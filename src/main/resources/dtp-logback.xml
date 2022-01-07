@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false" scan="true" scanPeriod="1 seconds" packagingData="true">
+    <contextName>dynamic-tp</contextName>
+    <appender name="MONITOR_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG.PATH}/dynamictp/monitor.log</file>
+        
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${LOG.PATH}/dynamictp/monitor.log.%i</fileNamePattern>
+            <maxIndex>${JM.LOG.RETAIN.COUNT:-7}</maxIndex>
+        </rollingPolicy>
+        
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>${LOG.FILE.SIZE:-10MB}</maxFileSize>
+        </triggeringPolicy>
+        
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %p [%-5t:%c{2}] %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="dtp.monitor.log" level="${dynamic.tp.monitor.log.level:-info}"
+        additivity="false">
+        <appender-ref ref="MONITOR_LOG_FILE"/>
+    </logger>
+
+</configuration>

@@ -16,20 +16,20 @@ import java.util.Map;
 public interface ConfigParser {
 
     /**
-     * Judge type
+     * Judge type.
      * @param type
      * @return
      */
     boolean supports(ConfigFileTypeEnum type);
 
     /**
-     * type: yaml or properties
+     * Type: yaml or properties.
      * @return
      */
     List<ConfigFileTypeEnum> type();
 
     /**
-     * Parse content
+     * Parse content.
      * @param content
      * @return
      * @throws IOException

@@ -1,4 +1,4 @@
-package io.lyh.dtp.domain;
+package io.lyh.dtp.support;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

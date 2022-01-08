@@ -1,7 +1,8 @@
-package io.lyh.dtp.domain;
+package io.lyh.dtp.core;
 
 import cn.hutool.core.collection.CollUtil;
-import io.lyh.dtp.core.DtpExecutor;
+import io.lyh.dtp.notify.NotifyItem;
+import io.lyh.dtp.notify.NotifyPlatform;
 import lombok.Builder;
 import lombok.Data;
 import lombok.val;
@@ -19,7 +20,7 @@ import static java.util.stream.Collectors.toMap;
  */
 @Builder
 @Data
-public class DtpContextWrapper {
+public class DtpContext {
 
     private DtpExecutor dtpExecutor;
 

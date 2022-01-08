@@ -1,4 +1,4 @@
-package io.lyh.dtp.domain;
+package io.lyh.dtp.notify;
 
 import lombok.Data;
 
@@ -13,17 +13,17 @@ import lombok.Data;
 public class NotifyPlatform {
 
     /**
-     * 通知平台
+     * Notify platform.
      */
     private String platform;
 
     /**
-     * url后需要拼接的key
+     * Key of url.
      */
     private String urlKey;
 
     /**
-     * 密钥（可为空）
+     * Secret, can be null.
      */
     private String secret;
 

@@ -1,7 +1,6 @@
 package io.lyh.dtp.notify;
 
 import io.lyh.dtp.core.DtpExecutor;
-import io.lyh.dtp.domain.NotifyItem;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.apache.commons.lang3.StringUtils;

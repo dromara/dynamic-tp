@@ -1,10 +1,10 @@
 package io.lyh.dtp.notify.wechat;
 
 import io.lyh.dtp.core.DtpContextHolder;
-import io.lyh.dtp.domain.DtpContextWrapper;
+import io.lyh.dtp.core.DtpContext;
 import io.lyh.dtp.common.em.NotifyTypeEnum;
-import io.lyh.dtp.domain.DtpMainPropWrapper;
-import io.lyh.dtp.domain.NotifyPlatform;
+import io.lyh.dtp.support.DtpMainPropWrapper;
+import io.lyh.dtp.notify.NotifyPlatform;
 import io.lyh.dtp.common.em.NotifyPlatformEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +32,7 @@ public class DtpWechatNotifier extends WechatAbsNotifier {
 
     @Override
     public void sendChangeMsg(DtpMainPropWrapper oldProp, List<String> diffs) {
-        DtpContextWrapper contextWrapper = DtpContextHolder.get();
+        DtpContext contextWrapper = DtpContextHolder.get();
         NotifyPlatform platform = contextWrapper.getPlatform(NotifyPlatformEnum.WECHAT.name());
         String content = buildNoticeContent(platform, WechatNotifyConst.WECHAT_CHANGE_NOTICE_TEMPLATE, oldProp, diffs);
         if (StringUtils.isBlank(content)) {
@@ -43,7 +43,7 @@ public class DtpWechatNotifier extends WechatAbsNotifier {
 
     @Override
     public void sendAlarmMsg(NotifyTypeEnum typeEnum) {
-        DtpContextWrapper contextWrapper = DtpContextHolder.get();
+        DtpContext contextWrapper = DtpContextHolder.get();
         NotifyPlatform platform = contextWrapper.getPlatform(NotifyPlatformEnum.WECHAT.name());
         String content = buildAlarmContent(platform, typeEnum, WechatNotifyConst.WECHAT_ALARM_TEMPLATE);
         if (StringUtils.isBlank(content)) {

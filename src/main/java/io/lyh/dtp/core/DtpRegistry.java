@@ -5,9 +5,8 @@ import io.lyh.dtp.config.DtpProperties;
 import io.lyh.dtp.common.em.NotifyTypeEnum;
 import io.lyh.dtp.common.em.RejectedTypeEnum;
 import io.lyh.dtp.common.ex.DtpException;
-import io.lyh.dtp.domain.DtpContextWrapper;
-import io.lyh.dtp.domain.DtpMainPropWrapper;
-import io.lyh.dtp.domain.ThreadPoolProperties;
+import io.lyh.dtp.support.DtpMainPropWrapper;
+import io.lyh.dtp.config.ThreadPoolProperties;
 import io.lyh.dtp.handler.NotifierHandler;
 import io.lyh.dtp.notify.AlarmLimiter;
 import io.lyh.dtp.notify.NotifyHelper;
@@ -34,30 +33,39 @@ import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 /**
- * DtpKeeper related
+ * Core Registry, which keep the all registered Dynamic ThreadPoolExecutors.
  *
  * @author: yanhom1314@gmail.com
  * @date: 2021-12-27 16:51
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpKeeper implements InitializingBean {
+public class DtpRegistry implements InitializingBean {
 
     private static final ExecutorService NOTIFY_EXECUTOR = DtpCreator.createWithTtl(false,"dtp-notify");
 
-    private static final Map<String, DtpExecutor> DTP_EXECUTOR_MAP = new ConcurrentHashMap<>();
+    private static final Map<String, DtpExecutor> DTP_REGISTRY = new ConcurrentHashMap<>();
 
     private static final Equator EQUATOR = new GetterBaseEquator();
 
     private static DtpProperties dtpProperties;
 
+    /**
+     * Register the Dynamic ThreadPoolExecutors.
+     * @param executor DtpExecutor instance.
+     */
     public static void register(DtpExecutor executor) {
-        log.info("DynamicTp registry, executor: {}", DtpMainPropWrapper.of(executor));
-        DTP_EXECUTOR_MAP.put(executor.getThreadPoolName(), executor);
+        log.info("DynamicTp register, executor: {}", DtpMainPropWrapper.of(executor));
+        DTP_REGISTRY.put(executor.getThreadPoolName(), executor);
     }
 
+    /**
+     * Get Dynamic ThreadPoolExecutor by threadPoolName.
+     * @param name threadPoolName
+     * @return The managed DtpExecutor instance.
+     */
     public static DtpExecutor getExecutor(String name) {
-        val executor= DTP_EXECUTOR_MAP.get(name);
+        val executor= DTP_REGISTRY.get(name);
         if (Objects.isNull(executor)) {
             log.error("Cannot find a specified DynamicTp, name: {}", name);
             throw new DtpException("Cannot find a specified DynamicTp, name: " + name);
@@ -65,10 +73,10 @@ public class DtpKeeper implements InitializingBean {
         return executor;
     }
 
-    public static List<String> listAllDtpNames() {
-        return Lists.newArrayList(DTP_EXECUTOR_MAP.keySet());
-    }
-
+    /**
+     * Refresh while the listening configuration changes.
+     * @param properties Main properties that maintain by the config center.
+     */
     public static void refresh(DtpProperties properties) {
         if (Objects.isNull(properties) || CollUtil.isEmpty(properties.getExecutors())) {
             log.warn("DynamicTp refresh, empty threadPoolProperties.");
@@ -79,7 +87,7 @@ public class DtpKeeper implements InitializingBean {
                 log.warn("DynamicTp refresh, threadPoolName must not be empty.");
                 return;
             }
-            val dtpExecutor = DTP_EXECUTOR_MAP.get(x.getThreadPoolName());
+            val dtpExecutor = DTP_REGISTRY.get(x.getThreadPoolName());
             if (Objects.isNull(dtpExecutor)) {
                 log.warn("DynamicTp refresh, cannot find specified executor, name: {}.", x.getThreadPoolName());
                 return;
@@ -99,7 +107,7 @@ public class DtpKeeper implements InitializingBean {
 
         List<FieldInfo> diffFields = EQUATOR.getDiffFields(oldProp, newProp);
         List<String> diffKeys = diffFields.stream().map(FieldInfo::getFieldName).collect(Collectors.toList());
-        DtpContextWrapper contextWrapper = DtpContextWrapper.builder()
+        DtpContext contextWrapper = DtpContext.builder()
                 .dtpExecutor(executor)
                 .platforms(dtpProperties.getPlatforms())
                 .notifyItem(NotifyHelper.getNotifyItem(executor, NotifyTypeEnum.CHANGE))
@@ -143,10 +151,10 @@ public class DtpKeeper implements InitializingBean {
         }
 
         String originRejectedName = dtpExecutor.getRejectHandlerName();
-        if (StringUtils.isNotBlank(properties.getRejectedExecutionName()) &&
-                !originRejectedName.contains(properties.getRejectedExecutionName())) {
+        if (StringUtils.isNotBlank(properties.getRejectedHandlerType()) &&
+                !originRejectedName.contains(properties.getRejectedHandlerType())) {
             dtpExecutor.setRejectedExecutionHandler(
-                    RejectedTypeEnum.buildRejectedHandler(properties.getRejectedExecutionName()));
+                    RejectedTypeEnum.buildRejectedHandler(properties.getRejectedHandlerType()));
         }
 
         if (properties.getQueueCapacity() > 0 &&
@@ -169,9 +177,13 @@ public class DtpKeeper implements InitializingBean {
         }
     }
 
+    public static List<String> listAllDtpNames() {
+        return Lists.newArrayList(DTP_REGISTRY.keySet());
+    }
+
     @Autowired
     public void setDtpProperties(DtpProperties dtpProperties) {
-        DtpKeeper.dtpProperties = dtpProperties;
+        DtpRegistry.dtpProperties = dtpProperties;
     }
 
     @Override
@@ -186,7 +198,7 @@ public class DtpKeeper implements InitializingBean {
                     .maximumPoolSize(x.getMaximumPoolSize())
                     .keepAliveTime(x.getKeepAliveTime())
                     .workQueue(x.getQueueType(), x.getQueueCapacity(), x.isFair())
-                    .rejectedExecutionHandler(x.getRejectedExecutionName())
+                    .rejectedExecutionHandler(x.getRejectedHandlerType())
                     .threadFactory(x.getThreadNamePrefix())
                     .allowCoreThreadTimeOut(x.isAllowCoreThreadTimeOut())
                     .threadPoolName(x.getThreadPoolName())
@@ -195,10 +207,10 @@ public class DtpKeeper implements InitializingBean {
             register(executor);
         });
 
-        DTP_EXECUTOR_MAP.forEach((k, v) -> {
+        DTP_REGISTRY.forEach((k, v) -> {
             NotifyHelper.fillNotifyItems(dtpProperties.getPlatforms(), v.getNotifyItems());
             v.getNotifyItems().forEach(x -> {
-                // 变更通知没必要注册报警限流
+                // change notify not need to register alarm limiting.
                 if (x.getInterval() == null) {
                     return;
                 }

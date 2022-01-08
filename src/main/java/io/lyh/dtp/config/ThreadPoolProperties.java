@@ -1,8 +1,10 @@
-package io.lyh.dtp.domain;
+package io.lyh.dtp.config;
 
+import io.lyh.dtp.common.em.NotifyTypeEnum;
 import io.lyh.dtp.common.em.QueueTypeEnum;
 import io.lyh.dtp.common.em.RejectedTypeEnum;
 import io.lyh.dtp.common.constant.DynamicTpConst;
+import io.lyh.dtp.notify.NotifyItem;
 import lombok.Data;
 
 import java.util.List;
@@ -19,64 +21,64 @@ import java.util.concurrent.TimeUnit;
 public class ThreadPoolProperties {
 
     /**
-     * 线程池名称
+     * Name of Dynamic ThreadPool.
      */
     private String threadPoolName = "DynamicTp";
 
     /**
-     * 核心线程数
+     * CoreSize of ThreadPool.
      */
     private int corePoolSize = 2;
 
     /**
-     * 最大线程数, 默认值为CPU核心数量
+     * MaxSize of ThreadPool.
      */
     private int maximumPoolSize = DynamicTpConst.AVAILABLE_PROCESSORS;
 
     /**
-     * 队列最大数量
+     * BlockingQueue capacity.
      */
     private int queueCapacity = 1024;
 
     /**
-     * 队列类型
-     * @see QueueTypeEnum
+     * Blocking queue type, see {@link QueueTypeEnum}
      */
     private String queueType = QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE.getName();
 
     /**
-     * 是否公平策略 SynchronousQueue用
+     * If fair strategy, for SynchronousQueue
      */
     private boolean fair = false;
 
     /**
-     * 拒绝策略
-     * @see RejectedTypeEnum
+     * RejectedExecutionHandler type, see {@link RejectedTypeEnum}
      */
-    private String rejectedExecutionName = RejectedTypeEnum.CALLER_RUNS_POLICY.getName();
+    private String rejectedHandlerType = RejectedTypeEnum.CALLER_RUNS_POLICY.getName();
 
     /**
-     * 空闲线程存活时间
+     * When the number of threads is greater than the core,
+     * this is the maximum time that excess idle threads
+     * will wait for new tasks before terminating.
      */
     private long keepAliveTime = 30;
 
     /**
-     * 空闲线程存活时间单位
+     * Timeout unit.
      */
     private TimeUnit unit = TimeUnit.SECONDS;
 
     /**
-     * 是否允许核心线程超时
+     * If allow core thread timeout.
      */
     private boolean allowCoreThreadTimeOut = false;
 
     /**
-     * 线程名称前缀
+     * Thread name prefix.
      */
     private String threadNamePrefix = "dynamic-tp";
 
     /**
-     * 报警配置
+     * Notify items, see {@link NotifyTypeEnum}
      */
     private List<NotifyItem> notifyItems;
 

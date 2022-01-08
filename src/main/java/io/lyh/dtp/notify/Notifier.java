@@ -1,7 +1,7 @@
 package io.lyh.dtp.notify;
 
 import io.lyh.dtp.common.em.NotifyTypeEnum;
-import io.lyh.dtp.domain.DtpMainPropWrapper;
+import io.lyh.dtp.support.DtpMainPropWrapper;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
 public interface Notifier {
 
     /**
-     * Get send platform
+     * Get send platform.
      *
      * @return platform
      */
@@ -30,7 +30,7 @@ public interface Notifier {
     void sendChangeMsg(DtpMainPropWrapper oldPropWrapper, List<String> diffs);
 
     /**
-     * Send alarm message
+     * Send alarm message.
      * @param typeEnum notify type
      */
     void sendAlarmMsg(NotifyTypeEnum typeEnum);

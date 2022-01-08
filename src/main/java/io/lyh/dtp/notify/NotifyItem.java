@@ -1,8 +1,8 @@
-package io.lyh.dtp.domain;
+package io.lyh.dtp.notify;
 
+import com.google.common.collect.Lists;
 import io.lyh.dtp.common.em.NotifyPlatformEnum;
 import io.lyh.dtp.common.em.NotifyTypeEnum;
-import com.google.common.collect.Lists;
 import lombok.Data;
 
 import java.util.List;
@@ -18,34 +18,32 @@ import java.util.List;
 public class NotifyItem {
 
     /**
-     * 通知平台
-     * @see NotifyPlatformEnum
+     * Notify platforms, see {@link NotifyPlatformEnum}
      */
     private List<String> platforms;
 
     /**
-     * 是否开启通知
+     * If enabled notify.
      */
     private boolean enabled = true;
 
     /**
-     * 通知类型
-     * @see NotifyTypeEnum
+     * Notify type, see {@link NotifyTypeEnum}
      */
     private String type;
 
     /**
-     * 报警项阈值
+     * Alarm threshold.
      */
     private int threshold;
 
     /**
-     * 报警间隔（s）
+     * Alarm interval, time unit（s）
      */
     private Integer interval = 120;
 
     /**
-     * 默认支持通知配置（线程池变动通知、活性报警、容量报警、拒绝报警）
+     * Default notify items.
      */
     private static final List<NotifyItem> DEFAULT_NOTIFY_ITEMS;
 
@@ -56,19 +54,16 @@ public class NotifyItem {
 
         NotifyItem livenessNotify = new NotifyItem();
         livenessNotify.setType(NotifyTypeEnum.LIVENESS.getValue());
-        // 队列元素数量达到容量的${threshold}%后报警
         livenessNotify.setThreshold(80);
         livenessNotify.setInterval(300);
 
         NotifyItem capacityNotify = new NotifyItem();
         capacityNotify.setType(NotifyTypeEnum.CAPACITY.getValue());
-        // 队列元素数量达到容量的${threshold}%后报警
         capacityNotify.setThreshold(80);
         capacityNotify.setInterval(300);
 
         NotifyItem rejectNotify = new NotifyItem();
         rejectNotify.setType(NotifyTypeEnum.REJECT.getValue());
-        // 拒绝任务数量达到${threshold}个后报警
         rejectNotify.setThreshold(1);
         rejectNotify.setInterval(300);
 

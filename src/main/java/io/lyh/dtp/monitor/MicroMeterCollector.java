@@ -1,7 +1,6 @@
 package io.lyh.dtp.monitor;
 
 import io.lyh.dtp.core.DtpExecutor;
-import io.lyh.dtp.domain.ThreadPoolMetrics;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tag;
 import lombok.extern.slf4j.Slf4j;

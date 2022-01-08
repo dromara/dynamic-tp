@@ -9,8 +9,7 @@ import io.lyh.dtp.config.DtpProperties;
 import io.lyh.dtp.core.DtpContextHolder;
 import io.lyh.dtp.core.DtpExecutor;
 import io.lyh.dtp.core.ThreadPoolBuilder;
-import io.lyh.dtp.domain.DtpContextWrapper;
-import io.lyh.dtp.domain.NotifyItem;
+import io.lyh.dtp.core.DtpContext;
 import io.lyh.dtp.handler.NotifierHandler;
 import io.lyh.dtp.support.ApplicationContextHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -70,21 +69,16 @@ public class AlarmManager {
         }
         DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
         NotifyItem notifyItem = NotifyHelper.getNotifyItem(executor, typeEnum);
-        DtpContextWrapper dtpContextWrapper = DtpContextWrapper.builder()
+        DtpContext dtpContext = DtpContext.builder()
                 .dtpExecutor(executor)
                 .platforms(dtpProperties.getPlatforms())
                 .notifyItem(notifyItem)
                 .build();
-        DtpContextHolder.set(dtpContextWrapper);
+        DtpContextHolder.set(dtpContext);
         AlarmLimiter.putVal(executor, typeEnum.getValue());
         NotifierHandler.getInstance().sendAlarm(typeEnum);
     }
 
-    /**
-     * 活性基本条件检查
-     * @param executor
-     * @return
-     */
     private static boolean checkLiveness(DtpExecutor executor) {
 
         NotifyItem notifyItem = NotifyHelper.getNotifyItem(executor, NotifyTypeEnum.LIVENESS);
@@ -97,11 +91,6 @@ public class AlarmManager {
         return notifyItem.isEnabled() && div >= notifyItem.getThreshold();
     }
 
-    /**
-     * 容量基本条件检查
-     * @param executor
-     * @return
-     */
     private static boolean checkCapacity(DtpExecutor executor) {
         BlockingQueue<Runnable> workQueue = executor.getQueue();
         if (CollUtil.isEmpty(workQueue)) {
@@ -118,11 +107,6 @@ public class AlarmManager {
         return notifyItem.isEnabled() && div >= notifyItem.getThreshold();
     }
 
-    /**
-     * 拒绝策略条件检查
-     * @param executor
-     * @return
-     */
     private static boolean checkReject(DtpExecutor executor) {
         NotifyItem notifyItem = NotifyHelper.getNotifyItem(executor, NotifyTypeEnum.REJECT);
         if (Objects.isNull(notifyItem)) {

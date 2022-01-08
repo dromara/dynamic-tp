@@ -13,23 +13,23 @@ import lombok.Getter;
 public enum NotifyTypeEnum {
 
     /**
-     * 配置变动通知
+     * Config change notify.
      */
     CHANGE("change"),
 
     /**
-     * 活性监控
-     * 线程池活跃度 = activeCount/maximumPoolSize
+     * ThreadPool livenes notify.
+     * livenes = activeCount / maximumPoolSize
      */
     LIVENESS("liveness"),
 
     /**
-     * 容量达到阈值预警
+     * Capacity threshold notify
      */
     CAPACITY("capacity"),
 
     /**
-     * 触发拒绝策略告警
+     * Reject notify.
      */
     REJECT("reject"),;
 

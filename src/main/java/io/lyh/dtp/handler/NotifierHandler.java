@@ -2,8 +2,8 @@ package io.lyh.dtp.handler;
 
 import io.lyh.dtp.core.DtpContextHolder;
 import io.lyh.dtp.common.em.NotifyTypeEnum;
-import io.lyh.dtp.domain.DtpMainPropWrapper;
-import io.lyh.dtp.domain.NotifyItem;
+import io.lyh.dtp.support.DtpMainPropWrapper;
+import io.lyh.dtp.notify.NotifyItem;
 import io.lyh.dtp.notify.Notifier;
 import io.lyh.dtp.notify.ding.DtpDingNotifier;
 import io.lyh.dtp.notify.wechat.DtpWechatNotifier;

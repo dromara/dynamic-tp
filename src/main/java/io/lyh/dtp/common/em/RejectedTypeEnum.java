@@ -24,7 +24,7 @@ import java.util.concurrent.RejectedExecutionHandler;
 public enum RejectedTypeEnum {
 
     /**
-     * Execution handler while trigger reject policy.
+     * RejectedExecutionHandler type while trigger reject policy.
      */
     ABORT_POLICY("AbortPolicy"),
 

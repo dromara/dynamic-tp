@@ -1,4 +1,4 @@
-package io.lyh.dtp.domain;
+package io.lyh.dtp.monitor;
 
 import lombok.Data;
 
@@ -11,23 +11,24 @@ import lombok.Data;
  **/
 @Data
 public class JvmMetrics extends Metrics {
+
     /**
-     * jvm最大内存
+     * Jvm max memory.
      */
     private String maxMemory;
 
     /**
-     * jvm已分配内存
+     * Jvm total memory.
      */
     private String totalMemory;
 
     /**
-     * jvm已分配内存中的剩余空间
+     * Jvm free memory.
      */
     private String freeMemory;
 
     /**
-     * jvm最大可用内容
+     * Jvm usable memory.
      */
     private String usableMemory;
 }

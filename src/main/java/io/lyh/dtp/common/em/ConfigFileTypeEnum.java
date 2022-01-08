@@ -3,7 +3,7 @@ package io.lyh.dtp.common.em;
 import lombok.Getter;
 
 /**
- * ConfigFileTypeEnum related
+ * Config file type.
  *
  * @author: yanhom1314@gmail.com
  * @date: 2021-12-30 14:08
@@ -13,7 +13,7 @@ import lombok.Getter;
 public enum ConfigFileTypeEnum {
 
     /**
-     * config file type
+     * Config file type.
      */
     PROPERTIES("properties"),
     XML("xml"),

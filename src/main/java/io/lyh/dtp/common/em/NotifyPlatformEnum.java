@@ -1,7 +1,7 @@
 package io.lyh.dtp.common.em;
 
 /**
- * Notify platform enum
+ * Notify platform type.
  *
  * @author: yanhom1314@gmail.com
  * @date: 2021-12-22 10:20
@@ -10,27 +10,21 @@ package io.lyh.dtp.common.em;
 public enum NotifyPlatformEnum {
 
     /**
-     * 钉钉
+     * Ding ding
      */
     DING,
 
     /**
-     * 企业微信
+     * Enterprise WeChat
      */
     WECHAT,
 
     /**
-     * lark
+     * Lark
      */
     LARK,
 
-    /**
-     * 邮件
-     */
     EMAIL,
 
-    /**
-     * 短信
-     */
     SMS
 }

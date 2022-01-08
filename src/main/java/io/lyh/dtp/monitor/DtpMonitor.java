@@ -2,7 +2,7 @@ package io.lyh.dtp.monitor;
 
 import io.lyh.dtp.config.DtpProperties;
 import io.lyh.dtp.core.DtpExecutor;
-import io.lyh.dtp.core.DtpKeeper;
+import io.lyh.dtp.core.DtpRegistry;
 import io.lyh.dtp.core.NamedThreadFactory;
 import io.lyh.dtp.handler.CollectorHandler;
 import io.lyh.dtp.notify.AlarmManager;
@@ -45,9 +45,9 @@ public class DtpMonitor implements ApplicationRunner {
         if (log.isDebugEnabled()) {
             log.debug("DynamicTp monitor run...");
         }
-        val names = DtpKeeper.listAllDtpNames();
+        val names = DtpRegistry.listAllDtpNames();
         names.forEach(x -> {
-            DtpExecutor executor = DtpKeeper.getExecutor(x);
+            DtpExecutor executor = DtpRegistry.getExecutor(x);
             AlarmManager.triggerAlarm(
                     () -> AlarmManager.doAlarm(executor, Lists.newArrayList(NotifyTypeEnum.LIVENESS, NotifyTypeEnum.CAPACITY)));
             if (dtpProperties.isEnabledCollect()) {

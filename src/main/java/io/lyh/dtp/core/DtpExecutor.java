@@ -1,6 +1,7 @@
 package io.lyh.dtp.core;
 
-import io.lyh.dtp.domain.NotifyItem;
+import io.lyh.dtp.common.em.NotifyTypeEnum;
+import io.lyh.dtp.notify.NotifyItem;
 import io.lyh.dtp.handler.reject.RejectedCountableCallerRunsPolicy;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * DtpExecutor related
+ * Dynamic ThreadPoolExecutor inherits ThreadPoolExecutor, and extends some features.
  *
  * @author: yanhom1314@gmail.com
  * @date: 2021-12-27 16:51
@@ -17,12 +18,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DtpExecutor extends ThreadPoolExecutor {
 
     /**
-     * Globally unique identifier.
+     * Uniquely identifies.
      */
     private String threadPoolName;
 
+    /**
+     * Total reject count.
+     */
     private final AtomicInteger rejectCount = new AtomicInteger();
 
+    /**
+     * Notify items, see {@link NotifyTypeEnum}.
+     */
     private List<NotifyItem> notifyItems;
 
     public DtpExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue) {

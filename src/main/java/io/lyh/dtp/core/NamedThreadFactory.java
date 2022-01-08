@@ -6,7 +6,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * NamedThreadFactory related
+ * Default ThreadFactory used in Dynamic ThreadPoolExecutors.
  *
  * @author: yanhom1314@gmail.com
  * @date: 2021-12-08 10:20
@@ -16,16 +16,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class NamedThreadFactory implements ThreadFactory {
 
     private final ThreadGroup group;
-    private final AtomicInteger seq = new AtomicInteger(1);
     private final String namePrefix;
+
     /**
-     * 是否守护线程
+     * is daemon thread.
      */
     private final boolean daemon;
+
     /**
-     * 线程优先级
+     * thread priority.
      */
     private final Integer priority;
+
+    /**
+     * thread name index.
+     */
+    private final AtomicInteger seq = new AtomicInteger(1);
 
     private final Thread.UncaughtExceptionHandler uncaughtExceptionHandler;
 

@@ -2,7 +2,7 @@ package io.lyh.dtp.refresh;
 
 import io.lyh.dtp.common.em.ConfigFileTypeEnum;
 import io.lyh.dtp.config.DtpProperties;
-import io.lyh.dtp.core.DtpKeeper;
+import io.lyh.dtp.core.DtpRegistry;
 import io.lyh.dtp.handler.ConfigChangeHandler;
 import io.lyh.dtp.common.constant.DynamicTpConst;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +50,7 @@ public abstract class AbstractRefresher implements Refresher {
         ConfigurationPropertySource sources = new MapConfigurationPropertySource(properties);
         Binder binder = new Binder(sources);
         DtpProperties bindDtpProperties = binder.bind(DynamicTpConst.MAIN_PROPERTIES_PREFIX, Bindable.ofInstance(dtpProperties)).get();
-        DtpKeeper.refresh(bindDtpProperties);
+        DtpRegistry.refresh(bindDtpProperties);
     }
 
 }

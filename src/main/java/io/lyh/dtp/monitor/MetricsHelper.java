@@ -1,7 +1,6 @@
 package io.lyh.dtp.monitor;
 
 import io.lyh.dtp.core.DtpExecutor;
-import io.lyh.dtp.domain.ThreadPoolMetrics;
 
 /**
  * MetricsHelper related

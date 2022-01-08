@@ -3,8 +3,6 @@ package io.lyh.dtp.notify;
 import cn.hutool.core.collection.CollUtil;
 import io.lyh.dtp.common.em.NotifyTypeEnum;
 import io.lyh.dtp.core.DtpExecutor;
-import io.lyh.dtp.domain.NotifyItem;
-import io.lyh.dtp.domain.NotifyPlatform;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;

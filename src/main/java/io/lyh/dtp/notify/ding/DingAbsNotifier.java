@@ -5,7 +5,7 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.json.JSONUtil;
 import io.lyh.dtp.notify.AbstractNotifier;
-import io.lyh.dtp.domain.NotifyPlatform;
+import io.lyh.dtp.notify.NotifyPlatform;
 import io.lyh.dtp.notify.MarkdownReq;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

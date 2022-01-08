@@ -1,8 +1,7 @@
 package io.lyh.dtp.config;
 
-import io.lyh.dtp.domain.NotifyPlatform;
-import io.lyh.dtp.domain.ThreadPoolProperties;
 import io.lyh.dtp.common.constant.DynamicTpConst;
+import io.lyh.dtp.notify.NotifyPlatform;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -11,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 /**
- * DtpProperties related
+ * Main properties that maintain by the config center.
  *
  * @author: yanhom1314@gmail.com
  * @date: 2021-12-27 17:37
@@ -24,56 +23,53 @@ import java.util.List;
 public class DtpProperties {
 
     /**
-     * 开启动态线程池
+     * If enabled DynamicTp.
      */
     private boolean enabled = true;
 
     /**
-     * 是否打印banner
+     * If print banner.
      */
     private boolean enabledBanner = true;
 
     /**
-     * Nacos config
+     * Nacos config.
      */
     private Nacos nacos;
 
     /**
-     * Apollo config
+     * Apollo config.
      */
     private Apollo apollo;
 
     /**
-     * 配置文件类型
+     * Config file type.
      */
     private String configType = "yml";
 
     /**
-     * 开启指标采集
+     * If enabled metrics collect.
      */
     private boolean enabledCollect = false;
 
     /**
-     * 监控时间间隔（s）
+     * Monitor interval, time unit（s）
      */
     private int monitorInterval = 5;
 
     /**
-     * 线程池配置
+     * ThreadPoolExecutor configs.
      */
     private List<ThreadPoolProperties> executors;
 
     /**
-     * 通知平台配置
+     * Notify platform configs.
      */
     private List<NotifyPlatform> platforms;
 
     @Data
     public static class Nacos {
 
-        /**
-         * 监听的Nacos dataId
-         */
         private String dataId;
 
         private String group = "DEFAULT_GROUP";;

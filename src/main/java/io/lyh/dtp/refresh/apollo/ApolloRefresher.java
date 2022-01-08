@@ -37,7 +37,6 @@ public class ApolloRefresher extends AbstractRefresher implements ConfigChangeLi
     @Override
     public void afterPropertiesSet() {
 
-        // 如果没有指定，namespace默认拿配置的第一个
         String[] apolloNamespaces = this.namespace.split(",");
         String realNamespace = apolloNamespaces[0];
         DtpProperties.Apollo apollo = dtpProperties.getApollo();

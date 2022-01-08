@@ -3,7 +3,7 @@ package io.lyh.dtp.autoconfigure;
 import com.alibaba.cloud.nacos.NacosConfigProperties;
 import io.lyh.dtp.config.DtpProperties;
 import io.lyh.dtp.monitor.DtpMonitor;
-import io.lyh.dtp.core.DtpKeeper;
+import io.lyh.dtp.core.DtpRegistry;
 import io.lyh.dtp.core.DtpPostProcessor;
 import io.lyh.dtp.endpoint.DtpEndpoint;
 import io.lyh.dtp.refresh.apollo.ApolloRefresher;
@@ -57,8 +57,8 @@ public class DtpAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public DtpKeeper dtpKeeper() {
-        return new DtpKeeper();
+    public DtpRegistry dtpKeeper() {
+        return new DtpRegistry();
     }
 
     @Bean

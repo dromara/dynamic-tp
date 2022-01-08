@@ -20,7 +20,7 @@ import java.util.concurrent.*;
 public enum QueueTypeEnum {
 
     /**
-     * Blocking queue type for config.
+     * BlockingQueue type.
      */
     ARRAY_BLOCKING_QUEUE(1,"ArrayBlockingQueue"),
 

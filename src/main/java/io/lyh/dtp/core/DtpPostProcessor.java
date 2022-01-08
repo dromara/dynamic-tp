@@ -2,9 +2,11 @@ package io.lyh.dtp.core;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 
 /**
- * DtpPostProcessor related
+ * BeanPostProcessor that handles all related beans managed by Spring,
+ * mainly refers to the beans marked by @Bean annotation.
  *
  * @author: yanhom1314@gmail.com
  * @date: 2021-12-27 16:57
@@ -24,6 +26,6 @@ public class DtpPostProcessor implements BeanPostProcessor {
     }
 
     private void register(DtpExecutor executor) {
-        DtpKeeper.register(executor);
+        DtpRegistry.register(executor);
     }
 }

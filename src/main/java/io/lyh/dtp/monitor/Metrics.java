@@ -1,4 +1,4 @@
-package io.lyh.dtp.domain;
+package io.lyh.dtp.monitor;
 
 import lombok.Data;
 

@@ -3,9 +3,9 @@ package io.lyh.dtp.endpoint;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.system.RuntimeInfo;
 import io.lyh.dtp.core.DtpExecutor;
-import io.lyh.dtp.core.DtpKeeper;
-import io.lyh.dtp.domain.Metrics;
-import io.lyh.dtp.domain.JvmMetrics;
+import io.lyh.dtp.core.DtpRegistry;
+import io.lyh.dtp.monitor.Metrics;
+import io.lyh.dtp.monitor.JvmMetrics;
 import io.lyh.dtp.monitor.MetricsHelper;
 import com.google.common.collect.Lists;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -26,10 +26,10 @@ public class DtpEndpoint {
     @ReadOperation
     public List<Metrics> invoke() {
 
-        List<String> dtpNames = DtpKeeper.listAllDtpNames();
+        List<String> dtpNames = DtpRegistry.listAllDtpNames();
         List<Metrics> metricsList = Lists.newArrayList();
         dtpNames.forEach(x -> {
-            DtpExecutor dtpExecutor = DtpKeeper.getExecutor(x);
+            DtpExecutor dtpExecutor = DtpRegistry.getExecutor(x);
             metricsList.add(MetricsHelper.getMetrics(dtpExecutor));
         });
 

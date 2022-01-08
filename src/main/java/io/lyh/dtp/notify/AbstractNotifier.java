@@ -8,11 +8,12 @@ import io.lyh.dtp.common.constant.DynamicTpConst;
 import io.lyh.dtp.common.em.NotifyTypeEnum;
 import io.lyh.dtp.common.em.RejectedTypeEnum;
 import io.lyh.dtp.core.DtpContextHolder;
+import io.lyh.dtp.core.DtpContext;
 import io.lyh.dtp.core.DtpExecutor;
-import io.lyh.dtp.core.DtpKeeper;
-import com.lyh.dtp.domain.*;
+import io.lyh.dtp.core.DtpRegistry;
 import io.lyh.dtp.support.ApplicationContextHolder;
-import io.lyh.dtp.domain.*;
+import io.lyh.dtp.support.DtpMainPropWrapper;
+import io.lyh.dtp.support.Instance;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -63,8 +64,8 @@ public abstract class AbstractNotifier implements Notifier {
     }
 
     public String buildAlarmContent(NotifyPlatform platform, NotifyTypeEnum typeEnum, String template) {
-        DtpContextWrapper contextWrapper = DtpContextHolder.get();
-        DtpExecutor executor = DtpKeeper.getExecutor(contextWrapper.getDtpExecutor().getThreadPoolName());
+        DtpContext contextWrapper = DtpContextHolder.get();
+        DtpExecutor executor = DtpRegistry.getExecutor(contextWrapper.getDtpExecutor().getThreadPoolName());
 
         List<String> receivers = StrUtil.split(platform.getReceivers(), ',');
         String receivesStr = Joiner.on(", @").join(receivers);
@@ -104,7 +105,7 @@ public abstract class AbstractNotifier implements Notifier {
                                      DtpMainPropWrapper oldPropWrapper,
                                      List<String> diffs) {
         String threadPoolName = oldPropWrapper.getDtpName();
-        DtpExecutor dtpExecutor = DtpKeeper.getExecutor(threadPoolName);
+        DtpExecutor dtpExecutor = DtpRegistry.getExecutor(threadPoolName);
 
         List<String> receivers = StrUtil.split(platform.getReceivers(), ',');
         String receivesStr = Joiner.on(", @").join(receivers);

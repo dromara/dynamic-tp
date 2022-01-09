@@ -207,6 +207,11 @@ public class ThreadPoolBuilder {
         }
     }
 
+    /**
+     * Build dynamic threadPoolExecutor.
+     * @param builder builder
+     * @return DtpExecutor instance
+     */
     private DtpExecutor buildDtpExecutor(ThreadPoolBuilder builder) {
         Assert.notNull(builder.threadPoolName, "The thread pool name must not be null.");
         DtpExecutor dtpExecutor = new DtpExecutor(
@@ -224,6 +229,11 @@ public class ThreadPoolBuilder {
         return dtpExecutor;
     }
 
+    /**
+     * Build common threadPoolExecutor, does not manage by DynamicTp framework.
+     * @param builder builder
+     * @return ThreadPoolExecutor instance
+     */
     private ThreadPoolExecutor buildCommonExecutor(ThreadPoolBuilder builder) {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(
                 builder.corePoolSize,

@@ -1,21 +1,37 @@
-###  基于配置中心的轻量级动态线程池 - DynamicTp
+## 基于配置中心的轻量级动态线程池 - DynamicTp
+
+
+
+```yml
+|  __ \                            (_) |__   __|   
+| |  | |_   _ _ __   __ _ _ __ ___  _  ___| |_ __  
+| |  | | | | | '_ \ / _` | '_ ` _ \| |/ __| | '_ \ 
+| |__| | |_| | | | | (_| | | | | | | | (__| | |_) |
+|_____/ \__, |_| |_|\__,_|_| |_| |_|_|\___|_| .__/ 
+         __/ |                              | |    
+        |___/                               |_|    
+ :: Dynamic Thread Pool :: 
+```
 
 
 
 ***
 
-#### 背景
+### 背景
 
 + 广泛性，在Java开发中，想要提高系统性能，线程池已经是一个90%以上的人都会选择使用的基础工具
+
 + 不确定性，项目中可能会创建很多线程池，既有IO密集型的，也有CPU密集型的，但线程池的参数并不好确定；需要有套机制在运行过程中动态去调整参数
+
 + 无感知性，线程池运行过程中的各项指标一般感知不到；需要有套监控报警机制在事前、事中就能让开发人员感知到线程池的运行状况，及时处理
+
 + 高可用性，配置变更需要及时推送到客户端；需要有高可用的配置管理推送服务，配置中心是现在大多数互联网系统都会使用的组件，与之结合可以大幅度减少开发量及接入难度
 
 
 
 ***
 
-#### 简介
+### 简介
 
 + 参考 [美团线程池实践](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html) ，对Java线程池参数动态化管理，增加监控、报警功能
 
@@ -31,7 +47,25 @@
 
 ***
 
-####  使用
+### 架构设计
+
++ 功能主要分四大模块
+
++ 配置变更监听模块，默认实现Nacos、Apollo监听，可通过内部提供的SPI接口扩展其他实现
+
++ 线程池管理模块，主要实现线程池的增删查改功能
+
++ 监控日志模块，实现监控指标采集以及输出，默认实现Json log输出、MicroMeter采集、Endpoint监控三种方式，可通过内部提供的SPI接口扩展其他实现
+
++ 通知告警模块，对接办公平台，实现告警信息通知，默认实现钉钉、企微，可通过内部提供的SPI接口扩展其他实现
+
+<a href="https://imgtu.com/i/7FoNZV"><img src="https://s4.ax1x.com/2022/01/09/7FoNZV.png" alt="7FoNZV.png" border="0" width=550px height=450px/></a>                                                        
+
+
+
+***
+
+### 使用
 
 + maven依赖
 
@@ -133,7 +167,7 @@
 
 ***
 
-####  注意事项
+### 注意事项
 
 1. 配置文件配置的参数会覆盖通过代码生成方式配置的参数
 
@@ -164,7 +198,7 @@
 
 ***
 
-#### 报警
+### 报警
 
 <a href="https://imgtu.com/i/7FlTDe"><img src="https://s4.ax1x.com/2022/01/09/7FlTDe.png" alt="7FlTDe.png" border="0" width=350px height=600px/></a>              <a href="https://imgtu.com/i/7FlouD"><img src="https://s4.ax1x.com/2022/01/09/7FlouD.md.png" alt="7FlouD.png" border="0" width=350px height=450px/></a>
 
@@ -172,17 +206,19 @@
 
 ***
 
-#### 监控日志
+### 监控日志
 
 + 通过引入MicroMeter相关依赖采集到支持的平台
+
 + 指标Json日志输出磁盘，地址：${user.home}/logs/dynamictp/monitor.log
 
 
 
 ***
 
-#### 联系我
+### 联系我
 
 + 对项目有什么想法或者建议，可以加我vx交流，或者创建[issues](https://github.com/lyh200/dynamic-tp-spring-cloud-starter/issues)，一起完善项目
 
 <a href="https://imgtu.com/i/7Fy2an"><img src="https://s4.ax1x.com/2022/01/09/7Fy2an.jpg" alt="7Fy2an.jpg" border="0" width=250px height=250px/></a>
+

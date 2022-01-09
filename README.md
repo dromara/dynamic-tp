@@ -1,4 +1,15 @@
-###  轻量级动态线程池 - DynamicTp
+###  基于配置中心的轻量级动态线程池 - DynamicTp
+
+
+
+***
+
+#### 背景
+
++ 广泛性，在Java开发中，想要提高系统性能，线程池已经是一个90%以上的人都会选择使用的基础工具
++ 不确定性，项目中可能会创建很多线程池，既有IO密集型的，也有CPU密集型的，但线程池的参数并不好确定；需要有套机制在运行过程中动态去调整参数
++ 无感知性，线程池运行过程中的各项指标一般感知不到；需要有套监控报警机制在事前、事中就能让开发人员感知到线程池的运行状况，及时处理
++ 高可用性，配置变更需要及时推送到客户端；需要有高可用的配置管理推送服务，配置中心是现在大多数互联网系统都会使用的组件，与之结合可以大幅度减少开发量及接入难度
 
 
 
@@ -16,7 +27,7 @@
 
 + 内置简单线程池指标采集功能，支持通过MicroMeter、日志输出、Endpoint三种方式，可自定义扩展
 
-  
+
 
 ***
 
@@ -122,10 +133,32 @@
 
 ***
 
-####  注意细节
+####  注意事项
 
 1. 配置文件配置的参数会覆盖通过代码生成方式配置的参数
+
 2. 阻塞队列只有VariableLinkedBlockingQueue类型可以修改capacity
+
+3. ```yaml
+   启动看到如下日志输出证明接入成功
+   
+   |  __ \                            (_) |__   __|   
+   | |  | |_   _ _ __   __ _ _ __ ___  _  ___| |_ __  
+   | |  | | | | | '_ \ / _` | '_ ` _ \| |/ __| | '_ \ 
+   | |__| | |_| | | | | (_| | | | | | | | (__| | |_) |
+   |_____/ \__, |_| |_|\__,_|_| |_| |_|_|\___|_| .__/ 
+            __/ |                              | |    
+           |___/                               |_|    
+    :: Dynamic Thread Pool :: 
+   
+   DynamicTp register, executor: DtpMainPropWrapper(dtpName=dynamic-tp-test-1, corePoolSize=6, maxPoolSize=8, keepAliveTime=50, queueType=VariableLinkedBlockingQueue, queueCapacity=200, rejectType=RejectedCountableCallerRunsPolicy, allowCoreThreadTimeOut=false)
+   ```
+
+4. ```yml
+   配置变更会输出相应日志，以及会推送通知
+   
+   DynamicTp [dynamic-tp-test-1] refresh end, changed keys: [corePoolSize, queueCapacity], corePoolSize: [6 => 4], maxPoolSize: [8 => 8], queueType: [VariableLinkedBlockingQueue => VariableLinkedBlockingQueue], queueCapacity: [200 => 2000], keepAliveTime: [50s => 50s], rejectedType: [CallerRunsPolicy => CallerRunsPolicy], allowsCoreThreadTimeOut: [false => false]
+   ```
 
 
 
@@ -143,3 +176,13 @@
 
 + 通过引入MicroMeter相关依赖采集到支持的平台
 + 指标Json日志输出磁盘，地址：${user.home}/logs/dynamictp/monitor.log
+
+
+
+***
+
+#### 联系我
+
++ 对项目有什么想法或者建议，可以加我vx交流，或者创建[issues](https://github.com/lyh200/dynamic-tp-spring-cloud-starter/issues)，一起完善项目
+
+<a href="https://imgtu.com/i/7Fy2an"><img src="https://s4.ax1x.com/2022/01/09/7Fy2an.jpg" alt="7Fy2an.jpg" border="0" width=250px height=250px/></a>

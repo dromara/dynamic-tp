@@ -57,7 +57,7 @@ public class DtpAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public DtpRegistry dtpKeeper() {
+    public DtpRegistry dtpRegistry() {
         return new DtpRegistry();
     }
 

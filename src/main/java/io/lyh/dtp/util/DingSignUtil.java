@@ -1,4 +1,4 @@
-package io.lyh.dtp.notify.ding;
+package io.lyh.dtp.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
@@ -32,7 +32,7 @@ public class DingSignUtil {
             byte[] signData = mac.doFinal(stringToSign.getBytes(DEFAULT_ENCODING));
             return URLEncoder.encode(new String(Base64.encodeBase64(signData)), DEFAULT_ENCODING.name());
         } catch (Exception e) {
-            log.error("DynamicTp, cal sign error", e);
+            log.error("DynamicTp, cal ding sign error", e);
             return "";
         }
     }

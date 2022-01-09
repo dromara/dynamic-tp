@@ -1,5 +1,6 @@
-package io.lyh.dtp.logging;
+package io.lyh.dtp.util;
 
+import io.lyh.dtp.logging.DtpLogging;
 import org.slf4j.Logger;
 
 import static org.slf4j.LoggerFactory.getLogger;

@@ -15,8 +15,8 @@ import static java.util.stream.Collectors.toMap;
 /**
  * DtpContentWrapper related
  *
- * @author: yanhom1314@gmail.com
- * @date 2022-01-03 上午1:58
+ * @author: yanhom
+ * @since 1.0.0
  */
 @Builder
 @Data

@@ -5,8 +5,7 @@ import io.lyh.dtp.core.DtpExecutor;
 /**
  * MetricsHelper related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2022-01-06 16:55
+ * @author: yanhom
  * @since 1.0.0
  **/
 public class MetricsHelper {

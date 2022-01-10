@@ -13,8 +13,7 @@ import java.util.Map;
 /**
  * YamlConfigParser related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-29 17:42
+ * @author: yanhom
  * @since 1.0.0
  **/
 public class YamlConfigParser extends AbstractConfigParser {

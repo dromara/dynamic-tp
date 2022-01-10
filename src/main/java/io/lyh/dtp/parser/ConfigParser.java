@@ -9,8 +9,7 @@ import java.util.Map;
 /**
  * ConfigParser related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-29 17:35
+ * @author: yanhom
  * @since 1.0.0
  **/
 public interface ConfigParser {

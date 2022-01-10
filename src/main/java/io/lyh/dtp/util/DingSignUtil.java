@@ -12,8 +12,8 @@ import java.nio.charset.StandardCharsets;
 /**
  * DingSignUtil related
  *
- * @author: yanhom1314@gmail.com
- * @date 2022-01-02 下午3:11
+ * @author: yanhom
+ * @since 1.0.0
  */
 @Slf4j
 public class DingSignUtil {

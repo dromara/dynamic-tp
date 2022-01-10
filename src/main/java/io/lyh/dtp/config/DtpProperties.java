@@ -12,8 +12,7 @@ import java.util.List;
 /**
  * Main properties that maintain by the config center.
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-27 17:37
+ * @author: yanhom
  * @since 1.0.0
  **/
 @Slf4j
@@ -51,6 +50,11 @@ public class DtpProperties {
      * If enabled metrics collect.
      */
     private boolean enabledCollect = false;
+
+    /**
+     * Metrics collector type.
+     */
+    public String collectType = "logging";
 
     /**
      * Monitor interval, time unit（s）

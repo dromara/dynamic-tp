@@ -33,10 +33,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 /**
- * Core Registry, which keep the all registered Dynamic ThreadPoolExecutors.
+ * Core Registry, which keeps all registered Dynamic ThreadPoolExecutors.
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-27 16:51
+ * @author: yanhom
  * @since 1.0.0
  **/
 @Slf4j

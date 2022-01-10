@@ -10,8 +10,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * RejectedCountable related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-30 16:10
+ * @author: yanhom
  * @since 1.0.0
  **/
 public interface RejectedCountable extends RejectedExecutionHandler {

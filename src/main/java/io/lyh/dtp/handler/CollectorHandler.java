@@ -1,10 +1,10 @@
 package io.lyh.dtp.handler;
 
-import io.lyh.dtp.core.DtpExecutor;
-import io.lyh.dtp.monitor.LogCollector;
-import io.lyh.dtp.monitor.MicroMeterCollector;
-import io.lyh.dtp.monitor.MetricsCollector;
 import com.google.common.collect.Lists;
+import io.lyh.dtp.core.DtpExecutor;
+import io.lyh.dtp.monitor.collector.LogCollector;
+import io.lyh.dtp.monitor.collector.MetricsCollector;
+import io.lyh.dtp.monitor.collector.MicroMeterCollector;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -13,8 +13,7 @@ import java.util.ServiceLoader;
 /**
  * CollectorHandler related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-29 18:06
+ * @author: yanhom
  * @since 1.0.0
  **/
 @Slf4j
@@ -39,17 +38,15 @@ public class CollectorHandler {
     }
 
     public static CollectorHandler getInstance() {
-        return CollectorHandler.CollectorHandlerHolder.INSTANCE;
+        return CollectorHandlerHolder.INSTANCE;
     }
 
-    public void collect(DtpExecutor executor) {
-
-        COLLECTORS.forEach(x -> {
-            try {
-                x.collect(executor);
-            } catch (Exception e) {
-                log.error("Dynamic collect failed, collector: {}", x.getClass().getSimpleName(), e);
+    public void collect(DtpExecutor executor, String type) {
+        for (MetricsCollector collector : COLLECTORS) {
+            if (collector.support(type)) {
+                collector.collect(executor);
+                break;
             }
-        });
+        }
     }
 }

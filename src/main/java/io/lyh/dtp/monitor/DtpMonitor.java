@@ -21,8 +21,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * DtpMonitor related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2022-01-05 16:00
+ * @author: yanhom
  * @since 1.0.0
  **/
 @Slf4j
@@ -42,15 +41,15 @@ public class DtpMonitor implements ApplicationRunner {
     }
 
     private void run() {
-
         try {
             val names = DtpRegistry.listAllDtpNames();
             names.forEach(x -> {
                 DtpExecutor executor = DtpRegistry.getExecutor(x);
                 AlarmManager.triggerAlarm(
-                        () -> AlarmManager.doAlarm(executor, Lists.newArrayList(NotifyTypeEnum.LIVENESS, NotifyTypeEnum.CAPACITY)));
+                        () -> AlarmManager.doAlarm(executor,
+                                Lists.newArrayList(NotifyTypeEnum.LIVENESS, NotifyTypeEnum.CAPACITY)));
                 if (dtpProperties.isEnabledCollect()) {
-                    CollectorHandler.getInstance().collect(executor);
+                    CollectorHandler.getInstance().collect(executor, dtpProperties.getCollectType());
                 }
             });
         } catch (Exception e) {

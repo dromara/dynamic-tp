@@ -11,8 +11,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * DtpMainPropWrapper related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-31 14:19
+ * @author: yanhom
  * @since 1.0.0
  **/
 @Data

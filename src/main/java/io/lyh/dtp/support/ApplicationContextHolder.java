@@ -10,8 +10,7 @@ import java.util.Map;
 /**
  * ApplicationContextHolder related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-28 16:58
+ * @author: yanhom
  * @since 1.0.0
  **/
 public class ApplicationContextHolder implements ApplicationContextAware {

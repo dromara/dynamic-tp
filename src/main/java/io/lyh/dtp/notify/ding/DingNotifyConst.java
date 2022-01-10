@@ -3,8 +3,7 @@ package io.lyh.dtp.notify.ding;
 /**
  * DingNotifyConst related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-31 15:42
+ * @author: yanhom
  * @since 1.0.0
  **/
 public class DingNotifyConst {

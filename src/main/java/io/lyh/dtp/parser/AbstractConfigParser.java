@@ -5,8 +5,7 @@ import io.lyh.dtp.common.em.ConfigFileTypeEnum;
 /**
  * AbstractConfigParser related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-29 17:40
+ * @author: yanhom
  * @since 1.0.0
  **/
 public abstract class AbstractConfigParser implements ConfigParser {

@@ -7,8 +7,8 @@ import java.util.List;
 /**
  * MarkdownReq related
  *
- * @author: yanhom1314@gmail.com
- * @date 2022-01-02 下午3:31
+ * @author: yanhom
+ * @since 1.0.0
  */
 @Data
 public class MarkdownReq {

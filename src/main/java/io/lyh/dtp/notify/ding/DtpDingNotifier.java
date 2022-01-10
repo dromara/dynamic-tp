@@ -18,8 +18,7 @@ import java.util.List;
 /**
  * DtpDingNotifier related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-31 15:54
+ * @author: yanhom
  * @since 1.0.0
  **/
 @Slf4j

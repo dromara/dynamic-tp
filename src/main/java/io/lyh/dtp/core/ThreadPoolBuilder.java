@@ -18,8 +18,7 @@ import java.util.concurrent.*;
 /**
  * Builder that create a ThreadPoolExecutor gracefully.
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-27 18:02
+ * @author: yanhom
  * @since 1.0.0
  **/
 public class ThreadPoolBuilder {

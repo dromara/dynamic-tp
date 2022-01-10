@@ -21,8 +21,7 @@ import java.util.Objects;
 /**
  * AbstractRefresher related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-29 18:20
+ * @author: yanhom
  * @since 1.0.0
  **/
 @Slf4j

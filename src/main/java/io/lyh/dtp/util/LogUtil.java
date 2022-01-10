@@ -8,8 +8,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * LogUtil related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2022-01-06 18:44
+ * @author: yanhom
  * @since 1.0.0
  **/
 public class LogUtil {

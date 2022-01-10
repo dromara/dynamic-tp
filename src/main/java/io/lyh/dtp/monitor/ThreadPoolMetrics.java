@@ -5,8 +5,7 @@ import lombok.Data;
 /**
  * ThredPoolMetrics related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2022-01-06 15:51
+ * @author: yanhom
  * @since 1.0.0
  **/
 @Data

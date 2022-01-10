@@ -5,8 +5,7 @@ import io.lyh.dtp.common.em.ConfigFileTypeEnum;
 /**
  * Refresher related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-27 17:37
+ * @author: yanhom
  * @since 1.0.0
  **/
 public interface Refresher {

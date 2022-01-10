@@ -11,8 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Dynamic ThreadPoolExecutor inherits ThreadPoolExecutor, and extends some features.
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-27 16:51
+ * @author: yanhom
  * @since 1.0.0
  **/
 public class DtpExecutor extends ThreadPoolExecutor {

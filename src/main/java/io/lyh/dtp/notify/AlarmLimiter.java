@@ -12,8 +12,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * AlarmLimiter related
  *
- * @author: yanhom1314@gmail.com
- * @date 2022-01-03 上午12:21
+ * @author: yanhom
+ * @since 1.0.0
  */
 public class AlarmLimiter {
 

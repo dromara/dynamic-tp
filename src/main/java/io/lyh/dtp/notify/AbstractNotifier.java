@@ -29,8 +29,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * AbstractNotifier related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-31 17:09
+ * @author: yanhom
  * @since 1.0.0
  **/
 @Slf4j

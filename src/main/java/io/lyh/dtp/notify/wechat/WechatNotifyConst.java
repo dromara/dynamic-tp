@@ -3,8 +3,7 @@ package io.lyh.dtp.notify.wechat;
 /**
  * Wechat alarm constant
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-22 10:20
+ * @author: yanhom
  * @since 1.0.0
  **/
 public class WechatNotifyConst {

@@ -1,37 +1,39 @@
 package io.lyh.dtp.handler;
 
+import com.google.common.collect.Lists;
 import io.lyh.dtp.common.em.ConfigFileTypeEnum;
 import io.lyh.dtp.parser.ConfigParser;
 import io.lyh.dtp.parser.PropertiesConfigParser;
 import io.lyh.dtp.parser.YamlConfigParser;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.ServiceLoader;
 
 /**
  * ConfigChangeHandler related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-29 18:06
+ * @author: yanhom
  * @since 1.0.0
  **/
 public class ConfigChangeHandler {
 
-    private final List<ConfigParser> parsers;
+    private static final List<ConfigParser> PARSERS = Lists.newArrayList();
 
     private static class ConfigChangeHandlerHolder {
         private static final ConfigChangeHandler INSTANCE = new ConfigChangeHandler();
     }
 
     private ConfigChangeHandler() {
-        this.parsers = new LinkedList<>();
         ServiceLoader<ConfigParser> loader = ServiceLoader.load(ConfigParser.class);
         for (ConfigParser configParser : loader) {
-            this.parsers.add(configParser);
+            PARSERS.add(configParser);
         }
 
-        this.parsers.add(new PropertiesConfigParser());
-        this.parsers.add(new YamlConfigParser());
+        PARSERS.add(new PropertiesConfigParser());
+        PARSERS.add(new YamlConfigParser());
     }
 
     public static ConfigChangeHandler getInstance() {
@@ -39,7 +41,7 @@ public class ConfigChangeHandler {
     }
 
     public Map<Object, Object> parseConfig(String content, ConfigFileTypeEnum type) throws IOException {
-        for (ConfigParser parser : parsers) {
+        for (ConfigParser parser : PARSERS) {
             if (parser.supports(type)) {
                 return parser.doParse(content);
             }

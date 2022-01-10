@@ -10,8 +10,7 @@ import java.util.stream.Stream;
 /**
  * DynamicTpConst related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-29 18:24
+ * @author: yanhom
  * @since 1.0.0
  **/
 public class DynamicTpConst {

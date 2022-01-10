@@ -13,8 +13,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * ThreadPoolProperties related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-27 17:37
+ * @author: yanhom
  * @since 1.0.0
  **/
 @Data

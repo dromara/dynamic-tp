@@ -13,8 +13,7 @@ import java.util.Objects;
 /**
  * AbstractNotifier related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-23 10:39
+ * @author: yanhom
  * @since 1.0.0
  **/
 @Slf4j

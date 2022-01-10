@@ -1,6 +1,10 @@
-package io.lyh.dtp.monitor;
+package io.lyh.dtp.monitor.collector;
 
+import io.lyh.dtp.common.em.CollectorTypeEnum;
 import io.lyh.dtp.core.DtpExecutor;
+import io.lyh.dtp.monitor.MetricsHelper;
+import io.lyh.dtp.monitor.ThreadPoolMetrics;
+import io.lyh.dtp.monitor.collector.AbstractCollector;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -10,15 +14,20 @@ import java.util.Collections;
 /**
  * MicroMeterCollector related
  *
- * @author: yanhom1314@gmail.com
- * @date 2022-01-06 上午12:21
+ * @author: yanhom
+ * @since 1.0.0
  */
 @Slf4j
-public class MicroMeterCollector implements MetricsCollector {
+public class MicroMeterCollector extends AbstractCollector {
 
     @Override
     public void collect(DtpExecutor executor) {
         gauge(MetricsHelper.getMetrics(executor));
+    }
+
+    @Override
+    public CollectorTypeEnum type() {
+        return CollectorTypeEnum.MICROMETER;
     }
 
     public void gauge(ThreadPoolMetrics metrics) {

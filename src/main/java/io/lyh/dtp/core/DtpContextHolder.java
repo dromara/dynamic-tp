@@ -5,8 +5,8 @@ import com.alibaba.ttl.TransmittableThreadLocal;
 /**
  * DtpContextHolder, wraps ThreadLocal with ttl.
  *
- * @author: yanhom1314@gmail.com
- * @date 2022-01-03 上午1:56
+ * @author: yanhom
+ * @since 1.0.0
  */
 public class DtpContextHolder {
 

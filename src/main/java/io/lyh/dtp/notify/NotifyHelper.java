@@ -13,8 +13,8 @@ import static java.util.stream.Collectors.toList;
 /**
  * NotifyHelper related
  *
- * @author: yanhom1314@gmail.com
- * @date 2022-01-02 下午12:06
+ * @author: yanhom
+ * @since 1.0.0
  */
 @Slf4j
 public class NotifyHelper {

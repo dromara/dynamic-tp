@@ -15,8 +15,7 @@ import java.util.concurrent.RejectedExecutionHandler;
 /**
  * RejectedTypeEnum related
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-27 10:21
+ * @author: yanhom
  * @since 1.0.0
  **/
 @Slf4j

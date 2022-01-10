@@ -8,8 +8,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
  * BeanPostProcessor that handles all related beans managed by Spring,
  * mainly refers to the beans marked by @Bean annotation.
  *
- * @author: yanhom1314@gmail.com
- * @date: 2021-12-27 16:57
+ * @author: yanhom
  * @since 1.0.0
  **/
 public class DtpPostProcessor implements BeanPostProcessor {

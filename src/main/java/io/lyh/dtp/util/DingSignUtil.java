@@ -18,10 +18,14 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class DingSignUtil {
 
-    // The default encoding
+    /**
+     * The default encoding
+     */
     private static final Charset DEFAULT_ENCODING = StandardCharsets.UTF_8;
 
-    // Signature method
+    /**
+     * Signature method
+     */
     private static final String ALGORITHM = "HmacSHA256";
 
     public static String dingSign(String secret, long timestamp) {

@@ -1,10 +1,14 @@
 package io.lyh.dtp.logging;
 
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
+import org.springframework.cloud.bootstrap.BootstrapImportSelectorConfiguration;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.GenericApplicationListener;
 import org.springframework.core.Ordered;
 import org.springframework.core.ResolvableType;
+
+import java.util.Set;
 
 /**
  * Reload dtp log configuration file, after
@@ -26,12 +30,20 @@ public class DtpLoggingListener implements GenericApplicationListener {
 
     @Override
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
+        Class<?> type = applicationEvent.getSource().getClass();
+        if (SpringApplication.class.isAssignableFrom(type)) {
+            SpringApplication application = (SpringApplication) applicationEvent.getSource();
+            Set<Object> sources = application.getAllSources();
+            if (sources.size() == 1 && sources.contains(BootstrapImportSelectorConfiguration.class)) {
+                return;
+            }
+        }
         DtpLogging.getInstance().loadConfiguration();
     }
 
     @Override
     public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE + 31;
+        return Ordered.HIGHEST_PRECEDENCE + 24;
     }
 
 }

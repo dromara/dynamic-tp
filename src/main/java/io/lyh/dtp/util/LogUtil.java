@@ -1,6 +1,5 @@
 package io.lyh.dtp.util;
 
-import io.lyh.dtp.logging.DtpLogging;
 import org.slf4j.Logger;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -12,17 +11,15 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @since 1.0.0
  **/
 public class LogUtil {
-    
+
     public static final Logger MONITOR_LOGGER;
     private static final String MONITOR_LOG_NAME = "dtp.monitor.log";
 
     static {
-        DtpLogging.getInstance().loadConfiguration();
         MONITOR_LOGGER = getLogger(MONITOR_LOG_NAME);
     }
-    
+
     public static Logger logger(Class<?> clazz) {
         return getLogger(clazz);
     }
-    
 }

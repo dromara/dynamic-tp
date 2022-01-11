@@ -4,7 +4,6 @@ import cn.hutool.json.JSONUtil;
 import io.lyh.dtp.common.em.CollectorTypeEnum;
 import io.lyh.dtp.core.DtpExecutor;
 import io.lyh.dtp.monitor.MetricsHelper;
-import io.lyh.dtp.monitor.collector.AbstractCollector;
 import io.lyh.dtp.util.LogUtil;
 
 /**

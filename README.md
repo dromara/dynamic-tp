@@ -102,7 +102,7 @@
         apollo:                    # apollo配置，不配置默认拿apollo配置第一个namespace
           namespace: dynamic-tp-demo-dev.yml
         configType: yml            # 配置文件类型
-        platforms:         # 通知报警平台配置
+        platforms:                 # 通知报警平台配置
           - platform: wechat
             urlKey: 3a7500-1287-4bd-a798-c5c3d8b69c  # 替换
             receivers: test1,test2  # 接受人企微名称
@@ -110,7 +110,7 @@
             urlKey: f80dad441fcd655438f4a08dcd6a     # 替换
             secret: SECb5441fa6f375d5b9d21           # 替换，非sign模式可以没有此值
             receivers: 15810119805                   # 钉钉账号手机号          
-        executors:         # 动态线程池配置
+        executors:                  # 动态线程池配置
           - threadPoolName: dynamic-tp-test-1
             corePoolSize: 6
             maximumPoolSize: 8
@@ -119,13 +119,13 @@
             rejectedHandlerType: CallerRunsPolicy
             keepAliveTime: 50
             allowCoreThreadTimeOut: false
-            threadNamePrefix: 线程名前缀
-            notifyItems:   # 报警项，不配置自动会配置（变更通知、容量报警、活性报警、拒绝报警）
+            threadNamePrefix:        # 线程名前缀
+            notifyItems:             # 报警项，不配置自动会配置（变更通知、容量报警、活性报警、拒绝报警）
               - type: capacity
                 enabled: true
                 threshold: 80
                 platforms: [ding,wechat]    # 可选配置，不配置默认拿上层platforms配置的所以平台
-                interval: 报警间隔
+                interval: 120               # 报警间隔（单位：s）
               - type: change
                 enabled: true
               - type: liveness

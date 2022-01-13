@@ -57,6 +57,11 @@ public class DtpProperties {
     public String collectType = "logging";
 
     /**
+     * 监控日志存储路径
+     */
+    public String logPath;
+
+    /**
      * Monitor interval, time unit（s）
      */
     private int monitorInterval = 5;

@@ -78,7 +78,7 @@
     <dependency>
         <groupId>io.github.lyh200</groupId>
         <artifactId>dynamic-tp-spring-cloud-starter</artifactId>
-        <version>1.0.0-RELEASE</version>
+        <version>1.0.1-RELEASE</version>
     </dependency>
   ```
 
@@ -94,6 +94,7 @@
         enabledBanner: true        # 是否开启banner打印，默认true
         enabledCollect: false      # 是否开启监控指标采集，默认false
         collectType: logging       # 监控数据采集器类型（JsonLog | MicroMeter）
+        logPath: /home             # 监控日志数据路径，默认${user.home}/logs
         monitorInterval: 5         # 监控时间间隔（报警判断、指标采集）
         nacos:                     # nacos配置，不配置有默认值（规则name-dev.yml这样）
           dataId: dynamic-tp-demo-dev.yml
@@ -229,7 +230,7 @@
 
 + MicroMeter：通过引入相关依赖采集到支持的平台
 
-+ Logging：定时采集指标以Json日志格式输出磁盘，地址：${user.home}/logs/dynamictp/${appName}.monitor.log
++ Logging：定时采集指标以Json日志格式输出磁盘，地址：${logPath}/dynamictp/${appName}.monitor.log
 
 + 也有提供EndPoint端点(dynamic-tp)，可以通过http方式请求
 

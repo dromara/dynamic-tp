@@ -2,6 +2,8 @@ package io.lyh.dtp.logging;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.util.ContextInitializer;
+import io.lyh.dtp.config.DtpProperties;
+import io.lyh.dtp.support.ApplicationContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.impl.StaticLoggerBinder;
 
@@ -24,10 +26,13 @@ public class DtpLogging {
     private static final String LOGGING_PATH = "LOG.PATH";
 
     static {
-        String logPath = System.getProperty(LOGGING_PATH);
+        DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+        String logPath = dtpProperties.getLogPath();
         if (StringUtils.isBlank(logPath)) {
             String userHome = System.getProperty("user.home");
             System.setProperty(LOGGING_PATH, userHome + File.separator + "logs");
+        } else {
+            System.setProperty(LOGGING_PATH, logPath);
         }
     }
 

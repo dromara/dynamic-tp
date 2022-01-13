@@ -1,7 +1,7 @@
 package io.lyh.dtp.logging;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.cloud.bootstrap.BootstrapImportSelectorConfiguration;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.GenericApplicationListener;
@@ -23,7 +23,7 @@ public class DtpLoggingListener implements GenericApplicationListener {
     public boolean supportsEventType(ResolvableType resolvableType) {
         Class<?> type = resolvableType.getRawClass();
         if (type != null) {
-            return ApplicationEnvironmentPreparedEvent.class.isAssignableFrom(type);
+            return ApplicationStartedEvent.class.isAssignableFrom(type);
         }
         return false;
     }

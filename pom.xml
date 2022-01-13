@@ -9,6 +9,7 @@
 
     <name>DynamicTp Spring Cloud Starter</name>
     <description>🔥🔥🔥轻量级动态线程池，内置监控告警功能，基于主流配置中心（默认支持Nacos、Apollo，可通过SPI自定义实现）</description>
+    <url>https://github.com/lyh200/dynamic-tp-spring-cloud-starter</url>
 
     <properties>
         <java.version>1.8</java.version>
@@ -160,9 +161,10 @@
     </licenses>
 
     <scm>
-        <connection>scm:git@github.com:lyh200/dynamic-tp-spring-cloud-starter</connection>
-        <developerConnection>scm:git@github.com:lyh200/dynamic-tp-spring-cloud-starter.git</developerConnection>
-        <url>git@github.com:lyh200/dynamic-tp-spring-cloud-starter.git</url>
+        <url>https://github.com/lyh200/dynamic-tp-spring-cloud-starter/tree/master</url>
+        <connection>scm:git:git://github.com/lyh200/dynamic-tp-spring-cloud-starter.git</connection>
+        <developerConnection>scm:git:ssh://github.com:lyh200/dynamic-tp-spring-cloud-starter.git</developerConnection>
+        <tag>HEAD</tag>
     </scm>
 
     <developers>
@@ -219,17 +221,15 @@
                 </executions>
             </plugin>
 
-            <!-- Gpg Signature -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
+                        <id>package</id>
                         <goals>
-                            <goal>sign</goal>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -250,6 +250,21 @@
                 </configuration>
             </plugin>
 
+            <!-- Gpg Signature -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
@@ -260,6 +275,12 @@
                     <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>false</autoReleaseAfterClose>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.3.2.RELEASE</version>
             </plugin>
         </plugins>
     </build>

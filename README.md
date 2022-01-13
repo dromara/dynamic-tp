@@ -63,9 +63,8 @@
 
 + 监控日志模块，实现监控指标采集以及输出，默认实现Json log输出、MicroMeter采集、Endpoint监控三种方式，可通过内部提供的SPI接口扩展其他实现
 
-+ 通知告警模块，对接办公平台，实现告警信息通知，默认实现钉钉、企微，可通过内部提供的SPI接口扩展其他实现
-
-<a href="https://imgtu.com/i/7FoNZV"><img src="https://s4.ax1x.com/2022/01/09/7FoNZV.png" alt="7FoNZV.png" border="0" width=550px height=450px/></a>                                                        
++ 通知告警模块，对接办公平台，实现告警信息通知，默认实现钉钉、企微，可通过内部提供的SPI接口扩展其他实现</br></br>
+<img src="https://s4.ax1x.com/2022/01/09/7FoNZV.png" alt="7FoNZV.png" border="0" width=550px height=450px/>                                                      
 
 
 
@@ -119,8 +118,8 @@
             rejectedHandlerType: CallerRunsPolicy
             keepAliveTime: 50
             allowCoreThreadTimeOut: false
-            threadNamePrefix:        # 线程名前缀
-            notifyItems:             # 报警项，不配置自动会配置（变更通知、容量报警、活性报警、拒绝报警）
+            threadNamePrefix: test       # 线程名前缀
+            notifyItems:                 # 报警项，不配置自动会配置（变更通知、容量报警、活性报警、拒绝报警）
               - type: capacity
                 enabled: true
                 threshold: 80
@@ -181,7 +180,7 @@
 
 ### 注意事项
 
-1. 配置项都用默认值，使用时可以查看源码，使用默认值的可以不配置相应字段
+1. 配置项都有默认值，使用时可以查看源码，使用默认值的可以不配置相应字段
 
 2. 配置文件配置的参数会覆盖通过代码生成方式配置的参数
 
@@ -212,9 +211,13 @@
 
 ***
 
-### 报警
+### 通知报警
++ 触发报警阈值会推送相应报警消息（活性、容量、拒绝触发），且会高亮显示相应字段</br></br>
+<img src="https://s4.ax1x.com/2022/01/09/7FlTDe.png" alt="7FlTDe.png" border="0" width=350px height=500px/>      
 
-<a href="https://imgtu.com/i/7FlTDe"><img src="https://s4.ax1x.com/2022/01/09/7FlTDe.png" alt="7FlTDe.png" border="0" width=350px height=600px/></a>              <a href="https://imgtu.com/i/7FlouD"><img src="https://s4.ax1x.com/2022/01/09/7FlouD.md.png" alt="7FlouD.png" border="0" width=350px height=450px/></a>
+
++ 配置变更会推送通知消息，且会高亮变更了的字段</br></br>
+<img src="https://s4.ax1x.com/2022/01/09/7FlouD.md.png" alt="7FlouD.png" border="0" width=350px height=450px/>
 
 
 
@@ -222,9 +225,21 @@
 
 ### 监控日志
 
-+ 通过引入MicroMeter相关依赖采集到支持的平台
++ 通过collectType属性配置监控指标输出类型，默认 logging
 
-+ 指标Json日志输出磁盘，地址：${user.home}/logs/dynamictp/monitor.log
++ MicroMeter：通过引入相关依赖采集到支持的平台
+
++ Logging：定时采集指标以Json日志格式输出磁盘，地址：${user.home}/logs/dynamictp/${appName}.monitor.log
+
++ 也有提供EndPoint端点(dynamic-tp)，可以通过http方式请求
+
+```
+2022-01-11 00:25:20.599 INFO [dtp-monitor-thread-1:d.m.log] {"activeCount":0,"queueSize":0,"largestPoolSize":0,"poolSize":0,"rejectHandlerName":"RejectedCountableCallerRunsPolicy","queueCapacity":1024,"fair":false,"rejectCount":0,"waitTaskCount":0,"taskCount":0,"queueRemainingCapacity":1024,"corePoolSize":6,"queueType":"VariableLinkedBlockingQueue","completedTaskCount":0,"dtpName":"remoting-call","maximumPoolSize":8}
+2022-01-11 00:25:25.603 INFO [dtp-monitor-thread-1:d.m.log] {"activeCount":0,"queueSize":0,"largestPoolSize":0,"poolSize":0,"rejectHandlerName":"RejectedCountableCallerRunsPolicy","queueCapacity":1024,"fair":false,"rejectCount":0,"waitTaskCount":0,"taskCount":0,"queueRemainingCapacity":1024,"corePoolSize":6,"queueType":"VariableLinkedBlockingQueue","completedTaskCount":0,"dtpName":"remoting-call","maximumPoolSize":8}
+2022-01-11 00:25:30.609 INFO [dtp-monitor-thread-1:d.m.log] {"activeCount":0,"queueSize":0,"largestPoolSize":0,"poolSize":0,"rejectHandlerName":"RejectedCountableCallerRunsPolicy","queueCapacity":1024,"fair":false,"rejectCount":0,"waitTaskCount":0,"taskCount":0,"queueRemainingCapacity":1024,"corePoolSize":6,"queueType":"VariableLinkedBlockingQueue","completedTaskCount":0,"dtpName":"remoting-call","maximumPoolSize":8}
+2022-01-11 00:25:35.613 INFO [dtp-monitor-thread-1:d.m.log] {"activeCount":0,"queueSize":0,"largestPoolSize":0,"poolSize":0,"rejectHandlerName":"RejectedCountableCallerRunsPolicy","queueCapacity":1024,"fair":false,"rejectCount":0,"waitTaskCount":0,"taskCount":0,"queueRemainingCapacity":1024,"corePoolSize":6,"queueType":"VariableLinkedBlockingQueue","completedTaskCount":0,"dtpName":"remoting-call","maximumPoolSize":8}
+2022-01-11 00:25:40.616 INFO [dtp-monitor-thread-1:d.m.log] {"activeCount":0,"queueSize":0,"largestPoolSize":0,"poolSize":0,"rejectHandlerName":"RejectedCountableCallerRunsPolicy","queueCapacity":1024,"fair":false,"rejectCount":0,"waitTaskCount":0,"taskCount":0,"queueRemainingCapacity":1024,"corePoolSize":6,"queueType":"VariableLinkedBlockingQueue","completedTaskCount":0,"dtpName":"remoting-call","maximumPoolSize":8}
+```
 
 
 
@@ -234,5 +249,5 @@
 
 + 对项目有什么想法或者建议，可以加我vx交流，或者创建[issues](https://github.com/lyh200/dynamic-tp-spring-cloud-starter/issues)，一起完善项目
 
-<a href="https://imgtu.com/i/7Fy2an"><img src="https://s4.ax1x.com/2022/01/09/7Fy2an.jpg" alt="7Fy2an.jpg" border="0" width=250px height=250px/></a>
+<img src="https://s4.ax1x.com/2022/01/09/7Fy2an.jpg" alt="7Fy2an.jpg" border="0" width=250px height=250px/>
 

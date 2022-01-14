@@ -47,18 +47,20 @@ public abstract class AbstractNotifier implements Notifier {
 
     @SneakyThrows
     public static void init() {
-        Environment environment = ApplicationContextHolder.getInstance().getEnvironment();
-        String[] profiles = environment.getActiveProfiles();
-        if (profiles.length < 1) {
-            profiles = environment.getDefaultProfiles();
-        }
+        Environment environment = ApplicationContextHolder.getEnvironment();
 
         String appName = environment.getProperty("spring.application.name");
         appName = StringUtils.isNoneBlank(appName) ? appName : "application";
 
         String portStr = environment.getProperty("server.port");
         int port = StringUtils.isNotBlank(portStr) ? Integer.parseInt(portStr) : 0;
+
         String address = InetAddress.getLocalHost().getHostAddress();
+
+        String[] profiles = environment.getActiveProfiles();
+        if (profiles.length < 1) {
+            profiles = environment.getDefaultProfiles();
+        }
         instance = new Instance(address, port, appName, profiles[0]);
     }
 

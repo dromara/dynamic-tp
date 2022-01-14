@@ -3,14 +3,14 @@
 
 
 ```yml
-|  __ \                            (_) |__   __|   
-| |  | |_   _ _ __   __ _ _ __ ___  _  ___| |_ __  
-| |  | | | | | '_ \ / _` | '_ ` _ \| |/ __| | '_ \ 
-| |__| | |_| | | | | (_| | | | | | | | (__| | |_) |
-|_____/ \__, |_| |_|\__,_|_| |_| |_|_|\___|_| .__/ 
-         __/ |                              | |    
-        |___/                               |_|    
- :: Dynamic Thread Pool :: 
+|  __ \                            (_) |__   __|
+  | |  | |_   _ _ __   __ _ _ __ ___  _  ___| |_ __
+  | |  | | | | | '_ \ / _` | '_ ` _ \| |/ __| | '_ \
+  | |__| | |_| | | | | (_| | | | | | | | (__| | |_) |
+  |_____/ \__, |_| |_|\__,_|_| |_| |_|_|\___|_| .__/
+  __/ |                              | |    
+  |___/                               |_|    
+  :: Dynamic Thread Pool :: 
 ```
 
 
@@ -19,7 +19,7 @@
 
 ### 背景
 
-+ 广泛性，在Java开发中，想要提高系统性能，线程池已经是一个90%以上的人都会选择使用的基础工具
++ 广泛性，在Java开发中，想要提高系统性能，线程池已经是一个90%以上的开发人员都会选择使用的基础工具
 
 + 不确定性，项目中可能会创建很多线程池，既有IO密集型的，也有CPU密集型的，但线程池的参数并不好确定；需要有套机制在运行过程中动态去调整参数
 > 1. 最大线程数和任务队列设置过小，会导致服务大量抛出RejectedExecutionException异常
@@ -47,7 +47,7 @@
 
 + 内置通知报警功能，提供多种报警维度（配置变更通知、活性报警、容量阈值报警、拒绝策略触发报警），默认支持企业微信、钉钉报警，同时提供SPI接口可自定义扩展实现
 
-+ 内置简单线程池指标采集功能，支持通过MicroMeter、日志输出、Endpoint三种方式，可自定义扩展
++ 内置简单线程池指标采集功能，支持通过MicroMeter收集、日志输出、Endpoint三种方式，可自定义扩展
 
 
 
@@ -57,13 +57,13 @@
 
 + 功能主要分四大模块
 
-+ 配置变更监听模块，默认实现Nacos、Apollo监听，可通过内部提供的SPI接口扩展其他实现
++ 配置变更监听模块：监听配置中心的变化，实时更新线程池参数，默认实现Nacos、Apollo监听，可通过内部提供的SPI接口扩展其他实现
 
-+ 线程池管理模块，主要实现线程池的增删查改功能
++ 线程池管理模块：主要实现动态线程池的增删查改功能
 
-+ 监控日志模块，实现监控指标采集以及输出，默认实现Json log输出、MicroMeter采集、Endpoint监控三种方式，可通过内部提供的SPI接口扩展其他实现
++ 监控模块：实现监控指标采集以及输出，默认实现JsonLog输出、MicroMeter采集、Endpoint暴露端点三种方式，可通过内部提供的SPI接口扩展其他实现
 
-+ 通知告警模块，对接办公平台，实现告警信息通知，默认实现钉钉、企微，可通过内部提供的SPI接口扩展其他实现</br></br>
++ 通知告警模块：对接办公平台，实现告警信息通知，默认实现钉钉、企微，可通过内部提供的SPI接口扩展其他实现</br></br>
 <img src="https://s4.ax1x.com/2022/01/09/7FoNZV.png" alt="7FoNZV.png" border="0" width=550px height=450px/>                                                      
 
 
@@ -78,7 +78,7 @@
     <dependency>
         <groupId>io.github.lyh200</groupId>
         <artifactId>dynamic-tp-spring-cloud-starter</artifactId>
-        <version>1.0.1-RELEASE</version>
+        <version>1.0.2-RELEASE</version>
     </dependency>
   ```
 
@@ -93,9 +93,9 @@
         enabled: true
         enabledBanner: true        # 是否开启banner打印，默认true
         enabledCollect: false      # 是否开启监控指标采集，默认false
-        collectType: logging       # 监控数据采集器类型（JsonLog | MicroMeter）
+        collectorType: logging     # 监控数据采集器类型（JsonLog | MicroMeter），默认logging
         logPath: /home             # 监控日志数据路径，默认${user.home}/logs
-        monitorInterval: 5         # 监控时间间隔（报警判断、指标采集）
+        monitorInterval: 5         # 监控时间间隔（报警判断、指标采集），默认5s
         nacos:                     # nacos配置，不配置有默认值（规则name-dev.yml这样）
           dataId: dynamic-tp-demo-dev.yml
           group: DEFAULT_GROUP
@@ -105,27 +105,27 @@
         platforms:                 # 通知报警平台配置
           - platform: wechat
             urlKey: 3a7500-1287-4bd-a798-c5c3d8b69c  # 替换
-            receivers: test1,test2  # 接受人企微名称
+            receivers: test1,test2                   # 接受人企微名称
           - platform: ding
             urlKey: f80dad441fcd655438f4a08dcd6a     # 替换
             secret: SECb5441fa6f375d5b9d21           # 替换，非sign模式可以没有此值
             receivers: 15810119805                   # 钉钉账号手机号          
-        executors:                  # 动态线程池配置
+        executors:                                   # 动态线程池配置
           - threadPoolName: dynamic-tp-test-1
             corePoolSize: 6
             maximumPoolSize: 8
             queueCapacity: 200
-            queueType: VariableLinkedBlockingQueue
-            rejectedHandlerType: CallerRunsPolicy
+            queueType: VariableLinkedBlockingQueue   # 任务队列，查看源码QueueTypeEnum枚举类
+            rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
             keepAliveTime: 50
             allowCoreThreadTimeOut: false
-            threadNamePrefix: test       # 线程名前缀
-            notifyItems:                 # 报警项，不配置自动会配置（变更通知、容量报警、活性报警、拒绝报警）
-              - type: capacity
+            threadNamePrefix: test           # 线程名前缀
+            notifyItems:                     # 报警项，不配置自动会配置（变更通知、容量报警、活性报警、拒绝报警）
+              - type: capacity               # 报警项类型，查看源码 NotifyTypeEnum枚举类
                 enabled: true
-                threshold: 80
-                platforms: [ding,wechat]    # 可选配置，不配置默认拿上层platforms配置的所以平台
-                interval: 120               # 报警间隔（单位：s）
+                threshold: 80                # 报警阈值
+                platforms: [ding,wechat]     # 可选配置，不配置默认拿上层platforms配置的所以平台
+                interval: 120                # 报警间隔（单位：s）
               - type: change
                 enabled: true
               - type: liveness
@@ -139,7 +139,7 @@
 
 
 + 代码生成
-
+  
   ```java
   @Configuration
   public class DtpConfig {
@@ -213,11 +213,11 @@
 ***
 
 ### 通知报警
-+ 触发报警阈值会推送相应报警消息（活性、容量、拒绝触发），且会高亮显示相应字段</br></br>
++ 触发报警阈值会推送相应报警消息（活性、容量、拒绝策略），且会高亮显示相应字段</br></br>
 <img src="https://s4.ax1x.com/2022/01/09/7FlTDe.png" alt="7FlTDe.png" border="0" width=350px height=500px/>      
 
 
-+ 配置变更会推送通知消息，且会高亮变更了的字段</br></br>
++ 配置变更会推送通知消息，且会高亮变更的字段</br></br>
 <img src="https://s4.ax1x.com/2022/01/09/7FlouD.md.png" alt="7FlouD.png" border="0" width=350px height=450px/>
 
 
@@ -228,9 +228,9 @@
 
 + 通过collectType属性配置监控指标输出类型，默认 logging
 
-+ MicroMeter：通过引入相关依赖采集到支持的平台
++ MicroMeter：通过引入相关MicroMeter依赖采集到相应的平台（如Prometheus，InfluxDb...）
 
-+ Logging：定时采集指标以Json日志格式输出磁盘，地址：${logPath}/dynamictp/${appName}.monitor.log
++ Logging：定时采集指标数据以Json日志格式输出磁盘，地址：${logPath}/dynamictp/${appName}.monitor.log
 
 + 也有提供EndPoint端点(dynamic-tp)，可以通过http方式请求
 

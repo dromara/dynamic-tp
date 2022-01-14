@@ -28,8 +28,8 @@ import java.util.concurrent.TimeUnit;
 public class DtpMonitor implements ApplicationRunner {
 
     private static final ScheduledExecutorService MONITOR_EXECUTOR = new ScheduledThreadPoolExecutor(
-                    1,
-                    new NamedThreadFactory("dtp-monitor", true));
+            1,
+            new NamedThreadFactory("dtp-monitor", true));
 
     @Resource
     private DtpProperties dtpProperties;
@@ -48,8 +48,9 @@ public class DtpMonitor implements ApplicationRunner {
                 AlarmManager.triggerAlarm(
                         () -> AlarmManager.doAlarm(executor,
                                 Lists.newArrayList(NotifyTypeEnum.LIVENESS, NotifyTypeEnum.CAPACITY)));
+
                 if (dtpProperties.isEnabledCollect()) {
-                    CollectorHandler.getInstance().collect(executor, dtpProperties.getCollectType());
+                    CollectorHandler.getInstance().collect(executor, dtpProperties.getCollectorType());
                 }
             });
         } catch (Exception e) {

@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DtpRegistry implements InitializingBean {
 
-    private static final ExecutorService NOTIFY_EXECUTOR = DtpCreator.createWithTtl(false,"dtp-notify");
+    private static final ExecutorService NOTIFY_EXECUTOR = DtpCreator.createWithTtl("dtp-notify");
 
     private static final Map<String, DtpExecutor> DTP_REGISTRY = new ConcurrentHashMap<>();
 

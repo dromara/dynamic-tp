@@ -26,13 +26,18 @@ public class DynamicTpConst {
     public static final String CONTENT_COLOR = "#664B4B";
 
     public static final List<String> LIVENESS_ALARM_KEYS = Lists.newArrayList(
-            "alarmType", "threshold", "corePoolSize", "maximumPoolSize", "poolSize", "activeCount");
+            "alarmType", "threshold", "corePoolSize",
+            "maximumPoolSize", "poolSize", "activeCount"
+    );
 
     public static final List<String> CAPACITY_ALARM_KEYS = Lists.newArrayList(
-            "alarmType", "threshold", "queueType", "queueCapacity", "queueSize", "queueRemaining");
+            "alarmType", "threshold", "queueType",
+            "queueCapacity", "queueSize", "queueRemaining"
+    );
 
     public static final List<String> REJECT_ALARM_KEYS = Lists.newArrayList(
-            "alarmType", "threshold", "rejectType", "rejectCount");
+            "alarmType", "threshold", "rejectType", "rejectCount"
+    );
 
     public static final List<String> ALL_ALARM_KEYS =
             Stream.of(CAPACITY_ALARM_KEYS, REJECT_ALARM_KEYS, LIVENESS_ALARM_KEYS)

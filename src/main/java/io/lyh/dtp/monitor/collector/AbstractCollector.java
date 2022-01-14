@@ -10,6 +10,6 @@ public abstract class AbstractCollector implements MetricsCollector {
 
     @Override
     public boolean support(String type) {
-        return this.type().name().equalsIgnoreCase(type);
+        return this.type().equalsIgnoreCase(type);
     }
 }

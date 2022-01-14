@@ -3,6 +3,7 @@ package io.lyh.dtp.support;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.env.Environment;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
@@ -36,5 +37,9 @@ public class ApplicationContextHolder implements ApplicationContextAware {
 
     public static ApplicationContext getInstance() {
         return context;
+    }
+
+    public static Environment getEnvironment() {
+        return getInstance().getEnvironment();
     }
 }

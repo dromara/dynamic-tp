@@ -53,7 +53,7 @@ public enum RejectedTypeEnum {
         ServiceLoader<RejectedExecutionHandler> serviceLoader = ServiceLoader.load(RejectedExecutionHandler.class);
         for (RejectedExecutionHandler handler : serviceLoader) {
             String handlerName = handler.getClass().getSimpleName();
-            if (name.equals(handlerName)) {
+            if (name.equalsIgnoreCase(handlerName)) {
                 return handler;
             }
         }

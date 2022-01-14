@@ -22,7 +22,7 @@ public interface ConfigParser {
     boolean supports(ConfigFileTypeEnum type);
 
     /**
-     * Type: yaml or properties.
+     * Type: yaml, properties...
      * @return
      */
     List<ConfigFileTypeEnum> type();

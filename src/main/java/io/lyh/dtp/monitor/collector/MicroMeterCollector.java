@@ -4,7 +4,6 @@ import io.lyh.dtp.common.em.CollectorTypeEnum;
 import io.lyh.dtp.core.DtpExecutor;
 import io.lyh.dtp.monitor.MetricsHelper;
 import io.lyh.dtp.monitor.ThreadPoolMetrics;
-import io.lyh.dtp.monitor.collector.AbstractCollector;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -26,8 +25,8 @@ public class MicroMeterCollector extends AbstractCollector {
     }
 
     @Override
-    public CollectorTypeEnum type() {
-        return CollectorTypeEnum.MICROMETER;
+    public String type() {
+        return CollectorTypeEnum.MICROMETER.name();
     }
 
     public void gauge(ThreadPoolMetrics metrics) {

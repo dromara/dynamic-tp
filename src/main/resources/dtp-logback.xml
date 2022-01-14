@@ -2,10 +2,10 @@
 <configuration debug="false" scan="true" scanPeriod="1 seconds" packagingData="true">
     <contextName>DynamicTp</contextName>
     <appender name="MONITOR_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG.PATH}/dynamictp/${spring.application.name}.monitor.log</file>
+        <file>${LOG.PATH}/dynamictp/${APP.NAME}.monitor.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG.PATH}/dynamictp/${spring.application.name}.monitor.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-            <maxFileSize>${LOG.MAX_FILE_SIZE:-100MB}</maxFileSize>
+            <fileNamePattern>${LOG.PATH}/dynamictp/${APP.NAME}.monitor.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxFileSize>${LOG.MAX_FILE_SIZE:-200MB}</maxFileSize>
             <maxHistory>${LOG.MAX_HISTORY:-7}</maxHistory>
             <totalSizeCap>${LOG.TOTAL_SIZE_CAP:-2GB}</totalSizeCap>
         </rollingPolicy>
@@ -15,7 +15,7 @@
         </encoder>
     </appender>
 
-    <logger name="dtp.monitor.log" additivity="false">
+    <logger name="DTP.MONITOR.LOG" additivity="false">
         <level value="INFO"/>
         <appender-ref ref="MONITOR_LOG_FILE"/>
     </logger>

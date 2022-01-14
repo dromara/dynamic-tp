@@ -13,7 +13,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class LogUtil {
 
     public static final Logger MONITOR_LOGGER;
-    private static final String MONITOR_LOG_NAME = "dtp.monitor.log";
+    private static final String MONITOR_LOG_NAME = "DTP.MONITOR.LOG";
 
     static {
         MONITOR_LOGGER = getLogger(MONITOR_LOG_NAME);

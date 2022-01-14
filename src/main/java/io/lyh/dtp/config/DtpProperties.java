@@ -54,7 +54,7 @@ public class DtpProperties {
     /**
      * Metrics collector type.
      */
-    public String collectType = "logging";
+    public String collectorType = "logging";
 
     /**
      * 监控日志存储路径

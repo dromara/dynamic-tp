@@ -5,7 +5,7 @@
 
     <groupId>io.github.lyh200</groupId>
     <artifactId>dynamic-tp-spring-cloud-starter</artifactId>
-    <version>1.0.1-RELEASE</version>
+    <version>1.0.2-RELEASE</version>
 
     <name>DynamicTp Spring Cloud Starter</name>
     <description>🔥🔥🔥轻量级动态线程池，内置监控告警功能，基于主流配置中心（默认支持Nacos、Apollo，可通过SPI自定义实现）</description>
@@ -275,12 +275,6 @@
                     <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>false</autoReleaseAfterClose>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.3.2.RELEASE</version>
             </plugin>
         </plugins>
     </build>

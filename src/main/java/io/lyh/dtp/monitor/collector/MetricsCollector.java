@@ -1,6 +1,5 @@
 package io.lyh.dtp.monitor.collector;
 
-import io.lyh.dtp.common.em.CollectorTypeEnum;
 import io.lyh.dtp.core.DtpExecutor;
 
 /**
@@ -21,7 +20,7 @@ public interface MetricsCollector {
      * Collector type.
      * @return
      */
-    CollectorTypeEnum type();
+    String type();
 
     /**
      * Judge collector type.

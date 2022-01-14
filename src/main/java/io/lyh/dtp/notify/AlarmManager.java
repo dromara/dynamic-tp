@@ -30,12 +30,11 @@ public class AlarmManager {
 
     private static final ExecutorService ALARM_EXECUTOR = ThreadPoolBuilder.newBuilder()
             .threadPoolName("dtp-alarm")
-            .threadFactory("tdp-alarm")
-            .dynamic(false)
+            .threadFactory("dtp-alarm")
             .corePoolSize(4)
-            .workQueue(QueueTypeEnum.LINKED_BLOCKING_QUEUE.getName(), 5000, false)
+            .workQueue(QueueTypeEnum.LINKED_BLOCKING_QUEUE.getName(), 2000, false)
             .rejectedExecutionHandler(RejectedTypeEnum.ABORT_POLICY.getName())
-            .buildWrapperWithTtl();
+            .buildWithTtl();
 
     private AlarmManager() {}
 

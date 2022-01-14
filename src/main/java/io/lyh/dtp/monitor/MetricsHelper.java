@@ -2,6 +2,8 @@ package io.lyh.dtp.monitor;
 
 import io.lyh.dtp.core.DtpExecutor;
 
+import static io.lyh.dtp.common.em.RejectedTypeEnum.formatRejectName;
+
 /**
  * MetricsHelper related
  *
@@ -25,7 +27,7 @@ public class MetricsHelper {
         metrics.setLargestPoolSize(dtpExecutor.getLargestPoolSize());
         metrics.setPoolSize(dtpExecutor.getPoolSize());
         metrics.setWaitTaskCount(dtpExecutor.getQueue().size());
-        metrics.setRejectHandlerName(dtpExecutor.getRejectHandlerName());
+        metrics.setRejectHandlerName(formatRejectName(dtpExecutor.getRejectHandlerName()));
         metrics.setRejectCount(dtpExecutor.getRejectCount());
         return metrics;
     }

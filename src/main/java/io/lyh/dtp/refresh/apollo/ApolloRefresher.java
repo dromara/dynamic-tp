@@ -51,7 +51,6 @@ public class ApolloRefresher extends AbstractRefresher implements ConfigChangeLi
         config.addChangeListener(this);
     }
 
-
     @Override
     public void onChange(ConfigChangeEvent changeEvent) {
         ConfigFile configFile = ConfigService.getConfigFile(namespace, ConfigFileFormat.fromString(configFileType.getValue()));

@@ -24,6 +24,7 @@ public class DtpLogging {
     private static final String CLASSPATH_PREFIX = "classpath:";
     private static final String LOGBACK_LOCATION = "classpath:dtp-logback.xml";
     private static final String LOGGING_PATH = "LOG.PATH";
+    private static final String APP_NAME = "APP.NAME";
 
     static {
         DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
@@ -34,6 +35,10 @@ public class DtpLogging {
         } else {
             System.setProperty(LOGGING_PATH, logPath);
         }
+
+        String appName = ApplicationContextHolder.getEnvironment().getProperty("spring.application.name");
+        appName = StringUtils.isNoneBlank(appName) ? appName : "application";
+        System.setProperty(APP_NAME, appName);
     }
 
     private static class LoggingInstance {

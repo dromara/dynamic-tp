@@ -14,18 +14,6 @@ import java.util.concurrent.ThreadPoolExecutor;
  **/
 public class DtpCreator {
 
-    public static ExecutorService createWithTtl(boolean dynamic, String threadPrefix) {
-        return createWithTtl(null, dynamic, threadPrefix);
-    }
-
-    public static ExecutorService createWithTtl(String name, boolean dynamic, String threadPrefix) {
-        return ThreadPoolBuilder.newBuilder()
-                .threadPoolName(name)
-                .dynamic(dynamic)
-                .threadFactory(threadPrefix)
-                .buildWrapperWithTtl();
-    }
-
     public static ThreadPoolExecutor createCommonFast(String threadPrefix) {
         return ThreadPoolBuilder.newBuilder()
                 .threadFactory(threadPrefix)
@@ -41,5 +29,11 @@ public class DtpCreator {
                 .threadPoolName(name)
                 .threadFactory(threadPrefix)
                 .buildDynamic();
+    }
+
+    public static ExecutorService createWithTtl(String threadPrefix) {
+        return ThreadPoolBuilder.newBuilder()
+                .threadFactory(threadPrefix)
+                .buildWithTtl();
     }
 }

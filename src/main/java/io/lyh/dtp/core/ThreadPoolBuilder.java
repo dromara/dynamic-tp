@@ -194,16 +194,12 @@ public class ThreadPoolBuilder {
     }
 
     /**
-     * Build according to dynamic field, and then wrapper with ttl
+     * Build and wrapper with ttl
      * @see com.alibaba.ttl.TransmittableThreadLocal
      * @return
      */
-    public ExecutorService buildWrapperWithTtl() {
-        if (dynamic) {
-            return TtlExecutors.getTtlExecutorService(buildDtpExecutor(this));
-        } else {
-            return TtlExecutors.getTtlExecutorService(buildCommonExecutor(this));
-        }
+    public ExecutorService buildWithTtl() {
+        return TtlExecutors.getTtlExecutorService(buildCommonExecutor(this));
     }
 
     /**

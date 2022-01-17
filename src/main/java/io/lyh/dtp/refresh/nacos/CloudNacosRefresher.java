@@ -1,7 +1,7 @@
 package io.lyh.dtp.refresh.nacos;
 
-import com.alibaba.nacos.api.annotation.NacosInjected;
-import com.alibaba.nacos.api.config.ConfigService;
+import com.alibaba.cloud.nacos.NacosConfigManager;
+import com.alibaba.cloud.nacos.NacosConfigProperties;
 import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
 import io.lyh.dtp.common.em.ConfigFileTypeEnum;
@@ -18,23 +18,26 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * NacosRefresher related
+ * SpringCloudNacosRefresher related
  *
  * @author: yanhom
  * @since 1.0.0
  **/
 @Slf4j
-public class NacosRefresher extends AbstractRefresher implements InitializingBean, Listener {
+public class CloudNacosRefresher extends AbstractRefresher implements InitializingBean, Listener {
 
     private static final ThreadPoolExecutor EXECUTOR = DtpCreator.createCommonFast("nacos-listener");
 
     private ConfigFileTypeEnum configFileType;
 
-    @NacosInjected
-    private ConfigService configService;
+    @Resource
+    private NacosConfigManager nacosConfigManager;
 
     @Resource
     private DtpProperties dtpProperties;
+
+    @Resource
+    private NacosConfigProperties nacosConfigProperties;
 
     @Resource
     private Environment environment;
@@ -43,14 +46,15 @@ public class NacosRefresher extends AbstractRefresher implements InitializingBea
     public void afterPropertiesSet() {
 
         DtpProperties.Nacos nacos = dtpProperties.getNacos();
-        configFileType = NacosUtil.getConfigType(dtpProperties, ConfigFileTypeEnum.PROPERTIES);
+        configFileType = NacosUtil.getConfigType(dtpProperties,
+                ConfigFileTypeEnum.of(nacosConfigProperties.getFileExtension()));
         String dataId = NacosUtil.deduceDataId(nacos, environment, configFileType);
-        String group = NacosUtil.getGroup(nacos, "DEFAULT_GROUP");
+        String group = NacosUtil.getGroup(nacos, nacosConfigProperties.getGroup());
 
         try {
-            configService.addListener(dataId, group, this);
+            nacosConfigManager.getConfigService().addListener(dataId, group, this);
         } catch (NacosException e) {
-            log.error("DynamicTp refresher, {} addListener error.", getClass().getSimpleName());
+            log.error("DynamicTp refresher, {} addListener error", getClass().getSimpleName());
         }
     }
 

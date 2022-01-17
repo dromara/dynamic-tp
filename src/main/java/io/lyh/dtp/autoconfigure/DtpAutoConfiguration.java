@@ -7,6 +7,7 @@ import io.lyh.dtp.core.DtpRegistry;
 import io.lyh.dtp.core.DtpPostProcessor;
 import io.lyh.dtp.endpoint.DtpEndpoint;
 import io.lyh.dtp.refresh.apollo.ApolloRefresher;
+import io.lyh.dtp.refresh.nacos.CloudNacosRefresher;
 import io.lyh.dtp.refresh.nacos.NacosRefresher;
 import io.lyh.dtp.support.ApplicationContextHolder;
 import io.lyh.dtp.support.DtpBannerPrinter;
@@ -14,6 +15,7 @@ import io.lyh.dtp.common.constant.DynamicTpConst;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -75,6 +77,18 @@ public class DtpAutoConfiguration {
 
     @Configuration
     @ConditionalOnClass(NacosConfigProperties.class)
+    protected static class SpringCloudNacosConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean()
+        public CloudNacosRefresher cloudNacosRefresher() {
+            return new CloudNacosRefresher();
+        }
+    }
+
+    @Configuration
+    @ConditionalOnClass(value = com.alibaba.nacos.api.config.ConfigService.class)
+    @ConditionalOnMissingClass(value = {"com.alibaba.cloud.nacos.NacosConfigProperties"})
     protected static class NacosConfiguration {
 
         @Bean

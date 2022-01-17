@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,7 +40,7 @@ public class DynamicTpConst {
             "alarmType", "threshold", "rejectType", "rejectCount"
     );
 
-    public static final List<String> ALL_ALARM_KEYS =
+    public static final Set<String> ALL_ALARM_KEYS =
             Stream.of(CAPACITY_ALARM_KEYS, REJECT_ALARM_KEYS, LIVENESS_ALARM_KEYS)
-            .flatMap(Collection::stream).collect(Collectors.toList());
+            .flatMap(Collection::stream).collect(Collectors.toSet());
 }

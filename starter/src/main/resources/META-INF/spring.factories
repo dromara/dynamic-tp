@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  io.lyh.dynamic.tp.starter.DtpAutoConfiguration
-org.springframework.context.ApplicationListener=\
-  io.lyh.dynamic.tp.logging.DtpLoggingListener

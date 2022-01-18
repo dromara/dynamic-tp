@@ -1,0 +1,24 @@
+server:
+  port: 8099
+
+spring:
+  application:
+    name: dynamic-tp-example
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+        file-extension: yml
+
+#apollo:
+#  bootstrap:
+#    enabled: true
+#    namespaces: application
+#  meta: http://localhost:8080
+#  config-service: http://localhost:8080
+#app:
+#  id: dynamic-tp-example

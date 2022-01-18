@@ -28,11 +28,11 @@
 如果看过ThreadPoolExecutor的源码，大概可以知道其实它有提供一些set方法，可以在运行时动态去修改相应的值，这些方法有：
 
 ```java
-public void setCorePoolSize(int corePoolSize);
-public void setMaximumPoolSize(int maximumPoolSize);
-public void setKeepAliveTime(long time, TimeUnit unit);
-public void setThreadFactory(ThreadFactory threadFactory);
-public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
+public void setCorePoolSize(int corePoolSize);
+public void setMaximumPoolSize(int maximumPoolSize);
+public void setKeepAliveTime(long time, TimeUnit unit);
+public void setThreadFactory(ThreadFactory threadFactory);
+public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 ```
 
 现在大多数的互联网项目其实都会微服务化部署，有一套自己的服务治理体系，微服务组件中的分布式配置中心扮演的就是动态修改配置，
@@ -136,9 +136,9 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
     ```xml
     <dependency>
-         <groupId>io.github.lyh200</groupId>
-         <artifactId>dynamic-tp-spring-cloud-starter</artifactId>
-         <version>1.0.2-RELEASE</version>
+         <groupId>io.github.lyh200</groupId>
+         <artifactId>dynamic-tp-spring-cloud-starter</artifactId>
+         <version>1.0.2-RELEASE</version>
     </dependency>
     ```
 
@@ -146,77 +146,77 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
     ```yaml
     spring:
-      dynamic:
-        tp:
-          enabled: true
-          enabledBanner: true        # 是否开启banner打印，默认true
-          enabledCollect: false      # 是否开启监控指标采集，默认false
-          collectorType: logging     # 监控数据采集器类型（JsonLog | MicroMeter），默认logging
-          logPath: /home/logs        # 监控日志数据路径，默认${user.home}/logs
-          monitorInterval: 5         # 监控时间间隔（报警判断、指标采集），默认5s
-          nacos:                     # nacos配置，不配置有默认值（规则name-dev.yml这样）
-            dataId: dynamic-tp-demo-dev.yml
-            group: DEFAULT_GROUP
-          apollo:                    # apollo配置，不配置默认拿apollo配置第一个namespace
-            namespace: dynamic-tp-demo-dev.yml
-          configType: yml            # 配置文件类型
-          platforms:                 # 通知报警平台配置
-            - platform: wechat
-              urlKey: 3a7500-1287-4bd-a798-c5c3d8b69c  # 替换
-              receivers: test1,test2                   # 接受人企微名称
-            - platform: ding
-              urlKey: f80dad441fcd655438f4a08dcd6a     # 替换
-              secret: SECb5441fa6f375d5b9d21           # 替换，非sign模式可以没有此值
-              receivers: 15810119805                   # 钉钉账号手机号          
-          executors:                                   # 动态线程池配置
-            - threadPoolName: dynamic-tp-test-1
-              corePoolSize: 6
-              maximumPoolSize: 8
-              queueCapacity: 200
-              queueType: VariableLinkedBlockingQueue   # 任务队列，查看源码QueueTypeEnum枚举类
-              rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
-              keepAliveTime: 50
-              allowCoreThreadTimeOut: false
-              threadNamePrefix: test           # 线程名前缀
-              notifyItems:                     # 报警项，不配置自动会配置（变更通知、容量报警、活性报警、拒绝报警）
-                - type: capacity               # 报警项类型，查看源码 NotifyTypeEnum枚举类
-                  enabled: true
-                  threshold: 80                # 报警阈值
-                  platforms: [ding,wechat]     # 可选配置，不配置默认拿上层platforms配置的所以平台
-                  interval: 120                # 报警间隔（单位：s）
-                - type: change
-                  enabled: true
-                - type: liveness
-                  enabled: true
-                  threshold: 80
-                - type: reject
-                  enabled: true
-                  threshold: 1
+      dynamic:
+        tp:
+          enabled: true
+          enabledBanner: true        # 是否开启banner打印，默认true
+          enabledCollect: false      # 是否开启监控指标采集，默认false
+          collectorType: logging     # 监控数据采集器类型（JsonLog | MicroMeter），默认logging
+          logPath: /home/logs        # 监控日志数据路径，默认${user.home}/logs
+          monitorInterval: 5         # 监控时间间隔（报警判断、指标采集），默认5s
+          nacos:                     # nacos配置，不配置有默认值（规则name-dev.yml这样）
+            dataId: dynamic-tp-demo-dev.yml
+            group: DEFAULT_GROUP
+          apollo:                    # apollo配置，不配置默认拿apollo配置第一个namespace
+            namespace: dynamic-tp-demo-dev.yml
+          configType: yml            # 配置文件类型
+          platforms:                 # 通知报警平台配置
+            - platform: wechat
+              urlKey: 3a7500-1287-4bd-a798-c5c3d8b69c  # 替换
+              receivers: test1,test2                   # 接受人企微名称
+            - platform: ding
+              urlKey: f80dad441fcd655438f4a08dcd6a     # 替换
+              secret: SECb5441fa6f375d5b9d21           # 替换，非sign模式可以没有此值
+              receivers: 15810119805                   # 钉钉账号手机号          
+          executors:                                   # 动态线程池配置
+            - threadPoolName: dynamic-tp-test-1
+              corePoolSize: 6
+              maximumPoolSize: 8
+              queueCapacity: 200
+              queueType: VariableLinkedBlockingQueue   # 任务队列，查看源码QueueTypeEnum枚举类
+              rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
+              keepAliveTime: 50
+              allowCoreThreadTimeOut: false
+              threadNamePrefix: test           # 线程名前缀
+              notifyItems:                     # 报警项，不配置自动会配置（变更通知、容量报警、活性报警、拒绝报警）
+                - type: capacity               # 报警项类型，查看源码 NotifyTypeEnum枚举类
+                  enabled: true
+                  threshold: 80                # 报警阈值
+                  platforms: [ding,wechat]     # 可选配置，不配置默认拿上层platforms配置的所以平台
+                  interval: 120                # 报警间隔（单位：s）
+                - type: change
+                  enabled: true
+                - type: liveness
+                  enabled: true
+                  threshold: 80
+                - type: reject
+                  enabled: true
+                  threshold: 1
     ```
 
 +   代码方式生成，服务启动会自动注册
 
     ```java
     @Configuration
-    public class DtpConfig {
+    public class DtpConfig {
 
-       @Bean
-       public DtpExecutor demo1Executor() {
-           return DtpCreator.createDynamicFast("demo1-executor");
-      }
+       @Bean
+       public DtpExecutor demo1Executor() {
+           return DtpCreator.createDynamicFast("demo1-executor");
+      }
 
-       @Bean
-       public ThreadPoolExecutor demo2Executor() {
-           return ThreadPoolBuilder.newBuilder()
-                  .threadPoolName("demo2-executor")
-                  .corePoolSize(8)
-                  .maximumPoolSize(16)
-                  .keepAliveTime(50)
-                  .allowCoreThreadTimeOut(true)
-                  .workQueue(QueueTypeEnum.SYNCHRONOUS_QUEUE.getName(), null, false)
-                  .rejectedExecutionHandler(RejectedTypeEnum.CALLER_RUNS_POLICY.getName())
-                  .buildDynamic();
-      }
+       @Bean
+       public ThreadPoolExecutor demo2Executor() {
+           return ThreadPoolBuilder.newBuilder()
+                  .threadPoolName("demo2-executor")
+                  .corePoolSize(8)
+                  .maximumPoolSize(16)
+                  .keepAliveTime(50)
+                  .allowCoreThreadTimeOut(true)
+                  .workQueue(QueueTypeEnum.SYNCHRONOUS_QUEUE.getName(), null, false)
+                  .rejectedExecutionHandler(RejectedTypeEnum.CALLER_RUNS_POLICY.getName())
+                  .buildDynamic();
+      }
     }
     ```
 
@@ -224,9 +224,9 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 +   代码调用，根据线程池名称获取
 
     ```java
-    public static void main(String[] args) {
-           DtpExecutor dtpExecutor = DtpRegistry.getExecutor("dynamic-tp-test-1");
-           dtpExecutor.execute(() -> System.out.println("test"));
+    public static void main(String[] args) {
+           DtpExecutor dtpExecutor = DtpRegistry.getExecutor("dynamic-tp-test-1");
+           dtpExecutor.execute(() -> System.out.println("test"));
     }
     ```
 

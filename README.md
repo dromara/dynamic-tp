@@ -132,14 +132,30 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 ### 使用
 
-+   maven依赖
-
++   **maven依赖**
+1. apollo应用用接入用此依赖
     ```xml
-    <dependency>
-         <groupId>io.github.lyh200</groupId>
-         <artifactId>dynamic-tp-spring-cloud-starter</artifactId>
-         <version>1.0.2-RELEASE</version>
-    </dependency>
+        <dependency>
+            <groupId>io.github.lyh200</groupId>
+            <artifactId>dynamic-tp-spring-boot-starter-apollo</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    ```
+2. spring-cloud场景下的nacos应用接入用此依赖
+    ```xml
+        <dependency>
+            <groupId>io.github.lyh200</groupId>
+            <artifactId>dynamic-tp-spring-cloud-starter-nacos</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    ```
+3. 非spring-cloud场景下的nacos应用接入用此依赖
+    ```xml
+        <dependency>
+            <groupId>io.github.lyh200</groupId>
+            <artifactId>dynamic-tp-spring-boot-starter-nacos</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     ```
 
 +   线程池配置

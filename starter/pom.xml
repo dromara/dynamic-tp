@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.lyh200</groupId>
         <artifactId>dynamic-tp-all</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>dynamic-tp-starter</artifactId>
@@ -17,9 +17,16 @@
     </properties>
 
     <modules>
-        <module>starter-common</module>
         <module>starter-apollo</module>
         <module>starter-nacos</module>
+        <module>cloud-starter-nacos</module>
     </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.lyh200</groupId>
+            <artifactId>dynamic-tp-logging</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

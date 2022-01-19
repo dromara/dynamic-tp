@@ -32,20 +32,20 @@ public class MicroMeterCollector extends AbstractCollector {
     public void gauge(ThreadPoolMetrics metrics) {
 
         Iterable<Tag> tags = Collections.singletonList(Tag.of("thread.pool.name", metrics.getDtpName()));
-        Metrics.gauge("thread.pool.core.size", tags, metrics, ThreadPoolMetrics::getCorePoolSize);
-        Metrics.gauge("thread.pool.maximum.size", tags, metrics, ThreadPoolMetrics::getMaximumPoolSize);
-        Metrics.gauge("thread.pool.current.size", tags, metrics, ThreadPoolMetrics::getPoolSize);
-        Metrics.gauge("thread.pool.largest.size", tags, metrics, ThreadPoolMetrics::getLargestPoolSize);
-        Metrics.gauge("thread.pool.active.count", tags, metrics, ThreadPoolMetrics::getActiveCount);
+        Metrics.gauge("thread.pool.core.size", tags, metrics.getCorePoolSize());
+        Metrics.gauge("thread.pool.maximum.size", tags, metrics.getMaximumPoolSize());
+        Metrics.gauge("thread.pool.current.size", tags, metrics.getPoolSize());
+        Metrics.gauge("thread.pool.largest.size", tags, metrics.getLargestPoolSize());
+        Metrics.gauge("thread.pool.active.count", tags, metrics.getActiveCount());
 
-        Metrics.gauge("thread.pool.task.count", tags, metrics, ThreadPoolMetrics::getTaskCount);
-        Metrics.gauge("thread.pool.completed.task.count", tags, metrics, ThreadPoolMetrics::getCompletedTaskCount);
-        Metrics.gauge("thread.pool.wait.task.count", tags, metrics, ThreadPoolMetrics::getWaitTaskCount);
+        Metrics.gauge("thread.pool.task.count", tags, metrics.getTaskCount());
+        Metrics.gauge("thread.pool.completed.task.count", tags, metrics.getCompletedTaskCount());
+        Metrics.gauge("thread.pool.wait.task.count", tags, metrics.getWaitTaskCount());
 
-        Metrics.gauge("thread.pool.queue.size", tags, metrics, ThreadPoolMetrics::getQueueSize);
-        Metrics.gauge("thread.pool.queue.capacity", tags, metrics, ThreadPoolMetrics::getQueueCapacity);
-        Metrics.gauge("thread.pool.queue.remaining.capacity", tags, metrics, ThreadPoolMetrics::getQueueRemainingCapacity);
+        Metrics.gauge("thread.pool.queue.size", tags, metrics.getQueueSize());
+        Metrics.gauge("thread.pool.queue.capacity", tags, metrics.getQueueCapacity());
+        Metrics.gauge("thread.pool.queue.remaining.capacity", tags, metrics.getQueueRemainingCapacity());
 
-        Metrics.gauge("thread.pool.reject.count", tags, metrics, ThreadPoolMetrics::getRejectCount);
+        Metrics.gauge("thread.pool.reject.count", tags, metrics.getRejectCount());
     }
 }

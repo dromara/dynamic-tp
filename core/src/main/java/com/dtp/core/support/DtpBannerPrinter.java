@@ -1,4 +1,4 @@
-package com.dtp.common;
+package com.dtp.core.support;
 
 import com.dtp.common.config.DtpProperties;
 import lombok.extern.slf4j.Slf4j;

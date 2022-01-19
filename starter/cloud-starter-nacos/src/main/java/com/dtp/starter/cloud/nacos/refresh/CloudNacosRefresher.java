@@ -1,4 +1,4 @@
-package com.dtp.starter.nacos.refresh;
+package com.dtp.starter.cloud.nacos.refresh;
 
 import com.alibaba.cloud.nacos.NacosConfigManager;
 import com.alibaba.cloud.nacos.NacosConfigProperties;

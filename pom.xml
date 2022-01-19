@@ -5,7 +5,7 @@
 
     <groupId>io.github.lyh200</groupId>
     <artifactId>dynamic-tp-all</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <name>DynamicTp Project</name>
@@ -14,6 +14,7 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <dtp.version>1.0.0</dtp.version>
         <spring-boot.version>2.5.8</spring-boot.version>
         <spring-cloud.version>2020.0.5</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.1</spring-cloud-alibaba.version>
@@ -69,6 +70,25 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>io.github.lyh200</groupId>
+                <artifactId>dynamic-tp-common</artifactId>
+                <version>${dtp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.lyh200</groupId>
+                <artifactId>dynamic-tp-core</artifactId>
+                <version>${dtp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.lyh200</groupId>
+                <artifactId>dynamic-tp-logging</artifactId>
+                <version>${dtp.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
@@ -92,16 +112,48 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-actuator</artifactId>
-                <version>${spring-boot.version}</version>
-                <scope>compile</scope>
-                <optional>true</optional>
-            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/lyh200/dynamic-tp-spring-cloud-starter/tree/master</url>
+        <connection>scm:git:git://github.com/lyh200/dynamic-tp-spring-cloud-starter.git</connection>
+        <developerConnection>scm:git:ssh://github.com:lyh200/dynamic-tp-spring-cloud-starter.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>yanhom</id>
+            <name>yanhom</name>
+            <email>yanhom1314@gmail.com</email>
+            <url>https://github.com/lyh200</url>
+        </developer>
+    </developers>
+
+    <issueManagement>
+        <system>Github Issue</system>
+        <url>https://github.com/lyh200/dynamic-tp-spring-cloud-starter/issues</url>
+    </issueManagement>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <plugins>
@@ -131,34 +183,62 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>package</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Implementation-Title>${project.artifactId}</Implementation-Title>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                            <Build-Time>${maven.build.timestamp}</Build-Time>
+                            <Built-By>yanhom</Built-By>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- Gpg Signature -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
-
-    <repositories>
-        <repository>
-            <id>java-snapshots</id>
-            <url>http://nexus.sys.wanmei.com/repository/java-snapshots</url>
-        </repository>
-        <repository>
-            <id>Release Repository</id>
-            <url>http://nexus.sys.wanmei.com/repository/java-releases</url>
-        </repository>
-        <repository>
-            <id>Public Repository</id>
-            <url>http://nexus.sys.wanmei.com/repository/maven-public</url>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>pwrd-nexus-releases</id>
-            <name>Internal Releases</name>
-            <url>http://nexus.sys.wanmei.com/repository/java-releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>pwrd-nexus-snapshots</id>
-            <name>Internal Snapshots</name>
-            <url>http://nexus.sys.wanmei.com/repository/java-snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
 </project>

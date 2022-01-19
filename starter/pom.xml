@@ -17,16 +17,38 @@
     </properties>
 
     <modules>
+        <module>starter-common</module>
         <module>starter-apollo</module>
         <module>starter-nacos</module>
         <module>cloud-starter-nacos</module>
     </modules>
 
     <dependencies>
+
+        <dependency>
+            <groupId>io.github.lyh200</groupId>
+            <artifactId>dynamic-tp-common</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.lyh200</groupId>
+            <artifactId>dynamic-tp-core</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>io.github.lyh200</groupId>
             <artifactId>dynamic-tp-logging</artifactId>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.github.lyh200</groupId>
+                <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

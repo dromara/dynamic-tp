@@ -45,24 +45,24 @@ public enum QueueTypeEnum {
         this.name = name;
     }
 
-    public static BlockingQueue buildBlockingQueue(String name, int capacity, boolean fair) {
-        BlockingQueue blockingQueue = null;
+    public static BlockingQueue<Runnable> buildBlockingQueue(String name, int capacity, boolean fair) {
+        BlockingQueue<Runnable> blockingQueue = null;
         if (Objects.equals(name, ARRAY_BLOCKING_QUEUE.getName())) {
-            blockingQueue = new ArrayBlockingQueue(capacity);
+            blockingQueue = new ArrayBlockingQueue<>(capacity);
         } else if (Objects.equals(name, LINKED_BLOCKING_QUEUE.getName())) {
-            blockingQueue = new LinkedBlockingQueue(capacity);
+            blockingQueue = new LinkedBlockingQueue<>(capacity);
         } else if (Objects.equals(name, PRIORITY_BLOCKING_QUEUE.getName())) {
-            blockingQueue = new PriorityBlockingQueue(capacity);
+            blockingQueue = new PriorityBlockingQueue<>(capacity);
         } else if (Objects.equals(name, DELAY_QUEUE.getName())) {
             blockingQueue = new DelayQueue();
         } else if (Objects.equals(name, SYNCHRONOUS_QUEUE.getName())) {
-            blockingQueue = new SynchronousQueue(fair);
+            blockingQueue = new SynchronousQueue<>(fair);
         } else if (Objects.equals(name, LINKED_TRANSFER_QUEUE.getName())) {
-            blockingQueue = new LinkedTransferQueue();
+            blockingQueue = new LinkedTransferQueue<>();
         } else if (Objects.equals(name, LINKED_BLOCKING_DEQUE.getName())) {
-            blockingQueue = new LinkedBlockingDeque(capacity);
+            blockingQueue = new LinkedBlockingDeque<>(capacity);
         } else if (Objects.equals(name, VARIABLE_LINKED_BLOCKING_QUEUE.getName())) {
-            blockingQueue = new VariableLinkedBlockingQueue(capacity);
+            blockingQueue = new VariableLinkedBlockingQueue<>(capacity);
         }
         if (blockingQueue != null) {
             return blockingQueue;

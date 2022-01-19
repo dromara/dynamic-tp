@@ -1,6 +1,7 @@
 package com.dtp.common.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * ThredPoolMetrics related
@@ -8,6 +9,7 @@ import lombok.Data;
  * @author: yanhom
  * @since 1.0.0
  **/
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class ThreadPoolMetrics extends Metrics {
 

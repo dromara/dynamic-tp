@@ -15,6 +15,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static com.dtp.common.constant.WechatNotifyConst.WECHAT_ALARM_TEMPLATE;
+import static com.dtp.common.constant.WechatNotifyConst.WECHAT_CHANGE_NOTICE_TEMPLATE;
+
 /**
  * DtpWechatNotifier related
  *
@@ -34,7 +37,7 @@ public class DtpWechatNotifier extends AbstractWechatNotifier {
     public void sendChangeMsg(DtpMainProp oldProp, List<String> diffs) {
         DtpContext contextWrapper = DtpContextHolder.get();
         NotifyPlatform platform = contextWrapper.getPlatform(NotifyPlatformEnum.WECHAT.name());
-        String content = buildNoticeContent(platform, WechatNotifyConst.WECHAT_CHANGE_NOTICE_TEMPLATE, oldProp, diffs);
+        String content = buildNoticeContent(platform, WECHAT_CHANGE_NOTICE_TEMPLATE, oldProp, diffs);
         if (StringUtils.isBlank(content)) {
             return;
         }
@@ -45,7 +48,7 @@ public class DtpWechatNotifier extends AbstractWechatNotifier {
     public void sendAlarmMsg(NotifyTypeEnum typeEnum) {
         DtpContext contextWrapper = DtpContextHolder.get();
         NotifyPlatform platform = contextWrapper.getPlatform(NotifyPlatformEnum.WECHAT.name());
-        String content = buildAlarmContent(platform, typeEnum, WechatNotifyConst.WECHAT_ALARM_TEMPLATE);
+        String content = buildAlarmContent(platform, typeEnum, WECHAT_ALARM_TEMPLATE);
         if (StringUtils.isBlank(content)) {
             return;
         }

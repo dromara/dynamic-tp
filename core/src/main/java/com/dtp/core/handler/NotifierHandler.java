@@ -25,10 +25,6 @@ public class NotifierHandler {
 
     private static final Map<String, Notifier> NOTIFIERS = new HashMap<>();
 
-    private static class NotifierHandlerHolder {
-        private static final NotifierHandler INSTANCE = new NotifierHandler();
-    }
-
     private NotifierHandler() {
         ServiceLoader<Notifier> loader = ServiceLoader.load(Notifier.class);
         for (Notifier notifier : loader) {
@@ -39,10 +35,6 @@ public class NotifierHandler {
         Notifier wechatNotifier = new DtpWechatNotifier();
         NOTIFIERS.put(dingNotifier.platform(), dingNotifier);
         NOTIFIERS.put(wechatNotifier.platform(), wechatNotifier);
-    }
-
-    public static NotifierHandler getInstance() {
-        return NotifierHandlerHolder.INSTANCE;
     }
 
     public void sendNotice(DtpMainProp prop, List<String> diffs) {
@@ -72,5 +64,13 @@ public class NotifierHandler {
         } finally {
             DtpContextHolder.remove();
         }
+    }
+
+    public static NotifierHandler getInstance() {
+        return NotifierHandlerHolder.INSTANCE;
+    }
+
+    private static class NotifierHandlerHolder {
+        private static final NotifierHandler INSTANCE = new NotifierHandler();
     }
 }

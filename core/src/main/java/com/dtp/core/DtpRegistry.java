@@ -165,7 +165,7 @@ public class DtpRegistry implements InitializingBean {
 
             val blockingQueue = dtpExecutor.getQueue();
             if (blockingQueue instanceof VariableLinkedBlockingQueue) {
-                ((VariableLinkedBlockingQueue)blockingQueue).setCapacity(properties.getQueueCapacity());
+                ((VariableLinkedBlockingQueue<Runnable>)blockingQueue).setCapacity(properties.getQueueCapacity());
             } else {
                 log.error("DynamicTp refresh, the blockingqueue capacity cannot be reset, dtpName: {}, queue {}",
                         dtpExecutor.getThreadPoolName(), dtpExecutor.getQueueName());

@@ -17,7 +17,7 @@ import java.util.List;
 public class NotifyItem {
 
     /**
-     * Notify platforms, see {@link NotifyPlatformEnum}
+     * Notify platform names, see {@link NotifyPlatformEnum}
      */
     private List<String> platforms;
 

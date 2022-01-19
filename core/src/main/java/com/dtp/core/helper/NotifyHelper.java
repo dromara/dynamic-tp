@@ -44,7 +44,8 @@ public class NotifyHelper {
             return;
         }
 
-        List<String> platformNames = platforms.stream().map(NotifyPlatform::getPlatform).collect(toList());
+        List<String> platformNames = platforms.stream()
+                .map(NotifyPlatform::getPlatform).collect(toList());
         notifyItems.forEach(n -> {
             if (CollUtil.isEmpty(n.getPlatforms())) {
                 n.setPlatforms(platformNames);

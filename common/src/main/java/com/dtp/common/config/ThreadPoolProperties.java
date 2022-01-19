@@ -1,9 +1,9 @@
 package com.dtp.common.config;
 
-import com.dtp.common.em.NotifyTypeEnum;
-import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.dto.NotifyItem;
+import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;
 import lombok.Data;
 
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * ThreadPoolProperties related
+ * ThreadPool main properties.
  *
  * @author: yanhom
  * @since 1.0.0

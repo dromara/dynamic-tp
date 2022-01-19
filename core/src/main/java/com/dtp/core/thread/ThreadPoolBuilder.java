@@ -55,7 +55,7 @@ public class ThreadPoolBuilder {
     /**
      * Blocking queue, see {@link QueueTypeEnum}
      */
-    private BlockingQueue workQueue = new VariableLinkedBlockingQueue(1024);
+    private BlockingQueue<Runnable> workQueue = new VariableLinkedBlockingQueue<>(1024);
 
     /**
      * RejectedExecutionHandler that implements RejectedCountable interface, see {@link RejectedTypeEnum}

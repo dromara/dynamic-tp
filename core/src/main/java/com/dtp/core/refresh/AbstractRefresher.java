@@ -41,14 +41,16 @@ public abstract class AbstractRefresher implements Refresher {
             val prop = ConfigHandler.getInstance().parseConfig(content, fileTypeEnum);
             doRefresh(prop);
         } catch (IOException e) {
-            log.error("DynamicTp refresh error, content: {}, fileType: {}", content, fileTypeEnum, e);
+            log.error("DynamicTp refresh error, content: {}, fileType: {}",
+                    content, fileTypeEnum, e);
         }
     }
 
     private void doRefresh(Map<Object, Object> properties) {
         ConfigurationPropertySource sources = new MapConfigurationPropertySource(properties);
         Binder binder = new Binder(sources);
-        DtpProperties bindDtpProperties = binder.bind(DynamicTpConst.MAIN_PROPERTIES_PREFIX, Bindable.ofInstance(dtpProperties)).get();
+        DtpProperties bindDtpProperties = binder.bind(DynamicTpConst.MAIN_PROPERTIES_PREFIX,
+                Bindable.ofInstance(dtpProperties)).get();
         DtpRegistry.refresh(bindDtpProperties);
     }
 }

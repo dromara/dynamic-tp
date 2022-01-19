@@ -5,19 +5,17 @@ import com.dtp.common.dto.NotifyPlatform;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
 /**
- * Main properties that maintain by the config center.
+ * Main properties that maintain by config center.
  *
  * @author: yanhom
  * @since 1.0.0
  **/
 @Slf4j
 @Data
-@Configuration
 @ConfigurationProperties(prefix = DynamicTpConst.MAIN_PROPERTIES_PREFIX)
 public class DtpProperties {
 
@@ -57,7 +55,7 @@ public class DtpProperties {
     public String collectorType = "logging";
 
     /**
-     * 监控日志存储路径
+     * MetricsLog storage path
      */
     public String logPath;
 
@@ -81,14 +79,14 @@ public class DtpProperties {
 
         private String dataId;
 
-        private String group = "DEFAULT_GROUP";
+        private String group;
 
-        private String namespace = "public";
+        private String namespace;
     }
 
     @Data
     public static class Apollo {
 
-        private String namespace = "application";
+        private String namespace;
     }
 }

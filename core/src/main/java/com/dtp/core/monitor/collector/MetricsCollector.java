@@ -12,7 +12,7 @@ public interface MetricsCollector {
 
     /**
      * Collect key metrics.
-     * @param executor DtpExecutor
+     * @param executor dtpExecutor instance
      */
     void collect(DtpExecutor executor);
 

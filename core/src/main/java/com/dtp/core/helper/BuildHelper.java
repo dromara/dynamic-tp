@@ -19,11 +19,13 @@ import static com.dtp.common.em.RejectedTypeEnum.*;
 /**
  * BuildHelper related
  *
- * @author: linyanhong@ihuman.com
+ * @author: yanhom
  * @since 1.0.0
  **/
 @Slf4j
 public class BuildHelper {
+
+    private BuildHelper() {}
 
     public static RejectedExecutionHandler buildRejectedHandler(String name) {
         if (Objects.equals(name, ABORT_POLICY.getName())) {

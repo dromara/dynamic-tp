@@ -1,10 +1,10 @@
 package com.dtp.core.handler;
 
-import com.google.common.collect.Lists;
 import com.dtp.common.em.ConfigFileTypeEnum;
 import com.dtp.core.parser.ConfigParser;
 import com.dtp.core.parser.PropertiesConfigParser;
 import com.dtp.core.parser.YamlConfigParser;
+import com.google.common.collect.Lists;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -22,10 +22,6 @@ public class ConfigHandler {
 
     private static final List<ConfigParser> PARSERS = Lists.newArrayList();
 
-    private static class ConfigHandlerHolder {
-        private static final ConfigHandler INSTANCE = new ConfigHandler();
-    }
-
     private ConfigHandler() {
         ServiceLoader<ConfigParser> loader = ServiceLoader.load(ConfigParser.class);
         for (ConfigParser configParser : loader) {
@@ -36,10 +32,6 @@ public class ConfigHandler {
         PARSERS.add(new YamlConfigParser());
     }
 
-    public static ConfigHandler getInstance() {
-        return ConfigHandlerHolder.INSTANCE;
-    }
-
     public Map<Object, Object> parseConfig(String content, ConfigFileTypeEnum type) throws IOException {
         for (ConfigParser parser : PARSERS) {
             if (parser.supports(type)) {
@@ -48,5 +40,13 @@ public class ConfigHandler {
         }
 
         return Collections.emptyMap();
+    }
+
+    public static ConfigHandler getInstance() {
+        return ConfigHandlerHolder.INSTANCE;
+    }
+
+    private static class ConfigHandlerHolder {
+        private static final ConfigHandler INSTANCE = new ConfigHandler();
     }
 }

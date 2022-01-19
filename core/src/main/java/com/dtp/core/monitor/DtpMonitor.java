@@ -18,6 +18,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import static com.dtp.core.notify.AlarmManager.doAlarm;
+
 /**
  * DtpMonitor related
  *
@@ -45,8 +47,7 @@ public class DtpMonitor implements ApplicationRunner {
             val names = DtpRegistry.listAllDtpNames();
             names.forEach(x -> {
                 DtpExecutor executor = DtpRegistry.getExecutor(x);
-                AlarmManager.triggerAlarm(
-                        () -> AlarmManager.doAlarm(executor,
+                AlarmManager.triggerAlarm(() -> doAlarm(executor,
                                 Lists.newArrayList(NotifyTypeEnum.LIVENESS, NotifyTypeEnum.CAPACITY)));
 
                 if (dtpProperties.isEnabledCollect()) {

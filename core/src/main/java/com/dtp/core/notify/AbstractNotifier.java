@@ -3,20 +3,19 @@ package com.dtp.core.notify;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import com.dtp.common.ApplicationContextHolder;
+import com.dtp.common.constant.DynamicTpConst;
+import com.dtp.common.dto.DtpMainProp;
+import com.dtp.common.dto.Instance;
+import com.dtp.common.dto.NotifyItem;
+import com.dtp.common.dto.NotifyPlatform;
+import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.core.DtpExecutor;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
 import com.google.common.base.Joiner;
-
-import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.dto.DtpMainProp;
-import com.dtp.common.dto.Instance;
-import com.dtp.common.constant.DynamicTpConst;
-import com.dtp.common.dto.NotifyItem;
-import com.dtp.common.dto.NotifyPlatform;
-import com.dtp.common.em.NotifyTypeEnum;
-import com.dtp.common.em.RejectedTypeEnum;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -69,7 +68,8 @@ public abstract class AbstractNotifier implements Notifier {
 
     public String buildAlarmContent(NotifyPlatform platform, NotifyTypeEnum typeEnum, String template) {
         DtpContext contextWrapper = DtpContextHolder.get();
-        DtpExecutor executor = DtpRegistry.getExecutor(contextWrapper.getDtpExecutor().getThreadPoolName());
+        String dtpName = contextWrapper.getDtpExecutor().getThreadPoolName();
+        DtpExecutor executor = DtpRegistry.getExecutor(dtpName);
 
         List<String> receivers = StrUtil.split(platform.getReceivers(), ',');
         String receivesStr = Joiner.on(", @").join(receivers);

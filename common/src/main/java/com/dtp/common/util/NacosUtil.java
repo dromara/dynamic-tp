@@ -9,8 +9,11 @@ import org.springframework.core.env.Environment;
  * NacosUtil related
  *
  * @author yanhom
+ * @since 1.0.0
  */
 public class NacosUtil {
+
+    private NacosUtil() {}
 
     public static String deduceDataId(DtpProperties.Nacos nacos,
                                       Environment environment,
@@ -36,7 +39,7 @@ public class NacosUtil {
 
     public static String getGroup(DtpProperties.Nacos nacos, String defaultGroup) {
         String group = defaultGroup;
-        if (StringUtils.isNotBlank(nacos.getGroup())) {
+        if (nacos != null && StringUtils.isNotBlank(nacos.getGroup())) {
             group = nacos.getGroup();
         }
         return group;

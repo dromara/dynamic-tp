@@ -13,6 +13,8 @@ import static com.dtp.common.em.RejectedTypeEnum.formatRejectName;
  **/
 public class MetricsHelper {
 
+    private MetricsHelper() {}
+
     public static ThreadPoolMetrics getMetrics(DtpExecutor dtpExecutor) {
         ThreadPoolMetrics metrics = new ThreadPoolMetrics();
         metrics.setDtpName(dtpExecutor.getThreadPoolName());

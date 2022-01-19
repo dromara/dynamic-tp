@@ -12,22 +12,22 @@ import lombok.Data;
 public class NotifyPlatform {
 
     /**
-     * Notify platform.
+     * Notify platform name.
      */
     private String platform;
 
     /**
-     * Key of url.
+     * Token of url.
      */
     private String urlKey;
 
     /**
-     * Secret, can be null.
+     * Secret, may be null.
      */
     private String secret;
 
     /**
-     * receivers, split by ,
+     * Receivers, split by ,
      */
     private String receivers = "所有人";
 }

@@ -1,8 +1,8 @@
 package com.dtp.starter.apollo.autoconfigure;
 
 import com.dtp.common.constant.DynamicTpConst;
-import com.dtp.core.config.BaseBeanConfiguration;
 import com.dtp.starter.apollo.refresh.ApolloRefresher;
+import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -22,7 +22,7 @@ import static com.ctrip.framework.apollo.spring.config.PropertySourcesConstants.
 @ConditionalOnClass(com.ctrip.framework.apollo.ConfigService.class)
 @ConditionalOnProperty(value = {APOLLO_BOOTSTRAP_ENABLED, DynamicTpConst.DTP_ENABLED_PROP},
         havingValue = "true", matchIfMissing = true)
-@ImportAutoConfiguration({BaseBeanConfiguration.class})
+@ImportAutoConfiguration({BaseBeanAutoConfiguration.class})
 public class DtpAutoConfiguration {
 
     @Bean

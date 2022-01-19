@@ -14,12 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>io.github.lyh200</groupId>
-            <artifactId>dynamic-tp-common</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.lyh200</groupId>
-            <artifactId>dynamic-tp-core</artifactId>
+            <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
         </dependency>
 
         <dependency>

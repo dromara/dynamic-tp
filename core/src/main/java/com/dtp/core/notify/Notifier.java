@@ -14,14 +14,14 @@ import java.util.List;
 public interface Notifier {
 
     /**
-     * Get send platform.
+     * Get the send platform name.
      *
      * @return platform
      */
     String platform();
 
     /**
-     * Send notify message.
+     * Send change notify message.
      *
      * @param oldProp old properties
      * @param diffs the changed keys

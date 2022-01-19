@@ -1,4 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.dtp.starter.common.config.BaseBeanConfiguration
+  com.dtp.core.config.BaseBeanConfiguration
 org.springframework.context.ApplicationListener=\
   com.dtp.logging.DtpLoggingListener

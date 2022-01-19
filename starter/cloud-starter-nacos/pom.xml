@@ -5,35 +5,30 @@
     <parent>
         <groupId>io.github.lyh200</groupId>
         <artifactId>dynamic-tp-starter</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
-    <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
+    <artifactId>dynamic-tp-spring-cloud-starter-nacos</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>io.github.lyh200</groupId>
             <artifactId>dynamic-tp-common</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.lyh200</groupId>
             <artifactId>dynamic-tp-core</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
-            <groupId>io.github.lyh200</groupId>
-            <artifactId>dynamic-tp-logging</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+            <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
     </dependencies>
 
 </project>

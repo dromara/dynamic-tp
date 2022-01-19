@@ -5,10 +5,11 @@
     <parent>
         <groupId>io.github.lyh200</groupId>
         <artifactId>dynamic-tp-all</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>dynamic-tp-example</artifactId>
+    <packaging>pom</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,7 +25,7 @@
         <dependency>
             <groupId>io.github.lyh200</groupId>
             <artifactId>dynamic-tp-spring-cloud-starter-nacos</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>

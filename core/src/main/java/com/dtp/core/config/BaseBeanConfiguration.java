@@ -1,12 +1,12 @@
-package com.dtp.starter.common.config;
+package com.dtp.core.config;
 
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.DtpBannerPrinter;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.monitor.DtpMonitor;
 import com.dtp.core.monitor.endpoint.DtpEndpoint;
+import com.dtp.core.support.DtpBannerPrinter;
 import com.dtp.core.support.DtpPostProcessor;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -24,9 +24,8 @@ import javax.annotation.Resource;
  * @since 1.0.0
  **/
 @Configuration
-@ImportAutoConfiguration({DtpProperties.class})
-@ConditionalOnProperty(prefix = DynamicTpConst.MAIN_PROPERTIES_PREFIX,
-        value = "enabled", matchIfMissing = true, havingValue = "true")
+@ImportAutoConfiguration(DtpProperties.class)
+@ConditionalOnProperty(name = DynamicTpConst.DTP_ENABLED_PROP, matchIfMissing = true, havingValue = "true")
 public class BaseBeanConfiguration {
 
     @Resource

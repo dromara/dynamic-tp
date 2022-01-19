@@ -17,7 +17,6 @@ import java.util.List;
  **/
 @Slf4j
 @Data
-@Configuration
 @ConfigurationProperties(prefix = DynamicTpConst.MAIN_PROPERTIES_PREFIX)
 public class DtpProperties {
 

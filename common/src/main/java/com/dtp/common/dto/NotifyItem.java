@@ -39,7 +39,7 @@ public class NotifyItem {
     /**
      * Alarm interval, time unit（s）
      */
-    private Integer interval = 120;
+    private int interval = 120;
 
     /**
      * Default notify items.
@@ -49,22 +49,18 @@ public class NotifyItem {
     static {
         NotifyItem changeNotify = new NotifyItem();
         changeNotify.setType(NotifyTypeEnum.CHANGE.getValue());
-        changeNotify.setInterval(null);
 
         NotifyItem livenessNotify = new NotifyItem();
         livenessNotify.setType(NotifyTypeEnum.LIVENESS.getValue());
         livenessNotify.setThreshold(80);
-        livenessNotify.setInterval(300);
 
         NotifyItem capacityNotify = new NotifyItem();
         capacityNotify.setType(NotifyTypeEnum.CAPACITY.getValue());
         capacityNotify.setThreshold(80);
-        capacityNotify.setInterval(300);
 
         NotifyItem rejectNotify = new NotifyItem();
         rejectNotify.setType(NotifyTypeEnum.REJECT.getValue());
         rejectNotify.setThreshold(1);
-        rejectNotify.setInterval(300);
 
         DEFAULT_NOTIFY_ITEMS = new ArrayList<>(4);
         DEFAULT_NOTIFY_ITEMS.add(livenessNotify);

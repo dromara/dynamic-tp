@@ -49,8 +49,9 @@ public class NacosRefresher extends AbstractRefresher implements InitializingBea
 
         try {
             configService.addListener(dataId, group, this);
+            log.info("DynamicTp refresher, add listener success, dataId: {}, group: {}", dataId, group);
         } catch (NacosException e) {
-            log.error("DynamicTp refresher, {} addListener error.", getClass().getSimpleName());
+            log.error("DynamicTp refresher, add listener error, dataId: {}, group: {}", dataId, group, e);
         }
     }
 

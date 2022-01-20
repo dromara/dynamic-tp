@@ -48,7 +48,13 @@ public class ApolloRefresher extends AbstractRefresher implements ConfigChangeLi
         configFileType = ConfigFileTypeEnum.of(configFileFormat.getValue());
 
         Config config = ConfigService.getConfig(realNamespace);
-        config.addChangeListener(this);
+
+        try {
+            config.addChangeListener(this);
+            log.info("DynamicTp refresher, add listener success, namespace: {}", realNamespace);
+        } catch (Exception e) {
+            log.error("DynamicTp refresher, add listener error, namespace: {}", realNamespace, e);
+        }
     }
 
     @Override

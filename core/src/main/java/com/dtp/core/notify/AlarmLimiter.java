@@ -1,9 +1,10 @@
 package com.dtp.core.notify;
 
+import com.dtp.common.dto.NotifyItem;
+import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.core.DtpExecutor;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.dtp.common.dto.NotifyItem;
-import com.dtp.core.DtpExecutor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
@@ -23,10 +24,11 @@ public class AlarmLimiter {
     private AlarmLimiter() {}
 
     public static void initAlarmLimiter(String dtpName, NotifyItem notifyItem) {
-        String outerKey = buildOuterKey(dtpName, notifyItem.getType());
-        if (ALARM_LIMITER.get(outerKey) != null) {
+        if (NotifyTypeEnum.CHANGE.getValue().equalsIgnoreCase(notifyItem.getType())) {
             return;
         }
+
+        String outerKey = buildOuterKey(dtpName, notifyItem.getType());
         Cache<String, String> cache = CacheBuilder.newBuilder()
                 .expireAfterWrite(notifyItem.getInterval(), TimeUnit.SECONDS)
                 .build();

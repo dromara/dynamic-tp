@@ -1,27 +1,27 @@
 package com.dtp.core;
 
 import cn.hutool.core.collection.CollUtil;
+import com.dtp.common.VariableLinkedBlockingQueue;
+import com.dtp.common.config.DtpProperties;
+import com.dtp.common.config.ThreadPoolProperties;
+import com.dtp.common.constant.DynamicTpConst;
+import com.dtp.common.dto.DtpMainProp;
+import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.QueueTypeEnum;
+import com.dtp.common.em.RejectedTypeEnum;
+import com.dtp.common.ex.DtpException;
+import com.dtp.core.context.DtpContext;
+import com.dtp.core.context.DtpContextHolder;
+import com.dtp.core.handler.NotifierHandler;
 import com.dtp.core.helper.BuildHelper;
 import com.dtp.core.helper.NotifyHelper;
 import com.dtp.core.notify.AlarmLimiter;
+import com.dtp.core.support.DtpCreator;
+import com.dtp.core.thread.ThreadPoolBuilder;
 import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
 import com.google.common.collect.Lists;
-import com.dtp.common.dto.DtpMainProp;
-import com.dtp.common.VariableLinkedBlockingQueue;
-import com.dtp.common.constant.DynamicTpConst;
-import com.dtp.common.em.NotifyTypeEnum;
-import com.dtp.common.em.QueueTypeEnum;
-import com.dtp.common.ex.DtpException;
-import com.dtp.common.config.DtpProperties;
-import com.dtp.common.config.ThreadPoolProperties;
-import com.dtp.core.context.DtpContext;
-import com.dtp.core.context.DtpContextHolder;
-import com.dtp.core.handler.NotifierHandler;
-import com.dtp.common.em.RejectedTypeEnum;
-import com.dtp.core.support.DtpCreator;
-import com.dtp.core.thread.ThreadPoolBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +35,8 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
+
+import static com.dtp.common.dto.NotifyItem.getDefaultNotifyItems;
 
 /**
  * Core Registry, which keeps all registered Dynamic ThreadPoolExecutors.
@@ -152,7 +154,9 @@ public class DtpRegistry implements InitializingBean {
         if (properties.getKeepAliveTime() > 0 && properties.getUnit() != null) {
             dtpExecutor.setKeepAliveTime(properties.getKeepAliveTime(), properties.getUnit());
         }
+        dtpExecutor.allowCoreThreadTimeOut(properties.isAllowCoreThreadTimeOut());
 
+        // update reject handler
         String originRejectedName = dtpExecutor.getRejectHandlerName();
         if (StringUtils.isNotBlank(properties.getRejectedHandlerType()) &&
                 !originRejectedName.contains(properties.getRejectedHandlerType())) {
@@ -160,6 +164,7 @@ public class DtpRegistry implements InitializingBean {
                     BuildHelper.buildRejectedHandler(properties.getRejectedHandlerType()));
         }
 
+        // update work queue capacity
         if (properties.getQueueCapacity() > 0 &&
                 Objects.equals(properties.getQueueType(), QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE.getName())) {
 
@@ -171,13 +176,13 @@ public class DtpRegistry implements InitializingBean {
                         dtpExecutor.getThreadPoolName(), dtpExecutor.getQueueName());
             }
         }
-        dtpExecutor.allowCoreThreadTimeOut(properties.isAllowCoreThreadTimeOut());
 
-        if (CollUtil.isNotEmpty(properties.getNotifyItems())) {
-            NotifyHelper.fillNotifyItems(dtpProperties.getPlatforms(), properties.getNotifyItems());
-            dtpExecutor.setNotifyItems(properties.getNotifyItems());
-            properties.getNotifyItems().forEach(x -> AlarmLimiter.initAlarmLimiter(dtpExecutor.getThreadPoolName(), x));
+        if (CollUtil.isEmpty(properties.getNotifyItems())) {
+            dtpExecutor.setNotifyItems(getDefaultNotifyItems());
+            return;
         }
+        NotifyHelper.setExecutorNotifyItems(dtpExecutor, dtpProperties, properties);
+        dtpExecutor.setNotifyItems(properties.getNotifyItems());
     }
 
     public static List<String> listAllDtpNames() {
@@ -212,13 +217,7 @@ public class DtpRegistry implements InitializingBean {
 
         DTP_REGISTRY.forEach((k, v) -> {
             NotifyHelper.fillNotifyItems(dtpProperties.getPlatforms(), v.getNotifyItems());
-            v.getNotifyItems().forEach(x -> {
-                // change notify not need to register alarm limiting.
-                if (x.getInterval() == null) {
-                    return;
-                }
-                AlarmLimiter.initAlarmLimiter(k, x);
-            });
+            v.getNotifyItems().forEach(x -> AlarmLimiter.initAlarmLimiter(k, x));
         });
     }
 }

@@ -1,13 +1,18 @@
 package com.dtp.core.helper;
 
 import cn.hutool.core.collection.CollUtil;
+import com.dtp.common.config.DtpProperties;
+import com.dtp.common.config.ThreadPoolProperties;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.util.StreamUtil;
 import com.dtp.core.DtpExecutor;
+import com.dtp.core.notify.AlarmLimiter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
@@ -50,6 +55,22 @@ public class NotifyHelper {
             if (CollUtil.isEmpty(n.getPlatforms())) {
                 n.setPlatforms(platformNames);
             }
+        });
+    }
+
+    public static void setExecutorNotifyItems(DtpExecutor dtpExecutor,
+                                              DtpProperties dtpProperties,
+                                              ThreadPoolProperties properties) {
+
+        fillNotifyItems(dtpProperties.getPlatforms(), properties.getNotifyItems());
+        List<NotifyItem> oldNotifyItems = dtpExecutor.getNotifyItems();
+        Map<String, NotifyItem> oldNotifyItemMap = StreamUtil.toMap(oldNotifyItems, NotifyItem::getType);
+        properties.getNotifyItems().forEach(x -> {
+            NotifyItem oldNotifyItem = oldNotifyItemMap.get(x.getType());
+            if (Objects.nonNull(oldNotifyItem) && oldNotifyItem.getInterval() == x.getInterval()) {
+                return;
+            }
+            AlarmLimiter.initAlarmLimiter(dtpExecutor.getThreadPoolName(), x);
         });
     }
 }

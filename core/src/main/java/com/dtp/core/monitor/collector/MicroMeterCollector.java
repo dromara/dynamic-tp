@@ -1,14 +1,19 @@
 package com.dtp.core.monitor.collector;
 
-import com.dtp.common.dto.ThreadPoolMetrics;
+import cn.hutool.core.bean.BeanUtil;
+import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.common.em.CollectorTypeEnum;
 import com.dtp.core.DtpExecutor;
 import com.dtp.core.helper.MetricsHelper;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tag;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * MicroMeterCollector related
@@ -19,9 +24,26 @@ import java.util.Collections;
 @Slf4j
 public class MicroMeterCollector extends AbstractCollector {
 
+    /**
+     * Prefix used for all dtp metric names.
+     */
+    public static final String DTP_METRIC_NAME_PREFIX = "thread.pool";
+
+    public static final String TAG_KEY = DTP_METRIC_NAME_PREFIX + ".name";
+
+    private static final Map<String, ThreadPoolStats> GAUGE_CACHE = new ConcurrentHashMap<>();
+
     @Override
     public void collect(DtpExecutor executor) {
-        gauge(MetricsHelper.getMetrics(executor));
+        ThreadPoolStats stats = MetricsHelper.getPoolStats(executor);
+        // metrics must be held with a strong reference, even though it is never referenced within this class
+        ThreadPoolStats oldStats = GAUGE_CACHE.get(executor.getThreadPoolName());
+        if (Objects.isNull(oldStats)) {
+            GAUGE_CACHE.put(executor.getThreadPoolName(), stats);
+        } else {
+            BeanUtil.copyProperties(stats, oldStats);
+        }
+        gauge(GAUGE_CACHE.get(executor.getThreadPoolName()));
     }
 
     @Override
@@ -29,23 +51,29 @@ public class MicroMeterCollector extends AbstractCollector {
         return CollectorTypeEnum.MICROMETER.name();
     }
 
-    public void gauge(ThreadPoolMetrics metrics) {
+    public void gauge(ThreadPoolStats poolStats) {
 
-        Iterable<Tag> tags = Collections.singletonList(Tag.of("thread.pool.name", metrics.getDtpName()));
-        Metrics.gauge("thread.pool.core.size", tags, metrics.getCorePoolSize());
-        Metrics.gauge("thread.pool.maximum.size", tags, metrics.getMaximumPoolSize());
-        Metrics.gauge("thread.pool.current.size", tags, metrics.getPoolSize());
-        Metrics.gauge("thread.pool.largest.size", tags, metrics.getLargestPoolSize());
-        Metrics.gauge("thread.pool.active.count", tags, metrics.getActiveCount());
+        Iterable<Tag> tags = Collections.singletonList(Tag.of(TAG_KEY, poolStats.getDtpName()));
 
-        Metrics.gauge("thread.pool.task.count", tags, metrics.getTaskCount());
-        Metrics.gauge("thread.pool.completed.task.count", tags, metrics.getCompletedTaskCount());
-        Metrics.gauge("thread.pool.wait.task.count", tags, metrics.getWaitTaskCount());
+        Metrics.gauge(metricName("core.size"), tags, poolStats, ThreadPoolStats::getCorePoolSize);
+        Metrics.gauge(metricName("maximum.size"), tags, poolStats, ThreadPoolStats::getMaximumPoolSize);
+        Metrics.gauge(metricName("current.size"), tags, poolStats, ThreadPoolStats::getPoolSize);
+        Metrics.gauge(metricName("largest.size"), tags, poolStats, ThreadPoolStats::getLargestPoolSize);
+        Metrics.gauge(metricName("active.count"), tags, poolStats, ThreadPoolStats::getActiveCount);
 
-        Metrics.gauge("thread.pool.queue.size", tags, metrics.getQueueSize());
-        Metrics.gauge("thread.pool.queue.capacity", tags, metrics.getQueueCapacity());
-        Metrics.gauge("thread.pool.queue.remaining.capacity", tags, metrics.getQueueRemainingCapacity());
+        Metrics.gauge(metricName("task.count"), tags, poolStats, ThreadPoolStats::getTaskCount);
+        Metrics.gauge(metricName("completed.task.count"), tags, poolStats, ThreadPoolStats::getCompletedTaskCount);
+        Metrics.gauge(metricName("wait.task.count"), tags, poolStats, ThreadPoolStats::getWaitTaskCount);
 
-        Metrics.gauge("thread.pool.reject.count", tags, metrics.getRejectCount());
+        Metrics.gauge(metricName("queue.size"), tags, poolStats, ThreadPoolStats::getQueueSize);
+        Metrics.gauge(metricName("queue.capacity"), tags, poolStats, ThreadPoolStats::getQueueCapacity);
+        Metrics.gauge(metricName("queue.remaining.capacity"), tags, poolStats, ThreadPoolStats::getQueueRemainingCapacity);
+
+        Metrics.gauge(metricName("reject.count"), tags, poolStats, ThreadPoolStats::getRejectCount);
+    }
+
+    private static String metricName(String name) {
+        return String.join(".", DTP_METRIC_NAME_PREFIX, name);
     }
 }
+

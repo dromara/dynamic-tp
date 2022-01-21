@@ -4,14 +4,14 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * JvmMetrics related
+ * JvmStats related
  *
  * @author: yanhom
  * @since 1.0.0
  **/
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class JvmMetrics extends Metrics {
+public class JvmStats extends Metrics {
 
     /**
      * Jvm max memory.

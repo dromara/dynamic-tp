@@ -4,29 +4,29 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * ThredPoolMetrics related
+ * ThreadPoolStats related
  *
  * @author: yanhom
  * @since 1.0.0
  **/
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ThreadPoolMetrics extends Metrics {
+public class ThreadPoolStats extends Metrics {
 
     private String dtpName;
 
-    private Integer corePoolSize;
+    private int corePoolSize;
 
-    private Integer maximumPoolSize;
+    private int maximumPoolSize;
 
     private String queueType;
 
-    private Integer queueCapacity;
+    private int queueCapacity;
 
     /**
      * 队列任务数量
      */
-    private Integer queueSize;
+    private int queueSize;
 
     /**
      * SynchronousQueue队列模式
@@ -36,42 +36,42 @@ public class ThreadPoolMetrics extends Metrics {
     /**
      * 队列剩余容量
      */
-    private Integer queueRemainingCapacity;
+    private int queueRemainingCapacity;
 
     /**
      * 正在执行任务的活跃线程大致总数
      */
-    private Integer activeCount;
+    private int activeCount;
 
     /**
      * 大致任务总数
      */
-    private Long taskCount;
+    private long taskCount;
 
     /**
      * 已执行完成的大致任务总数
      */
-    private Long completedTaskCount;
+    private long completedTaskCount;
 
     /**
      * 池中曾经同时存在的最大线程数量
      */
-    private Integer largestPoolSize;
+    private int largestPoolSize;
 
     /**
      * 当前池中存在的线程总数
      */
-    private Integer poolSize;
+    private int poolSize;
 
     /**
      * 等待执行的任务数量
      */
-    private Integer waitTaskCount;
+    private int waitTaskCount;
 
     /**
      * 拒绝的任务数量
      */
-    private Integer rejectCount;
+    private int rejectCount;
 
     /**
      * 拒绝策略名称

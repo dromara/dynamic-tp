@@ -6,7 +6,7 @@ import com.dtp.core.DtpExecutor;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.helper.MetricsHelper;
 import com.google.common.collect.Lists;
-import com.dtp.common.dto.JvmMetrics;
+import com.dtp.common.dto.JvmStats;
 import com.dtp.common.dto.Metrics;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
@@ -29,16 +29,16 @@ public class DtpEndpoint {
         List<Metrics> metricsList = Lists.newArrayList();
         dtpNames.forEach(x -> {
             DtpExecutor dtpExecutor = DtpRegistry.getExecutor(x);
-            metricsList.add(MetricsHelper.getMetrics(dtpExecutor));
+            metricsList.add(MetricsHelper.getPoolStats(dtpExecutor));
         });
 
-        JvmMetrics jvmMetrics = new JvmMetrics();
+        JvmStats jvmStats = new JvmStats();
         RuntimeInfo runtimeInfo = new RuntimeInfo();
-        jvmMetrics.setMaxMemory(FileUtil.readableFileSize(runtimeInfo.getMaxMemory()));
-        jvmMetrics.setTotalMemory(FileUtil.readableFileSize(runtimeInfo.getTotalMemory()));
-        jvmMetrics.setFreeMemory(FileUtil.readableFileSize(runtimeInfo.getFreeMemory()));
-        jvmMetrics.setUsableMemory(FileUtil.readableFileSize(runtimeInfo.getUsableMemory()));
-        metricsList.add(jvmMetrics);
+        jvmStats.setMaxMemory(FileUtil.readableFileSize(runtimeInfo.getMaxMemory()));
+        jvmStats.setTotalMemory(FileUtil.readableFileSize(runtimeInfo.getTotalMemory()));
+        jvmStats.setFreeMemory(FileUtil.readableFileSize(runtimeInfo.getFreeMemory()));
+        jvmStats.setUsableMemory(FileUtil.readableFileSize(runtimeInfo.getUsableMemory()));
+        metricsList.add(jvmStats);
         return metricsList;
     }
 }

@@ -16,7 +16,7 @@ public class LogCollector extends AbstractCollector {
 
     @Override
     public void collect(DtpExecutor executor) {
-        String metrics = JSONUtil.toJsonStr(MetricsHelper.getMetrics(executor));
+        String metrics = JSONUtil.toJsonStr(MetricsHelper.getPoolStats(executor));
         LogUtil.MONITOR_LOGGER.info("{}", metrics);
     }
 

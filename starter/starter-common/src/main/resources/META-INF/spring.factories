@@ -1,4 +1,7 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration
+  com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration,\
+  com.dtp.starter.common.autoconfigure.WebServerTpAutoConfiguration
 org.springframework.context.ApplicationListener=\
-  com.dtp.logging.DtpLoggingListener
+  com.dtp.logging.DtpLoggingListener,\
+  com.dtp.adapter.web.listener.DtpWebRefreshListener,\
+  com.dtp.adapter.web.listener.DtpWebCollectListener

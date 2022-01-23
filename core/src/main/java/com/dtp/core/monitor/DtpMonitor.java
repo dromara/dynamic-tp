@@ -1,23 +1,31 @@
 package com.dtp.core.monitor;
 
-import com.dtp.core.DtpExecutor;
+import cn.hutool.core.collection.CollUtil;
+import com.dtp.common.config.DtpProperties;
+import com.dtp.common.convert.MetricsConverter;
+import com.dtp.common.dto.ThreadPoolStats;
+import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.event.CollectEvent;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.handler.CollectorHandler;
 import com.dtp.core.notify.AlarmManager;
+import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.thread.NamedThreadFactory;
 import com.google.common.collect.Lists;
-import com.dtp.common.config.DtpProperties;
-import com.dtp.common.em.NotifyTypeEnum;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.event.ApplicationEventMulticaster;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import static com.dtp.common.em.NotifyTypeEnum.CAPACITY;
+import static com.dtp.common.em.NotifyTypeEnum.LIVENESS;
 import static com.dtp.core.notify.AlarmManager.doAlarm;
 
 /**
@@ -29,12 +37,17 @@ import static com.dtp.core.notify.AlarmManager.doAlarm;
 @Slf4j
 public class DtpMonitor implements ApplicationRunner {
 
+    private static final List<NotifyTypeEnum> ALARM_TYPES = Lists.newArrayList(LIVENESS, CAPACITY);
+
     private static final ScheduledExecutorService MONITOR_EXECUTOR = new ScheduledThreadPoolExecutor(
             1,
             new NamedThreadFactory("dtp-monitor", true));
 
     @Resource
     private DtpProperties dtpProperties;
+
+    @Resource
+    private ApplicationEventMulticaster applicationEventMulticaster;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -43,19 +56,35 @@ public class DtpMonitor implements ApplicationRunner {
     }
 
     private void run() {
-        try {
-            val names = DtpRegistry.listAllDtpNames();
-            names.forEach(x -> {
-                DtpExecutor executor = DtpRegistry.getExecutor(x);
-                AlarmManager.triggerAlarm(() -> doAlarm(executor,
-                                Lists.newArrayList(NotifyTypeEnum.LIVENESS, NotifyTypeEnum.CAPACITY)));
-
-                if (dtpProperties.isEnabledCollect()) {
-                    CollectorHandler.getInstance().collect(executor, dtpProperties.getCollectorType());
-                }
-            });
-        } catch (Exception e) {
-            log.error("DynamicTp monitor, run error...", e);
+        List<String> names = DtpRegistry.listAllDtpNames();
+        if (CollUtil.isEmpty(names)) {
+            return;
         }
+        names.forEach(x -> {
+            DtpExecutor executor = DtpRegistry.getExecutor(x);
+            AlarmManager.triggerAlarm(() -> doAlarm(executor, ALARM_TYPES));
+
+            ThreadPoolStats poolStats = MetricsConverter.convert(executor,
+                    executor.getThreadPoolName(), executor.getRejectCount());
+            doCollect(poolStats);
+        });
+
+        publishEvent();
+    }
+
+    private void doCollect(ThreadPoolStats threadPoolStats) {
+        if (!dtpProperties.isEnabledCollect()) {
+            return;
+        }
+        try {
+            CollectorHandler.getInstance().collect(threadPoolStats, dtpProperties.getCollectorType());
+        } catch (Exception e) {
+            log.error("DynamicTp monitor, metrics collect error...", e);
+        }
+    }
+
+    private void publishEvent() {
+        CollectEvent event = new CollectEvent(this, dtpProperties);
+        applicationEventMulticaster.multicastEvent(event);
     }
 }

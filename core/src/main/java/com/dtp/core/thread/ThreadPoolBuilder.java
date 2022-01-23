@@ -7,7 +7,6 @@ import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.common.dto.NotifyItem;
-import com.dtp.core.DtpExecutor;
 import com.dtp.core.helper.BuildHelper;
 import com.dtp.core.reject.RejectedCountableCallerRunsPolicy;
 import com.dtp.common.em.RejectedTypeEnum;

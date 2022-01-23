@@ -11,4 +11,10 @@
     <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
     <packaging>jar</packaging>
 
+    <dependencies>
+        <dependency>
+            <groupId>io.github.lyh200</groupId>
+            <artifactId>dynamic-tp-adapter</artifactId>
+        </dependency>
+    </dependencies>
 </project>

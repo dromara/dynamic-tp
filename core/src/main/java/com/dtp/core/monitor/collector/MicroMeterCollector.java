@@ -3,12 +3,9 @@ package com.dtp.core.monitor.collector;
 import cn.hutool.core.bean.BeanUtil;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.common.em.CollectorTypeEnum;
-import com.dtp.core.DtpExecutor;
-import com.dtp.core.helper.MetricsHelper;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tag;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 
 import java.util.Collections;
 import java.util.Map;
@@ -34,16 +31,15 @@ public class MicroMeterCollector extends AbstractCollector {
     private static final Map<String, ThreadPoolStats> GAUGE_CACHE = new ConcurrentHashMap<>();
 
     @Override
-    public void collect(DtpExecutor executor) {
-        ThreadPoolStats stats = MetricsHelper.getPoolStats(executor);
+    public void collect(ThreadPoolStats threadPoolStats) {
         // metrics must be held with a strong reference, even though it is never referenced within this class
-        ThreadPoolStats oldStats = GAUGE_CACHE.get(executor.getThreadPoolName());
+        ThreadPoolStats oldStats = GAUGE_CACHE.get(threadPoolStats.getDtpName());
         if (Objects.isNull(oldStats)) {
-            GAUGE_CACHE.put(executor.getThreadPoolName(), stats);
+            GAUGE_CACHE.put(threadPoolStats.getDtpName(), threadPoolStats);
         } else {
-            BeanUtil.copyProperties(stats, oldStats);
+            BeanUtil.copyProperties(threadPoolStats, oldStats);
         }
-        gauge(GAUGE_CACHE.get(executor.getThreadPoolName()));
+        gauge(GAUGE_CACHE.get(threadPoolStats.getDtpName()));
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.dtp.core.helper;
 
 import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.ex.DtpException;
-import com.dtp.core.DtpExecutor;
+import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.reject.RejectedCountableAbortPolicy;
 import com.dtp.core.reject.RejectedCountableCallerRunsPolicy;
 import com.dtp.core.reject.RejectedCountableDiscardOldestPolicy;

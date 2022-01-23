@@ -1,10 +1,9 @@
 package com.dtp.core.monitor.collector;
 
 import cn.hutool.json.JSONUtil;
+import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.common.em.CollectorTypeEnum;
 import com.dtp.common.util.LogUtil;
-import com.dtp.core.DtpExecutor;
-import com.dtp.core.helper.MetricsHelper;
 
 /**
  * LogCollector related
@@ -15,8 +14,8 @@ import com.dtp.core.helper.MetricsHelper;
 public class LogCollector extends AbstractCollector {
 
     @Override
-    public void collect(DtpExecutor executor) {
-        String metrics = JSONUtil.toJsonStr(MetricsHelper.getPoolStats(executor));
+    public void collect(ThreadPoolStats threadPoolStats) {
+        String metrics = JSONUtil.toJsonStr(threadPoolStats);
         LogUtil.MONITOR_LOGGER.info("{}", metrics);
     }
 

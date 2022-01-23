@@ -1,5 +1,6 @@
 package com.dtp.common.dto;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -11,6 +12,7 @@ import lombok.EqualsAndHashCode;
  **/
 @EqualsAndHashCode(callSuper = true)
 @Data
+@Builder
 public class ThreadPoolStats extends Metrics {
 
     private String dtpName;

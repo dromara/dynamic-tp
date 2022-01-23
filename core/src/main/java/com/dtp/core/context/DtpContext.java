@@ -3,7 +3,7 @@ package com.dtp.core.context;
 import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
-import com.dtp.core.DtpExecutor;
+import com.dtp.core.thread.DtpExecutor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.val;

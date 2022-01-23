@@ -1,6 +1,6 @@
 package com.dtp.example;
 
-import com.dtp.core.DtpExecutor;
+import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.DtpRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

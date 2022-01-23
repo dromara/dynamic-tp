@@ -1,11 +1,15 @@
 package com.dtp.common.config;
 
+import com.dtp.common.config.web.JettyThreadPool;
+import com.dtp.common.config.web.TomcatThreadPool;
+import com.dtp.common.config.web.UndertowThreadPool;
 import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.dto.NotifyPlatform;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -68,6 +72,21 @@ public class DtpProperties {
      * ThreadPoolExecutor configs.
      */
     private List<ThreadPoolProperties> executors;
+
+    /**
+     * Tomcat worker thread pool.
+     */
+    private TomcatThreadPool tomcatTp;
+
+    /**
+     * Jetty thread pool.
+     */
+    private JettyThreadPool jettyTp;
+
+    /**
+     * Undertow thread pool.
+     */
+    private UndertowThreadPool undertowTp;
 
     /**
      * Notify platform configs.

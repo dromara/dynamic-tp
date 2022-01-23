@@ -1,7 +1,7 @@
 package com.dtp.core.reject;
 
 import com.dtp.common.em.NotifyTypeEnum;
-import com.dtp.core.DtpExecutor;
+import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.notify.AlarmManager;
 
 import java.util.concurrent.RejectedExecutionHandler;

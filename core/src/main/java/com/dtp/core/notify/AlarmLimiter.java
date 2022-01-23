@@ -2,7 +2,7 @@ package com.dtp.core.notify;
 
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyTypeEnum;
-import com.dtp.core.DtpExecutor;
+import com.dtp.core.thread.DtpExecutor;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.apache.commons.lang3.StringUtils;

@@ -3,6 +3,7 @@ package com.dtp.core.refresh;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.em.ConfigFileTypeEnum;
+import com.dtp.common.event.RefreshEvent;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.handler.ConfigHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
+import org.springframework.context.event.ApplicationEventMulticaster;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -29,6 +31,9 @@ public abstract class AbstractRefresher implements Refresher {
 
     @Resource
     private DtpProperties dtpProperties;
+
+    @Resource
+    private ApplicationEventMulticaster applicationEventMulticaster;
 
     @Override
     public void refresh(String content, ConfigFileTypeEnum fileTypeEnum) {
@@ -52,5 +57,11 @@ public abstract class AbstractRefresher implements Refresher {
         DtpProperties bindDtpProperties = binder.bind(DynamicTpConst.MAIN_PROPERTIES_PREFIX,
                 Bindable.ofInstance(dtpProperties)).get();
         DtpRegistry.refresh(bindDtpProperties);
+        publishEvent();
+    }
+
+    private void publishEvent() {
+        RefreshEvent event = new RefreshEvent(this, dtpProperties);
+        applicationEventMulticaster.multicastEvent(event);
     }
 }

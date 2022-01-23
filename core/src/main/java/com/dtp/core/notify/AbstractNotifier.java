@@ -11,7 +11,7 @@ import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;
-import com.dtp.core.DtpExecutor;
+import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;

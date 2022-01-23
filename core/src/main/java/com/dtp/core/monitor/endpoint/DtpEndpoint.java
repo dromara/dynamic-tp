@@ -2,9 +2,9 @@ package com.dtp.core.monitor.endpoint;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.system.RuntimeInfo;
-import com.dtp.core.DtpExecutor;
+import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.DtpRegistry;
-import com.dtp.core.helper.MetricsHelper;
+import com.dtp.common.convert.MetricsConverter;
 import com.google.common.collect.Lists;
 import com.dtp.common.dto.JvmStats;
 import com.dtp.common.dto.Metrics;
@@ -28,8 +28,9 @@ public class DtpEndpoint {
         List<String> dtpNames = DtpRegistry.listAllDtpNames();
         List<Metrics> metricsList = Lists.newArrayList();
         dtpNames.forEach(x -> {
-            DtpExecutor dtpExecutor = DtpRegistry.getExecutor(x);
-            metricsList.add(MetricsHelper.getPoolStats(dtpExecutor));
+            DtpExecutor executor = DtpRegistry.getExecutor(x);
+            metricsList.add(MetricsConverter.convert(executor,
+                    executor.getThreadPoolName(), executor.getRejectCount()));
         });
 
         JvmStats jvmStats = new JvmStats();

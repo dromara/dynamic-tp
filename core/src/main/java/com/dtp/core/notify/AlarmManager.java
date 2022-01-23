@@ -10,7 +10,7 @@ import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
-import com.dtp.core.DtpExecutor;
+import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.handler.NotifierHandler;
 import com.dtp.core.helper.NotifyHelper;
 import com.dtp.core.thread.ThreadPoolBuilder;

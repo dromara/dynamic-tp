@@ -1,6 +1,6 @@
 package com.dtp.core.support;
 
-import com.dtp.core.DtpExecutor;
+import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.thread.ThreadPoolBuilder;
 
 import java.util.concurrent.ExecutorService;

@@ -1,6 +1,6 @@
 package com.dtp.core.monitor.collector;
 
-import com.dtp.core.DtpExecutor;
+import com.dtp.common.dto.ThreadPoolStats;
 
 /**
  * MetricsCollector related
@@ -12,9 +12,9 @@ public interface MetricsCollector {
 
     /**
      * Collect key metrics.
-     * @param executor dtpExecutor instance
+     * @param poolStats ThreadPoolStats instance
      */
-    void collect(DtpExecutor executor);
+    void collect(ThreadPoolStats poolStats);
 
     /**
      * Collector type.

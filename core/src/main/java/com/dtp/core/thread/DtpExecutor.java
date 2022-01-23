@@ -1,4 +1,4 @@
-package com.dtp.core;
+package com.dtp.core.thread;
 
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyTypeEnum;

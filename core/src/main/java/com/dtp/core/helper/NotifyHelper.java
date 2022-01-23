@@ -7,7 +7,7 @@ import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.util.StreamUtil;
-import com.dtp.core.DtpExecutor;
+import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.notify.AlarmLimiter;
 import lombok.extern.slf4j.Slf4j;
 

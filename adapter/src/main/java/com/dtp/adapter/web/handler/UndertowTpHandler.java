@@ -8,7 +8,6 @@ import org.springframework.boot.web.server.WebServer;
 
 import java.util.Objects;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * UndertowTpHandler related
@@ -36,8 +35,6 @@ public class UndertowTpHandler extends AbstractWebServerTpHandler {
         if (Objects.isNull(undertowTp) || Objects.isNull(webServerExecutor)) {
             return;
         }
-
-        ((ThreadPoolExecutor) webServerExecutor).setCorePoolSize(undertowTp.getMin());
-        ((ThreadPoolExecutor) webServerExecutor).setMaximumPoolSize(undertowTp.getMax());
+        // TODO update undertow thread pool
     }
 }

@@ -15,7 +15,6 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.ApplicationEventMulticaster;
 
 import javax.annotation.Resource;

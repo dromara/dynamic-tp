@@ -58,15 +58,15 @@ public class TomcatTpHandler extends AbstractWebServerTpHandler {
             return;
         }
 
-        int oldCorePoolSize = convertAndGet().getCorePoolSize();
-        int oldMaximumPoolSize = convertAndGet().getMaximumPoolSize();
+        int oldMinSpare = convertAndGet().getCorePoolSize();
+        int oldMax = convertAndGet().getMaximumPoolSize();
 
         convertAndGet().setCorePoolSize(tomcatTp.getMinSpare());
         convertAndGet().setMaximumPoolSize(tomcatTp.getMax());
 
-        log.info("DynamicTp tomcat web server refresh end, corePoolSize: [{}], maxPoolSize: [{}]",
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldCorePoolSize, tomcatTp.getMinSpare()),
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaximumPoolSize, tomcatTp.getMax()));
+        log.info("DynamicTp tomcatWebServerTp refresh end, minSpare: [{}], max: [{}]",
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMinSpare, tomcatTp.getMinSpare()),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMax, tomcatTp.getMax()));
     }
 
     private ThreadPoolExecutor convertAndGet() {

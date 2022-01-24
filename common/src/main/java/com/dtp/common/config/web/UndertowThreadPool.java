@@ -11,12 +11,12 @@ import lombok.Data;
 public class UndertowThreadPool {
 
     /**
-     * Maximum number of threads.
+     * Number of io threads.
      */
-    private int max = 200;
+    private int ioThreads = 8;
 
     /**
-     * Minimum number of threads.
+     * Number of worker threads.
      */
-    private int min = 8;
+    private int workerThreads = 8 * ioThreads;
 }

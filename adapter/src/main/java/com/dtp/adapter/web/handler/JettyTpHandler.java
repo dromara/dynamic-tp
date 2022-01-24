@@ -59,7 +59,7 @@ public class JettyTpHandler extends AbstractWebServerTpHandler {
         convertAndGet().setMinThreads(jettyTp.getMin());
         convertAndGet().setMaxThreads(jettyTp.getMax());
 
-        log.info("DynamicTp jetty web server refresh end, minThreads: [{}], maxThreads: [{}]",
+        log.info("DynamicTp jettyWebServerTp refresh end, minThreads: [{}], maxThreads: [{}]",
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMinThreads, jettyTp.getMin()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaxThreads, jettyTp.getMax()));
     }

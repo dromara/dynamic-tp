@@ -3,9 +3,12 @@ package com.dtp.starter.common.autoconfigure;
 import com.dtp.adapter.web.handler.JettyTpHandler;
 import com.dtp.adapter.web.handler.TomcatTpHandler;
 import com.dtp.adapter.web.handler.UndertowTpHandler;
+import com.dtp.adapter.web.listener.DtpWebCollectListener;
+import com.dtp.adapter.web.listener.DtpWebRefreshListener;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.constant.DynamicTpConst;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -39,5 +42,17 @@ public class WebServerTpAutoConfiguration {
     @ConditionalOnBean(name = {"undertowServletWebServerFactory"})
     public UndertowTpHandler undertowTpHandler() {
         return new UndertowTpHandler();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DtpWebRefreshListener dtpWebRefreshListener() {
+        return new DtpWebRefreshListener();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DtpWebCollectListener dtpWebCollectListener() {
+        return new DtpWebCollectListener();
     }
 }

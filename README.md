@@ -71,17 +71,19 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 
 **特性**
-+   参考[美团线程池实践](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)，对线程池参数动态化管理，增加监控、报警功能
++   **参考[美团线程池实践](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)，对线程池参数动态化管理，增加监控、报警功能**
 
-+   基于Spring框架，现只支持SpringBoot项目使用，轻量级，引入starter即可食用
++   **基于Spring框架，现只支持SpringBoot项目使用，轻量级，引入starter即可食用**
 
-+   基于配置中心实现线程池参数动态调整，实时生效；集成主流配置中心，默认支持Nacos、Apollo，
-    同时也提供SPI接口可自定义扩展实现
++   **基于配置中心实现线程池参数动态调整，实时生效；集成主流配置中心，默认支持Nacos、Apollo，
+    同时也提供SPI接口可自定义扩展实现**
 
-+   内置通知报警功能，提供多种报警维度（配置变更通知、活性报警、容量阈值报警、拒绝策略触发报警），
-    默认支持企业微信、钉钉报警，同时提供SPI接口可自定义扩展实现
++   **内置通知报警功能，提供多种报警维度（配置变更通知、活性报警、容量阈值报警、拒绝策略触发报警），
+    默认支持企业微信、钉钉报警，同时提供SPI接口可自定义扩展实现**
 
-+   内置线程池指标采集功能，支持通过MicroMeter、JsonLog日志输出、Endpoint三种方式，可通过SPI接口自定义扩展实现
++   **内置线程池指标采集功能，支持通过MicroMeter、JsonLog日志输出、Endpoint三种方式，可通过SPI接口自定义扩展实现**
+
++   **集成管理常用第三方组件的线程池，已集成SpringBoot内置WebServer（tomcat、undertow、jetty）的线程池管理**
 
 ***
 
@@ -183,7 +185,16 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
             - platform: ding
               urlKey: f80dad441fcd655438f4a08dcd6a     # 替换
               secret: SECb5441fa6f375d5b9d21           # 替换，非sign模式可以没有此值
-              receivers: 15810119805                   # 钉钉账号手机号          
+              receivers: 15810119805                   # 钉钉账号手机号    
+          tomcatTp:                                    # tomcat web server线程池配置
+              minSpare: 100
+              max: 400      
+          jettyTp:                                     # jetty web server线程池配置
+              min: 100
+              max: 400     
+          undertowTp:                                  # undertow web server线程池配置
+              ioThreads: 100
+              workerThreads: 400      
           executors:                                   # 动态线程池配置
             - threadPoolName: dynamic-tp-test-1
               corePoolSize: 6

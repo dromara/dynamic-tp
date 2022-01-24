@@ -1,6 +1,8 @@
 package com.dtp.adapter.web.handler;
 
 import com.dtp.common.ApplicationContextHolder;
+import com.dtp.common.config.DtpProperties;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.web.context.WebServerApplicationContext;
 import org.springframework.boot.web.server.WebServer;
 import org.springframework.context.ApplicationContext;
@@ -13,7 +15,7 @@ import java.util.concurrent.Executor;
  * @author yanhom
  * @since 1.0.0
  */
-public abstract class AbstractWebServerTpHandler implements WebServerTpHandler {
+public abstract class AbstractWebServerTpHandler implements WebServerTpHandler, InitializingBean {
 
     protected volatile Executor webServerExecutor;
 
@@ -37,4 +39,10 @@ public abstract class AbstractWebServerTpHandler implements WebServerTpHandler {
      * @return Executor instance
      */
     protected abstract Executor doGetTp(WebServer webServer);
+
+    @Override
+    public void afterPropertiesSet() {
+        DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+        updateWebServerTp(dtpProperties);
+    }
 }

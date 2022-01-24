@@ -15,22 +15,19 @@ import java.util.concurrent.Executor;
  */
 public abstract class AbstractWebServerTpHandler implements WebServerTpHandler {
 
-    protected Executor webServerExecutor;
-
-    protected AbstractWebServerTpHandler() {
-        init();
-    }
-
-    private void init() {
-        ApplicationContext applicationContext = ApplicationContextHolder.getInstance();
-        if (webServerExecutor == null) {
-            WebServer webServer = ((WebServerApplicationContext) applicationContext).getWebServer();
-            webServerExecutor = doGetTp(webServer);
-        }
-    }
+    protected volatile Executor webServerExecutor;
 
     @Override
     public Executor getWebServerTp() {
+        if (webServerExecutor == null) {
+            synchronized (AbstractWebServerTpHandler.class) {
+                if (webServerExecutor == null) {
+                    ApplicationContext applicationContext = ApplicationContextHolder.getInstance();
+                    WebServer webServer = ((WebServerApplicationContext) applicationContext).getWebServer();
+                    webServerExecutor = doGetTp(webServer);
+                }
+            }
+        }
         return webServerExecutor;
     }
 
@@ -40,5 +37,4 @@ public abstract class AbstractWebServerTpHandler implements WebServerTpHandler {
      * @return Executor instance
      */
     protected abstract Executor doGetTp(WebServer webServer);
-
 }

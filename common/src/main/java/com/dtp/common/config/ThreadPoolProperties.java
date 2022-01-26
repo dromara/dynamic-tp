@@ -27,7 +27,7 @@ public class ThreadPoolProperties {
     /**
      * CoreSize of ThreadPool.
      */
-    private int corePoolSize = 2;
+    private int corePoolSize = 1;
 
     /**
      * MaxSize of ThreadPool.

@@ -7,7 +7,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * DtpCreator related
+ * Offer a fast dtp creator, use only in simple scenario.
+ * It is best to use ThreadPoolBuilder and assign relevant values.
  *
  * @author: yanhom
  * @since 1.0.0

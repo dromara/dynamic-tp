@@ -358,4 +358,4 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 对项目有什么想法或者建议，可以加我微信交流，或者创建[issues](https://github.com/lyh200/dynamic-tp-spring-cloud-starter/issues)，一起完善项目
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/52693295459f45b88acb3846a8a6d618~tplv-k3u1fbpfcp-zoom-1.image)
+![](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/530709dc29604630b6d1537d7c160ea5~tplv-k3u1fbpfcp-watermark.image)

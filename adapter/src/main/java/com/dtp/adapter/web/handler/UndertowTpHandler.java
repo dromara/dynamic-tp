@@ -20,6 +20,7 @@ public class UndertowTpHandler extends AbstractWebServerTpHandler {
     @Override
     public Executor doGetTp(WebServer webServer) {
         UndertowServletWebServer undertowWebServer = (UndertowServletWebServer) webServer;
+        // TODO: if get null, then the XNIO Worker TaskPool will be used.
         return undertowWebServer.getDeploymentManager().getDeployment().getExecutor();
     }
 

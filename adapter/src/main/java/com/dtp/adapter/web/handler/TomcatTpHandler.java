@@ -64,7 +64,7 @@ public class TomcatTpHandler extends AbstractWebServerTpHandler {
         convertAndGet().setCorePoolSize(tomcatTp.getMinSpare());
         convertAndGet().setMaximumPoolSize(tomcatTp.getMax());
 
-        log.info("DynamicTp tomcatWebServerTp refresh end, minSpare: [{}], max: [{}]",
+        log.info("DynamicTp tomcatWebServerTp refreshed end, minSpare: [{}], max: [{}]",
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMinSpare, tomcatTp.getMinSpare()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMax, tomcatTp.getMax()));
     }

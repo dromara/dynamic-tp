@@ -12,7 +12,6 @@ import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
 import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.handler.NotifierHandler;
-import com.dtp.core.helper.NotifyHelper;
 import com.dtp.core.thread.ThreadPoolBuilder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,7 +32,8 @@ public class AlarmManager {
     private static final ExecutorService ALARM_EXECUTOR = ThreadPoolBuilder.newBuilder()
             .threadPoolName("dtp-alarm")
             .threadFactory("dtp-alarm")
-            .corePoolSize(4)
+            .corePoolSize(2)
+            .maximumPoolSize(4)
             .workQueue(QueueTypeEnum.LINKED_BLOCKING_QUEUE.getName(), 2000, false)
             .rejectedExecutionHandler(RejectedTypeEnum.ABORT_POLICY.getName())
             .buildWithTtl();

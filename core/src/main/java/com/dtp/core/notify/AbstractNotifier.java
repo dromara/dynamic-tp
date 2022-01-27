@@ -4,18 +4,18 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.Instance;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;
-import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
+import com.dtp.core.thread.DtpExecutor;
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -24,9 +24,10 @@ import org.springframework.core.env.Environment;
 
 import java.lang.reflect.Field;
 import java.net.InetAddress;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static com.dtp.core.notify.NotifyHelper.*;
 
 /**
  * AbstractNotifier related
@@ -140,7 +141,8 @@ public abstract class AbstractNotifier implements Notifier {
     }
 
     /**
-     * Implement by subclass, get color config.
+     * Implement by subclass, get content color config.
+     *
      * @return left: highlight color, right: other content color
      */
     protected abstract Pair<String, String> getColors();
@@ -165,20 +167,21 @@ public abstract class AbstractNotifier implements Notifier {
             return content;
         }
 
-        List<String> colorKeys = Collections.emptyList();
+        List<String> colorKeys = Lists.newArrayList();
         if (typeEnum == NotifyTypeEnum.REJECT) {
-            colorKeys = DynamicTpConst.REJECT_ALARM_KEYS;
+            colorKeys = REJECT_ALARM_KEYS;
         } else if (typeEnum == NotifyTypeEnum.CAPACITY) {
-            colorKeys = DynamicTpConst.CAPACITY_ALARM_KEYS;
+            colorKeys = CAPACITY_ALARM_KEYS;
         } else if (typeEnum == NotifyTypeEnum.LIVENESS) {
-            colorKeys = DynamicTpConst.LIVENESS_ALARM_KEYS;
+            colorKeys = LIVENESS_ALARM_KEYS;
         }
 
+        colorKeys.addAll(COMMON_ALARM_KEYS);
         Pair<String, String> pair = getColors();
         for (String field : colorKeys) {
             content = content.replace(field, pair.getLeft());
         }
-        for (String field : DynamicTpConst.ALL_ALARM_KEYS) {
+        for (String field : ALL_ALARM_KEYS) {
             content = content.replace(field, pair.getRight());
         }
         return content;

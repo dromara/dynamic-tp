@@ -4,12 +4,12 @@ import cn.hutool.core.collection.CollUtil;
 import com.alibaba.ttl.threadpool.TtlExecutors;
 import com.dtp.common.VariableLinkedBlockingQueue;
 import com.dtp.common.constant.DynamicTpConst;
+import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.em.QueueTypeEnum;
-import com.dtp.common.dto.NotifyItem;
-import com.dtp.core.helper.BuildHelper;
-import com.dtp.core.reject.RejectedCountableCallerRunsPolicy;
 import com.dtp.common.em.RejectedTypeEnum;
+import com.dtp.core.reject.RejectHandlerGetter;
+import com.dtp.core.reject.RejectedCountableCallerRunsPolicy;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.concurrent.*;
 
 /**
- * Builder that create a ThreadPoolExecutor gracefully.
+ * Builder for creating a ThreadPoolExecutor gracefully.
  *
  * @author: yanhom
  * @since 1.0.0
@@ -121,23 +121,24 @@ public class ThreadPoolBuilder {
     }
 
     /**
-     * create work queue
+     * Create work queue
+     *
      * @param queueName queue name
      * @param capacity queue capacity
      * @param fair for SynchronousQueue
-     * @return ThreadPoolBuilder instance
+     * @return the ThreadPoolBuilder instance
      */
     public ThreadPoolBuilder workQueue(String queueName, Integer capacity, Boolean fair) {
         if (StringUtils.isNotBlank(queueName)) {
             workQueue = QueueTypeEnum.buildBlockingQueue(queueName,
-                    capacity != null ? capacity : 128, fair != null && fair);
+                    capacity != null ? capacity : 1024, fair != null && fair);
         }
         return this;
     }
 
     public ThreadPoolBuilder rejectedExecutionHandler(String rejectedName) {
         if (StringUtils.isNotBlank(rejectedName)) {
-            rejectedExecutionHandler = BuildHelper.buildRejectedHandler(rejectedName);
+            rejectedExecutionHandler = RejectHandlerGetter.buildRejectedHandler(rejectedName);
         }
         return this;
     }
@@ -168,7 +169,8 @@ public class ThreadPoolBuilder {
 
     /**
      * Build according to dynamic field.
-     * @return ThreadPoolExecutor instance
+     *
+     * @return the newly created ThreadPoolExecutor instance
      */
     public ThreadPoolExecutor build() {
         if (dynamic) {
@@ -179,8 +181,9 @@ public class ThreadPoolBuilder {
     }
 
     /**
-     * Build dynamic ThreadPoolExecutor.
-     * @return DtpExecutor instance
+     * Build a dynamic ThreadPoolExecutor.
+     *
+     * @return the newly created DtpExecutor instance
      */
     public DtpExecutor buildDynamic() {
         return buildDtpExecutor(this);
@@ -188,16 +191,18 @@ public class ThreadPoolBuilder {
 
     /**
      * Build common ThreadPoolExecutor.
-     * @return ThreadPoolExecutor instance
+     *
+     * @return the newly created ThreadPoolExecutor instance
      */
     public ThreadPoolExecutor buildCommon() {
         return buildCommonExecutor(this);
     }
 
     /**
-     * Build and wrapper with ttl
+     * Build thread pool executor and wrapper with ttl
+     *
      * @see com.alibaba.ttl.TransmittableThreadLocal
-     * @return ExecutorService instance
+     * @return the newly created ExecutorService instance
      */
     public ExecutorService buildWithTtl() {
         return TtlExecutors.getTtlExecutorService(buildCommonExecutor(this));
@@ -205,8 +210,9 @@ public class ThreadPoolBuilder {
 
     /**
      * Build dynamic threadPoolExecutor.
-     * @param builder builder
-     * @return DtpExecutor instance
+     *
+     * @param builder the targeted builder
+     * @return the newly created DtpExecutor instance
      */
     private DtpExecutor buildDtpExecutor(ThreadPoolBuilder builder) {
         Assert.notNull(builder.threadPoolName, "The thread pool name must not be null.");
@@ -227,8 +233,9 @@ public class ThreadPoolBuilder {
 
     /**
      * Build common threadPoolExecutor, does not manage by DynamicTp framework.
-     * @param builder builder
-     * @return ThreadPoolExecutor instance
+     *
+     * @param builder the targeted builder
+     * @return the newly created ThreadPoolExecutor instance
      */
     private ThreadPoolExecutor buildCommonExecutor(ThreadPoolBuilder builder) {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(

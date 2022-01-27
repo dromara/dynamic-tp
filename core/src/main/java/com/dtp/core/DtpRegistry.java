@@ -12,10 +12,11 @@ import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.common.ex.DtpException;
 import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
+import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.handler.NotifierHandler;
-import com.dtp.core.helper.BuildHelper;
-import com.dtp.core.helper.NotifyHelper;
 import com.dtp.core.notify.AlarmLimiter;
+import com.dtp.core.notify.NotifyHelper;
+import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.support.DtpCreator;
 import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.thread.ThreadPoolBuilder;
@@ -57,18 +58,21 @@ public class DtpRegistry implements InitializingBean {
     private static DtpProperties dtpProperties;
 
     /**
-     * Register the Dynamic ThreadPoolExecutors.
-     * @param executor DtpExecutor instance.
+     * Register a Dynamic ThreadPoolExecutor.
+     *
+     * @param executor the newly created DtpExecutor instance
+     * @param source the source of the call to register method
      */
-    public static void register(DtpExecutor executor) {
-        log.info("DynamicTp register, executor: {}", BuildHelper.of(executor));
+    public static void register(DtpExecutor executor, String source) {
+        log.info("DynamicTp register, source: {}, executor: {}", source, ExecutorConverter.convert(executor));
         DTP_REGISTRY.put(executor.getThreadPoolName(), executor);
     }
 
     /**
-     * Get Dynamic ThreadPoolExecutor by threadPoolName.
-     * @param name threadPoolName
-     * @return The managed DtpExecutor instance.
+     * Get Dynamic ThreadPoolExecutor by thread pool name.
+     *
+     * @param name the name of dynamic thread pool
+     * @return the managed DtpExecutor instance
      */
     public static DtpExecutor getExecutor(String name) {
         val executor= DTP_REGISTRY.get(name);
@@ -80,8 +84,9 @@ public class DtpRegistry implements InitializingBean {
     }
 
     /**
-     * Refresh while the listening configuration changes.
-     * @param properties Main properties that maintain by the config center.
+     * Refresh while the listening configuration changed.
+     *
+     * @param properties the main properties that maintain by config center
      */
     public static void refresh(DtpProperties properties) {
         if (Objects.isNull(properties) || CollUtil.isEmpty(properties.getExecutors())) {
@@ -103,11 +108,11 @@ public class DtpRegistry implements InitializingBean {
     }
 
     public static void refresh(DtpExecutor executor, ThreadPoolProperties properties) {
-        DtpMainProp oldProp = BuildHelper.of(executor);
+        DtpMainProp oldProp = ExecutorConverter.convert(executor);
         doRefresh(executor, properties);
-        DtpMainProp newProp = BuildHelper.of(executor);
+        DtpMainProp newProp = ExecutorConverter.convert(executor);
         if (oldProp.equals(newProp)) {
-            log.warn("DynamicTp [{}] has no property changes.", executor.getThreadPoolName());
+            log.warn("DynamicTp [{}] has no properties changed.", executor.getThreadPoolName());
             return;
         }
 
@@ -121,7 +126,7 @@ public class DtpRegistry implements InitializingBean {
         DtpContextHolder.set(contextWrapper);
         NOTIFY_EXECUTOR.execute(() -> NotifierHandler.getInstance().sendNotice(oldProp, diffKeys));
 
-        log.info("DynamicTp [{}] refresh end, changed keys: {}, corePoolSize: [{}], maxPoolSize: [{}], " +
+        log.info("DynamicTp [{}] refreshed end, changed keys: {}, corePoolSize: [{}], maxPoolSize: [{}], " +
                         "queueType: [{}], queueCapacity: [{}], keepAliveTime: [{}], rejectedType: [{}], " +
                         "allowsCoreThreadTimeOut: [{}]",
                 executor.getThreadPoolName(),
@@ -162,7 +167,7 @@ public class DtpRegistry implements InitializingBean {
         if (StringUtils.isNotBlank(properties.getRejectedHandlerType()) &&
                 !originRejectedName.contains(properties.getRejectedHandlerType())) {
             dtpExecutor.setRejectedExecutionHandler(
-                    BuildHelper.buildRejectedHandler(properties.getRejectedHandlerType()));
+                    RejectHandlerGetter.buildRejectedHandler(properties.getRejectedHandlerType()));
         }
 
         // update work queue capacity
@@ -173,7 +178,7 @@ public class DtpRegistry implements InitializingBean {
             if (blockingQueue instanceof VariableLinkedBlockingQueue) {
                 ((VariableLinkedBlockingQueue<Runnable>)blockingQueue).setCapacity(properties.getQueueCapacity());
             } else {
-                log.error("DynamicTp refresh, the blockingqueue capacity cannot be reset, dtpName: {}, queue {}",
+                log.error("DynamicTp refresh, the blockingqueue capacity cannot be reset, dtpName: {}, queueType {}",
                         dtpExecutor.getThreadPoolName(), dtpExecutor.getQueueName());
             }
         }
@@ -213,7 +218,7 @@ public class DtpRegistry implements InitializingBean {
                     .threadPoolName(x.getThreadPoolName())
                     .notifyItems(x.getNotifyItems())
                     .buildDynamic();
-            register(executor);
+            register(executor, "configuration");
         });
 
         DTP_REGISTRY.forEach((k, v) -> {

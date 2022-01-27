@@ -26,6 +26,6 @@ public class DtpPostProcessor implements BeanPostProcessor {
     }
 
     private void register(DtpExecutor executor) {
-        DtpRegistry.register(executor);
+        DtpRegistry.register(executor, "beanPostProcessor");
     }
 }

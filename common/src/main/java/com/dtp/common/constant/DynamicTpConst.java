@@ -1,13 +1,5 @@
 package com.dtp.common.constant;
 
-import com.google.common.collect.Lists;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 /**
  * DynamicTpConst related
  *
@@ -25,22 +17,4 @@ public class DynamicTpConst {
     public static final int AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors();
 
     public static final String PROPERTIES_CHANGE_SHOW_STYLE = "%s => %s";
-
-    public static final List<String> LIVENESS_ALARM_KEYS = Lists.newArrayList(
-            "alarmType", "threshold", "corePoolSize",
-            "maximumPoolSize", "poolSize", "activeCount"
-    );
-
-    public static final List<String> CAPACITY_ALARM_KEYS = Lists.newArrayList(
-            "alarmType", "threshold", "queueType",
-            "queueCapacity", "queueSize", "queueRemaining"
-    );
-
-    public static final List<String> REJECT_ALARM_KEYS = Lists.newArrayList(
-            "alarmType", "threshold", "rejectType", "rejectCount"
-    );
-
-    public static final Set<String> ALL_ALARM_KEYS =
-            Stream.of(CAPACITY_ALARM_KEYS, REJECT_ALARM_KEYS, LIVENESS_ALARM_KEYS)
-            .flatMap(Collection::stream).collect(Collectors.toSet());
 }

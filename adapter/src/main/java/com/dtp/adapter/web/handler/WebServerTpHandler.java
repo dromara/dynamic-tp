@@ -15,19 +15,22 @@ public interface WebServerTpHandler {
 
     /**
      * Get specify web server thread pool.
-     * @return
+     *
+     * @return the specify executor
      */
     Executor getWebServerTp();
 
     /**
-     * Get thread pool stats.
-     * @return
+     * Get web server thread pool stats.
+     *
+     * @return the thread pool stats
      */
     ThreadPoolStats getPoolStats();
 
     /**
      * Update web server thread pool.
-     * @param dtpProperties dtpProperties
+     *
+     * @param dtpProperties the targeted dtpProperties
      */
     void updateWebServerTp(DtpProperties dtpProperties);
 }

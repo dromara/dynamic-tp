@@ -2,7 +2,7 @@ package com.dtp.core.monitor;
 
 import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.config.DtpProperties;
-import com.dtp.common.convert.MetricsConverter;
+import com.dtp.core.convert.MetricsConverter;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.event.CollectEvent;

@@ -35,8 +35,9 @@ public abstract class AbstractWebServerTpHandler implements WebServerTpHandler, 
 
     /**
      * Get thread pool.
+     *
      * @param webServer webServer
-     * @return Executor instance
+     * @return the Executor instance
      */
     protected abstract Executor doGetTp(WebServer webServer);
 

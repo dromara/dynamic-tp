@@ -1,4 +1,4 @@
-package com.dtp.common.convert;
+package com.dtp.core.convert;
 
 import com.dtp.common.dto.ThreadPoolStats;
 
@@ -21,7 +21,6 @@ public class MetricsConverter {
         if (executor == null) {
             return null;
         }
-
         return ThreadPoolStats.builder()
                 .corePoolSize(executor.getCorePoolSize())
                 .maximumPoolSize(executor.getMaximumPoolSize())

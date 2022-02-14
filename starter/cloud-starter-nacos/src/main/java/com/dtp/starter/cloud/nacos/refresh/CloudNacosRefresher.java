@@ -8,7 +8,7 @@ import com.dtp.common.config.DtpProperties;
 import com.dtp.common.em.ConfigFileTypeEnum;
 import com.dtp.common.util.NacosUtil;
 import com.dtp.core.refresh.AbstractRefresher;
-import com.dtp.core.support.DtpCreator;
+import com.dtp.core.support.ThreadPoolCreator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.env.Environment;
@@ -26,7 +26,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class CloudNacosRefresher extends AbstractRefresher implements InitializingBean, Listener {
 
-    private static final ThreadPoolExecutor EXECUTOR = DtpCreator.createCommonFast("nacos-listener");
+    private static final ThreadPoolExecutor EXECUTOR = ThreadPoolCreator.createCommonFast("nacos-listener");
 
     private ConfigFileTypeEnum configFileType;
 

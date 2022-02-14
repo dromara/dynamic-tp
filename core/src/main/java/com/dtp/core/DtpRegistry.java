@@ -17,7 +17,7 @@ import com.dtp.core.handler.NotifierHandler;
 import com.dtp.core.notify.AlarmLimiter;
 import com.dtp.core.notify.NotifyHelper;
 import com.dtp.core.reject.RejectHandlerGetter;
-import com.dtp.core.support.DtpCreator;
+import com.dtp.core.support.ThreadPoolCreator;
 import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.thread.ThreadPoolBuilder;
 import com.github.dadiyang.equator.Equator;
@@ -49,7 +49,7 @@ import static com.dtp.common.dto.NotifyItem.getDefaultNotifyItems;
 @Slf4j
 public class DtpRegistry implements InitializingBean {
 
-    private static final ExecutorService NOTIFY_EXECUTOR = DtpCreator.createWithTtl("dtp-notify");
+    private static final ExecutorService NOTIFY_EXECUTOR = ThreadPoolCreator.createWithTtl("dtp-notify");
 
     private static final Map<String, DtpExecutor> DTP_REGISTRY = new ConcurrentHashMap<>();
 

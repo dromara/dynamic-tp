@@ -85,6 +85,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 +   **集成管理常用第三方组件的线程池，已集成SpringBoot内置WebServer（tomcat、undertow、jetty）的线程池管理**
 
++   **Builder提供TTL包装功能，生成的线程池支持上下文信息传递** 
 ***
 
 ### 架构设计
@@ -140,7 +141,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
         <dependency>
             <groupId>io.github.lyh200</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-apollo</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
         </dependency>
     ```
 2. spring-cloud场景下的nacos应用接入用此依赖
@@ -148,7 +149,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
         <dependency>
             <groupId>io.github.lyh200</groupId>
             <artifactId>dynamic-tp-spring-cloud-starter-nacos</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
         </dependency>
     ```
 3. 非spring-cloud场景下的nacos应用接入用此依赖
@@ -156,7 +157,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
         <dependency>
             <groupId>io.github.lyh200</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-nacos</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
         </dependency>
     ```
 

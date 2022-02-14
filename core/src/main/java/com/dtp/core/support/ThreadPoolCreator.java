@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @author: yanhom
  * @since 1.0.0
  **/
-public class DtpCreator {
+public class ThreadPoolCreator {
 
     public static ThreadPoolExecutor createCommonFast(String threadPrefix) {
         return ThreadPoolBuilder.newBuilder()

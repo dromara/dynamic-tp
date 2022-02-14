@@ -1,5 +1,6 @@
 package com.dtp.core.thread;
 
+import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ThreadFactory;
@@ -54,7 +55,7 @@ public class NamedThreadFactory implements ThreadFactory {
 
     @Override
     public Thread newThread(Runnable r) {
-        Thread t = new Thread(group, r, namePrefix + "-thread-" + seq.getAndIncrement(), 0);
+        Thread t = new Thread(group, r, StrUtil.format("{}{}", namePrefix, seq.getAndIncrement()));
         t.setDaemon(daemon);
         t.setPriority(priority);
         t.setUncaughtExceptionHandler(uncaughtExceptionHandler);

@@ -8,7 +8,6 @@ import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.em.QueueTypeEnum;
-import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.common.ex.DtpException;
 import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
@@ -136,8 +135,7 @@ public class DtpRegistry implements InitializingBean {
                 String.format(DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getQueueType(), newProp.getQueueType()),
                 String.format(DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getQueueCapacity(), newProp.getQueueCapacity()),
                 String.format("%ss => %ss", oldProp.getKeepAliveTime(), newProp.getKeepAliveTime()),
-                String.format(DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE, RejectedTypeEnum.formatRejectName(oldProp.getRejectType()),
-                        RejectedTypeEnum.formatRejectName(newProp.getRejectType())),
+                String.format(DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getRejectType(), newProp.getRejectType()),
                 String.format(DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE, oldProp.isAllowCoreThreadTimeOut(),
                         newProp.isAllowCoreThreadTimeOut()));
     }
@@ -166,8 +164,8 @@ public class DtpRegistry implements InitializingBean {
         String originRejectedName = dtpExecutor.getRejectHandlerName();
         if (StringUtils.isNotBlank(properties.getRejectedHandlerType()) &&
                 !originRejectedName.contains(properties.getRejectedHandlerType())) {
-            dtpExecutor.setRejectedExecutionHandler(
-                    RejectHandlerGetter.buildRejectedHandler(properties.getRejectedHandlerType()));
+            dtpExecutor.setRejectedExecutionHandler(RejectHandlerGetter.getProxy(properties.getRejectedHandlerType()));
+            dtpExecutor.setRejectHandlerName(properties.getRejectedHandlerType());
         }
 
         // update work queue capacity

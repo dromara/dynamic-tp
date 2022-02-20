@@ -26,16 +26,7 @@ public enum RejectedTypeEnum {
 
     private final String name;
 
-    private static final String REJECTED_PREFIX = "RejectedCountable";
-
     RejectedTypeEnum(String name) {
         this.name = name;
-    }
-
-    public static String formatRejectName(String name) {
-        if (name.startsWith(REJECTED_PREFIX)) {
-            return name.replace(REJECTED_PREFIX, "");
-        }
-        return name;
     }
 }

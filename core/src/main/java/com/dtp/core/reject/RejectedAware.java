@@ -1,19 +1,18 @@
 package com.dtp.core.reject;
 
 import com.dtp.common.em.NotifyTypeEnum;
-import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.notify.AlarmManager;
+import com.dtp.core.thread.DtpExecutor;
 
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * RejectedCountable related
+ * RejectedAware related
  *
  * @author: yanhom
  * @since 1.0.0
  **/
-public interface RejectedCountable extends RejectedExecutionHandler {
+public interface RejectedAware {
 
     /**
      * Do sth before reject.
@@ -26,5 +25,4 @@ public interface RejectedCountable extends RejectedExecutionHandler {
             AlarmManager.triggerAlarm(() -> AlarmManager.doAlarm(dtpExecutor, NotifyTypeEnum.REJECT));
         }
     }
-
 }

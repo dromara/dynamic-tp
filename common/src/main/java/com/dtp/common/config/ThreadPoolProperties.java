@@ -52,7 +52,7 @@ public class ThreadPoolProperties {
     /**
      * RejectedExecutionHandler type, see {@link RejectedTypeEnum}
      */
-    private String rejectedHandlerType = RejectedTypeEnum.CALLER_RUNS_POLICY.getName();
+    private String rejectedHandlerType = RejectedTypeEnum.ABORT_POLICY.getName();
 
     /**
      * When the number of threads is greater than the core,

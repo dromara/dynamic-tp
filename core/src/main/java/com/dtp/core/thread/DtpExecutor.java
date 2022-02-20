@@ -2,7 +2,7 @@ package com.dtp.core.thread;
 
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyTypeEnum;
-import com.dtp.core.reject.RejectedCountableCallerRunsPolicy;
+import com.dtp.core.reject.RejectHandlerGetter;
 
 import java.util.List;
 import java.util.concurrent.*;
@@ -27,18 +27,14 @@ public class DtpExecutor extends ThreadPoolExecutor {
     private final AtomicInteger rejectCount = new AtomicInteger();
 
     /**
+     * RejectHandler name.
+     */
+    private String rejectHandlerName;
+
+    /**
      * Notify items, see {@link NotifyTypeEnum}.
      */
     private List<NotifyItem> notifyItems;
-
-    public DtpExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue) {
-        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
-    }
-
-    public DtpExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
-                       BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory) {
-        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, new RejectedCountableCallerRunsPolicy());
-    }
 
     public DtpExecutor(int corePoolSize,
                        int maximumPoolSize,
@@ -47,7 +43,10 @@ public class DtpExecutor extends ThreadPoolExecutor {
                        BlockingQueue<Runnable> workQueue,
                        ThreadFactory threadFactory,
                        RejectedExecutionHandler handler) {
-        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
+        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);
+        this.rejectHandlerName = handler.getClass().getSimpleName();
+        RejectedExecutionHandler rejectedExecutionHandler = RejectHandlerGetter.getProxy(handler);
+        setRejectedExecutionHandler(rejectedExecutionHandler);
     }
 
     public void setThreadPoolName(String threadPoolName) {
@@ -83,6 +82,10 @@ public class DtpExecutor extends ThreadPoolExecutor {
     }
 
     public String getRejectHandlerName() {
-        return getRejectedExecutionHandler().getClass().getSimpleName();
+        return rejectHandlerName;
+    }
+
+    public void setRejectHandlerName(String rejectHandlerName) {
+        this.rejectHandlerName = rejectHandlerName;
     }
 }

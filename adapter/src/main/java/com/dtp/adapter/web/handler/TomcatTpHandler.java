@@ -12,7 +12,6 @@ import java.util.Objects;
 import java.util.concurrent.Executor;
 
 import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
-import static com.dtp.common.em.RejectedTypeEnum.formatRejectName;
 
 /**
  * TomcatTpHandler related
@@ -46,7 +45,7 @@ public class TomcatTpHandler extends AbstractWebServerTpHandler {
                 .largestPoolSize(executor.getLargestPoolSize())
                 .poolSize(executor.getPoolSize())
                 .waitTaskCount(executor.getQueue().size())
-                .rejectHandlerName(formatRejectName(executor.getRejectedExecutionHandler().getClass().getSimpleName()))
+                .rejectHandlerName(executor.getRejectedExecutionHandler().getClass().getSimpleName())
                 .dtpName("tomcatWebServerTp")
                 .build();
     }

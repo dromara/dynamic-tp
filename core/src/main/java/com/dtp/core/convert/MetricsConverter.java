@@ -4,8 +4,6 @@ import com.dtp.common.dto.ThreadPoolStats;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
-import static com.dtp.common.em.RejectedTypeEnum.formatRejectName;
-
 /**
  * MetricsConverter related
  *
@@ -34,7 +32,7 @@ public class MetricsConverter {
                 .largestPoolSize(executor.getLargestPoolSize())
                 .poolSize(executor.getPoolSize())
                 .waitTaskCount(executor.getQueue().size())
-                .rejectHandlerName(formatRejectName(executor.getRejectedExecutionHandler().getClass().getSimpleName()))
+                .rejectHandlerName(executor.getRejectedExecutionHandler().getClass().getSimpleName())
                 .dtpName(name)
                 .rejectCount(rejectCount)
                 .build();

@@ -9,7 +9,6 @@ import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.core.reject.RejectHandlerGetter;
-import com.dtp.core.reject.RejectedCountableCallerRunsPolicy;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -57,9 +56,9 @@ public class ThreadPoolBuilder {
     private BlockingQueue<Runnable> workQueue = new VariableLinkedBlockingQueue<>(1024);
 
     /**
-     * RejectedExecutionHandler that implements RejectedCountable interface, see {@link RejectedTypeEnum}
+     * RejectedExecutionHandler, see {@link RejectedTypeEnum}
      */
-    private RejectedExecutionHandler rejectedExecutionHandler = new RejectedCountableCallerRunsPolicy();
+    private RejectedExecutionHandler rejectedExecutionHandler = new ThreadPoolExecutor.AbortPolicy();
 
     /**
      * Default inner thread factory.

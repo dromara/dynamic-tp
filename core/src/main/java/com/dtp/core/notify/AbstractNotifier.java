@@ -9,7 +9,6 @@ import com.dtp.common.dto.Instance;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.em.NotifyTypeEnum;
-import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
@@ -96,7 +95,7 @@ public abstract class AbstractNotifier implements Notifier {
                 executor.getQueueCapacity(),
                 executor.getQueue().size(),
                 executor.getQueue().remainingCapacity(),
-                RejectedTypeEnum.formatRejectName(executor.getRejectHandlerName()),
+                executor.getRejectHandlerName(),
                 executor.getRejectCount(),
                 receivesStr,
                 DateUtil.now(),
@@ -132,8 +131,8 @@ public abstract class AbstractNotifier implements Notifier {
                 dtpExecutor.getQueueName(),
                 oldProp.getQueueCapacity(),
                 dtpExecutor.getQueueCapacity(),
-                RejectedTypeEnum.formatRejectName(oldProp.getRejectType()),
-                RejectedTypeEnum.formatRejectName(dtpExecutor.getRejectHandlerName()),
+                oldProp.getRejectType(),
+                dtpExecutor.getRejectHandlerName(),
                 receivesStr,
                 DateTime.now()
         );

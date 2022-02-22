@@ -1,8 +1,7 @@
 package com.dtp.core.convert;
 
 import com.dtp.common.dto.ThreadPoolStats;
-
-import java.util.concurrent.ThreadPoolExecutor;
+import com.dtp.core.thread.DtpExecutor;
 
 /**
  * MetricsConverter related
@@ -14,7 +13,7 @@ public class MetricsConverter {
 
     private MetricsConverter() {}
 
-    public static ThreadPoolStats convert(ThreadPoolExecutor executor, String name, int rejectCount) {
+    public static ThreadPoolStats convert(DtpExecutor executor) {
 
         if (executor == null) {
             return null;
@@ -32,9 +31,9 @@ public class MetricsConverter {
                 .largestPoolSize(executor.getLargestPoolSize())
                 .poolSize(executor.getPoolSize())
                 .waitTaskCount(executor.getQueue().size())
-                .rejectHandlerName(executor.getRejectedExecutionHandler().getClass().getSimpleName())
-                .dtpName(name)
-                .rejectCount(rejectCount)
+                .rejectHandlerName(executor.getRejectHandlerName())
+                .dtpName(executor.getThreadPoolName())
+                .rejectCount(executor.getRejectCount())
                 .build();
     }
 }

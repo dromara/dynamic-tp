@@ -2,12 +2,12 @@ package com.dtp.core.monitor.endpoint;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.system.RuntimeInfo;
-import com.dtp.core.thread.DtpExecutor;
-import com.dtp.core.DtpRegistry;
-import com.dtp.core.convert.MetricsConverter;
-import com.google.common.collect.Lists;
 import com.dtp.common.dto.JvmStats;
 import com.dtp.common.dto.Metrics;
+import com.dtp.core.DtpRegistry;
+import com.dtp.core.convert.MetricsConverter;
+import com.dtp.core.thread.DtpExecutor;
+import com.google.common.collect.Lists;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
@@ -29,8 +29,7 @@ public class DtpEndpoint {
         List<Metrics> metricsList = Lists.newArrayList();
         dtpNames.forEach(x -> {
             DtpExecutor executor = DtpRegistry.getExecutor(x);
-            metricsList.add(MetricsConverter.convert(executor,
-                    executor.getThreadPoolName(), executor.getRejectCount()));
+            metricsList.add(MetricsConverter.convert(executor));
         });
 
         JvmStats jvmStats = new JvmStats();

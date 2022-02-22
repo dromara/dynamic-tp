@@ -2,11 +2,11 @@ package com.dtp.core.monitor;
 
 import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.config.DtpProperties;
-import com.dtp.core.convert.MetricsConverter;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.event.CollectEvent;
 import com.dtp.core.DtpRegistry;
+import com.dtp.core.convert.MetricsConverter;
 import com.dtp.core.handler.CollectorHandler;
 import com.dtp.core.notify.AlarmManager;
 import com.dtp.core.thread.DtpExecutor;
@@ -62,9 +62,7 @@ public class DtpMonitor implements ApplicationRunner {
         names.forEach(x -> {
             DtpExecutor executor = DtpRegistry.getExecutor(x);
             AlarmManager.triggerAlarm(() -> doAlarm(executor, ALARM_TYPES));
-
-            ThreadPoolStats poolStats = MetricsConverter.convert(executor,
-                    executor.getThreadPoolName(), executor.getRejectCount());
+            ThreadPoolStats poolStats = MetricsConverter.convert(executor);
             doCollect(poolStats);
         });
 

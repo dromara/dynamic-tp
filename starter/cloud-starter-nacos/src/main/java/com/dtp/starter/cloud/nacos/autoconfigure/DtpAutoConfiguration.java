@@ -26,7 +26,7 @@ public class DtpAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean()
-    @ConditionalOnBean(NacosConfigManager.class)
+    @ConditionalOnClass(NacosConfigManager.class)
     public CloudNacosRefresher cloudNacosRefresher() {
         return new CloudNacosRefresher();
     }

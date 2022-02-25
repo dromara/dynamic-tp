@@ -1,5 +1,6 @@
 package com.dtp.starter.cloud.nacos.autoconfigure;
 
+import com.alibaba.cloud.nacos.NacosConfigManager;
 import com.alibaba.cloud.nacos.NacosConfigProperties;
 import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.starter.cloud.nacos.refresh.CloudNacosRefresher;
@@ -25,6 +26,7 @@ public class DtpAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean()
+    @ConditionalOnBean(NacosConfigManager.class)
     public CloudNacosRefresher cloudNacosRefresher() {
         return new CloudNacosRefresher();
     }

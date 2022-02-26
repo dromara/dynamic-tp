@@ -33,7 +33,7 @@ public class WebServerTpAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnBean(name = {"jettyServletWebServerFactory"})
+    @ConditionalOnBean(name = {"JettyServletWebServerFactory"})
     public JettyTpHandler jettyTpHandler() {
         return new JettyTpHandler();
     }

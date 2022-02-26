@@ -3,7 +3,9 @@ package com.dtp.adapter.web.handler;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.web.JettyThreadPool;
 import com.dtp.common.dto.ThreadPoolStats;
+import com.dtp.common.ex.DtpException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.springframework.boot.web.embedded.jetty.JettyWebServer;
@@ -37,6 +39,7 @@ public class JettyTpHandler extends AbstractWebServerTpHandler {
                 .maximumPoolSize(threadPool.getMaxThreads())
                 .dtpName("jettyWebServerTp")
                 .build();
+
         if (threadPool instanceof QueuedThreadPool) {
             QueuedThreadPool queuedThreadPool = (QueuedThreadPool) threadPool;
             poolStats.setActiveCount(queuedThreadPool.getBusyThreads());
@@ -65,6 +68,11 @@ public class JettyTpHandler extends AbstractWebServerTpHandler {
     }
 
     private ThreadPool.SizedThreadPool convertAndGet() {
-        return (ThreadPool.SizedThreadPool) getWebServerTp();
+        Executor executor = getWebServerTp();
+        if (Objects.isNull(executor)) {
+            log.warn("Jetty web server threadPool is null.");
+            throw new DtpException("Jetty web server threadPool is null.");
+        }
+        return (ThreadPool.SizedThreadPool) executor;
     }
 }

@@ -3,7 +3,9 @@ package com.dtp.adapter.web.handler;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.web.TomcatThreadPool;
 import com.dtp.common.dto.ThreadPoolStats;
+import com.dtp.common.ex.DtpException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.Service;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 import org.springframework.boot.web.server.WebServer;
@@ -25,7 +27,11 @@ public class TomcatTpHandler extends AbstractWebServerTpHandler {
     @Override
     public Executor doGetTp(WebServer webServer) {
         TomcatWebServer tomcatWebServer = (TomcatWebServer) webServer;
-        return tomcatWebServer.getTomcat().getConnector().getProtocolHandler().getExecutor();
+        Service service = tomcatWebServer.getTomcat().getService();
+        if (service.findConnectors().length > 0) {
+            return service.findConnectors()[0].getProtocolHandler().getExecutor();
+        }
+        return null;
     }
 
     @Override
@@ -69,6 +75,11 @@ public class TomcatTpHandler extends AbstractWebServerTpHandler {
     }
 
     private ThreadPoolExecutor convertAndGet() {
-        return (ThreadPoolExecutor) getWebServerTp();
+        Executor executor = getWebServerTp();
+        if (Objects.isNull(executor)) {
+            log.warn("Tomcat web server threadPool is null.");
+            throw new DtpException("Tomcat web server threadPool is null.");
+        }
+        return (ThreadPoolExecutor) executor;
     }
 }

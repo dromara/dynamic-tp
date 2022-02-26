@@ -32,7 +32,7 @@ public class DtpWebCollectListener implements ApplicationListener<CollectEvent> 
             }
             CollectorHandler.getInstance().collect(poolStats, dtpProperties.getCollectorType());
         } catch (Exception e) {
-            log.error("DynamicTp monitor, collect web server thread pool metrics error...", e);
+            log.error("DynamicTp monitor, collect web server thread pool metrics failed.", e);
         }
     }
 }

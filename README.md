@@ -308,7 +308,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 ### 监控日志
 
-![监控数据](https://files.mdnice.com/user/25315/9e573928-d59a-42a7-9d1b-0612c0b24cef.png)
+![监控数据](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ec5a7d1a31e7418ba5d9a101a5c03826~tplv-k3u1fbpfcp-zoom-1.image)
 
 通过collectType属性配置监控指标采集类型，默认 logging
 

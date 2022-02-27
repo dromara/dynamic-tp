@@ -16,7 +16,17 @@ public class UndertowThreadPool {
     private int ioThreads = 8;
 
     /**
-     * Number of worker threads.
+     * Number of core worker threads, internal default the coreThreads = maxThreads
      */
-    private int workerThreads = 8 * ioThreads;
+    private int coreWorkerThreads = 8 * ioThreads;
+
+    /**
+     * Number of max worker threads
+     */
+    private int maxWorkerThreads = 8 * ioThreads;
+
+    /**
+     * Worker thread keep alive, unit s
+     */
+    private int workerKeepAlive;
 }

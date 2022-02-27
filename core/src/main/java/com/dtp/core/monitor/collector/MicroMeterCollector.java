@@ -3,11 +3,12 @@ package com.dtp.core.monitor.collector;
 import cn.hutool.core.bean.BeanUtil;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.common.em.CollectorTypeEnum;
+import com.dtp.common.util.CommonUtil;
+import com.google.common.collect.Lists;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tag;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,7 +27,9 @@ public class MicroMeterCollector extends AbstractCollector {
      */
     public static final String DTP_METRIC_NAME_PREFIX = "thread.pool";
 
-    public static final String TAG_KEY = DTP_METRIC_NAME_PREFIX + ".name";
+    public static final String POOL_NAME_TAG = DTP_METRIC_NAME_PREFIX + ".name";
+
+    public static final String APP_NAME_TAG = "app.name";
 
     private static final Map<String, ThreadPoolStats> GAUGE_CACHE = new ConcurrentHashMap<>();
 
@@ -49,7 +52,9 @@ public class MicroMeterCollector extends AbstractCollector {
 
     public void gauge(ThreadPoolStats poolStats) {
 
-        Iterable<Tag> tags = Collections.singletonList(Tag.of(TAG_KEY, poolStats.getDtpName()));
+        Iterable<Tag> tags = Lists.newArrayList(
+                Tag.of(POOL_NAME_TAG, poolStats.getDtpName()),
+                Tag.of(APP_NAME_TAG, CommonUtil.getAppName()));
 
         Metrics.gauge(metricName("core.size"), tags, poolStats, ThreadPoolStats::getCorePoolSize);
         Metrics.gauge(metricName("maximum.size"), tags, poolStats, ThreadPoolStats::getMaximumPoolSize);

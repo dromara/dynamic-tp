@@ -5,7 +5,6 @@ import com.dtp.common.config.web.JettyThreadPool;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.common.ex.DtpException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.springframework.boot.web.embedded.jetty.JettyWebServer;
@@ -33,7 +32,7 @@ public class JettyTpHandler extends AbstractWebServerTpHandler {
 
     @Override
     public ThreadPoolStats getPoolStats() {
-        ThreadPool.SizedThreadPool threadPool = (ThreadPool.SizedThreadPool) getWebServerTp();
+        ThreadPool.SizedThreadPool threadPool = convertAndGet();
         ThreadPoolStats poolStats = ThreadPoolStats.builder()
                 .corePoolSize(threadPool.getMinThreads())
                 .maximumPoolSize(threadPool.getMaxThreads())

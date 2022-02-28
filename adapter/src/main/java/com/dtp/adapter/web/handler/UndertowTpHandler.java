@@ -34,6 +34,9 @@ public class UndertowTpHandler extends AbstractWebServerTpHandler {
 
         UndertowWebServer undertowWebServer = (UndertowWebServer) webServer;
         Field undertowField = ReflectionUtils.findField(UndertowWebServer.class, "undertow");
+        if (Objects.isNull(undertowField)) {
+            return null;
+        }
         ReflectionUtils.makeAccessible(undertowField);
         Undertow undertow = (Undertow) ReflectionUtils.getField(undertowField, undertowWebServer);
         if (Objects.isNull(undertow)) {

@@ -117,14 +117,6 @@ public class DtpRegistry implements InitializingBean {
 
         List<FieldInfo> diffFields = EQUATOR.getDiffFields(oldProp, newProp);
         List<String> diffKeys = diffFields.stream().map(FieldInfo::getFieldName).collect(Collectors.toList());
-        DtpContext contextWrapper = DtpContext.builder()
-                .dtpExecutor(executor)
-                .platforms(dtpProperties.getPlatforms())
-                .notifyItem(NotifyHelper.getNotifyItem(executor, NotifyTypeEnum.CHANGE))
-                .build();
-        DtpContextHolder.set(contextWrapper);
-        NOTIFY_EXECUTOR.execute(() -> NotifierHandler.getInstance().sendNotice(oldProp, diffKeys));
-
         log.info("DynamicTp [{}] refreshed end, changed keys: {}, corePoolSize: [{}], maxPoolSize: [{}], " +
                         "queueType: [{}], queueCapacity: [{}], keepAliveTime: [{}], rejectedType: [{}], " +
                         "allowsCoreThreadTimeOut: [{}]",
@@ -138,6 +130,21 @@ public class DtpRegistry implements InitializingBean {
                 String.format(DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getRejectType(), newProp.getRejectType()),
                 String.format(DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE, oldProp.isAllowCoreThreadTimeOut(),
                         newProp.isAllowCoreThreadTimeOut()));
+
+        val notifyItem = NotifyHelper.getNotifyItem(executor, NotifyTypeEnum.CHANGE);
+        boolean ifNotice = CollUtil.isNotEmpty(dtpProperties.getPlatforms()) &&
+                Objects.nonNull(notifyItem) &&
+                notifyItem.isEnabled();
+        if (!ifNotice) {
+            return;
+        }
+        DtpContext context = DtpContext.builder()
+                .dtpExecutor(executor)
+                .platforms(dtpProperties.getPlatforms())
+                .notifyItem(notifyItem)
+                .build();
+        DtpContextHolder.set(context);
+        NOTIFY_EXECUTOR.execute(() -> NotifierHandler.getInstance().sendNotice(oldProp, diffKeys));
     }
 
     public static void doRefresh(DtpExecutor dtpExecutor, ThreadPoolProperties properties) {

@@ -51,7 +51,6 @@ public class TomcatTpHandler extends AbstractWebServerTpHandler {
                 .largestPoolSize(executor.getLargestPoolSize())
                 .poolSize(executor.getPoolSize())
                 .waitTaskCount(executor.getQueue().size())
-                .rejectHandlerName(executor.getRejectedExecutionHandler().getClass().getSimpleName())
                 .dtpName("tomcatWebServerTp")
                 .build();
     }

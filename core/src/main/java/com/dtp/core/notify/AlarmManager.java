@@ -10,8 +10,8 @@ import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
-import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.handler.NotifierHandler;
+import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.thread.ThreadPoolBuilder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -89,7 +89,7 @@ public class AlarmManager {
 
         int maximumPoolSize = executor.getMaximumPoolSize();
         double div = NumberUtil.div(executor.getActiveCount(), maximumPoolSize, 2) * 100;
-        return notifyItem.isEnabled() && div >= notifyItem.getThreshold();
+        return satisfyBaseCondition(notifyItem) && div >= notifyItem.getThreshold();
     }
 
     private static boolean checkCapacity(DtpExecutor executor) {
@@ -105,7 +105,7 @@ public class AlarmManager {
 
         int queueCapacity = executor.getQueueCapacity();
         double div = NumberUtil.div(workQueue.size(), queueCapacity, 2) * 100;
-        return notifyItem.isEnabled() && div >= notifyItem.getThreshold();
+        return satisfyBaseCondition(notifyItem) && div >= notifyItem.getThreshold();
     }
 
     private static boolean checkReject(DtpExecutor executor) {
@@ -115,7 +115,10 @@ public class AlarmManager {
         }
 
         int rejectCount = executor.getRejectCount();
-        return notifyItem.isEnabled() && rejectCount >= notifyItem.getThreshold();
+        return satisfyBaseCondition(notifyItem) && rejectCount >= notifyItem.getThreshold();
     }
 
+    private static boolean satisfyBaseCondition(NotifyItem notifyItem) {
+        return notifyItem.isEnabled() && CollUtil.isNotEmpty(notifyItem.getPlatforms());
+    }
 }

@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <modules>
-        <module>dynamic-tp-example-nacos</module>
-        <module>dynamic-tp-example-nacos-cloud</module>
-        <module>dynamic-tp-example-apollo</module>
+        <module>example-nacos</module>
+        <module>example-nacos-cloud</module>
+        <module>example-apollo</module>
     </modules>
 
     <parent>

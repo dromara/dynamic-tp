@@ -3,11 +3,13 @@ package com.dtp.example;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * @author Redick01
+ */
 @SpringBootApplication
-public class ExampleApplication {
+public class NacosCloudExampleApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ExampleApplication.class, args);
+        SpringApplication.run(NacosCloudExampleApplication.class, args);
     }
-
 }

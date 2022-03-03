@@ -1,7 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+    <modules>
+        <module>dynamic-tp-example-nacos</module>
+        <module>dynamic-tp-example-nacos-cloud</module>
+        <module>dynamic-tp-example-apollo</module>
+    </modules>
+
     <parent>
         <groupId>io.github.lyh200</groupId>
         <artifactId>dynamic-tp-all</artifactId>
@@ -14,37 +21,4 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bootstrap</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.lyh200</groupId>
-            <artifactId>dynamic-tp-spring-cloud-starter-nacos</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>com.ctrip.framework.apollo</groupId>-->
-<!--            <artifactId>apollo-client</artifactId>-->
-<!--            <version>1.9.1</version>-->
-<!--        </dependency>-->
-
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-        </dependency>
-    </dependencies>
 </project>

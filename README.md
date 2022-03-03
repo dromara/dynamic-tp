@@ -258,6 +258,8 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
     }
     ```
 
++   详细使用实例参考`example`工程
+
 ***
 
 ### 注意事项

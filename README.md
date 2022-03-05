@@ -222,6 +222,85 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
                   threshold: 1
     ```
 
+4. zookeeper配置中心应用接入
+    ```xml
+        <dependency>
+            <groupId>io.github.lyh200</groupId>
+            <artifactId>dynamic-tp-spring-boot-starter-zookeeper</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+    ```
++ application.yml配置，必配置
+
+    ```yaml
+    spring:
+      application:
+        name: dynamic-tp-zookeeper-demo
+      dynamic:
+        tp:
+          config-type: properties # zookeeper只支持properties配置
+          zookeeper:
+            config-version: 1.0.0
+            zk-connect-str: 127.0.0.1:2181
+            root-node: /configserver/userproject
+            node: dynamic-tp-zookeeper-demo
+    ```
++ zookeeper配置中心动态线程池配置参考
+
+    ```properties
+    spring.dynamic.tp.enabled=true
+    spring.dynamic.tp.enabledBanner=true
+    spring.dynamic.tp.enabledCollect=true
+    spring.dynamic.tp.collectorType=logging
+    spring.dynamic.tp.monitorInterval=5
+    spring.dynamic.tp.executors[0].threadPoolName=dynamic-tp-test-1
+    spring.dynamic.tp.executors[0].corePoolSize=50
+    spring.dynamic.tp.executors[0].maximumPoolSize=50
+    spring.dynamic.tp.executors[0].queueCapacity=3000
+    spring.dynamic.tp.executors[0].queueType=VariableLinkedBlockingQueue
+    spring.dynamic.tp.executors[0].rejectedHandlerType=CallerRunsPolicy
+    spring.dynamic.tp.executors[0].keepAliveTime=50
+    spring.dynamic.tp.executors[0].allowCoreThreadTimeOut=false
+    spring.dynamic.tp.executors[0].threadNamePrefix=test1
+    spring.dynamic.tp.executors[0].notifyItems[0].type=capacity
+    spring.dynamic.tp.executors[0].notifyItems[0].enabled=false
+    spring.dynamic.tp.executors[0].notifyItems[0].threshold=80
+    spring.dynamic.tp.executors[0].notifyItems[0].platforms[0]=ding
+    spring.dynamic.tp.executors[0].notifyItems[0].platforms[1]=wechat
+    spring.dynamic.tp.executors[0].notifyItems[0].interval=120
+    spring.dynamic.tp.executors[0].notifyItems[1].type=change
+    spring.dynamic.tp.executors[0].notifyItems[1].enabled=false
+    spring.dynamic.tp.executors[0].notifyItems[2].type=liveness
+    spring.dynamic.tp.executors[0].notifyItems[2].enabled=false
+    spring.dynamic.tp.executors[0].notifyItems[2].threshold=80
+    spring.dynamic.tp.executors[0].notifyItems[3].type=reject
+    spring.dynamic.tp.executors[0].notifyItems[3].enabled=false
+    spring.dynamic.tp.executors[0].notifyItems[3].threshold=1
+    spring.dynamic.tp.executors[1].threadPoolName=dynamic-tp-test-2
+    spring.dynamic.tp.executors[1].corePoolSize=20
+    spring.dynamic.tp.executors[1].maximumPoolSize=30
+    spring.dynamic.tp.executors[1].queueCapacity=1000
+    spring.dynamic.tp.executors[1].queueType=VariableLinkedBlockingQueue
+    spring.dynamic.tp.executors[1].rejectedHandlerType=CallerRunsPolicy
+    spring.dynamic.tp.executors[1].keepAliveTime=50
+    spring.dynamic.tp.executors[1].allowCoreThreadTimeOut=false
+    spring.dynamic.tp.executors[1].threadNamePrefix=test2
+    spring.dynamic.tp.executors[1].notifyItems[0].type=capacity
+    spring.dynamic.tp.executors[1].notifyItems[0].enabled=false
+    spring.dynamic.tp.executors[1].notifyItems[0].threshold=80
+    spring.dynamic.tp.executors[1].notifyItems[0].platforms[0]=ding
+    spring.dynamic.tp.executors[1].notifyItems[0].platforms[1]=wechat
+    spring.dynamic.tp.executors[1].notifyItems[0].interval=120
+    spring.dynamic.tp.executors[1].notifyItems[1].type=change
+    spring.dynamic.tp.executors[1].notifyItems[1].enabled=false
+    spring.dynamic.tp.executors[1].notifyItems[2].type=liveness
+    spring.dynamic.tp.executors[1].notifyItems[2].enabled=false
+    spring.dynamic.tp.executors[1].notifyItems[2].threshold=80
+    spring.dynamic.tp.executors[1].notifyItems[3].type=reject
+    spring.dynamic.tp.executors[1].notifyItems[3].enabled=false
+    spring.dynamic.tp.executors[1].notifyItems[3].threshold=1
+    ```
+
 +   代码方式生成，服务启动会自动注册
 
     ```java

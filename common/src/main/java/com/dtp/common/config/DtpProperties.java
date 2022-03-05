@@ -44,6 +44,11 @@ public class DtpProperties {
     private Apollo apollo;
 
     /**
+     * Zookeeper config.
+     */
+    private Zookeeper zookeeper;
+
+    /**
      * Config file type.
      */
     private String configType = "yml";
@@ -107,5 +112,17 @@ public class DtpProperties {
     public static class Apollo {
 
         private String namespace;
+    }
+
+    @Data
+    public static class Zookeeper {
+
+        private String zkConnectStr;
+
+        private String configVersion;
+
+        private String rootNode;
+
+        private String node;
     }
 }

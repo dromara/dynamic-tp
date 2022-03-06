@@ -7,6 +7,7 @@
         <module>example-nacos</module>
         <module>example-nacos-cloud</module>
         <module>example-apollo</module>
+        <module>example-zookeeper</module>
     </modules>
 
     <parent>

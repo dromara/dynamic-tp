@@ -21,6 +21,7 @@
         <module>starter-apollo</module>
         <module>starter-nacos</module>
         <module>cloud-starter-nacos</module>
+        <module>starter-zookeeper</module>
     </modules>
 
     <dependencies>

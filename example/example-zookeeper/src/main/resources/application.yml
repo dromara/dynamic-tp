@@ -1,0 +1,19 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: dynamic-tp-zookeeper-demo
+  dynamic:
+    tp:
+      config-type: properties # zookeeper只支持properties配置
+      zookeeper:
+        config-version: 1.0.0
+        zk-connect-str: 127.0.0.1:2181
+        root-node: /configserver/userproject
+        node: dynamic-tp-zookeeper-demo
+
+
+#logging:
+#  level:
+#    root: DEBUG

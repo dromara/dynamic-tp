@@ -75,7 +75,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 +   **基于Spring框架，现只支持SpringBoot项目使用，轻量级，引入starter即可食用**
 
-+   **基于配置中心实现线程池参数动态调整，实时生效；集成主流配置中心，默认支持Nacos、Apollo，
++   **基于配置中心实现线程池参数动态调整，实时生效；集成主流配置中心，已支持Nacos、Apollo，Zookeeper，
     同时也提供SPI接口可自定义扩展实现**
 
 +   **内置通知报警功能，提供多种报警维度（配置变更通知、活性报警、容量阈值报警、拒绝策略触发报警），
@@ -94,7 +94,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 +   配置变更监听模块：
 
-    1.监听特定配置中心的指定配置文件（默认实现Nacos、Apollo）,可通过内部提供的SPI接口扩展其他实现
+    1.监听特定配置中心的指定配置文件（已实现Nacos、Apollo、Zookeeper）,可通过内部提供的SPI接口扩展其他实现
 
     2.解析配置文件内容，内置实现yml、properties配置文件的解析，可通过内部提供的SPI接口扩展其他实现
 
@@ -160,8 +160,31 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
             <version>1.0.1</version>
         </dependency>
     ```
-
-+   线程池配置
+4. zookeeper配置中心应用接入
+    ```xml
+        <dependency>
+            <groupId>io.github.lyh200</groupId>
+            <artifactId>dynamic-tp-spring-boot-starter-zookeeper</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+    ```
+   application.yml需配置zk地址节点信息
+   
+       ```yaml
+       spring:
+         application:
+           name: dynamic-tp-zookeeper-demo
+         dynamic:
+           tp:
+             config-type: properties # zookeeper只支持properties配置
+             zookeeper:
+               config-version: 1.0.0
+               zk-connect-str: 127.0.0.1:2181
+               root-node: /configserver/userproject
+               node: dynamic-tp-zookeeper-demo
+       ```
+   
++   线程池配置（yml类型）
 
     ```yaml
     spring:
@@ -222,30 +245,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
                   threshold: 1
     ```
 
-4. zookeeper配置中心应用接入
-    ```xml
-        <dependency>
-            <groupId>io.github.lyh200</groupId>
-            <artifactId>dynamic-tp-spring-boot-starter-zookeeper</artifactId>
-            <version>1.0.1</version>
-        </dependency>
-    ```
-+ application.yml配置，必配置
-
-    ```yaml
-    spring:
-      application:
-        name: dynamic-tp-zookeeper-demo
-      dynamic:
-        tp:
-          config-type: properties # zookeeper只支持properties配置
-          zookeeper:
-            config-version: 1.0.0
-            zk-connect-str: 127.0.0.1:2181
-            root-node: /configserver/userproject
-            node: dynamic-tp-zookeeper-demo
-    ```
-+ zookeeper配置中心动态线程池配置参考
++ 线程池配置（properties类型）
 
     ```properties
     spring.dynamic.tp.enabled=true
@@ -285,20 +285,6 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
     spring.dynamic.tp.executors[1].keepAliveTime=50
     spring.dynamic.tp.executors[1].allowCoreThreadTimeOut=false
     spring.dynamic.tp.executors[1].threadNamePrefix=test2
-    spring.dynamic.tp.executors[1].notifyItems[0].type=capacity
-    spring.dynamic.tp.executors[1].notifyItems[0].enabled=false
-    spring.dynamic.tp.executors[1].notifyItems[0].threshold=80
-    spring.dynamic.tp.executors[1].notifyItems[0].platforms[0]=ding
-    spring.dynamic.tp.executors[1].notifyItems[0].platforms[1]=wechat
-    spring.dynamic.tp.executors[1].notifyItems[0].interval=120
-    spring.dynamic.tp.executors[1].notifyItems[1].type=change
-    spring.dynamic.tp.executors[1].notifyItems[1].enabled=false
-    spring.dynamic.tp.executors[1].notifyItems[2].type=liveness
-    spring.dynamic.tp.executors[1].notifyItems[2].enabled=false
-    spring.dynamic.tp.executors[1].notifyItems[2].threshold=80
-    spring.dynamic.tp.executors[1].notifyItems[3].type=reject
-    spring.dynamic.tp.executors[1].notifyItems[3].enabled=false
-    spring.dynamic.tp.executors[1].notifyItems[3].threshold=1
     ```
 
 +   代码方式生成，服务启动会自动注册

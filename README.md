@@ -173,19 +173,19 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
    ```
    application.yml 需配置 zk 地址节点信息
 
-```yaml
-    spring:
-      application:
-        name: dynamic-tp-zookeeper-demo
-      dynamic:
-        tp:
-          config-type: properties # zookeeper只支持properties配置
-          zookeeper:
-            config-version: 1.0.0
-            zk-connect-str: 127.0.0.1:2181
-            root-node: /configserver/userproject
-            node: dynamic-tp-zookeeper-demo
-```
+    ```yaml
+        spring:
+          application:
+            name: dynamic-tp-zookeeper-demo
+          dynamic:
+            tp:
+              config-type: properties # zookeeper只支持properties配置
+              zookeeper:
+                config-version: 1.0.0
+                zk-connect-str: 127.0.0.1:2181
+                root-node: /configserver/userproject
+                node: dynamic-tp-zookeeper-demo
+    ```
 
 - 线程池配置（yml 类型）
 

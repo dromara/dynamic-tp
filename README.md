@@ -1,4 +1,3 @@
-````
 ## 基于配置中心的轻量级动态线程池 - DynamicTp
 
 ```yml
@@ -453,5 +452,3 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 对项目有什么想法或者建议，可以加我微信交流，或者创建[issues](https://github.com/lyh200/dynamic-tp-spring-cloud-starter/issues)，一起完善项目
 
 ![](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/530709dc29604630b6d1537d7c160ea5~tplv-k3u1fbpfcp-watermark.image)
-````
-

@@ -9,6 +9,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.api.CuratorListener;
 import org.apache.curator.framework.api.GetChildrenBuilder;
 import org.apache.curator.framework.api.GetDataBuilder;
 import org.apache.curator.framework.state.ConnectionState;
@@ -16,7 +17,8 @@ import org.apache.curator.framework.state.ConnectionStateListener;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.utils.ZKPaths;
 import org.apache.zookeeper.WatchedEvent;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.boot.web.servlet.context.ServletWebServerInitializedEvent;
+import org.springframework.context.ApplicationListener;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -26,21 +28,34 @@ import java.util.concurrent.CountDownLatch;
  * @author Redick01
  */
 @Slf4j
-public class ZookeeperRefresher extends AbstractRefresher implements InitializingBean {
+public class ZookeeperRefresher extends AbstractRefresher implements ApplicationListener<ServletWebServerInitializedEvent> {
 
     @Resource
     private DtpProperties dtpProperties;
 
     private CuratorFramework curatorFramework;
 
+    private final CountDownLatch countDownLatch = new CountDownLatch(1);
+
     @Override
-    public void afterPropertiesSet() {
+    public void onApplicationEvent(ServletWebServerInitializedEvent event) {
+
         DtpProperties.Zookeeper zookeeper = dtpProperties.getZookeeper();
-        this.curatorFramework = CuratorFrameworkFactory.newClient(zookeeper.getZkConnectStr(), new ExponentialBackoffRetry(1000, 3));
-        this.curatorFramework.start();
-        String nodePath = ZKPaths.makePath(ZKPaths.makePath(zookeeper.getRootNode(), zookeeper.getConfigVersion()), zookeeper.getNode());
-        curatorFramework.getCuratorListenable().addListener((client, event) -> {
-            final WatchedEvent watchedEvent = event.getWatchedEvent();
+        curatorFramework = CuratorFrameworkFactory.newClient(zookeeper.getZkConnectStr(),
+                new ExponentialBackoffRetry(1000, 3));
+        String nodePath = ZKPaths.makePath(ZKPaths.makePath(zookeeper.getRootNode(),
+                zookeeper.getConfigVersion()), zookeeper.getNode());
+
+        final ConnectionStateListener connectionStateListener = (client, newState) -> {
+            if (newState == ConnectionState.CONNECTED) {
+                loadNode(nodePath);
+                countDownLatch.countDown();
+            } else if (newState == ConnectionState.RECONNECTED) {
+                loadNode(nodePath);
+            }};
+
+        final CuratorListener curatorListener = (client, curatorEvent) -> {
+            final WatchedEvent watchedEvent = curatorEvent.getWatchedEvent();
             if (null != watchedEvent) {
                 switch (watchedEvent.getType()) {
                     case NodeChildrenChanged:
@@ -50,27 +65,19 @@ public class ZookeeperRefresher extends AbstractRefresher implements Initializin
                     default:
                         break;
                 }
-            }
-        });
-        final CountDownLatch countDownLatch = new CountDownLatch(1);
-        this.curatorFramework.getConnectionStateListenable().addListener(new ConnectionStateListener() {
-            @Override
-            public void stateChanged(CuratorFramework client, ConnectionState newState) {
-                if (newState == ConnectionState.CONNECTED) {
-                    loadNode(nodePath);
-                    countDownLatch.countDown();
-                } else if (newState == ConnectionState.RECONNECTED) {
-                    loadNode(nodePath);
-                }
-            }
-        });
-        log.info("DynamicTp refresher, add listener success, nodePath: {}", nodePath);
+            }};
+        curatorFramework.getConnectionStateListenable().addListener(connectionStateListener);
+        curatorFramework.getCuratorListenable().addListener(curatorListener);
+
         try {
+            curatorFramework.start();
             countDownLatch.await();
+            log.info("DynamicTp refresher, add listener success, nodePath: {}", nodePath);
         } catch (InterruptedException e) {
             log.error("zk connection state listener countDownLatch InterruptedException", e);
         }
     }
+
 
     /**
      * load config and refresh

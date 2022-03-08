@@ -144,7 +144,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-apollo</artifactId>
-           <version>1.0.1</version>
+           <version>1.0.2</version>
        </dependency>
    ```
 2. spring-cloud 场景下的 nacos 应用接入用此依赖
@@ -152,7 +152,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-nacos</artifactId>
-           <version>1.0.1</version>
+           <version>1.0.2</version>
        </dependency>
    ```
 3. 非 spring-cloud 场景下的 nacos 应用接入用此依赖
@@ -160,7 +160,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-nacos</artifactId>
-           <version>1.0.1</version>
+           <version>1.0.2</version>
        </dependency>
    ```
 4. zookeeper 配置中心应用接入
@@ -168,7 +168,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-zookeeper</artifactId>
-           <version>1.0.1</version>
+           <version>1.0.2</version>
        </dependency>
    ```
    application.yml 需配置 zk 地址节点信息
@@ -334,8 +334,8 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
   ```java
   public static void main(String[] args) {
-         DtpExecutor dtpExecutor = DtpRegistry.getExecutor("dynamic-tp-test-1");
-         dtpExecutor.execute(() -> System.out.println("test"));
+     DtpExecutor dtpExecutor = DtpRegistry.getExecutor("dynamic-tp-test-1");
+     dtpExecutor.execute(() -> System.out.println("test"));
   }
   ```
 
@@ -353,7 +353,6 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 - 启动看到如下日志输出证明接入成功
 
   ```bash
-
   |  __ \                            (_) |__   __|
   | |  | |_   _ _ __   __ _ _ __ ___  _  ___| |_ __
   | |  | | | | | '_ \ / _` | '_ ` _ | |/ __| | '_ \
@@ -369,7 +368,6 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 * 配置变更会推送通知消息，且会高亮变更的字段
 
   ```bash
-
   DynamicTp [dynamic-tp-test-1] refresh end, changed keys: [corePoolSize, queueCapacity], corePoolSize: [6 => 4], maxPoolSize: [8 => 8], queueType: [VariableLinkedBlockingQueue => VariableLinkedBlockingQueue], queueCapacity: [200 => 2000], keepAliveTime: [50s => 50s], rejectedType: [CallerRunsPolicy => CallerRunsPolicy], allowsCoreThreadTimeOut: [false => false]
   ```
 

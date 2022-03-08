@@ -68,20 +68,17 @@ public class UndertowTpHandler extends AbstractWebServerTpHandler {
 
         XnioWorker xnioWorker = convertAndGet();
         try {
-            int oldIoThreads = xnioWorker.getOption(Options.WORKER_IO_THREADS);
             int oldCoreWorkerThreads = xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS);
             int oldMaxWorkerThreads = xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS);
             int oldWorkerKeepAlive = xnioWorker.getOption(Options.WORKER_TASK_KEEPALIVE);
 
             int keepAlive = undertowTp.getWorkerKeepAlive() * 1000;
-            xnioWorker.setOption(Options.WORKER_IO_THREADS, undertowTp.getIoThreads());
             xnioWorker.setOption(Options.WORKER_TASK_CORE_THREADS, undertowTp.getCoreWorkerThreads());
             xnioWorker.setOption(Options.WORKER_TASK_MAX_THREADS, undertowTp.getMaxWorkerThreads());
             xnioWorker.setOption(Options.WORKER_TASK_KEEPALIVE, keepAlive);
 
-            log.info("DynamicTp undertowWebServerTp refreshed end, ioThreads: [{}], " +
-                            "coreWorkerThreads: [{}], maxWorkerThreads: [{}], workerThreadKeepAlive: [{}]",
-                    String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldIoThreads, undertowTp.getIoThreads()),
+            log.info("DynamicTp undertowWebServerTp refreshed end, coreWorkerThreads: [{}]," +
+                            " maxWorkerThreads: [{}], workerThreadKeepAlive: [{}]",
                     String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldCoreWorkerThreads, undertowTp.getCoreWorkerThreads()),
                     String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaxWorkerThreads, undertowTp.getMaxWorkerThreads()),
                     String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldWorkerKeepAlive, keepAlive));

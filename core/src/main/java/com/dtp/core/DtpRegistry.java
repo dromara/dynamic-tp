@@ -7,7 +7,6 @@ import com.dtp.common.config.ThreadPoolProperties;
 import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.em.NotifyTypeEnum;
-import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.common.ex.DtpException;
 import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
@@ -38,6 +37,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 import static com.dtp.common.dto.NotifyItem.getDefaultNotifyItems;
+import static com.dtp.common.em.QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE;
 
 /**
  * Core Registry, which keeps all registered Dynamic ThreadPoolExecutors.
@@ -55,6 +55,14 @@ public class DtpRegistry implements InitializingBean {
     private static final Equator EQUATOR = new GetterBaseEquator();
 
     private static DtpProperties dtpProperties;
+
+    /**
+     * Get all DtpExecutor names.
+     * @return executor names
+     */
+    public static List<String> listAllDtpNames() {
+        return Lists.newArrayList(DTP_REGISTRY.keySet());
+    }
 
     /**
      * Register a Dynamic ThreadPoolExecutor.
@@ -106,7 +114,16 @@ public class DtpRegistry implements InitializingBean {
         });
     }
 
-    public static void refresh(DtpExecutor executor, ThreadPoolProperties properties) {
+    private static void refresh(DtpExecutor executor, ThreadPoolProperties properties) {
+
+        if (properties.getCorePoolSize() < 0 ||
+                properties.getMaximumPoolSize() <= 0 ||
+                properties.getMaximumPoolSize() < properties.getCorePoolSize() ||
+                properties.getKeepAliveTime() < 0){
+            log.error("DynamicTp refresh, invalid parameters exist, properties: {}", properties);
+            return;
+        }
+
         DtpMainProp oldProp = ExecutorConverter.convert(executor);
         doRefresh(executor, properties);
         DtpMainProp newProp = ExecutorConverter.convert(executor);
@@ -147,38 +164,33 @@ public class DtpRegistry implements InitializingBean {
         NOTIFY_EXECUTOR.execute(() -> NotifierHandler.getInstance().sendNotice(oldProp, diffKeys));
     }
 
-    public static void doRefresh(DtpExecutor dtpExecutor, ThreadPoolProperties properties) {
+    private static void doRefresh(DtpExecutor dtpExecutor, ThreadPoolProperties properties) {
 
-        if (properties.getMaximumPoolSize() >= 0) {
-            dtpExecutor.setMaximumPoolSize(properties.getMaximumPoolSize());
-        }
-
-        // jdk1.8 bug：setCorePoolSize未与maximumPoolSize比较
-        if (properties.getCorePoolSize() > dtpExecutor.getMaximumPoolSize()) {
-            throw new IllegalArgumentException();
-        }
-
-        if (properties.getCorePoolSize() >= 0) {
+        if (!Objects.equals(dtpExecutor.getCorePoolSize(), properties.getCorePoolSize())) {
             dtpExecutor.setCorePoolSize(properties.getCorePoolSize());
         }
 
-        if (properties.getKeepAliveTime() > 0 && properties.getUnit() != null) {
+        if (!Objects.equals(dtpExecutor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
+            dtpExecutor.setMaximumPoolSize(properties.getMaximumPoolSize());
+        }
+
+        if (!Objects.equals(dtpExecutor.getKeepAliveTime(properties.getUnit()), properties.getKeepAliveTime())) {
             dtpExecutor.setKeepAliveTime(properties.getKeepAliveTime(), properties.getUnit());
         }
-        dtpExecutor.allowCoreThreadTimeOut(properties.isAllowCoreThreadTimeOut());
+
+        if (!Objects.equals(dtpExecutor.allowsCoreThreadTimeOut(), properties.isAllowCoreThreadTimeOut())) {
+            dtpExecutor.allowCoreThreadTimeOut(properties.isAllowCoreThreadTimeOut());
+        }
 
         // update reject handler
-        String originRejectedName = dtpExecutor.getRejectHandlerName();
-        if (StringUtils.isNotBlank(properties.getRejectedHandlerType()) &&
-                !originRejectedName.contains(properties.getRejectedHandlerType())) {
+        if (!Objects.equals(dtpExecutor.getRejectHandlerName(), properties.getRejectedHandlerType())) {
             dtpExecutor.setRejectedExecutionHandler(RejectHandlerGetter.getProxy(properties.getRejectedHandlerType()));
             dtpExecutor.setRejectHandlerName(properties.getRejectedHandlerType());
         }
 
         // update work queue capacity
-        if (properties.getQueueCapacity() > 0 &&
-                Objects.equals(properties.getQueueType(), QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE.getName())) {
-
+        if (!Objects.equals(dtpExecutor.getQueueCapacity(), properties.getQueueCapacity()) &&
+                Objects.equals(properties.getQueueType(), VARIABLE_LINKED_BLOCKING_QUEUE.getName())) {
             val blockingQueue = dtpExecutor.getQueue();
             if (blockingQueue instanceof VariableLinkedBlockingQueue) {
                 ((VariableLinkedBlockingQueue<Runnable>)blockingQueue).setCapacity(properties.getQueueCapacity());
@@ -194,10 +206,6 @@ public class DtpRegistry implements InitializingBean {
         }
         NotifyHelper.setExecutorNotifyItems(dtpExecutor, dtpProperties, properties);
         dtpExecutor.setNotifyItems(properties.getNotifyItems());
-    }
-
-    public static List<String> listAllDtpNames() {
-        return Lists.newArrayList(DTP_REGISTRY.keySet());
     }
 
     @Autowired

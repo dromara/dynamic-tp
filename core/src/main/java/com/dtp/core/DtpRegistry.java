@@ -17,13 +17,13 @@ import com.dtp.core.notify.NotifyHelper;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.support.ThreadPoolCreator;
 import com.dtp.core.thread.DtpExecutor;
-import com.dtp.core.thread.ThreadPoolBuilder;
 import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import lombok.var;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -199,6 +199,8 @@ public class DtpRegistry implements InitializingBean {
                         dtpExecutor.getThreadPoolName(), dtpExecutor.getQueueName());
             }
         }
+        dtpExecutor.setWaitForTasksToCompleteOnShutdown(properties.isWaitForTasksToCompleteOnShutdown());
+        dtpExecutor.setAwaitTerminationSeconds(properties.getAwaitTerminationSeconds());
 
         if (CollUtil.isEmpty(properties.getNotifyItems())) {
             dtpExecutor.setNotifyItems(getDefaultNotifyItems());
@@ -219,19 +221,16 @@ public class DtpRegistry implements InitializingBean {
         if (CollectionUtils.isEmpty(dtpProperties.getExecutors())) {
             return;
         }
+
+        // It is better to define one spring bean using @Bean for each thread pool declared in configuration.
+        // Mainly using the advantage of spring bean lifecycle.
         dtpProperties.getExecutors().forEach(x -> {
-            val executor = ThreadPoolBuilder.newBuilder()
-                    .corePoolSize(x.getCorePoolSize())
-                    .maximumPoolSize(x.getMaximumPoolSize())
-                    .keepAliveTime(x.getKeepAliveTime())
-                    .workQueue(x.getQueueType(), x.getQueueCapacity(), x.isFair())
-                    .rejectedExecutionHandler(x.getRejectedHandlerType())
-                    .threadFactory(x.getThreadNamePrefix())
-                    .allowCoreThreadTimeOut(x.isAllowCoreThreadTimeOut())
-                    .threadPoolName(x.getThreadPoolName())
-                    .notifyItems(x.getNotifyItems())
-                    .buildDynamic();
-            register(executor, "configuration");
+            var executor = DTP_REGISTRY.get(x.getThreadPoolName());
+            if (Objects.nonNull(executor)) {
+                doRefresh(executor, x);
+                return;
+            }
+            log.warn("Please define the threadPool {} using @Bean first.", x.getThreadPoolName());
         });
 
         DTP_REGISTRY.forEach((k, v) -> {

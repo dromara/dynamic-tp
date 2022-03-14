@@ -220,8 +220,9 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
             min: 100
             max: 400
         undertowTp:                                  # undertow web server线程池配置
-            ioThreads: 100
-            workerThreads: 400
+            coreWorkerThreads: 100                   # 核心线程数
+            maxWorkerThreads: 400                    # 最大线程数
+            workerKeepAlive: 40                     
         executors:                                   # 动态线程池配置
           - threadPoolName: dynamic-tp-test-1
             corePoolSize: 6
@@ -231,7 +232,9 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
             rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
             keepAliveTime: 50
             allowCoreThreadTimeOut: false
-            threadNamePrefix: test           # 线程名前缀
+            threadNamePrefix: test                         # 线程名前缀
+            waitForTasksToCompleteOnShutdown: false        # 参考spring线程池设计
+            awaitTerminationSeconds: 5                     # 单位（s）
             notifyItems:                     # 报警项，不配置自动会配置（变更通知、容量报警、活性报警、拒绝报警）
               - type: capacity               # 报警项类型，查看源码 NotifyTypeEnum枚举类
                 enabled: true
@@ -290,7 +293,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
   spring.dynamic.tp.executors[1].threadNamePrefix=test2
   ```
 
-- 代码方式生成，服务启动会自动注册
+- 定义线程池Bean
 
   ```java
   @Configuration
@@ -298,13 +301,13 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
      @Bean
      public DtpExecutor demo1Executor() {
-         return DtpCreator.createDynamicFast("demo1-executor");
+         return DtpCreator.createDynamicFast("demo1Executor");
     }
 
      @Bean
      public ThreadPoolExecutor demo2Executor() {
          return ThreadPoolBuilder.newBuilder()
-                .threadPoolName("demo2-executor")
+                .threadPoolName("demo2Executor")
                 .corePoolSize(8)
                 .maximumPoolSize(16)
                 .keepAliveTime(50)
@@ -316,11 +319,20 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
   }
   ```
 
-* 代码调用，根据线程池名称获取
+* 代码调用，从DtpRegistry中根据线程池名称获取，或者通过依赖注入方式(推荐，更优雅)
 
   ```java
+  @Resource
+  private ThreadPoolExecutor demo1Executor;
+  
+  public void exec() {
+     demo1Executor.execute(() -> System.out.println("test"));
+  }
+  ```
+  
+  ```java
   public static void main(String[] args) {
-     DtpExecutor dtpExecutor = DtpRegistry.getExecutor("dynamic-tp-test-1");
+     DtpExecutor dtpExecutor = DtpRegistry.getExecutor("demo1Executor");
      dtpExecutor.execute(() -> System.out.println("test"));
   }
   ```
@@ -331,7 +343,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 ### 注意事项
 
-- 配置文件配置的参数会覆盖通过代码生成方式配置的参数
+- 配置文件中的executors要跟代码中@Bean一一对应
 
 - 阻塞队列只有 VariableLinkedBlockingQueue 类型可以修改 capacity，该类型功能和 LinkedBlockingQueue 相似，
   只是 capacity 不是 final 类型，可以修改， VariableLinkedBlockingQueue 参考 RabbitMq 的实现
@@ -428,6 +440,8 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 [https://juejin.cn/post/7063408526894301192](https://juejin.cn/post/7063408526894301192)
 
 [https://juejin.cn/post/7069297636552998943](https://juejin.cn/post/7069581808932749348)
+
+[https://juejin.cn/post/7073286368629096485](https://juejin.cn/post/7073286368629096485)
 
 ---
 

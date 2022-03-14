@@ -17,15 +17,14 @@ import java.util.concurrent.TimeUnit;
 public class ThreadPoolConfiguration {
 
     @Bean
-    public DtpExecutor dtpExecutor() {
-
-        return ThreadPoolCreator.createDynamicFast("dynamic-tp-test-1");
+    public DtpExecutor dtpExecutor1() {
+        return ThreadPoolCreator.createDynamicFast("dtpExecutor1");
     }
 
     @Bean
-    public ThreadPoolExecutor threadPoolExecutor() {
+    public ThreadPoolExecutor dtpExecutor2() {
         return ThreadPoolBuilder.newBuilder()
-                .threadPoolName("dynamic-tp-test-2")
+                .threadPoolName("dtpExecutor2")
                 .corePoolSize(10)
                 .maximumPoolSize(15)
                 .keepAliveTime(15000)

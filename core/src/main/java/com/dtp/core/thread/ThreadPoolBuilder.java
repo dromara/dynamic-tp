@@ -1,6 +1,7 @@
 package com.dtp.core.thread;
 
 import cn.hutool.core.collection.CollUtil;
+import com.alibaba.ttl.TtlRunnable;
 import com.alibaba.ttl.threadpool.TtlExecutors;
 import com.dtp.common.VariableLinkedBlockingQueue;
 import com.dtp.common.constant.DynamicTpConst;
@@ -9,6 +10,7 @@ import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.core.reject.RejectHandlerGetter;
+import com.dtp.core.support.TaskWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -74,6 +76,24 @@ public class ThreadPoolBuilder {
      * Dynamic or common.
      */
     private boolean dynamic = true;
+
+    /**
+     * Whether to wait for scheduled tasks to complete on shutdown,
+     * not interrupting running tasks and executing all tasks in the queue.
+     */
+    private boolean waitForTasksToCompleteOnShutdown = false;
+
+    /**
+     * The maximum number of seconds that this executor is supposed to block
+     * on shutdown in order to wait for remaining tasks to complete their execution
+     * before the rest of the container continues to shut down.
+     */
+    private int awaitTerminationSeconds = 0;
+
+    /**
+     * The task wrapper.
+     */
+    private TaskWrapper taskWrapper;
 
     /**
      * Notify items, see {@link NotifyTypeEnum}
@@ -166,6 +186,21 @@ public class ThreadPoolBuilder {
         return this;
     }
 
+    public ThreadPoolBuilder awaitTerminationSeconds(int awaitTerminationSeconds) {
+        this.awaitTerminationSeconds = awaitTerminationSeconds;
+        return this;
+    }
+
+    public ThreadPoolBuilder waitForTasksToCompleteOnShutdown(boolean waitForTasksToCompleteOnShutdown) {
+        this.waitForTasksToCompleteOnShutdown = waitForTasksToCompleteOnShutdown;
+        return this;
+    }
+
+    public ThreadPoolBuilder taskWrapper(TaskWrapper taskWrapper) {
+        this.taskWrapper = taskWrapper;
+        return this;
+    }
+
     /**
      * Build according to dynamic field.
      *
@@ -204,7 +239,12 @@ public class ThreadPoolBuilder {
      * @return the newly created ExecutorService instance
      */
     public ExecutorService buildWithTtl() {
-        return TtlExecutors.getTtlExecutorService(buildCommonExecutor(this));
+        if (dynamic) {
+            taskWrapper = TtlRunnable::get;
+            return buildDtpExecutor(this);
+        } else {
+            return TtlExecutors.getTtlExecutorService(buildCommonExecutor(this));
+        }
     }
 
     /**
@@ -224,9 +264,12 @@ public class ThreadPoolBuilder {
                 builder.threadFactory,
                 builder.rejectedExecutionHandler
         );
-        dtpExecutor.allowCoreThreadTimeOut(builder.allowCoreThreadTimeOut);
         dtpExecutor.setThreadPoolName(builder.threadPoolName);
+        dtpExecutor.allowCoreThreadTimeOut(builder.allowCoreThreadTimeOut);
         dtpExecutor.setNotifyItems(notifyItems);
+        dtpExecutor.setWaitForTasksToCompleteOnShutdown(waitForTasksToCompleteOnShutdown);
+        dtpExecutor.setAwaitTerminationSeconds(awaitTerminationSeconds);
+        dtpExecutor.setTaskWrapper(taskWrapper);
         return dtpExecutor;
     }
 
@@ -249,5 +292,4 @@ public class ThreadPoolBuilder {
         executor.allowCoreThreadTimeOut(builder.allowCoreThreadTimeOut);
         return executor;
     }
-
 }

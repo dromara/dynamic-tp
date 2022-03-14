@@ -81,4 +81,16 @@ public class ThreadPoolProperties {
      */
     private List<NotifyItem> notifyItems;
 
+    /**
+     * Whether to wait for scheduled tasks to complete on shutdown,
+     * not interrupting running tasks and executing all tasks in the queue.
+     */
+    private boolean waitForTasksToCompleteOnShutdown = false;
+
+    /**
+     * The maximum number of seconds that this executor is supposed to block
+     * on shutdown in order to wait for remaining tasks to complete their execution
+     * before the rest of the container continues to shut down.
+     */
+    private int awaitTerminationSeconds = 0;
 }

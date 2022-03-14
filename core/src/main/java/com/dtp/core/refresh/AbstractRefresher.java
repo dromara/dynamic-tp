@@ -1,7 +1,6 @@
 package com.dtp.core.refresh;
 
 import com.dtp.common.config.DtpProperties;
-import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.em.ConfigFileTypeEnum;
 import com.dtp.common.event.RefreshEvent;
 import com.dtp.core.DtpRegistry;
@@ -14,11 +13,14 @@ import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
 import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
 import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.core.ResolvableType;
 
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
+
+import static com.dtp.common.constant.DynamicTpConst.MAIN_PROPERTIES_PREFIX;
 
 /**
  * AbstractRefresher related
@@ -54,9 +56,10 @@ public abstract class AbstractRefresher implements Refresher {
     private void doRefresh(Map<Object, Object> properties) {
         ConfigurationPropertySource sources = new MapConfigurationPropertySource(properties);
         Binder binder = new Binder(sources);
-        DtpProperties bindDtpProperties = binder.bind(DynamicTpConst.MAIN_PROPERTIES_PREFIX,
-                Bindable.ofInstance(dtpProperties)).get();
-        DtpRegistry.refresh(bindDtpProperties);
+        ResolvableType type = ResolvableType.forClass(DtpProperties.class);
+        Bindable<?> target = Bindable.of(type).withExistingValue(dtpProperties);
+        binder.bind(MAIN_PROPERTIES_PREFIX, target);
+        DtpRegistry.refresh(dtpProperties);
         publishEvent();
     }
 

@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -15,6 +16,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 @RestController
 @SuppressWarnings("all")
 public class TestController {
+
+    @Resource
+    private ThreadPoolExecutor dtpExecutor1;
 
     @GetMapping("/dtp-nacos-example/test")
     public String test() {
@@ -29,7 +33,6 @@ public class TestController {
     }
 
     public void task() throws InterruptedException {
-        DtpExecutor dtpExecutor1 = DtpRegistry.getExecutor("dynamic-tp-test-1");
         DtpExecutor dtpExecutor2 = DtpRegistry.getExecutor("dynamic-tp-test-2");
         for (int i = 0; i < 100; i++) {
             Thread.sleep(100);

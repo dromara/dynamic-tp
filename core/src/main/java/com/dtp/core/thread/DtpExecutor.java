@@ -3,23 +3,24 @@ package com.dtp.core.thread;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.core.reject.RejectHandlerGetter;
+import com.dtp.core.spring.DtpLifecycleSupport;
+import com.dtp.core.support.TaskWrapper;
 
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.Objects;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Dynamic ThreadPoolExecutor inherits ThreadPoolExecutor, and extends some features.
+ * Dynamic ThreadPoolExecutor inherits DtpLifecycleSupport, and extends some features.
  *
  * @author: yanhom
  * @since 1.0.0
  **/
-public class DtpExecutor extends ThreadPoolExecutor {
-
-    /**
-     * Uniquely identifies.
-     */
-    private String threadPoolName;
+public class DtpExecutor extends DtpLifecycleSupport {
 
     /**
      * Total reject count.
@@ -36,6 +37,11 @@ public class DtpExecutor extends ThreadPoolExecutor {
      */
     private List<NotifyItem> notifyItems;
 
+    /**
+     * Task wrapper, do sth enhanced.
+     */
+    private TaskWrapper taskWrapper;
+
     public DtpExecutor(int corePoolSize,
                        int maximumPoolSize,
                        long keepAliveTime,
@@ -49,12 +55,12 @@ public class DtpExecutor extends ThreadPoolExecutor {
         setRejectedExecutionHandler(rejectedExecutionHandler);
     }
 
-    public void setThreadPoolName(String threadPoolName) {
-        this.threadPoolName = threadPoolName;
-    }
-
-    public String getThreadPoolName() {
-        return threadPoolName;
+    @Override
+    public void execute(Runnable command) {
+        if (Objects.nonNull(taskWrapper)) {
+            command = taskWrapper.wrap(command);
+        }
+        super.execute(command);
     }
 
     public void incRejectCount(int count) {
@@ -87,5 +93,9 @@ public class DtpExecutor extends ThreadPoolExecutor {
 
     public void setRejectHandlerName(String rejectHandlerName) {
         this.rejectHandlerName = rejectHandlerName;
+    }
+
+    public void setTaskWrapper(TaskWrapper taskWrapper) {
+        this.taskWrapper = taskWrapper;
     }
 }

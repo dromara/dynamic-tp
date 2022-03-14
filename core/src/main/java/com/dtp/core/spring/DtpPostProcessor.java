@@ -1,4 +1,4 @@
-package com.dtp.core.support;
+package com.dtp.core.spring;
 
 import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.DtpRegistry;

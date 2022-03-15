@@ -22,6 +22,17 @@ public class ThreadPoolConfiguration {
     }
 
     @Bean
+    public DtpExecutor ioIntensiveExecutor() {
+        return ThreadPoolBuilder.newBuilder()
+                .threadPoolName("ioIntensiveExecutor")
+                .corePoolSize(20)
+                .maximumPoolSize(50)
+                .queueCapacity(2048)
+                .ioIntensive(true)
+                .buildDynamic();
+    }
+
+    @Bean
     public ThreadPoolExecutor dtpExecutor2() {
         return ThreadPoolBuilder.newBuilder()
                 .threadPoolName("dtpExecutor2")

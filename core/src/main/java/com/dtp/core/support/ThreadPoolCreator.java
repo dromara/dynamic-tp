@@ -15,10 +15,19 @@ import java.util.concurrent.ThreadPoolExecutor;
  **/
 public class ThreadPoolCreator {
 
+    private ThreadPoolCreator() {}
+
     public static ThreadPoolExecutor createCommonFast(String threadPrefix) {
         return ThreadPoolBuilder.newBuilder()
                 .threadFactory(threadPrefix)
                 .buildCommon();
+    }
+
+    public static ExecutorService createCommonWithTtl(String threadPrefix) {
+        return ThreadPoolBuilder.newBuilder()
+                .dynamic(false)
+                .threadFactory(threadPrefix)
+                .buildWithTtl();
     }
 
     public static DtpExecutor createDynamicFast(String name) {
@@ -32,8 +41,13 @@ public class ThreadPoolCreator {
                 .buildDynamic();
     }
 
-    public static ExecutorService createWithTtl(String threadPrefix) {
+    public static ExecutorService createDynamicWithTtl(String name) {
+        return createDynamicWithTtl(name, name);
+    }
+
+    public static ExecutorService createDynamicWithTtl(String name, String threadPrefix) {
         return ThreadPoolBuilder.newBuilder()
+                .threadPoolName(name)
                 .threadFactory(threadPrefix)
                 .buildWithTtl();
     }

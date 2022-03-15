@@ -77,7 +77,6 @@ public class DtpLifecycleSupport extends ThreadPoolExecutor implements Disposabl
         if (log.isInfoEnabled()) {
             log.info("Shutting down ExecutorService, poolName: {}", threadPoolName);
         }
-
         if (this.waitForTasksToCompleteOnShutdown) {
             this.shutdown();
         } else {
@@ -107,17 +106,18 @@ public class DtpLifecycleSupport extends ThreadPoolExecutor implements Disposabl
      * {@link #setAwaitTerminationSeconds "awaitTerminationSeconds"} property.
      */
     private void awaitTerminationIfNecessary() {
-        if (this.awaitTerminationMillis > 0) {
-            try {
-                if (!awaitTermination(this.awaitTerminationMillis, TimeUnit.MILLISECONDS) && log.isWarnEnabled()) {
-                    log.warn("Timed out while waiting for executor {} to terminate", threadPoolName);
-                }
-            } catch (InterruptedException ex) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Interrupted while waiting for executor {} to terminate", threadPoolName);
-                }
-                Thread.currentThread().interrupt();
+        if (this.awaitTerminationMillis <= 0) {
+            return;
+        }
+        try {
+            if (!awaitTermination(this.awaitTerminationMillis, TimeUnit.MILLISECONDS) && log.isWarnEnabled()) {
+                log.warn("Timed out while waiting for executor {} to terminate", threadPoolName);
             }
+        } catch (InterruptedException ex) {
+            if (log.isWarnEnabled()) {
+                log.warn("Interrupted while waiting for executor {} to terminate", threadPoolName);
+            }
+            Thread.currentThread().interrupt();
         }
     }
 }

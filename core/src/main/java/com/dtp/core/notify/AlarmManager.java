@@ -35,7 +35,8 @@ public class AlarmManager {
             .corePoolSize(2)
             .maximumPoolSize(4)
             .workQueue(QueueTypeEnum.LINKED_BLOCKING_QUEUE.getName(), 2000, false)
-            .rejectedExecutionHandler(RejectedTypeEnum.ABORT_POLICY.getName())
+            .rejectedExecutionHandler(RejectedTypeEnum.DISCARD_OLDEST_POLICY.getName())
+            .dynamic(false)
             .buildWithTtl();
 
     private AlarmManager() {}

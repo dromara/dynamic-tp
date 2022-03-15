@@ -22,7 +22,7 @@ public class ThreadPoolProperties {
     /**
      * Name of Dynamic ThreadPool.
      */
-    private String threadPoolName = "DynamicTp";
+    private String threadPoolName = "DefaultDynamicTp";
 
     /**
      * CoreSize of ThreadPool.

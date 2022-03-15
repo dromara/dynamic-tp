@@ -10,6 +10,7 @@ import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.core.reject.RejectHandlerGetter;
+import com.dtp.core.support.TaskQueue;
 import com.dtp.core.support.TaskWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -28,7 +29,7 @@ public class ThreadPoolBuilder {
     /**
      * Name of Dynamic ThreadPool.
      */
-    private String threadPoolName = "DynamicTp";
+    private String threadPoolName = "DefaultDynamicTp";
 
     /**
      * CoreSize of ThreadPool.
@@ -56,6 +57,11 @@ public class ThreadPoolBuilder {
      * Blocking queue, see {@link QueueTypeEnum}
      */
     private BlockingQueue<Runnable> workQueue = new VariableLinkedBlockingQueue<>(1024);
+
+    /**
+     * Queue capacity
+     */
+    private int queueCapacity = 1024;
 
     /**
      * RejectedExecutionHandler, see {@link RejectedTypeEnum}
@@ -94,6 +100,12 @@ public class ThreadPoolBuilder {
      * The task wrapper.
      */
     private TaskWrapper taskWrapper;
+
+    /**
+     * If io intensive thread pool.
+     * default false, true indicate cpu intensive thread pool.
+     */
+    private boolean ioIntensive = false;
 
     /**
      * Notify items, see {@link NotifyTypeEnum}
@@ -201,6 +213,16 @@ public class ThreadPoolBuilder {
         return this;
     }
 
+    public ThreadPoolBuilder ioIntensive(boolean ioIntensive) {
+        this.ioIntensive = ioIntensive;
+        return this;
+    }
+
+    public ThreadPoolBuilder queueCapacity(int queueCapacity) {
+        this.queueCapacity = queueCapacity;
+        return this;
+    }
+
     /**
      * Build according to dynamic field.
      *
@@ -255,21 +277,39 @@ public class ThreadPoolBuilder {
      */
     private DtpExecutor buildDtpExecutor(ThreadPoolBuilder builder) {
         Assert.notNull(builder.threadPoolName, "The thread pool name must not be null.");
-        DtpExecutor dtpExecutor = new DtpExecutor(
-                builder.corePoolSize,
-                builder.maximumPoolSize,
-                builder.keepAliveTime,
-                builder.timeUnit,
-                builder.workQueue,
-                builder.threadFactory,
-                builder.rejectedExecutionHandler
-        );
+        DtpExecutor dtpExecutor = createInternal(builder);
         dtpExecutor.setThreadPoolName(builder.threadPoolName);
         dtpExecutor.allowCoreThreadTimeOut(builder.allowCoreThreadTimeOut);
         dtpExecutor.setNotifyItems(notifyItems);
         dtpExecutor.setWaitForTasksToCompleteOnShutdown(waitForTasksToCompleteOnShutdown);
         dtpExecutor.setAwaitTerminationSeconds(awaitTerminationSeconds);
         dtpExecutor.setTaskWrapper(taskWrapper);
+        return dtpExecutor;
+    }
+
+    private DtpExecutor createInternal(ThreadPoolBuilder builder) {
+        DtpExecutor dtpExecutor;
+        if (ioIntensive) {
+            TaskQueue taskQueue = new TaskQueue(builder.queueCapacity);
+            dtpExecutor = new EagerDtpExecutor(
+                    builder.corePoolSize,
+                    builder.maximumPoolSize,
+                    builder.keepAliveTime,
+                    builder.timeUnit,
+                    taskQueue,
+                    builder.threadFactory,
+                    builder.rejectedExecutionHandler);
+            taskQueue.setExecutor((EagerDtpExecutor) dtpExecutor);
+        } else {
+            dtpExecutor = new DtpExecutor(
+                    builder.corePoolSize,
+                    builder.maximumPoolSize,
+                    builder.keepAliveTime,
+                    builder.timeUnit,
+                    builder.workQueue,
+                    builder.threadFactory,
+                    builder.rejectedExecutionHandler);
+        }
         return dtpExecutor;
     }
 

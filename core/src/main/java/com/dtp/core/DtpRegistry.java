@@ -29,6 +29,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -48,7 +49,7 @@ import static com.dtp.common.em.QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE;
 @Slf4j
 public class DtpRegistry implements InitializingBean {
 
-    private static final ExecutorService NOTIFY_EXECUTOR = ThreadPoolCreator.createWithTtl("dtp-notify");
+    private static final ExecutorService NOTIFY_EXECUTOR = ThreadPoolCreator.createCommonWithTtl("dtp-notify");
 
     private static final Map<String, DtpExecutor> DTP_REGISTRY = new ConcurrentHashMap<>();
 
@@ -224,15 +225,20 @@ public class DtpRegistry implements InitializingBean {
 
         // It is better to define one spring bean using @Bean for each thread pool declared in configuration.
         // Mainly using the advantage of spring bean lifecycle.
+        val registeredExecutorNames = Lists.newArrayList(DTP_REGISTRY.keySet());
         dtpProperties.getExecutors().forEach(x -> {
             var executor = DTP_REGISTRY.get(x.getThreadPoolName());
             if (Objects.nonNull(executor)) {
                 doRefresh(executor, x);
+                registeredExecutorNames.remove(x.getThreadPoolName());
                 return;
             }
             log.warn("Please define the threadPool {} using @Bean first.", x.getThreadPoolName());
         });
-
+        if (CollUtil.isNotEmpty(registeredExecutorNames)) {
+            log.warn("DtpRegistry initialization end, no corresponding configuration items exist for {}",
+                    registeredExecutorNames);
+        }
         DTP_REGISTRY.forEach((k, v) -> {
             NotifyHelper.fillNotifyItems(dtpProperties.getPlatforms(), v.getNotifyItems());
             v.getNotifyItems().forEach(x -> AlarmLimiter.initAlarmLimiter(k, x));

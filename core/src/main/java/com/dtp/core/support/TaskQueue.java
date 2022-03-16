@@ -2,6 +2,7 @@ package com.dtp.core.support;
 
 import com.dtp.common.VariableLinkedBlockingQueue;
 import com.dtp.core.thread.EagerDtpExecutor;
+import org.springframework.lang.NonNull;
 
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -17,7 +18,7 @@ public class TaskQueue extends VariableLinkedBlockingQueue<Runnable> {
 
     private static final long serialVersionUID = -1L;
 
-    private EagerDtpExecutor executor;
+    private transient EagerDtpExecutor executor;
 
     public TaskQueue(int capacity) {
         super(capacity);
@@ -28,7 +29,7 @@ public class TaskQueue extends VariableLinkedBlockingQueue<Runnable> {
     }
 
     @Override
-    public boolean offer(Runnable runnable) {
+    public boolean offer(@NonNull Runnable runnable) {
         if (executor == null) {
             throw new RejectedExecutionException("The task queue does not have executor.");
         }

@@ -47,21 +47,25 @@ public class EagerDtpExecutor extends DtpExecutor {
         try {
             super.execute(command);
         } catch (RejectedExecutionException rx) {
-            // force offer the task into queue.
-            final TaskQueue queue = (TaskQueue) super.getQueue();
-            try {
-                if (!queue.force(command, 0, TimeUnit.MILLISECONDS)) {
+            if (getQueue() instanceof TaskQueue) {
+                // If the Executor is close to maximum pool size, concurrent
+                // calls to execute() may result (due to use of TaskQueue) in
+                // some tasks being rejected rather than queued.
+                // If this happens, add them to the queue.
+                final TaskQueue queue = (TaskQueue) getQueue();
+                try {
+                    if (!queue.force(command, 0, TimeUnit.MILLISECONDS)) {
+                        submittedTaskCount.decrementAndGet();
+                        throw new RejectedExecutionException("Queue capacity is full.", rx);
+                    }
+                } catch (InterruptedException x) {
                     submittedTaskCount.decrementAndGet();
-                    throw new RejectedExecutionException("Queue capacity is full.", rx);
+                    throw new RejectedExecutionException(x);
                 }
-            } catch (InterruptedException x) {
+            } else {
                 submittedTaskCount.decrementAndGet();
-                throw new RejectedExecutionException(x);
+                throw rx;
             }
-        } catch (Exception t) {
-            // decrease any way
-            submittedTaskCount.decrementAndGet();
-            throw t;
         }
     }
 }

@@ -35,9 +35,7 @@ public enum QueueTypeEnum {
 
     LINKED_BLOCKING_DEQUE(7,"LinkedBlockingDeque"),
 
-    VARIABLE_LINKED_BLOCKING_QUEUE(8,"VariableLinkedBlockingQueue"),
-
-    TASK_QUEUE(9, "TaskQueue");
+    VARIABLE_LINKED_BLOCKING_QUEUE(8,"VariableLinkedBlockingQueue");
 
     private final Integer code;
     private final String name;

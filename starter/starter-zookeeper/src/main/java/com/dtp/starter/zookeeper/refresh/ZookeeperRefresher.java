@@ -3,7 +3,6 @@ package com.dtp.starter.zookeeper.refresh;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.em.ConfigFileTypeEnum;
 import com.dtp.core.refresh.AbstractRefresher;
-import com.google.common.base.Charsets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -17,10 +16,12 @@ import org.apache.curator.framework.state.ConnectionStateListener;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.utils.ZKPaths;
 import org.apache.zookeeper.WatchedEvent;
-import org.springframework.boot.web.servlet.context.ServletWebServerInitializedEvent;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.lang.NonNull;
 
 import javax.annotation.Resource;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -28,7 +29,7 @@ import java.util.concurrent.CountDownLatch;
  * @author Redick01
  */
 @Slf4j
-public class ZookeeperRefresher extends AbstractRefresher implements ApplicationListener<ServletWebServerInitializedEvent> {
+public class ZookeeperRefresher extends AbstractRefresher implements ApplicationListener<ApplicationStartedEvent> {
 
     @Resource
     private DtpProperties dtpProperties;
@@ -38,7 +39,7 @@ public class ZookeeperRefresher extends AbstractRefresher implements Application
     private final CountDownLatch countDownLatch = new CountDownLatch(1);
 
     @Override
-    public void onApplicationEvent(ServletWebServerInitializedEvent event) {
+    public void onApplicationEvent(@NonNull ApplicationStartedEvent event) {
 
         DtpProperties.Zookeeper zookeeper = dtpProperties.getZookeeper();
         curatorFramework = CuratorFrameworkFactory.newClient(zookeeper.getZkConnectStr(),
@@ -75,6 +76,7 @@ public class ZookeeperRefresher extends AbstractRefresher implements Application
             log.info("DynamicTp refresher, add listener success, nodePath: {}", nodePath);
         } catch (InterruptedException e) {
             log.error("zk connection state listener countDownLatch InterruptedException", e);
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -94,7 +96,7 @@ public class ZookeeperRefresher extends AbstractRefresher implements Application
                 final GetDataBuilder data = curatorFramework.getData();
                 String value = "";
                 try {
-                    value = new String(data.watched().forPath(n), Charsets.UTF_8);
+                    value = new String(data.watched().forPath(n), StandardCharsets.UTF_8);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

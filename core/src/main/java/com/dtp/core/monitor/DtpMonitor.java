@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.event.ApplicationEventMulticaster;
+import org.springframework.core.Ordered;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -34,7 +35,7 @@ import static com.dtp.core.notify.AlarmManager.doAlarm;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpMonitor implements ApplicationRunner {
+public class DtpMonitor implements ApplicationRunner, Ordered {
 
     private static final List<NotifyTypeEnum> ALARM_TYPES = Lists.newArrayList(LIVENESS, CAPACITY);
 
@@ -83,5 +84,10 @@ public class DtpMonitor implements ApplicationRunner {
     private void publishEvent() {
         CollectEvent event = new CollectEvent(this, dtpProperties);
         applicationEventMulticaster.multicastEvent(event);
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE + 2;
     }
 }

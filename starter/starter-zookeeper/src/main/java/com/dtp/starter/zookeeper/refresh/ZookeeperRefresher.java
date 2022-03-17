@@ -32,7 +32,7 @@ public class ZookeeperRefresher extends AbstractRefresher implements Initializin
     private CuratorFramework curatorFramework;
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
 
         DtpProperties.Zookeeper zookeeper = dtpProperties.getZookeeper();
         curatorFramework = CuratorFrameworkFactory.newClient(zookeeper.getZkConnectStr(),
@@ -41,9 +41,7 @@ public class ZookeeperRefresher extends AbstractRefresher implements Initializin
                 zookeeper.getConfigVersion()), zookeeper.getNode());
 
         final ConnectionStateListener connectionStateListener = (client, newState) -> {
-            if (newState == ConnectionState.CONNECTED) {
-                loadNode(nodePath);
-            } else if (newState == ConnectionState.RECONNECTED) {
+            if (newState == ConnectionState.CONNECTED || newState == ConnectionState.RECONNECTED) {
                 loadNode(nodePath);
             }};
 
@@ -64,7 +62,6 @@ public class ZookeeperRefresher extends AbstractRefresher implements Initializin
         curatorFramework.start();
         log.info("DynamicTp refresher, add listener success, nodePath: {}", nodePath);
     }
-
 
     /**
      * load config and refresh

@@ -2,8 +2,12 @@ package com.dtp.starter.zookeeper.refresh;
 
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.em.ConfigFileTypeEnum;
+import com.dtp.core.handler.ConfigHandler;
 import com.dtp.core.refresh.AbstractRefresher;
+import com.dtp.core.support.PropertiesBinder;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.api.CuratorListener;
@@ -17,6 +21,7 @@ import org.apache.zookeeper.WatchedEvent;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -41,8 +46,10 @@ public class ZookeeperRefresher extends AbstractRefresher implements Initializin
                 zookeeper.getConfigVersion()), zookeeper.getNode());
 
         final ConnectionStateListener connectionStateListener = (client, newState) -> {
-            if (newState == ConnectionState.CONNECTED || newState == ConnectionState.RECONNECTED) {
-                loadNode(nodePath);
+            if (newState == ConnectionState.CONNECTED) {
+                initProperties(nodePath);
+            } else if (newState == ConnectionState.RECONNECTED) {
+                loadAndRefresh(nodePath);
             }};
 
         final CuratorListener curatorListener = (client, curatorEvent) -> {
@@ -51,7 +58,7 @@ public class ZookeeperRefresher extends AbstractRefresher implements Initializin
                 switch (watchedEvent.getType()) {
                     case NodeChildrenChanged:
                     case NodeDataChanged:
-                        loadNode(nodePath);
+                        loadAndRefresh(nodePath);
                         break;
                     default:
                         break;
@@ -63,11 +70,29 @@ public class ZookeeperRefresher extends AbstractRefresher implements Initializin
         log.info("DynamicTp refresher, add listener success, nodePath: {}", nodePath);
     }
 
+    private void initProperties(String nodePath) {
+        String content = genContent(nodePath);
+        if (StringUtils.isBlank(content)) {
+            return;
+        }
+        try {
+            val prop = ConfigHandler.getInstance()
+                    .parseConfig(content, ConfigFileTypeEnum.PROPERTIES);
+            PropertiesBinder.bindDtpProperties(prop, dtpProperties);
+        } catch (IOException e) {
+            log.error("Init dtp properties error", e);
+        }
+    }
+
     /**
      * load config and refresh
      * @param nodePath config path
      */
-    public void loadNode(String nodePath) {
+    private void loadAndRefresh(String nodePath) {
+        refresh(genContent(nodePath), ConfigFileTypeEnum.PROPERTIES);
+    }
+
+    private String genContent(String nodePath) {
         try {
             final GetChildrenBuilder childrenBuilder = curatorFramework.getChildren();
             final List<String> children = childrenBuilder.watched().forPath(nodePath);
@@ -84,9 +109,10 @@ public class ZookeeperRefresher extends AbstractRefresher implements Initializin
                 }
                 content.append(nodeName).append("=").append(value).append("\n");
             });
-            refresh(content.toString(), ConfigFileTypeEnum.PROPERTIES);
+            return content.toString();
         } catch (Exception e) {
             log.error("load zk node error, nodePath is {}", nodePath, e);
+            return null;
         }
     }
 }

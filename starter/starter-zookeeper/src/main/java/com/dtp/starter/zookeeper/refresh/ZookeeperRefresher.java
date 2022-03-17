@@ -4,8 +4,6 @@ import com.dtp.common.config.DtpProperties;
 import com.dtp.common.em.ConfigFileTypeEnum;
 import com.dtp.core.refresh.AbstractRefresher;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.api.CuratorListener;
@@ -16,30 +14,25 @@ import org.apache.curator.framework.state.ConnectionStateListener;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.utils.ZKPaths;
 import org.apache.zookeeper.WatchedEvent;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.lang.NonNull;
+import org.springframework.beans.factory.InitializingBean;
 
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * @author Redick01
  */
 @Slf4j
-public class ZookeeperRefresher extends AbstractRefresher implements ApplicationListener<ApplicationStartedEvent> {
+public class ZookeeperRefresher extends AbstractRefresher implements InitializingBean {
 
     @Resource
     private DtpProperties dtpProperties;
 
     private CuratorFramework curatorFramework;
 
-    private final CountDownLatch countDownLatch = new CountDownLatch(1);
-
     @Override
-    public void onApplicationEvent(@NonNull ApplicationStartedEvent event) {
+    public void afterPropertiesSet() throws Exception {
 
         DtpProperties.Zookeeper zookeeper = dtpProperties.getZookeeper();
         curatorFramework = CuratorFrameworkFactory.newClient(zookeeper.getZkConnectStr(),
@@ -50,7 +43,6 @@ public class ZookeeperRefresher extends AbstractRefresher implements Application
         final ConnectionStateListener connectionStateListener = (client, newState) -> {
             if (newState == ConnectionState.CONNECTED) {
                 loadNode(nodePath);
-                countDownLatch.countDown();
             } else if (newState == ConnectionState.RECONNECTED) {
                 loadNode(nodePath);
             }};
@@ -69,15 +61,8 @@ public class ZookeeperRefresher extends AbstractRefresher implements Application
             }};
         curatorFramework.getConnectionStateListenable().addListener(connectionStateListener);
         curatorFramework.getCuratorListenable().addListener(curatorListener);
-
-        try {
-            curatorFramework.start();
-            countDownLatch.await();
-            log.info("DynamicTp refresher, add listener success, nodePath: {}", nodePath);
-        } catch (InterruptedException e) {
-            log.error("zk connection state listener countDownLatch InterruptedException", e);
-            Thread.currentThread().interrupt();
-        }
+        curatorFramework.start();
+        log.info("DynamicTp refresher, add listener success, nodePath: {}", nodePath);
     }
 
 
@@ -98,10 +83,9 @@ public class ZookeeperRefresher extends AbstractRefresher implements Application
                 try {
                     value = new String(data.watched().forPath(n), StandardCharsets.UTF_8);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error("zk config value watched exception.", e);
                 }
-                final Pair<String, String> keyValue = new ImmutablePair<>(nodeName, value);
-                content.append(keyValue.getKey()).append("=").append(keyValue.getValue()).append("\n");
+                content.append(nodeName).append("=").append(value).append("\n");
             });
             refresh(content.toString(), ConfigFileTypeEnum.PROPERTIES);
         } catch (Exception e) {

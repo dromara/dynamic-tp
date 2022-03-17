@@ -25,8 +25,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import lombok.var;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.Ordered;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -46,7 +48,7 @@ import static com.dtp.common.em.QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpRegistry implements InitializingBean {
+public class DtpRegistry implements ApplicationRunner, Ordered {
 
     private static final ExecutorService NOTIFY_EXECUTOR = ThreadPoolCreator.createCommonWithTtl("dtp-notify");
 
@@ -216,8 +218,7 @@ public class DtpRegistry implements InitializingBean {
     }
 
     @Override
-    public void afterPropertiesSet() {
-
+    public void run(ApplicationArguments args) {
         if (CollectionUtils.isEmpty(dtpProperties.getExecutors())) {
             return;
         }
@@ -242,5 +243,10 @@ public class DtpRegistry implements InitializingBean {
             NotifyHelper.fillNotifyItems(dtpProperties.getPlatforms(), v.getNotifyItems());
             v.getNotifyItems().forEach(x -> AlarmLimiter.initAlarmLimiter(k, x));
         });
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE + 1;
     }
 }

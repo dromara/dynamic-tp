@@ -229,7 +229,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         dtpProperties.getExecutors().forEach(x -> {
             var executor = DTP_REGISTRY.get(x.getThreadPoolName());
             if (Objects.nonNull(executor)) {
-                doRefresh(executor, x);
+                refresh(executor, x);
                 registeredExecutorNames.remove(x.getThreadPoolName());
                 return;
             }

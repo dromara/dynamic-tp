@@ -24,6 +24,8 @@ import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYL
 @Slf4j
 public class JettyTpHandler extends AbstractWebServerTpHandler {
 
+    private static final String POOL_NAME = "jettyWebServerTp";
+
     @Override
     public Executor doGetTp(WebServer webServer) {
         JettyWebServer jettyWebServer = (JettyWebServer) webServer;
@@ -36,7 +38,7 @@ public class JettyTpHandler extends AbstractWebServerTpHandler {
         ThreadPoolStats poolStats = ThreadPoolStats.builder()
                 .corePoolSize(threadPool.getMinThreads())
                 .maximumPoolSize(threadPool.getMaxThreads())
-                .dtpName("jettyWebServerTp")
+                .poolName(POOL_NAME)
                 .build();
 
         if (threadPool instanceof QueuedThreadPool) {

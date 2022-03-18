@@ -15,6 +15,7 @@ import com.dtp.core.handler.NotifierHandler;
 import com.dtp.core.notify.AlarmLimiter;
 import com.dtp.core.notify.NotifyHelper;
 import com.dtp.core.reject.RejectHandlerGetter;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.ThreadPoolCreator;
 import com.dtp.core.thread.DtpExecutor;
 import com.github.dadiyang.equator.Equator;
@@ -52,7 +53,15 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
     private static final ExecutorService NOTIFY_EXECUTOR = ThreadPoolCreator.createCommonWithTtl("dtp-notify");
 
+    /**
+     * Maintain all automatically registered or manually registered DtpExecutors.
+     */
     private static final Map<String, DtpExecutor> DTP_REGISTRY = new ConcurrentHashMap<>();
+
+    /**
+     * Maintain all automatically registered or manually registered JUC ThreadPoolExecutors.
+     */
+    private static final Map<String, ExecutorWrapper> COMMON_REGISTRY = new ConcurrentHashMap<>();
 
     private static final Equator EQUATOR = new GetterBaseEquator();
 
@@ -60,6 +69,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
     /**
      * Get all DtpExecutor names.
+     *
      * @return executor names
      */
     public static List<String> listAllDtpNames() {
@@ -67,14 +77,35 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
     }
 
     /**
-     * Register a Dynamic ThreadPoolExecutor.
+     * Get all JUC ThreadPoolExecutor names.
+     *
+     * @return executor name
+     */
+    public static List<String> listAllCommonNames() {
+        return Lists.newArrayList(COMMON_REGISTRY.keySet());
+    }
+
+    /**
+     * Register a DtpExecutor.
      *
      * @param executor the newly created DtpExecutor instance
      * @param source the source of the call to register method
      */
-    public static void register(DtpExecutor executor, String source) {
-        log.info("DynamicTp register, source: {}, executor: {}", source, ExecutorConverter.convert(executor));
+    public static void registerDtp(DtpExecutor executor, String source) {
+        log.info("DynamicTp register dtpExecutor, source: {}, executor: {}",
+                source, ExecutorConverter.convert(executor));
         DTP_REGISTRY.put(executor.getThreadPoolName(), executor);
+    }
+
+    /**
+     * Register a common ThreadPoolExecutor.
+     *
+     * @param wrapper the newly created ThreadPoolExecutor wrapper instance
+     * @param source the source of the call to register method
+     */
+    public static void registerCommon(ExecutorWrapper wrapper, String source) {
+        log.info("DynamicTp register commonExecutor, source: {}, name: {}", source, wrapper.getThreadPoolName());
+        COMMON_REGISTRY.put(wrapper.getThreadPoolName(), wrapper);
     }
 
     /**
@@ -83,11 +114,20 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      * @param name the name of dynamic thread pool
      * @return the managed DtpExecutor instance
      */
-    public static DtpExecutor getExecutor(String name) {
+    public static DtpExecutor getDtpExecutor(String name) {
         val executor= DTP_REGISTRY.get(name);
         if (Objects.isNull(executor)) {
             log.error("Cannot find a specified DynamicTp, name: {}", name);
             throw new DtpException("Cannot find a specified DynamicTp, name: " + name);
+        }
+        return executor;
+    }
+
+    public static ExecutorWrapper getCommonExecutor(String name) {
+        val executor= COMMON_REGISTRY.get(name);
+        if (Objects.isNull(executor)) {
+            log.error("Cannot find a specified executor, name: {}", name);
+            throw new DtpException("Cannot find a specified executor, name: " + name);
         }
         return executor;
     }

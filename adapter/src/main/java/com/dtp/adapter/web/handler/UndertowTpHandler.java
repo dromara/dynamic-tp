@@ -29,6 +29,8 @@ import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYL
 @Slf4j
 public class UndertowTpHandler extends AbstractWebServerTpHandler {
 
+    private static final String POOL_NAME = "undertowWebServerWorkerTp";
+
     @Override
     public Executor doGetTp(WebServer webServer) {
 
@@ -55,7 +57,7 @@ public class UndertowTpHandler extends AbstractWebServerTpHandler {
                 .poolSize(mxBean.getWorkerPoolSize())
                 .activeCount(mxBean.getBusyWorkerThreadCount())
                 .queueSize(mxBean.getWorkerQueueSize())
-                .dtpName("undertowWebServerWorkerTp")
+                .poolName(POOL_NAME)
                 .build();
     }
 

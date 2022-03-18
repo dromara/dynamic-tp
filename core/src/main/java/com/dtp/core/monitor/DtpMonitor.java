@@ -9,6 +9,7 @@ import com.dtp.core.DtpRegistry;
 import com.dtp.core.convert.MetricsConverter;
 import com.dtp.core.handler.CollectorHandler;
 import com.dtp.core.notify.AlarmManager;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.thread.NamedThreadFactory;
 import com.google.common.collect.Lists;
@@ -56,28 +57,38 @@ public class DtpMonitor implements ApplicationRunner, Ordered {
     }
 
     private void run() {
-        List<String> names = DtpRegistry.listAllDtpNames();
-        if (CollUtil.isEmpty(names)) {
+        List<String> dtpNames = DtpRegistry.listAllDtpNames();
+        List<String> commonNames = DtpRegistry.listAllCommonNames();
+        if (CollUtil.isEmpty(dtpNames) && CollUtil.isEmpty(commonNames)) {
             return;
         }
-        names.forEach(x -> {
-            DtpExecutor executor = DtpRegistry.getExecutor(x);
+
+        boolean enabledCollect = dtpProperties.isEnabledCollect();
+        dtpNames.forEach(x -> {
+            DtpExecutor executor = DtpRegistry.getDtpExecutor(x);
             AlarmManager.triggerAlarm(() -> doAlarm(executor, ALARM_TYPES));
-            ThreadPoolStats poolStats = MetricsConverter.convert(executor);
-            doCollect(poolStats);
+            if (enabledCollect) {
+                ThreadPoolStats poolStats = MetricsConverter.convert(executor);
+                doCollect(poolStats);
+            }
         });
 
+        if (!enabledCollect) {
+            return;
+        }
+        commonNames.forEach(x -> {
+            ExecutorWrapper wrapper = DtpRegistry.getCommonExecutor(x);
+            ThreadPoolStats poolStats = MetricsConverter.convert(wrapper);
+            doCollect(poolStats);
+        });
         publishEvent();
     }
 
     private void doCollect(ThreadPoolStats threadPoolStats) {
-        if (!dtpProperties.isEnabledCollect()) {
-            return;
-        }
         try {
             CollectorHandler.getInstance().collect(threadPoolStats, dtpProperties.getCollectorType());
         } catch (Exception e) {
-            log.error("DynamicTp monitor, metrics collect error...", e);
+            log.error("DynamicTp monitor, metrics collect error.", e);
         }
     }
 

@@ -1,12 +1,14 @@
 package com.dtp.example.config;
 
 import com.dtp.common.em.QueueTypeEnum;
+import com.dtp.core.support.DynamicTp;
 import com.dtp.core.support.ThreadPoolCreator;
 import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.thread.ThreadPoolBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -15,6 +17,12 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration
 public class ThreadPoolConfiguration {
+
+    @DynamicTp("commonExecutor")
+    @Bean
+    public ThreadPoolExecutor commonExecutor() {
+        return (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+    }
 
     @Bean
     public DtpExecutor dtpExecutor1() {

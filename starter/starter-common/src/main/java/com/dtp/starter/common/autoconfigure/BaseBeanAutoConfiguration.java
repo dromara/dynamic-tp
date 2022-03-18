@@ -9,11 +9,13 @@ import com.dtp.core.monitor.endpoint.DtpEndpoint;
 import com.dtp.core.spring.DtpPostProcessor;
 import com.dtp.core.support.DtpBannerPrinter;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 
 /**
  * BaseBeanAutoConfiguration related
@@ -38,6 +40,7 @@ public class BaseBeanAutoConfiguration {
     }
 
     @Bean
+    @DependsOn({"dtpApplicationContextHolder"})
     @ConditionalOnMissingBean
     public DtpPostProcessor dtpPostProcessor() {
         return new DtpPostProcessor();

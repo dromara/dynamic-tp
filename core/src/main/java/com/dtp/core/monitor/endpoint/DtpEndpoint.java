@@ -6,6 +6,7 @@ import com.dtp.common.dto.JvmStats;
 import com.dtp.common.dto.Metrics;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.convert.MetricsConverter;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.thread.DtpExecutor;
 import com.google.common.collect.Lists;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -26,10 +27,17 @@ public class DtpEndpoint {
     public List<Metrics> invoke() {
 
         List<String> dtpNames = DtpRegistry.listAllDtpNames();
+        List<String> commonNames = DtpRegistry.listAllCommonNames();
+
         List<Metrics> metricsList = Lists.newArrayList();
         dtpNames.forEach(x -> {
-            DtpExecutor executor = DtpRegistry.getExecutor(x);
+            DtpExecutor executor = DtpRegistry.getDtpExecutor(x);
             metricsList.add(MetricsConverter.convert(executor));
+        });
+
+        commonNames.forEach(x -> {
+            ExecutorWrapper wrapper = DtpRegistry.getCommonExecutor(x);
+            metricsList.add(MetricsConverter.convert(wrapper));
         });
 
         JvmStats jvmStats = new JvmStats();

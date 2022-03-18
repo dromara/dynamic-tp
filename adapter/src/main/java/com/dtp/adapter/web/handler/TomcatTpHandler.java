@@ -23,6 +23,8 @@ import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYL
 @Slf4j
 public class TomcatTpHandler extends AbstractWebServerTpHandler {
 
+    private static final String POOL_NAME = "tomcatWebServerTp";
+
     @Override
     public Executor doGetTp(WebServer webServer) {
         TomcatWebServer tomcatWebServer = (TomcatWebServer) webServer;
@@ -31,7 +33,6 @@ public class TomcatTpHandler extends AbstractWebServerTpHandler {
 
     @Override
     public ThreadPoolStats getPoolStats() {
-
         ThreadPoolExecutor executor = convertAndGet();
         return ThreadPoolStats.builder()
                 .corePoolSize(executor.getCorePoolSize())
@@ -46,7 +47,7 @@ public class TomcatTpHandler extends AbstractWebServerTpHandler {
                 .largestPoolSize(executor.getLargestPoolSize())
                 .poolSize(executor.getPoolSize())
                 .waitTaskCount(executor.getQueue().size())
-                .dtpName("tomcatWebServerTp")
+                .poolName(POOL_NAME)
                 .build();
     }
 

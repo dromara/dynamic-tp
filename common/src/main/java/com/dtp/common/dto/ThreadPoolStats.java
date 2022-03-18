@@ -15,7 +15,7 @@ import lombok.EqualsAndHashCode;
 @Builder
 public class ThreadPoolStats extends Metrics {
 
-    private String dtpName;
+    private String poolName;
 
     private int corePoolSize;
 
@@ -80,4 +80,8 @@ public class ThreadPoolStats extends Metrics {
      */
     private String rejectHandlerName;
 
+    /**
+     * 是否DtpExecutor线程池
+     */
+    private boolean dynamic;
 }

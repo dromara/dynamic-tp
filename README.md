@@ -293,11 +293,17 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
   spring.dynamic.tp.executors[1].threadNamePrefix=test2
   ```
 
-- 定义线程池Bean
+- 定义线程池Bean，非DtpExecutor线程池也会被采集监控指标，但是不会动态调参、报警
 
   ```java
   @Configuration
   public class DtpConfig {
+    
+    @DynamicTp("commonExecutor")
+    @Bean
+    public ThreadPoolExecutor commonExecutor() {
+        return (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+    }
 
      @Bean
      public DtpExecutor demo1Executor() {

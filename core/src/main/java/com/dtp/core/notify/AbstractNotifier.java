@@ -69,7 +69,7 @@ public abstract class AbstractNotifier implements Notifier {
     public String buildAlarmContent(NotifyPlatform platform, NotifyTypeEnum typeEnum, String template) {
         DtpContext contextWrapper = DtpContextHolder.get();
         String dtpName = contextWrapper.getDtpExecutor().getThreadPoolName();
-        DtpExecutor executor = DtpRegistry.getExecutor(dtpName);
+        DtpExecutor executor = DtpRegistry.getDtpExecutor(dtpName);
 
         List<String> receivers = StrUtil.split(platform.getReceivers(), ',');
         String receivesStr = Joiner.on(", @").join(receivers);
@@ -109,7 +109,7 @@ public abstract class AbstractNotifier implements Notifier {
                                      DtpMainProp oldProp,
                                      List<String> diffs) {
         String threadPoolName = oldProp.getDtpName();
-        DtpExecutor dtpExecutor = DtpRegistry.getExecutor(threadPoolName);
+        DtpExecutor dtpExecutor = DtpRegistry.getDtpExecutor(threadPoolName);
 
         List<String> receivers = StrUtil.split(platform.getReceivers(), ',');
         String receivesStr = Joiner.on(", @").join(receivers);

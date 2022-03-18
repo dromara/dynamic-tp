@@ -36,13 +36,13 @@ public class MicroMeterCollector extends AbstractCollector {
     @Override
     public void collect(ThreadPoolStats threadPoolStats) {
         // metrics must be held with a strong reference, even though it is never referenced within this class
-        ThreadPoolStats oldStats = GAUGE_CACHE.get(threadPoolStats.getDtpName());
+        ThreadPoolStats oldStats = GAUGE_CACHE.get(threadPoolStats.getPoolName());
         if (Objects.isNull(oldStats)) {
-            GAUGE_CACHE.put(threadPoolStats.getDtpName(), threadPoolStats);
+            GAUGE_CACHE.put(threadPoolStats.getPoolName(), threadPoolStats);
         } else {
             BeanUtil.copyProperties(threadPoolStats, oldStats);
         }
-        gauge(GAUGE_CACHE.get(threadPoolStats.getDtpName()));
+        gauge(GAUGE_CACHE.get(threadPoolStats.getPoolName()));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class MicroMeterCollector extends AbstractCollector {
     public void gauge(ThreadPoolStats poolStats) {
 
         Iterable<Tag> tags = Lists.newArrayList(
-                Tag.of(POOL_NAME_TAG, poolStats.getDtpName()),
+                Tag.of(POOL_NAME_TAG, poolStats.getPoolName()),
                 Tag.of(APP_NAME_TAG, CommonUtil.getAppName()));
 
         Metrics.gauge(metricName("core.size"), tags, poolStats, ThreadPoolStats::getCorePoolSize);

@@ -16,10 +16,8 @@ import javax.annotation.Resource;
 @Slf4j
 public class CloudZookeeperRefresher implements SmartApplicationListener {
 
-
     @Resource
     private DtpProperties dtpProperties;
-
 
     @Override
     public boolean supportsEventType(@NonNull Class<? extends ApplicationEvent> eventType) {

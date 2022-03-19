@@ -195,25 +195,8 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
            <version>1.0.2</version>
        </dependency>
    ```
-   bootstrap.yml 配置
-
-    ```yaml
-        spring:
-          application:
-            name: dynamic-tp-cloud-zookeeper-demo
-          cloud:
-            zookeeper:
-              connect-string: 127.0.0.1:2181
-              config:
-                root: /configserver/dev
-              enabled: true
-              watcher:
-                enabled: true
-          profiles:
-            active: dev
-    ```
-
-+ 注：配置中心配置文件参考example-zookeeper-cloud/resource下的config.txt，该文件可以通过`ZKUI`工具导入到`Zookeeper`
+   
+   注：配置中心配置文件参考example-zookeeper-cloud/resource下的config.txt，该文件可以通过`ZKUI`工具导入到`Zookeeper`
 
 - 线程池配置（yml 类型）
 
@@ -325,8 +308,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
   ```java
   @Configuration
-  public class DtpConfig {
-    
+  public class DtpConfig {  
     
     /**
      * 通过{@link DynamicTp} 注解定义普通juc线程池，会享受到该框架监控功能，注解名称优先级高于方法名

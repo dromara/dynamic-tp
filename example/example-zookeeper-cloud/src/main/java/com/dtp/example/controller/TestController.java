@@ -33,7 +33,7 @@ public class TestController {
     }
 
     public void task() throws InterruptedException {
-        DtpExecutor dtpExecutor2 = DtpRegistry.getExecutor("dtpExecutor2");
+        DtpExecutor dtpExecutor2 = DtpRegistry.getDtpExecutor("dtpExecutor2");
         for (int i = 0; i < 100; i++) {
             Thread.sleep(100);
             dtpExecutor1.execute(() -> {

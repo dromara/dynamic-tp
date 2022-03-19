@@ -10,7 +10,5 @@ spring:
       config:
         root: /configserver/dev
       enabled: true
-      watcher:
-        enabled: true
   profiles:
     active: dev

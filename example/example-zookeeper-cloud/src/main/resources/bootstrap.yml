@@ -1,0 +1,16 @@
+server:
+  port: 8890
+
+spring:
+  application:
+    name: dynamic-tp-cloud-zookeeper-demo
+  cloud:
+    zookeeper:
+      connect-string: 127.0.0.1:2181
+      config:
+        root: /configserver/dev
+      enabled: true
+      watcher:
+        enabled: true
+  profiles:
+    active: dev

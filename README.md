@@ -186,6 +186,34 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
                 root-node: /configserver/userproject
                 node: dynamic-tp-zookeeper-demo
     ```
+   
+5. spring-cloud-starter-zookeeper-config 应用接入
+   ```xml
+       <dependency>
+           <groupId>io.github.lyh200</groupId>
+           <artifactId>dynamic-tp-spring-cloud-starter-zookeeper</artifactId>
+           <version>1.0.2</version>
+       </dependency>
+   ```
+   bootstrap.yml 配置
+
+    ```yaml
+        spring:
+          application:
+            name: dynamic-tp-cloud-zookeeper-demo
+          cloud:
+            zookeeper:
+              connect-string: 127.0.0.1:2181
+              config:
+                root: /configserver/dev
+              enabled: true
+              watcher:
+                enabled: true
+          profiles:
+            active: dev
+    ```
+
++ 注：配置中心配置文件参考example-zookeeper-cloud/resource下的config.txt，该文件可以通过`ZKUI`工具导入到`Zookeeper`
 
 - 线程池配置（yml 类型）
 

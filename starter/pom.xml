@@ -23,6 +23,7 @@
         <module>cloud-starter-nacos</module>
         <module>starter-zookeeper</module>
         <module>cloud-starter-zookeeper</module>
+        <module>cloud-starter-consul</module>
     </modules>
 
     <dependencies>

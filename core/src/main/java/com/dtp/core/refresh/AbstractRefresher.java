@@ -13,7 +13,6 @@ import org.springframework.context.event.ApplicationEventMulticaster;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -41,20 +40,20 @@ public abstract class AbstractRefresher implements Refresher {
 
         try {
             val configHandler = ConfigHandler.getInstance();
-            val prop = configHandler.parseConfig(content, fileTypeEnum);
-            doRefresh(prop);
+            val properties = configHandler.parseConfig(content, fileTypeEnum);
+            PropertiesBinder.bindDtpProperties(properties, dtpProperties);
+            doRefresh(dtpProperties);
         } catch (IOException e) {
             log.error("DynamicTp refresh error, content: {}, fileType: {}", content, fileTypeEnum, e);
         }
     }
 
-    private void doRefresh(Map<Object, Object> properties) {
-        PropertiesBinder.bindDtpProperties(properties, dtpProperties);
+    protected void doRefresh(DtpProperties dtpProperties) {
         DtpRegistry.refresh(dtpProperties);
-        publishEvent();
+        publishEvent(dtpProperties);
     }
 
-    private void publishEvent() {
+    private void publishEvent(DtpProperties dtpProperties) {
         RefreshEvent event = new RefreshEvent(this, dtpProperties);
         applicationEventMulticaster.multicastEvent(event);
     }

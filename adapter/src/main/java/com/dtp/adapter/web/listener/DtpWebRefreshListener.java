@@ -4,9 +4,8 @@ import com.dtp.adapter.web.handler.WebServerTpHandler;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.event.RefreshEvent;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.web.context.WebServerApplicationContext;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
+import org.springframework.lang.NonNull;
 
 /**
  * DtpWebRefreshListener related
@@ -18,12 +17,7 @@ import org.springframework.context.ApplicationListener;
 public class DtpWebRefreshListener implements ApplicationListener<RefreshEvent> {
 
     @Override
-    public void onApplicationEvent(RefreshEvent event) {
-
-        ApplicationContext applicationContext = ApplicationContextHolder.getInstance();
-        if (!(applicationContext instanceof WebServerApplicationContext)) {
-            return;
-        }
+    public void onApplicationEvent(@NonNull RefreshEvent event) {
 
         try {
             WebServerTpHandler webServerTpHandler = ApplicationContextHolder.getBean(WebServerTpHandler.class);

@@ -8,6 +8,7 @@ import com.dtp.common.event.CollectEvent;
 import com.dtp.core.handler.CollectorHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
+import org.springframework.lang.NonNull;
 
 /**
  * DtpWebCollectListener related
@@ -19,7 +20,7 @@ import org.springframework.context.ApplicationListener;
 public class DtpWebCollectListener implements ApplicationListener<CollectEvent> {
 
     @Override
-    public void onApplicationEvent(CollectEvent event) {
+    public void onApplicationEvent(@NonNull CollectEvent event) {
         DtpProperties dtpProperties = event.getDtpProperties();
         try {
             WebServerTpHandler webServerTpHandler = ApplicationContextHolder.getBean(WebServerTpHandler.class);

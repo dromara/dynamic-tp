@@ -1,7 +1,7 @@
 package com.dtp.starter.cloud.zookeeper.refresh;
 
 import com.dtp.common.config.DtpProperties;
-import com.dtp.core.DtpRegistry;
+import com.dtp.core.refresh.AbstractRefresher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.ApplicationEvent;
@@ -14,7 +14,7 @@ import javax.annotation.Resource;
  * @author Redick01
  */
 @Slf4j
-public class CloudZookeeperRefresher implements SmartApplicationListener {
+public class CloudZookeeperRefresher extends AbstractRefresher implements SmartApplicationListener {
 
     @Resource
     private DtpProperties dtpProperties;
@@ -27,7 +27,7 @@ public class CloudZookeeperRefresher implements SmartApplicationListener {
     @Override
     public void onApplicationEvent(@NonNull ApplicationEvent event) {
         if (event instanceof RefreshScopeRefreshedEvent) {
-            DtpRegistry.refresh(dtpProperties);
+            doRefresh(dtpProperties);
         }
     }
 }

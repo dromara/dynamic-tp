@@ -2,12 +2,13 @@ package com.dtp.core.spring;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.*;
 
 /**
  * DtpLifecycleSupport which mainly implements Spring bean's lifecycle methods,
- * follow spring internal thread pool.
+ * mimics spring internal thread pool {@link ThreadPoolTaskExecutor}.
  *
  * @author: yanhom
  * @since 1.0.3

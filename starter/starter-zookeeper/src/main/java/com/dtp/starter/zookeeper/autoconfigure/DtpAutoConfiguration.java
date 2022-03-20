@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
 public class DtpAutoConfiguration {
 
     @Bean
-    public ZookeeperRefresher loadZookeeper() {
+    public ZookeeperRefresher zookeeperRefresher() {
         return new ZookeeperRefresher();
     }
 }

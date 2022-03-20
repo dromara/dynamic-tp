@@ -203,11 +203,11 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-consul</artifactId>
-           <version>1.0.2</version>
+           <version>1.0.3</version>
        </dependency>
    ```
 
-   注：配置中心配置文件参考example-consul-cloud/resource下的dynamic-tp-cloud-consul-demo.yml
+   注：配置中心配置文件参考example-consul-cloud/resource下的dynamic-tp-cloud-consul-demo-dtp.yml
 
 - 线程池配置（yml 类型）
 

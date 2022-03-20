@@ -22,7 +22,8 @@ public class DtpAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean()
-    public CloudConsulRefresher cloudZookeeperRefresher() {
+    @ConditionalOnProperty(value = "spring.cloud.consul.config.enabled", matchIfMissing = true)
+    public CloudConsulRefresher cloudConsulRefresher() {
         return new CloudConsulRefresher();
     }
 }

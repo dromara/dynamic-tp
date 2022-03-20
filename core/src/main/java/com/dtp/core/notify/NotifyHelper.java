@@ -59,7 +59,7 @@ public class NotifyHelper {
 
     public static void fillNotifyItems(List<NotifyPlatform> platforms, List<NotifyItem> notifyItems) {
         if (CollUtil.isEmpty(platforms)) {
-            log.warn("DynamicTp notify, no notify platforms configured...");
+            log.warn("DynamicTp notify, no notify platforms configured.");
             return;
         }
 

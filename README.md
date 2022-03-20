@@ -75,7 +75,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 - **基于 Spring 框架，现只支持 SpringBoot 项目使用，轻量级，引入 starter 即可食用**
 
-- **基于配置中心实现线程池参数动态调整，实时生效；集成主流配置中心，已支持 Nacos、Apollo，Zookeeper，
+- **基于配置中心实现线程池参数动态调整，实时生效；集成主流配置中心，已支持 Nacos、Apollo、Zookeeper、Consul，
   同时也提供 SPI 接口可自定义扩展实现**
 
 - **内置通知报警功能，提供多种报警维度（配置变更通知、活性报警、容量阈值报警、拒绝策略触发报警），
@@ -95,7 +95,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 - 配置变更监听模块：
 
-  1.监听特定配置中心的指定配置文件（已实现 Nacos、Apollo、Zookeeper）,可通过内部提供的 SPI 接口扩展其他实现
+  1.监听特定配置中心的指定配置文件（已实现 Nacos、Apollo、Zookeeper、Consul）,可通过内部提供的 SPI 接口扩展其他实现
 
   2.解析配置文件内容，内置实现 yml、properties 配置文件的解析，可通过内部提供的 SPI 接口扩展其他实现
 

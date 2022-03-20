@@ -14,4 +14,4 @@ spring:
         enabled: true
         prefixes: config
         format: yaml
-        data-key: dynamic-tp-cloud-consul-demo
+        data-key: dynamic-tp-cloud-consul-demo-dtp

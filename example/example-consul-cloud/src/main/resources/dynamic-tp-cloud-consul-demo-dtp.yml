@@ -6,9 +6,6 @@ spring:
       enabledCollect: true       # 是否开启监控指标采集，默认false
       collectorType: logging     # 监控数据采集器类型（JsonLog | MicroMeter），默认logging
       monitorInterval: 10        # 监控时间间隔（报警判断、指标采集），默认5s
-      nacos:                     # nacos配置，不配置有默认值（规则name-dev.yml这样）
-        dataId: dynamic-tp-consul-demo-dev.yml
-        group: DEFAULT_GROUP
       executors:                                   # 动态线程池配置
         - threadPoolName: dtpExecutor1
           corePoolSize: 60

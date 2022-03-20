@@ -1,0 +1,58 @@
+spring:
+  dynamic:
+    tp:
+      enabled: true
+      enabledBanner: true        # 是否开启banner打印，默认true
+      enabledCollect: true       # 是否开启监控指标采集，默认false
+      collectorType: logging     # 监控数据采集器类型（JsonLog | MicroMeter），默认logging
+      monitorInterval: 10        # 监控时间间隔（报警判断、指标采集），默认5s
+      nacos:                     # nacos配置，不配置有默认值（规则name-dev.yml这样）
+        dataId: dynamic-tp-consul-demo-dev.yml
+        group: DEFAULT_GROUP
+      executors:                                   # 动态线程池配置
+        - threadPoolName: dtpExecutor1
+          corePoolSize: 60
+          maximumPoolSize: 60
+          queueCapacity: 3000
+          queueType: VariableLinkedBlockingQueue   # 任务队列，查看源码QueueTypeEnum枚举类
+          rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
+          keepAliveTime: 50
+          allowCoreThreadTimeOut: false
+          threadNamePrefix: test1          # 线程名前缀
+          notifyItems:                     # 报警项，不配置自动会配置（变更通知、容量报警、活性报警、拒绝报警）
+            - type: capacity               # 报警项类型，查看源码 NotifyTypeEnum枚举类
+              enabled: false
+              threshold: 80                # 报警阈值
+              platforms: [ding,wechat]     # 可选配置，不配置默认拿上层platforms配置的所以平台
+              interval: 120                # 报警间隔（单位：s）
+            - type: change
+              enabled: false
+            - type: liveness
+              enabled: false
+              threshold: 80
+            - type: reject
+              enabled: false
+              threshold: 1
+        - threadPoolName: dtpExecutor2
+          corePoolSize: 10
+          maximumPoolSize: 30
+          queueCapacity: 1000
+          queueType: SynchronousQueue   # 任务队列，查看源码QueueTypeEnum枚举类
+          rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
+          keepAliveTime: 50
+          allowCoreThreadTimeOut: false
+          threadNamePrefix: test2          # 线程名前缀
+          notifyItems:                     # 报警项，不配置自动会配置（变更通知、容量报警、活性报警、拒绝报警）
+            - type: capacity               # 报警项类型，查看源码 NotifyTypeEnum枚举类
+              enabled: false
+              threshold: 80                # 报警阈值
+              platforms: [ding,wechat]     # 可选配置，不配置默认拿上层platforms配置的所以平台
+              interval: 120                # 报警间隔（单位：s）
+            - type: change
+              enabled: false
+            - type: liveness
+              enabled: false
+              threshold: 80
+            - type: reject
+              enabled: false
+              threshold: 1

@@ -1,0 +1,17 @@
+server:
+  port: 8890
+
+spring:
+  application:
+    name: dynamic-tp-cloud-consul-demo
+  profiles:
+    active: dev
+  cloud:
+    consul:
+      host: 127.0.0.1
+      port: 8500
+      config:
+        enabled: true
+        prefixes: config
+        format: yaml
+        data-key: dynamic-tp-cloud-consul-demo

@@ -198,6 +198,17 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
    
    注：配置中心配置文件参考example-zookeeper-cloud/resource下的config.txt，该文件可以通过`ZKUI`工具导入到`Zookeeper`
 
+6. spring-cloud-starter-consul-config 应用接入
+   ```xml
+       <dependency>
+           <groupId>io.github.lyh200</groupId>
+           <artifactId>dynamic-tp-spring-cloud-starter-consul</artifactId>
+           <version>1.0.2</version>
+       </dependency>
+   ```
+
+   注：配置中心配置文件参考example-consul-cloud/resource下的dynamic-tp-cloud-consul-demo.yml
+
 - 线程池配置（yml 类型）
 
   ```yaml

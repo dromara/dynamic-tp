@@ -97,6 +97,8 @@ public abstract class AbstractNotifier implements Notifier {
                 executor.getQueue().remainingCapacity(),
                 executor.getRejectHandlerName(),
                 executor.getRejectCount(),
+                executor.getRunTimeoutCount(),
+                executor.getQueueTimeoutCount(),
                 receivesStr,
                 DateUtil.now(),
                 notifyItem.getInterval()
@@ -173,6 +175,10 @@ public abstract class AbstractNotifier implements Notifier {
             colorKeys = CAPACITY_ALARM_KEYS;
         } else if (typeEnum == NotifyTypeEnum.LIVENESS) {
             colorKeys = LIVENESS_ALARM_KEYS;
+        } else if (typeEnum == NotifyTypeEnum.RUN_TIMEOUT) {
+            colorKeys = RUN_TIMEOUT_ALARM_KEYS;
+        } else if (typeEnum == NotifyTypeEnum.QUEUE_TIMEOUT) {
+            colorKeys = QUEUE_TIMEOUT_ALARM_KEYS;
         }
 
         colorKeys.addAll(COMMON_ALARM_KEYS);

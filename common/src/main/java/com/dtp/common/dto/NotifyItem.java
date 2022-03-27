@@ -62,11 +62,21 @@ public class NotifyItem {
         rejectNotify.setType(NotifyTypeEnum.REJECT.getValue());
         rejectNotify.setThreshold(1);
 
+        NotifyItem runTimeoutNotify = new NotifyItem();
+        runTimeoutNotify.setType(NotifyTypeEnum.RUN_TIMEOUT.getValue());
+        runTimeoutNotify.setThreshold(1);
+
+        NotifyItem queueTimeoutNotify = new NotifyItem();
+        queueTimeoutNotify.setType(NotifyTypeEnum.QUEUE_TIMEOUT.getValue());
+        queueTimeoutNotify.setThreshold(1);
+
         DEFAULT_NOTIFY_ITEMS = new ArrayList<>(4);
         DEFAULT_NOTIFY_ITEMS.add(livenessNotify);
         DEFAULT_NOTIFY_ITEMS.add(changeNotify);
         DEFAULT_NOTIFY_ITEMS.add(capacityNotify);
         DEFAULT_NOTIFY_ITEMS.add(rejectNotify);
+        DEFAULT_NOTIFY_ITEMS.add(runTimeoutNotify);
+        DEFAULT_NOTIFY_ITEMS.add(queueTimeoutNotify);
     }
 
     public static List<NotifyItem> getDefaultNotifyItems() {

@@ -42,6 +42,8 @@ public class DingNotifyConst {
                     "<font color='queueRemaining' size=2>队列剩余容量：%d</font> \n\n " +
                     "<font color='rejectType' size=2>拒绝策略：%s</font> \n\n" +
                     "<font color='rejectCount' size=2>拒绝任务数量：%d</font> \n\n " +
+                    "<font color='runTimeoutCount' size=2>执行超时任务数量：%d</font> \n\n " +
+                    "<font color='queueTimeoutCount' size=2>等待超时任务数量：%d</font> \n\n " +
                     "<font color='#664B4B' size=2>接收人：@%s</font> \n\n" +
                     "<font color='#664B4B' size=2>通知时间：%s</font> \n\n" +
                     "<font color='#22B838' size=2>报警间隔：%ss</font> \n\n";

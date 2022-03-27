@@ -167,7 +167,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         if (properties.getCorePoolSize() < 0 ||
                 properties.getMaximumPoolSize() <= 0 ||
                 properties.getMaximumPoolSize() < properties.getCorePoolSize() ||
-                properties.getKeepAliveTime() < 0){
+                properties.getKeepAliveTime() < 0) {
             log.error("DynamicTp refresh, invalid parameters exist, properties: {}", properties);
             return;
         }
@@ -176,13 +176,13 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         doRefresh(executor, properties);
         DtpMainProp newProp = ExecutorConverter.convert(executor);
         if (oldProp.equals(newProp)) {
-            log.warn("DynamicTp [{}] has no properties changed.", executor.getThreadPoolName());
+            log.warn("DynamicTp refresh, main properties of [{}] have not changed.", executor.getThreadPoolName());
             return;
         }
 
         List<FieldInfo> diffFields = EQUATOR.getDiffFields(oldProp, newProp);
         List<String> diffKeys = diffFields.stream().map(FieldInfo::getFieldName).collect(Collectors.toList());
-        log.info("DynamicTp [{}] refreshed end, changed keys: {}, corePoolSize: [{}], maxPoolSize: [{}], " +
+        log.info("DynamicTp refresh, name: [{}], changed keys: {}, corePoolSize: [{}], maxPoolSize: [{}], " +
                         "queueType: [{}], queueCapacity: [{}], keepAliveTime: [{}], rejectedType: [{}], " +
                         "allowsCoreThreadTimeOut: [{}]",
                 executor.getThreadPoolName(),
@@ -249,6 +249,9 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         }
         dtpExecutor.setWaitForTasksToCompleteOnShutdown(properties.isWaitForTasksToCompleteOnShutdown());
         dtpExecutor.setAwaitTerminationSeconds(properties.getAwaitTerminationSeconds());
+        dtpExecutor.setPreStartAllCoreThreads(properties.isPreStartAllCoreThreads());
+        dtpExecutor.setRunTimeout(properties.getRunTimeout());
+        dtpExecutor.setQueueTimeout(properties.getQueueTimeout());
 
         if (CollUtil.isEmpty(properties.getNotifyItems())) {
             dtpExecutor.setNotifyItems(getDefaultNotifyItems());

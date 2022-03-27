@@ -1,4 +1,4 @@
-package com.dtp.core.thread;
+package com.dtp.core.support;
 
 import cn.hutool.core.collection.CollUtil;
 import com.alibaba.ttl.TtlRunnable;
@@ -10,8 +10,10 @@ import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.core.reject.RejectHandlerGetter;
-import com.dtp.core.support.TaskQueue;
-import com.dtp.core.support.TaskWrapper;
+import com.dtp.core.thread.DtpExecutor;
+import com.dtp.core.thread.EagerDtpExecutor;
+import com.dtp.core.thread.NamedThreadFactory;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -97,15 +99,30 @@ public class ThreadPoolBuilder {
     private int awaitTerminationSeconds = 0;
 
     /**
-     * The task wrapper.
-     */
-    private TaskWrapper taskWrapper;
-
-    /**
      * If io intensive thread pool.
      * default false, true indicate cpu intensive thread pool.
      */
     private boolean ioIntensive = false;
+
+    /**
+     * If pre start all core threads.
+     */
+    private boolean preStartAllCoreThreads = false;
+
+    /**
+     * Task execute timeout, unit (ms), just for statistics.
+     */
+    private long runTimeout = 0;
+
+    /**
+     * Task queue wait timeout, unit (ms), just for statistics.
+     */
+    private long queueTimeout = 0;
+
+    /**
+     * Task wrappers.
+     */
+    private final List<TaskWrapper> taskWrappers = Lists.newArrayList();
 
     /**
      * Notify items, see {@link NotifyTypeEnum}
@@ -167,6 +184,11 @@ public class ThreadPoolBuilder {
         return this;
     }
 
+    public ThreadPoolBuilder queueCapacity(int queueCapacity) {
+        this.queueCapacity = queueCapacity;
+        return this;
+    }
+
     public ThreadPoolBuilder rejectedExecutionHandler(String rejectedName) {
         if (StringUtils.isNotBlank(rejectedName)) {
             rejectedExecutionHandler = RejectHandlerGetter.buildRejectedHandler(rejectedName);
@@ -191,13 +213,6 @@ public class ThreadPoolBuilder {
         return this;
     }
 
-    public ThreadPoolBuilder notifyItems(List<NotifyItem> notifyItemList) {
-        if (CollUtil.isNotEmpty(notifyItemList)) {
-            notifyItems = notifyItemList;
-        }
-        return this;
-    }
-
     public ThreadPoolBuilder awaitTerminationSeconds(int awaitTerminationSeconds) {
         this.awaitTerminationSeconds = awaitTerminationSeconds;
         return this;
@@ -208,18 +223,40 @@ public class ThreadPoolBuilder {
         return this;
     }
 
-    public ThreadPoolBuilder taskWrapper(TaskWrapper taskWrapper) {
-        this.taskWrapper = taskWrapper;
-        return this;
-    }
-
     public ThreadPoolBuilder ioIntensive(boolean ioIntensive) {
         this.ioIntensive = ioIntensive;
         return this;
     }
 
-    public ThreadPoolBuilder queueCapacity(int queueCapacity) {
-        this.queueCapacity = queueCapacity;
+    public ThreadPoolBuilder preStartAllCoreThreads(boolean preStartAllCoreThreads) {
+        this.preStartAllCoreThreads = preStartAllCoreThreads;
+        return this;
+    }
+
+    public ThreadPoolBuilder runTimeout(long runTimeout) {
+        this.runTimeout = runTimeout;
+        return this;
+    }
+
+    public ThreadPoolBuilder queueTimeout(long queueTimeout) {
+        this.queueTimeout = queueTimeout;
+        return this;
+    }
+
+    public ThreadPoolBuilder taskWrappers(List<TaskWrapper> taskWrappers) {
+        this.taskWrappers.addAll(taskWrappers);
+        return this;
+    }
+
+    public ThreadPoolBuilder taskWrapper(TaskWrapper taskWrapper) {
+        this.taskWrappers.add(taskWrapper);
+        return this;
+    }
+
+    public ThreadPoolBuilder notifyItems(List<NotifyItem> notifyItemList) {
+        if (CollUtil.isNotEmpty(notifyItemList)) {
+            notifyItems = notifyItemList;
+        }
         return this;
     }
 
@@ -262,7 +299,7 @@ public class ThreadPoolBuilder {
      */
     public ExecutorService buildWithTtl() {
         if (dynamic) {
-            taskWrapper = TtlRunnable::get;
+            taskWrappers.add(TtlRunnable::get);
             return buildDtpExecutor(this);
         } else {
             return TtlExecutors.getTtlExecutorService(buildCommonExecutor(this));
@@ -280,10 +317,13 @@ public class ThreadPoolBuilder {
         DtpExecutor dtpExecutor = createInternal(builder);
         dtpExecutor.setThreadPoolName(builder.threadPoolName);
         dtpExecutor.allowCoreThreadTimeOut(builder.allowCoreThreadTimeOut);
-        dtpExecutor.setNotifyItems(notifyItems);
-        dtpExecutor.setWaitForTasksToCompleteOnShutdown(waitForTasksToCompleteOnShutdown);
-        dtpExecutor.setAwaitTerminationSeconds(awaitTerminationSeconds);
-        dtpExecutor.setTaskWrapper(taskWrapper);
+        dtpExecutor.setWaitForTasksToCompleteOnShutdown(builder.waitForTasksToCompleteOnShutdown);
+        dtpExecutor.setAwaitTerminationSeconds(builder.awaitTerminationSeconds);
+        dtpExecutor.setPreStartAllCoreThreads(builder.preStartAllCoreThreads);
+        dtpExecutor.setRunTimeout(builder.runTimeout);
+        dtpExecutor.setQueueTimeout(builder.queueTimeout);
+        dtpExecutor.addTaskWrappers(builder.taskWrappers);
+        dtpExecutor.setNotifyItems(builder.notifyItems);
         return dtpExecutor;
     }
 

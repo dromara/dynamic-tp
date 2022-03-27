@@ -12,7 +12,7 @@ import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
 import com.dtp.core.handler.NotifierHandler;
 import com.dtp.core.thread.DtpExecutor;
-import com.dtp.core.thread.ThreadPoolBuilder;
+import com.dtp.core.support.ThreadPoolBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -58,6 +58,10 @@ public class AlarmManager {
             triggerCondition = checkCapacity(executor);
         } else if (typeEnum == NotifyTypeEnum.LIVENESS) {
             triggerCondition = checkLiveness(executor);
+        } else if (typeEnum == NotifyTypeEnum.RUN_TIMEOUT) {
+            triggerCondition = checkRunTimeout(executor);
+        } else if (typeEnum == NotifyTypeEnum.QUEUE_TIMEOUT) {
+            triggerCondition = checkQueueTimeout(executor);
         }
         if (!triggerCondition) {
             return;
@@ -117,6 +121,26 @@ public class AlarmManager {
 
         int rejectCount = executor.getRejectCount();
         return satisfyBaseCondition(notifyItem) && rejectCount >= notifyItem.getThreshold();
+    }
+
+    private static boolean checkRunTimeout(DtpExecutor executor) {
+        NotifyItem notifyItem = NotifyHelper.getNotifyItem(executor, NotifyTypeEnum.RUN_TIMEOUT);
+        if (Objects.isNull(notifyItem)) {
+            return false;
+        }
+
+        int runTimeoutTaskCount = executor.getRunTimeoutCount();
+        return satisfyBaseCondition(notifyItem) && runTimeoutTaskCount >= notifyItem.getThreshold();
+    }
+
+    private static boolean checkQueueTimeout(DtpExecutor executor) {
+        NotifyItem notifyItem = NotifyHelper.getNotifyItem(executor, NotifyTypeEnum.QUEUE_TIMEOUT);
+        if (Objects.isNull(notifyItem)) {
+            return false;
+        }
+
+        int queueTimeoutTaskCount = executor.getQueueTimeoutCount();
+        return satisfyBaseCondition(notifyItem) && queueTimeoutTaskCount >= notifyItem.getThreshold();
     }
 
     private static boolean satisfyBaseCondition(NotifyItem notifyItem) {

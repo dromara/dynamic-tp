@@ -36,8 +36,14 @@ public class NotifyHelper {
 
     protected static final List<String> REJECT_ALARM_KEYS = Lists.newArrayList("rejectType", "rejectCount");
 
+    protected static final List<String> RUN_TIMEOUT_ALARM_KEYS = Lists.newArrayList("runTimeoutCount");
+
+    protected static final List<String> QUEUE_TIMEOUT_ALARM_KEYS = Lists.newArrayList("queueTimeoutCount");
+
     protected static final Set<String> ALL_ALARM_KEYS =
-            Stream.of(COMMON_ALARM_KEYS, CAPACITY_ALARM_KEYS, REJECT_ALARM_KEYS, LIVENESS_ALARM_KEYS)
+            Stream.of(COMMON_ALARM_KEYS, CAPACITY_ALARM_KEYS,
+                    REJECT_ALARM_KEYS, LIVENESS_ALARM_KEYS,
+                    RUN_TIMEOUT_ALARM_KEYS, QUEUE_TIMEOUT_ALARM_KEYS)
                     .flatMap(Collection::stream).collect(Collectors.toSet());
 
     private NotifyHelper() {}

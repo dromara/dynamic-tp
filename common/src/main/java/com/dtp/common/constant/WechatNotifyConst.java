@@ -44,6 +44,8 @@ public class WechatNotifyConst {
                     "> <font color='queueRemaining'>队列剩余容量：%s</font> \n" +
                     "> <font color='rejectType'>拒绝策略：%s</font> \n" +
                     "> <font color='rejectCount'>拒绝任务数量：%s</font> \n" +
+                    "> <font color='runTimeoutCount'>执行超时任务数量：%s</font> \n" +
+                    "> <font color='queueTimeoutCount'>等待超时任务数量：%s</font> \n" +
                     SUFFIX +
                     "> <font color='info'>报警间隔：%ss</font> \n";
 

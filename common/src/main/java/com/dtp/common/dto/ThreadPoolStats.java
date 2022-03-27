@@ -84,4 +84,14 @@ public class ThreadPoolStats extends Metrics {
      * 是否DtpExecutor线程池
      */
     private boolean dynamic;
+
+    /**
+     * 执行超时任务数量
+     */
+    private int runTimeoutCount;
+
+    /**
+     * 在队列等待超时任务数量
+     */
+    private int queueTimeoutCount;
 }

@@ -1,13 +1,16 @@
 package com.dtp.core.thread;
 
+import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.core.notify.AlarmManager;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.spring.DtpLifecycleSupport;
+import com.dtp.core.support.DtpRunnable;
 import com.dtp.core.support.TaskWrapper;
+import com.google.common.collect.Lists;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
@@ -38,9 +41,34 @@ public class DtpExecutor extends DtpLifecycleSupport {
     private List<NotifyItem> notifyItems;
 
     /**
-     * Task wrapper, do sth enhanced.
+     * Task wrappers, do sth enhanced.
      */
-    private TaskWrapper taskWrapper;
+    private final List<TaskWrapper> taskWrappers = Lists.newArrayList();
+
+    /**
+     * If pre start all core threads.
+     */
+    private boolean preStartAllCoreThreads;
+
+    /**
+     * Task execute timeout, unit (ms), just for statistics.
+     */
+    private long runTimeout;
+
+    /**
+     * Task queue wait timeout, unit (ms), just for statistics.
+     */
+    private long queueTimeout;
+
+    /**
+     * Count run timeout tasks.
+     */
+    private final AtomicInteger runTimeoutCount = new AtomicInteger();
+
+    /**
+     * Count queue wait timeout tasks.
+     */
+    private final AtomicInteger queueTimeoutCount = new AtomicInteger();
 
     public DtpExecutor(int corePoolSize,
                        int maximumPoolSize,
@@ -53,14 +81,57 @@ public class DtpExecutor extends DtpLifecycleSupport {
         this.rejectHandlerName = handler.getClass().getSimpleName();
         RejectedExecutionHandler rejectedExecutionHandler = RejectHandlerGetter.getProxy(handler);
         setRejectedExecutionHandler(rejectedExecutionHandler);
+
+        if (preStartAllCoreThreads) {
+            prestartAllCoreThreads();
+        }
     }
 
     @Override
     public void execute(Runnable command) {
-        if (Objects.nonNull(taskWrapper)) {
-            command = taskWrapper.wrap(command);
+        if (CollUtil.isNotEmpty(taskWrappers)) {
+            for (TaskWrapper t : taskWrappers) {
+                command = t.wrap(command);
+            }
+        }
+
+        if (runTimeout > 0 && queueTimeout > 0) {
+            command = new DtpRunnable(command);
         }
         super.execute(command);
+    }
+
+    @Override
+    protected void beforeExecute(Thread t, Runnable r) {
+
+        if (queueTimeout > 0) {
+            DtpRunnable runnable = (DtpRunnable) r;
+            long currTime = System.currentTimeMillis();
+            runnable.setStartTime(currTime);
+
+            long waitTime = currTime - runnable.getSubmitTime();
+            if (waitTime > queueTimeout) {
+                queueTimeoutCount.incrementAndGet();
+                AlarmManager.triggerAlarm(() -> AlarmManager.doAlarm(this, NotifyTypeEnum.QUEUE_TIMEOUT));
+            }
+        }
+
+        super.beforeExecute(t, r);
+    }
+
+    @Override
+    protected void afterExecute(Runnable r, Throwable t) {
+
+        if (runTimeout > 0) {
+            DtpRunnable runnable = (DtpRunnable) r;
+            long runTime = System.currentTimeMillis() - runnable.getStartTime();
+            if (runTime > runTimeout) {
+                runTimeoutCount.incrementAndGet();
+                AlarmManager.triggerAlarm(() -> AlarmManager.doAlarm(this, NotifyTypeEnum.RUN_TIMEOUT));
+            }
+        }
+
+        super.afterExecute(r, t);
     }
 
     public void incRejectCount(int count) {
@@ -95,7 +166,29 @@ public class DtpExecutor extends DtpLifecycleSupport {
         this.rejectHandlerName = rejectHandlerName;
     }
 
-    public void setTaskWrapper(TaskWrapper taskWrapper) {
-        this.taskWrapper = taskWrapper;
+    public void addTaskWrappers(List<TaskWrapper> taskWrappers) {
+        if (CollUtil.isNotEmpty(taskWrappers)) {
+            this.taskWrappers.addAll(taskWrappers);
+        }
+    }
+
+    public void setPreStartAllCoreThreads(boolean preStartAllCoreThreads) {
+        this.preStartAllCoreThreads = preStartAllCoreThreads;
+    }
+
+    public void setRunTimeout(long runTimeout) {
+        this.runTimeout = runTimeout;
+    }
+
+    public int getRunTimeoutCount() {
+        return runTimeoutCount.get();
+    }
+
+    public int getQueueTimeoutCount() {
+        return queueTimeoutCount.get();
+    }
+
+    public void setQueueTimeout(long queueTimeout) {
+        this.queueTimeout = queueTimeout;
     }
 }

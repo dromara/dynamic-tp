@@ -4,7 +4,7 @@ import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.core.support.DynamicTp;
 import com.dtp.core.support.ThreadPoolCreator;
 import com.dtp.core.thread.DtpExecutor;
-import com.dtp.core.thread.ThreadPoolBuilder;
+import com.dtp.core.support.ThreadPoolBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

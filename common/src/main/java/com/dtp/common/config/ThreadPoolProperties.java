@@ -93,4 +93,19 @@ public class ThreadPoolProperties {
      * before the rest of the container continues to shut down.
      */
     private int awaitTerminationSeconds = 0;
+
+    /**
+     * If pre start all core threads.
+     */
+    private boolean preStartAllCoreThreads;
+
+    /**
+     * Task execute timeout, unit (ms), just for statistics.
+     */
+    private long runTimeout;
+
+    /**
+     * Task queue wait timeout, unit (ms), just for statistics.
+     */
+    private long queueTimeout;
 }

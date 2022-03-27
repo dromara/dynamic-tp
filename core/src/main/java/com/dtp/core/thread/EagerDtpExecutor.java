@@ -6,8 +6,9 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * EagerDtpExecutor related.
- * Mainly used in io intensive scenario.
+ * When core threads are all in busy,
+ * create new thread instead of putting task into blocking queue,
+ * mainly used in io intensive scenario.
  *
  * @author: yanhom
  * @since 1.0.3
@@ -36,6 +37,7 @@ public class EagerDtpExecutor extends DtpExecutor {
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
         submittedTaskCount.decrementAndGet();
+        super.afterExecute(r, t);
     }
 
     @Override

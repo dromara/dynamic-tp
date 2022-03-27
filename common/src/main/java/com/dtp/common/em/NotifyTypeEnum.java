@@ -30,7 +30,17 @@ public enum NotifyTypeEnum {
     /**
      * Reject notify.
      */
-    REJECT("reject"),;
+    REJECT("reject"),
+
+    /**
+     * Task run timeout alarm.
+     */
+    RUN_TIMEOUT("run_timeout"),
+
+    /**
+     * Task queue wait timeout alarm.
+     */
+    QUEUE_TIMEOUT("queue_timeout");
 
     private final String value;
 

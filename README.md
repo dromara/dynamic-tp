@@ -55,7 +55,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 我们基于配置中心对线程池 ThreadPoolExecutor 做一些扩展，实现对运行中线程池参数的动态修改，实时生效；
 以及实时监控线程池的运行状态，触发设置的报警策略时报警，报警信息会推送办公平台（钉钉、企微等）。
-报警维度包括（队列容量、线程池活性、拒绝触发等）；同时也会定时采集线程池指标数据供监控平台可视化使用。
+报警维度包括（队列容量、线程池活性、拒绝触发、任务超时等）；同时也会定时采集线程池指标数据供监控平台可视化使用。
 使我们能时刻感知到线程池的负载，根据情况及时调整，避免出现问题影响线上业务。
 
 ```bash
@@ -78,12 +78,12 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 - **基于配置中心实现线程池参数动态调整，实时生效；集成主流配置中心，已支持 Nacos、Apollo、Zookeeper、Consul，
   同时也提供 SPI 接口可自定义扩展实现**
 
-- **内置通知报警功能，提供多种报警维度（配置变更通知、活性报警、容量阈值报警、拒绝策略触发报警），
+- **内置通知报警功能，提供多种报警维度（配置变更通知、活性报警、容量阈值报警、拒绝触发报警、任务执行或等待超时报警），
   默认支持企业微信、钉钉报警，同时提供 SPI 接口可自定义扩展实现**
 
 - **内置线程池指标采集功能，支持通过 MicroMeter、JsonLog 日志输出、Endpoint 三种方式，可通过 SPI 接口自定义扩展实现**
 
-- **集成管理常用第三方组件的线程池，已集成 SpringBoot 内置 WebServer（tomcat、undertow、jetty）的线程池管理**
+- **集成管理常用第三方组件的线程池，已集成 SpringBoot 内置 WebServer（Tomcat、Undertow、Jetty）的线程池管理**
 
 - **Builder 提供 TTL 包装功能，生成的线程池支持上下文信息传递**
 
@@ -130,6 +130,10 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
   3.线程池活性达到设置阈值告警
 
   4.触发拒绝策略告警
+  
+  5.任务执行超时告警
+  
+  6.任务等待超时告警
 
 ![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/91ea4c3e1166426e8dca9903dacfd9eb~tplv-k3u1fbpfcp-zoom-1.image)
 
@@ -257,7 +261,9 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
             threadNamePrefix: test                         # 线程名前缀
             waitForTasksToCompleteOnShutdown: false        # 参考spring线程池设计
             awaitTerminationSeconds: 5                     # 单位（s）
-            notifyItems:                     # 报警项，不配置自动会配置（变更通知、容量报警、活性报警、拒绝报警）
+            runTimeout: 200                                # 任务执行超时阈值，目前只做告警用，单位（ms）
+            queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
+            notifyItems:                     # 报警项，不配置自动会配置（变更通知、容量报警、活性报警、拒绝报警、任务超时报警）
               - type: capacity               # 报警项类型，查看源码 NotifyTypeEnum枚举类
                 enabled: true
                 threshold: 80                # 报警阈值
@@ -269,6 +275,12 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
                 enabled: true
                 threshold: 80
               - type: reject
+                enabled: true
+                threshold: 1
+              - type: run_timeout
+                enabled: true
+                threshold: 1
+              - type: queue_timeout
                 enabled: true
                 threshold: 1
   ```

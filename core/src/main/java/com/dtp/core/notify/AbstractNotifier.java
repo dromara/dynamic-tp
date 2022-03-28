@@ -4,19 +4,16 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.dto.DtpMainProp;
-import com.dtp.common.dto.Instance;
-import com.dtp.common.dto.NotifyItem;
-import com.dtp.common.dto.NotifyPlatform;
+import com.dtp.common.dto.*;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
 import com.dtp.core.thread.DtpExecutor;
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.core.env.Environment;
@@ -24,9 +21,12 @@ import org.springframework.core.env.Environment;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static com.dtp.core.notify.NotifyHelper.*;
+import static com.dtp.common.constant.DynamicTpConst.UNKNOWN;
+import static com.dtp.core.notify.NotifyHelper.getAlarmKeys;
+import static com.dtp.core.notify.NotifyHelper.getAllAlarmKeys;
 
 /**
  * AbstractNotifier related
@@ -75,6 +75,8 @@ public abstract class AbstractNotifier implements Notifier {
         String receivesStr = Joiner.on(", @").join(receivers);
 
         NotifyItem notifyItem = contextWrapper.getNotifyItem();
+        AlarmInfo alarmInfo = contextWrapper.getAlarmInfo();
+        val triple = AlarmCounter.countNotifyItems(dtpName);
         String content = String.format(
                 template,
                 getInstance().getServiceName(),
@@ -96,11 +98,12 @@ public abstract class AbstractNotifier implements Notifier {
                 executor.getQueue().size(),
                 executor.getQueue().remainingCapacity(),
                 executor.getRejectHandlerName(),
-                executor.getRejectCount(),
-                executor.getRunTimeoutCount(),
-                executor.getQueueTimeoutCount(),
-                receivesStr,
+                triple.getLeft() + "/" + executor.getRejectCount(),
+                triple.getMiddle() + "/" + executor.getRunTimeoutCount(),
+                triple.getRight() + "/" + executor.getQueueTimeoutCount(),
+                alarmInfo.getLastAlarmTime() == null ? UNKNOWN : alarmInfo.getLastAlarmTime(),
                 DateUtil.now(),
+                receivesStr,
                 notifyItem.getInterval()
         );
         return highlightAlarmContent(content, typeEnum);
@@ -168,25 +171,13 @@ public abstract class AbstractNotifier implements Notifier {
             return content;
         }
 
-        List<String> colorKeys = Lists.newArrayList();
-        if (typeEnum == NotifyTypeEnum.REJECT) {
-            colorKeys = REJECT_ALARM_KEYS;
-        } else if (typeEnum == NotifyTypeEnum.CAPACITY) {
-            colorKeys = CAPACITY_ALARM_KEYS;
-        } else if (typeEnum == NotifyTypeEnum.LIVENESS) {
-            colorKeys = LIVENESS_ALARM_KEYS;
-        } else if (typeEnum == NotifyTypeEnum.RUN_TIMEOUT) {
-            colorKeys = RUN_TIMEOUT_ALARM_KEYS;
-        } else if (typeEnum == NotifyTypeEnum.QUEUE_TIMEOUT) {
-            colorKeys = QUEUE_TIMEOUT_ALARM_KEYS;
-        }
-
-        colorKeys.addAll(COMMON_ALARM_KEYS);
+        Set<String> colorKeys = getAlarmKeys(typeEnum);
         Pair<String, String> pair = getColors();
         for (String field : colorKeys) {
             content = content.replace(field, pair.getLeft());
         }
-        for (String field : ALL_ALARM_KEYS) {
+
+        for (String field : getAllAlarmKeys()) {
             content = content.replace(field, pair.getRight());
         }
         return content;

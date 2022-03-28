@@ -17,4 +17,6 @@ public class DynamicTpConst {
     public static final int AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors();
 
     public static final String PROPERTIES_CHANGE_SHOW_STYLE = "%s => %s";
+
+    public static final String UNKNOWN = "UKN";
 }

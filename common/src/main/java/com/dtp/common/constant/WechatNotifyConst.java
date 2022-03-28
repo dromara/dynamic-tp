@@ -46,7 +46,9 @@ public class WechatNotifyConst {
                     "> <font color='rejectCount'>拒绝任务数量：%s</font> \n" +
                     "> <font color='runTimeoutCount'>执行超时任务数量：%s</font> \n" +
                     "> <font color='queueTimeoutCount'>等待超时任务数量：%s</font> \n" +
-                    SUFFIX +
+                    "> <font color='comment'>上次报警时间：%s</font> \n" +
+                    "> <font color='comment'>报警时间：%s</font> \n" +
+                    "> <font color='comment'>接收人：@%s</font> \n" +
                     "> <font color='info'>报警间隔：%ss</font> \n";
 
     public static final String WECHAT_CHANGE_NOTICE_TEMPLATE =
@@ -62,5 +64,6 @@ public class WechatNotifyConst {
                     "> <font color='comment'>队列类型：%s</font> \n" +
                     "> <font color='queueCapacity'>队列容量：%s => %s</font> \n" +
                     "> <font color='rejectType'>拒绝策略：%s => %s</font> \n" +
-                    SUFFIX;
+                    "> <font color='comment'>接收人：@%s</font> \n" +
+                    "> <font color='comment'>通知时间：%s</font> \n";
 }

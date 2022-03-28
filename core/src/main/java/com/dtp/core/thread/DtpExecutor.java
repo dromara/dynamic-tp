@@ -17,6 +17,9 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.dtp.common.em.NotifyTypeEnum.QUEUE_TIMEOUT;
+import static com.dtp.common.em.NotifyTypeEnum.RUN_TIMEOUT;
+
 /**
  * Dynamic ThreadPoolExecutor inherits DtpLifecycleSupport, and extends some features.
  *
@@ -108,11 +111,11 @@ public class DtpExecutor extends DtpLifecycleSupport {
             DtpRunnable runnable = (DtpRunnable) r;
             long currTime = System.currentTimeMillis();
             runnable.setStartTime(currTime);
-
             long waitTime = currTime - runnable.getSubmitTime();
             if (waitTime > queueTimeout) {
                 queueTimeoutCount.incrementAndGet();
-                AlarmManager.triggerAlarm(() -> AlarmManager.doAlarm(this, NotifyTypeEnum.QUEUE_TIMEOUT));
+                Runnable alarmTask = () -> AlarmManager.doAlarm(this, QUEUE_TIMEOUT);
+                AlarmManager.triggerAlarm(this.getThreadPoolName(), QUEUE_TIMEOUT.getValue(), alarmTask);
             }
         }
 
@@ -127,7 +130,8 @@ public class DtpExecutor extends DtpLifecycleSupport {
             long runTime = System.currentTimeMillis() - runnable.getStartTime();
             if (runTime > runTimeout) {
                 runTimeoutCount.incrementAndGet();
-                AlarmManager.triggerAlarm(() -> AlarmManager.doAlarm(this, NotifyTypeEnum.RUN_TIMEOUT));
+                Runnable alarmTask = () -> AlarmManager.doAlarm(this, RUN_TIMEOUT);
+                AlarmManager.triggerAlarm(this.getThreadPoolName(), RUN_TIMEOUT.getValue(), alarmTask);
             }
         }
 

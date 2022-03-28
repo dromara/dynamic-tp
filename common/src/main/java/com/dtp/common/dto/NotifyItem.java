@@ -70,7 +70,7 @@ public class NotifyItem {
         queueTimeoutNotify.setType(NotifyTypeEnum.QUEUE_TIMEOUT.getValue());
         queueTimeoutNotify.setThreshold(1);
 
-        DEFAULT_NOTIFY_ITEMS = new ArrayList<>(4);
+        DEFAULT_NOTIFY_ITEMS = new ArrayList<>(6);
         DEFAULT_NOTIFY_ITEMS.add(livenessNotify);
         DEFAULT_NOTIFY_ITEMS.add(changeNotify);
         DEFAULT_NOTIFY_ITEMS.add(capacityNotify);

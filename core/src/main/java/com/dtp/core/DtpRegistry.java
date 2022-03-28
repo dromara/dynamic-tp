@@ -12,6 +12,7 @@ import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
 import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.handler.NotifierHandler;
+import com.dtp.core.notify.AlarmCounter;
 import com.dtp.core.notify.AlarmLimiter;
 import com.dtp.core.notify.NotifyHelper;
 import com.dtp.core.reject.RejectHandlerGetter;
@@ -290,7 +291,10 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         }
         DTP_REGISTRY.forEach((k, v) -> {
             NotifyHelper.fillNotifyItems(dtpProperties.getPlatforms(), v.getNotifyItems());
-            v.getNotifyItems().forEach(x -> AlarmLimiter.initAlarmLimiter(k, x));
+            v.getNotifyItems().forEach(x -> {
+                AlarmLimiter.initAlarmLimiter(k, x);
+                AlarmCounter.init(k, x.getType());
+            });
         });
     }
 

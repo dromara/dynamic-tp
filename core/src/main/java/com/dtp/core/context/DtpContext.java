@@ -1,6 +1,7 @@
 package com.dtp.core.context;
 
 import cn.hutool.core.collection.CollUtil;
+import com.dtp.common.dto.AlarmInfo;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.core.thread.DtpExecutor;
@@ -28,6 +29,8 @@ public class DtpContext {
     private List<NotifyPlatform> platforms;
 
     private NotifyItem notifyItem;
+
+    private AlarmInfo alarmInfo;
 
     public NotifyPlatform getPlatform(String platform) {
         if (CollUtil.isEmpty(platforms)) {

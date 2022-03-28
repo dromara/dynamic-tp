@@ -9,12 +9,15 @@ import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.util.StreamUtil;
 import com.dtp.core.thread.DtpExecutor;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import static com.dtp.common.em.NotifyTypeEnum.*;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -26,27 +29,46 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 public class NotifyHelper {
 
-    protected static final List<String> COMMON_ALARM_KEYS = Lists.newArrayList("alarmType", "threshold");
+    private static final List<String> COMMON_ALARM_KEYS = Lists.newArrayList("alarmType", "threshold");
 
-    protected static final List<String> LIVENESS_ALARM_KEYS = Lists.newArrayList(
+    private static final Set<String> LIVENESS_ALARM_KEYS = Sets.newHashSet(
             "corePoolSize", "maximumPoolSize", "poolSize", "activeCount");
 
-    protected static final List<String> CAPACITY_ALARM_KEYS = Lists.newArrayList(
+    private static final Set<String> CAPACITY_ALARM_KEYS = Sets.newHashSet(
             "queueType", "queueCapacity", "queueSize", "queueRemaining");
 
-    protected static final List<String> REJECT_ALARM_KEYS = Lists.newArrayList("rejectType", "rejectCount");
+    private static final Set<String> REJECT_ALARM_KEYS = Sets.newHashSet("rejectType", "rejectCount");
 
-    protected static final List<String> RUN_TIMEOUT_ALARM_KEYS = Lists.newArrayList("runTimeoutCount");
+    private static final Set<String> RUN_TIMEOUT_ALARM_KEYS = Sets.newHashSet("runTimeoutCount");
 
-    protected static final List<String> QUEUE_TIMEOUT_ALARM_KEYS = Lists.newArrayList("queueTimeoutCount");
+    private static final Set<String> QUEUE_TIMEOUT_ALARM_KEYS = Sets.newHashSet("queueTimeoutCount");
 
-    protected static final Set<String> ALL_ALARM_KEYS =
-            Stream.of(COMMON_ALARM_KEYS, CAPACITY_ALARM_KEYS,
-                    REJECT_ALARM_KEYS, LIVENESS_ALARM_KEYS,
-                    RUN_TIMEOUT_ALARM_KEYS, QUEUE_TIMEOUT_ALARM_KEYS)
-                    .flatMap(Collection::stream).collect(Collectors.toSet());
+    private static final Set<String> ALL_ALARM_KEYS;
+
+    private static final Map<String, Set<String>> ALARM_KEYS = Maps.newHashMap();
+
+    static {
+        ALARM_KEYS.put(LIVENESS.name(), LIVENESS_ALARM_KEYS);
+        ALARM_KEYS.put(CAPACITY.name(), CAPACITY_ALARM_KEYS);
+        ALARM_KEYS.put(REJECT.name(), REJECT_ALARM_KEYS);
+        ALARM_KEYS.put(RUN_TIMEOUT.name(), RUN_TIMEOUT_ALARM_KEYS);
+        ALARM_KEYS.put(QUEUE_TIMEOUT.name(), QUEUE_TIMEOUT_ALARM_KEYS);
+
+        ALL_ALARM_KEYS = ALARM_KEYS.values().stream().flatMap(Collection::stream).collect(Collectors.toSet());
+        ALL_ALARM_KEYS.addAll(COMMON_ALARM_KEYS);
+    }
 
     private NotifyHelper() {}
+
+    public static Set<String> getAllAlarmKeys() {
+        return ALL_ALARM_KEYS;
+    }
+
+    public static Set<String> getAlarmKeys(NotifyTypeEnum typeEnum) {
+        val keys = ALARM_KEYS.get(typeEnum.name());
+        keys.addAll(COMMON_ALARM_KEYS);
+        return keys;
+    }
 
     public static NotifyItem getNotifyItem(DtpExecutor dtpExecutor, NotifyTypeEnum typeEnum) {
         List<NotifyItem> notifyItems = dtpExecutor.getNotifyItems();
@@ -55,7 +77,7 @@ public class NotifyHelper {
                 .findFirst()
                 .orElse(null);
         if (Objects.isNull(notifyItem)) {
-            log.warn("DynamicTp notify, no such [{}] notify item configured, threadPoolName: {}",
+            log.debug("DynamicTp notify, no such [{}] notify item configured, threadPoolName: {}",
                     typeEnum.getValue(), dtpExecutor.getThreadPoolName());
             return null;
         }
@@ -90,6 +112,7 @@ public class NotifyHelper {
                 return;
             }
             AlarmLimiter.initAlarmLimiter(dtpExecutor.getThreadPoolName(), x);
+            AlarmCounter.init(dtpExecutor.getThreadPoolName(), x.getType());
         });
     }
 }

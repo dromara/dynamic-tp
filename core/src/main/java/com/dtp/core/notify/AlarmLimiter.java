@@ -1,5 +1,6 @@
 package com.dtp.core.notify;
 
+import com.dtp.common.dto.AlarmInfo;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.core.thread.DtpExecutor;

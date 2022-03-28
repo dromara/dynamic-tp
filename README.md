@@ -129,11 +129,11 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
   3.线程池活性达到设置阈值告警
 
-  4.触发拒绝策略告警
+  4.触发拒绝策略告警，格式：A/B，A：该报警项前后两次报警区间累加数量，B：该报警项累计总数
   
-  5.任务执行超时告警
+  5.任务执行超时告警，格式：A/B，A：该报警项前后两次报警区间累加数量，B：该报警项累计总数
   
-  6.任务等待超时告警
+  6.任务等待超时告警，格式：A/B，A：该报警项前后两次报警区间累加数量，B：该报警项累计总数
 
 ![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/91ea4c3e1166426e8dca9903dacfd9eb~tplv-k3u1fbpfcp-zoom-1.image)
 

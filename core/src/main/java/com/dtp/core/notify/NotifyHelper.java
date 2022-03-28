@@ -85,7 +85,7 @@ public class NotifyHelper {
         return notifyItem;
     }
 
-    public static void fillNotifyItems(List<NotifyPlatform> platforms, List<NotifyItem> notifyItems) {
+    public static void fillPlatforms(List<NotifyPlatform> platforms, List<NotifyItem> notifyItems) {
         if (CollUtil.isEmpty(platforms)) {
             log.warn("DynamicTp notify, no notify platforms configured.");
             return;
@@ -100,19 +100,22 @@ public class NotifyHelper {
         });
     }
 
-    public static void setExecutorNotifyItems(DtpExecutor dtpExecutor,
-                                              DtpProperties dtpProperties,
-                                              ThreadPoolProperties properties) {
-        fillNotifyItems(dtpProperties.getPlatforms(), properties.getNotifyItems());
-        List<NotifyItem> oldNotifyItems = dtpExecutor.getNotifyItems();
+    public static void reSetNotifyItems(DtpExecutor executor, DtpProperties dtpProperties, ThreadPoolProperties properties) {
+        if (CollUtil.isEmpty(dtpProperties.getPlatforms())) {
+            executor.setNotifyItems(Collections.emptyList());
+            return;
+        }
+        fillPlatforms(dtpProperties.getPlatforms(), properties.getNotifyItems());
+        List<NotifyItem> oldNotifyItems = executor.getNotifyItems();
         Map<String, NotifyItem> oldNotifyItemMap = StreamUtil.toMap(oldNotifyItems, NotifyItem::getType);
         properties.getNotifyItems().forEach(x -> {
             NotifyItem oldNotifyItem = oldNotifyItemMap.get(x.getType());
             if (Objects.nonNull(oldNotifyItem) && oldNotifyItem.getInterval() == x.getInterval()) {
                 return;
             }
-            AlarmLimiter.initAlarmLimiter(dtpExecutor.getThreadPoolName(), x);
-            AlarmCounter.init(dtpExecutor.getThreadPoolName(), x.getType());
+            AlarmLimiter.initAlarmLimiter(executor.getThreadPoolName(), x);
+            AlarmCounter.init(executor.getThreadPoolName(), x.getType());
         });
+        executor.setNotifyItems(properties.getNotifyItems());
     }
 }

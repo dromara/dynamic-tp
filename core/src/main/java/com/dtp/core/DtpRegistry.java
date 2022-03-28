@@ -255,11 +255,9 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         dtpExecutor.setQueueTimeout(properties.getQueueTimeout());
 
         if (CollUtil.isEmpty(properties.getNotifyItems())) {
-            dtpExecutor.setNotifyItems(getDefaultNotifyItems());
-            return;
+            properties.setNotifyItems(getDefaultNotifyItems());
         }
-        NotifyHelper.setExecutorNotifyItems(dtpExecutor, dtpProperties, properties);
-        dtpExecutor.setNotifyItems(properties.getNotifyItems());
+        NotifyHelper.reSetNotifyItems(dtpExecutor, dtpProperties, properties);
     }
 
     @Autowired
@@ -289,8 +287,12 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
             log.warn("DtpRegistry initialization end, no corresponding configuration items exist for {}",
                     registeredExecutorNames);
         }
+        if (CollUtil.isEmpty(dtpProperties.getPlatforms())) {
+            log.warn("DtpRegistry initialization end, no notify platforms configured.");
+            return;
+        }
         DTP_REGISTRY.forEach((k, v) -> {
-            NotifyHelper.fillNotifyItems(dtpProperties.getPlatforms(), v.getNotifyItems());
+            NotifyHelper.fillPlatforms(dtpProperties.getPlatforms(), v.getNotifyItems());
             v.getNotifyItems().forEach(x -> {
                 AlarmLimiter.initAlarmLimiter(k, x);
                 AlarmCounter.init(k, x.getType());

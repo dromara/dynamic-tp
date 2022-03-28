@@ -60,10 +60,10 @@ public class AlarmCounter {
         String rejectCount = rejectAlarm == null ? UNKNOWN : String.valueOf(rejectAlarm.getCount());
 
         val runTimeoutAlarm = getAlarmInfo(dtpName, RUN_TIMEOUT.getValue());
-        String runTimeoutCount = rejectAlarm == null ? UNKNOWN : String.valueOf(runTimeoutAlarm.getCount());
+        String runTimeoutCount = runTimeoutAlarm == null ? UNKNOWN : String.valueOf(runTimeoutAlarm.getCount());
 
         val queueTimeoutAlarm = getAlarmInfo(dtpName, QUEUE_TIMEOUT.getValue());
-        String queueTimeoutCount = rejectAlarm == null ? UNKNOWN : String.valueOf(queueTimeoutAlarm.getCount());
+        String queueTimeoutCount = queueTimeoutAlarm == null ? UNKNOWN : String.valueOf(queueTimeoutAlarm.getCount());
 
         return new ImmutableTriple<>(rejectCount, runTimeoutCount, queueTimeoutCount);
     }

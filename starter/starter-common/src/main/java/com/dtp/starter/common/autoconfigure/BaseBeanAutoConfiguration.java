@@ -9,7 +9,6 @@ import com.dtp.core.monitor.endpoint.DtpEndpoint;
 import com.dtp.core.spring.DtpPostProcessor;
 import com.dtp.core.support.DtpBannerPrinter;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

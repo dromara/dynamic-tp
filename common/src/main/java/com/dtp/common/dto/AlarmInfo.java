@@ -1,5 +1,6 @@
 package com.dtp.common.dto;
 
+import cn.hutool.core.date.DateUtil;
 import com.dtp.common.em.NotifyTypeEnum;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +28,7 @@ public class AlarmInfo {
     }
 
     public void reset() {
+        lastAlarmTime = DateUtil.now();
         counter.set(0);
     }
 

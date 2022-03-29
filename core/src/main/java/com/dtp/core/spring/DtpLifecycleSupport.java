@@ -19,20 +19,20 @@ public class DtpLifecycleSupport extends ThreadPoolExecutor implements Disposabl
     /**
      * Uniquely identifies.
      */
-    private String threadPoolName;
+    protected String threadPoolName;
 
     /**
      * Whether to wait for scheduled tasks to complete on shutdown,
      * not interrupting running tasks and executing all tasks in the queue.
      */
-    private boolean waitForTasksToCompleteOnShutdown = false;
+    protected boolean waitForTasksToCompleteOnShutdown = false;
 
     /**
      * The maximum number of seconds that this executor is supposed to block
      * on shutdown in order to wait for remaining tasks to complete their execution
      * before the rest of the container continues to shut down.
      */
-    private long awaitTerminationMillis = 0;
+    protected int awaitTerminationSeconds = 0;
 
     public DtpLifecycleSupport(int corePoolSize,
                                int maximumPoolSize,
@@ -43,12 +43,12 @@ public class DtpLifecycleSupport extends ThreadPoolExecutor implements Disposabl
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);
     }
 
-    public void setWaitForTasksToCompleteOnShutdown(boolean waitForJobsToCompleteOnShutdown) {
-        this.waitForTasksToCompleteOnShutdown = waitForJobsToCompleteOnShutdown;
+    public void setWaitForTasksToCompleteOnShutdown(boolean waitForTasksToCompleteOnShutdown) {
+        this.waitForTasksToCompleteOnShutdown = waitForTasksToCompleteOnShutdown;
     }
 
     public void setAwaitTerminationSeconds(int awaitTerminationSeconds) {
-        this.awaitTerminationMillis = awaitTerminationSeconds * 1000L;
+        this.awaitTerminationSeconds = awaitTerminationSeconds;
     }
 
     public void setThreadPoolName(String threadPoolName) {
@@ -107,11 +107,11 @@ public class DtpLifecycleSupport extends ThreadPoolExecutor implements Disposabl
      * {@link #setAwaitTerminationSeconds "awaitTerminationSeconds"} property.
      */
     private void awaitTerminationIfNecessary() {
-        if (this.awaitTerminationMillis <= 0) {
+        if (this.awaitTerminationSeconds <= 0) {
             return;
         }
         try {
-            if (!awaitTermination(this.awaitTerminationMillis, TimeUnit.MILLISECONDS) && log.isWarnEnabled()) {
+            if (!awaitTermination(this.awaitTerminationSeconds, TimeUnit.SECONDS) && log.isWarnEnabled()) {
                 log.warn("Timed out while waiting for executor {} to terminate", threadPoolName);
             }
         } catch (InterruptedException ex) {

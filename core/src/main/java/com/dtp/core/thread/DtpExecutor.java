@@ -31,7 +31,7 @@ public class DtpExecutor extends DtpLifecycleSupport {
     /**
      * Total reject count.
      */
-    private final AtomicInteger rejectCount = new AtomicInteger();
+    private final AtomicInteger rejectCount = new AtomicInteger(0);
 
     /**
      * RejectHandler name.
@@ -194,5 +194,13 @@ public class DtpExecutor extends DtpLifecycleSupport {
 
     public void setQueueTimeout(long queueTimeout) {
         this.queueTimeout = queueTimeout;
+    }
+
+    /**
+     * In order for the field can be assigned by reflection.
+     * @param allowCoreThreadTimeOut allowCoreThreadTimeOut
+     */
+    public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
+        allowCoreThreadTimeOut(allowCoreThreadTimeOut);
     }
 }

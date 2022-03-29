@@ -25,23 +25,22 @@ import com.github.dadiyang.equator.GetterBaseEquator;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import lombok.var;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.Ordered;
-import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
-import java.util.stream.Collectors;
 
 import static com.dtp.common.dto.NotifyItem.getDefaultNotifyItems;
 import static com.dtp.common.em.QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Core Registry, which keeps all registered Dynamic ThreadPoolExecutors.
@@ -182,7 +181,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         }
 
         List<FieldInfo> diffFields = EQUATOR.getDiffFields(oldProp, newProp);
-        List<String> diffKeys = diffFields.stream().map(FieldInfo::getFieldName).collect(Collectors.toList());
+        List<String> diffKeys = diffFields.stream().map(FieldInfo::getFieldName).collect(toList());
         log.info("DynamicTp refresh, name: [{}], changed keys: {}, corePoolSize: [{}], maxPoolSize: [{}], " +
                         "queueType: [{}], queueCapacity: [{}], keepAliveTime: [{}], rejectedType: [{}], " +
                         "allowsCoreThreadTimeOut: [{}]",
@@ -267,26 +266,18 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
     @Override
     public void run(ApplicationArguments args) {
-        if (CollectionUtils.isEmpty(dtpProperties.getExecutors())) {
-            return;
+        val registeredExecutors = Lists.newArrayList(DTP_REGISTRY.keySet());
+        List<String> remoteExecutors = Collections.emptyList();
+        if (CollUtil.isNotEmpty(dtpProperties.getExecutors())) {
+            remoteExecutors = dtpProperties.getExecutors().stream()
+                    .map(ThreadPoolProperties::getThreadPoolName)
+                    .collect(toList());
         }
+        val localExecutors = CollUtil.subtract(registeredExecutors, remoteExecutors);
 
-        // It is better to define one spring bean using @Bean for each thread pool declared in configuration.
-        // Mainly using the advantage of spring bean lifecycle.
-        val registeredExecutorNames = Lists.newArrayList(DTP_REGISTRY.keySet());
-        dtpProperties.getExecutors().forEach(x -> {
-            var executor = DTP_REGISTRY.get(x.getThreadPoolName());
-            if (Objects.nonNull(executor)) {
-                refresh(executor, x);
-                registeredExecutorNames.remove(x.getThreadPoolName());
-                return;
-            }
-            log.warn("Please define the threadPool {} using @Bean first.", x.getThreadPoolName());
-        });
-        if (CollUtil.isNotEmpty(registeredExecutorNames)) {
-            log.warn("DtpRegistry initialization end, no corresponding configuration items exist for {}",
-                    registeredExecutorNames);
-        }
+        log.info("DtpRegistry initialization end, remote dtpExecutors: {}, local dtpExecutors: {}",
+                remoteExecutors, localExecutors);
+
         if (CollUtil.isEmpty(dtpProperties.getPlatforms())) {
             log.warn("DtpRegistry initialization end, no notify platforms configured.");
             return;

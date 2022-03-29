@@ -4,7 +4,9 @@ import com.dtp.common.ApplicationContextHolder;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.support.DynamicTp;
 import com.dtp.core.support.ExecutorWrapper;
+import com.dtp.core.support.TaskQueue;
 import com.dtp.core.thread.DtpExecutor;
+import com.dtp.core.thread.EagerDtpExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
@@ -15,8 +17,7 @@ import org.springframework.context.ApplicationContext;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * BeanPostProcessor that handles all related beans managed by Spring,
- * mainly refers to the beans marked by @Bean annotation.
+ * BeanPostProcessor that handles all related beans managed by Spring.
  *
  * @author: yanhom
  * @since 1.0.0
@@ -33,6 +34,9 @@ public class DtpPostProcessor implements BeanPostProcessor {
 
         if (bean instanceof DtpExecutor) {
             DtpExecutor dtpExecutor = (DtpExecutor) bean;
+            if (bean instanceof EagerDtpExecutor) {
+                ((TaskQueue) dtpExecutor.getQueue()).setExecutor((EagerDtpExecutor) dtpExecutor);
+            }
             registerDtp(dtpExecutor);
             return dtpExecutor;
         }

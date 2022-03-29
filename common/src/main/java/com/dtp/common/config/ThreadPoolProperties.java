@@ -24,6 +24,8 @@ public class ThreadPoolProperties {
      */
     private String threadPoolName = "DefaultDynamicTp";
 
+    private String executorType;
+
     /**
      * CoreSize of ThreadPool.
      */

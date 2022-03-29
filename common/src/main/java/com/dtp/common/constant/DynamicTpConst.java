@@ -19,4 +19,23 @@ public class DynamicTpConst {
     public static final String PROPERTIES_CHANGE_SHOW_STYLE = "%s => %s";
 
     public static final String UNKNOWN = "UKN";
+
+    /**
+     * Dtp executor properties const.
+     */
+    public static final String THREAD_POOL_NAME = "threadPoolName";
+
+    public static final String ALLOW_CORE_THREAD_TIMEOUT = "allowCoreThreadTimeOut";
+
+    public static final String NOTIFY_ITEMS = "notifyItems";
+
+    public static final String WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN = "waitForTasksToCompleteOnShutdown";
+
+    public static final String AWAIT_TERMINATION_SECONDS = "awaitTerminationSeconds";
+
+    public static final String PRE_START_ALL_CORE_THREADS = "preStartAllCoreThreads";
+
+    public static final String RUN_TIMEOUT = "runTimeout";
+
+    public static final String QUEUE_TIMEOUT = "queueTimeout";
 }

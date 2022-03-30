@@ -3,7 +3,7 @@
 /configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.enabledCollect=true
 /configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.collectorType=logging
 /configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.monitorInterval=5
-/configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.executors[0].threadPoolName=dynamic-tp-test-1
+/configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.executors[0].threadPoolName=dtpExecutor1
 /configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.executors[0].corePoolSize=50
 /configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.executors[0].maximumPoolSize=50
 /configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.executors[0].queueCapacity=3000
@@ -26,7 +26,7 @@
 /configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.executors[0].notifyItems[3].type=reject
 /configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.executors[0].notifyItems[3].enabled=false
 /configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.executors[0].notifyItems[3].threshold=1
-/configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.executors[1].threadPoolName=dynamic-tp-test-2
+/configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.executors[1].threadPoolName=dtpExecutor2
 /configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.executors[1].corePoolSize=20
 /configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.executors[1].maximumPoolSize=30
 /configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.executors[1].queueCapacity=1000

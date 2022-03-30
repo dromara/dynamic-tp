@@ -8,6 +8,9 @@ spring:
       collectorType: logging     # 监控数据采集器类型（JsonLog | MicroMeter），默认logging
       logPath: /home/logs        # 监控日志数据路径，默认 ${user.home}/logs
       monitorInterval: 5         # 监控时间间隔（报警判断、指标采集），默认5s
+      apollo:                    # apollo配置，不配置默认拿apollo配置第一个namespace
+        namespace: dynamic-tp-apollo-demo-dtp.yml
+      configType: yml            # 配置文件类型
       platforms:                 # 通知报警平台配置
         - platform: wechat
           urlKey: 3a7500-1287-4bd-a798-c5c3d8b69c  # 替换
@@ -23,8 +26,8 @@ spring:
         min: 100
         max: 400
       undertowTp:                                  # undertow web server线程池配置
-        coreWorkerThreads: 100                     # 核心线程数
-        maxWorkerThreads: 400                      # 最大线程数
+        coreWorkerThreads: 100                   # 核心线程数
+        maxWorkerThreads: 400                    # 最大线程数
         workerKeepAlive: 40
       executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
         - threadPoolName: dtpExecutor1

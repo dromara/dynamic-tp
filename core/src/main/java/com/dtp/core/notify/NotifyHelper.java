@@ -100,15 +100,16 @@ public class NotifyHelper {
         });
     }
 
-    public static void reSetNotifyItems(DtpExecutor executor, DtpProperties dtpProperties, ThreadPoolProperties properties) {
+    public static void updateNotifyItems(DtpExecutor executor, DtpProperties dtpProperties, ThreadPoolProperties tpp) {
         if (CollUtil.isEmpty(dtpProperties.getPlatforms())) {
             executor.setNotifyItems(Collections.emptyList());
             return;
         }
-        fillPlatforms(dtpProperties.getPlatforms(), properties.getNotifyItems());
+
+        fillPlatforms(dtpProperties.getPlatforms(), tpp.getNotifyItems());
         List<NotifyItem> oldNotifyItems = executor.getNotifyItems();
         Map<String, NotifyItem> oldNotifyItemMap = StreamUtil.toMap(oldNotifyItems, NotifyItem::getType);
-        properties.getNotifyItems().forEach(x -> {
+        tpp.getNotifyItems().forEach(x -> {
             NotifyItem oldNotifyItem = oldNotifyItemMap.get(x.getType());
             if (Objects.nonNull(oldNotifyItem) && oldNotifyItem.getInterval() == x.getInterval()) {
                 return;
@@ -116,6 +117,6 @@ public class NotifyHelper {
             AlarmLimiter.initAlarmLimiter(executor.getThreadPoolName(), x);
             AlarmCounter.init(executor.getThreadPoolName(), x.getType());
         });
-        executor.setNotifyItems(properties.getNotifyItems());
+        executor.setNotifyItems(tpp.getNotifyItems());
     }
 }

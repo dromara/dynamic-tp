@@ -24,6 +24,9 @@ public class ThreadPoolProperties {
      */
     private String threadPoolName = "DefaultDynamicTp";
 
+    /**
+     * Executor type, used in create phase.
+     */
     private String executorType;
 
     /**
@@ -99,15 +102,20 @@ public class ThreadPoolProperties {
     /**
      * If pre start all core threads.
      */
-    private boolean preStartAllCoreThreads;
+    private boolean preStartAllCoreThreads = false;
 
     /**
      * Task execute timeout, unit (ms), just for statistics.
      */
-    private long runTimeout;
+    private long runTimeout = 0;
 
     /**
      * Task queue wait timeout, unit (ms), just for statistics.
      */
-    private long queueTimeout;
+    private long queueTimeout = 0;
+
+    /**
+     * Task wrapper names.
+     */
+    private List<String> taskWrapperNames;
 }

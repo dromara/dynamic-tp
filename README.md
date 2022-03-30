@@ -73,7 +73,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 - **参考[美团线程池实践](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)，对线程池参数动态化管理，增加监控、报警功能**
 
-- **基于 Spring 框架，现只支持 SpringBoot 项目使用，轻量级，引入 starter 即可食用**
+- **基于 Spring 框架，现只支持 SpringBoot 项目使用，轻量级，引入 starter 即可使用**
 
 - **基于配置中心实现线程池参数动态调整，实时生效；集成主流配置中心，已支持 Nacos、Apollo、Zookeeper、Consul，
   同时也提供 SPI 接口可自定义扩展实现**
@@ -85,7 +85,9 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 - **集成管理常用第三方组件的线程池，已集成 SpringBoot 内置 WebServer（Tomcat、Undertow、Jetty）的线程池管理**
 
-- **Builder 提供 TTL 包装功能，生成的线程池支持上下文信息传递**
+- **提供任务包装功能，实现TaskWrapper接口即可，如TtlTaskWrapper可以支持线程池上下文信息传递**
+
+- **JUC普通线程池也可以被框架监控（@DynamicTp）；参考Tomcat线程池提供了io密集型场景使用的EagerDtpExecutor**
 
 ---
 
@@ -95,7 +97,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 - 配置变更监听模块：
 
-  1.监听特定配置中心的指定配置文件（已实现 Nacos、Apollo、Zookeeper、Consul）,可通过内部提供的 SPI 接口扩展其他实现
+  1.监听特定配置中心的指定配置文件（已实现 Nacos、Apollo、Zookeeper、Consul），可通过内部提供的SPI接口扩展其他实现
 
   2.解析配置文件内容，内置实现 yml、properties 配置文件的解析，可通过内部提供的 SPI 接口扩展其他实现
 
@@ -103,31 +105,31 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 - 线程池管理模块：
 
-  1.服务启动时从配置中心拉取配置信息，生成线程池实例注册到内部线程池注册中心中
+  1.服务启动时从配置中心拉取配置，生成线程池实例注册到内部线程池注册中心以及Spring容器中
 
   2.监听模块监听到配置变更时，将变更信息传递给管理模块，实现线程池参数的刷新
 
-  3.代码中通过 getExecutor()方法根据线程池名称来获取线程池对象实例
+  3.代码中通过依赖注入（推荐）或者getExecutor()方法根据线程池名称来获取线程池实例
 
 - 监控模块：
 
   实现监控指标采集以及输出，默认提供以下三种方式，也可通过内部提供的 SPI 接口扩展其他实现
 
-  1.默认实现 Json log 输出到磁盘
+  1.默认实现JsonLog输出到磁盘，可以自己采集解析日志，存储展示
 
-  2.MicroMeter 采集，引入 MicroMeter 相关依赖
+  2.MicroMeter采集，引入 MicroMeter 相关依赖，暴露相关端点
 
-  3.暴雷 Endpoint 端点，可通过 http 方式访问
+  3.暴雷自定义Endpoint端点，可通过 http 方式实时访问
 
 - 通知告警模块：
 
-  对接办公平台，实现通告告警功能，默认实现钉钉、企微，可通过内部提供的 SPI 接口扩展其他实现，通知告警类型如下
+  对接办公平台，实现通知告警功能，默认实现钉钉、企微，可通过内部提供的 SPI 接口扩展其他实现，通知告警类型如下
 
-  1.线程池参数变更通知
+  1.线程池主要参数变更通知
 
-  2.阻塞队列容量达到设置阈值告警
+  2.阻塞队列容量达到设置的告警阈值
 
-  3.线程池活性达到设置阈值告警
+  3.线程池活性达到设置的告警阈值
 
   4.触发拒绝策略告警，格式：A/B，A：该报警项前后两次报警区间累加数量，B：该报警项累计总数
   
@@ -140,19 +142,20 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 ---
 
 ### 使用
-#### 1.引入对应配置中心的依赖
 
-#### 2.配置中心配置线程池实例，配置参考下文（给出的是全配置，默认项可以删掉，减少配置项）
+1.引入对应配置中心的依赖
 
-#### 3.启动类加@EnableDynamicTp注解
+2.配置中心配置线程池实例，配置参考下文（给出的是全配置项，配置项都有默认值）
 
-#### 4.使用@Resource或@Autowired注解注入，或DtpRegistry.getExecutor("name")获取
+3.启动类加@EnableDynamicTp注解
 
-#### 5.普通JUC线程池想要被监控，@Bean时加@DynamicTp注解
+4.使用@Resource或@Autowired注解注入，或通过DtpRegistry.getExecutor("name")获取
 
-#### 6.tips：动态线程池实例服务启动时会根据配置中心的配置动态注册到Spring容器中，建议不要用@Bean重复声明同一线程池实例，直接配置在配置中心就行
+5.普通JUC线程池想要被监控，可以@Bean定义时加@DynamicTp注解
 
-#### 7.详细参考下文及Example示例
+6.tips：动态线程池实例服务启动时会根据配置中心的配置动态注册到Spring容器中，建议不要用@Bean编程式重复声明同一线程池实例，直接配置在配置中心就行
+
+7.详细参考下文及Example示例
 
 - **maven 依赖**
 
@@ -196,7 +199,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
             name: dynamic-tp-zookeeper-demo
           dynamic:
             tp:
-              config-type: properties # zookeeper只支持properties配置
+              config-type: properties         # zookeeper只支持properties配置
               zookeeper:
                 config-version: 1.0.0
                 zk-connect-str: 127.0.0.1:2181
@@ -263,7 +266,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
             maxWorkerThreads: 400                    # 最大线程数
             workerKeepAlive: 40                     
         executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
-          - threadPoolName: dynamic-tp-test-1
+          - threadPoolName: dtpExecutor1
             executorType: common                     # 线程池类型common、eager：适用于io密集型
             corePoolSize: 6
             maximumPoolSize: 8
@@ -278,8 +281,8 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
             preStartAllCoreThreads: false                  # 是否预热核心线程，默认false
             runTimeout: 200                                # 任务执行超时阈值，目前只做告警用，单位（ms）
             queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
-            taskWrappers: ["ttl"]                          # 任务包装器名称，集成TaskWrapper接口
-            notifyItems:                     # 报警项，不配置自动会配置（变更通知、容量报警、活性报警、拒绝报警、任务超时报警）
+            taskWrapperNames: ["ttl"]                          # 任务包装器名称，集成TaskWrapper接口
+            notifyItems:                     # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警、拒绝报警、任务超时报警）
               - type: capacity               # 报警项类型，查看源码 NotifyTypeEnum枚举类
                 enabled: true
                 threshold: 80                # 报警阈值
@@ -343,7 +346,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
   spring.dynamic.tp.executors[1].threadNamePrefix=test2
   ```
 
-- 定义线程池Bean，建议直接配置在配置中心，如果想后期在添加到配置中心，可以先用@Bean声明（方便依赖注入）
+- 定义线程池Bean（可选），建议直接配置在配置中心；但是如果想后期再添加到配置中心，可以先用@Bean声明（方便依赖注入）
 
   ```java
   @Configuration
@@ -404,16 +407,16 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
   ```java
   @Resource
-  private ThreadPoolExecutor demo1Executor;
+  private ThreadPoolExecutor dtpExecutor1;
   
   public void exec() {
-     demo1Executor.execute(() -> System.out.println("test"));
+     dtpExecutor1.execute(() -> System.out.println("test"));
   }
   ```
   
   ```java
   public static void main(String[] args) {
-     DtpExecutor dtpExecutor = DtpRegistry.getExecutor("demo1Executor");
+     DtpExecutor dtpExecutor = DtpRegistry.getExecutor("dtpExecutor1");
      dtpExecutor.execute(() -> System.out.println("test"));
   }
   ```
@@ -425,7 +428,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 ### 注意事项
 
 - 服务启动时会根据配置中心配置的executors动态生成线程池实例注册到spring容器中，动态线程池建议直接配置在配置中心中， 
-  同一线程池实例不要用@Bean重复配置，虽然会覆盖掉
+  同一线程池实例不要用@Bean编程式重复配置，虽然会覆盖掉
 
 - 阻塞队列只有 VariableLinkedBlockingQueue 类型可以修改 capacity，该类型功能和 LinkedBlockingQueue 相似，
   只是 capacity 不是 final 类型，可以修改， VariableLinkedBlockingQueue 参考 RabbitMq 的实现

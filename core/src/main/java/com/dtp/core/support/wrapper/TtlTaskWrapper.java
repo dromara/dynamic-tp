@@ -5,8 +5,8 @@ import com.alibaba.ttl.TtlRunnable;
 /**
  * TtlTaskWrapper related
  *
- * @author: linyanhong@ihuman.com
- * @since 1.0.0
+ * @author: yanhom
+ * @since 1.0.4
  **/
 public class TtlTaskWrapper implements TaskWrapper {
 

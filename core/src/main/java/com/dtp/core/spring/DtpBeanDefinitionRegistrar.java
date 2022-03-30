@@ -5,10 +5,11 @@ import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.ThreadPoolProperties;
 import com.dtp.common.util.BeanUtil;
 import com.dtp.core.reject.RejectHandlerGetter;
+import com.dtp.core.support.ExecutorType;
 import com.dtp.core.support.PropertiesBinder;
 import com.dtp.core.support.TaskQueue;
+import com.dtp.core.support.wrapper.TaskWrappers;
 import com.dtp.core.thread.EagerDtpExecutor;
-import com.dtp.core.support.ExecutorType;
 import com.dtp.core.thread.NamedThreadFactory;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -66,14 +67,18 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         Map<String, Object> properties = Maps.newHashMap();
         properties.put(THREAD_POOL_NAME, tpp.getThreadPoolName());
         properties.put(ALLOW_CORE_THREAD_TIMEOUT, tpp.isAllowCoreThreadTimeOut());
-        val notifyItems= CollUtil.isNotEmpty(tpp.getNotifyItems()) ?
-                tpp.getNotifyItems() : getDefaultNotifyItems();
-        properties.put(NOTIFY_ITEMS, notifyItems);
         properties.put(WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN, tpp.isWaitForTasksToCompleteOnShutdown());
         properties.put(AWAIT_TERMINATION_SECONDS, tpp.getAwaitTerminationSeconds());
         properties.put(PRE_START_ALL_CORE_THREADS, tpp.isPreStartAllCoreThreads());
         properties.put(RUN_TIMEOUT, tpp.getRunTimeout());
         properties.put(QUEUE_TIMEOUT, tpp.getQueueTimeout());
+
+        val notifyItems= CollUtil.isNotEmpty(tpp.getNotifyItems()) ?
+                tpp.getNotifyItems() : getDefaultNotifyItems();
+        properties.put(NOTIFY_ITEMS, notifyItems);
+
+        val taskWrappers = TaskWrappers.getInstance().getByNames(tpp.getTaskWrapperNames());
+        properties.put(TASK_WRAPPERS, taskWrappers);
 
         return properties;
     }

@@ -18,11 +18,14 @@ import com.dtp.core.notify.NotifyHelper;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.ThreadPoolCreator;
+import com.dtp.core.support.wrapper.TaskWrapper;
+import com.dtp.core.support.wrapper.TaskWrappers;
 import com.dtp.core.thread.DtpExecutor;
 import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -31,12 +34,10 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.Ordered;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 import static com.dtp.common.dto.NotifyItem.getDefaultNotifyItems;
 import static com.dtp.common.em.QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE;
@@ -154,8 +155,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
             }
             val dtpExecutor = DTP_REGISTRY.get(x.getThreadPoolName());
             if (Objects.isNull(dtpExecutor)) {
-                log.warn("DynamicTp refresh, cannot find specified dtpExecutor, name: {}.",
-                        x.getThreadPoolName());
+                log.warn("DynamicTp refresh, cannot find specified dtpExecutor, name: {}.", x.getThreadPoolName());
                 return;
             }
             refresh(dtpExecutor, x);
@@ -253,10 +253,13 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         dtpExecutor.setRunTimeout(properties.getRunTimeout());
         dtpExecutor.setQueueTimeout(properties.getQueueTimeout());
 
+        List<TaskWrapper> taskWrappers = TaskWrappers.getInstance().getByNames(properties.getTaskWrapperNames());
+        dtpExecutor.setTaskWrappers(taskWrappers);
+
         if (CollUtil.isEmpty(properties.getNotifyItems())) {
             properties.setNotifyItems(getDefaultNotifyItems());
         }
-        NotifyHelper.reSetNotifyItems(dtpExecutor, dtpProperties, properties);
+        NotifyHelper.updateNotifyItems(dtpExecutor, dtpProperties, properties);
     }
 
     @Autowired
@@ -266,12 +269,12 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
     @Override
     public void run(ApplicationArguments args) {
-        val registeredExecutors = Lists.newArrayList(DTP_REGISTRY.keySet());
-        List<String> remoteExecutors = Collections.emptyList();
+        val registeredExecutors = Sets.newHashSet(DTP_REGISTRY.keySet());
+        Set<String> remoteExecutors = Collections.emptySet();
         if (CollUtil.isNotEmpty(dtpProperties.getExecutors())) {
             remoteExecutors = dtpProperties.getExecutors().stream()
                     .map(ThreadPoolProperties::getThreadPoolName)
-                    .collect(toList());
+                    .collect(Collectors.toSet());
         }
         val localExecutors = CollUtil.subtract(registeredExecutors, remoteExecutors);
 

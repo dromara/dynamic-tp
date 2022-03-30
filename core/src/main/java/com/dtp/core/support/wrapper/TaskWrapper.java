@@ -1,4 +1,4 @@
-package com.dtp.core.support;
+package com.dtp.core.support.wrapper;
 
 /**
  * TaskWrapper related
@@ -8,6 +8,14 @@ package com.dtp.core.support;
  **/
 @FunctionalInterface
 public interface TaskWrapper {
+
+    /**
+     * Task wrapper name, for config
+     * @return name
+     */
+    default String name() {
+        return null;
+    }
 
     /**
      * Enhance the given runnable.

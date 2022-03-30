@@ -7,7 +7,7 @@ import com.dtp.core.notify.AlarmManager;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.spring.DtpLifecycleSupport;
 import com.dtp.core.support.DtpRunnable;
-import com.dtp.core.support.TaskWrapper;
+import com.dtp.core.support.wrapper.TaskWrapper;
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -170,7 +170,7 @@ public class DtpExecutor extends DtpLifecycleSupport {
         this.rejectHandlerName = rejectHandlerName;
     }
 
-    public void addTaskWrappers(List<TaskWrapper> taskWrappers) {
+    public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
         if (CollUtil.isNotEmpty(taskWrappers)) {
             this.taskWrappers.addAll(taskWrappers);
         }

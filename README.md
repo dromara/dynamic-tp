@@ -140,6 +140,19 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 ---
 
 ### 使用
+#### 1.引入对应配置中心的依赖
+
+#### 2.配置中心配置线程池实例，配置参考下文（给出的是全配置，默认项可以删掉，减少配置项）
+
+#### 3.启动类加@EnableDynamicTp注解
+
+#### 4.使用@Resource或@Autowired注解注入，或DtpRegistry.getExecutor("name")获取
+
+#### 5.普通JUC线程池想要被监控，@Bean时加@DynamicTp注解
+
+#### 6.tips：动态线程池对象服务启动时会根据配置中心的配置动态注册实例到Spring容器中，请不要用@Bean重复配置同一线程池实例，否则会报Bean已存在异常
+
+#### 7.详细参考下文及Example示例
 
 - **maven 依赖**
 
@@ -187,7 +200,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
               zookeeper:
                 config-version: 1.0.0
                 zk-connect-str: 127.0.0.1:2181
-                root-node: /configserver/userproject
+                root-node: /configserver/dev
                 node: dynamic-tp-zookeeper-demo
     ```
    
@@ -225,7 +238,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
         collectorType: logging     # 监控数据采集器类型（JsonLog | MicroMeter），默认logging
         logPath: /home/logs        # 监控日志数据路径，默认 ${user.home}/logs
         monitorInterval: 5         # 监控时间间隔（报警判断、指标采集），默认5s
-        nacos:                     # nacos配置，不配置有默认值（规则name-dev.yml这样）
+        nacos:                     # nacos配置，不配置有默认值（规则name-dev.yml这样），cloud应用不需要配置
           dataId: dynamic-tp-demo-dev.yml
           group: DEFAULT_GROUP
         apollo:                    # apollo配置，不配置默认拿apollo配置第一个namespace
@@ -249,8 +262,9 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
             coreWorkerThreads: 100                   # 核心线程数
             maxWorkerThreads: 400                    # 最大线程数
             workerKeepAlive: 40                     
-        executors:                                   # 动态线程池配置
+        executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
           - threadPoolName: dynamic-tp-test-1
+            executorType: common                     # 线程池类型common、eager：适用于io密集型
             corePoolSize: 6
             maximumPoolSize: 8
             queueCapacity: 200
@@ -261,8 +275,10 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
             threadNamePrefix: test                         # 线程名前缀
             waitForTasksToCompleteOnShutdown: false        # 参考spring线程池设计
             awaitTerminationSeconds: 5                     # 单位（s）
+            preStartAllCoreThreads: false                  # 是否预热核心线程，默认false
             runTimeout: 200                                # 任务执行超时阈值，目前只做告警用，单位（ms）
             queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
+            taskWrappers: ["ttl"]                          # 任务包装器名称，集成TaskWrapper接口
             notifyItems:                     # 报警项，不配置自动会配置（变更通知、容量报警、活性报警、拒绝报警、任务超时报警）
               - type: capacity               # 报警项类型，查看源码 NotifyTypeEnum枚举类
                 enabled: true
@@ -327,7 +343,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
   spring.dynamic.tp.executors[1].threadNamePrefix=test2
   ```
 
-- 定义线程池Bean，非DtpExecutor线程池也会被采集监控指标，但是不会动态调参、报警
+- 定义线程池Bean(跟配置中心配置二选一)，非DtpExecutor线程池也会被采集监控指标，但是不会动态调参、报警
 
   ```java
   @Configuration

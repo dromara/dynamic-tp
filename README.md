@@ -150,7 +150,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 #### 5.普通JUC线程池想要被监控，@Bean时加@DynamicTp注解
 
-#### 6.tips：动态线程池对象服务启动时会根据配置中心的配置动态注册实例到Spring容器中，请不要用@Bean重复配置同一线程池实例，否则会报Bean已存在异常
+#### 6.tips：动态线程池实例服务启动时会根据配置中心的配置动态注册到Spring容器中，建议不要用@Bean重复声明同一线程池实例，直接配置在配置中心就行
 
 #### 7.详细参考下文及Example示例
 
@@ -343,14 +343,14 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
   spring.dynamic.tp.executors[1].threadNamePrefix=test2
   ```
 
-- 定义线程池Bean(跟配置中心配置二选一)，非DtpExecutor线程池也会被采集监控指标，但是不会动态调参、报警
+- 定义线程池Bean，建议直接配置在配置中心，如果想后期在添加到配置中心，可以先用@Bean声明（方便依赖注入）
 
   ```java
   @Configuration
   public class DtpConfig {  
     
     /**
-     * 通过{@link DynamicTp} 注解定义普通juc线程池，会享受到该框架监控功能，注解名称优先级高于方法名
+     * 通过{@link DynamicTp} 注解定义普通juc线程池，会享受到该框架监控功能，但是不会动态调参、报警，注解名称优先级高于方法名
      * @return 线程池实例
      */
     @DynamicTp("commonExecutor")
@@ -424,7 +424,8 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 ### 注意事项
 
-- 配置文件中的executors要跟代码中@Bean一一对应
+- 服务启动时会根据配置中心配置的executors动态生成线程池实例注册到spring容器中，动态线程池建议直接配置在配置中心中， 
+  同一线程池实例不要用@Bean重复配置，虽然会覆盖掉
 
 - 阻塞队列只有 VariableLinkedBlockingQueue 类型可以修改 capacity，该类型功能和 LinkedBlockingQueue 相似，
   只是 capacity 不是 final 类型，可以修改， VariableLinkedBlockingQueue 参考 RabbitMq 的实现
@@ -454,7 +455,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 ### 通知报警
 
-- 触发报警阈值会推送相应报警消息（活性、容量、拒绝），且会高亮显示相应字段
+- 触发报警阈值会推送相应报警消息（活性、容量、拒绝、超时），且会高亮显示相应字段
 
 ![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bb4b2d4390b14965b7470b708674ccbe~tplv-k3u1fbpfcp-zoom-1.image)
 

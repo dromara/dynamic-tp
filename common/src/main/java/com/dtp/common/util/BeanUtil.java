@@ -1,6 +1,7 @@
 package com.dtp.common.util;
 
 import cn.hutool.core.collection.CollUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -14,7 +15,10 @@ import java.util.Map;
  * @author: yanhom
  * @since 1.0.4
  **/
+@Slf4j
 public class BeanUtil {
+
+    private BeanUtil() {}
 
     public static void registerIfAbsent(BeanDefinitionRegistry registry,
                                         String beanName,
@@ -22,7 +26,9 @@ public class BeanUtil {
                                         Map<String, Object> properties,
                                         Object... constructorArgs) {
         if (ifPresent(registry, beanName, clazz) || registry.containsBeanDefinition(beanName)) {
-            return;
+            log.warn("DynamicTp registrar, bean definition already exists, overrides with remote config, beanName: {}",
+                    beanName);
+            registry.removeBeanDefinition(beanName);
         }
         doRegister(registry, beanName, clazz, properties, constructorArgs);
     }

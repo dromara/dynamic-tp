@@ -28,14 +28,14 @@ public class ThreadPoolConfiguration {
         return (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
     }
 
-//    /**
-//     * 通过{@link ThreadPoolCreator} 快速创建一些简单配置的动态线程池
-//     * @return 线程池实例
-//     */
-//    @Bean
-//    public DtpExecutor dtpExecutor1() {
-//        return ThreadPoolCreator.createDynamicFast("dtpExecutor1");
-//    }
+    /**
+     * 通过{@link ThreadPoolCreator} 快速创建一些简单配置的动态线程池
+     * @return 线程池实例
+     */
+    @Bean
+    public DtpExecutor dtpExecutor1() {
+        return ThreadPoolCreator.createDynamicFast("dtpExecutor1");
+    }
 
     /**
      * 通过{@link ThreadPoolBuilder} 设置详细参数创建动态线程池（推荐方式），
@@ -53,17 +53,17 @@ public class ThreadPoolConfiguration {
                 .buildDynamic();
     }
 
-//    @Bean
-//    public ThreadPoolExecutor dtpExecutor2() {
-//        return ThreadPoolBuilder.newBuilder()
-//                .threadPoolName("dtpExecutor2")
-//                .corePoolSize(10)
-//                .maximumPoolSize(15)
-//                .keepAliveTime(15000)
-//                .timeUnit(TimeUnit.MILLISECONDS)
-//                .workQueue(QueueTypeEnum.SYNCHRONOUS_QUEUE.getName(), null, false)
-//                .waitForTasksToCompleteOnShutdown(true)
-//                .awaitTerminationSeconds(5)
-//                .buildDynamic();
-//    }
+    @Bean
+    public ThreadPoolExecutor dtpExecutor2() {
+        return ThreadPoolBuilder.newBuilder()
+                .threadPoolName("dtpExecutor2")
+                .corePoolSize(10)
+                .maximumPoolSize(15)
+                .keepAliveTime(15000)
+                .timeUnit(TimeUnit.MILLISECONDS)
+                .workQueue(QueueTypeEnum.SYNCHRONOUS_QUEUE.getName(), null, false)
+                .waitForTasksToCompleteOnShutdown(true)
+                .awaitTerminationSeconds(5)
+                .buildDynamic();
+    }
 }

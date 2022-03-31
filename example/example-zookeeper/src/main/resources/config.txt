@@ -26,7 +26,7 @@
 /configserver/dev/dynamic-tp-zookeeper-demo=spring.dynamic.tp.executors[0].notifyItems[3].type=reject
 /configserver/dev/dynamic-tp-zookeeper-demo=spring.dynamic.tp.executors[0].notifyItems[3].enabled=false
 /configserver/dev/dynamic-tp-zookeeper-demo=spring.dynamic.tp.executors[0].notifyItems[3].threshold=1
-/configserver/dev/dynamic-tp-zookeeper-demo=spring.dynamic.tp.executors[1].threadPoolName=dtpExecutor1
+/configserver/dev/dynamic-tp-zookeeper-demo=spring.dynamic.tp.executors[1].threadPoolName=dtpExecutor2
 /configserver/dev/dynamic-tp-zookeeper-demo=spring.dynamic.tp.executors[1].corePoolSize=20
 /configserver/dev/dynamic-tp-zookeeper-demo=spring.dynamic.tp.executors[1].maximumPoolSize=30
 /configserver/dev/dynamic-tp-zookeeper-demo=spring.dynamic.tp.executors[1].queueCapacity=1000

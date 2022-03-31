@@ -21,7 +21,7 @@ import java.util.Map;
  **/
 public class ZkConfigEnvironmentProcessor implements EnvironmentPostProcessor, Ordered {
 
-    private static final String ZK_PROPERTY_SOURCE_NAME = "dtpZkPropertySource";
+    public static final String ZK_PROPERTY_SOURCE_NAME = "dtpZkPropertySource";
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {

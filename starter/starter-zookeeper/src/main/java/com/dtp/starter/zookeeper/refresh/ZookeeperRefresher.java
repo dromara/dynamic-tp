@@ -11,14 +11,19 @@ import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.framework.state.ConnectionStateListener;
 import org.apache.zookeeper.WatchedEvent;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
 
 import javax.annotation.Resource;
+
+import static com.dtp.starter.zookeeper.autoconfigure.ZkConfigEnvironmentProcessor.ZK_PROPERTY_SOURCE_NAME;
 
 /**
  * @author Redick01
  */
 @Slf4j
-public class ZookeeperRefresher extends AbstractRefresher implements InitializingBean {
+public class ZookeeperRefresher extends AbstractRefresher implements EnvironmentAware, InitializingBean {
 
     @Resource
     private DtpProperties dtpProperties;
@@ -59,5 +64,11 @@ public class ZookeeperRefresher extends AbstractRefresher implements Initializin
      */
     private void loadAndRefresh(String nodePath) {
         refresh(CuratorUtil.propertiesContent(curatorFramework, nodePath), ConfigFileTypeEnum.PROPERTIES);
+    }
+
+    @Override
+    public void setEnvironment(Environment environment) {
+        ConfigurableEnvironment env = ((ConfigurableEnvironment) environment);
+        env.getPropertySources().remove(ZK_PROPERTY_SOURCE_NAME);
     }
 }

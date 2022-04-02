@@ -22,12 +22,12 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 1,
-  "iteration": 1648395594178,
+  "iteration": 1648880798928,
   "links": [],
   "liveNow": false,
   "panels": [
     {
-      "description": "当前池大小",
+      "description": "当前线程数",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -108,7 +108,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cwex-Nsnk"
+            "uid": "WcpShMYnk"
           },
           "exemplar": true,
           "expr": "thread_pool_current_size{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
@@ -117,103 +117,8 @@
           "refId": "A"
         }
       ],
-      "title": "当前池大小",
+      "title": "当前线程数",
       "transparent": true,
-      "type": "timeseries"
-    },
-    {
-      "description": "任务队列剩余大小",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-GrYlRd"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 5,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "smooth",
-            "lineWidth": 1,
-            "pointSize": 7,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "orange",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 0
-      },
-      "id": 2,
-      "links": [
-        {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
-        }
-      ],
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.3.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "cwex-Nsnk"
-          },
-          "exemplar": true,
-          "expr": "thread_pool_queue_remaining_capacity{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
-          "hide": false,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "{{thread_pool_name}}",
-          "refId": "B"
-        }
-      ],
-      "title": "任务队列剩余大小",
       "type": "timeseries"
     },
     {
@@ -271,8 +176,8 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 0,
-        "y": 8
+        "x": 12,
+        "y": 0
       },
       "id": 8,
       "links": [
@@ -295,7 +200,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cwex-Nsnk"
+            "uid": "WcpShMYnk"
           },
           "exemplar": true,
           "expr": "thread_pool_active_count{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
@@ -362,7 +267,7 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 12,
+        "x": 0,
         "y": 8
       },
       "id": 6,
@@ -386,7 +291,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cwex-Nsnk"
+            "uid": "WcpShMYnk"
           },
           "exemplar": true,
           "expr": "thread_pool_queue_size{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}\n",
@@ -396,6 +301,101 @@
         }
       ],
       "title": "任务队列大小",
+      "type": "timeseries"
+    },
+    {
+      "description": "任务队列剩余大小",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 5,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 7,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "orange",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 2,
+      "links": [
+        {
+          "title": "https://github.com/lyh200/dynamic-tp",
+          "url": "https://github.com/lyh200/dynamic-tp"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.3.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "WcpShMYnk"
+          },
+          "exemplar": true,
+          "expr": "thread_pool_queue_remaining_capacity{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "hide": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{thread_pool_name}}",
+          "refId": "B"
+        }
+      ],
+      "title": "任务队列剩余大小",
       "type": "timeseries"
     },
     {
@@ -477,7 +477,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cwex-Nsnk"
+            "uid": "WcpShMYnk"
           },
           "exemplar": true,
           "expr": "thread_pool_completed_task_count{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
@@ -494,7 +494,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-RdYlGr"
+            "mode": "continuous-reds"
           },
           "custom": {
             "axisLabel": "",
@@ -570,7 +570,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cwex-Nsnk"
+            "uid": "WcpShMYnk"
           },
           "exemplar": true,
           "expr": "thread_pool_reject_count{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}\n",
@@ -589,7 +589,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-RdYlGr"
+            "mode": "continuous-reds"
           },
           "custom": {
             "axisLabel": "",
@@ -663,7 +663,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cwex-Nsnk"
+            "uid": "WcpShMYnk"
           },
           "exemplar": true,
           "expr": "thread_pool_run_timeout_count{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
@@ -680,7 +680,7 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-RdYlGr"
+            "mode": "continuous-reds"
           },
           "custom": {
             "axisLabel": "",
@@ -754,7 +754,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cwex-Nsnk"
+            "uid": "WcpShMYnk"
           },
           "exemplar": true,
           "expr": "thread_pool_queue_timeout_count{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
@@ -799,8 +799,8 @@
       {
         "current": {
           "selected": false,
-          "text": "192.168.2.104:9098",
-          "value": "192.168.2.104:9098"
+          "text": "10.2.109.132:9100",
+          "value": "10.2.109.132:9100"
         },
         "definition": "label_values(thread_pool_reject_count, instance)",
         "hide": 0,
@@ -822,8 +822,8 @@
       {
         "current": {
           "selected": false,
-          "text": "dtpExecutor1",
-          "value": "dtpExecutor1"
+          "text": "dtpExecutor2",
+          "value": "dtpExecutor2"
         },
         "definition": "label_values(thread_pool_reject_count, thread_pool_name)",
         "hide": 0,
@@ -852,6 +852,6 @@
   "timezone": "",
   "title": "线程池监控（DynamicTp）",
   "uid": "9tZqk3Bnk",
-  "version": 17,
+  "version": 5,
   "weekStart": ""
 }

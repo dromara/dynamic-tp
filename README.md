@@ -164,7 +164,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-apollo</artifactId>
-           <version>1.0.3</version>
+           <version>1.0.4</version>
        </dependency>
    ```
 2. spring-cloud 场景下的 nacos 应用接入用此依赖
@@ -172,7 +172,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-nacos</artifactId>
-           <version>1.0.3</version>
+           <version>1.0.4</version>
        </dependency>
    ```
 3. 非 spring-cloud 场景下的 nacos 应用接入用此依赖
@@ -180,7 +180,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-nacos</artifactId>
-           <version>1.0.3</version>
+           <version>1.0.4</version>
        </dependency>
    ```
 4. zookeeper 配置中心应用接入
@@ -188,7 +188,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-zookeeper</artifactId>
-           <version>1.0.3</version>
+           <version>1.0.4</version>
        </dependency>
    ```
    application.yml 需配置 zk 地址节点信息
@@ -212,7 +212,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-zookeeper</artifactId>
-           <version>1.0.3</version>
+           <version>1.0.4</version>
        </dependency>
    ```
    
@@ -223,7 +223,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-consul</artifactId>
-           <version>1.0.3</version>
+           <version>1.0.4</version>
        </dependency>
    ```
 

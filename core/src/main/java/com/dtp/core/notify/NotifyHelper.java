@@ -72,17 +72,16 @@ public class NotifyHelper {
 
     public static NotifyItem getNotifyItem(DtpExecutor dtpExecutor, NotifyTypeEnum typeEnum) {
         List<NotifyItem> notifyItems = dtpExecutor.getNotifyItems();
-        NotifyItem notifyItem = notifyItems.stream()
+        val notifyItemOpt = notifyItems.stream()
                 .filter(x -> typeEnum.getValue().equalsIgnoreCase(x.getType()) && x.isEnabled())
-                .findFirst()
-                .orElse(null);
-        if (Objects.isNull(notifyItem)) {
+                .findFirst();
+        if (!notifyItemOpt.isPresent()) {
             log.debug("DynamicTp notify, no such [{}] notify item configured, threadPoolName: {}",
                     typeEnum.getValue(), dtpExecutor.getThreadPoolName());
             return null;
         }
 
-        return notifyItem;
+        return notifyItemOpt.get();
     }
 
     public static void fillPlatforms(List<NotifyPlatform> platforms, List<NotifyItem> notifyItems) {
@@ -91,8 +90,7 @@ public class NotifyHelper {
             return;
         }
 
-        List<String> platformNames = platforms.stream()
-                .map(NotifyPlatform::getPlatform).collect(toList());
+        List<String> platformNames = platforms.stream().map(NotifyPlatform::getPlatform).collect(toList());
         notifyItems.forEach(n -> {
             if (CollUtil.isEmpty(n.getPlatforms())) {
                 n.setPlatforms(platformNames);

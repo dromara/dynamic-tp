@@ -18,10 +18,6 @@ public class WechatNotifyConst {
 
     public static final String COMMENT_COLOR = "comment";
 
-    public static final String SUFFIX = "" +
-            "> <font color='comment'>接收人：@%s</font> \n" +
-            "> <font color='comment'>通知时间：%s</font> \n";
-
     public static final String WECHAT_ALARM_TEMPLATE =
             "#### <font color='warning'>【报警】</font> 动态线程池告警 \n" +
                     "> <font color='comment'>服务名称：%s</font> \n" +

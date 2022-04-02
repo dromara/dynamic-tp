@@ -18,7 +18,7 @@ public class DynamicTpConst {
 
     public static final String PROPERTIES_CHANGE_SHOW_STYLE = "%s => %s";
 
-    public static final String UNKNOWN = "UKN";
+    public static final String UNKNOWN = "---";
 
     /**
      * Dtp executor properties const.

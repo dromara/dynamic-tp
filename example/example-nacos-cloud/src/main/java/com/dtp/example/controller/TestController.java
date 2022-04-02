@@ -21,9 +21,6 @@ public class TestController {
     @Resource
     private ThreadPoolExecutor dtpExecutor1;
 
-    @Resource
-    private ThreadPoolExecutor ioIntensiveExecutor;
-
     @GetMapping("/dtp-nacos-cloud-example/test")
     public String test() {
         new Thread(() -> {
@@ -45,16 +42,12 @@ public class TestController {
                 log.info("i am dynamic-tp-test-1 task");
             });
             dtpExecutor2.execute(() -> {
-                log.info("i am dynamic-tp-test-2 task");
-            });
-
-            ioIntensiveExecutor.execute(() -> {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                log.info("i am executing a io intensive task");
+                log.info("i am dynamic-tp-test-2 task");
             });
         }
     }

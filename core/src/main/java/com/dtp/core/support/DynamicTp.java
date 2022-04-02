@@ -6,7 +6,7 @@ import java.lang.annotation.*;
  * DynamicTp annotation, mainly used to manage juc ThreadPoolExecutor by this framework.
  *
  * @author: yanhom
- * @since 1.0.0
+ * @since 1.0.3
  **/
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

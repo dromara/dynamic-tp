@@ -98,7 +98,7 @@ public class DtpExecutor extends DtpLifecycleSupport {
             }
         }
 
-        if (runTimeout > 0 && queueTimeout > 0) {
+        if (runTimeout > 0 || queueTimeout > 0) {
             command = new DtpRunnable(command);
         }
         super.execute(command);
@@ -106,11 +106,16 @@ public class DtpExecutor extends DtpLifecycleSupport {
 
     @Override
     protected void beforeExecute(Thread t, Runnable r) {
-
-        if (queueTimeout > 0) {
-            DtpRunnable runnable = (DtpRunnable) r;
-            long currTime = System.currentTimeMillis();
+        if (!(r instanceof DtpRunnable)) {
+            super.beforeExecute(t, r);
+            return;
+        }
+        DtpRunnable runnable = (DtpRunnable) r;
+        long currTime = System.currentTimeMillis();
+        if (runTimeout > 0) {
             runnable.setStartTime(currTime);
+        }
+        if (queueTimeout > 0) {
             long waitTime = currTime - runnable.getSubmitTime();
             if (waitTime > queueTimeout) {
                 queueTimeoutCount.incrementAndGet();

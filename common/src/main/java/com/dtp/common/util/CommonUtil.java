@@ -11,6 +11,8 @@ import org.springframework.core.env.Environment;
  */
 public class CommonUtil {
 
+    private CommonUtil() {}
+
     private static final String APP_NAME;
 
     static {

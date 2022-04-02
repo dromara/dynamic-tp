@@ -86,7 +86,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
     private Object[] buildArgs(Class<?> clazz, ThreadPoolProperties tpp) {
 
         BlockingQueue<Runnable> taskQueue;
-        if (clazz.isAssignableFrom(EagerDtpExecutor.class)) {
+        if (clazz.equals(EagerDtpExecutor.class)) {
             taskQueue = new TaskQueue(tpp.getQueueCapacity());
         } else {
             taskQueue = buildBlockingQueue(tpp.getQueueType(), tpp.getQueueCapacity(), tpp.isFair());

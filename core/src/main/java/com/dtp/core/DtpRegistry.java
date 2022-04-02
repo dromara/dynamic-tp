@@ -283,6 +283,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
         if (CollUtil.isEmpty(dtpProperties.getPlatforms())) {
             log.warn("DtpRegistry initialization end, no notify platforms configured.");
+            DTP_REGISTRY.forEach((k, v) -> v.setNotifyItems(Collections.emptyList()));
             return;
         }
         DTP_REGISTRY.forEach((k, v) -> {

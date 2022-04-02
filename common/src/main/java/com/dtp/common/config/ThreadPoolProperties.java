@@ -8,6 +8,7 @@ import com.dtp.common.em.RejectedTypeEnum;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -117,5 +118,5 @@ public class ThreadPoolProperties {
     /**
      * Task wrapper names.
      */
-    private List<String> taskWrapperNames;
+    private Set<String> taskWrapperNames;
 }

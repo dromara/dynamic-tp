@@ -1,11 +1,13 @@
 package com.dtp.core.support.wrapper;
 
 import cn.hutool.core.collection.CollUtil;
+import com.dtp.common.util.StringUtil;
 import com.google.common.collect.Lists;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -27,11 +29,13 @@ public class TaskWrappers {
         TASK_WRAPPERS.add(new TtlTaskWrapper());
     }
 
-    public List<TaskWrapper> getByNames(List<String> names) {
+    public List<TaskWrapper> getByNames(Set<String> names) {
         if (CollUtil.isEmpty(names)) {
             return Collections.emptyList();
         }
-        return TASK_WRAPPERS.stream().filter(t -> names.contains(t.name())).collect(Collectors.toList());
+
+        return TASK_WRAPPERS.stream().filter(t -> StringUtil.containsIgnoreCase(t.name(), names))
+                .collect(Collectors.toList());
     }
 
     public static TaskWrappers getInstance() {

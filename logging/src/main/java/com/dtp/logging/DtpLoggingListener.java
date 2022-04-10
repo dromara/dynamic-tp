@@ -3,7 +3,6 @@ package com.dtp.logging;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.cloud.bootstrap.BootstrapImportSelectorConfiguration;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.GenericApplicationListener;
 import org.springframework.core.Ordered;
@@ -33,20 +32,20 @@ public class DtpLoggingListener implements GenericApplicationListener {
     @Override
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
         try {
-            Class.forName("org.springframework.cloud.bootstrap.BootstrapImportSelectorConfiguration");
+            Class<?> clazz = Class.forName("org.springframework.cloud.bootstrap.BootstrapImportSelectorConfiguration");
             Class<?> type = applicationEvent.getSource().getClass();
             if (SpringApplication.class.isAssignableFrom(type)) {
                 SpringApplication application = (SpringApplication) applicationEvent.getSource();
                 Set<Object> sources = application.getAllSources();
-                if (sources.size() == 1 && sources.contains(BootstrapImportSelectorConfiguration.class)) {
+                if (sources.size() == 1 && sources.contains(clazz)) {
                     return;
                 }
             }
         } catch (ClassNotFoundException e) {
-            log.warn("DynamicTp logging init, not spring cloud application.");
+            log.warn("DynamicTp logging initialize, not spring cloud application.");
         }
 
-        DtpLogging.getInstance().loadConfiguration();
+        DtpLoggingInitializer.getInstance().loadConfiguration();
     }
 
     @Override

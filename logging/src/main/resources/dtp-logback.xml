@@ -11,7 +11,7 @@
         </rollingPolicy>
 
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %p [%-5t:%c{2}] %m%n</pattern>
+            <pattern>{"datetime": "%d{yyyy-MM-dd HH:mm:ss.SSS}", "app_name": "${APP.NAME}", "thread_pool_metrics": %m}%n</pattern>
         </encoder>
     </appender>
 

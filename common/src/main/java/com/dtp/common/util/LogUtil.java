@@ -2,8 +2,6 @@ package com.dtp.common.util;
 
 import org.slf4j.Logger;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
 /**
  * LogUtil related
  *
@@ -14,14 +12,13 @@ public class LogUtil {
 
     private LogUtil() {}
 
-    public static final Logger MONITOR_LOGGER;
-    private static final String MONITOR_LOG_NAME = "DTP.MONITOR.LOG";
+    private static Logger monitorLogger = null;
 
-    static {
-        MONITOR_LOGGER = getLogger(MONITOR_LOG_NAME);
+    public static void init(Logger logger) {
+        monitorLogger = logger;
     }
 
-    public static Logger logger(Class<?> clazz) {
-        return getLogger(clazz);
+    public static Logger getMonitorLogger() {
+        return monitorLogger;
     }
 }

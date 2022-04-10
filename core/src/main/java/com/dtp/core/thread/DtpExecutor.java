@@ -164,7 +164,8 @@ public class DtpExecutor extends DtpLifecycleSupport {
     }
 
     public int getQueueCapacity() {
-        return getQueue().size() + getQueue().remainingCapacity();
+        int capacity = getQueue().size() + getQueue().remainingCapacity();
+        return capacity < 0 ? Integer.MAX_VALUE : capacity;
     }
 
     public String getRejectHandlerName() {

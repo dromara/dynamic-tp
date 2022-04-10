@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <Appenders>
+        <RollingFile name="MONITOR_LOG_FILE"
+                     fileName="${sys:LOG.PATH}/dynamictp/${sys:APP.NAME}.monitor.log"
+                     filePattern="${sys:LOG.PATH}/dynamictp/${sys:APP.NAME}.monitor.log.%d{yyyy-MM-dd}.%i">
+            <PatternLayout>
+                <Pattern>{"datetime": "%d{yyyy-MM-dd HH:mm:ss.SSS}", "app_name": "${sys:APP.NAME}", "thread_pool_metrics": %m}%n</Pattern>
+            </PatternLayout>
+
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="${LOG.FILE_SIZE:-200MB}"/>
+            </Policies>
+
+            <DefaultRolloverStrategy max="${LOG.MAX_HISTORY:-7}"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="DTP.MONITOR.LOG" level="INFO" additivity="false">
+            <AppenderRef ref="MONITOR_LOG_FILE"/>
+        </Logger>
+
+        <Root level="INFO">
+            <AppenderRef ref="MONITOR_LOG_FILE"/>
+        </Root>
+    </Loggers>
+</Configuration>

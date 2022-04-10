@@ -1,11 +1,8 @@
 package com.dtp.logging;
 
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.util.ContextInitializer;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.impl.StaticLoggerBinder;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,15 +11,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * DtpLogging related
+ * AbstractDtpLogging related
  *
- * @author: yanhom
- * @since 1.0.0
- **/
-public class DtpLogging {
+ * @author yanhom
+ * @since 1.0.5
+ */
+public abstract class AbstractDtpLogging {
 
+    protected static final String MONITOR_LOG_NAME = "DTP.MONITOR.LOG";
     private static final String CLASSPATH_PREFIX = "classpath:";
-    private static final String LOGBACK_LOCATION = "classpath:dtp-logback.xml";
     private static final String LOGGING_PATH = "LOG.PATH";
     private static final String APP_NAME = "APP.NAME";
 
@@ -41,32 +38,14 @@ public class DtpLogging {
         System.setProperty(APP_NAME, appName);
     }
 
-    private static class LoggingInstance {
-
-        private static final DtpLogging INSTANCE = new DtpLogging();
-    }
-
-    public static DtpLogging getInstance() {
-        return LoggingInstance.INSTANCE;
-    }
-
-    public void loadConfiguration() {
-        try {
-            LoggerContext loggerContext = (LoggerContext) StaticLoggerBinder.getSingleton().getLoggerFactory();
-            new ContextInitializer(loggerContext).configureByResource(getResourceUrl(LOGBACK_LOCATION));
-        } catch (Exception e) {
-            throw new IllegalStateException("Could not initialize logback from " + LOGBACK_LOCATION, e);
-        }
-    }
-
-    public static URL getResourceUrl(String resource) throws IOException {
+    public URL getResourceUrl(String resource) throws IOException {
 
         if (resource.startsWith(CLASSPATH_PREFIX)) {
             String path = resource.substring(CLASSPATH_PREFIX.length());
-            ClassLoader classLoader = DtpLogging.class.getClassLoader();
+            ClassLoader classLoader = DtpLoggingInitializer.class.getClassLoader();
             URL url = (classLoader != null ? classLoader.getResource(path) : ClassLoader.getSystemResource(path));
             if (url == null) {
-                throw new FileNotFoundException("Resource [" + resource + "] does not exist...");
+                throw new FileNotFoundException("Cannot find file: +" + resource);
             }
             return url;
         }
@@ -77,4 +56,14 @@ public class DtpLogging {
             return new File(resource).toURI().toURL();
         }
     }
+
+    /**
+     * Load configuration.
+     */
+    public abstract void loadConfiguration();
+
+    /**
+     * Init monitor logger.
+     */
+    public abstract void initMonitorLogger();
 }

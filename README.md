@@ -425,12 +425,12 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 - 触发报警阈值会推送相应报警消息（活性、容量、拒绝、任务等待超时、任务执行超时），且会高亮显示相应字段
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d65151e3e9ca460eac18f30ea6be05d3~tplv-k3u1fbpfcp-zoom-1.image)
+![告警](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d65151e3e9ca460eac18f30ea6be05d3~tplv-k3u1fbpfcp-zoom-1.image)
 
 
 - 配置变更会推送通知消息，且会高亮变更的字段
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/30093a6ede914887bb5566139352fb8b~tplv-k3u1fbpfcp-zoom-1.image)
+![变更通知](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/30093a6ede914887bb5566139352fb8b~tplv-k3u1fbpfcp-zoom-1.image)
 
 
 ---
@@ -488,11 +488,13 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 ## 介绍文章
 
-[https://juejin.cn/post/7063408526894301192](https://juejin.cn/post/7063408526894301192)
+[美团动态线程池实践思路，开源了](https://juejin.cn/post/7063408526894301192)
 
-[https://juejin.cn/post/7069297636552998943](https://juejin.cn/post/7069581808932749348)
+[动态线程池框架（DynamicTp），监控及源码解析篇](https://juejin.cn/post/7069581808932749348)
 
-[https://juejin.cn/post/7073286368629096485](https://juejin.cn/post/7073286368629096485)
+[动态线程池（DynamicTp），动态调整Tomcat、Jetty、Undertow线程池参数篇](https://juejin.cn/post/7073286368629096485)
+
+[美团动态线程池实践思路开源项目（DynamicTp），线程池源码解析及通知告警篇](https://juejin.cn/post/7083387245712900126)
 
 ---
 

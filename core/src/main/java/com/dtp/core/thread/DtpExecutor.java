@@ -46,7 +46,7 @@ public class DtpExecutor extends DtpLifecycleSupport {
     /**
      * Task wrappers, do sth enhanced.
      */
-    private final List<TaskWrapper> taskWrappers = Lists.newArrayList();
+    private List<TaskWrapper> taskWrappers = Lists.newArrayList();
 
     /**
      * If pre start all core threads.
@@ -177,9 +177,7 @@ public class DtpExecutor extends DtpLifecycleSupport {
     }
 
     public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
-        if (CollUtil.isNotEmpty(taskWrappers)) {
-            this.taskWrappers.addAll(taskWrappers);
-        }
+        this.taskWrappers = taskWrappers;
     }
 
     public void setPreStartAllCoreThreads(boolean preStartAllCoreThreads) {

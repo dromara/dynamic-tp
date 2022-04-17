@@ -1,19 +1,20 @@
-## 基于配置中心的轻量级动态线程池 - DynamicTp
+<p align="center">
+	<img alt="logo" src="https://files.mdnice.com/user/25315/b56ebee1-dac0-4984-9eb1-9ea8c235b1e8.png" width="45%">
+</p>
+<p align="center">
+	<strong>基于配置中心的轻量级动态线程池，内置监控告警功能，可通过SPI自定义扩展实现</strong>
+</p>
 
-```yml
-    |  __ \                            (_) |__   __|
-    | |  | |_   _ _ __   __ _ _ __ ___  _  ___| |_ __
-    | |  | | | | | '_ \ / _` | '_ ` _ \| |/ __| | '_ \
-    | |__| | |_| | | | | (_| | | | | | | | (__| | |_) |
-    |_____/ \__, |_| |_|\__,_|_| |_| |_|_|\___|_| .__/
-             __/ |                              | |
-            |___/                               |_|
-     :: Dynamic Thread Pool ::
-```
+<p align="center">
+	<a href="https://gitee.com/dromara/dynamic-tp"><img src="https://gitee.com/dromara/dynamic-tp/badge/star.svg"></a>
+	<a href="https://github.com/dromara/dynamic-tp"><img src="https://img.shields.io/github/stars/dromara/dynamic-tp?style=flat-square&logo=github"></a>
+  	<a href="https://github.com/dromara/dynamic-tp/blob/master/LICENSE"><img src="https://img.shields.io/github/license/dromara/dynamic-tp.svg?style=flat-square"></a>
+  <a target="_blank" href="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/530709dc29604630b6d1537d7c160ea5~tplv-k3u1fbpfcp-watermark.image"><img src='https://files.mdnice.com/user/25315/cd8662c4-45f0-46d2-9e8d-95d1951cbca5.png' alt='备注加群'></a>
+</p>
 
 ---
 
-### 背景
+## 背景
 
 **使用 ThreadPoolExecutor 过程中你是否有以下痛点呢？**
 
@@ -39,7 +40,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 实时生效的角色。那么我们是否可以结合配置中心来做运行时线程池参数的动态调整呢？答案是肯定的，而且配置中心相对都是高可用的，
 使用它也不用过于担心配置推送出现问题这类事儿，而且也能减少研发动态线程池组件的难度和工作量。
 
-**综上，我们总结出以下的背景**
+**综上，可以总结出以下的背景**
 
 - 广泛性：在 Java 开发中，想要提高系统性能，线程池已经是一个 90%以上的人都会选择使用的基础工具
 
@@ -51,27 +52,16 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 ---
 
-### 简介
+## 简介
 
 我们基于配置中心对线程池 ThreadPoolExecutor 做一些扩展，实现对运行中线程池参数的动态修改，实时生效；
 以及实时监控线程池的运行状态，触发设置的报警策略时报警，报警信息会推送办公平台（钉钉、企微等）。
-报警维度包括（队列容量、线程池活性、拒绝触发、任务超时等）；同时也会定时采集线程池指标数据供监控平台可视化使用。
+报警维度包括（队列容量、线程池活性、拒绝触发、任务执行等待超时等）；同时也会定时采集线程池指标数据供监控平台可视化使用。
 使我们能时刻感知到线程池的负载，根据情况及时调整，避免出现问题影响线上业务。
-
-```bash
-    |  __ \                            (_) |__   __|
-    | |  | |_   _ _ __   __ _ _ __ ___  _  ___| |_ __
-    | |  | | | | | '_ \ / _` | '_ ` _ | |/ __| | '_ \
-    | |__| | |_| | | | | (_| | | | | | | | (__| | |_) |
-    |_____/ __, |_| |_|__,_|_| |_| |_|_|___|_| .__/
-             __/ |                              | |
-            |___/                               |_|
-     :: Dynamic Thread Pool ::
-```
 
 **特性**
 
-- **参考[美团线程池实践](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)，对线程池参数动态化管理，增加监控、报警功能**
+- **参考[美团线程池实践](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)，对线程池参数动态化管理，增加监控、报警等增强功能**
 
 - **基于 Spring 框架，现只支持 SpringBoot 项目使用，轻量级，引入 starter 即可使用**
 
@@ -87,11 +77,13 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 - **提供任务包装功能，实现TaskWrapper接口即可，如TtlTaskWrapper可以支持线程池上下文信息传递**
 
-- **JUC普通线程池也可以被框架监控（@DynamicTp）；参考Tomcat线程池提供了io密集型场景使用的EagerDtpExecutor**
+- **JUC普通线程池也可以被框架监控（@DynamicTp）**
+
+- **参考Tomcat线程池提供了io密集型场景使用的EagerDtpExecutor**
 
 ---
 
-### 架构设计
+## 架构设计
 
 **主要分四大模块**
 
@@ -141,7 +133,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 ---
 
-### 使用
+## 使用
 
 1.引入对应配置中心的依赖
 
@@ -434,7 +426,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 ---
 
-### 注意事项
+## 注意事项
 
 - 服务启动时会根据配置中心配置的executors动态生成线程池实例注册到spring容器中，动态线程池建议直接配置在配置中心中， 
   同一线程池实例不要用@Bean编程式重复配置，虽然会覆盖掉
@@ -454,30 +446,30 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
           |___/                               |_|
    :: Dynamic Thread Pool ::
 
-  DynamicTp register, executor: DtpMainPropWrapper(dtpName=dynamic-tp-test-1, corePoolSize=6, maxPoolSize=8, keepAliveTime=50, queueType=VariableLinkedBlockingQueue, queueCapacity=200, rejectType=RejectedCountableCallerRunsPolicy, allowCoreThreadTimeOut=false)
+  DynamicTp register dtpExecutor, source: beanPostProcessor, executor: DtpMainPropWrapper(dtpName=dynamic-tp-test-1, corePoolSize=6, maxPoolSize=8, keepAliveTime=50, queueType=VariableLinkedBlockingQueue, queueCapacity=200, rejectType=RejectedCountableCallerRunsPolicy, allowCoreThreadTimeOut=false)
   ```
 
 * 配置变更会推送通知消息，且会高亮变更的字段
 
   ```bash
-  DynamicTp [dynamic-tp-test-1] refresh end, changed keys: [corePoolSize, queueCapacity], corePoolSize: [6 => 4], maxPoolSize: [8 => 8], queueType: [VariableLinkedBlockingQueue => VariableLinkedBlockingQueue], queueCapacity: [200 => 2000], keepAliveTime: [50s => 50s], rejectedType: [CallerRunsPolicy => CallerRunsPolicy], allowsCoreThreadTimeOut: [false => false]
+  DynamicTp refresh, name: [dtpExecutor2], changed keys: [corePoolSize, queueCapacity], corePoolSize: [6 => 4], maxPoolSize: [8 => 8], queueType: [VariableLinkedBlockingQueue => VariableLinkedBlockingQueue], queueCapacity: [200 => 2000], keepAliveTime: [50s => 50s], rejectedType: [CallerRunsPolicy => CallerRunsPolicy], allowsCoreThreadTimeOut: [false => false]
   ```
 
 ---
 
-### 通知报警
+## 通知报警
 
-- 触发报警阈值会推送相应报警消息（活性、容量、拒绝、超时），且会高亮显示相应字段
+- 触发报警阈值会推送相应报警消息（活性、容量、拒绝、任务等待超时、任务执行超时），且会高亮显示相应字段
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bb4b2d4390b14965b7470b708674ccbe~tplv-k3u1fbpfcp-zoom-1.image)
+![](https://files.mdnice.com/user/25315/29e2981c-c816-463b-857d-a154c6a1a164.png)
 
 - 配置变更会推送通知消息，且会高亮变更的字段
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9fb3e28c1a4e4d46a3ecbf3427181576~tplv-k3u1fbpfcp-zoom-1.image)
+![](https://files.mdnice.com/user/25315/99dfcf1e-7182-43e6-b816-4bfd5b8fca61.png)
 
 ---
 
-### 监控
+## 监控
 
 ![监控数据](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ec5a7d1a31e7418ba5d9a101a5c03826~tplv-k3u1fbpfcp-zoom-1.image)
 
@@ -490,11 +482,10 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
     namictp/${appName}.monitor.log
 
   ```bash
-  2022-01-11 00:25:20.599 INFO [dtp-monitor-thread-1:d.m.log] {"activeCount":0,"queueSize":0,"largestPoolSize":0,"poolSize":0,"rejectHandlerName":"RejectedCountableCallerRunsPolicy","queueCapacity":1024,"fair":false,"rejectCount":0,"waitTaskCount":0,"taskCount":0,"queueRemainingCapacity":1024,"corePoolSize":6,"queueType":"VariableLinkedBlockingQueue","completedTaskCount":0,"dtpName":"remoting-call","maximumPoolSize":8}
-  2022-01-11 00:25:25.603 INFO [dtp-monitor-thread-1:d.m.log] {"activeCount":0,"queueSize":0,"largestPoolSize":0,"poolSize":0,"rejectHandlerName":"RejectedCountableCallerRunsPolicy","queueCapacity":1024,"fair":false,"rejectCount":0,"waitTaskCount":0,"taskCount":0,"queueRemainingCapacity":1024,"corePoolSize":6,"queueType":"VariableLinkedBlockingQueue","completedTaskCount":0,"dtpName":"remoting-call","maximumPoolSize":8}
-  2022-01-11 00:25:30.609 INFO [dtp-monitor-thread-1:d.m.log] {"activeCount":0,"queueSize":0,"largestPoolSize":0,"poolSize":0,"rejectHandlerName":"RejectedCountableCallerRunsPolicy","queueCapacity":1024,"fair":false,"rejectCount":0,"waitTaskCount":0,"taskCount":0,"queueRemainingCapacity":1024,"corePoolSize":6,"queueType":"VariableLinkedBlockingQueue","completedTaskCount":0,"dtpName":"remoting-call","maximumPoolSize":8}
-  2022-01-11 00:25:35.613 INFO [dtp-monitor-thread-1:d.m.log] {"activeCount":0,"queueSize":0,"largestPoolSize":0,"poolSize":0,"rejectHandlerName":"RejectedCountableCallerRunsPolicy","queueCapacity":1024,"fair":false,"rejectCount":0,"waitTaskCount":0,"taskCount":0,"queueRemainingCapacity":1024,"corePoolSize":6,"queueType":"VariableLinkedBlockingQueue","completedTaskCount":0,"dtpName":"remoting-call","maximumPoolSize":8}
-  2022-01-11 00:25:40.616 INFO [dtp-monitor-thread-1:d.m.log] {"activeCount":0,"queueSize":0,"largestPoolSize":0,"poolSize":0,"rejectHandlerName":"RejectedCountableCallerRunsPolicy","queueCapacity":1024,"fair":false,"rejectCount":0,"waitTaskCount":0,"taskCount":0,"queueRemainingCapacity":1024,"corePoolSize":6,"queueType":"VariableLinkedBlockingQueue","completedTaskCount":0,"dtpName":"remoting-call","maximumPoolSize":8}
+  {"datetime": "2022-04-17 11:35:15.208", "app_name": "dynamic-tp-nacos-cloud-demo", "thread_pool_metrics": {"activeCount":0,"queueSize":0,"largestPoolSize":0,"poolSize":0,"rejectHandlerName":"CallerRunsPolicy","queueCapacity":2000,"fair":false,"queueTimeoutCount":0,"rejectCount":0,"waitTaskCount":0,"taskCount":0,"runTimeoutCount":0,"queueRemainingCapacity":2000,"corePoolSize":4,"queueType":"VariableLinkedBlockingQueue","completedTaskCount":0,"dynamic":true,"maximumPoolSize":6,"poolName":"dtpExecutor1"}}
+  {"datetime": "2022-04-17 11:35:15.209", "app_name": "dynamic-tp-nacos-cloud-demo", "thread_pool_metrics": {"activeCount":0,"queueSize":0,"largestPoolSize":0,"poolSize":0,"rejectHandlerName":"CallerRunsPolicy","queueCapacity":2000,"fair":false,"queueTimeoutCount":0,"rejectCount":0,"waitTaskCount":0,"taskCount":0,"runTimeoutCount":0,"queueRemainingCapacity":2000,"corePoolSize":2,"queueType":"TaskQueue","completedTaskCount":0,"dynamic":true,"maximumPoolSize":4,"poolName":"dtpExecutor2"}}
+  {"datetime": "2022-04-17 11:35:15.209", "app_name": "dynamic-tp-nacos-cloud-demo", "thread_pool_metrics": {"activeCount":0,"queueSize":0,"largestPoolSize":0,"poolSize":0,"queueCapacity":2147483647,"fair":false,"queueTimeoutCount":0,"rejectCount":0,"waitTaskCount":0,"taskCount":0,"runTimeoutCount":0,"queueRemainingCapacity":2147483647,"corePoolSize":1,"queueType":"LinkedBlockingQueue","completedTaskCount":0,"dynamic":false,"maximumPoolSize":1,"poolName":"commonExecutor"}}
+  {"datetime": "2022-04-17 11:35:15.209", "app_name": "dynamic-tp-nacos-cloud-demo", "thread_pool_metrics": {"activeCount":0,"queueSize":0,"largestPoolSize":100,"poolSize":100,"queueCapacity":2147483647,"fair":false,"queueTimeoutCount":0,"rejectCount":0,"waitTaskCount":0,"taskCount":177,"runTimeoutCount":0,"queueRemainingCapacity":2147483647,"corePoolSize":100,"queueType":"TaskQueue","completedTaskCount":177,"dynamic":false,"maximumPoolSize":400,"poolName":"tomcatWebServerTp"}}
   ```
 
 - 暴露 EndPoint 端点(dynamic-tp)，可以通过 http 方式请求
@@ -529,7 +520,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 ---
 
-### 介绍文章
+## 介绍文章
 
 [https://juejin.cn/post/7063408526894301192](https://juejin.cn/post/7063408526894301192)
 
@@ -539,8 +530,8 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 ---
 
-### 联系我
+## 联系我
 
-对项目有什么想法或者建议，可以加我微信交流，或者创建[issues](https://github.com/lyh200/dynamic-tp-spring-cloud-starter/issues)，一起完善项目
+对项目有什么想法或者建议，可以**加我微信拉交流群，或者创建[issues]**(https://github.com/lyh200/dynamic-tp-spring-cloud-starter/issues)，一起完善项目
 
 ![](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/530709dc29604630b6d1537d7c160ea5~tplv-k3u1fbpfcp-watermark.image)

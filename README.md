@@ -1,5 +1,5 @@
 <p align="center">
-	<img alt="logo" src="https://files.mdnice.com/user/25315/b56ebee1-dac0-4984-9eb1-9ea8c235b1e8.png" width="45%">
+	<img alt="logo" src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/eb9c3731b9a44959ad03a463f1dc58b6~tplv-k3u1fbpfcp-zoom-1.image" width="45%">
 </p>
 <p align="center">
 	<strong>基于配置中心的轻量级动态线程池，内置监控告警功能，可通过SPI自定义扩展实现</strong>
@@ -9,7 +9,7 @@
 	<a href="https://gitee.com/dromara/dynamic-tp"><img src="https://gitee.com/dromara/dynamic-tp/badge/star.svg"></a>
 	<a href="https://github.com/dromara/dynamic-tp"><img src="https://img.shields.io/github/stars/dromara/dynamic-tp?style=flat-square&logo=github"></a>
   	<a href="https://github.com/dromara/dynamic-tp/blob/master/LICENSE"><img src="https://img.shields.io/github/license/dromara/dynamic-tp.svg?style=flat-square"></a>
-  <a target="_blank" href="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/530709dc29604630b6d1537d7c160ea5~tplv-k3u1fbpfcp-watermark.image"><img src='https://files.mdnice.com/user/25315/cd8662c4-45f0-46d2-9e8d-95d1951cbca5.png' alt='备注加群'></a>
+    <a target="_blank" href="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/530709dc29604630b6d1537d7c160ea5~tplv-k3u1fbpfcp-watermark.image"><img src='https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ddfaed2cce2a47608fb0c0c375a10f08~tplv-k3u1fbpfcp-zoom-1.image' alt='备注加群'></a>
 </p>
 
 ---
@@ -461,11 +461,11 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 - 触发报警阈值会推送相应报警消息（活性、容量、拒绝、任务等待超时、任务执行超时），且会高亮显示相应字段
 
-![](https://files.mdnice.com/user/25315/29e2981c-c816-463b-857d-a154c6a1a164.png)
+![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/30093a6ede914887bb5566139352fb8b~tplv-k3u1fbpfcp-zoom-1.image)
 
 - 配置变更会推送通知消息，且会高亮变更的字段
 
-![](https://files.mdnice.com/user/25315/99dfcf1e-7182-43e6-b816-4bfd5b8fca61.png)
+![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d65151e3e9ca460eac18f30ea6be05d3~tplv-k3u1fbpfcp-zoom-1.image)
 
 ---
 
@@ -532,6 +532,6 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 ## 联系我
 
-对项目有什么想法或者建议，可以**加我微信拉交流群，或者创建[issues]**(https://github.com/lyh200/dynamic-tp-spring-cloud-starter/issues)，一起完善项目
+对项目有什么想法或者建议，可以**加我微信拉交流群**，或者创建[issues](https://github.com/lyh200/dynamic-tpp/issues)，一起完善项目
 
 ![](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/530709dc29604630b6d1537d7c160ea5~tplv-k3u1fbpfcp-watermark.image)

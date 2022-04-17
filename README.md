@@ -1,5 +1,5 @@
 <p align="center">
-	<img alt="logo" src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/eb9c3731b9a44959ad03a463f1dc58b6~tplv-k3u1fbpfcp-zoom-1.image" width="45%">
+	<img alt="logo" src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3a70070ebc4546aba734e3ba97e7b193~tplv-k3u1fbpfcp-zoom-1.image" width="50%">
 </p>
 <p align="center">
 	<strong>基于配置中心的轻量级动态线程池，内置监控告警功能，可通过SPI自定义扩展实现</strong>
@@ -296,47 +296,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
                 threshold: 1
   ```
 
-- 线程池配置（properties 类型）
-
-  ```properties
-  spring.dynamic.tp.enabled=true
-  spring.dynamic.tp.enabledBanner=true
-  spring.dynamic.tp.enabledCollect=true
-  spring.dynamic.tp.collectorType=logging
-  spring.dynamic.tp.monitorInterval=5
-  spring.dynamic.tp.executors[0].threadPoolName=dynamic-tp-test-1
-  spring.dynamic.tp.executors[0].corePoolSize=50
-  spring.dynamic.tp.executors[0].maximumPoolSize=50
-  spring.dynamic.tp.executors[0].queueCapacity=3000
-  spring.dynamic.tp.executors[0].queueType=VariableLinkedBlockingQueue
-  spring.dynamic.tp.executors[0].rejectedHandlerType=CallerRunsPolicy
-  spring.dynamic.tp.executors[0].keepAliveTime=50
-  spring.dynamic.tp.executors[0].allowCoreThreadTimeOut=false
-  spring.dynamic.tp.executors[0].threadNamePrefix=test1
-  spring.dynamic.tp.executors[0].notifyItems[0].type=capacity
-  spring.dynamic.tp.executors[0].notifyItems[0].enabled=false
-  spring.dynamic.tp.executors[0].notifyItems[0].threshold=80
-  spring.dynamic.tp.executors[0].notifyItems[0].platforms[0]=ding
-  spring.dynamic.tp.executors[0].notifyItems[0].platforms[1]=wechat
-  spring.dynamic.tp.executors[0].notifyItems[0].interval=120
-  spring.dynamic.tp.executors[0].notifyItems[1].type=change
-  spring.dynamic.tp.executors[0].notifyItems[1].enabled=false
-  spring.dynamic.tp.executors[0].notifyItems[2].type=liveness
-  spring.dynamic.tp.executors[0].notifyItems[2].enabled=false
-  spring.dynamic.tp.executors[0].notifyItems[2].threshold=80
-  spring.dynamic.tp.executors[0].notifyItems[3].type=reject
-  spring.dynamic.tp.executors[0].notifyItems[3].enabled=false
-  spring.dynamic.tp.executors[0].notifyItems[3].threshold=1
-  spring.dynamic.tp.executors[1].threadPoolName=dynamic-tp-test-2
-  spring.dynamic.tp.executors[1].corePoolSize=20
-  spring.dynamic.tp.executors[1].maximumPoolSize=30
-  spring.dynamic.tp.executors[1].queueCapacity=1000
-  spring.dynamic.tp.executors[1].queueType=VariableLinkedBlockingQueue
-  spring.dynamic.tp.executors[1].rejectedHandlerType=CallerRunsPolicy
-  spring.dynamic.tp.executors[1].keepAliveTime=50
-  spring.dynamic.tp.executors[1].allowCoreThreadTimeOut=false
-  spring.dynamic.tp.executors[1].threadNamePrefix=test2
-  ```
+- 线程池配置（properties 类型），具体请看example-zookeeper项目下的配置文件
 
 - 定义线程池Bean（可选），建议直接配置在配置中心；但是如果想后期再添加到配置中心，可以先用@Bean声明（方便依赖注入）
 
@@ -406,6 +366,8 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 * 代码调用，从DtpRegistry中根据线程池名称获取，或者通过依赖注入方式(推荐，更优雅)
 
+  1）依赖注入方式使用，优先推荐依赖注入方式，不能使用依赖注入的场景可以使用方式2
+  
   ```java
   @Resource
   private ThreadPoolExecutor dtpExecutor1;
@@ -415,14 +377,16 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
   }
   ```
   
+  2）通过DtpRegistry注册器获取
+  
   ```java
   public static void main(String[] args) {
-     DtpExecutor dtpExecutor = DtpRegistry.getExecutor("dtpExecutor1");
+     DtpExecutor dtpExecutor = DtpRegistry.getDtpExecutor("dtpExecutor1");
      dtpExecutor.execute(() -> System.out.println("test"));
   }
   ```
 
-* 详细使用实例参考`example`工程
+* 更详细使用实例请参考`example`工程
 
 ---
 
@@ -461,11 +425,13 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 - 触发报警阈值会推送相应报警消息（活性、容量、拒绝、任务等待超时、任务执行超时），且会高亮显示相应字段
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/30093a6ede914887bb5566139352fb8b~tplv-k3u1fbpfcp-zoom-1.image)
+![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d65151e3e9ca460eac18f30ea6be05d3~tplv-k3u1fbpfcp-zoom-1.image)
+
 
 - 配置变更会推送通知消息，且会高亮变更的字段
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d65151e3e9ca460eac18f30ea6be05d3~tplv-k3u1fbpfcp-zoom-1.image)
+![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/30093a6ede914887bb5566139352fb8b~tplv-k3u1fbpfcp-zoom-1.image)
+
 
 ---
 

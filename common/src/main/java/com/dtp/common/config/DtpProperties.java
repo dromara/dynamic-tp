@@ -124,5 +124,7 @@ public class DtpProperties {
         private String rootNode;
 
         private String node;
+
+        private String configKey;
     }
 }

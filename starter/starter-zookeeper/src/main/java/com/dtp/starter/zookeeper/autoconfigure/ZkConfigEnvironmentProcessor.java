@@ -3,7 +3,6 @@ package com.dtp.starter.zookeeper.autoconfigure;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.core.support.PropertiesBinder;
 import com.dtp.starter.zookeeper.util.CuratorUtil;
-import lombok.val;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.boot.env.OriginTrackedMapPropertySource;
@@ -28,10 +27,7 @@ public class ZkConfigEnvironmentProcessor implements EnvironmentPostProcessor, O
 
         DtpProperties dtpProperties = new DtpProperties();
         PropertiesBinder.bindDtpProperties(environment, dtpProperties);
-
-        val curatorFramework = CuratorUtil.getCuratorFramework(dtpProperties);
-        String nodePath = CuratorUtil.nodePath(dtpProperties);
-        Map<String, String> properties = CuratorUtil.genPropertiesMap(curatorFramework, nodePath);
+        Map<Object, Object> properties = CuratorUtil.genPropertiesMap(dtpProperties);
         if (!checkPropertyExist(environment)) {
             createZkPropertySource(environment, properties);
         }
@@ -42,7 +38,7 @@ public class ZkConfigEnvironmentProcessor implements EnvironmentPostProcessor, O
         return propertySources.stream().anyMatch(p -> ZK_PROPERTY_SOURCE_NAME.equals(p.getName()));
     }
 
-    private void createZkPropertySource(ConfigurableEnvironment environment, Map<String, String> properties) {
+    private void createZkPropertySource(ConfigurableEnvironment environment, Map<Object, Object> properties) {
         MutablePropertySources propertySources = environment.getPropertySources();
         OriginTrackedMapPropertySource zkSource = new OriginTrackedMapPropertySource(ZK_PROPERTY_SOURCE_NAME, properties);
         propertySources.addLast(zkSource);

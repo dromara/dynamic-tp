@@ -20,6 +20,8 @@ public class DynamicTpConst {
 
     public static final String UNKNOWN = "---";
 
+    public static final String VALUE = "value";
+
     /**
      * Dtp executor properties const.
      */
@@ -40,4 +42,13 @@ public class DynamicTpConst {
     public static final String QUEUE_TIMEOUT = "queueTimeout";
 
     public static final String TASK_WRAPPERS = "taskWrappers";
+
+    /**
+     * symbol
+     */
+    public static final String DOT = ".";
+
+    public static final String ARR_LEFT_BRACKET = "[";
+
+    public static final String ARR_RIGHT_BRACKET = "]";
 }

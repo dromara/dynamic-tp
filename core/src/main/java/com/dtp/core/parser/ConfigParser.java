@@ -34,4 +34,13 @@ public interface ConfigParser {
      * @throws IOException if occurs error while parsing
      */
     Map<Object, Object> doParse(String content) throws IOException;
+
+    /**
+     * Parse content.
+     * @param content content
+     * @param prefix key prefix
+     * @return k-v properties
+     * @throws IOException if occurs error while parsing
+     */
+    Map<Object, Object> doParse(String content, String prefix);
 }

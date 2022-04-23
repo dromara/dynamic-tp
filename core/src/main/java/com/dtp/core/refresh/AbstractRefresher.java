@@ -1,5 +1,6 @@
 package com.dtp.core.refresh;
 
+import cn.hutool.core.map.MapUtil;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.em.ConfigFileTypeEnum;
 import com.dtp.common.event.RefreshEvent;
@@ -13,6 +14,7 @@ import org.springframework.context.event.ApplicationEventMulticaster;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -46,6 +48,15 @@ public abstract class AbstractRefresher implements Refresher {
         } catch (IOException e) {
             log.error("DynamicTp refresh error, content: {}, fileType: {}", content, fileTypeEnum, e);
         }
+    }
+
+    protected void doRefresh(Map<Object, Object> properties) {
+        if (MapUtil.isEmpty(properties)) {
+            log.warn("DynamicTp refresh, empty properties.");
+            return;
+        }
+        PropertiesBinder.bindDtpProperties(properties, dtpProperties);
+        doRefresh(dtpProperties);
     }
 
     protected void doRefresh(DtpProperties dtpProperties) {

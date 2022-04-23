@@ -24,6 +24,8 @@
         <logback.version>1.2.10</logback.version>
         <log4j.version>2.17.1</log4j.version>
         <guava.version>31.0.1-jre</guava.version>
+        <jackson-core.version>2.13.2</jackson-core.version>
+        <jackson-databind.version>2.13.2</jackson-databind.version>
     </properties>
 
     <modules>
@@ -151,6 +153,17 @@
                 <version>${log4j.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson-core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-databind.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

@@ -22,7 +22,7 @@ public class PropertiesBinder {
 
     private PropertiesBinder() {}
 
-    public static void bindDtpProperties(Map<Object, Object> properties, DtpProperties dtpProperties) {
+    public static void bindDtpProperties(Map<?, Object> properties, DtpProperties dtpProperties) {
         ConfigurationPropertySource sources = new MapConfigurationPropertySource(properties);
         Binder binder = new Binder(sources);
         ResolvableType type = ResolvableType.forClass(DtpProperties.class);

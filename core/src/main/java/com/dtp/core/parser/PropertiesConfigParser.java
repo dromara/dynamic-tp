@@ -1,7 +1,7 @@
 package com.dtp.core.parser;
 
-import com.google.common.collect.Lists;
 import com.dtp.common.em.ConfigFileTypeEnum;
+import com.google.common.collect.Lists;
 
 import java.io.IOException;
 import java.io.StringReader;

@@ -1,7 +1,6 @@
 package com.dtp.starter.zookeeper.refresh;
 
 import com.dtp.common.config.DtpProperties;
-import com.dtp.common.em.ConfigFileTypeEnum;
 import com.dtp.core.refresh.AbstractRefresher;
 import com.dtp.starter.zookeeper.util.CuratorUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -28,16 +27,12 @@ public class ZookeeperRefresher extends AbstractRefresher implements Environment
     @Resource
     private DtpProperties dtpProperties;
 
-    private CuratorFramework curatorFramework;
-
     @Override
     public void afterPropertiesSet() {
-        curatorFramework = CuratorUtil.getCuratorFramework(dtpProperties);
-        String nodePath = CuratorUtil.nodePath(dtpProperties);
 
         final ConnectionStateListener connectionStateListener = (client, newState) -> {
             if (newState == ConnectionState.RECONNECTED) {
-                loadAndRefresh(nodePath);
+                loadAndRefresh();
             }};
 
         final CuratorListener curatorListener = (client, curatorEvent) -> {
@@ -46,12 +41,16 @@ public class ZookeeperRefresher extends AbstractRefresher implements Environment
                 switch (watchedEvent.getType()) {
                     case NodeChildrenChanged:
                     case NodeDataChanged:
-                        loadAndRefresh(nodePath);
+                        loadAndRefresh();
                         break;
                     default:
                         break;
                 }
             }};
+
+        CuratorFramework curatorFramework = CuratorUtil.getCuratorFramework(dtpProperties);
+        String nodePath = CuratorUtil.nodePath(dtpProperties);
+
         curatorFramework.getConnectionStateListenable().addListener(connectionStateListener);
         curatorFramework.getCuratorListenable().addListener(curatorListener);
 
@@ -60,10 +59,9 @@ public class ZookeeperRefresher extends AbstractRefresher implements Environment
 
     /**
      * load config and refresh
-     * @param nodePath config path
      */
-    private void loadAndRefresh(String nodePath) {
-        refresh(CuratorUtil.propertiesContent(curatorFramework, nodePath), ConfigFileTypeEnum.PROPERTIES);
+    private void loadAndRefresh() {
+        doRefresh(CuratorUtil.genPropertiesMap(dtpProperties));
     }
 
     @Override

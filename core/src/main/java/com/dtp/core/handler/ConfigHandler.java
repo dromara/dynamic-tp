@@ -2,6 +2,7 @@ package com.dtp.core.handler;
 
 import com.dtp.common.em.ConfigFileTypeEnum;
 import com.dtp.core.parser.ConfigParser;
+import com.dtp.core.parser.JsonConfigParser;
 import com.dtp.core.parser.PropertiesConfigParser;
 import com.dtp.core.parser.YamlConfigParser;
 import com.google.common.collect.Lists;
@@ -30,6 +31,7 @@ public class ConfigHandler {
 
         PARSERS.add(new PropertiesConfigParser());
         PARSERS.add(new YamlConfigParser());
+        PARSERS.add(new JsonConfigParser());
     }
 
     public Map<Object, Object> parseConfig(String content, ConfigFileTypeEnum type) throws IOException {

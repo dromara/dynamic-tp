@@ -1,8 +1,8 @@
 package com.dtp.core.parser;
 
+import com.dtp.common.em.ConfigFileTypeEnum;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.dtp.common.em.ConfigFileTypeEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.io.ByteArrayResource;

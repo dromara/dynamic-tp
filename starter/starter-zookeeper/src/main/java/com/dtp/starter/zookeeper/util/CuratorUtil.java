@@ -1,9 +1,11 @@
 package com.dtp.starter.zookeeper.util;
 
-import cn.hutool.core.map.MapUtil;
 import com.dtp.common.config.DtpProperties;
+import com.dtp.core.handler.ConfigHandler;
 import com.google.common.collect.Maps;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.api.GetChildrenBuilder;
@@ -14,9 +16,13 @@ import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.utils.ZKPaths;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+
+import static com.dtp.common.em.ConfigFileTypeEnum.JSON;
+import static com.dtp.common.em.ConfigFileTypeEnum.PROPERTIES;
 
 /**
  * CuratorUtil related
@@ -60,37 +66,50 @@ public class CuratorUtil {
                 zookeeper.getConfigVersion()), zookeeper.getNode());
     }
 
-    public static Map<String, String> genPropertiesMap(CuratorFramework curatorFramework, String nodePath) {
+    @SneakyThrows
+    public static Map<Object, Object> genPropertiesMap(DtpProperties dtpProperties) {
+
+        val curatorFramework = getCuratorFramework(dtpProperties);
+        String nodePath = nodePath(dtpProperties);
+
+        Map<Object, Object> result = Maps.newHashMap();
+        if (PROPERTIES.getValue().equalsIgnoreCase(dtpProperties.getConfigType().trim())) {
+            result = genPropertiesTypeMap(nodePath, curatorFramework);
+        } else if (JSON.getValue().equalsIgnoreCase(dtpProperties.getConfigType().trim())) {
+            nodePath = ZKPaths.makePath(nodePath, dtpProperties.getZookeeper().getConfigKey());
+            String value = getVal(nodePath, curatorFramework);
+            result = ConfigHandler.getInstance().parseConfig(value, JSON);
+        }
+
+        return result;
+    }
+
+    private static Map<Object, Object> genPropertiesTypeMap(String nodePath, CuratorFramework curatorFramework) {
         try {
             final GetChildrenBuilder childrenBuilder = curatorFramework.getChildren();
             final List<String> children = childrenBuilder.watched().forPath(nodePath);
-            Map<String, String> properties = Maps.newHashMap();
+            Map<Object, Object> properties = Maps.newHashMap();
             children.forEach(c -> {
-                String n = ZKPaths.makePath(nodePath, c);
-                final String nodeName = ZKPaths.getNodeFromPath(n);
-                final GetDataBuilder data = curatorFramework.getData();
-                String value = "";
-                try {
-                    value = new String(data.watched().forPath(n), StandardCharsets.UTF_8);
-                } catch (Exception e) {
-                    log.error("zk config value watched exception.", e);
-                }
+                String path = ZKPaths.makePath(nodePath, c);
+                final String nodeName = ZKPaths.getNodeFromPath(path);
+                String value = getVal(path, curatorFramework);
                 properties.put(nodeName, value);
             });
             return properties;
         } catch (Exception e) {
-            log.error("load zk node error, nodePath is {}", nodePath, e);
-            return Maps.newHashMapWithExpectedSize(0);
+            log.error("get zk configs error, nodePath is {}", nodePath, e);
+            return Collections.emptyMap();
         }
     }
 
-    public static String propertiesContent(CuratorFramework curatorFramework, String nodePath) {
-        Map<String, String> propertiesMap = genPropertiesMap(curatorFramework, nodePath);
-        if (MapUtil.isEmpty(propertiesMap)) {
-            return null;
+    private static String getVal(String path, CuratorFramework curatorFramework) {
+        final GetDataBuilder data = curatorFramework.getData();
+        String value = "";
+        try {
+            value = new String(data.watched().forPath(path), StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            log.error("get zk config value failed, path: {}", path, e);
         }
-        StringBuilder content = new StringBuilder();
-        propertiesMap.forEach((k, v) -> content.append(k).append("=").append(v).append("\n"));
-        return content.toString();
+        return value;
     }
 }

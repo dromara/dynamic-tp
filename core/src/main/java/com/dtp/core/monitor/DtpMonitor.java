@@ -41,8 +41,7 @@ public class DtpMonitor implements ApplicationRunner, Ordered {
     private static final List<NotifyTypeEnum> ALARM_TYPES = Lists.newArrayList(LIVENESS, CAPACITY);
 
     private static final ScheduledExecutorService MONITOR_EXECUTOR = new ScheduledThreadPoolExecutor(
-            1,
-            new NamedThreadFactory("dtp-monitor", true));
+            1, new NamedThreadFactory("dtp-monitor", true));
 
     @Resource
     private DtpProperties dtpProperties;

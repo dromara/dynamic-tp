@@ -43,8 +43,7 @@ public abstract class AbstractRefresher implements Refresher {
         try {
             val configHandler = ConfigHandler.getInstance();
             val properties = configHandler.parseConfig(content, fileTypeEnum);
-            PropertiesBinder.bindDtpProperties(properties, dtpProperties);
-            doRefresh(dtpProperties);
+            doRefresh(properties);
         } catch (IOException e) {
             log.error("DynamicTp refresh error, content: {}, fileType: {}", content, fileTypeEnum, e);
         }

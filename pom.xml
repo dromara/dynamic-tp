@@ -5,7 +5,7 @@
 
     <groupId>io.github.lyh200</groupId>
     <artifactId>dynamic-tp-all</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <packaging>pom</packaging>
 
     <name>DynamicTp Project</name>
@@ -14,7 +14,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <dtp.version>1.0.4</dtp.version>
+        <dtp.version>1.0.5</dtp.version>
         <spring-boot.version>2.5.8</spring-boot.version>
         <spring-cloud.version>2020.0.5</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.1</spring-cloud-alibaba.version>

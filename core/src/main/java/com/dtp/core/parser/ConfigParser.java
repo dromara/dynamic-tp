@@ -42,5 +42,5 @@ public interface ConfigParser {
      * @return k-v properties
      * @throws IOException if occurs error while parsing
      */
-    Map<Object, Object> doParse(String content, String prefix);
+    Map<Object, Object> doParse(String content, String prefix) throws IOException;
 }

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>dynamic-tp-example</artifactId>
         <groupId>io.github.lyh200</groupId>
-        <version>1.0.4</version>
+        <version>1.0.5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>io.github.lyh200</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-zookeeper</artifactId>
-            <version>1.0.4</version>
+            <version>1.0.5</version>
         </dependency>
     </dependencies>
 </project>

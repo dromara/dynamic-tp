@@ -36,21 +36,14 @@ public class JsonConfigParser extends AbstractConfigParser {
     }
 
     @Override
-    public Map<Object, Object> doParse(String content) {
+    public Map<Object, Object> doParse(String content) throws IOException {
         return doParse(content, MAIN_PROPERTIES_PREFIX);
     }
 
     @Override
-    public Map<Object, Object> doParse(String content, String prefix) {
+    public Map<Object, Object> doParse(String content, String prefix) throws IOException {
 
-        Map<String, Object> originMap;
-        try {
-            originMap = MAPPER.readValue(content, LinkedHashMap.class);
-        } catch (IOException e) {
-            log.error("read value error", e);
-            return Maps.newHashMapWithExpectedSize(0);
-        }
-
+        Map<String, Object> originMap = MAPPER.readValue(content, LinkedHashMap.class);
         Map<Object, Object> result = Maps.newHashMap();
 
         flatMap(result, originMap, prefix);

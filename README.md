@@ -91,7 +91,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
   1.监听特定配置中心的指定配置文件（已实现 Nacos、Apollo、Zookeeper、Consul），可通过内部提供的SPI接口扩展其他实现
 
-  2.解析配置文件内容，内置实现 yml、properties 配置文件的解析，可通过内部提供的 SPI 接口扩展其他实现
+  2.解析配置文件内容，内置实现 yml、properties、json 配置文件的解析，可通过内部提供的 SPI 接口扩展其他实现
 
   3.通知线程池管理模块实现刷新
 
@@ -156,7 +156,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-apollo</artifactId>
-           <version>1.0.4</version>
+           <version>1.0.5</version>
        </dependency>
    ```
 2. spring-cloud 场景下的 nacos 应用接入用此依赖
@@ -164,7 +164,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-nacos</artifactId>
-           <version>1.0.4</version>
+           <version>1.0.5</version>
        </dependency>
    ```
 3. 非 spring-cloud 场景下的 nacos 应用接入用此依赖
@@ -172,7 +172,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-nacos</artifactId>
-           <version>1.0.4</version>
+           <version>1.0.5</version>
        </dependency>
    ```
 4. zookeeper 配置中心应用接入
@@ -180,7 +180,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-zookeeper</artifactId>
-           <version>1.0.4</version>
+           <version>1.0.5</version>
        </dependency>
    ```
    application.yml 需配置 zk 地址节点信息
@@ -191,12 +191,13 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
             name: dynamic-tp-zookeeper-demo
           dynamic:
             tp:
-              config-type: properties         # zookeeper只支持properties配置
+              config-type: properties         # zookeeper支持properties、json配置
               zookeeper:
                 config-version: 1.0.0
                 zk-connect-str: 127.0.0.1:2181
                 root-node: /configserver/dev
                 node: dynamic-tp-zookeeper-demo
+                config-key: dtp-config       # json 用到, 配置项的key
     ```
    
 5. spring-cloud-starter-zookeeper-config 应用接入
@@ -204,7 +205,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-zookeeper</artifactId>
-           <version>1.0.4</version>
+           <version>1.0.5</version>
        </dependency>
    ```
    
@@ -215,7 +216,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-consul</artifactId>
-           <version>1.0.4</version>
+           <version>1.0.5</version>
        </dependency>
    ```
 
@@ -297,6 +298,8 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
   ```
 
 - 线程池配置（properties 类型），具体请看example-zookeeper项目下的配置文件
+
+- 线程池配置（json 类型），具体请看example-zookeeper项目下的config.json配置文件
 
 - 定义线程池Bean（可选），建议直接配置在配置中心；但是如果想后期再添加到配置中心，可以先用@Bean声明（方便依赖注入）
 
@@ -474,12 +477,6 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
           "wait_task_count": 0,
           "reject_count": 124662,
           "reject_handler_name": "CallerRunsPolicy"
-      },
-      {
-          "max_memory": "228 MB",
-          "total_memory": "147 MB",
-          "free_memory": "44.07 MB",
-          "usable_memory": "125.07 MB"
       }
   ]
   ```

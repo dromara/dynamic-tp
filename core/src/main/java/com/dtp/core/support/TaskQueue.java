@@ -54,7 +54,7 @@ public class TaskQueue extends VariableLinkedBlockingQueue<Runnable> {
      *
      * @param o task
      * @return offer success or not
-     * @throws RejectedExecutionException if executor is terminated.
+     * @throws InterruptedException if executor is interrupted.
      */
     public boolean force(Runnable o, long timeout, TimeUnit unit) throws InterruptedException {
         if (executor.isShutdown()) {

@@ -1,7 +1,6 @@
-package com.dtp.adapter.web.listener;
+package com.dtp.adapter.rpc.dubbo;
 
 import com.dtp.adapter.TpHandler;
-import com.dtp.adapter.web.handler.AbstractWebServerTpHandler;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.event.CollectEvent;
@@ -13,23 +12,23 @@ import org.springframework.lang.NonNull;
 import java.util.Optional;
 
 /**
- * DtpWebCollectListener related
+ * DtpDubboCollectListener related
  *
  * @author yanhom
- * @since 1.0.0
+ * @since 1.0.6
  */
 @Slf4j
-public class DtpWebCollectListener implements ApplicationListener<CollectEvent> {
+public class DtpDubboCollectListener implements ApplicationListener<CollectEvent> {
 
     @Override
     public void onApplicationEvent(@NonNull CollectEvent event) {
         DtpProperties dtpProperties = event.getDtpProperties();
         try {
-            TpHandler webServerTpHandler = ApplicationContextHolder.getBean(AbstractWebServerTpHandler.class);
-            Optional.ofNullable(webServerTpHandler.getPoolStats())
+            TpHandler dubboTpHandler = ApplicationContextHolder.getBean(DubboTpHandler.class);
+            Optional.ofNullable(dubboTpHandler.getPoolStats())
                     .ifPresent(p -> CollectorHandler.getInstance().collect(p, dtpProperties.getCollectorType()));
         } catch (Exception e) {
-            log.error("DynamicTp monitor, collect web server thread pool metrics failed.", e);
+            log.error("DynamicTp monitor, collect dubbo thread pool metrics failed.", e);
         }
     }
 }

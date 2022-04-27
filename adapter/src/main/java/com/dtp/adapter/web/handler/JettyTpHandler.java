@@ -51,7 +51,7 @@ public class JettyTpHandler extends AbstractWebServerTpHandler {
     }
 
     @Override
-    public void updateWebServerTp(DtpProperties dtpProperties) {
+    public void updateTp(DtpProperties dtpProperties) {
         JettyThreadPool jettyTp = dtpProperties.getJettyTp();
         if (Objects.isNull(jettyTp)) {
             return;
@@ -69,7 +69,7 @@ public class JettyTpHandler extends AbstractWebServerTpHandler {
     }
 
     private ThreadPool.SizedThreadPool convertAndGet() {
-        Executor executor = getWebServerTp();
+        Executor executor = getTp();
         if (Objects.isNull(executor)) {
             log.warn("Jetty web server threadPool is null.");
             throw new DtpException("Jetty web server threadPool is null.");

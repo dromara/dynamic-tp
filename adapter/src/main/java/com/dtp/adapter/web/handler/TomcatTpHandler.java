@@ -52,7 +52,7 @@ public class TomcatTpHandler extends AbstractWebServerTpHandler {
     }
 
     @Override
-    public void updateWebServerTp(DtpProperties dtpProperties) {
+    public void updateTp(DtpProperties dtpProperties) {
         TomcatThreadPool tomcatTp = dtpProperties.getTomcatTp();
         if (Objects.isNull(tomcatTp)) {
             return;
@@ -70,7 +70,7 @@ public class TomcatTpHandler extends AbstractWebServerTpHandler {
     }
 
     private ThreadPoolExecutor convertAndGet() {
-        Executor executor = getWebServerTp();
+        Executor executor = getTp();
         if (Objects.isNull(executor)) {
             log.warn("Tomcat web server threadPool is null.");
             throw new DtpException("Tomcat web server threadPool is null.");

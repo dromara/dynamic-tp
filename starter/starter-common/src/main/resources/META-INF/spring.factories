@@ -1,3 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration,\
-  com.dtp.starter.common.autoconfigure.WebServerTpAutoConfiguration
+  com.dtp.starter.common.autoconfigure.WebServerTpAutoConfiguration,\
+  com.dtp.starter.common.autoconfigure.DubboTpAutoConfiguration

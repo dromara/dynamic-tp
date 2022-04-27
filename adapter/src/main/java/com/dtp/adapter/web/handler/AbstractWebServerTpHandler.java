@@ -1,5 +1,6 @@
 package com.dtp.adapter.web.handler;
 
+import com.dtp.adapter.TpHandler;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +19,8 @@ import java.util.concurrent.Executor;
  * @since 1.0.0
  */
 @Slf4j
-public abstract class AbstractWebServerTpHandler
-        implements WebServerTpHandler, ApplicationListener<ServletWebServerInitializedEvent> {
+public abstract class AbstractWebServerTpHandler implements
+        TpHandler, ApplicationListener<ServletWebServerInitializedEvent> {
 
     protected volatile Executor webServerExecutor;
 
@@ -27,14 +28,14 @@ public abstract class AbstractWebServerTpHandler
     public void onApplicationEvent(ServletWebServerInitializedEvent event) {
         try {
             DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-            updateWebServerTp(dtpProperties);
+            updateTp(dtpProperties);
         } catch (Exception e) {
             log.error("Init web server thread pool failed.", e);
         }
     }
 
     @Override
-    public Executor getWebServerTp() {
+    public Executor getTp() {
         if (webServerExecutor == null) {
             synchronized (AbstractWebServerTpHandler.class) {
                 if (webServerExecutor == null) {

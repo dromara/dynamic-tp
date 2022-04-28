@@ -1,7 +1,7 @@
-package com.dtp.adapter.web.listener;
+package com.dtp.adapter.webserver.listener;
 
 import com.dtp.adapter.TpHandler;
-import com.dtp.adapter.web.handler.AbstractWebServerTpHandler;
+import com.dtp.adapter.webserver.handler.AbstractWebServerTpHandler;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.event.CollectEvent;
@@ -13,13 +13,13 @@ import org.springframework.lang.NonNull;
 import java.util.Optional;
 
 /**
- * DtpWebCollectListener related
+ * WebServerCollectListener related
  *
  * @author yanhom
  * @since 1.0.0
  */
 @Slf4j
-public class DtpWebCollectListener implements ApplicationListener<CollectEvent> {
+public class WebServerCollectListener implements ApplicationListener<CollectEvent> {
 
     @Override
     public void onApplicationEvent(@NonNull CollectEvent event) {

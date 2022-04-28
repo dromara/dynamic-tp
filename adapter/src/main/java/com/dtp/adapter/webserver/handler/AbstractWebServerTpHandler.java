@@ -1,4 +1,4 @@
-package com.dtp.adapter.web.handler;
+package com.dtp.adapter.webserver.handler;
 
 import com.dtp.adapter.TpHandler;
 import com.dtp.common.ApplicationContextHolder;

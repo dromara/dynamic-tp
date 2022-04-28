@@ -16,6 +16,7 @@ public class ThriftTpHandler implements TpHandler {
 
     @Override
     public Executor getTp() {
+        // TODO
         return null;
     }
 

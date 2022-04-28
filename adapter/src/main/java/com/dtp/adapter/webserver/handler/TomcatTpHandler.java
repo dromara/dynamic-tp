@@ -1,4 +1,4 @@
-package com.dtp.adapter.web.handler;
+package com.dtp.adapter.webserver.handler;
 
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.web.TomcatThreadPool;

@@ -1,10 +1,10 @@
 package com.dtp.starter.common.autoconfigure;
 
-import com.dtp.adapter.web.handler.JettyTpHandler;
-import com.dtp.adapter.web.handler.TomcatTpHandler;
-import com.dtp.adapter.web.handler.UndertowTpHandler;
-import com.dtp.adapter.web.listener.DtpWebCollectListener;
-import com.dtp.adapter.web.listener.DtpWebRefreshListener;
+import com.dtp.adapter.webserver.handler.JettyTpHandler;
+import com.dtp.adapter.webserver.handler.TomcatTpHandler;
+import com.dtp.adapter.webserver.handler.UndertowTpHandler;
+import com.dtp.adapter.webserver.listener.WebServerCollectListener;
+import com.dtp.adapter.webserver.listener.WebServerRefreshListener;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.constant.DynamicTpConst;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -46,13 +46,13 @@ public class WebServerTpAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public DtpWebRefreshListener dtpWebRefreshListener() {
-        return new DtpWebRefreshListener();
+    public WebServerRefreshListener dtpWebRefreshListener() {
+        return new WebServerRefreshListener();
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public DtpWebCollectListener dtpWebCollectListener() {
-        return new DtpWebCollectListener();
+    public WebServerCollectListener dtpWebCollectListener() {
+        return new WebServerCollectListener();
     }
 }

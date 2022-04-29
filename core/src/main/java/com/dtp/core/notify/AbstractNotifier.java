@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.*;
+import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.context.DtpContext;
@@ -20,11 +21,14 @@ import org.springframework.core.env.Environment;
 
 import java.lang.reflect.Field;
 import java.net.InetAddress;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static com.dtp.common.constant.DynamicTpConst.UNKNOWN;
+import static com.dtp.common.constant.LarkNotifyConst.*;
 import static com.dtp.core.notify.NotifyHelper.getAlarmKeys;
 import static com.dtp.core.notify.NotifyHelper.getAllAlarmKeys;
 
@@ -71,8 +75,7 @@ public abstract class AbstractNotifier implements Notifier {
         String dtpName = contextWrapper.getDtpExecutor().getThreadPoolName();
         DtpExecutor executor = DtpRegistry.getDtpExecutor(dtpName);
 
-        List<String> receivers = StrUtil.split(platform.getReceivers(), ',');
-        String receivesStr = Joiner.on(", @").join(receivers);
+        String receivesStr = getReceives(platform.getPlatform(), platform.getReceivers());
 
         NotifyItem notifyItem = contextWrapper.getNotifyItem();
         AlarmInfo alarmInfo = contextWrapper.getAlarmInfo();
@@ -106,7 +109,7 @@ public abstract class AbstractNotifier implements Notifier {
                 receivesStr,
                 notifyItem.getInterval()
         );
-        return highlightAlarmContent(content, typeEnum);
+        return highlightAlarmContent(platform.getPlatform(), content, typeEnum);
     }
 
     public String buildNoticeContent(NotifyPlatform platform,
@@ -116,8 +119,7 @@ public abstract class AbstractNotifier implements Notifier {
         String threadPoolName = oldProp.getDtpName();
         DtpExecutor dtpExecutor = DtpRegistry.getDtpExecutor(threadPoolName);
 
-        List<String> receivers = StrUtil.split(platform.getReceivers(), ',');
-        String receivesStr = Joiner.on(", @").join(receivers);
+        String receivesStr = getReceives(platform.getPlatform(), platform.getReceivers());
 
         String content = String.format(
                 template,
@@ -141,7 +143,21 @@ public abstract class AbstractNotifier implements Notifier {
                 receivesStr,
                 DateTime.now()
         );
-        return highlightNotifyContent(content, diffs);
+        return highlightNotifyContent(platform.getPlatform(), content, diffs);
+    }
+
+    private String getReceives(String platform, String receives) {
+        if (StrUtil.isBlank(receives)) {
+            return "";
+        }
+        if (NotifyPlatformEnum.LARK.name().toLowerCase().equals(platform)) {
+            return Arrays.stream(receives.split(","))
+                    .map(receive -> StrUtil.startWith(receive, LARK_OPENID_PREFIX) ? String.format(LARK_AT_FORMAT_OPENID, receive) : String.format(LARK_AT_FORMAT_USERNAME, receive))
+                    .collect(Collectors.joining(" "));
+        } else {
+            List<String> receivers = StrUtil.split(receives, ',');
+            return Joiner.on(", @").join(receivers);
+        }
     }
 
     /**
@@ -151,33 +167,45 @@ public abstract class AbstractNotifier implements Notifier {
      */
     protected abstract Pair<String, String> getColors();
 
-    private String highlightNotifyContent(String content, List<String> diffs) {
+    private String highlightNotifyContent(String platform, String content, List<String> diffs) {
         if (StringUtils.isBlank(content)) {
             return content;
         }
 
         Pair<String, String> pair = getColors();
+        List<String> fieldNameList = DtpMainProp.getMainProps().stream().map(Field::getName).collect(Collectors.toList());
+
+        if (NotifyPlatformEnum.LARK.name().toLowerCase().equals(platform)) {
+            diffs = diffs.stream().map(field -> "<" + field + ">").collect(Collectors.toList());
+            fieldNameList = fieldNameList.stream().map(field -> "<" + field + ">").collect(Collectors.toList());
+        }
         for (String field : diffs) {
             content = content.replace(field, pair.getLeft());
         }
-        for (Field field : DtpMainProp.getMainProps()) {
-            content = content.replace(field.getName(), pair.getRight());
+        for (String field : fieldNameList) {
+            content = content.replace(field, pair.getRight());
         }
         return content;
     }
 
-    private String highlightAlarmContent(String content, NotifyTypeEnum typeEnum) {
+    private String highlightAlarmContent(String platform, String content, NotifyTypeEnum typeEnum) {
         if (StringUtils.isBlank(content)) {
             return content;
         }
 
         Set<String> colorKeys = getAlarmKeys(typeEnum);
         Pair<String, String> pair = getColors();
+        Set<String> allAlarmKeys = getAllAlarmKeys();
+        if (NotifyPlatformEnum.LARK.name().toLowerCase().equals(platform)) {
+            colorKeys = colorKeys.stream().map(field -> "<" + field + ">").collect(Collectors.toSet());
+            allAlarmKeys = allAlarmKeys.stream().map(field -> "<" + field + ">").collect(Collectors.toSet());
+        }
+
         for (String field : colorKeys) {
             content = content.replace(field, pair.getLeft());
         }
 
-        for (String field : getAllAlarmKeys()) {
+        for (String field : allAlarmKeys) {
             content = content.replace(field, pair.getRight());
         }
         return content;

@@ -176,9 +176,9 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/lyh200/dynamic-tp-spring-cloud-starter/tree/master</url>
-        <connection>scm:git:git://github.com/lyh200/dynamic-tp-spring-cloud-starter.git</connection>
-        <developerConnection>scm:git:ssh://github.com:lyh200/dynamic-tp-spring-cloud-starter.git</developerConnection>
+        <url>https://github.com/lyh200/dynamic-tp/tree/master</url>
+        <connection>scm:git:git://github.com/lyh200/dynamic-tp.git</connection>
+        <developerConnection>scm:git:ssh://github.com:lyh200/dynamic-tp.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
@@ -193,7 +193,7 @@
 
     <issueManagement>
         <system>Github Issue</system>
-        <url>https://github.com/lyh200/dynamic-tp-spring-cloud-starter/issues</url>
+        <url>https://github.com/lyh200/dynamic-tp/issues</url>
     </issueManagement>
 
     <distributionManagement>

@@ -8,13 +8,13 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.lang.NonNull;
 
 /**
- * DtpDubboRefreshListener related
+ * DubboRefreshListener related
  *
  * @author: yanhom
  * @since 1.0.6
  **/
 @Slf4j
-public class DtpDubboRefreshListener implements ApplicationListener<RefreshEvent> {
+public class DubboRefreshListener implements ApplicationListener<RefreshEvent> {
 
     @Override
     public void onApplicationEvent(@NonNull RefreshEvent event) {

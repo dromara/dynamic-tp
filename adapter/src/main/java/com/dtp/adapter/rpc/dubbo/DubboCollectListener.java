@@ -12,13 +12,13 @@ import org.springframework.lang.NonNull;
 import java.util.Optional;
 
 /**
- * DtpDubboCollectListener related
+ * DubboCollectListener related
  *
  * @author yanhom
  * @since 1.0.6
  */
 @Slf4j
-public class DtpDubboCollectListener implements ApplicationListener<CollectEvent> {
+public class DubboCollectListener implements ApplicationListener<CollectEvent> {
 
     @Override
     public void onApplicationEvent(@NonNull CollectEvent event) {

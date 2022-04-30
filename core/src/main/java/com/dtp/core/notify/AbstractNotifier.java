@@ -109,7 +109,7 @@ public abstract class AbstractNotifier implements Notifier {
                 receivesStr,
                 notifyItem.getInterval()
         );
-        return highlightAlarmContent(platform.getPlatform(), content, typeEnum);
+        return highlightAlarmContent(content, typeEnum);
     }
 
     public String buildNoticeContent(NotifyPlatform platform,
@@ -143,7 +143,7 @@ public abstract class AbstractNotifier implements Notifier {
                 receivesStr,
                 DateTime.now()
         );
-        return highlightNotifyContent(platform.getPlatform(), content, diffs);
+        return highlightNotifyContent(content, diffs);
     }
 
     private String getReceives(String platform, String receives) {
@@ -167,45 +167,35 @@ public abstract class AbstractNotifier implements Notifier {
      */
     protected abstract Pair<String, String> getColors();
 
-    private String highlightNotifyContent(String platform, String content, List<String> diffs) {
+    private String highlightNotifyContent(String content, List<String> diffs) {
         if (StringUtils.isBlank(content)) {
             return content;
         }
 
         Pair<String, String> pair = getColors();
-        List<String> fieldNameList = DtpMainProp.getMainProps().stream().map(Field::getName).collect(Collectors.toList());
 
-        if (NotifyPlatformEnum.LARK.name().toLowerCase().equals(platform)) {
-            diffs = diffs.stream().map(field -> "<" + field + ">").collect(Collectors.toList());
-            fieldNameList = fieldNameList.stream().map(field -> "<" + field + ">").collect(Collectors.toList());
-        }
         for (String field : diffs) {
             content = content.replace(field, pair.getLeft());
         }
-        for (String field : fieldNameList) {
-            content = content.replace(field, pair.getRight());
+        for (Field field : DtpMainProp.getMainProps()) {
+            content = content.replace(field.getName(), pair.getRight());
         }
         return content;
     }
 
-    private String highlightAlarmContent(String platform, String content, NotifyTypeEnum typeEnum) {
+    private String highlightAlarmContent(String content, NotifyTypeEnum typeEnum) {
         if (StringUtils.isBlank(content)) {
             return content;
         }
 
         Set<String> colorKeys = getAlarmKeys(typeEnum);
         Pair<String, String> pair = getColors();
-        Set<String> allAlarmKeys = getAllAlarmKeys();
-        if (NotifyPlatformEnum.LARK.name().toLowerCase().equals(platform)) {
-            colorKeys = colorKeys.stream().map(field -> "<" + field + ">").collect(Collectors.toSet());
-            allAlarmKeys = allAlarmKeys.stream().map(field -> "<" + field + ">").collect(Collectors.toSet());
-        }
 
         for (String field : colorKeys) {
             content = content.replace(field, pair.getLeft());
         }
 
-        for (String field : allAlarmKeys) {
+        for (String field : getAllAlarmKeys()) {
             content = content.replace(field, pair.getRight());
         }
         return content;

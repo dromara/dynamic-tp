@@ -6,6 +6,7 @@ import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.core.context.DtpContextHolder;
 import com.dtp.core.notify.Notifier;
 import com.dtp.core.notify.ding.DtpDingNotifier;
+import com.dtp.core.notify.lark.DtpLarkNotifier;
 import com.dtp.core.notify.wechat.DtpWechatNotifier;
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,8 +34,10 @@ public class NotifierHandler {
 
         Notifier dingNotifier = new DtpDingNotifier();
         Notifier wechatNotifier = new DtpWechatNotifier();
+        Notifier larkNotifier = new DtpLarkNotifier();
         NOTIFIERS.put(dingNotifier.platform(), dingNotifier);
         NOTIFIERS.put(wechatNotifier.platform(), wechatNotifier);
+        NOTIFIERS.put(larkNotifier.platform(), larkNotifier);
     }
 
     public void sendNotice(DtpMainProp prop, List<String> diffs) {

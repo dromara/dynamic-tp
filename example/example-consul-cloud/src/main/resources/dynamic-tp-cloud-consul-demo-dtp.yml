@@ -12,6 +12,9 @@ spring:
         - platform: wechat
           urlKey: 3a7500-1287-4bd-a798-c5c3d8b69c  # 替换
           receivers: test1,test2                   # 接受人企微名称
+        - platform: lark
+          urlKey: 0d944ae7-b24a-4059-a49e-eca623e8fbc7     # 替换
+          receivers: test1,test2                           # 接受人飞书名称/openid
         - platform: ding
           urlKey: f80dad441fcd655438f4a08dcd6a     # 替换
           secret: SECb5441fa6f375d5b9d21           # 替换，非sign模式可以没有此值

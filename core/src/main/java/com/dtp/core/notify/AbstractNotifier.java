@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.*;
+import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.context.DtpContext;
@@ -20,11 +21,14 @@ import org.springframework.core.env.Environment;
 
 import java.lang.reflect.Field;
 import java.net.InetAddress;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static com.dtp.common.constant.DynamicTpConst.UNKNOWN;
+import static com.dtp.common.constant.LarkNotifyConst.*;
 import static com.dtp.core.notify.NotifyHelper.getAlarmKeys;
 import static com.dtp.core.notify.NotifyHelper.getAllAlarmKeys;
 
@@ -71,8 +75,7 @@ public abstract class AbstractNotifier implements Notifier {
         String dtpName = contextWrapper.getDtpExecutor().getThreadPoolName();
         DtpExecutor executor = DtpRegistry.getDtpExecutor(dtpName);
 
-        List<String> receivers = StrUtil.split(platform.getReceivers(), ',');
-        String receivesStr = Joiner.on(", @").join(receivers);
+        String receivesStr = getReceives(platform.getPlatform(), platform.getReceivers());
 
         NotifyItem notifyItem = contextWrapper.getNotifyItem();
         AlarmInfo alarmInfo = contextWrapper.getAlarmInfo();
@@ -116,8 +119,7 @@ public abstract class AbstractNotifier implements Notifier {
         String threadPoolName = oldProp.getDtpName();
         DtpExecutor dtpExecutor = DtpRegistry.getDtpExecutor(threadPoolName);
 
-        List<String> receivers = StrUtil.split(platform.getReceivers(), ',');
-        String receivesStr = Joiner.on(", @").join(receivers);
+        String receivesStr = getReceives(platform.getPlatform(), platform.getReceivers());
 
         String content = String.format(
                 template,
@@ -144,6 +146,20 @@ public abstract class AbstractNotifier implements Notifier {
         return highlightNotifyContent(content, diffs);
     }
 
+    private String getReceives(String platform, String receives) {
+        if (StrUtil.isBlank(receives)) {
+            return "";
+        }
+        if (NotifyPlatformEnum.LARK.name().toLowerCase().equals(platform)) {
+            return Arrays.stream(receives.split(","))
+                    .map(receive -> StrUtil.startWith(receive, LARK_OPENID_PREFIX) ? String.format(LARK_AT_FORMAT_OPENID, receive) : String.format(LARK_AT_FORMAT_USERNAME, receive))
+                    .collect(Collectors.joining(" "));
+        } else {
+            List<String> receivers = StrUtil.split(receives, ',');
+            return Joiner.on(", @").join(receivers);
+        }
+    }
+
     /**
      * Implement by subclass, get content color config.
      *
@@ -157,6 +173,7 @@ public abstract class AbstractNotifier implements Notifier {
         }
 
         Pair<String, String> pair = getColors();
+
         for (String field : diffs) {
             content = content.replace(field, pair.getLeft());
         }
@@ -173,6 +190,7 @@ public abstract class AbstractNotifier implements Notifier {
 
         Set<String> colorKeys = getAlarmKeys(typeEnum);
         Pair<String, String> pair = getColors();
+
         for (String field : colorKeys) {
             content = content.replace(field, pair.getLeft());
         }

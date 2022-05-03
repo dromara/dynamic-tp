@@ -69,7 +69,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
   同时也提供 SPI 接口可自定义扩展实现**
 
 - **内置通知报警功能，提供多种报警维度（配置变更通知、活性报警、容量阈值报警、拒绝触发报警、任务执行或等待超时报警），
-  默认支持企业微信、钉钉报警，同时提供 SPI 接口可自定义扩展实现**
+  已支持企业微信、钉钉、飞书报警，同时提供 SPI 接口可自定义扩展实现**
 
 - **内置线程池指标采集功能，支持通过 MicroMeter、JsonLog 日志输出、Endpoint 三种方式，可通过 SPI 接口自定义扩展实现**
 
@@ -115,7 +115,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 - 通知告警模块：
 
-  对接办公平台，实现通知告警功能，默认实现钉钉、企微，可通过内部提供的 SPI 接口扩展其他实现，通知告警类型如下
+  对接办公平台，实现通知告警功能，已支持钉钉、企微、飞书，可通过内部提供的 SPI 接口扩展其他实现，通知告警类型如下
 
   1.线程池主要参数变更通知
 
@@ -141,7 +141,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 3.启动类加@EnableDynamicTp注解
 
-4.使用@Resource或@Autowired注解注入，或通过DtpRegistry.getExecutor("name")获取
+4.使用@Resource或@Autowired注解注入，或通过DtpRegistry.getDtpExecutor("name")获取
 
 5.普通JUC线程池想要被监控，可以@Bean定义时加@DynamicTp注解
 
@@ -248,6 +248,9 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
             urlKey: f80dad441fcd655438f4a08dcd6a     # 替换
             secret: SECb5441fa6f375d5b9d21           # 替换，非sign模式可以没有此值
             receivers: 15810119805                   # 钉钉账号手机号
+          - platform: lark
+            urlKey: 0d944ae7-b24a-40                 # 替换
+            receivers: test1,test2                   # 接受人飞书名称/openid
         tomcatTp:                                    # tomcat web server线程池配置
             minSpare: 100
             max: 400

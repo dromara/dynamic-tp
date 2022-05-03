@@ -269,17 +269,18 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
     @Override
     public void run(ApplicationArguments args) {
-        val registeredExecutors = Sets.newHashSet(DTP_REGISTRY.keySet());
         Set<String> remoteExecutors = Collections.emptySet();
         if (CollUtil.isNotEmpty(dtpProperties.getExecutors())) {
             remoteExecutors = dtpProperties.getExecutors().stream()
                     .map(ThreadPoolProperties::getThreadPoolName)
                     .collect(Collectors.toSet());
         }
-        val localExecutors = CollUtil.subtract(registeredExecutors, remoteExecutors);
 
-        log.info("DtpRegistry initialization end, remote dtpExecutors: {}, local dtpExecutors: {}",
-                remoteExecutors, localExecutors);
+        val registeredDtpExecutors = Sets.newHashSet(DTP_REGISTRY.keySet());
+        val localDtpExecutors = CollUtil.subtract(registeredDtpExecutors, remoteExecutors);
+        val localCommonExecutors = COMMON_REGISTRY.keySet();
+        log.info("DtpRegistry initialization end, remote dtpExecutors: {}, local dtpExecutors: {}," +
+                        " local commonExecutors: {}", remoteExecutors, localDtpExecutors, localCommonExecutors);
 
         if (CollUtil.isEmpty(dtpProperties.getPlatforms())) {
             log.warn("DtpRegistry initialization end, no notify platforms configured.");

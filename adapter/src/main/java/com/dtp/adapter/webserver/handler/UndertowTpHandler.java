@@ -90,7 +90,7 @@ public class UndertowTpHandler extends AbstractWebServerTpHandler {
     }
 
     private XnioWorker convertAndGet() {
-        Executor executor = getTp();
+        Executor executor = getExecutor();
         if (Objects.isNull(executor)) {
             log.warn("Undertow web server threadPool is null.");
             throw new DtpException("Undertow web server threadPool is null.");

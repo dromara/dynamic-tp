@@ -4,6 +4,7 @@ import com.dtp.adapter.TpHandler;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.dto.ThreadPoolStats;
 
+import java.util.List;
 import java.util.concurrent.Executor;
 
 /**
@@ -15,7 +16,7 @@ import java.util.concurrent.Executor;
 public class DubboTpHandler implements TpHandler {
 
     @Override
-    public Executor getTp() {
+    public List<Executor> getExecutors() {
         // TODO see ThreadPoolStatusChecker
         return null;
     }
@@ -26,7 +27,7 @@ public class DubboTpHandler implements TpHandler {
     }
 
     @Override
-    public ThreadPoolStats getPoolStats() {
+    public List<ThreadPoolStats> getMultiPoolStats() {
         // TODO
         return null;
     }

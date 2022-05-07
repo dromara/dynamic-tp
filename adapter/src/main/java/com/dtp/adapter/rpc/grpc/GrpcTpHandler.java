@@ -15,7 +15,7 @@ import java.util.concurrent.Executor;
 public class GrpcTpHandler implements TpHandler {
 
     @Override
-    public Executor getTp() {
+    public Executor getExecutor() {
         // TODO
         return null;
     }

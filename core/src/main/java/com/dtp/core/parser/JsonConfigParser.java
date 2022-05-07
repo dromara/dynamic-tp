@@ -20,6 +20,7 @@ import static com.dtp.common.constant.DynamicTpConst.*;
  * @since 1.0.5
  **/
 @Slf4j
+@SuppressWarnings("unchecked")
 public class JsonConfigParser extends AbstractConfigParser {
 
     private static final List<ConfigFileTypeEnum> CONFIG_TYPE = Lists.newArrayList(ConfigFileTypeEnum.JSON);

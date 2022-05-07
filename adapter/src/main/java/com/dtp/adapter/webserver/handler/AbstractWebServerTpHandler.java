@@ -35,7 +35,7 @@ public abstract class AbstractWebServerTpHandler implements
     }
 
     @Override
-    public Executor getTp() {
+    public Executor getExecutor() {
         if (webServerExecutor == null) {
             synchronized (AbstractWebServerTpHandler.class) {
                 if (webServerExecutor == null) {

@@ -69,7 +69,7 @@ public class JettyTpHandler extends AbstractWebServerTpHandler {
     }
 
     private ThreadPool.SizedThreadPool convertAndGet() {
-        Executor executor = getTp();
+        Executor executor = getExecutor();
         if (Objects.isNull(executor)) {
             log.warn("Jetty web server threadPool is null.");
             throw new DtpException("Jetty web server threadPool is null.");

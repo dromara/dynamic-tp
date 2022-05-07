@@ -70,7 +70,7 @@ public class TomcatTpHandler extends AbstractWebServerTpHandler {
     }
 
     private ThreadPoolExecutor convertAndGet() {
-        Executor executor = getTp();
+        Executor executor = getExecutor();
         if (Objects.isNull(executor)) {
             log.warn("Tomcat web server threadPool is null.");
             throw new DtpException("Tomcat web server threadPool is null.");

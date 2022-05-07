@@ -25,8 +25,9 @@ public class DubboCollectListener implements ApplicationListener<CollectEvent> {
         DtpProperties dtpProperties = event.getDtpProperties();
         try {
             TpHandler dubboTpHandler = ApplicationContextHolder.getBean(DubboTpHandler.class);
-            Optional.ofNullable(dubboTpHandler.getPoolStats())
-                    .ifPresent(p -> CollectorHandler.getInstance().collect(p, dtpProperties.getCollectorType()));
+            Optional.ofNullable(dubboTpHandler.getMultiPoolStats())
+                    .ifPresent(p -> p.forEach(f ->
+                            CollectorHandler.getInstance().collect(f, dtpProperties.getCollectorType())));
         } catch (Exception e) {
             log.error("DynamicTp monitor, collect dubbo thread pool metrics failed.", e);
         }

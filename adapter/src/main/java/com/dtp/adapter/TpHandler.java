@@ -3,6 +3,8 @@ package com.dtp.adapter;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.dto.ThreadPoolStats;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Executor;
 
 /**
@@ -14,11 +16,22 @@ import java.util.concurrent.Executor;
 public interface TpHandler {
 
     /**
-     * Get specify thread pool.
+     * Get specify thread pool executor.
      *
      * @return the specify executor
      */
-    Executor getTp();
+    default Executor getExecutor() {
+        return null;
+    }
+
+    /**
+     * Get multi thread pool executors.
+     *
+     * @return executors
+     */
+    default List<Executor> getExecutors() {
+        return Collections.emptyList();
+    }
 
     /**
      * Update thread pool with specify properties.
@@ -32,5 +45,16 @@ public interface TpHandler {
      *
      * @return the thread pool stats
      */
-    ThreadPoolStats getPoolStats();
+    default ThreadPoolStats getPoolStats() {
+        return null;
+    }
+
+    /**
+     * Get multi thread pool stats.
+     *
+     * @return thead pools stats
+     */
+    default List<ThreadPoolStats> getMultiPoolStats() {
+        return Collections.emptyList();
+    }
 }

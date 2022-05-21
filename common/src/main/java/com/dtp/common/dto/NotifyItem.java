@@ -41,12 +41,7 @@ public class NotifyItem {
      */
     private int interval = 120;
 
-    /**
-     * Default notify items.
-     */
-    private static final List<NotifyItem> DEFAULT_NOTIFY_ITEMS;
-
-    static {
+    public static List<NotifyItem> getDefaultNotifyItems() {
         NotifyItem changeNotify = new NotifyItem();
         changeNotify.setType(NotifyTypeEnum.CHANGE.getValue());
 
@@ -70,16 +65,14 @@ public class NotifyItem {
         queueTimeoutNotify.setType(NotifyTypeEnum.QUEUE_TIMEOUT.getValue());
         queueTimeoutNotify.setThreshold(1);
 
-        DEFAULT_NOTIFY_ITEMS = new ArrayList<>(6);
-        DEFAULT_NOTIFY_ITEMS.add(livenessNotify);
-        DEFAULT_NOTIFY_ITEMS.add(changeNotify);
-        DEFAULT_NOTIFY_ITEMS.add(capacityNotify);
-        DEFAULT_NOTIFY_ITEMS.add(rejectNotify);
-        DEFAULT_NOTIFY_ITEMS.add(runTimeoutNotify);
-        DEFAULT_NOTIFY_ITEMS.add(queueTimeoutNotify);
-    }
+        List<NotifyItem> notifyItems = new ArrayList<>(6);
+        notifyItems.add(livenessNotify);
+        notifyItems.add(changeNotify);
+        notifyItems.add(capacityNotify);
+        notifyItems.add(rejectNotify);
+        notifyItems.add(runTimeoutNotify);
+        notifyItems.add(queueTimeoutNotify);
 
-    public static List<NotifyItem> getDefaultNotifyItems() {
-        return DEFAULT_NOTIFY_ITEMS;
+        return notifyItems;
     }
 }

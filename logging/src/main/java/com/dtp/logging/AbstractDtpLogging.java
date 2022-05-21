@@ -2,6 +2,7 @@ package com.dtp.logging;
 
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -16,6 +17,7 @@ import java.net.URL;
  * @author yanhom
  * @since 1.0.5
  */
+@Slf4j
 public abstract class AbstractDtpLogging {
 
     protected static final String MONITOR_LOG_NAME = "DTP.MONITOR.LOG";
@@ -24,18 +26,22 @@ public abstract class AbstractDtpLogging {
     private static final String APP_NAME = "APP.NAME";
 
     static {
-        DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-        String logPath = dtpProperties.getLogPath();
-        if (StringUtils.isBlank(logPath)) {
-            String userHome = System.getProperty("user.home");
-            System.setProperty(LOGGING_PATH, userHome + File.separator + "logs");
-        } else {
-            System.setProperty(LOGGING_PATH, logPath);
-        }
+        try {
+            DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+            String logPath = dtpProperties.getLogPath();
+            if (StringUtils.isBlank(logPath)) {
+                String userHome = System.getProperty("user.home");
+                System.setProperty(LOGGING_PATH, userHome + File.separator + "logs");
+            } else {
+                System.setProperty(LOGGING_PATH, logPath);
+            }
 
-        String appName = ApplicationContextHolder.getEnvironment().getProperty("spring.application.name");
-        appName = StringUtils.isNotBlank(appName) ? appName : "application";
-        System.setProperty(APP_NAME, appName);
+            String appName = ApplicationContextHolder.getEnvironment().getProperty("spring.application.name");
+            appName = StringUtils.isNotBlank(appName) ? appName : "application";
+            System.setProperty(APP_NAME, appName);
+        } catch (Exception e) {
+            log.error("DynamicTp logging env init failed, if collectType is not logging, this error can be ignored.", e);
+        }
     }
 
     public URL getResourceUrl(String resource) throws IOException {

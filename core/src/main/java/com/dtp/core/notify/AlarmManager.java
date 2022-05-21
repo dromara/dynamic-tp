@@ -40,6 +40,8 @@ public class AlarmManager {
             .dynamic(false)
             .buildWithTtl();
 
+    private static final Object SEND_LOCK = new Object();
+
     private AlarmManager() {}
 
     public static void triggerAlarm(String dtpName, String notifyType, Runnable runnable) {
@@ -71,6 +73,17 @@ public class AlarmManager {
             return;
         }
 
+        synchronized (SEND_LOCK) {
+            // recheck alarm limit.
+            ifAlarm = AlarmLimiter.ifAlarm(executor, typeEnum.getValue());
+            if (!ifAlarm) {
+                log.warn("DynamicTp notify, concurrent send, alarm limit, dtpName: {}, type: {}",
+                        executor.getThreadPoolName(), typeEnum.getValue());
+                return;
+            }
+            AlarmLimiter.putVal(executor, typeEnum.getValue());
+        }
+
         AlarmInfo alarmInfo = AlarmCounter.getAlarmInfo(executor.getThreadPoolName(), notifyItem.getType());
         DtpContext dtpContext = DtpContext.builder()
                 .dtpExecutor(executor)
@@ -79,7 +92,6 @@ public class AlarmManager {
                 .alarmInfo(alarmInfo)
                 .build();
         DtpContextHolder.set(dtpContext);
-        AlarmLimiter.putVal(executor, typeEnum.getValue());
         NotifierHandler.getInstance().sendAlarm(typeEnum);
         AlarmCounter.reset(executor.getThreadPoolName(), notifyItem.getType());
     }

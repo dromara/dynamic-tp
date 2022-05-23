@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 import com.alibaba.dubbo.common.store.DataStore;
-import com.dtp.adapter.dubbo.common.AbstractDtpHandler;
+import com.dtp.adapter.common.AbstractDtpHandler;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;
 import com.dtp.common.util.StreamUtil;

@@ -1,7 +1,7 @@
 package com.dtp.adapter.hystrix.handler;
 
 import cn.hutool.core.collection.CollUtil;
-import com.dtp.adapter.dubbo.common.AbstractDtpHandler;
+import com.dtp.adapter.common.AbstractDtpHandler;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;
 import com.dtp.common.util.StreamUtil;

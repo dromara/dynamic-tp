@@ -1,4 +1,4 @@
-package com.dtp.adapter.dubbo.common;
+package com.dtp.adapter.common;
 
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.event.CollectEvent;

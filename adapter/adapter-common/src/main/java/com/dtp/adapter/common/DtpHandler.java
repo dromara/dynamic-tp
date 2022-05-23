@@ -1,4 +1,4 @@
-package com.dtp.adapter.dubbo.common;
+package com.dtp.adapter.common;
 
 import cn.hutool.core.map.MapUtil;
 import com.dtp.common.config.DtpProperties;

@@ -1,4 +1,4 @@
-package com.dtp.adapter.dubbo.common;
+package com.dtp.adapter.common;
 
 import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.ApplicationContextHolder;

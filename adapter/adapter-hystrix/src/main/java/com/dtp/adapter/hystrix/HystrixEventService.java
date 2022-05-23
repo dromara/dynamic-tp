@@ -1,7 +1,7 @@
 package com.dtp.adapter.hystrix;
 
-import com.dtp.adapter.dubbo.common.DtpHandleListener;
-import com.dtp.adapter.dubbo.common.DtpHandler;
+import com.dtp.adapter.common.DtpHandleListener;
+import com.dtp.adapter.common.DtpHandler;
 import com.dtp.adapter.hystrix.handler.HystrixDtpHandler;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;

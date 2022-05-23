@@ -1,6 +1,6 @@
 package com.dtp.adapter.webserver.handler;
 
-import com.dtp.adapter.dubbo.common.DtpHandler;
+import com.dtp.adapter.common.DtpHandler;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import lombok.extern.slf4j.Slf4j;

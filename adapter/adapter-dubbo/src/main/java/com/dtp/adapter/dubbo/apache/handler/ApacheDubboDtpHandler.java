@@ -3,7 +3,7 @@ package com.dtp.adapter.dubbo.apache.handler;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
 import com.dtp.adapter.dubbo.apache.DubboVersion;
-import com.dtp.adapter.dubbo.common.AbstractDtpHandler;
+import com.dtp.adapter.common.AbstractDtpHandler;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;
 import com.dtp.common.util.StreamUtil;

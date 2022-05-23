@@ -1,8 +1,5 @@
 package com.dtp.common.config;
 
-import com.dtp.common.config.web.JettyThreadPool;
-import com.dtp.common.config.web.TomcatThreadPool;
-import com.dtp.common.config.web.UndertowThreadPool;
 import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.dto.NotifyPlatform;
 import lombok.Data;
@@ -80,17 +77,27 @@ public class DtpProperties {
     /**
      * Tomcat worker thread pool.
      */
-    private TomcatThreadPool tomcatTp;
+    private SimpleTpProperties tomcatTp;
 
     /**
      * Jetty thread pool.
      */
-    private JettyThreadPool jettyTp;
+    private SimpleTpProperties jettyTp;
 
     /**
      * Undertow thread pool.
      */
-    private UndertowThreadPool undertowTp;
+    private SimpleTpProperties undertowTp;
+
+    /**
+     * Dubbo thread pools.
+     */
+    private List<SimpleTpProperties> dubboTp;
+
+    /**
+     * Hystrix thread pools.
+     */
+    private List<SimpleTpProperties> hystrixTp;
 
     /**
      * Notify platform configs.

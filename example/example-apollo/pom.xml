@@ -28,7 +28,7 @@
         <dependency>
             <groupId>io.github.lyh200</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-apollo</artifactId>
-            <version>1.0.5</version>
+            <version>${dtp.version}</version>
         </dependency>
         <dependency>
             <groupId>com.ctrip.framework.apollo</groupId>

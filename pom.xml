@@ -100,6 +100,30 @@
             </dependency>
 
             <dependency>
+                <groupId>io.github.lyh200</groupId>
+                <artifactId>dynamic-tp-adapter-webserver</artifactId>
+                <version>${dtp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.lyh200</groupId>
+                <artifactId>dynamic-tp-adapter-dubbo</artifactId>
+                <version>${dtp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.lyh200</groupId>
+                <artifactId>dynamic-tp-adapter-rocketmq</artifactId>
+                <version>${dtp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.lyh200</groupId>
+                <artifactId>dynamic-tp-adapter-hystrix</artifactId>
+                <version>${dtp.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
                 <version>${spring-cloud-alibaba.version}</version>

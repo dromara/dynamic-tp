@@ -1,10 +1,9 @@
 package com.dtp.starter.common.autoconfigure;
 
-import com.dtp.adapter.webserver.handler.JettyTpHandler;
-import com.dtp.adapter.webserver.handler.TomcatTpHandler;
-import com.dtp.adapter.webserver.handler.UndertowTpHandler;
-import com.dtp.adapter.webserver.listener.WebServerCollectListener;
-import com.dtp.adapter.webserver.listener.WebServerRefreshListener;
+import com.dtp.adapter.dubbo.webserver.WebServerEventService;
+import com.dtp.adapter.dubbo.webserver.handler.JettyDtpHandler;
+import com.dtp.adapter.dubbo.webserver.handler.TomcatDtpHandler;
+import com.dtp.adapter.dubbo.webserver.handler.UndertowDtpHandler;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.constant.DynamicTpConst;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -19,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
  * WebServerTpAutoConfiguration related
  *
  * @author yanhom
+ * @since 1.0.6
  */
 @Configuration
 @EnableConfigurationProperties(DtpProperties.class)
@@ -28,31 +28,25 @@ public class WebServerTpAutoConfiguration {
 
     @Bean
     @ConditionalOnBean(name = {"tomcatServletWebServerFactory"})
-    public TomcatTpHandler tomcatTpHandler() {
-        return new TomcatTpHandler();
+    public TomcatDtpHandler tomcatTpHandler() {
+        return new TomcatDtpHandler();
     }
 
     @Bean
     @ConditionalOnBean(name = {"JettyServletWebServerFactory"})
-    public JettyTpHandler jettyTpHandler() {
-        return new JettyTpHandler();
+    public JettyDtpHandler jettyTpHandler() {
+        return new JettyDtpHandler();
     }
 
     @Bean
     @ConditionalOnBean(name = {"undertowServletWebServerFactory"})
-    public UndertowTpHandler undertowTpHandler() {
-        return new UndertowTpHandler();
+    public UndertowDtpHandler undertowTpHandler() {
+        return new UndertowDtpHandler();
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public WebServerRefreshListener dtpWebRefreshListener() {
-        return new WebServerRefreshListener();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public WebServerCollectListener dtpWebCollectListener() {
-        return new WebServerCollectListener();
+    public WebServerEventService webServerEventService() {
+        return new WebServerEventService();
     }
 }

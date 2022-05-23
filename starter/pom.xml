@@ -49,7 +49,7 @@
             <dependency>
                 <groupId>io.github.lyh200</groupId>
                 <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
-                <version>1.0.5</version>
+                <version>${dtp.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

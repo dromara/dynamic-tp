@@ -8,42 +8,21 @@
         <version>1.0.5</version>
     </parent>
     <artifactId>dynamic-tp-adapter</artifactId>
+    <packaging>pom</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <modules>
+        <module>adapter-common</module>
+        <module>adapter-webserver</module>
+        <module>adapter-dubbo</module>
+        <module>adapter-rocketmq</module>
+        <module>adapter-hystrix</module>
+    </modules>
+
     <dependencies>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-undertow</artifactId>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jetty</artifactId>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.dubbo</groupId>
-            <artifactId>dubbo-spring-boot-starter</artifactId>
-            <version>3.0.7</version>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-
         <dependency>
             <groupId>io.github.lyh200</groupId>
             <artifactId>dynamic-tp-common</artifactId>
@@ -53,7 +32,15 @@
             <groupId>io.github.lyh200</groupId>
             <artifactId>dynamic-tp-core</artifactId>
         </dependency>
-
     </dependencies>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.github.lyh200</groupId>
+                <artifactId>dynamic-tp-adapter-common</artifactId>
+                <version>${dtp.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

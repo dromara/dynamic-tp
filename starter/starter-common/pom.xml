@@ -14,7 +14,17 @@
     <dependencies>
         <dependency>
             <groupId>io.github.lyh200</groupId>
-            <artifactId>dynamic-tp-adapter</artifactId>
+            <artifactId>dynamic-tp-adapter-webserver</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.lyh200</groupId>
+            <artifactId>dynamic-tp-adapter-dubbo</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.lyh200</groupId>
+            <artifactId>dynamic-tp-adapter-hystrix</artifactId>
         </dependency>
     </dependencies>
 </project>

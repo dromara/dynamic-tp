@@ -73,17 +73,24 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 - **内置线程池指标采集功能，支持通过 MicroMeter、JsonLog 日志输出、Endpoint 三种方式，可通过 SPI 接口自定义扩展实现**
 
-- **集成管理常用第三方组件的线程池，已集成 SpringBoot 内置 WebServer（Tomcat、Undertow、Jetty）的线程池管理**
-
-- **已集成apache-dubbo & alibaba-dubbo线程池管理**
-
-- **已集成hystrix线程池管理**
+- **集成管理常用第三方组件的线程池管理，具体看下述**
 
 - **提供任务包装功能，实现TaskWrapper接口即可，如TtlTaskWrapper可以支持线程池上下文信息传递**
 
 - **JUC普通线程池也可以被框架监控（@DynamicTp）**
 
 - **参考Tomcat线程池提供了io密集型场景使用的EagerDtpExecutor**
+
+ 
+**集成第三方组件线程池管理**
+
+- **已集成 SpringBoot 内置 WebServer（Tomcat、Undertow、Jetty）的线程池管理**
+
+- **已集成apache-dubbo & alibaba-dubbo线程池管理**
+
+- **已集成hystrix线程池管理**
+
+- **已集成apache-rocketmq线程池管理**
 
 ---
 

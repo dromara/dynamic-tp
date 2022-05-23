@@ -43,6 +43,7 @@ public abstract class AbstractWebServerDtpHandler implements
                     WebServer webServer = ((WebServerApplicationContext) applicationContext).getWebServer();
                     webServerExecutor = doGetTp(webServer);
                 }
+                log.info("DynamicTp adapter, web server executor init end, executor: {}", webServerExecutor);
             }
         }
         return webServerExecutor;

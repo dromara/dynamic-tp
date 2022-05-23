@@ -26,5 +26,10 @@
             <groupId>io.github.lyh200</groupId>
             <artifactId>dynamic-tp-adapter-hystrix</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>io.github.lyh200</groupId>
+            <artifactId>dynamic-tp-adapter-rocketmq</artifactId>
+        </dependency>
     </dependencies>
 </project>

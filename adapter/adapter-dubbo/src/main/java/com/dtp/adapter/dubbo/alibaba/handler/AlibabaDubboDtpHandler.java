@@ -42,10 +42,7 @@ public class AlibabaDubboDtpHandler extends AbstractDtpHandler {
         }
 
         val tmpMap = StreamUtil.toMap(dubboTpList, SimpleTpProperties::getThreadPoolName);
-        executors.forEach((k ,v) -> {
-            val properties = tmpMap.get(k);
-            updateBase(NAME, properties, (ThreadPoolExecutor) v);
-        });
+        executors.forEach((k ,v) -> updateBase(NAME, tmpMap.get(k), (ThreadPoolExecutor) v));
     }
 
     @Override
@@ -59,8 +56,9 @@ public class AlibabaDubboDtpHandler extends AbstractDtpHandler {
         if (MapUtil.isNotEmpty(executors)) {
             executors.forEach((k, v) -> DUBBO_EXECUTORS.put(genTpName(k), (ThreadPoolExecutor) v));
         }
-        return DUBBO_EXECUTORS;
 
+        log.info("DynamicTp adapter, alibaba dubbo executors init end, executors: {}", DUBBO_EXECUTORS);
+        return DUBBO_EXECUTORS;
     }
 
     private String genTpName(String port) {

@@ -4,17 +4,17 @@ import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.common.ex.DtpException;
+import com.dtp.common.util.ReflectionUtil;
 import io.undertow.Undertow;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.boot.web.embedded.undertow.UndertowWebServer;
 import org.springframework.boot.web.server.WebServer;
-import org.springframework.util.ReflectionUtils;
 import org.xnio.Options;
 import org.xnio.XnioWorker;
 import org.xnio.management.XnioWorkerMXBean;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 
@@ -35,12 +35,7 @@ public class UndertowDtpHandler extends AbstractWebServerDtpHandler {
     public Executor doGetTp(WebServer webServer) {
 
         UndertowWebServer undertowWebServer = (UndertowWebServer) webServer;
-        Field undertowField = ReflectionUtils.findField(UndertowWebServer.class, "undertow");
-        if (Objects.isNull(undertowField)) {
-            return null;
-        }
-        ReflectionUtils.makeAccessible(undertowField);
-        Undertow undertow = (Undertow) ReflectionUtils.getField(undertowField, undertowWebServer);
+        val undertow = (Undertow) ReflectionUtil.getField(UndertowWebServer.class, "undertow", undertowWebServer);
         if (Objects.isNull(undertow)) {
             return null;
         }

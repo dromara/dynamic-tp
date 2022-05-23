@@ -2,10 +2,11 @@ package com.dtp.adapter.dubbo.apache.handler;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
-import com.dtp.adapter.dubbo.apache.DubboVersion;
 import com.dtp.adapter.common.AbstractDtpHandler;
+import com.dtp.adapter.dubbo.apache.DubboVersion;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;
+import com.dtp.common.util.ReflectionUtil;
 import com.dtp.common.util.StreamUtil;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +17,7 @@ import org.apache.dubbo.common.store.DataStore;
 import org.apache.dubbo.common.threadpool.manager.DefaultExecutorRepository;
 import org.apache.dubbo.common.threadpool.manager.ExecutorRepository;
 import org.apache.dubbo.rpc.model.ApplicationModel;
-import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
@@ -51,10 +50,7 @@ public class ApacheDubboDtpHandler extends AbstractDtpHandler {
         }
 
         val tmpMap = StreamUtil.toMap(dubboTpList, SimpleTpProperties::getThreadPoolName);
-        executors.forEach((k ,v) -> {
-            val properties = tmpMap.get(k);
-            updateBase(NAME, properties, (ThreadPoolExecutor) v);
-        });
+        executors.forEach((k ,v) -> updateBase(NAME, tmpMap.get(k), (ThreadPoolExecutor) v));
     }
 
     @Override
@@ -79,12 +75,9 @@ public class ApacheDubboDtpHandler extends AbstractDtpHandler {
         } else {
             executorRepository = ExtensionLoader.getExtensionLoader(ExecutorRepository.class).getDefaultExtension();
         }
-        Field dataField = ReflectionUtils.findField(DefaultExecutorRepository.class, "data");
-        if (Objects.isNull(dataField)) {
-            return DUBBO_EXECUTORS;
-        }
-        ReflectionUtils.makeAccessible(dataField);
-        val data = (ConcurrentMap<String, ConcurrentMap<Integer, ExecutorService>>) ReflectionUtils.getField(dataField, executorRepository);
+
+        val data = (ConcurrentMap<String, ConcurrentMap<Integer, ExecutorService>>) ReflectionUtil.getField(
+                DefaultExecutorRepository.class, "data", executorRepository);
         if (Objects.isNull(data)) {
             return DUBBO_EXECUTORS;
         }
@@ -92,6 +85,8 @@ public class ApacheDubboDtpHandler extends AbstractDtpHandler {
         if (MapUtil.isNotEmpty(executorMap)) {
             executorMap.forEach((k, v) -> DUBBO_EXECUTORS.put(genTpName(k.toString()), (ThreadPoolExecutor) v));
         }
+
+        log.info("DynamicTp adapter, apache Dubbo executors init end, executors: {}", DUBBO_EXECUTORS);
         return DUBBO_EXECUTORS;
     }
 

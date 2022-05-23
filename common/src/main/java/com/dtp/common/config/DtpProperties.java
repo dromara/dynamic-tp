@@ -100,6 +100,11 @@ public class DtpProperties {
     private List<SimpleTpProperties> hystrixTp;
 
     /**
+     * RocketMq thread pools.
+     */
+    private List<SimpleTpProperties> rocketMqTp;
+
+    /**
      * Notify platform configs.
      */
     private List<NotifyPlatform> platforms;

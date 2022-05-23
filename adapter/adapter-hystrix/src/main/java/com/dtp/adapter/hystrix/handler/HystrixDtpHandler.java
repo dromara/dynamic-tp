@@ -37,10 +37,7 @@ public class HystrixDtpHandler extends AbstractDtpHandler {
         }
 
         val tmpMap = StreamUtil.toMap(hystrixTpList, SimpleTpProperties::getThreadPoolName);
-        executors.forEach((k ,v) -> {
-            val properties = tmpMap.get(k);
-            updateBase(NAME, properties, (ThreadPoolExecutor) v);
-        });
+        executors.forEach((k ,v) -> updateBase(NAME, tmpMap.get(k), (ThreadPoolExecutor) v));
     }
 
     @Override
@@ -58,6 +55,7 @@ public class HystrixDtpHandler extends AbstractDtpHandler {
             HYSTRIX_EXECUTORS.put(threadPoolKey.name(), x.getThreadPool());
         });
 
+        log.info("DynamicTp adapter, hystrix executors init end, executors: {}", HYSTRIX_EXECUTORS);
         return HYSTRIX_EXECUTORS;
     }
 }

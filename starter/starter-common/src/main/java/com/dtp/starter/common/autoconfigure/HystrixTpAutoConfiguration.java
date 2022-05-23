@@ -1,7 +1,7 @@
 package com.dtp.starter.common.autoconfigure;
 
-import com.dtp.adapter.dubbo.hystrix.handler.HystrixDtpHandler;
-import com.dtp.adapter.dubbo.hystrix.HystrixEventService;
+import com.dtp.adapter.hystrix.handler.HystrixDtpHandler;
+import com.dtp.adapter.hystrix.HystrixEventService;
 import com.dtp.common.config.DtpProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

@@ -1,9 +1,9 @@
 package com.dtp.starter.common.autoconfigure;
 
-import com.dtp.adapter.dubbo.webserver.WebServerEventService;
-import com.dtp.adapter.dubbo.webserver.handler.JettyDtpHandler;
-import com.dtp.adapter.dubbo.webserver.handler.TomcatDtpHandler;
-import com.dtp.adapter.dubbo.webserver.handler.UndertowDtpHandler;
+import com.dtp.adapter.webserver.WebServerEventService;
+import com.dtp.adapter.webserver.handler.JettyDtpHandler;
+import com.dtp.adapter.webserver.handler.TomcatDtpHandler;
+import com.dtp.adapter.webserver.handler.UndertowDtpHandler;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.constant.DynamicTpConst;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

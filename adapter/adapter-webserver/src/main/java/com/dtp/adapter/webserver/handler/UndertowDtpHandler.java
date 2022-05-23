@@ -1,4 +1,4 @@
-package com.dtp.adapter.dubbo.webserver.handler;
+package com.dtp.adapter.webserver.handler;
 
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;

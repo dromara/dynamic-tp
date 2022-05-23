@@ -1,8 +1,8 @@
-package com.dtp.adapter.dubbo.webserver;
+package com.dtp.adapter.webserver;
 
 import com.dtp.adapter.dubbo.common.DtpHandleListener;
 import com.dtp.adapter.dubbo.common.DtpHandler;
-import com.dtp.adapter.dubbo.webserver.handler.AbstractWebServerDtpHandler;
+import com.dtp.adapter.webserver.handler.AbstractWebServerDtpHandler;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.core.handler.CollectorHandler;

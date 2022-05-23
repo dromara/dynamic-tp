@@ -1,4 +1,4 @@
-package com.dtp.adapter.dubbo.webserver.handler;
+package com.dtp.adapter.webserver.handler;
 
 import com.dtp.adapter.dubbo.common.DtpHandler;
 import com.dtp.common.ApplicationContextHolder;

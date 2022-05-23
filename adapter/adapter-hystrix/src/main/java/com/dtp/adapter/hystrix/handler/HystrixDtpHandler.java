@@ -1,4 +1,4 @@
-package com.dtp.adapter.dubbo.hystrix.handler;
+package com.dtp.adapter.hystrix.handler;
 
 import cn.hutool.core.collection.CollUtil;
 import com.dtp.adapter.dubbo.common.AbstractDtpHandler;

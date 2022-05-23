@@ -75,6 +75,10 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 - **集成管理常用第三方组件的线程池，已集成 SpringBoot 内置 WebServer（Tomcat、Undertow、Jetty）的线程池管理**
 
+- **已集成apache-dubbo & alibaba-dubbo线程池管理**
+
+- **已集成hystrix线程池管理**
+
 - **提供任务包装功能，实现TaskWrapper接口即可，如TtlTaskWrapper可以支持线程池上下文信息传递**
 
 - **JUC普通线程池也可以被框架监控（@DynamicTp）**

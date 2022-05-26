@@ -27,6 +27,8 @@ public class DynamicTpConst {
      */
     public static final String THREAD_POOL_NAME = "threadPoolName";
 
+    public static final String THREAD_POOL_ALIAS_NAME = "theadPoolAliasName";
+
     public static final String ALLOW_CORE_THREAD_TIMEOUT = "allowCoreThreadTimeOut";
 
     public static final String NOTIFY_ITEMS = "notifyItems";

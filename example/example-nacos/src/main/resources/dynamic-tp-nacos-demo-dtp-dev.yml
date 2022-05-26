@@ -35,6 +35,7 @@ spring:
         workerKeepAlive: 40
       executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
         - threadPoolName: dtpExecutor1
+          theadPoolAliasName: 接口调用
           executorType: common                     # 线程池类型common、eager：适用于io密集型
           corePoolSize: 6
           maximumPoolSize: 8

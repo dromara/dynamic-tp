@@ -66,6 +66,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
     private Map<String, Object> buildProperties(ThreadPoolProperties tpp) {
         Map<String, Object> properties = Maps.newHashMap();
         properties.put(THREAD_POOL_NAME, tpp.getThreadPoolName());
+        properties.put(THREAD_POOL_ALIAS_NAME, tpp.getTheadPoolAliasName());
         properties.put(ALLOW_CORE_THREAD_TIMEOUT, tpp.isAllowCoreThreadTimeOut());
         properties.put(WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN, tpp.isWaitForTasksToCompleteOnShutdown());
         properties.put(AWAIT_TERMINATION_SECONDS, tpp.getAwaitTerminationSeconds());

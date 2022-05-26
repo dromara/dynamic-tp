@@ -7,6 +7,7 @@ import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.*;
 import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.util.StringUtil;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
@@ -85,7 +86,7 @@ public abstract class AbstractNotifier implements Notifier {
                 getInstance().getServiceName(),
                 getInstance().getIp() + ":" + getInstance().getPort(),
                 getInstance().getEnv(),
-                executor.getThreadPoolName(),
+                populatePoolName(executor),
                 typeEnum.getValue(),
                 notifyItem.getThreshold(),
                 executor.getCorePoolSize(),
@@ -126,7 +127,7 @@ public abstract class AbstractNotifier implements Notifier {
                 getInstance().getServiceName(),
                 getInstance().getIp() + ":" + getInstance().getPort(),
                 getInstance().getEnv(),
-                dtpExecutor.getTheadPoolAliasName() + "["+threadPoolName+"]",
+                populatePoolName(dtpExecutor),
                 oldProp.getCorePoolSize(),
                 dtpExecutor.getCorePoolSize(),
                 oldProp.getMaxPoolSize(),
@@ -166,6 +167,13 @@ public abstract class AbstractNotifier implements Notifier {
      * @return left: highlight color, right: other content color
      */
     protected abstract Pair<String, String> getColors();
+
+    private String populatePoolName(DtpExecutor executor) {
+        if (StringUtils.isBlank(executor.getTheadPoolAliasName())) {
+            return executor.getThreadPoolName();
+        }
+        return executor.getThreadPoolName() + " ("+executor.getTheadPoolAliasName()+")";
+    }
 
     private String highlightNotifyContent(String content, List<String> diffs) {
         if (StringUtils.isBlank(content)) {

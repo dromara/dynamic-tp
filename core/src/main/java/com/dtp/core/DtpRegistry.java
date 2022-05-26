@@ -236,6 +236,11 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
             dtpExecutor.setRejectHandlerName(properties.getRejectedHandlerType());
         }
 
+        // update Alias Name
+        if (!Objects.equals(dtpExecutor.getTheadPoolAliasName(), properties.getTheadPoolAliasName())) {
+            dtpExecutor.setTheadPoolAliasName(properties.getTheadPoolAliasName());
+        }
+
         // update work queue capacity
         if (!Objects.equals(dtpExecutor.getQueueCapacity(), properties.getQueueCapacity()) &&
                 Objects.equals(properties.getQueueType(), VARIABLE_LINKED_BLOCKING_QUEUE.getName())) {

@@ -8,6 +8,7 @@ import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.spring.DtpLifecycleSupport;
 import com.dtp.core.support.DtpRunnable;
 import com.dtp.core.support.wrapper.TaskWrapper;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import java.util.List;
@@ -37,6 +38,11 @@ public class DtpExecutor extends DtpLifecycleSupport {
      * RejectHandler name.
      */
     private String rejectHandlerName;
+
+    /**
+     * Simple Business alias Name of Dynamic ThreadPool. Use for notify.
+     */
+    private String theadPoolAliasName;
 
     /**
      * Notify items, see {@link NotifyTypeEnum}.
@@ -206,5 +212,17 @@ public class DtpExecutor extends DtpLifecycleSupport {
      */
     public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
         allowCoreThreadTimeOut(allowCoreThreadTimeOut);
+    }
+
+    public String getTheadPoolAliasName() {
+        return Strings.isNullOrEmpty(theadPoolAliasName) ? threadPoolName : theadPoolAliasName;
+    }
+
+    public void setTheadPoolAliasName(String theadPoolAliasName) {
+        if (Strings.isNullOrEmpty(theadPoolAliasName)){
+            this.theadPoolAliasName = this.threadPoolName;
+        }else {
+            this.theadPoolAliasName = theadPoolAliasName;
+        }
     }
 }

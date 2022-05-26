@@ -126,7 +126,7 @@ public abstract class AbstractNotifier implements Notifier {
                 getInstance().getServiceName(),
                 getInstance().getIp() + ":" + getInstance().getPort(),
                 getInstance().getEnv(),
-                threadPoolName,
+                dtpExecutor.getTheadPoolAliasName() + "["+threadPoolName+"]",
                 oldProp.getCorePoolSize(),
                 dtpExecutor.getCorePoolSize(),
                 oldProp.getMaxPoolSize(),

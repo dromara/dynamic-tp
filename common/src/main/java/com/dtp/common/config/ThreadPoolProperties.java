@@ -26,6 +26,11 @@ public class ThreadPoolProperties {
     private String threadPoolName = "DefaultDynamicTp";
 
     /**
+     * Simple Alias Name of Dynamic ThreadPool. Use for notify.
+     */
+    private String theadPoolAliasName;
+
+    /**
      * Executor type, used in create phase.
      */
     private String executorType;

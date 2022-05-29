@@ -235,6 +235,9 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 - 线程池配置（yml 类型）
 
+  以下给出的是全配置，不需要的可以选择性删除，使用默认值的项也可以不用配置，简化配置
+  
+  
   ```yaml
   spring:
     dynamic:
@@ -271,7 +274,19 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
         undertowTp:                                  # undertow web server线程池配置
             corePoolSize: 100                        # 核心线程数
             maximumPoolSize: 400                     # 最大线程数
-            keepAliveTime: 40                     
+            keepAliveTime: 40        
+        hystrixTp:                                   # hystrix 线程池配置
+          - threadPoolName: hystrix1                                  
+            corePoolSize: 100
+            maximumPoolSize: 400 
+        dubboTp:                                     # dubbo 线程池配置
+          - threadPoolName: dubboTp#20880                                  
+            corePoolSize: 100
+            maximumPoolSize: 400       
+        rocketMqTp:                                  # rocketmq 线程池配置
+          - threadPoolName: group1#topic1                                  
+            corePoolSize: 200
+            maximumPoolSize: 400             
         executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
           - threadPoolName: dtpExecutor1
             executorType: common                     # 线程池类型common、eager：适用于io密集型
@@ -407,37 +422,6 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 ---
 
-## 注意事项
-
-- 服务启动时会根据配置中心配置的 executors 动态生成线程池实例注册到 spring 容器中，动态线程池建议直接配置在配置中心中， 
-  同一线程池实例不要用 @Bean 编程式重复配置，虽然会覆盖掉
-
-- 阻塞队列只有 VariableLinkedBlockingQueue 类型可以修改 capacity，该类型功能和 LinkedBlockingQueue 相似，
-  只是 capacity 不是 final 类型，可以修改， VariableLinkedBlockingQueue 参考 RabbitMq 的实现
-
-- 启动看到如下日志输出证明接入成功
-
-  ```bash
-  |  __ \                            (_) |__   __|
-  | |  | |_   _ _ __   __ _ _ __ ___  _  ___| |_ __
-  | |  | | | | | '_ \ / _` | '_ ` _ | |/ __| | '_ \
-  | |__| | |_| | | | | (_| | | | | | | | (__| | |_) |
-  |_____/ __, |_| |_|__,_|_| |_| |_|_|___|_| .__/
-           __/ |                              | |
-          |___/                               |_|
-   :: Dynamic Thread Pool ::
-
-  DynamicTp register dtpExecutor, source: beanPostProcessor, executor: DtpMainPropWrapper(dtpName=dynamic-tp-test-1, corePoolSize=6, maxPoolSize=8, keepAliveTime=50, queueType=VariableLinkedBlockingQueue, queueCapacity=200, rejectType=RejectedCountableCallerRunsPolicy, allowCoreThreadTimeOut=false)
-  ```
-
-* 配置变更会推送通知消息，且会高亮变更的字段
-
-  ```bash
-  DynamicTp refresh, name: [dtpExecutor2], changed keys: [corePoolSize, queueCapacity], corePoolSize: [6 => 4], maxPoolSize: [8 => 8], queueType: [VariableLinkedBlockingQueue => VariableLinkedBlockingQueue], queueCapacity: [200 => 2000], keepAliveTime: [50s => 50s], rejectedType: [CallerRunsPolicy => CallerRunsPolicy], allowsCoreThreadTimeOut: [false => false]
-  ```
-
----
-
 ## 通知报警
 
 - 触发报警阈值会推送相应报警消息（活性、容量、拒绝、任务等待超时、任务执行超时），且会高亮显示相应字段
@@ -493,6 +477,37 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
           "reject_handler_name": "CallerRunsPolicy"
       }
   ]
+  ```
+
+---
+
+## 注意事项
+
+- 服务启动时会根据配置中心配置的 executors 动态生成线程池实例注册到 spring 容器中，动态线程池建议直接配置在配置中心中， 
+  同一线程池实例不要用 @Bean 编程式重复配置，虽然会覆盖掉
+
+- 阻塞队列只有 VariableLinkedBlockingQueue 类型可以修改 capacity，该类型功能和 LinkedBlockingQueue 相似，
+  只是 capacity 不是 final 类型，可以修改， VariableLinkedBlockingQueue 参考 RabbitMq 的实现
+
+- 启动看到如下日志输出证明接入成功
+
+  ```bash
+  |  __ \                            (_) |__   __|
+  | |  | |_   _ _ __   __ _ _ __ ___  _  ___| |_ __
+  | |  | | | | | '_ \ / _` | '_ ` _ | |/ __| | '_ \
+  | |__| | |_| | | | | (_| | | | | | | | (__| | |_) |
+  |_____/ __, |_| |_|__,_|_| |_| |_|_|___|_| .__/
+           __/ |                              | |
+          |___/                               |_|
+   :: Dynamic Thread Pool ::
+
+  DynamicTp register dtpExecutor, source: beanPostProcessor, executor: DtpMainPropWrapper(dtpName=dynamic-tp-test-1, corePoolSize=6, maxPoolSize=8, keepAliveTime=50, queueType=VariableLinkedBlockingQueue, queueCapacity=200, rejectType=RejectedCountableCallerRunsPolicy, allowCoreThreadTimeOut=false)
+  ```
+
+* 配置变更会推送通知消息，且会高亮变更的字段
+
+  ```bash
+  DynamicTp refresh, name: [dtpExecutor2], changed keys: [corePoolSize, queueCapacity], corePoolSize: [6 => 4], maxPoolSize: [8 => 8], queueType: [VariableLinkedBlockingQueue => VariableLinkedBlockingQueue], queueCapacity: [200 => 2000], keepAliveTime: [50s => 50s], rejectedType: [CallerRunsPolicy => CallerRunsPolicy], allowsCoreThreadTimeOut: [false => false]
   ```
 
 ---

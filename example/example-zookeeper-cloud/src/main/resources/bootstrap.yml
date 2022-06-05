@@ -24,5 +24,5 @@ dubbo:
     name: dubbo
     port: 20880
 
-rocketmq:
-  name-server: 127.0.0.1:9876
+#rocketmq:
+#  name-server: 127.0.0.1:9876

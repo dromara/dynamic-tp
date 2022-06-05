@@ -1,6 +1,7 @@
 package com.dtp.example.controller;
 
 import com.dtp.core.DtpRegistry;
+import com.dtp.core.support.NamedRunnable;
 import com.dtp.core.thread.DtpExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,14 +22,8 @@ public class TestController {
     private ThreadPoolExecutor dtpExecutor1;
 
     @GetMapping("/dtp-zookeeper-example/test")
-    public String test() {
-        new Thread(() -> {
-            try {
-                task();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
+    public String test() throws InterruptedException {
+        task();
         return "success";
     }
 
@@ -39,9 +34,14 @@ public class TestController {
             dtpExecutor1.execute(() -> {
                 log.info("i am dynamic-tp-test-1 task");
             });
-            dtpExecutor2.execute(() -> {
+            dtpExecutor2.execute(NamedRunnable.of(() -> {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 log.info("i am dynamic-tp-test-2 task");
-            });
+            }, "task-" + i));
         }
     }
 }

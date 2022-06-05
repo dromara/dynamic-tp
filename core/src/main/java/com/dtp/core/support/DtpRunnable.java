@@ -14,9 +14,12 @@ public class DtpRunnable implements Runnable {
 
     private Long startTime;
 
-    public DtpRunnable(Runnable runnable) {
+    private final String taskName;
+
+    public DtpRunnable(Runnable runnable, String taskName) {
         this.runnable = runnable;
         submitTime = System.currentTimeMillis();
+        this.taskName = taskName;
     }
 
     @Override
@@ -34,5 +37,9 @@ public class DtpRunnable implements Runnable {
 
     public void setStartTime(Long startTime) {
         this.startTime = startTime;
+    }
+
+    public String getTaskName() {
+        return taskName;
     }
 }

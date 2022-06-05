@@ -63,7 +63,7 @@ public interface DtpHandler {
 
     /**
      * Check update params.
-     * @param properties
+     * @param properties the targeted properties
      */
     default void checkParams(SimpleTpProperties properties) {
         if (properties.getCorePoolSize() < 0 ||

@@ -1,8 +1,21 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>io.github.lyh200</groupId>
+        <artifactId>dynamic-tp-all</artifactId>
+        <version>1.0.6</version>
+    </parent>
     <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>dynamic-tp-example</artifactId>
     <packaging>pom</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <modules>
         <module>example-nacos</module>
         <module>example-nacos-cloud</module>
@@ -11,17 +24,5 @@
         <module>example-zookeeper-cloud</module>
         <module>example-consul-cloud</module>
     </modules>
-
-    <parent>
-        <groupId>io.github.lyh200</groupId>
-        <artifactId>dynamic-tp-all</artifactId>
-        <version>1.0.5</version>
-    </parent>
-
-    <artifactId>dynamic-tp-example</artifactId>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
 </project>

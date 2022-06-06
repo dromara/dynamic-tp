@@ -148,11 +148,11 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 1.引入对应配置中心的依赖
 
-2.配置中心配置线程池实例，配置参考下文（给出的是全配置项，配置项都有默认值）
+2.配置中心配置线程池实例，配置参考下文（给出的是全配置项，不需要的可以删除）
 
 3.启动类加 @EnableDynamicTp 注解
 
-4.使用 @Resource 或 @Autowired 注解注入，或通过 DtpRegistry.getDtpExecutor("name") 获取
+4.使用 @Resource 或 @Autowired 注解注入，或通过DtpRegistry.getDtpExecutor("name") 获取
 
 5.普通 JUC 线程池想要被监控，可以 @Bean 定义时加 @DynamicTp 注解
 
@@ -167,7 +167,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-apollo</artifactId>
-           <version>1.0.5</version>
+           <version>1.0.6</version>
        </dependency>
    ```
 2. spring-cloud 场景下的 nacos 应用接入用此依赖
@@ -175,7 +175,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-nacos</artifactId>
-           <version>1.0.5</version>
+           <version>1.0.6</version>
        </dependency>
    ```
 3. 非 spring-cloud 场景下的 nacos 应用接入用此依赖
@@ -183,7 +183,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-nacos</artifactId>
-           <version>1.0.5</version>
+           <version>1.0.6</version>
        </dependency>
    ```
 4. zookeeper 配置中心应用接入
@@ -191,7 +191,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-zookeeper</artifactId>
-           <version>1.0.5</version>
+           <version>1.0.6</version>
        </dependency>
    ```
    application.yml 需配置 zk 地址节点信息
@@ -216,7 +216,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-zookeeper</artifactId>
-           <version>1.0.5</version>
+           <version>1.0.6</version>
        </dependency>
    ```
    
@@ -227,7 +227,7 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-consul</artifactId>
-           <version>1.0.5</version>
+           <version>1.0.6</version>
        </dependency>
    ```
 

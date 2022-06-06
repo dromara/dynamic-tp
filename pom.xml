@@ -5,7 +5,7 @@
 
     <groupId>io.github.lyh200</groupId>
     <artifactId>dynamic-tp-all</artifactId>
-    <version>1.0.6</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
 
     <name>DynamicTp Project</name>
@@ -14,7 +14,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <dtp.version>1.0.6</dtp.version>
+        <revision>1.0.6</revision>
         <spring-boot.version>2.5.8</spring-boot.version>
         <spring-cloud.version>2020.0.5</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.1</spring-cloud-alibaba.version>
@@ -26,6 +26,7 @@
         <guava.version>31.1-jre</guava.version>
         <jackson-core.version>2.13.2</jackson-core.version>
         <jackson-databind.version>2.13.2</jackson-databind.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <modules>
@@ -72,49 +73,49 @@
             <dependency>
                 <groupId>io.github.lyh200</groupId>
                 <artifactId>dynamic-tp-adapter</artifactId>
-                <version>${dtp.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.lyh200</groupId>
                 <artifactId>dynamic-tp-common</artifactId>
-                <version>${dtp.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.lyh200</groupId>
                 <artifactId>dynamic-tp-core</artifactId>
-                <version>${dtp.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.lyh200</groupId>
                 <artifactId>dynamic-tp-logging</artifactId>
-                <version>${dtp.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.lyh200</groupId>
                 <artifactId>dynamic-tp-adapter-webserver</artifactId>
-                <version>${dtp.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.lyh200</groupId>
                 <artifactId>dynamic-tp-adapter-dubbo</artifactId>
-                <version>${dtp.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.lyh200</groupId>
                 <artifactId>dynamic-tp-adapter-rocketmq</artifactId>
-                <version>${dtp.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>
                 <groupId>io.github.lyh200</groupId>
                 <artifactId>dynamic-tp-adapter-hystrix</artifactId>
-                <version>${dtp.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>

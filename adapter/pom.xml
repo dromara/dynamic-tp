@@ -5,14 +5,10 @@
     <parent>
         <groupId>io.github.lyh200</groupId>
         <artifactId>dynamic-tp-all</artifactId>
-        <version>1.0.6</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>dynamic-tp-adapter</artifactId>
     <packaging>pom</packaging>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <modules>
         <module>adapter-common</module>
@@ -39,7 +35,7 @@
             <dependency>
                 <groupId>io.github.lyh200</groupId>
                 <artifactId>dynamic-tp-adapter-common</artifactId>
-                <version>${dtp.version}</version>
+                <version>${revision}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

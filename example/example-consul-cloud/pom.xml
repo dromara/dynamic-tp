@@ -2,18 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>dynamic-tp-example</artifactId>
         <groupId>io.github.lyh200</groupId>
-        <version>1.0.6</version>
+        <version>${revision}</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
-
     <artifactId>dynamic-tp-example-consul-cloud</artifactId>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
@@ -37,7 +34,7 @@
         <dependency>
             <groupId>io.github.lyh200</groupId>
             <artifactId>dynamic-tp-spring-cloud-starter-consul</artifactId>
-            <version>${dtp.version}</version>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>

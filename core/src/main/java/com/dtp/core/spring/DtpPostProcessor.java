@@ -1,9 +1,9 @@
 package com.dtp.core.spring;
 
 import com.dtp.common.ApplicationContextHolder;
+import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.support.DynamicTp;
-import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.TaskQueue;
 import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.thread.EagerDtpExecutor;
@@ -63,9 +63,7 @@ public class DtpPostProcessor implements BeanPostProcessor {
     }
 
     private void registerCommon(String poolName, ThreadPoolExecutor executor) {
-        ExecutorWrapper wrapper = new ExecutorWrapper();
-        wrapper.setThreadPoolName(poolName);
-        wrapper.setExecutor(executor);
+        ExecutorWrapper wrapper = new ExecutorWrapper(poolName, executor);
         DtpRegistry.registerCommon(wrapper, "beanPostProcessor");
     }
 }

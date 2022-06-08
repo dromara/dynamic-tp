@@ -1,8 +1,8 @@
 package com.dtp.adapter.dubbo.apache;
 
-import com.dtp.adapter.dubbo.apache.handler.ApacheDubboDtpHandler;
 import com.dtp.adapter.common.DtpHandleListener;
 import com.dtp.adapter.common.DtpHandler;
+import com.dtp.adapter.dubbo.apache.handler.ApacheDubboDtpHandler;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.core.handler.CollectorHandler;
@@ -24,8 +24,8 @@ public class ApacheDubboEventService extends DtpHandleListener {
     }
 
     @Override
-    protected void doUpdate(DtpProperties dtpProperties) {
+    protected void doRefresh(DtpProperties dtpProperties) {
         DtpHandler apacheDubboDtpHandler = ApplicationContextHolder.getBean(ApacheDubboDtpHandler.class);
-        apacheDubboDtpHandler.updateTp(dtpProperties);
+        apacheDubboDtpHandler.refresh(dtpProperties);
     }
 }

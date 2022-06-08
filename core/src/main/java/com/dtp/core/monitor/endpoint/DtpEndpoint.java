@@ -6,7 +6,7 @@ import com.dtp.common.dto.JvmStats;
 import com.dtp.common.dto.Metrics;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.convert.MetricsConverter;
-import com.dtp.core.support.ExecutorWrapper;
+import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.core.thread.DtpExecutor;
 import com.google.common.collect.Lists;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;

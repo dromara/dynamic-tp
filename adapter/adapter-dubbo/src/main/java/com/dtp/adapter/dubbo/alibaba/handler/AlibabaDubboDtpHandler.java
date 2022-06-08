@@ -7,13 +7,13 @@ import com.alibaba.dubbo.common.store.DataStore;
 import com.dtp.adapter.common.AbstractDtpHandler;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;
+import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.util.StreamUtil;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.Map;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.alibaba.dubbo.common.Constants.EXECUTOR_SERVICE_COMPONENT_KEY;
@@ -31,22 +31,22 @@ public class AlibabaDubboDtpHandler extends AbstractDtpHandler {
 
     private static final String NAME = "dubboTp";
 
-    private static final Map<String, ThreadPoolExecutor> DUBBO_EXECUTORS = Maps.newHashMap();
+    private static final Map<String, ExecutorWrapper> DUBBO_EXECUTORS = Maps.newHashMap();
 
     @Override
-    public void updateTp(DtpProperties dtpProperties) {
+    public void refresh(DtpProperties dtpProperties) {
         val dubboTpList = dtpProperties.getDubboTp();
-        val executors = getExecutors();
-        if (CollUtil.isEmpty(dubboTpList) || CollUtil.isEmpty(executors)) {
+        val executorWrappers = getExecutorWrappers();
+        if (CollUtil.isEmpty(dubboTpList) || CollUtil.isEmpty(executorWrappers)) {
             return;
         }
 
         val tmpMap = StreamUtil.toMap(dubboTpList, SimpleTpProperties::getThreadPoolName);
-        executors.forEach((k ,v) -> updateBase(NAME, tmpMap.get(k), (ThreadPoolExecutor) v));
+        executorWrappers.forEach((k ,v) -> updateBase(NAME, tmpMap.get(k), v));
     }
 
     @Override
-    public Map<String, ? extends Executor> getExecutors() {
+    public Map<String, ExecutorWrapper> getExecutorWrappers() {
         if (MapUtil.isNotEmpty(DUBBO_EXECUTORS)) {
             return DUBBO_EXECUTORS;
         }
@@ -54,7 +54,11 @@ public class AlibabaDubboDtpHandler extends AbstractDtpHandler {
         DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
         Map<String, Object> executors = dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY);
         if (MapUtil.isNotEmpty(executors)) {
-            executors.forEach((k, v) -> DUBBO_EXECUTORS.put(genTpName(k), (ThreadPoolExecutor) v));
+            executors.forEach((k, v) -> {
+                val name = genTpName(k);
+                val executorWrapper = new ExecutorWrapper(name, (ThreadPoolExecutor) v);
+                DUBBO_EXECUTORS.put(name, executorWrapper);
+            });
         }
 
         log.info("DynamicTp adapter, alibaba dubbo executors init end, executors: {}", DUBBO_EXECUTORS);

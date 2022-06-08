@@ -26,47 +26,47 @@ public class AlarmCounter {
 
     private static final Map<String, AlarmInfo> ALARM_INFO_CACHE = new ConcurrentHashMap<>();
 
-    public static void init(String dtpName, String notifyType) {
-        String key = buildKey(dtpName, notifyType);
+    public static void init(String threadPoolName, String notifyType) {
+        String key = buildKey(threadPoolName, notifyType);
         val alarmInfo = AlarmInfo.builder()
                 .type(NotifyTypeEnum.of(notifyType))
                 .build();
         ALARM_INFO_CACHE.putIfAbsent(key, alarmInfo);
     }
 
-    public static AlarmInfo getAlarmInfo(String dtpName, String notifyType) {
-        String key = buildKey(dtpName, notifyType);
+    public static AlarmInfo getAlarmInfo(String threadPoolName, String notifyType) {
+        String key = buildKey(threadPoolName, notifyType);
         return ALARM_INFO_CACHE.get(key);
     }
 
-    public static void reset(String dtpName, String notifyType) {
-        String key = buildKey(dtpName, notifyType);
+    public static void reset(String threadPoolName, String notifyType) {
+        String key = buildKey(threadPoolName, notifyType);
         var alarmInfo = ALARM_INFO_CACHE.get(key);
         alarmInfo.reset();
     }
 
-    public static void incAlarmCounter(String dtpName, String notifyType) {
-        String key = buildKey(dtpName, notifyType);
+    public static void incAlarmCounter(String threadPoolName, String notifyType) {
+        String key = buildKey(threadPoolName, notifyType);
         var alarmInfo = ALARM_INFO_CACHE.get(key);
         if (Objects.nonNull(alarmInfo)) {
             alarmInfo.incCounter();
         }
     }
 
-    public static Triple<String, String, String> countNotifyItems(String dtpName) {
-        val rejectAlarm = getAlarmInfo(dtpName, REJECT.getValue());
+    public static Triple<String, String, String> countNotifyItems(String threadPoolName) {
+        val rejectAlarm = getAlarmInfo(threadPoolName, REJECT.getValue());
         String rejectCount = rejectAlarm == null ? UNKNOWN : String.valueOf(rejectAlarm.getCount());
 
-        val runTimeoutAlarm = getAlarmInfo(dtpName, RUN_TIMEOUT.getValue());
+        val runTimeoutAlarm = getAlarmInfo(threadPoolName, RUN_TIMEOUT.getValue());
         String runTimeoutCount = runTimeoutAlarm == null ? UNKNOWN : String.valueOf(runTimeoutAlarm.getCount());
 
-        val queueTimeoutAlarm = getAlarmInfo(dtpName, QUEUE_TIMEOUT.getValue());
+        val queueTimeoutAlarm = getAlarmInfo(threadPoolName, QUEUE_TIMEOUT.getValue());
         String queueTimeoutCount = queueTimeoutAlarm == null ? UNKNOWN : String.valueOf(queueTimeoutAlarm.getCount());
 
         return new ImmutableTriple<>(rejectCount, runTimeoutCount, queueTimeoutCount);
     }
 
-    private static String buildKey(String dtpName, String notifyType) {
-        return dtpName + ":" + notifyType;
+    private static String buildKey(String threadPoolName, String notifyType) {
+        return threadPoolName + ":" + notifyType;
     }
 }

@@ -16,7 +16,7 @@ import com.dtp.core.notify.AlarmCounter;
 import com.dtp.core.notify.AlarmLimiter;
 import com.dtp.core.notify.NotifyHelper;
 import com.dtp.core.reject.RejectHandlerGetter;
-import com.dtp.core.support.ExecutorWrapper;
+import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.core.support.ThreadPoolCreator;
 import com.dtp.core.support.wrapper.TaskWrapper;
 import com.dtp.core.support.wrapper.TaskWrappers;

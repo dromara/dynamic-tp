@@ -2,6 +2,7 @@ package com.dtp.adapter.webserver.handler;
 
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;
+import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.common.ex.DtpException;
 import com.dtp.common.util.ReflectionUtil;
@@ -16,7 +17,6 @@ import org.xnio.management.XnioWorkerMXBean;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.concurrent.Executor;
 
 import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
 
@@ -29,22 +29,22 @@ import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYL
 @Slf4j
 public class UndertowDtpHandler extends AbstractWebServerDtpHandler {
 
-    private static final String POOL_NAME = "undertowWebServerWorkerTp";
+    private static final String POOL_NAME = "undertowTp";
 
     @Override
-    public Executor doGetTp(WebServer webServer) {
+    public ExecutorWrapper doGetExecutorWrapper(WebServer webServer) {
 
         UndertowWebServer undertowWebServer = (UndertowWebServer) webServer;
         val undertow = (Undertow) ReflectionUtil.getField(UndertowWebServer.class, "undertow", undertowWebServer);
         if (Objects.isNull(undertow)) {
             return null;
         }
-        return undertow.getWorker();
+        return new ExecutorWrapper(POOL_NAME, undertow.getWorker());
     }
 
     @Override
     public ThreadPoolStats getPoolStats() {
-        XnioWorker xnioWorker = convertAndGet();
+        XnioWorker xnioWorker = (XnioWorker) getWrapper().getExecutor();
         XnioWorkerMXBean mxBean = xnioWorker.getMXBean();
         return ThreadPoolStats.builder()
                 .corePoolSize(mxBean.getCoreWorkerPoolSize())
@@ -57,14 +57,16 @@ public class UndertowDtpHandler extends AbstractWebServerDtpHandler {
     }
 
     @Override
-    public void updateTp(DtpProperties dtpProperties) {
+    public void refresh(DtpProperties dtpProperties) {
         SimpleTpProperties undertowTp = dtpProperties.getUndertowTp();
         if (Objects.isNull(undertowTp)) {
             return;
         }
 
         checkParams(undertowTp);
-        XnioWorker xnioWorker = convertAndGet();
+        val executorWrapper = getWrapper();
+        XnioWorker xnioWorker = (XnioWorker) executorWrapper.getExecutor();
+
         try {
             int oldCoreWorkerThreads = xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS);
             int oldMaxWorkerThreads = xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS);
@@ -84,12 +86,12 @@ public class UndertowDtpHandler extends AbstractWebServerDtpHandler {
         }
     }
 
-    private XnioWorker convertAndGet() {
-        Executor executor = getExecutor();
-        if (Objects.isNull(executor)) {
+    private ExecutorWrapper getWrapper() {
+        ExecutorWrapper executorWrapper = getExecutorWrapper();
+        if (Objects.isNull(executorWrapper) || Objects.isNull(executorWrapper.getExecutor())) {
             log.warn("Undertow web server threadPool is null.");
             throw new DtpException("Undertow web server threadPool is null.");
         }
-        return (XnioWorker) executor;
+        return executorWrapper;
     }
 }

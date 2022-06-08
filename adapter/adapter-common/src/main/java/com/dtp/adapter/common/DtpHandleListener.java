@@ -31,7 +31,7 @@ public abstract class DtpHandleListener implements GenericApplicationListener {
     public void onApplicationEvent(@NonNull ApplicationEvent event) {
         try {
             if (event instanceof RefreshEvent) {
-                doUpdate(((RefreshEvent) event).getDtpProperties());
+                doRefresh(((RefreshEvent) event).getDtpProperties());
             } else if (event instanceof CollectEvent) {
                 doCollect(((CollectEvent) event).getDtpProperties());
             }
@@ -47,8 +47,8 @@ public abstract class DtpHandleListener implements GenericApplicationListener {
     protected abstract void doCollect(DtpProperties dtpProperties);
 
     /**
-     * Do update.
+     * Do refresh.
      * @param dtpProperties dtpProperties
      */
-    protected abstract void doUpdate(DtpProperties dtpProperties);
+    protected abstract void doRefresh(DtpProperties dtpProperties);
 }

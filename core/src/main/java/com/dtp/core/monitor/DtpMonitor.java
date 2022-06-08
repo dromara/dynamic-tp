@@ -9,7 +9,7 @@ import com.dtp.core.DtpRegistry;
 import com.dtp.core.convert.MetricsConverter;
 import com.dtp.core.handler.CollectorHandler;
 import com.dtp.core.notify.AlarmManager;
-import com.dtp.core.support.ExecutorWrapper;
+import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.thread.NamedThreadFactory;
 import com.google.common.collect.Lists;

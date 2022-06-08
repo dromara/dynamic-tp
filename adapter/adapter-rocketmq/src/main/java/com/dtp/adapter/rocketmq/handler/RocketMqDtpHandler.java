@@ -5,6 +5,7 @@ import com.dtp.adapter.common.AbstractDtpHandler;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;
+import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.util.ReflectionUtil;
 import com.dtp.common.util.StreamUtil;
 import com.google.common.collect.Maps;
@@ -19,7 +20,6 @@ import org.apache.rocketmq.spring.support.DefaultRocketMQListenerContainer;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -36,22 +36,22 @@ public class RocketMqDtpHandler extends AbstractDtpHandler {
 
     private static final String CONSUME_EXECUTOR_FIELD_NAME = "consumeExecutor";
 
-    private static final Map<String, ThreadPoolExecutor> ROCKETMQ_EXECUTORS = Maps.newHashMap();
+    private static final Map<String, ExecutorWrapper> ROCKETMQ_EXECUTORS = Maps.newHashMap();
 
     @Override
-    public void updateTp(DtpProperties dtpProperties) {
+    public void refresh(DtpProperties dtpProperties) {
         val rocketMqTpList = dtpProperties.getRocketMqTp();
-        val executors = getExecutors();
+        val executors = getExecutorWrappers();
         if (CollUtil.isEmpty(rocketMqTpList) || CollUtil.isEmpty(executors)) {
             return;
         }
 
         val tmpMap = StreamUtil.toMap(rocketMqTpList, SimpleTpProperties::getThreadPoolName);
-        executors.forEach((k ,v) -> updateBase(NAME, tmpMap.get(k), (ThreadPoolExecutor) v));
+        executors.forEach((k ,v) -> updateBase(NAME, tmpMap.get(k), v));
     }
 
     @Override
-    public Map<String, ? extends Executor> getExecutors() {
+    public Map<String, ExecutorWrapper> getExecutorWrappers() {
 
         if (CollUtil.isNotEmpty(ROCKETMQ_EXECUTORS)) {
             return ROCKETMQ_EXECUTORS;
@@ -80,7 +80,8 @@ public class RocketMqDtpHandler extends AbstractDtpHandler {
                         CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
             }
             if (Objects.nonNull(executor)) {
-                ROCKETMQ_EXECUTORS.put(key, executor);
+                val executorWrapper = new ExecutorWrapper(k, executor);
+                ROCKETMQ_EXECUTORS.put(key, executorWrapper);
             }
         });
         log.info("DynamicTp adapter, rocketMq consumer executors init end, executors: {}", ROCKETMQ_EXECUTORS);

@@ -25,8 +25,8 @@ public class WebServerEventService extends DtpHandleListener {
     }
 
     @Override
-    protected void doUpdate(DtpProperties dtpProperties) {
+    protected void doRefresh(DtpProperties dtpProperties) {
         DtpHandler webServerTpHandler = ApplicationContextHolder.getBean(AbstractWebServerDtpHandler.class);
-        webServerTpHandler.updateTp(dtpProperties);
+        webServerTpHandler.refresh(dtpProperties);
     }
 }

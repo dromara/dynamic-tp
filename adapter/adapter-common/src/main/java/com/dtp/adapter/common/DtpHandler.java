@@ -1,14 +1,13 @@
 package com.dtp.adapter.common;
 
-import cn.hutool.core.map.MapUtil;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;
+import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
 
 /**
  * DtpHandler related
@@ -19,29 +18,29 @@ import java.util.concurrent.Executor;
 public interface DtpHandler {
 
     /**
-     * Get specify thread pool executor.
+     * Get specify thread pool executor wrapper.
      *
-     * @return the specify executor
+     * @return specify executor
      */
-    default Executor getExecutor() {
+    default ExecutorWrapper getExecutorWrapper() {
         return null;
     }
 
     /**
-     * Get multi thread pool executors.
+     * Get executor wrappers.
      *
      * @return executors
      */
-    default Map<String, ? extends Executor> getExecutors() {
-        return MapUtil.empty();
+    default Map<String, ExecutorWrapper> getExecutorWrappers() {
+        return Collections.emptyMap();
     }
 
     /**
-     * Update thread pool with specify properties.
+     * Refresh the thread pool with specify properties.
      *
      * @param dtpProperties the targeted dtpProperties
      */
-    void updateTp(DtpProperties dtpProperties);
+    void refresh(DtpProperties dtpProperties);
 
     /**
      * Get thread pool stats.

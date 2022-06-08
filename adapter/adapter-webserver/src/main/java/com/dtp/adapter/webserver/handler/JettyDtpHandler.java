@@ -2,16 +2,17 @@ package com.dtp.adapter.webserver.handler;
 
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;
+import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.common.ex.DtpException;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.springframework.boot.web.embedded.jetty.JettyWebServer;
 import org.springframework.boot.web.server.WebServer;
 
 import java.util.Objects;
-import java.util.concurrent.Executor;
 
 import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
 
@@ -24,17 +25,17 @@ import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYL
 @Slf4j
 public class JettyDtpHandler extends AbstractWebServerDtpHandler {
 
-    private static final String POOL_NAME = "jettyWebServerTp";
+    private static final String POOL_NAME = "jettyTp";
 
     @Override
-    public Executor doGetTp(WebServer webServer) {
+    public ExecutorWrapper doGetExecutorWrapper(WebServer webServer) {
         JettyWebServer jettyWebServer = (JettyWebServer) webServer;
-        return jettyWebServer.getServer().getThreadPool();
+        return new ExecutorWrapper(POOL_NAME, jettyWebServer.getServer().getThreadPool());
     }
 
     @Override
     public ThreadPoolStats getPoolStats() {
-        ThreadPool.SizedThreadPool threadPool = convertAndGet();
+        ThreadPool.SizedThreadPool threadPool = (ThreadPool.SizedThreadPool) getWrapper().getExecutor();
         ThreadPoolStats poolStats = ThreadPoolStats.builder()
                 .corePoolSize(threadPool.getMinThreads())
                 .maximumPoolSize(threadPool.getMaxThreads())
@@ -51,30 +52,32 @@ public class JettyDtpHandler extends AbstractWebServerDtpHandler {
     }
 
     @Override
-    public void updateTp(DtpProperties dtpProperties) {
+    public void refresh(DtpProperties dtpProperties) {
         SimpleTpProperties jettyTp = dtpProperties.getJettyTp();
         if (Objects.isNull(jettyTp)) {
             return;
         }
 
         checkParams(jettyTp);
-        int oldMinThreads = convertAndGet().getMinThreads();
-        int oldMaxThreads = convertAndGet().getMaxThreads();
+        val executorWrapper = getWrapper();
+        ThreadPool.SizedThreadPool threadPool = (ThreadPool.SizedThreadPool) executorWrapper.getExecutor();
+        int oldMinThreads = threadPool.getMinThreads();
+        int oldMaxThreads = threadPool.getMaxThreads();
 
-        convertAndGet().setMinThreads(jettyTp.getCorePoolSize());
-        convertAndGet().setMaxThreads(jettyTp.getMaximumPoolSize());
+        threadPool.setMinThreads(jettyTp.getCorePoolSize());
+        threadPool.setMaxThreads(jettyTp.getMaximumPoolSize());
 
         log.info("DynamicTp jettyWebServerTp refreshed end, coreSize: [{}], maxSize: [{}]",
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMinThreads, jettyTp.getCorePoolSize()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaxThreads, jettyTp.getMaximumPoolSize()));
     }
 
-    private ThreadPool.SizedThreadPool convertAndGet() {
-        Executor executor = getExecutor();
-        if (Objects.isNull(executor)) {
+    private ExecutorWrapper getWrapper() {
+        ExecutorWrapper executorWrapper = getExecutorWrapper();
+        if (Objects.isNull(executorWrapper) || Objects.isNull(executorWrapper.getExecutor())) {
             log.warn("Jetty web server threadPool is null.");
             throw new DtpException("Jetty web server threadPool is null.");
         }
-        return (ThreadPool.SizedThreadPool) executor;
+        return executorWrapper;
     }
 }

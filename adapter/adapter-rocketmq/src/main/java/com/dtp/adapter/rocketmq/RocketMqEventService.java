@@ -23,8 +23,8 @@ public class RocketMqEventService extends DtpHandleListener {
     }
 
     @Override
-    protected void doUpdate(DtpProperties dtpProperties) {
+    protected void doRefresh(DtpProperties dtpProperties) {
         DtpHandler rocketMqDtpHandler = ApplicationContextHolder.getBean(RocketMqDtpHandler.class);
-        rocketMqDtpHandler.updateTp(dtpProperties);
+        rocketMqDtpHandler.refresh(dtpProperties);
     }
 }

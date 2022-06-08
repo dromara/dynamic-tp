@@ -1,7 +1,10 @@
 package com.dtp.common.config;
 
+import com.dtp.common.dto.NotifyItem;
+import com.dtp.common.em.NotifyTypeEnum;
 import lombok.Data;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -39,4 +42,9 @@ public class SimpleTpProperties {
      * Timeout unit.
      */
     private TimeUnit unit = TimeUnit.SECONDS;
+
+    /**
+     * Notify items, see {@link NotifyTypeEnum}
+     */
+    private List<NotifyItem> notifyItems;
 }

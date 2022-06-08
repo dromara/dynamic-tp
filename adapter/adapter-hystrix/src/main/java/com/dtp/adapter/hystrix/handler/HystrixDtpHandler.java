@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.dtp.adapter.common.AbstractDtpHandler;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;
+import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.util.StreamUtil;
 import com.google.common.collect.Maps;
 import com.netflix.hystrix.HystrixThreadPoolMetrics;
@@ -12,8 +13,6 @@ import lombok.val;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * HystrixDtpHandler related
@@ -26,22 +25,22 @@ public class HystrixDtpHandler extends AbstractDtpHandler {
 
     private static final String NAME = "hystrixTp";
 
-    private static final Map<String, ThreadPoolExecutor> HYSTRIX_EXECUTORS = Maps.newHashMap();
+    private static final Map<String, ExecutorWrapper> HYSTRIX_EXECUTORS = Maps.newHashMap();
 
     @Override
-    public void updateTp(DtpProperties dtpProperties) {
+    public void refresh(DtpProperties dtpProperties) {
         val hystrixTpList = dtpProperties.getHystrixTp();
-        val executors = getExecutors();
-        if (CollUtil.isEmpty(hystrixTpList) || CollUtil.isEmpty(executors)) {
+        val executorWrappers = getExecutorWrappers();
+        if (CollUtil.isEmpty(hystrixTpList) || CollUtil.isEmpty(executorWrappers)) {
             return;
         }
 
         val tmpMap = StreamUtil.toMap(hystrixTpList, SimpleTpProperties::getThreadPoolName);
-        executors.forEach((k ,v) -> updateBase(NAME, tmpMap.get(k), (ThreadPoolExecutor) v));
+        executorWrappers.forEach((k ,v) -> updateBase(NAME, tmpMap.get(k), v));
     }
 
     @Override
-    public Map<String, ? extends Executor> getExecutors() {
+    public Map<String, ExecutorWrapper> getExecutorWrappers() {
         if (CollUtil.isNotEmpty(HYSTRIX_EXECUTORS)) {
             return HYSTRIX_EXECUTORS;
         }
@@ -52,7 +51,8 @@ public class HystrixDtpHandler extends AbstractDtpHandler {
         }
         threadPoolMetrics.forEach(x -> {
             val threadPoolKey = x.getThreadPoolKey();
-            HYSTRIX_EXECUTORS.put(threadPoolKey.name(), x.getThreadPool());
+            val executorWrapper = new ExecutorWrapper(threadPoolKey.name(), x.getThreadPool());
+            HYSTRIX_EXECUTORS.put(threadPoolKey.name(), executorWrapper);
         });
 
         log.info("DynamicTp adapter, hystrix executors init end, executors: {}", HYSTRIX_EXECUTORS);

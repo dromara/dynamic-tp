@@ -23,8 +23,8 @@ public class HystrixEventService extends DtpHandleListener {
     }
 
     @Override
-    protected void doUpdate(DtpProperties dtpProperties) {
+    protected void doRefresh(DtpProperties dtpProperties) {
         DtpHandler hystrixTpHandler = ApplicationContextHolder.getBean(HystrixDtpHandler.class);
-        hystrixTpHandler.updateTp(dtpProperties);
+        hystrixTpHandler.refresh(dtpProperties);
     }
 }

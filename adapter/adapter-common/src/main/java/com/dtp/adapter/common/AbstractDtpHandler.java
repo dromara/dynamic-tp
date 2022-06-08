@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;
+import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ public abstract class AbstractDtpHandler implements DtpHandler, ApplicationListe
     public void onApplicationEvent(ApplicationStartedEvent event) {
         try {
             DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-            updateTp(dtpProperties);
+            refresh(dtpProperties);
         } catch (Exception e) {
             log.error("Init third party thread pool failed.", e);
         }
@@ -44,14 +45,14 @@ public abstract class AbstractDtpHandler implements DtpHandler, ApplicationListe
      */
     @Override
     public List<ThreadPoolStats> getMultiPoolStats() {
-        val executors = getExecutors();
-        if (CollUtil.isEmpty(executors)) {
+        val executorWrappers = getExecutorWrappers();
+        if (CollUtil.isEmpty(executorWrappers)) {
             return Collections.emptyList();
         }
 
         List<ThreadPoolStats> threadPoolStats = Lists.newArrayList();
-        executors.forEach((k, v) -> {
-            val e = (ThreadPoolExecutor) v;
+        executorWrappers.forEach((k, v) -> {
+            val e = (ThreadPoolExecutor) v.getExecutor();
             val stats = ThreadPoolStats.builder()
                     .corePoolSize(e.getCorePoolSize())
                     .maximumPoolSize(e.getMaximumPoolSize())
@@ -72,12 +73,13 @@ public abstract class AbstractDtpHandler implements DtpHandler, ApplicationListe
         return threadPoolStats;
     }
 
-    public void updateBase(String name, SimpleTpProperties properties, ThreadPoolExecutor executor) {
+    public void updateBase(String name, SimpleTpProperties properties, ExecutorWrapper executorWrapper) {
         if (Objects.isNull(properties)) {
             return;
         }
 
         checkParams(properties);
+        val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
         int oldCoreSize = executor.getCorePoolSize();
         int oldMaxSize = executor.getMaximumPoolSize();
         long oldKeepAlive = executor.getKeepAliveTime(properties.getUnit());

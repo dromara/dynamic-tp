@@ -41,7 +41,7 @@ public class NotifyItem {
      */
     private int interval = 120;
 
-    public static List<NotifyItem> getDefaultNotifyItems() {
+    public static List<NotifyItem> getSimpleNotifyItems() {
         NotifyItem changeNotify = new NotifyItem();
         changeNotify.setType(NotifyTypeEnum.CHANGE.getValue());
 
@@ -53,6 +53,15 @@ public class NotifyItem {
         capacityNotify.setType(NotifyTypeEnum.CAPACITY.getValue());
         capacityNotify.setThreshold(80);
 
+        List<NotifyItem> notifyItems = new ArrayList<>(6);
+        notifyItems.add(livenessNotify);
+        notifyItems.add(changeNotify);
+        notifyItems.add(capacityNotify);
+
+        return notifyItems;
+    }
+
+    public static List<NotifyItem> getDefaultNotifyItems() {
         NotifyItem rejectNotify = new NotifyItem();
         rejectNotify.setType(NotifyTypeEnum.REJECT.getValue());
         rejectNotify.setThreshold(1);
@@ -66,9 +75,7 @@ public class NotifyItem {
         queueTimeoutNotify.setThreshold(1);
 
         List<NotifyItem> notifyItems = new ArrayList<>(6);
-        notifyItems.add(livenessNotify);
-        notifyItems.add(changeNotify);
-        notifyItems.add(capacityNotify);
+        notifyItems.addAll(getSimpleNotifyItems());
         notifyItems.add(rejectNotify);
         notifyItems.add(runTimeoutNotify);
         notifyItems.add(queueTimeoutNotify);

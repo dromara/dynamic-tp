@@ -1,9 +1,9 @@
 package com.dtp.adapter.dubbo.alibaba;
 
 
-import com.dtp.adapter.dubbo.alibaba.handler.AlibabaDubboDtpHandler;
 import com.dtp.adapter.common.DtpHandleListener;
 import com.dtp.adapter.common.DtpHandler;
+import com.dtp.adapter.dubbo.alibaba.handler.AlibabaDubboDtpHandler;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.core.handler.CollectorHandler;
@@ -25,8 +25,8 @@ public class AlibabaDubboEventService extends DtpHandleListener {
     }
 
     @Override
-    protected void doUpdate(DtpProperties dtpProperties) {
+    protected void doRefresh(DtpProperties dtpProperties) {
         DtpHandler dubboTpHandler = ApplicationContextHolder.getBean(AlibabaDubboDtpHandler.class);
-        dubboTpHandler.updateTp(dtpProperties);
+        dubboTpHandler.refresh(dtpProperties);
     }
 }

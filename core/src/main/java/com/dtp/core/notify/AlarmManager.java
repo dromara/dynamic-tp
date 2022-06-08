@@ -61,7 +61,7 @@ public class AlarmManager {
         if (!preCheck(executor, typeEnum)) {
             return;
         }
-        boolean ifAlarm = AlarmLimiter.ifAlarm(executor, typeEnum.getValue());
+        boolean ifAlarm = AlarmLimiter.ifAlarm(executor.getThreadPoolName(), typeEnum.getValue());
         if (!ifAlarm) {
             log.debug("DynamicTp notify, alarm limit, dtpName: {}, type: {}",
                     executor.getThreadPoolName(), typeEnum.getValue());
@@ -75,13 +75,13 @@ public class AlarmManager {
 
         synchronized (SEND_LOCK) {
             // recheck alarm limit.
-            ifAlarm = AlarmLimiter.ifAlarm(executor, typeEnum.getValue());
+            ifAlarm = AlarmLimiter.ifAlarm(executor.getThreadPoolName(), typeEnum.getValue());
             if (!ifAlarm) {
                 log.warn("DynamicTp notify, concurrent send, alarm limit, dtpName: {}, type: {}",
                         executor.getThreadPoolName(), typeEnum.getValue());
                 return;
             }
-            AlarmLimiter.putVal(executor, typeEnum.getValue());
+            AlarmLimiter.putVal(executor.getThreadPoolName(), typeEnum.getValue());
         }
 
         AlarmInfo alarmInfo = AlarmCounter.getAlarmInfo(executor.getThreadPoolName(), notifyItem.getType());

@@ -2,15 +2,16 @@ package com.dtp.adapter.webserver.handler;
 
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;
+import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.common.ex.DtpException;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 import org.springframework.boot.web.server.WebServer;
 
 import java.util.Objects;
-import java.util.concurrent.Executor;
 
 import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
 
@@ -23,17 +24,18 @@ import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYL
 @Slf4j
 public class TomcatDtpHandler extends AbstractWebServerDtpHandler {
 
-    private static final String POOL_NAME = "tomcatWebServerTp";
+    private static final String POOL_NAME = "tomcatTp";
 
     @Override
-    public Executor doGetTp(WebServer webServer) {
+    public ExecutorWrapper doGetExecutorWrapper(WebServer webServer) {
         TomcatWebServer tomcatWebServer = (TomcatWebServer) webServer;
-        return tomcatWebServer.getTomcat().getConnector().getProtocolHandler().getExecutor();
+        return new ExecutorWrapper(POOL_NAME,
+                tomcatWebServer.getTomcat().getConnector().getProtocolHandler().getExecutor());
     }
 
     @Override
     public ThreadPoolStats getPoolStats() {
-        ThreadPoolExecutor executor = convertAndGet();
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) getWrapper().getExecutor();
         return ThreadPoolStats.builder()
                 .corePoolSize(executor.getCorePoolSize())
                 .maximumPoolSize(executor.getMaximumPoolSize())
@@ -52,30 +54,32 @@ public class TomcatDtpHandler extends AbstractWebServerDtpHandler {
     }
 
     @Override
-    public void updateTp(DtpProperties dtpProperties) {
+    public void refresh(DtpProperties dtpProperties) {
         SimpleTpProperties tomcatTp = dtpProperties.getTomcatTp();
         if (Objects.isNull(tomcatTp)) {
             return;
         }
 
         checkParams(tomcatTp);
-        int oldCoreSize = convertAndGet().getCorePoolSize();
-        int oldMaxSize = convertAndGet().getMaximumPoolSize();
+        val executorWrapper = getWrapper();
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
+        int oldCoreSize = executor.getCorePoolSize();
+        int oldMaxSize = executor.getMaximumPoolSize();
 
-        convertAndGet().setCorePoolSize(tomcatTp.getCorePoolSize());
-        convertAndGet().setMaximumPoolSize(tomcatTp.getMaximumPoolSize());
+        executor.setCorePoolSize(tomcatTp.getCorePoolSize());
+        executor.setMaximumPoolSize(tomcatTp.getMaximumPoolSize());
 
         log.info("DynamicTp tomcatWebServerTp refreshed end, coreSize: [{}], maxSize: [{}]",
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldCoreSize, tomcatTp.getCorePoolSize()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaxSize, tomcatTp.getMaximumPoolSize()));
     }
 
-    private ThreadPoolExecutor convertAndGet() {
-        Executor executor = getExecutor();
-        if (Objects.isNull(executor)) {
+    private ExecutorWrapper getWrapper() {
+        ExecutorWrapper executorWrapper = getExecutorWrapper();
+        if (Objects.isNull(executorWrapper) || Objects.isNull(executorWrapper.getExecutor())) {
             log.warn("Tomcat web server threadPool is null.");
             throw new DtpException("Tomcat web server threadPool is null.");
         }
-        return (ThreadPoolExecutor) executor;
+        return executorWrapper;
     }
 }

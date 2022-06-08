@@ -1,7 +1,7 @@
 package com.dtp.core.convert;
 
+import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;
-import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.thread.DtpExecutor;
 
 import java.util.concurrent.ThreadPoolExecutor;
@@ -34,7 +34,7 @@ public class MetricsConverter {
         if (wrapper.getExecutor() == null) {
             return null;
         }
-        ThreadPoolStats poolStats = convertCommon(wrapper.getExecutor());
+        ThreadPoolStats poolStats = convertCommon((ThreadPoolExecutor) wrapper.getExecutor());
         poolStats.setPoolName(wrapper.getThreadPoolName());
         poolStats.setDynamic(false);
         return poolStats;

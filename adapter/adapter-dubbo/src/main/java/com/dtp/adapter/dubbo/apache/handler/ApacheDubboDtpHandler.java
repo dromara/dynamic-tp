@@ -50,7 +50,7 @@ public class ApacheDubboDtpHandler extends AbstractDtpHandler {
         }
 
         val tmpMap = StreamUtil.toMap(dubboTpList, SimpleTpProperties::getThreadPoolName);
-        executorWrappers.forEach((k ,v) -> updateBase(NAME, tmpMap.get(k), v));
+        executorWrappers.forEach((k ,v) -> refresh(NAME, v, dtpProperties.getPlatforms(), tmpMap.get(k)));
     }
 
     @Override

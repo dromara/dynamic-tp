@@ -7,8 +7,6 @@ import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.*;
 import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.em.NotifyTypeEnum;
-import com.dtp.common.util.StringUtil;
-import com.dtp.core.DtpRegistry;
 import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
 import com.dtp.core.thread.DtpExecutor;
@@ -25,6 +23,7 @@ import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -72,21 +71,21 @@ public abstract class AbstractNotifier implements Notifier {
     }
 
     public String buildAlarmContent(NotifyPlatform platform, NotifyTypeEnum typeEnum, String template) {
-        DtpContext contextWrapper = DtpContextHolder.get();
-        String dtpName = contextWrapper.getDtpExecutor().getThreadPoolName();
-        DtpExecutor executor = DtpRegistry.getDtpExecutor(dtpName);
+        DtpContext context = DtpContextHolder.get();
+        String threadPoolName = context.getExecutorWrapper().getThreadPoolName();
+        val executor = (ThreadPoolExecutor) context.getExecutorWrapper().getExecutor();
+        NotifyItem notifyItem = context.getNotifyItem();
+        AlarmInfo alarmInfo = context.getAlarmInfo();
 
+        val triple = AlarmCounter.countRrq(threadPoolName, executor);
         String receivesStr = getReceives(platform.getPlatform(), platform.getReceivers());
 
-        NotifyItem notifyItem = contextWrapper.getNotifyItem();
-        AlarmInfo alarmInfo = contextWrapper.getAlarmInfo();
-        val triple = AlarmCounter.countNotifyItems(dtpName);
         String content = String.format(
                 template,
                 getInstance().getServiceName(),
                 getInstance().getIp() + ":" + getInstance().getPort(),
                 getInstance().getEnv(),
-                populatePoolName(executor),
+                populatePoolName(threadPoolName, executor),
                 typeEnum.getValue(),
                 notifyItem.getThreshold(),
                 executor.getCorePoolSize(),
@@ -97,14 +96,14 @@ public abstract class AbstractNotifier implements Notifier {
                 executor.getTaskCount(),
                 executor.getCompletedTaskCount(),
                 executor.getQueue().size(),
-                executor.getQueueName(),
-                executor.getQueueCapacity(),
+                executor.getQueue().getClass().getSimpleName(),
+                getQueueCapacity(executor),
                 executor.getQueue().size(),
                 executor.getQueue().remainingCapacity(),
-                executor.getRejectHandlerName(),
-                triple.getLeft() + "/" + executor.getRejectCount(),
-                triple.getMiddle() + "/" + executor.getRunTimeoutCount(),
-                triple.getRight() + "/" + executor.getQueueTimeoutCount(),
+                getRejectHandlerName(executor),
+                triple.getLeft(),
+                triple.getMiddle(),
+                triple.getRight(),
                 alarmInfo.getLastAlarmTime() == null ? UNKNOWN : alarmInfo.getLastAlarmTime(),
                 DateUtil.now(),
                 receivesStr,
@@ -117,9 +116,9 @@ public abstract class AbstractNotifier implements Notifier {
                                      String template,
                                      DtpMainProp oldProp,
                                      List<String> diffs) {
-        String threadPoolName = oldProp.getDtpName();
-        DtpExecutor dtpExecutor = DtpRegistry.getDtpExecutor(threadPoolName);
-
+        String threadPoolName = oldProp.getThreadPoolName();
+        DtpContext context = DtpContextHolder.get();
+        val executor = (ThreadPoolExecutor) context.getExecutorWrapper().getExecutor();
         String receivesStr = getReceives(platform.getPlatform(), platform.getReceivers());
 
         String content = String.format(
@@ -127,20 +126,20 @@ public abstract class AbstractNotifier implements Notifier {
                 getInstance().getServiceName(),
                 getInstance().getIp() + ":" + getInstance().getPort(),
                 getInstance().getEnv(),
-                populatePoolName(dtpExecutor),
+                populatePoolName(threadPoolName, executor),
                 oldProp.getCorePoolSize(),
-                dtpExecutor.getCorePoolSize(),
+                executor.getCorePoolSize(),
                 oldProp.getMaxPoolSize(),
-                dtpExecutor.getMaximumPoolSize(),
+                executor.getMaximumPoolSize(),
                 oldProp.isAllowCoreThreadTimeOut(),
-                dtpExecutor.allowsCoreThreadTimeOut(),
+                executor.allowsCoreThreadTimeOut(),
                 oldProp.getKeepAliveTime(),
-                dtpExecutor.getKeepAliveTime(TimeUnit.SECONDS),
-                dtpExecutor.getQueueName(),
+                executor.getKeepAliveTime(TimeUnit.SECONDS),
+                executor.getQueue().getClass().getSimpleName(),
                 oldProp.getQueueCapacity(),
-                dtpExecutor.getQueueCapacity(),
+                getQueueCapacity(executor),
                 oldProp.getRejectType(),
-                dtpExecutor.getRejectHandlerName(),
+                getRejectHandlerName(executor),
                 receivesStr,
                 DateTime.now()
         );
@@ -153,7 +152,8 @@ public abstract class AbstractNotifier implements Notifier {
         }
         if (NotifyPlatformEnum.LARK.name().toLowerCase().equals(platform)) {
             return Arrays.stream(receives.split(","))
-                    .map(receive -> StrUtil.startWith(receive, LARK_OPENID_PREFIX) ? String.format(LARK_AT_FORMAT_OPENID, receive) : String.format(LARK_AT_FORMAT_USERNAME, receive))
+                    .map(receive -> StrUtil.startWith(receive, LARK_OPENID_PREFIX) ?
+                            String.format(LARK_AT_FORMAT_OPENID, receive) : String.format(LARK_AT_FORMAT_USERNAME, receive))
                     .collect(Collectors.joining(" "));
         } else {
             List<String> receivers = StrUtil.split(receives, ',');
@@ -168,11 +168,30 @@ public abstract class AbstractNotifier implements Notifier {
      */
     protected abstract Pair<String, String> getColors();
 
-    private String populatePoolName(DtpExecutor executor) {
-        if (StringUtils.isBlank(executor.getTheadPoolAliasName())) {
-            return executor.getThreadPoolName();
+    private String populatePoolName(String poolName, ThreadPoolExecutor executor) {
+
+        String poolAlisaName = null;
+        if (executor instanceof DtpExecutor) {
+            poolAlisaName = ((DtpExecutor) executor).getTheadPoolAliasName();
         }
-        return executor.getThreadPoolName() + " ("+executor.getTheadPoolAliasName()+")";
+        if (StringUtils.isBlank(poolAlisaName)) {
+            return poolName;
+        }
+        return poolName + "("+poolAlisaName+")";
+    }
+
+    private String getRejectHandlerName(ThreadPoolExecutor executor) {
+        if (executor instanceof DtpExecutor) {
+            return ((DtpExecutor) executor).getRejectHandlerName();
+        }
+        return executor.getRejectedExecutionHandler().getClass().getSimpleName();
+    }
+
+    private int getQueueCapacity(ThreadPoolExecutor executor) {
+        if (executor instanceof DtpExecutor) {
+            return ((DtpExecutor) executor).getQueueCapacity();
+        }
+        return executor.getQueue().size() + executor.getQueue().remainingCapacity();
     }
 
     private String highlightNotifyContent(String content, List<String> diffs) {

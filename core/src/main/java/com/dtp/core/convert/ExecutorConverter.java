@@ -1,8 +1,11 @@
 package com.dtp.core.convert;
 
 import com.dtp.common.dto.DtpMainProp;
+import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.core.thread.DtpExecutor;
+import lombok.val;
 
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -16,15 +19,29 @@ public class ExecutorConverter {
     private ExecutorConverter() {}
 
     public static DtpMainProp convert(DtpExecutor dtpExecutor) {
-        DtpMainProp wrapper = new DtpMainProp();
-        wrapper.setDtpName(dtpExecutor.getThreadPoolName());
-        wrapper.setCorePoolSize(dtpExecutor.getCorePoolSize());
-        wrapper.setMaxPoolSize(dtpExecutor.getMaximumPoolSize());
-        wrapper.setKeepAliveTime(dtpExecutor.getKeepAliveTime(TimeUnit.SECONDS));
-        wrapper.setQueueType(dtpExecutor.getQueueName());
-        wrapper.setQueueCapacity(dtpExecutor.getQueueCapacity());
-        wrapper.setRejectType(dtpExecutor.getRejectHandlerName());
-        wrapper.setAllowCoreThreadTimeOut(dtpExecutor.allowsCoreThreadTimeOut());
-        return wrapper;
+        DtpMainProp mainProp = new DtpMainProp();
+        mainProp.setThreadPoolName(dtpExecutor.getThreadPoolName());
+        mainProp.setCorePoolSize(dtpExecutor.getCorePoolSize());
+        mainProp.setMaxPoolSize(dtpExecutor.getMaximumPoolSize());
+        mainProp.setKeepAliveTime(dtpExecutor.getKeepAliveTime(TimeUnit.SECONDS));
+        mainProp.setQueueType(dtpExecutor.getQueueName());
+        mainProp.setQueueCapacity(dtpExecutor.getQueueCapacity());
+        mainProp.setRejectType(dtpExecutor.getRejectHandlerName());
+        mainProp.setAllowCoreThreadTimeOut(dtpExecutor.allowsCoreThreadTimeOut());
+        return mainProp;
+    }
+
+    public static DtpMainProp convert(ExecutorWrapper executorWrapper) {
+        DtpMainProp mainProp = new DtpMainProp();
+        mainProp.setThreadPoolName(executorWrapper.getThreadPoolName());
+        val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
+        mainProp.setCorePoolSize(executor.getCorePoolSize());
+        mainProp.setMaxPoolSize(executor.getMaximumPoolSize());
+        mainProp.setKeepAliveTime(executor.getKeepAliveTime(TimeUnit.SECONDS));
+        mainProp.setQueueType(executor.getQueue().getClass().getSimpleName());
+        mainProp.setQueueCapacity(executor.getQueue().size() + executor.getQueue().remainingCapacity());
+        mainProp.setRejectType(executor.getRejectedExecutionHandler().getClass().getSimpleName());
+        mainProp.setAllowCoreThreadTimeOut(executor.allowsCoreThreadTimeOut());
+        return mainProp;
     }
 }

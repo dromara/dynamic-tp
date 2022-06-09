@@ -21,7 +21,7 @@ public class DtpMainProp {
         FIELD_NAMES = Arrays.asList(DtpMainProp.class.getDeclaredFields());
     }
 
-    private String dtpName;
+    private String threadPoolName;
 
     private int corePoolSize;
 

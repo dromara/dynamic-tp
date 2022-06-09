@@ -41,13 +41,13 @@ public class RocketMqDtpHandler extends AbstractDtpHandler {
     @Override
     public void refresh(DtpProperties dtpProperties) {
         val rocketMqTpList = dtpProperties.getRocketMqTp();
-        val executors = getExecutorWrappers();
-        if (CollUtil.isEmpty(rocketMqTpList) || CollUtil.isEmpty(executors)) {
+        val executorWrappers = getExecutorWrappers();
+        if (CollUtil.isEmpty(rocketMqTpList) || CollUtil.isEmpty(executorWrappers)) {
             return;
         }
 
         val tmpMap = StreamUtil.toMap(rocketMqTpList, SimpleTpProperties::getThreadPoolName);
-        executors.forEach((k ,v) -> updateBase(NAME, tmpMap.get(k), v));
+        executorWrappers.forEach((k ,v) -> refresh(NAME, v, dtpProperties.getPlatforms(), tmpMap.get(k)));
     }
 
     @Override

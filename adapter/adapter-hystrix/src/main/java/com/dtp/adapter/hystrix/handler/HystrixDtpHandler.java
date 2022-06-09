@@ -36,7 +36,7 @@ public class HystrixDtpHandler extends AbstractDtpHandler {
         }
 
         val tmpMap = StreamUtil.toMap(hystrixTpList, SimpleTpProperties::getThreadPoolName);
-        executorWrappers.forEach((k ,v) -> updateBase(NAME, tmpMap.get(k), v));
+        executorWrappers.forEach((k ,v) -> refresh(NAME, v, dtpProperties.getPlatforms(), tmpMap.get(k)));
     }
 
     @Override

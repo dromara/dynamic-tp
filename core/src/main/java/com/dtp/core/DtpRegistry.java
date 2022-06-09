@@ -6,6 +6,7 @@ import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.ThreadPoolProperties;
 import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.dto.DtpMainProp;
+import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.ex.DtpException;
 import com.dtp.core.context.DtpContext;
@@ -16,7 +17,6 @@ import com.dtp.core.notify.AlarmCounter;
 import com.dtp.core.notify.AlarmLimiter;
 import com.dtp.core.notify.NotifyHelper;
 import com.dtp.core.reject.RejectHandlerGetter;
-import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.core.support.ThreadPoolCreator;
 import com.dtp.core.support.wrapper.TaskWrapper;
 import com.dtp.core.support.wrapper.TaskWrappers;
@@ -204,7 +204,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
             return;
         }
         DtpContext context = DtpContext.builder()
-                .dtpExecutor(executor)
+                .executorWrapper(new ExecutorWrapper(executor.getThreadPoolName(), executor))
                 .platforms(dtpProperties.getPlatforms())
                 .notifyItem(notifyItem)
                 .build();
@@ -264,7 +264,11 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         if (CollUtil.isEmpty(properties.getNotifyItems())) {
             properties.setNotifyItems(getDefaultNotifyItems());
         }
-        NotifyHelper.updateNotifyItems(dtpExecutor, dtpProperties, properties);
+        val newNotifyItems = NotifyHelper.handleAndGetNotifyItems(dtpExecutor.getThreadPoolName(),
+                dtpExecutor.getNotifyItems(),
+                properties.getNotifyItems(),
+                dtpProperties.getPlatforms());
+        dtpExecutor.setNotifyItems(newNotifyItems);
     }
 
     @Autowired

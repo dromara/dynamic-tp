@@ -29,4 +29,10 @@ public class ExecutorWrapper {
         this.executor = executor;
         this.notifyItems = NotifyItem.getSimpleNotifyItems();
     }
+
+    public ExecutorWrapper(String threadPoolName, Executor executor, List<NotifyItem> notifyItems) {
+        this.threadPoolName = threadPoolName;
+        this.executor = executor;
+        this.notifyItems = notifyItems;
+    }
 }

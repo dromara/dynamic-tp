@@ -2,6 +2,7 @@ package com.dtp.core.context;
 
 import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.dto.AlarmInfo;
+import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.core.thread.DtpExecutor;
@@ -24,7 +25,7 @@ import static java.util.stream.Collectors.toMap;
 @Data
 public class DtpContext {
 
-    private DtpExecutor dtpExecutor;
+    private ExecutorWrapper executorWrapper;
 
     private List<NotifyPlatform> platforms;
 

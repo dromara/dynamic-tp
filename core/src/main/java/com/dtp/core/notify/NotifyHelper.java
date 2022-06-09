@@ -1,8 +1,7 @@
 package com.dtp.core.notify;
 
 import cn.hutool.core.collection.CollUtil;
-import com.dtp.common.config.DtpProperties;
-import com.dtp.common.config.ThreadPoolProperties;
+import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.em.NotifyTypeEnum;
@@ -70,14 +69,19 @@ public class NotifyHelper {
         return keys;
     }
 
-    public static NotifyItem getNotifyItem(DtpExecutor dtpExecutor, NotifyTypeEnum typeEnum) {
-        List<NotifyItem> notifyItems = dtpExecutor.getNotifyItems();
+    public static NotifyItem getNotifyItem(DtpExecutor executor, NotifyTypeEnum typeEnum) {
+        val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor, executor.getNotifyItems());
+        return getNotifyItem(executorWrapper, typeEnum);
+    }
+
+    public static NotifyItem getNotifyItem(ExecutorWrapper executorWrapper, NotifyTypeEnum typeEnum) {
+        List<NotifyItem> notifyItems = executorWrapper.getNotifyItems();
         val notifyItemOpt = notifyItems.stream()
                 .filter(x -> typeEnum.getValue().equalsIgnoreCase(x.getType()) && x.isEnabled())
                 .findFirst();
         if (!notifyItemOpt.isPresent()) {
             log.debug("DynamicTp notify, no such [{}] notify item configured, threadPoolName: {}",
-                    typeEnum.getValue(), dtpExecutor.getThreadPoolName());
+                    typeEnum.getValue(), executorWrapper.getThreadPoolName());
             return null;
         }
 
@@ -98,23 +102,24 @@ public class NotifyHelper {
         });
     }
 
-    public static void updateNotifyItems(DtpExecutor executor, DtpProperties dtpProperties, ThreadPoolProperties tpp) {
-        if (CollUtil.isEmpty(dtpProperties.getPlatforms())) {
-            executor.setNotifyItems(Collections.emptyList());
-            return;
+    public static List<NotifyItem> handleAndGetNotifyItems(String threadPoolName,
+                                                           List<NotifyItem> oldNotifyItems,
+                                                           List<NotifyItem> newNotifyItems,
+                                                           List<NotifyPlatform> platforms) {
+        if (CollUtil.isEmpty(platforms)) {
+            return Collections.emptyList();
         }
 
-        fillPlatforms(dtpProperties.getPlatforms(), tpp.getNotifyItems());
-        List<NotifyItem> oldNotifyItems = executor.getNotifyItems();
+        fillPlatforms(platforms, newNotifyItems);
         Map<String, NotifyItem> oldNotifyItemMap = StreamUtil.toMap(oldNotifyItems, NotifyItem::getType);
-        tpp.getNotifyItems().forEach(x -> {
+        newNotifyItems.forEach(x -> {
             NotifyItem oldNotifyItem = oldNotifyItemMap.get(x.getType());
             if (Objects.nonNull(oldNotifyItem) && oldNotifyItem.getInterval() == x.getInterval()) {
                 return;
             }
-            AlarmLimiter.initAlarmLimiter(executor.getThreadPoolName(), x);
-            AlarmCounter.init(executor.getThreadPoolName(), x.getType());
+            AlarmLimiter.initAlarmLimiter(threadPoolName, x);
+            AlarmCounter.init(threadPoolName, x.getType());
         });
-        executor.setNotifyItems(tpp.getNotifyItems());
+        return newNotifyItems;
     }
 }

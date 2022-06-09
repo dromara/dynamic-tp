@@ -6,6 +6,11 @@ import com.dtp.adapter.dubbo.apache.handler.ApacheDubboDtpHandler;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.core.handler.CollectorHandler;
+import com.dtp.core.notify.AlarmManager;
+import lombok.val;
+
+import static com.dtp.common.constant.DynamicTpConst.SCHEDULE_ALARM_TYPES;
+import static com.dtp.core.notify.AlarmManager.doAlarm;
 
 /**
  * ApacheDubboEventService related
@@ -27,5 +32,12 @@ public class ApacheDubboEventService extends DtpHandleListener {
     protected void doRefresh(DtpProperties dtpProperties) {
         DtpHandler apacheDubboDtpHandler = ApplicationContextHolder.getBean(ApacheDubboDtpHandler.class);
         apacheDubboDtpHandler.refresh(dtpProperties);
+    }
+
+    @Override
+    protected void doAlarmCheck(DtpProperties dtpProperties) {
+        DtpHandler apacheDubboDtpHandler = ApplicationContextHolder.getBean(ApacheDubboDtpHandler.class);
+        val executorWrapper = apacheDubboDtpHandler.getExecutorWrappers();
+        executorWrapper.forEach((k, v) -> AlarmManager.triggerAlarm(() -> doAlarm(v, SCHEDULE_ALARM_TYPES)));
     }
 }

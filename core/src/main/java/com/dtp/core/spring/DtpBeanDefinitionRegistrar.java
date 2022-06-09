@@ -25,6 +25,7 @@ import java.util.concurrent.BlockingQueue;
 
 import static com.dtp.common.constant.DynamicTpConst.*;
 import static com.dtp.common.dto.NotifyItem.getDefaultNotifyItems;
+import static com.dtp.common.dto.NotifyItem.mergeDefaultNotifyItems;
 import static com.dtp.common.em.QueueTypeEnum.buildBlockingQueue;
 
 /**
@@ -74,8 +75,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         properties.put(RUN_TIMEOUT, tpp.getRunTimeout());
         properties.put(QUEUE_TIMEOUT, tpp.getQueueTimeout());
 
-        val notifyItems= CollUtil.isNotEmpty(tpp.getNotifyItems()) ?
-                tpp.getNotifyItems() : getDefaultNotifyItems();
+        val notifyItems= mergeDefaultNotifyItems(tpp.getNotifyItems());
         properties.put(NOTIFY_ITEMS, notifyItems);
 
         val taskWrappers = TaskWrappers.getInstance().getByNames(tpp.getTaskWrapperNames());

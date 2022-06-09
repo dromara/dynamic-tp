@@ -1,7 +1,7 @@
 package com.dtp.adapter.dubbo.alibaba;
 
 
-import com.dtp.adapter.common.DtpHandleListener;
+import com.dtp.adapter.common.AbstractDtpHandleListener;
 import com.dtp.adapter.common.DtpHandler;
 import com.dtp.adapter.dubbo.alibaba.handler.AlibabaDubboDtpHandler;
 import com.dtp.common.ApplicationContextHolder;
@@ -20,7 +20,7 @@ import static com.dtp.core.notify.AlarmManager.doAlarm;
  * @since 1.0.6
  */
 @SuppressWarnings("all")
-public class AlibabaDubboEventService extends DtpHandleListener {
+public class AlibabaDubboEventService extends AbstractDtpHandleListener {
 
     @Override
     protected void doCollect(DtpProperties dtpProperties) {

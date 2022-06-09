@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -70,7 +71,7 @@ public class NotifyHelper {
     }
 
     public static NotifyItem getNotifyItem(DtpExecutor executor, NotifyTypeEnum typeEnum) {
-        val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor, executor.getNotifyItems());
+        val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(),  executor, executor.getNotifyItems());
         return getNotifyItem(executorWrapper, typeEnum);
     }
 
@@ -102,24 +103,27 @@ public class NotifyHelper {
         });
     }
 
-    public static List<NotifyItem> handleAndGetNotifyItems(String threadPoolName,
-                                                           List<NotifyItem> oldNotifyItems,
-                                                           List<NotifyItem> newNotifyItems,
-                                                           List<NotifyPlatform> platforms) {
-        if (CollUtil.isEmpty(platforms)) {
+    public static List<NotifyItem> fillNotifyItems(List<NotifyItem> notifyItems, List<NotifyPlatform> platforms) {
+        if (CollUtil.isEmpty(platforms) || CollUtil.isEmpty(notifyItems)) {
             return Collections.emptyList();
         }
+        fillPlatforms(platforms, notifyItems);
+        return notifyItems;
+    }
 
-        fillPlatforms(platforms, newNotifyItems);
-        Map<String, NotifyItem> oldNotifyItemMap = StreamUtil.toMap(oldNotifyItems, NotifyItem::getType);
-        newNotifyItems.forEach(x -> {
+    public static void initAlarm(String poolName, List<NotifyItem> oldItems, List<NotifyItem> newItems) {
+
+        if (CollectionUtils.isEmpty(newItems)) {
+            return;
+        }
+        Map<String, NotifyItem> oldNotifyItemMap = StreamUtil.toMap(oldItems, NotifyItem::getType);
+        newItems.forEach(x -> {
             NotifyItem oldNotifyItem = oldNotifyItemMap.get(x.getType());
             if (Objects.nonNull(oldNotifyItem) && oldNotifyItem.getInterval() == x.getInterval()) {
                 return;
             }
-            AlarmLimiter.initAlarmLimiter(threadPoolName, x);
-            AlarmCounter.init(threadPoolName, x.getType());
+            AlarmLimiter.initAlarmLimiter(poolName, x);
+            AlarmCounter.init(poolName, x.getType());
         });
-        return newNotifyItems;
     }
 }

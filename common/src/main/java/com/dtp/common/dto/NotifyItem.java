@@ -1,11 +1,17 @@
 package com.dtp.common.dto;
 
+import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.util.StringUtil;
 import lombok.Data;
+import lombok.val;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * NotifyItem related
@@ -41,17 +47,31 @@ public class NotifyItem {
      */
     private int interval = 120;
 
+    public static List<NotifyItem> mergeSimpleNotifyItems(List<NotifyItem> source) {
+        // update notify items
+        if (CollUtil.isEmpty(source)) {
+            return getDefaultNotifyItems();
+        } else {
+            val excludeTypes = source.stream().map(NotifyItem::getType).collect(toList());
+            val filterItems = getSimpleNotifyItems().stream()
+                    .filter(t -> !StringUtil.containsIgnoreCase(t.getType(), excludeTypes))
+                    .collect(Collectors.toList());
+            source.addAll(filterItems);
+            return source;
+        }
+    }
+
     public static List<NotifyItem> getSimpleNotifyItems() {
         NotifyItem changeNotify = new NotifyItem();
         changeNotify.setType(NotifyTypeEnum.CHANGE.getValue());
 
         NotifyItem livenessNotify = new NotifyItem();
         livenessNotify.setType(NotifyTypeEnum.LIVENESS.getValue());
-        livenessNotify.setThreshold(80);
+        livenessNotify.setThreshold(70);
 
         NotifyItem capacityNotify = new NotifyItem();
         capacityNotify.setType(NotifyTypeEnum.CAPACITY.getValue());
-        capacityNotify.setThreshold(80);
+        capacityNotify.setThreshold(70);
 
         List<NotifyItem> notifyItems = new ArrayList<>(6);
         notifyItems.add(livenessNotify);
@@ -59,6 +79,20 @@ public class NotifyItem {
         notifyItems.add(capacityNotify);
 
         return notifyItems;
+    }
+
+    public static List<NotifyItem> mergeDefaultNotifyItems(List<NotifyItem> source) {
+        // update notify items
+        if (CollUtil.isEmpty(source)) {
+            return getDefaultNotifyItems();
+        } else {
+            val excludeTypes = source.stream().map(NotifyItem::getType).collect(toList());
+            val filterItems = getDefaultNotifyItems().stream()
+                    .filter(t -> !StringUtil.containsIgnoreCase(t.getType(), excludeTypes))
+                    .collect(Collectors.toList());
+            source.addAll(filterItems);
+            return source;
+        }
     }
 
     public static List<NotifyItem> getDefaultNotifyItems() {

@@ -1,6 +1,6 @@
 package com.dtp.adapter.hystrix;
 
-import com.dtp.adapter.common.DtpHandleListener;
+import com.dtp.adapter.common.AbstractDtpHandleListener;
 import com.dtp.adapter.common.DtpHandler;
 import com.dtp.adapter.hystrix.handler.HystrixDtpHandler;
 import com.dtp.common.ApplicationContextHolder;
@@ -18,7 +18,7 @@ import static com.dtp.core.notify.AlarmManager.doAlarm;
  * @author yanhom
  * @since 1.0.6
  */
-public class HystrixEventService extends DtpHandleListener {
+public class HystrixEventService extends AbstractDtpHandleListener {
 
     @Override
     protected void doCollect(DtpProperties dtpProperties) {

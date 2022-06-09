@@ -55,23 +55,27 @@ public class TomcatDtpHandler extends AbstractWebServerDtpHandler {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        SimpleTpProperties tomcatTp = dtpProperties.getTomcatTp();
-        if (Objects.isNull(tomcatTp)) {
+        SimpleTpProperties properties = dtpProperties.getTomcatTp();
+        if (Objects.isNull(properties)) {
             return;
         }
 
-        checkParams(tomcatTp);
+        checkParams(properties);
         val executorWrapper = getWrapper();
         ThreadPoolExecutor executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
         int oldCoreSize = executor.getCorePoolSize();
         int oldMaxSize = executor.getMaximumPoolSize();
+        long oldKeepAliveTime = executor.getKeepAliveTime(properties.getUnit());
 
-        executor.setCorePoolSize(tomcatTp.getCorePoolSize());
-        executor.setMaximumPoolSize(tomcatTp.getMaximumPoolSize());
+        executor.setCorePoolSize(properties.getCorePoolSize());
+        executor.setMaximumPoolSize(properties.getMaximumPoolSize());
+        executor.setKeepAliveTime(properties.getKeepAliveTime(), properties.getUnit());
 
-        log.info("DynamicTp tomcatWebServerTp refreshed end, coreSize: [{}], maxSize: [{}]",
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldCoreSize, tomcatTp.getCorePoolSize()),
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaxSize, tomcatTp.getMaximumPoolSize()));
+        log.info("DynamicTp adapter [{}}] refreshed end, corePoolSize: [{}], maxPoolSize: [{}], " +
+                        "keepAliveTime: [{}]", POOL_NAME,
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldCoreSize, properties.getCorePoolSize()),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaxSize, properties.getMaximumPoolSize()),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldKeepAliveTime, properties.getKeepAliveTime()));
     }
 
     private ExecutorWrapper getWrapper() {

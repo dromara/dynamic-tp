@@ -13,6 +13,8 @@ import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
 import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.handler.NotifierHandler;
+import com.dtp.core.notify.AlarmCounter;
+import com.dtp.core.notify.AlarmLimiter;
 import com.dtp.core.notify.NotifyHelper;
 import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
@@ -29,7 +31,7 @@ import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
-import static com.dtp.common.dto.NotifyItem.getSimpleNotifyItems;
+import static com.dtp.common.dto.NotifyItem.mergeSimpleNotifyItems;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -88,6 +90,13 @@ public abstract class AbstractDtpHandler implements DtpHandler, ApplicationListe
         return threadPoolStats;
     }
 
+    public void initNotifyItems(String poolName, ExecutorWrapper executorWrapper) {
+        executorWrapper.getNotifyItems().forEach(x -> {
+            AlarmLimiter.initAlarmLimiter(poolName, x);
+            AlarmCounter.init(poolName, x.getType());
+        });
+    }
+
     public void refresh(String name,
                         ExecutorWrapper executorWrapper,
                         List<NotifyPlatform> platforms,
@@ -129,8 +138,8 @@ public abstract class AbstractDtpHandler implements DtpHandler, ApplicationListe
     }
 
     private void doRefresh(ExecutorWrapper executorWrapper,
-                          List<NotifyPlatform> platforms,
-                          SimpleTpProperties properties) {
+                           List<NotifyPlatform> platforms,
+                           SimpleTpProperties properties) {
 
         val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
         if (!Objects.equals(executor.getCorePoolSize(), properties.getCorePoolSize())) {
@@ -145,14 +154,10 @@ public abstract class AbstractDtpHandler implements DtpHandler, ApplicationListe
             executor.setMaximumPoolSize(properties.getMaximumPoolSize());
         }
 
-        if (CollUtil.isEmpty(properties.getNotifyItems())) {
-            properties.setNotifyItems(getSimpleNotifyItems());
-        }
-        val newNotifyItems = NotifyHelper.handleAndGetNotifyItems(executorWrapper.getThreadPoolName(),
-                executorWrapper.getNotifyItems(),
-                properties.getNotifyItems(),
-                platforms);
-        executorWrapper.setNotifyItems(newNotifyItems);
+        // update notify items
+        properties.setNotifyItems(mergeSimpleNotifyItems(properties.getNotifyItems()));
+        val items = NotifyHelper.fillNotifyItems(properties.getNotifyItems(), platforms);
+        NotifyHelper.initAlarm(executorWrapper.getThreadPoolName(), executorWrapper.getNotifyItems(), items);
+        executorWrapper.setNotifyItems(items);
     }
-
 }

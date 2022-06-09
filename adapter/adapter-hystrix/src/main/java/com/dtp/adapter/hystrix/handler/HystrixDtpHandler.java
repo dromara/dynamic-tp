@@ -29,13 +29,13 @@ public class HystrixDtpHandler extends AbstractDtpHandler {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        val hystrixTpList = dtpProperties.getHystrixTp();
+        val properties = dtpProperties.getHystrixTp();
         val executorWrappers = getExecutorWrappers();
-        if (CollUtil.isEmpty(hystrixTpList) || CollUtil.isEmpty(executorWrappers)) {
+        if (CollUtil.isEmpty(properties) || CollUtil.isEmpty(executorWrappers)) {
             return;
         }
 
-        val tmpMap = StreamUtil.toMap(hystrixTpList, SimpleTpProperties::getThreadPoolName);
+        val tmpMap = StreamUtil.toMap(properties, SimpleTpProperties::getThreadPoolName);
         executorWrappers.forEach((k ,v) -> refresh(NAME, v, dtpProperties.getPlatforms(), tmpMap.get(k)));
     }
 
@@ -52,6 +52,7 @@ public class HystrixDtpHandler extends AbstractDtpHandler {
         threadPoolMetrics.forEach(x -> {
             val threadPoolKey = x.getThreadPoolKey();
             val executorWrapper = new ExecutorWrapper(threadPoolKey.name(), x.getThreadPool());
+            initNotifyItems(threadPoolKey.name(), executorWrapper);
             HYSTRIX_EXECUTORS.put(threadPoolKey.name(), executorWrapper);
         });
 

@@ -11,13 +11,13 @@ import org.springframework.core.ResolvableType;
 import org.springframework.lang.NonNull;
 
 /**
- * DtpHandleListener related
+ * AbstractDtpHandleListener related
  *
  * @author yanhom
  * @since 1.0.6
  */
 @Slf4j
-public abstract class DtpHandleListener implements GenericApplicationListener {
+public abstract class AbstractDtpHandleListener implements GenericApplicationListener {
 
     @Override
     public boolean supportsEventType(ResolvableType resolvableType) {

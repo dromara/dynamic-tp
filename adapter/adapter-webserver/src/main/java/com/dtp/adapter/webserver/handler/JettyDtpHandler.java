@@ -53,23 +53,24 @@ public class JettyDtpHandler extends AbstractWebServerDtpHandler {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        SimpleTpProperties jettyTp = dtpProperties.getJettyTp();
-        if (Objects.isNull(jettyTp)) {
+        SimpleTpProperties properties = dtpProperties.getJettyTp();
+        if (Objects.isNull(properties)) {
             return;
         }
 
-        checkParams(jettyTp);
+        checkParams(properties);
         val executorWrapper = getWrapper();
         ThreadPool.SizedThreadPool threadPool = (ThreadPool.SizedThreadPool) executorWrapper.getExecutor();
-        int oldMinThreads = threadPool.getMinThreads();
-        int oldMaxThreads = threadPool.getMaxThreads();
+        int oldCoreSize = threadPool.getMinThreads();
+        int oldMaxSize = threadPool.getMaxThreads();
 
-        threadPool.setMinThreads(jettyTp.getCorePoolSize());
-        threadPool.setMaxThreads(jettyTp.getMaximumPoolSize());
+        threadPool.setMinThreads(properties.getCorePoolSize());
+        threadPool.setMaxThreads(properties.getMaximumPoolSize());
 
-        log.info("DynamicTp jettyWebServerTp refreshed end, coreSize: [{}], maxSize: [{}]",
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMinThreads, jettyTp.getCorePoolSize()),
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaxThreads, jettyTp.getMaximumPoolSize()));
+        log.info("DynamicTp adapter [{}}] refreshed end, corePoolSize: [{}], maxPoolSize: [{}]",
+                POOL_NAME,
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldCoreSize, properties.getCorePoolSize()),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaxSize, properties.getMaximumPoolSize()));
     }
 
     private ExecutorWrapper getWrapper() {

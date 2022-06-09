@@ -61,27 +61,27 @@ public class AlarmCounter {
         if (executor instanceof DtpExecutor) {
             val rejectAlarm = getAlarmInfo(threadPoolName, REJECT.getValue());
             val leftCount = rejectAlarm == null ? UNKNOWN : String.valueOf(rejectAlarm.getCount());
-            rejectCount = leftCount + "/" + ((DtpExecutor) executor).getRejectCount();
+            rejectCount = leftCount + " / " + ((DtpExecutor) executor).getRejectCount();
         } else {
-            rejectCount = UNKNOWN + "/" + UNKNOWN;
+            rejectCount = UNKNOWN + " / " + UNKNOWN;
         }
 
         String runTimeoutCount;
         if (executor instanceof DtpExecutor) {
             val runTimeoutAlarm = getAlarmInfo(threadPoolName, RUN_TIMEOUT.getValue());
             val leftCount = runTimeoutAlarm == null ? UNKNOWN : String.valueOf(runTimeoutAlarm.getCount());
-            runTimeoutCount = leftCount + "/" + ((DtpExecutor) executor).getRunTimeoutCount();
+            runTimeoutCount = leftCount + " / " + ((DtpExecutor) executor).getRunTimeoutCount();
         } else {
-            runTimeoutCount = UNKNOWN + "/" + UNKNOWN;
+            runTimeoutCount = UNKNOWN + " / " + UNKNOWN;
         }
 
         String queueTimeoutCount;
         if (executor instanceof DtpExecutor) {
             val queueTimeoutAlarm = getAlarmInfo(threadPoolName, QUEUE_TIMEOUT.getValue());
             val leftCount = queueTimeoutAlarm == null ? UNKNOWN : String.valueOf(queueTimeoutAlarm.getCount());
-            queueTimeoutCount = leftCount + "/" + ((DtpExecutor) executor).getQueueTimeoutCount();
+            queueTimeoutCount = leftCount + " / " + ((DtpExecutor) executor).getQueueTimeoutCount();
         } else {
-            queueTimeoutCount = UNKNOWN + "/" + UNKNOWN;
+            queueTimeoutCount = UNKNOWN + " / " + UNKNOWN;
         }
 
         return new ImmutableTriple<>(rejectCount, runTimeoutCount, queueTimeoutCount);

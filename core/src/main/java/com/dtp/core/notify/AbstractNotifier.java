@@ -2,7 +2,6 @@ package com.dtp.core.notify;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.*;
 import com.dtp.common.em.NotifyPlatformEnum;
@@ -147,16 +146,16 @@ public abstract class AbstractNotifier implements Notifier {
     }
 
     private String getReceives(String platform, String receives) {
-        if (StrUtil.isBlank(receives)) {
+        if (StringUtils.isBlank(receives)) {
             return "";
         }
         if (NotifyPlatformEnum.LARK.name().toLowerCase().equals(platform)) {
             return Arrays.stream(receives.split(","))
-                    .map(receive -> StrUtil.startWith(receive, LARK_OPENID_PREFIX) ?
+                    .map(receive -> StringUtils.startsWith(receive, LARK_OPENID_PREFIX) ?
                             String.format(LARK_AT_FORMAT_OPENID, receive) : String.format(LARK_AT_FORMAT_USERNAME, receive))
                     .collect(Collectors.joining(" "));
         } else {
-            List<String> receivers = StrUtil.split(receives, ',');
+            String[] receivers = StringUtils.split(receives, ',');
             return Joiner.on(", @").join(receivers);
         }
     }

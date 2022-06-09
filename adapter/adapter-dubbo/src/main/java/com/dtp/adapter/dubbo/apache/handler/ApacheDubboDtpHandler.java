@@ -43,13 +43,13 @@ public class ApacheDubboDtpHandler extends AbstractDtpHandler {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        val dubboTpList = dtpProperties.getDubboTp();
+        val properties = dtpProperties.getDubboTp();
         val executorWrappers = getExecutorWrappers();
-        if (CollUtil.isEmpty(dubboTpList) || CollUtil.isEmpty(executorWrappers)) {
+        if (CollUtil.isEmpty(properties) || CollUtil.isEmpty(executorWrappers)) {
             return;
         }
 
-        val tmpMap = StreamUtil.toMap(dubboTpList, SimpleTpProperties::getThreadPoolName);
+        val tmpMap = StreamUtil.toMap(properties, SimpleTpProperties::getThreadPoolName);
         executorWrappers.forEach((k ,v) -> refresh(NAME, v, dtpProperties.getPlatforms(), tmpMap.get(k)));
     }
 
@@ -90,6 +90,7 @@ public class ApacheDubboDtpHandler extends AbstractDtpHandler {
             executorMap.forEach((k, v) -> {
                 val name = genTpName(k.toString());
                 val executorWrapper = new ExecutorWrapper(name, (ThreadPoolExecutor) v);
+                initNotifyItems(name, executorWrapper);
                 DUBBO_EXECUTORS.put(name, executorWrapper);
             });
         }

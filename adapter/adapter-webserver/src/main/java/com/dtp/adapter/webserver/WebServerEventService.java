@@ -1,6 +1,6 @@
 package com.dtp.adapter.webserver;
 
-import com.dtp.adapter.common.DtpHandleListener;
+import com.dtp.adapter.common.AbstractDtpHandleListener;
 import com.dtp.adapter.common.DtpHandler;
 import com.dtp.adapter.webserver.handler.AbstractWebServerDtpHandler;
 import com.dtp.common.ApplicationContextHolder;
@@ -15,7 +15,7 @@ import java.util.Optional;
  * @author yanhom
  * @since 1.0.6
  */
-public class WebServerEventService extends DtpHandleListener {
+public class WebServerEventService extends AbstractDtpHandleListener {
 
     @Override
     protected void doCollect(DtpProperties dtpProperties) {

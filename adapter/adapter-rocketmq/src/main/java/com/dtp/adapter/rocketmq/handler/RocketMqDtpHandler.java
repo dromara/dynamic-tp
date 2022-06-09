@@ -40,13 +40,13 @@ public class RocketMqDtpHandler extends AbstractDtpHandler {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        val rocketMqTpList = dtpProperties.getRocketMqTp();
+        val properties = dtpProperties.getRocketMqTp();
         val executorWrappers = getExecutorWrappers();
-        if (CollUtil.isEmpty(rocketMqTpList) || CollUtil.isEmpty(executorWrappers)) {
+        if (CollUtil.isEmpty(properties) || CollUtil.isEmpty(executorWrappers)) {
             return;
         }
 
-        val tmpMap = StreamUtil.toMap(rocketMqTpList, SimpleTpProperties::getThreadPoolName);
+        val tmpMap = StreamUtil.toMap(properties, SimpleTpProperties::getThreadPoolName);
         executorWrappers.forEach((k ,v) -> refresh(NAME, v, dtpProperties.getPlatforms(), tmpMap.get(k)));
     }
 
@@ -80,7 +80,8 @@ public class RocketMqDtpHandler extends AbstractDtpHandler {
                         CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
             }
             if (Objects.nonNull(executor)) {
-                val executorWrapper = new ExecutorWrapper(k, executor);
+                val executorWrapper = new ExecutorWrapper(key, executor);
+                initNotifyItems(key, executorWrapper);
                 ROCKETMQ_EXECUTORS.put(key, executorWrapper);
             }
         });

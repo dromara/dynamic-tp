@@ -1,6 +1,5 @@
 package com.dtp.core.monitor;
 
-import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;
@@ -63,10 +62,6 @@ public class DtpMonitor implements ApplicationRunner, Ordered {
             return;
         }
 
-        publishCollectEvent();
-        if (CollUtil.isEmpty(dtpNames) && CollUtil.isEmpty(commonNames)) {
-            return;
-        }
         dtpNames.forEach(x -> {
             DtpExecutor executor = DtpRegistry.getDtpExecutor(x);
             ThreadPoolStats poolStats = MetricsConverter.convert(executor);
@@ -77,6 +72,7 @@ public class DtpMonitor implements ApplicationRunner, Ordered {
             ThreadPoolStats poolStats = MetricsConverter.convert(wrapper);
             doCollect(poolStats);
         });
+        publishCollectEvent();
     }
 
     private void checkAlarm(List<String> dtpNames) {

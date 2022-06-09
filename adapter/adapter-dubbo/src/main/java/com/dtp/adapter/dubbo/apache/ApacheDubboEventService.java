@@ -1,6 +1,6 @@
 package com.dtp.adapter.dubbo.apache;
 
-import com.dtp.adapter.common.DtpHandleListener;
+import com.dtp.adapter.common.AbstractDtpHandleListener;
 import com.dtp.adapter.common.DtpHandler;
 import com.dtp.adapter.dubbo.apache.handler.ApacheDubboDtpHandler;
 import com.dtp.common.ApplicationContextHolder;
@@ -19,7 +19,7 @@ import static com.dtp.core.notify.AlarmManager.doAlarm;
  * @since 1.0.6
  */
 @SuppressWarnings("all")
-public class ApacheDubboEventService extends DtpHandleListener {
+public class ApacheDubboEventService extends AbstractDtpHandleListener {
 
     @Override
     protected void doCollect(DtpProperties dtpProperties) {

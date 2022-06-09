@@ -58,29 +58,30 @@ public class UndertowDtpHandler extends AbstractWebServerDtpHandler {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        SimpleTpProperties undertowTp = dtpProperties.getUndertowTp();
-        if (Objects.isNull(undertowTp)) {
+        SimpleTpProperties properties = dtpProperties.getUndertowTp();
+        if (Objects.isNull(properties)) {
             return;
         }
 
-        checkParams(undertowTp);
+        checkParams(properties);
         val executorWrapper = getWrapper();
         XnioWorker xnioWorker = (XnioWorker) executorWrapper.getExecutor();
 
         try {
-            int oldCoreWorkerThreads = xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS);
-            int oldMaxWorkerThreads = xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS);
-            int oldWorkerKeepAlive = xnioWorker.getOption(Options.WORKER_TASK_KEEPALIVE);
+            int oldCorePoolSize = xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS);
+            int oldMaxPoolSize = xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS);
+            int oldKeepAliveTime = xnioWorker.getOption(Options.WORKER_TASK_KEEPALIVE);
 
-            int keepAlive = undertowTp.getKeepAliveTime() * 1000;
-            xnioWorker.setOption(Options.WORKER_TASK_CORE_THREADS, undertowTp.getCorePoolSize());
-            xnioWorker.setOption(Options.WORKER_TASK_MAX_THREADS, undertowTp.getMaximumPoolSize());
+            int keepAlive = properties.getKeepAliveTime() * 1000;
+            xnioWorker.setOption(Options.WORKER_TASK_CORE_THREADS, properties.getCorePoolSize());
+            xnioWorker.setOption(Options.WORKER_TASK_MAX_THREADS, properties.getMaximumPoolSize());
             xnioWorker.setOption(Options.WORKER_TASK_KEEPALIVE, keepAlive);
 
-            log.info("DynamicTp undertowWebServerTp refreshed end, coreSize: [{}], maxSize: [{}], keepAlive: [{}]",
-                    String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldCoreWorkerThreads, undertowTp.getCorePoolSize()),
-                    String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaxWorkerThreads, undertowTp.getMaximumPoolSize()),
-                    String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldWorkerKeepAlive, keepAlive));
+            log.info("DynamicTp adapter [{}}] refreshed end, corePoolSize: [{}], maxPoolSize: [{}], " +
+                            "keepAliveTime: [{}]", POOL_NAME,
+                    String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldCorePoolSize, properties.getCorePoolSize()),
+                    String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaxPoolSize, properties.getMaximumPoolSize()),
+                    String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldKeepAliveTime, keepAlive));
         } catch (IOException e) {
             log.error("Update undertow web server threadPool failed.", e);
         }

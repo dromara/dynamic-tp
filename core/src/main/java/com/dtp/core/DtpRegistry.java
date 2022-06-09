@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
-import static com.dtp.common.dto.NotifyItem.getDefaultNotifyItems;
+import static com.dtp.common.dto.NotifyItem.mergeDefaultNotifyItems;
 import static com.dtp.common.em.QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE;
 import static java.util.stream.Collectors.toList;
 
@@ -261,14 +261,11 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         List<TaskWrapper> taskWrappers = TaskWrappers.getInstance().getByNames(properties.getTaskWrapperNames());
         dtpExecutor.setTaskWrappers(taskWrappers);
 
-        if (CollUtil.isEmpty(properties.getNotifyItems())) {
-            properties.setNotifyItems(getDefaultNotifyItems());
-        }
-        val newNotifyItems = NotifyHelper.handleAndGetNotifyItems(dtpExecutor.getThreadPoolName(),
-                dtpExecutor.getNotifyItems(),
-                properties.getNotifyItems(),
-                dtpProperties.getPlatforms());
-        dtpExecutor.setNotifyItems(newNotifyItems);
+        // update notify items
+        properties.setNotifyItems(mergeDefaultNotifyItems(properties.getNotifyItems()));
+        val items = NotifyHelper.fillNotifyItems(properties.getNotifyItems(), dtpProperties.getPlatforms());
+        NotifyHelper.initAlarm(dtpExecutor.getThreadPoolName(), dtpExecutor.getNotifyItems(), items);
+        dtpExecutor.setNotifyItems(items);
     }
 
     @Autowired

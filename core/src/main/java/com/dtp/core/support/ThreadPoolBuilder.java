@@ -128,7 +128,7 @@ public class ThreadPoolBuilder {
     /**
      * Notify items, see {@link NotifyTypeEnum}
      */
-    private List<NotifyItem> notifyItems = NotifyItem.getDefaultNotifyItems();
+    private List<NotifyItem> notifyItems = NotifyItem.getAllNotifyItems();
 
     private ThreadPoolBuilder() {}
 

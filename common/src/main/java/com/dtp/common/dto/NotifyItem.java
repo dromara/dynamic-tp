@@ -50,7 +50,7 @@ public class NotifyItem {
     public static List<NotifyItem> mergeSimpleNotifyItems(List<NotifyItem> source) {
         // update notify items
         if (CollUtil.isEmpty(source)) {
-            return getDefaultNotifyItems();
+            return getSimpleNotifyItems();
         } else {
             val excludeTypes = source.stream().map(NotifyItem::getType).collect(toList());
             val filterItems = getSimpleNotifyItems().stream()
@@ -81,13 +81,13 @@ public class NotifyItem {
         return notifyItems;
     }
 
-    public static List<NotifyItem> mergeDefaultNotifyItems(List<NotifyItem> source) {
+    public static List<NotifyItem> mergeAllNotifyItems(List<NotifyItem> source) {
         // update notify items
         if (CollUtil.isEmpty(source)) {
-            return getDefaultNotifyItems();
+            return getAllNotifyItems();
         } else {
             val excludeTypes = source.stream().map(NotifyItem::getType).collect(toList());
-            val filterItems = getDefaultNotifyItems().stream()
+            val filterItems = getAllNotifyItems().stream()
                     .filter(t -> !StringUtil.containsIgnoreCase(t.getType(), excludeTypes))
                     .collect(Collectors.toList());
             source.addAll(filterItems);
@@ -95,7 +95,7 @@ public class NotifyItem {
         }
     }
 
-    public static List<NotifyItem> getDefaultNotifyItems() {
+    public static List<NotifyItem> getAllNotifyItems() {
         NotifyItem rejectNotify = new NotifyItem();
         rejectNotify.setType(NotifyTypeEnum.REJECT.getValue());
         rejectNotify.setThreshold(1);

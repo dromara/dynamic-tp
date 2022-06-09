@@ -236,17 +236,16 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 - 线程池配置（yml 类型）
 
   以下给出的是全配置，不需要的可以选择性删除，使用默认值的项也可以不用配置，简化配置
-  
-  
+
   ```yaml
   spring:
     dynamic:
       tp:
         enabled: true
-        enabledBanner: true        # 是否开启banner打印，默认true
-        enabledCollect: false      # 是否开启监控指标采集，默认false
-        collectorType: logging     # 监控数据采集器类型（JsonLog | MicroMeter），默认logging
-        logPath: /home/logs        # 监控日志数据路径，默认 ${user.home}/logs
+        enabledBanner: true           # 是否开启banner打印，默认true
+        enabledCollect: true          # 是否开启监控指标采集，默认false
+        collectorType: MicroMeter     # 监控数据采集器类型（JsonLog | MicroMeter），默认logging
+        logPath: /home/logs           # 监控日志数据路径，默认 ${user.home}/logs
         monitorInterval: 5         # 监控时间间隔（报警判断、指标采集），默认5s
         nacos:                     # nacos配置，不配置有默认值（规则name-dev.yml这样），cloud应用不需要配置
           dataId: dynamic-tp-demo-dev.yml
@@ -266,27 +265,31 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
             urlKey: 0d944ae7-b24a-40                 # 替换
             receivers: test1,test2                   # 接受人飞书名称/openid
         tomcatTp:                                    # tomcat web server线程池配置
-            corePoolSize: 100
-            maximumPoolSize: 400
+          corePoolSize: 100
+          maximumPoolSize: 400
+          keepAliveTime: 60
         jettyTp:                                     # jetty web server线程池配置
+          corePoolSize: 100
+          maximumPoolSize: 400
+        undertowTp:                                  # undertow web server线程池配置
+          corePoolSize: 100
+          maximumPoolSize: 400
+          keepAliveTime: 60
+        hystrixTp:                                   # hystrix 线程池配置
+          - threadPoolName: hystrix1
             corePoolSize: 100
             maximumPoolSize: 400
-        undertowTp:                                  # undertow web server线程池配置
-            corePoolSize: 100                        # 核心线程数
-            maximumPoolSize: 400                     # 最大线程数
-            keepAliveTime: 40        
-        hystrixTp:                                   # hystrix 线程池配置
-          - threadPoolName: hystrix1                                  
-            corePoolSize: 100
-            maximumPoolSize: 400 
+            keepAliveTime: 60
         dubboTp:                                     # dubbo 线程池配置
-          - threadPoolName: dubboTp#20880                                  
+          - threadPoolName: dubboTp#20880
             corePoolSize: 100
-            maximumPoolSize: 400       
+            maximumPoolSize: 400
+            keepAliveTime: 60
         rocketMqTp:                                  # rocketmq 线程池配置
-          - threadPoolName: group1#topic1                                  
+          - threadPoolName: group1#topic1
             corePoolSize: 200
-            maximumPoolSize: 400             
+            maximumPoolSize: 400
+            keepAliveTime: 60
         executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
           - threadPoolName: dtpExecutor1
             executorType: common                     # 线程池类型common、eager：适用于io密集型

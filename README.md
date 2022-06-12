@@ -6,10 +6,16 @@
 </p>
 
 <p align="center">
-	<a href="https://gitee.com/dromara/dynamic-tp"><img src="https://gitee.com/dromara/dynamic-tp/badge/star.svg"></a>
-	<a href="https://github.com/dromara/dynamic-tp"><img src="https://img.shields.io/github/stars/dromara/dynamic-tp?style=flat-square&logo=github"></a>
-  	<a href="https://github.com/dromara/dynamic-tp/blob/master/LICENSE"><img src="https://img.shields.io/github/license/dromara/dynamic-tp.svg?style=flat-square"></a>
-    <a target="_blank" href="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/530709dc29604630b6d1537d7c160ea5~tplv-k3u1fbpfcp-watermark.image"><img src='https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ddfaed2cce2a47608fb0c0c375a10f08~tplv-k3u1fbpfcp-zoom-1.image' alt='备注加群'></a>
+  <a href="https://gitee.com/dromara/dynamic-tp"><img src="https://gitee.com/dromara/dynamic-tp/badge/star.svg"></a>
+  <a href="https://gitee.com/dromara/dynamic-tp/members"><img src="https://gitee.com/dromara/dynamic-tp/badge/fork.svg"></a>
+  <a href="https://github.com/dromara/dynamic-tp"><img src="https://img.shields.io/github/stars/dromara/dynamic-tp?style=flat-square&logo=github"></a>
+  <a href="https://github.com/dromara/dynamic-tp/network/members"><img src="https://img.shields.io/github/forks/dromara/dynamic-tp?style=flat-square&logo=GitHub"></a>
+  <a href="https://github.com/dromara/dynamic-tp/blob/master/LICENSE"><img src="https://img.shields.io/github/license/dromara/dynamic-tp.svg?style=flat-square"></a>
+  <a target="_blank" href="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/530709dc29604630b6d1537d7c160ea5~tplv-k3u1fbpfcp-watermark.image"><img src='https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ddfaed2cce2a47608fb0c0c375a10f08~tplv-k3u1fbpfcp-zoom-1.image' alt='备注加群'></a>
+</p>
+
+<p align="center">
+    官网： <a href="https://dynamictp.cn">https://dynamictp.cn</a> 🔥
 </p>
 
 ---
@@ -54,77 +60,89 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 ## 简介
 
-我们基于配置中心对线程池 ThreadPoolExecutor 做一些扩展，实现对运行中线程池参数的动态修改，实时生效；
-以及实时监控线程池的运行状态，触发设置的报警策略时报警，报警信息会推送办公平台（钉钉、企微等）。
-报警维度包括（队列容量、线程池活性、拒绝触发、任务执行等待超时等）；同时也会定时采集线程池指标数据供监控平台可视化使用。
-使我们能时刻感知到线程池的负载，根据情况及时调整，避免出现问题影响线上业务。
+**基于以上背景分析，我们对线程池 ThreadPoolExecutor 做一些扩展增强，主要实现以下目标**
 
-**特性**
+> 1.实现对运行中线程池参数的动态修改，实时生效
+>
+> 2.实时监控线程池的运行状态，触发设置的报警策略时报警，报警信息推送办公平台
+>
+> 3.定时采集线程池指标数据，配合像 grafana 这种可视化监控平台做大盘监控
 
-- 参考[美团线程池实践](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)，对线程池参数动态化管理，增加监控、报警等增强功能
+**经过多个版本的迭代，目前最新版本具有以下特性** ✅
 
-- 基于 Spring 框架，现只支持 SpringBoot 项目使用，轻量级，引入 starter 即可使用
+- **代码零侵入**：所有配置都放在配置中心，对业务代码零侵入
 
-- 基于配置中心实现线程池参数动态调整，实时生效；集成主流配置中心，已支持 Nacos、Apollo、Zookeeper、Consul，
-  同时也提供 SPI 接口可自定义扩展实现
+- **轻量简单**：基于 springboot 实现，引入 starter，接入只需简单4步就可完成，顺利3分钟搞定
 
-- 内置通知报警功能，提供多种报警维度（配置变更通知、活性报警、容量阈值报警、拒绝触发报警、任务执行或等待超时报警），
-  已支持企业微信、钉钉、飞书报警，同时提供 SPI 接口可自定义扩展实现
+- **高可扩展**：框架核心功能都提供 SPI 接口供用户自定义个性化实现（配置中心、配置文件解析、通知告警、监控数据采集、任务包装等等）
 
-- 内置线程池指标采集功能，支持通过 MicroMeter、JsonLog 日志输出、Endpoint 三种方式，可通过 SPI 接口自定义扩展实现
+- **线上大规模应用**：参考[美团线程池实践](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)，美团内部已经有该理论成熟的应用经验
 
-- 提供任务包装功能，实现TaskWrapper接口即可，如 TtlTaskWrapper 可以支持线程池上下文信息传递
+- **通知报警**：提供多种报警维度（配置变更通知、活性报警、容量阈值报警、拒绝触发报警、任务执行或等待超时报警），已支持企业微信、钉钉、飞书报警，同时提供 SPI 接口可自定义扩展实现
 
-- JUC普通线程池也可以被框架监控，@Bean 定义时加 @DynamicTp 注解即可
+- **监控**：定时采集线程池指标数据，支持通过 MicroMeter、JsonLog 日志输出、Endpoint 三种方式，可通过 SPI 接口自定义扩展实现
 
-- 参考Tomcat线程池提供了 IO 密集型场景使用的 EagerDtpExecutor 线程池
+- **任务增强**：提供任务包装功能，实现TaskWrapper接口即可，如 TtlTaskWrapper 可以支持线程池上下文信息传递，以及给任务设置标识id，方便问题追踪
 
-- 集成管理常用第三方组件的线程池管理，具体看下述
+- **兼容性**：JUC 普通线程池也可以被框架监控，@Bean 定义时加 @DynamicTp 注解即可
 
- 
-**集成第三方组件线程池管理**
+- **可靠性**：框架提供的线程池实现 Spring 生命周期方法，可以在 Spring 容器关闭前尽可能多的处理队列中的任务
 
-- 已集成 SpringBoot 内置 WebServer（Tomcat、Undertow、Jetty）的线程池管理
+- **多模式**：参考Tomcat线程池提供了 IO 密集型场景使用的 EagerDtpExecutor 线程池
 
-- 已集成 Apache-Dubbo & Alibaba-Dubbo 线程池管理
+- **支持多配置中心**：基于主流配置中心实现线程池参数动态调整，实时生效，已支持 Nacos、Apollo、Zookeeper、Consul，同时也提供 SPI 接口可自定义扩展实现
 
-- 已集成 Hystrix 线程池管理
-
-- 已集成 Apache-RocketMQ 线程池管理
+- **中间件线程池管理**：集成管理常用第三方组件的线程池，已集成Tomcat、Jetty、Undertow、Dubbo、RocketMq、Hystrix等组件的线程池管理（调参、监控报警）
 
 ---
 
 ## 设计
 
-**主要分四大模块**
+**框架功能大体可以分为以下几个模块**
 
-- 配置变更监听模块：
+> 1.配置变更监听模块
+>
+> 2.服务内部线程池管理模块
+>
+> 3.三方组件线程池管理模块
+>
+> 4.监控模块
+>
+> 5.通知告警模块
 
-  1.监听特定配置中心的指定配置文件（已实现 Nacos、Apollo、Zookeeper、Consul），可通过内部提供的 SPI 接口扩展其他实现
+- 配置变更监听模块
+
+  1.监听特定配置中心的指定配置文件（已实现 Nacos、Apollo、Zookeeper、Consul），可通过内部提供的SPI接口扩展其他实现
 
   2.解析配置文件内容，内置实现 yml、properties、json 配置文件的解析，可通过内部提供的 SPI 接口扩展其他实现
 
-  3.通知线程池管理模块进行线程池参数刷新
+  3.通知线程池管理模块实现参数的刷新
 
-- 线程池管理模块：
+- 服务内部线程池管理模块
 
-  1.服务启动时从配置中心拉取配置，生成线程池实例注册到内部线程池注册中心以及 Spring 容器中
+  1.服务启动时从配置中心拉取配置，生成线程池实例注册到内部线程池注册中心以及Spring容器中
 
-  2.监听模块监听到配置变更时，将变更信息传递给管理模块，实现线程池参数的刷新
+  2.接受配置监听模块的刷新事件，实现线程池参数的刷新
 
-  3.代码中通过依赖注入（推荐）或者 getExecutor() 方法根据线程池名称来获取线程池实例
+  3.代码中通过依赖注入（推荐）或者 DtpRegistry.getExecutor() 方法根据线程池名称来获取线程池实例
 
-- 监控模块：
+- 三方组件线程池管理
+
+  1.服务启动获取第三方中间件的线程池，被框架管理起来
+
+  2.接受参数刷新、指标收集、通知报警事件，进行相应的处理
+
+- 监控模块
 
   实现监控指标采集以及输出，默认提供以下三种方式，也可通过内部提供的 SPI 接口扩展其他实现
 
   1.默认实现 JsonLog 输出到磁盘，可以自己采集解析日志，存储展示
 
-  2.MicroMeter 采集，引入 MicroMeter 相关依赖，暴露相关端点
+  2.MicroMeter采集，引入 MicroMeter 相关依赖，暴露相关端点，采集指标数据，结合 Grafana 做监控大盘
 
-  3.暴雷自定义 Endpoint 端点，可通过 http 方式实时访问
+  3.暴雷自定义 Endpoint 端点（dynamic-tp），可通过 http 方式实时访问
 
-- 通知告警模块：
+- 通知告警模块
 
   对接办公平台，实现通知告警功能，已支持钉钉、企微、飞书，可通过内部提供的 SPI 接口扩展其他实现，通知告警类型如下
 
@@ -135,9 +153,9 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
   3.线程池活性达到设置的告警阈值
 
   4.触发拒绝策略告警，格式：A/B，A：该报警项前后两次报警区间累加数量，B：该报警项累计总数
-  
+
   5.任务执行超时告警，格式：A/B，A：该报警项前后两次报警区间累加数量，B：该报警项累计总数
-  
+
   6.任务等待超时告警，格式：A/B，A：该报警项前后两次报警区间累加数量，B：该报警项累计总数
 
 ![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/91ea4c3e1166426e8dca9903dacfd9eb~tplv-k3u1fbpfcp-zoom-1.image)
@@ -146,288 +164,33 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 ## 使用
 
-1.引入对应配置中心的依赖
+- 接入步骤
 
-2.配置中心配置线程池实例，配置参考下文（给出的是全配置项，不需要的可以删除）
+  1.引入相应配置中心的依赖，具体见下述 mavne依赖
 
-3.启动类加 @EnableDynamicTp 注解
+  2.配置中心配置线程池实例，配置见下述（给出的是全配置项，不用的可以删除）
 
-4.使用 @Resource 或 @Autowired 注解注入，或通过DtpRegistry.getDtpExecutor("name") 获取
+  3.启动类加 @EnableDynamicTp 注解
 
-5.普通 JUC 线程池想要被监控，可以 @Bean 定义时加 @DynamicTp 注解
+  4.使用 @Resource 或 @Autowired 进行依赖注入，或通过 DtpRegistry.getDtpExecutor("name")获取
 
-6.tips：动态线程池实例服务启动时会根据配置中心的配置动态注册到 Spring 容器中，建议不要用 @Bean 编程式重复声明同一线程池实例，直接配置在配置中心就行
+  5.通过以上4步就可以使用了，是不是感觉超简单
 
-7.详细参考下文及Example示例
+- maven 依赖，见官网文档，[maven 依赖](https://dynamictp.cn/guide/use/maven.html)
 
-- **maven 依赖**
+- 线程池配置，见官网文档，[配置文件](https://dynamictp.cn/guide/use/config.html)
 
-1. apollo 应用用接入用此依赖
-   ```xml
-       <dependency>
-           <groupId>io.github.lyh200</groupId>
-           <artifactId>dynamic-tp-spring-boot-starter-apollo</artifactId>
-           <version>1.0.6</version>
-       </dependency>
-   ```
-2. spring-cloud 场景下的 nacos 应用接入用此依赖
-   ```xml
-       <dependency>
-           <groupId>io.github.lyh200</groupId>
-           <artifactId>dynamic-tp-spring-cloud-starter-nacos</artifactId>
-           <version>1.0.6</version>
-       </dependency>
-   ```
-3. 非 spring-cloud 场景下的 nacos 应用接入用此依赖
-   ```xml
-       <dependency>
-           <groupId>io.github.lyh200</groupId>
-           <artifactId>dynamic-tp-spring-boot-starter-nacos</artifactId>
-           <version>1.0.6</version>
-       </dependency>
-   ```
-4. zookeeper 配置中心应用接入
-   ```xml
-       <dependency>
-           <groupId>io.github.lyh200</groupId>
-           <artifactId>dynamic-tp-spring-boot-starter-zookeeper</artifactId>
-           <version>1.0.6</version>
-       </dependency>
-   ```
-   application.yml 需配置 zk 地址节点信息
+- 代码使用，见官网文档，[代码使用](https://dynamictp.cn/guide/use/code.html)
 
-    ```yaml
-        spring:
-          application:
-            name: dynamic-tp-zookeeper-demo
-          dynamic:
-            tp:
-              config-type: properties         # zookeeper支持properties、json配置
-              zookeeper:
-                config-version: 1.0.0
-                zk-connect-str: 127.0.0.1:2181
-                root-node: /configserver/dev
-                node: dynamic-tp-zookeeper-demo
-                config-key: dtp-config       # json 用到, 配置项的key
-    ```
-   
-5. spring-cloud-starter-zookeeper-config 应用接入
-   ```xml
-       <dependency>
-           <groupId>io.github.lyh200</groupId>
-           <artifactId>dynamic-tp-spring-cloud-starter-zookeeper</artifactId>
-           <version>1.0.6</version>
-       </dependency>
-   ```
-   
-   注：配置中心配置文件参考example-zookeeper-cloud/resource下的config.txt，该文件可以通过`ZKUI`工具导入到`Zookeeper`
-
-6. spring-cloud-starter-consul-config 应用接入
-   ```xml
-       <dependency>
-           <groupId>io.github.lyh200</groupId>
-           <artifactId>dynamic-tp-spring-cloud-starter-consul</artifactId>
-           <version>1.0.6</version>
-       </dependency>
-   ```
-
-   注：配置中心配置文件参考example-consul-cloud/resource下的dynamic-tp-cloud-consul-demo-dtp.yml
-
-- 线程池配置（yml 类型）
-
-  以下给出的是全配置，不需要的可以选择性删除，使用默认值的项也可以不用配置，简化配置
-
-  ```yaml
-  spring:
-    dynamic:
-      tp:
-        enabled: true
-        enabledBanner: true           # 是否开启banner打印，默认true
-        enabledCollect: true          # 是否开启监控指标采集，默认false
-        collectorType: MicroMeter     # 监控数据采集器类型（JsonLog | MicroMeter），默认logging
-        logPath: /home/logs           # 监控日志数据路径，默认 ${user.home}/logs
-        monitorInterval: 5         # 监控时间间隔（报警判断、指标采集），默认5s
-        nacos:                     # nacos配置，不配置有默认值（规则name-dev.yml这样），cloud应用不需要配置
-          dataId: dynamic-tp-demo-dev.yml
-          group: DEFAULT_GROUP
-        apollo:                    # apollo配置，不配置默认拿apollo配置第一个namespace
-          namespace: dynamic-tp-demo-dev.yml
-        configType: yml            # 配置文件类型
-        platforms:                 # 通知报警平台配置
-          - platform: wechat
-            urlKey: 3a7500-1287-4bd-a798-c5c3d8b69c  # 替换
-            receivers: test1,test2                   # 接受人企微名称
-          - platform: ding
-            urlKey: f80dad441fcd655438f4a08dcd6a     # 替换
-            secret: SECb5441fa6f375d5b9d21           # 替换，非sign模式可以没有此值
-            receivers: 15810119805                   # 钉钉账号手机号
-          - platform: lark
-            urlKey: 0d944ae7-b24a-40                 # 替换
-            receivers: test1,test2                   # 接受人飞书名称/openid
-        tomcatTp:                                    # tomcat web server线程池配置
-          corePoolSize: 100
-          maximumPoolSize: 400
-          keepAliveTime: 60
-        jettyTp:                                     # jetty web server线程池配置
-          corePoolSize: 100
-          maximumPoolSize: 400
-        undertowTp:                                  # undertow web server线程池配置
-          corePoolSize: 100
-          maximumPoolSize: 400
-          keepAliveTime: 60
-        hystrixTp:                                   # hystrix 线程池配置
-          - threadPoolName: hystrix1
-            corePoolSize: 100
-            maximumPoolSize: 400
-            keepAliveTime: 60
-        dubboTp:                                     # dubbo 线程池配置
-          - threadPoolName: dubboTp#20880
-            corePoolSize: 100
-            maximumPoolSize: 400
-            keepAliveTime: 60
-        rocketMqTp:                                  # rocketmq 线程池配置
-          - threadPoolName: group1#topic1
-            corePoolSize: 200
-            maximumPoolSize: 400
-            keepAliveTime: 60
-        executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
-          - threadPoolName: dtpExecutor1
-            executorType: common                     # 线程池类型common、eager：适用于io密集型
-            corePoolSize: 6
-            maximumPoolSize: 8
-            queueCapacity: 200
-            queueType: VariableLinkedBlockingQueue   # 任务队列，查看源码QueueTypeEnum枚举类
-            rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
-            keepAliveTime: 50
-            allowCoreThreadTimeOut: false                  # 是否允许核心线程池超时
-            threadNamePrefix: test                         # 线程名前缀
-            waitForTasksToCompleteOnShutdown: false        # 参考spring线程池设计，优雅关闭线程池
-            awaitTerminationSeconds: 5                     # 单位（s）
-            preStartAllCoreThreads: false                  # 是否预热所有核心线程，默认false
-            runTimeout: 200                                # 任务执行超时阈值，目前只做告警用，单位（ms）
-            queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
-            taskWrapperNames: ["ttl"]                          # 任务包装器名称，集成TaskWrapper接口
-            notifyItems:                     # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警、拒绝报警、任务超时报警）
-              - type: capacity               # 报警项类型，查看源码 NotifyTypeEnum枚举类
-                enabled: true
-                threshold: 80                # 报警阈值
-                platforms: [ding,wechat]     # 可选配置，不配置默认拿上层platforms配置的所以平台
-                interval: 120                # 报警间隔（单位：s）
-              - type: change
-                enabled: true
-              - type: liveness
-                enabled: true
-                threshold: 80
-              - type: reject
-                enabled: true
-                threshold: 1
-              - type: run_timeout
-                enabled: true
-                threshold: 1
-              - type: queue_timeout
-                enabled: true
-                threshold: 1
-  ```
-
-- 线程池配置（properties 类型），具体请看 example-zookeeper 项目下的配置文件
-
-- 线程池配置（json 类型），具体请看 example-zookeeper 项目下的 config.json 配置文件
-
-- 定义线程池 Bean（可选），建议直接配置在配置中心；但是如果想后期再添加到配置中心，可以先用 @Bean 声明（方便依赖注入）
-
-  ```java
-  @Configuration
-  public class DtpConfig {  
-    
-    /**
-     * 通过{@link DynamicTp} 注解定义普通juc线程池，会享受到该框架监控功能，注解名称优先级高于方法名
-     *
-     * @return 线程池实例
-     */
-    @DynamicTp("commonExecutor")
-    @Bean
-    public ThreadPoolExecutor commonExecutor() {
-        return (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
-    }
-
-    /**
-     * 通过{@link ThreadPoolCreator} 快速创建一些简单配置的动态线程池
-     * tips: 建议直接在配置中心配置就行，不用@Bean声明
-     *
-     * @return 线程池实例
-     */
-    @Bean
-    public DtpExecutor dtpExecutor1() {
-        return ThreadPoolCreator.createDynamicFast("dtpExecutor1");
-    }
-
-    /**
-     * 通过{@link ThreadPoolBuilder} 设置详细参数创建动态线程池（推荐方式），
-     * ioIntensive，参考tomcat线程池设计，实现了处理io密集型任务的线程池，具体参数可以看代码注释
-     *
-     * tips: 建议直接在配置中心配置就行，不用@Bean声明
-     * @return 线程池实例
-     */
-    @Bean
-    public DtpExecutor ioIntensiveExecutor() {
-        return ThreadPoolBuilder.newBuilder()
-                .threadPoolName("ioIntensiveExecutor")
-                .corePoolSize(20)
-                .maximumPoolSize(50)
-                .queueCapacity(2048)
-                .ioIntensive(true)
-                .buildDynamic();
-    }
-
-    /**
-     * tips: 建议直接在配置中心配置就行，不用@Bean声明
-     * @return 线程池实例
-     */
-    @Bean
-    public ThreadPoolExecutor dtpExecutor2() {
-        return ThreadPoolBuilder.newBuilder()
-                .threadPoolName("dtpExecutor2")
-                .corePoolSize(10)
-                .maximumPoolSize(15)
-                .keepAliveTime(15000)
-                .timeUnit(TimeUnit.MILLISECONDS)
-                .workQueue(QueueTypeEnum.SYNCHRONOUS_QUEUE.getName(), null, false)
-                .waitForTasksToCompleteOnShutdown(true)
-                .awaitTerminationSeconds(5)
-                .buildDynamic();
-    }
-  }
-  ```
-
-* 代码调用，从DtpRegistry中根据线程池名称获取，或者通过依赖注入方式(推荐，更优雅)
-
-  1）依赖注入方式使用，优先推荐依赖注入方式，不能使用依赖注入的场景可以使用方式2
-  
-  ```java
-  @Resource
-  private ThreadPoolExecutor dtpExecutor1;
-  
-  public void exec() {
-     dtpExecutor1.execute(() -> System.out.println("test"));
-  }
-  ```
-  
-  2）通过DtpRegistry注册器获取
-  
-  ```java
-  public static void main(String[] args) {
-     DtpExecutor dtpExecutor = DtpRegistry.getDtpExecutor("dtpExecutor1");
-     dtpExecutor.execute(() -> System.out.println("test"));
-  }
-  ```
-
-* 更详细使用实例请参考`example`工程
+- 更详细使用实例请参考 `example` 工程
 
 ---
 
 ## 通知报警
 
 - 触发报警阈值会推送相应报警消息（活性、容量、拒绝、任务等待超时、任务执行超时），且会高亮显示相应字段
+  
+  更多见官网文档，[通知报警](https://dynamictp.cn/guide/notice/alarm.html)
 
 ![告警](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d65151e3e9ca460eac18f30ea6be05d3~tplv-k3u1fbpfcp-zoom-1.image)
 
@@ -445,11 +208,10 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 通过 collectType 属性配置监控指标采集类型，默认 logging
 
-- MicroMeter：通过引入相关 MicroMeter 依赖采集到相应的平台
-  （如 Prometheus，InfluxDb...）
+- MicroMeter：通过引入相关 MicroMeter 依赖采集到相应的平台（如 Prometheus，InfluxDb...）
 
-- Logging：定时采集指标数据以 Json 日志格式输出磁盘，地址 ${logPath}/dy
-    namictp/${appName}.monitor.log
+- Logging：定时采集指标数据以 Json 日志格式输出磁盘，
+  地址 ${logPath}/dynamictp/${appName}.monitor.log
 
   ```bash
   {"datetime": "2022-04-17 11:35:15.208", "app_name": "dynamic-tp-nacos-cloud-demo", "thread_pool_metrics": {"activeCount":0,"queueSize":0,"largestPoolSize":0,"poolSize":0,"rejectHandlerName":"CallerRunsPolicy","queueCapacity":2000,"fair":false,"queueTimeoutCount":0,"rejectCount":0,"waitTaskCount":0,"taskCount":0,"runTimeoutCount":0,"queueRemainingCapacity":2000,"corePoolSize":4,"queueType":"VariableLinkedBlockingQueue","completedTaskCount":0,"dynamic":true,"maximumPoolSize":6,"poolName":"dtpExecutor1"}}
@@ -484,51 +246,10 @@ public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
 
 ---
 
-## 注意事项
-
-- 服务启动时会根据配置中心配置的 executors 动态生成线程池实例注册到 spring 容器中，动态线程池建议直接配置在配置中心中， 
-  同一线程池实例不要用 @Bean 编程式重复配置，虽然会覆盖掉
-
-- 阻塞队列只有 VariableLinkedBlockingQueue 类型可以修改 capacity，该类型功能和 LinkedBlockingQueue 相似，
-  只是 capacity 不是 final 类型，可以修改， VariableLinkedBlockingQueue 参考 RabbitMq 的实现
-
-- 启动看到如下日志输出证明接入成功
-
-  ```bash
-  |  __ \                            (_) |__   __|
-  | |  | |_   _ _ __   __ _ _ __ ___  _  ___| |_ __
-  | |  | | | | | '_ \ / _` | '_ ` _ | |/ __| | '_ \
-  | |__| | |_| | | | | (_| | | | | | | | (__| | |_) |
-  |_____/ __, |_| |_|__,_|_| |_| |_|_|___|_| .__/
-           __/ |                              | |
-          |___/                               |_|
-   :: Dynamic Thread Pool ::
-
-  DynamicTp register dtpExecutor, source: beanPostProcessor, executor: DtpMainPropWrapper(dtpName=dynamic-tp-test-1, corePoolSize=6, maxPoolSize=8, keepAliveTime=50, queueType=VariableLinkedBlockingQueue, queueCapacity=200, rejectType=RejectedCountableCallerRunsPolicy, allowCoreThreadTimeOut=false)
-  ```
-
-* 配置变更会推送通知消息，且会高亮变更的字段
-
-  ```bash
-  DynamicTp refresh, name: [dtpExecutor2], changed keys: [corePoolSize, queueCapacity], corePoolSize: [6 => 4], maxPoolSize: [8 => 8], queueType: [VariableLinkedBlockingQueue => VariableLinkedBlockingQueue], queueCapacity: [200 => 2000], keepAliveTime: [50s => 50s], rejectedType: [CallerRunsPolicy => CallerRunsPolicy], allowsCoreThreadTimeOut: [false => false]
-  ```
-
----
-
-## 介绍文章
-
-[美团动态线程池实践思路，开源了](https://juejin.cn/post/7063408526894301192)
-
-[动态线程池框架（DynamicTp），监控及源码解析篇](https://juejin.cn/post/7069581808932749348)
-
-[动态线程池（DynamicTp），动态调整Tomcat、Jetty、Undertow线程池参数篇](https://juejin.cn/post/7073286368629096485)
-
-[美团动态线程池实践思路开源项目（DynamicTp），线程池源码解析及通知告警篇](https://juejin.cn/post/7083387245712900126)
-
----
-
 ## 联系我
 
-对项目有什么想法或者建议，可以**加我微信拉交流群**，或者创建[issues](https://github.com/lyh200/dynamic-tpp/issues)，一起完善项目
+使用过程中有任何问题，或者对项目有什么想法或者建议，可以加入社群，跟群友一起交流讨论。
+
+微信群已满200人，可以关注微信公众号，加我个人微信拉群（备注：dynamic-tp）。
 
 ![](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/530709dc29604630b6d1537d7c160ea5~tplv-k3u1fbpfcp-watermark.image)

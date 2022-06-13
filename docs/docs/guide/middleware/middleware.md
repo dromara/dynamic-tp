@@ -39,7 +39,7 @@ springboot 内置的三大 webserver 集成包默认会引入，不需要自己�
    <dependency>
         <groupId>io.github.lyh200</groupId>
         <artifactId>dynamic-tp-spring-boot-starter-adapter-dubbo</artifactId>
-        <version>1.0.6</version>
+        <version>1.0.7</version>
     </dependency>
 ```
 
@@ -47,7 +47,7 @@ springboot 内置的三大 webserver 集成包默认会引入，不需要自己�
     <dependency>
         <groupId>io.github.lyh200</groupId>
         <artifactId>dynamic-tp-spring-boot-starter-adapter-rocketmq</artifactId>
-        <version>1.0.6</version>
+        <version>1.0.7</version>
     </dependency>
 ```
 
@@ -55,7 +55,7 @@ springboot 内置的三大 webserver 集成包默认会引入，不需要自己�
     <dependency>
         <groupId>io.github.lyh200</groupId>
         <artifactId>dynamic-tp-spring-boot-starter-adapter-hystrix</artifactId>
-        <version>1.0.6</version>
+        <version>1.0.7</version>
     </dependency>
 ```
 

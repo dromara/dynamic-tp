@@ -20,7 +20,7 @@ star: true
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-apollo</artifactId>
-           <version>1.0.6</version>
+           <version>1.0.7</version>
        </dependency>
    ```
 
@@ -29,7 +29,7 @@ star: true
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-nacos</artifactId>
-           <version>1.0.6</version>
+           <version>1.0.7</version>
        </dependency>
    ```
 
@@ -38,7 +38,7 @@ star: true
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-nacos</artifactId>
-           <version>1.0.6</version>
+           <version>1.0.7</version>
        </dependency>
    ```
 
@@ -47,7 +47,7 @@ star: true
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-zookeeper</artifactId>
-           <version>1.0.6</version>
+           <version>1.0.7</version>
        </dependency>
    ```
    application.yml 需配置 zk 地址节点信息
@@ -72,7 +72,7 @@ star: true
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-zookeeper</artifactId>
-           <version>1.0.6</version>
+           <version>1.0.7</version>
        </dependency>
    ```
    
@@ -83,7 +83,7 @@ star: true
        <dependency>
            <groupId>io.github.lyh200</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-consul</artifactId>
-           <version>1.0.6</version>
+           <version>1.0.7</version>
        </dependency>
    ```
 

@@ -20,7 +20,7 @@ star: true
 
 2.micrometer：采用监控门面，通过引入相关 micrometer 依赖采集到相应的存储平台里（如 Prometheus，InfluxDb...）
 
-3.暴雷 Endpoint端点，可以通过 http 方式实时获取指标数据
+3.暴露 Endpoint端点，可以通过 http 方式实时获取指标数据
 
 :::
 

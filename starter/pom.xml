@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.github.lyh200</groupId>
         <artifactId>dynamic-tp-all</artifactId>
-        <version>${revision}</version>
+        <version>1.0.7</version>
     </parent>
 
     <artifactId>dynamic-tp-starter</artifactId>
@@ -18,7 +18,6 @@
     </modules>
 
     <dependencies>
-
         <dependency>
             <groupId>io.github.lyh200</groupId>
             <artifactId>dynamic-tp-common</artifactId>
@@ -34,15 +33,5 @@
             <artifactId>dynamic-tp-logging</artifactId>
         </dependency>
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.github.lyh200</groupId>
-                <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
-                <version>${revision}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 </project>

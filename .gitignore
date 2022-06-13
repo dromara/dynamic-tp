@@ -32,7 +32,7 @@ build/
 ### VS Code ###
 .vscode/
 
-node_modules/
-docs/.vuepress/dist/
-docs/.vuepress/.cache
-docs/.vuepress/.temp
+docs/node_modules/
+docs/docs/.vuepress/dist/
+docs/docs/.vuepress/.cache/
+docs/docs/.vuepress/.temp/

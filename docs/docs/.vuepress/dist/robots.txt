@@ -1,5 +1,0 @@
-
-User-agent:*
-Disallow:
-
-Sitemap: https://gitee.com/dromara/dynamic-tp/sitemap.xml

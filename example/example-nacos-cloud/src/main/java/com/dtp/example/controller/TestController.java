@@ -3,6 +3,8 @@ package com.dtp.example.controller;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.support.NamedRunnable;
 import com.dtp.core.thread.DtpExecutor;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +23,19 @@ public class TestController {
     @Resource
     private ThreadPoolExecutor dtpExecutor1;
 
+    @HystrixCommand(
+            threadPoolKey = "testThreadPoolKey",
+            commandProperties = {
+                    @HystrixProperty(name = "execution.isolation.strategy", value = "THREAD"),
+                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "1000"),
+                    @HystrixProperty(name = "circuitBreaker.enabled", value = "true"),
+                    @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "200")
+            },
+            threadPoolProperties = {
+                    @HystrixProperty(name = "coreSize", value = "5"),
+                    @HystrixProperty(name = "maxQueueSize", value = "10")
+            }
+    )
     @GetMapping("/dtp-nacos-cloud-example/test")
     public String test() throws InterruptedException {
         task();

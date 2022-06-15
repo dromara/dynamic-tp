@@ -2,9 +2,11 @@ package com.dtp.core.parser;
 
 import com.dtp.common.em.ConfigFileTypeEnum;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -26,6 +28,10 @@ public class PropertiesConfigParser extends AbstractConfigParser {
 
     @Override
     public Map<Object, Object> doParse(String content) throws IOException {
+
+        if (StringUtils.isBlank(content)) {
+            return Collections.emptyMap();
+        }
         Properties properties = new Properties();
         properties.load(new StringReader(content));
         return properties;

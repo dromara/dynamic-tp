@@ -41,8 +41,10 @@ star: true
            <version>1.0.7</version>
        </dependency>
    ```
+   注意版本：nacos-config-spring-boot-starter 0.2.10 及以下版本对应 springboot 2.3.12.RELEASE及以下版本，
+   0.2.11-beta及以上版本对应springboot 版本2.4.0及以上版本，具体看官方说明
 
-4. zookeeper 应用接入用此依赖
+5. zookeeper 应用接入用此依赖
    ```xml
        <dependency>
            <groupId>io.github.lyh200</groupId>
@@ -67,7 +69,7 @@ star: true
     ```
     注：配置中心配置文件参考example-zookeeper/resource下的config.txt / config.json，该文件可以通过`ZKUI`工具导入到`Zookeeper`
    
-5. spring-cloud 场景下 zookeeper 应用接入用此依赖
+6. spring-cloud 场景下 zookeeper 应用接入用此依赖
    ```xml
        <dependency>
            <groupId>io.github.lyh200</groupId>
@@ -78,7 +80,7 @@ star: true
    
    注：配置中心配置文件参考example-zookeeper-cloud/resource下的config.txt，该文件可以通过`ZKUI`工具导入到`Zookeeper`
 
-6. spring-cloud 场景 consul 应用接入用此依赖
+7. spring-cloud 场景 consul 应用接入用此依赖
    ```xml
        <dependency>
            <groupId>io.github.lyh200</groupId>

@@ -2,11 +2,11 @@ package com.dtp.core.parser;
 
 import com.dtp.common.em.ConfigFileTypeEnum;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.io.ByteArrayResource;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -30,9 +30,8 @@ public class YamlConfigParser extends AbstractConfigParser {
     public Map<Object, Object> doParse(String content) {
 
         if (StringUtils.isEmpty(content)) {
-            return Maps.newHashMapWithExpectedSize(0);
+            return Collections.emptyMap();
         }
-
         YamlPropertiesFactoryBean bean = new YamlPropertiesFactoryBean();
         bean.setResources(new ByteArrayResource(content.getBytes()));
         return bean.getObject();

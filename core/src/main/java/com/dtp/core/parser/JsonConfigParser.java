@@ -2,11 +2,11 @@ package com.dtp.core.parser;
 
 import cn.hutool.core.map.MapUtil;
 import com.dtp.common.em.ConfigFileTypeEnum;
-import com.dtp.common.util.StringUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -38,6 +38,9 @@ public class JsonConfigParser extends AbstractConfigParser {
 
     @Override
     public Map<Object, Object> doParse(String content) throws IOException {
+        if (StringUtils.isEmpty(content)) {
+            return Collections.emptyMap();
+        }
         return doParse(content, MAIN_PROPERTIES_PREFIX);
     }
 
@@ -76,7 +79,7 @@ public class JsonConfigParser extends AbstractConfigParser {
     }
 
     private String genFullKey(String prefix, String key) {
-        if (StringUtil.isEmpty(prefix)) {
+        if (StringUtils.isEmpty(prefix)) {
             return key;
         }
 

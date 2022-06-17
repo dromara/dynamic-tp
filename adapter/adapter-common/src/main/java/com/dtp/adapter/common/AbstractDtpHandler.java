@@ -49,11 +49,16 @@ public abstract class AbstractDtpHandler implements DtpHandler, ApplicationListe
     public void onApplicationEvent(ApplicationStartedEvent event) {
         try {
             DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+            initialize();
             refresh(dtpProperties);
         } catch (Exception e) {
             log.error("Init third party thread pool failed.", e);
         }
     }
+
+    protected void initialize() {}
+
+    public void register(String poolName, ThreadPoolExecutor threadPoolExecutor) {}
 
     /**
      * Get multi thread pool stats.
@@ -117,8 +122,9 @@ public abstract class AbstractDtpHandler implements DtpHandler, ApplicationListe
 
         List<FieldInfo> diffFields = EQUATOR.getDiffFields(oldProp, newProp);
         List<String> diffKeys = diffFields.stream().map(FieldInfo::getFieldName).collect(toList());
-        log.info("DynamicTp adapter [{}] refreshed end, changed keys: {}, corePoolSize: [{}], maxPoolSize: [{}], " +
-                        "keepAliveTime: [{}]", name, diffKeys,
+        log.info("DynamicTp {} adapter, [{}] refreshed end, changed keys: {}, corePoolSize: [{}], " +
+                        "maxPoolSize: [{}], keepAliveTime: [{}]",
+                name, executorWrapper.getThreadPoolName(), diffKeys,
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getCorePoolSize(), properties.getCorePoolSize()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getMaxPoolSize(), properties.getMaximumPoolSize()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getKeepAliveTime(), properties.getKeepAliveTime()));

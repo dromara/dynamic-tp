@@ -33,7 +33,13 @@ star: true
 6. Hystrix 线程池管理
 :::
 
-springboot 内置的三大 webserver 集成包默认会引入，不需要自己引入，其他三方组件的包需要自己引入
+```xml
+   <dependency>
+        <groupId>io.github.lyh200</groupId>
+        <artifactId>dynamic-tp-spring-boot-starter-adapter-webserver</artifactId>
+        <version>1.0.7</version>
+    </dependency>
+```
 
 ```xml
    <dependency>

@@ -63,20 +63,20 @@ public class RocketMqDtpHandler extends AbstractDtpHandler {
         beans.forEach((k, v) -> {
             DefaultRocketMQListenerContainer container = (DefaultRocketMQListenerContainer) v;
             DefaultMQPushConsumer consumer = container.getConsumer();
-            val pushConsumer = (DefaultMQPushConsumerImpl) ReflectionUtil.getField(DefaultMQPushConsumer.class,
+            val pushConsumer = (DefaultMQPushConsumerImpl) ReflectionUtil.getFieldValue(DefaultMQPushConsumer.class,
                     "defaultMQPushConsumerImpl", consumer);
-            val consumeMessageService = pushConsumer.getConsumeMessageService();
             if (Objects.isNull(pushConsumer)) {
                 return;
             }
 
             String key = container.getConsumerGroup() + "#" + container.getTopic();
             ThreadPoolExecutor executor = null;
+            val consumeMessageService = pushConsumer.getConsumeMessageService();
             if (consumeMessageService instanceof ConsumeMessageConcurrentlyService) {
-                executor = (ThreadPoolExecutor) ReflectionUtil.getField(ConsumeMessageConcurrentlyService.class,
+                executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(ConsumeMessageConcurrentlyService.class,
                         CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
             } else if (consumeMessageService instanceof ConsumeMessageOrderlyService) {
-                executor = (ThreadPoolExecutor) ReflectionUtil.getField(ConsumeMessageOrderlyService.class,
+                executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(ConsumeMessageOrderlyService.class,
                         CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
             }
             if (Objects.nonNull(executor)) {

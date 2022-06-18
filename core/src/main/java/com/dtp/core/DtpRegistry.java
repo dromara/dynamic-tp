@@ -17,7 +17,6 @@ import com.dtp.core.notify.AlarmCounter;
 import com.dtp.core.notify.AlarmLimiter;
 import com.dtp.core.notify.NotifyHelper;
 import com.dtp.core.reject.RejectHandlerGetter;
-import com.dtp.core.support.ThreadPoolCreator;
 import com.dtp.core.support.wrapper.TaskWrapper;
 import com.dtp.core.support.wrapper.TaskWrappers;
 import com.dtp.core.thread.DtpExecutor;
@@ -36,7 +35,6 @@ import org.springframework.core.Ordered;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 import static com.dtp.common.dto.NotifyItem.mergeAllNotifyItems;
@@ -51,8 +49,6 @@ import static java.util.stream.Collectors.toList;
  **/
 @Slf4j
 public class DtpRegistry implements ApplicationRunner, Ordered {
-
-    private static final ExecutorService NOTIFY_EXECUTOR = ThreadPoolCreator.createCommonWithTtl("dtp-notify");
 
     /**
      * Maintain all automatically registered and manually registered DtpExecutors.
@@ -209,7 +205,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
                 .notifyItem(notifyItem)
                 .build();
         DtpContextHolder.set(context);
-        NOTIFY_EXECUTOR.execute(() -> NotifierHandler.getInstance().sendNotice(oldProp, diffKeys));
+        NotifierHandler.getInstance().sendNoticeAsync(oldProp, diffKeys);
     }
 
     private static void doRefresh(DtpExecutor dtpExecutor, ThreadPoolProperties properties) {

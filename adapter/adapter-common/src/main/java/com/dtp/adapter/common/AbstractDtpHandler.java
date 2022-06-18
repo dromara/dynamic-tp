@@ -140,7 +140,7 @@ public abstract class AbstractDtpHandler implements DtpHandler, ApplicationListe
                 .notifyItem(notifyItem)
                 .build();
         DtpContextHolder.set(context);
-        NotifierHandler.getInstance().sendNotice(oldProp, diffKeys);
+        NotifierHandler.getInstance().sendNoticeAsync(oldProp, diffKeys);
     }
 
     private void doRefresh(ExecutorWrapper executorWrapper,

@@ -8,12 +8,14 @@ import com.dtp.core.notify.Notifier;
 import com.dtp.core.notify.ding.DtpDingNotifier;
 import com.dtp.core.notify.lark.DtpLarkNotifier;
 import com.dtp.core.notify.wechat.DtpWechatNotifier;
+import com.dtp.core.support.ThreadPoolCreator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.concurrent.ExecutorService;
 
 /**
  * NotifierHandler related
@@ -23,6 +25,8 @@ import java.util.ServiceLoader;
  **/
 @Slf4j
 public class NotifierHandler {
+
+    private static final ExecutorService NOTICE_EXECUTOR = ThreadPoolCreator.createCommonWithTtl("dtp-notify");
 
     private static final Map<String, Notifier> NOTIFIERS = new HashMap<>();
 
@@ -38,6 +42,10 @@ public class NotifierHandler {
         NOTIFIERS.put(dingNotifier.platform(), dingNotifier);
         NOTIFIERS.put(wechatNotifier.platform(), wechatNotifier);
         NOTIFIERS.put(larkNotifier.platform(), larkNotifier);
+    }
+
+    public void sendNoticeAsync(DtpMainProp prop, List<String> diffs) {
+        NOTICE_EXECUTOR.execute(() -> sendNotice(prop, diffs));
     }
 
     public void sendNotice(DtpMainProp prop, List<String> diffs) {

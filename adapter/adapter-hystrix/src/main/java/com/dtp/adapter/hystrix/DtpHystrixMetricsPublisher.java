@@ -1,11 +1,11 @@
 package com.dtp.adapter.hystrix;
 
-import com.netflix.hystrix.*;
+import com.netflix.hystrix.HystrixThreadPoolKey;
+import com.netflix.hystrix.HystrixThreadPoolMetrics;
+import com.netflix.hystrix.HystrixThreadPoolProperties;
 import com.netflix.hystrix.strategy.metrics.HystrixMetricsPublisher;
-import com.netflix.hystrix.strategy.metrics.HystrixMetricsPublisherCollapser;
-import com.netflix.hystrix.strategy.metrics.HystrixMetricsPublisherCommand;
 import com.netflix.hystrix.strategy.metrics.HystrixMetricsPublisherThreadPool;
-import io.micrometer.core.instrument.binder.hystrix.MicrometerMetricsPublisherCommand;
+import lombok.val;
 
 /**
  * DtpHystrixMetricsPublisher related
@@ -21,26 +21,12 @@ public class DtpHystrixMetricsPublisher extends HystrixMetricsPublisher {
     }
 
     @Override
-    public HystrixMetricsPublisherThreadPool getMetricsPublisherForThreadPool(HystrixThreadPoolKey threadPoolKey, HystrixThreadPoolMetrics metrics, HystrixThreadPoolProperties properties) {
-        HystrixMetricsPublisherThreadPool metricsPublisherForThreadPool =
+    public HystrixMetricsPublisherThreadPool getMetricsPublisherForThreadPool(HystrixThreadPoolKey threadPoolKey,
+                                                                              HystrixThreadPoolMetrics metrics,
+                                                                              HystrixThreadPoolProperties properties) {
+        val metricsPublisherForThreadPool =
                 metricsPublisher.getMetricsPublisherForThreadPool(threadPoolKey, metrics, properties);
         return new DtpMetricsPublisherThreadPool(threadPoolKey, metrics, properties, metricsPublisherForThreadPool);
-    }
-
-    @Override
-    public HystrixMetricsPublisherCollapser getMetricsPublisherForCollapser(HystrixCollapserKey collapserKey, HystrixCollapserMetrics metrics, HystrixCollapserProperties properties) {
-        return metricsPublisher.getMetricsPublisherForCollapser(collapserKey, metrics, properties);
-    }
-
-    @Override
-    public HystrixMetricsPublisherCommand getMetricsPublisherForCommand(HystrixCommandKey commandKey,
-                                                                        HystrixCommandGroupKey commandGroupKey,
-                                                                        HystrixCommandMetrics metrics,
-                                                                        HystrixCircuitBreaker circuitBreaker,
-                                                                        HystrixCommandProperties properties) {
-        HystrixMetricsPublisherCommand metricsPublisherForCommand =
-                metricsPublisher.getMetricsPublisherForCommand(commandKey, commandGroupKey, metrics, circuitBreaker, properties);
-        return metricsPublisherForCommand;
     }
 }
 

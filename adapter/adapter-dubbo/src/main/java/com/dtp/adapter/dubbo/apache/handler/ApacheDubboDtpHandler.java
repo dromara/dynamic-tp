@@ -80,7 +80,7 @@ public class ApacheDubboDtpHandler extends AbstractDtpHandler {
             executorRepository = ExtensionLoader.getExtensionLoader(ExecutorRepository.class).getDefaultExtension();
         }
 
-        val data = (ConcurrentMap<String, ConcurrentMap<Integer, ExecutorService>>) ReflectionUtil.getField(
+        val data = (ConcurrentMap<String, ConcurrentMap<Integer, ExecutorService>>) ReflectionUtil.getFieldValue(
                 DefaultExecutorRepository.class, "data", executorRepository);
         if (Objects.isNull(data)) {
             return DUBBO_EXECUTORS;

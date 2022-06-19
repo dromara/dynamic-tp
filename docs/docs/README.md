@@ -4,7 +4,7 @@ icon: home
 title: 首页
 heroImage: /logo.png
 heroText: dynamic-tp
-tagline: 🔥🔥🔥 基于配置中心的轻量级动态线程池
+tagline: 🔥🔥🔥 基于配置中心的轻量级动态可监控线程池
 actions:
     - text: 快速上手 🎉
       link: /guide/use/quick-start
@@ -27,12 +27,12 @@ features:
 
   - title: 运行监控
     icon: eye
-    details: 定时采集线程池运行指标数据，支持json long输出、micrometer、endpoint三种指标数据输出方式，可灵活选择
+    details: 定时采集线程池运行指标数据，提供jsonlog、micrometer、endpoint三种指标数据采集方式，可灵活选择
     link: "/guide/monitor/way"
 
   - title: 三方包集成
     icon: grid
-    details: 集成三方中间件线程池管理，已接入dubbo、rocketmq、tomcat、undertow、hystrix、jetty等组件线程池管理
+    details: 集成三方中间件线程池管理，已接入dubbo、rocketmq、hystrix、tomcat、undertow、jetty等组件线程池管理
     link: "/guide/middleware/middleware"
 ---
 

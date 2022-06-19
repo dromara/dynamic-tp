@@ -3,10 +3,12 @@ package com.dtp.adapter.hystrix.handler;
 import cn.hutool.core.collection.CollUtil;
 import com.dtp.adapter.common.AbstractDtpHandler;
 import com.dtp.adapter.hystrix.DtpHystrixMetricsPublisher;
+import com.dtp.adapter.hystrix.DtpMetricsPublisherThreadPool;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
+import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.util.StreamUtil;
 import com.google.common.collect.Maps;
 import com.netflix.hystrix.strategy.HystrixPlugins;
@@ -18,7 +20,9 @@ import com.netflix.hystrix.strategy.properties.HystrixPropertiesStrategy;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -34,6 +38,8 @@ public class HystrixDtpHandler extends AbstractDtpHandler {
 
     private static final Map<String, ExecutorWrapper> HYSTRIX_EXECUTORS = Maps.newHashMap();
 
+    private static final Map<String, DtpMetricsPublisherThreadPool> METRICS_PUBLISHERS = Maps.newHashMap();
+
     @Override
     public void refresh(DtpProperties dtpProperties) {
         val properties = dtpProperties.getHystrixTp();
@@ -44,6 +50,19 @@ public class HystrixDtpHandler extends AbstractDtpHandler {
 
         val tmpMap = StreamUtil.toMap(properties, SimpleTpProperties::getThreadPoolName);
         executorWrappers.forEach((k ,v) -> refresh(NAME, v, dtpProperties.getPlatforms(), tmpMap.get(k)));
+    }
+
+    @Override
+    public void refresh(String name,
+                        ExecutorWrapper executorWrapper,
+                        List<NotifyPlatform> platforms,
+                        SimpleTpProperties properties) {
+        super.refresh(name, executorWrapper, platforms, properties);
+        val metricsPublisher = METRICS_PUBLISHERS.get(executorWrapper.getThreadPoolName());
+        if (Objects.isNull(metricsPublisher)) {
+            return;
+        }
+        metricsPublisher.refreshProperties(properties);
     }
 
     @Override
@@ -66,6 +85,10 @@ public class HystrixDtpHandler extends AbstractDtpHandler {
 
         refresh(NAME, executorWrapper, dtpProperties.getPlatforms(), tmpMap.get(poolName));
         log.info("DynamicTp adapter, hystrix executor [{}] init end", poolName);
+    }
+
+    public void cacheMetricsPublisher(String poolName, DtpMetricsPublisherThreadPool metricsPublisher) {
+        METRICS_PUBLISHERS.putIfAbsent(poolName, metricsPublisher);
     }
 
     @Override

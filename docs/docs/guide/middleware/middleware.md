@@ -12,11 +12,11 @@ sticky: true
 star: true
 ---
 
-你还在为 Dubbo 线程池溢出而烦恼吗？😭😭😭
+你还在为 Dubbo 线程池耗尽而烦恼吗？😭😭😭
 
 你还在为 RocketMq 消费积压而烦恼吗？😭😭😭
 
-快快使用 DynamicTp 的三方中间件线程池管理功能吧，完美减少你的烦恼。😅😅😅
+快快使用 DynamicTp 的三方中间件线程池管理功能吧，一定程度上能减少你的烦恼。😅😅😅
 
 ::: tip
 已接入三方中间件
@@ -32,6 +32,8 @@ star: true
 
 6. Hystrix 线程池管理
 :::
+
+依赖如下，使用时需要手动引入对应依赖
 
 ```xml
    <dependency>
@@ -73,4 +75,6 @@ star: true
 3.Dubbo、RocketMq、Hystrix 享有动态调参、监控、通知告警 完整的功能
 
 4.注意配置时 threadPoolName 规则，配置文件有注释
+
+5.三方组件线程池通知告警项有（调参通知、活性告警、队列容量告警），可通过 notifyItems 自定义配置项值，默认全部开启
 :::

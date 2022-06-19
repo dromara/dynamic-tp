@@ -75,6 +75,12 @@ spring:
           corePoolSize: 100
           maximumPoolSize: 200
           keepAliveTime: 60
+          notifyItems:                             # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警）
+            - type: capacity                       # 报警项类型，查看源码 NotifyTypeEnum枚举类
+              enabled: true
+              threshold: 80                        # 报警阈值
+              platforms: [ding,wechat]             # 可选配置，不配置默认拿上层platforms配置的所以平台
+              interval: 120                        # 报警间隔（单位：s）
       rocketMqTp:                                  # rocketmq 线程池配置
         - threadPoolName: group1#topic1            # 名称规则：group + "#" + topic
           corePoolSize: 200

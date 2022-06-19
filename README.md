@@ -22,17 +22,17 @@
 
 ## 背景
 
-**使用 ThreadPoolExecutor 过程中你是否有以下痛点呢？**
+**使用线程池 ThreadPoolExecutor 过程中你是否有以下痛点呢？**
 
 > 1.代码中创建了一个 ThreadPoolExecutor，但是不知道那几个核心参数设置多少比较合适
 >
 > 2.凭经验设置参数值，上线后发现需要调整，改代码重启服务，非常麻烦
 >
-> 3.线程池相对开发人员来说是个黑盒，运行情况不能感知到，直到出现问题
+> 3.线程池相对开发人员来说是个黑盒，运行情况不能及时感知到，直到出现问题
 
 如果你有以上痛点，动态可监控线程池（DynamicTp）或许能帮助到你。
 
-如果看过 ThreadPoolExecutor 的源码，大概可以知道其实它有提供一些 set 方法，可以在运行时动态去修改相应的值，这些方法有：
+如果看过 ThreadPoolExecutor 的源码，大概可以知道它对核心参数基本都有提供 set / get 方法以及一些扩展方法，可以在运行时动态修改、获取相应的值，这些方法有：
 
 ```java
 public void setCorePoolSize(int corePoolSize);
@@ -40,6 +40,17 @@ public void setMaximumPoolSize(int maximumPoolSize);
 public void setKeepAliveTime(long time, TimeUnit unit);
 public void setThreadFactory(ThreadFactory threadFactory);
 public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
+public void allowCoreThreadTimeOut(boolean value);
+
+public int getCorePoolSize();
+public int getMaximumPoolSize();
+public long getKeepAliveTime(TimeUnit unit);
+public BlockingQueue<Runnable> getQueue();
+public RejectedExecutionHandler getRejectedExecutionHandler();
+public boolean allowsCoreThreadTimeOut();
+
+protected void beforeExecute(Thread t, Runnable r);
+protected void afterExecute(Runnable r, Throwable t);
 ```
 
 现在大多数的互联网项目其实都会微服务化部署，有一套自己的服务治理体系，微服务组件中的分布式配置中心扮演的就是动态修改配置，

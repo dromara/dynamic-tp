@@ -1,7 +1,7 @@
 package com.dtp.core;
 
 import cn.hutool.core.collection.CollUtil;
-import com.dtp.common.VariableLinkedBlockingQueue;
+import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.ThreadPoolProperties;
 import com.dtp.common.constant.DynamicTpConst;

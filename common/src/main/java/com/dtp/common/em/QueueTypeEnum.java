@@ -1,12 +1,15 @@
 package com.dtp.common.em;
 
-import com.dtp.common.VariableLinkedBlockingQueue;
+import com.dtp.common.queue.MemorySafeLinkedBlockingQueue;
+import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.common.ex.DtpException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
 import java.util.concurrent.*;
+
+import static com.dtp.common.queue.MemorySafeLinkedBlockingQueue.THE_256_MB;
 
 /**
  * QueueTypeEnum related
@@ -35,7 +38,9 @@ public enum QueueTypeEnum {
 
     LINKED_BLOCKING_DEQUE(7,"LinkedBlockingDeque"),
 
-    VARIABLE_LINKED_BLOCKING_QUEUE(8,"VariableLinkedBlockingQueue");
+    VARIABLE_LINKED_BLOCKING_QUEUE(8,"VariableLinkedBlockingQueue"),
+
+    MEMORY_SAFE_LINKED_BLOCKING_QUEUE(9,"MemorySafeLinkedBlockingQueue");
 
     private final Integer code;
     private final String name;
@@ -63,6 +68,8 @@ public enum QueueTypeEnum {
             blockingQueue = new LinkedBlockingDeque<>(capacity);
         } else if (Objects.equals(name, VARIABLE_LINKED_BLOCKING_QUEUE.getName())) {
             blockingQueue = new VariableLinkedBlockingQueue<>(capacity);
+        } else if (Objects.equals(name, MEMORY_SAFE_LINKED_BLOCKING_QUEUE.getName())) {
+            blockingQueue = new MemorySafeLinkedBlockingQueue<>(THE_256_MB, capacity);
         }
         if (blockingQueue != null) {
             return blockingQueue;

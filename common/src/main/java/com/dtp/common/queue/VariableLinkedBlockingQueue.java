@@ -24,7 +24,7 @@
  * https://creativecommons.org/licenses/publicdomain
  */
 
-package com.dtp.common;
+package com.dtp.common.queue;
 
 import java.util.AbstractQueue;
 import java.util.Collection;

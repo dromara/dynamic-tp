@@ -1,6 +1,6 @@
 package com.dtp.core.support;
 
-import com.dtp.common.VariableLinkedBlockingQueue;
+import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.core.thread.EagerDtpExecutor;
 import org.springframework.lang.NonNull;
 

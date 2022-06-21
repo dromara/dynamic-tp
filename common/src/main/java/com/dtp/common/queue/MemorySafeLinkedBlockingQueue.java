@@ -15,10 +15,9 @@
  * limitations under the License.
  */
 
-package com.dtp.common;
+package com.dtp.common.queue;
 
 import java.util.Collection;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,11 +25,11 @@ import java.util.concurrent.TimeUnit;
  *
  * @see <a href="https://github.com/apache/incubator-shenyu/blob/master/shenyu-common/src/main/java/org/apache/shenyu/common/concurrent/MemorySafeLinkedBlockingQueue.java">MemorySafeLinkedBlockingQueue</a>
  */
-public class MemorySafeLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
+public class MemorySafeLinkedBlockingQueue<E> extends VariableLinkedBlockingQueue<E> {
 
     private static final long serialVersionUID = 8032578371739960142L;
 
-    public static int THE_256_MB = 256 * 1024 * 1024;
+    public static final int THE_256_MB = 256 * 1024 * 1024;
 
     private int maxFreeMemory;
 
@@ -43,8 +42,12 @@ public class MemorySafeLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
         this.maxFreeMemory = maxFreeMemory;
     }
 
-    public MemorySafeLinkedBlockingQueue(final Collection<? extends E> c,
-                                         final int maxFreeMemory) {
+    public MemorySafeLinkedBlockingQueue(final int maxFreeMemory, final int capacity) {
+        super(capacity);
+        this.maxFreeMemory = maxFreeMemory;
+    }
+
+    public MemorySafeLinkedBlockingQueue(final Collection<? extends E> c, final int maxFreeMemory) {
         super(c);
         this.maxFreeMemory = maxFreeMemory;
     }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.dtp.common;
+package com.dtp.common.queue;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

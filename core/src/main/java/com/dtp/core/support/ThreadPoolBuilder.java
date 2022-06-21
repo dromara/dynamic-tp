@@ -3,7 +3,7 @@ package com.dtp.core.support;
 import cn.hutool.core.collection.CollUtil;
 import com.alibaba.ttl.TtlRunnable;
 import com.alibaba.ttl.threadpool.TtlExecutors;
-import com.dtp.common.VariableLinkedBlockingQueue;
+import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyTypeEnum;

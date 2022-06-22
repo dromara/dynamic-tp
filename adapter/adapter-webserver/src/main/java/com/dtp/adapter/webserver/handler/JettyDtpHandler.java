@@ -58,11 +58,11 @@ public class JettyDtpHandler extends AbstractWebServerDtpHandler {
             return;
         }
 
-        checkParams(properties);
         val executorWrapper = getWrapper();
         ThreadPool.SizedThreadPool threadPool = (ThreadPool.SizedThreadPool) executorWrapper.getExecutor();
         int oldCoreSize = threadPool.getMinThreads();
         int oldMaxSize = threadPool.getMaxThreads();
+        checkParams(oldMaxSize, properties);
 
         threadPool.setMinThreads(properties.getCorePoolSize());
         threadPool.setMaxThreads(properties.getMaximumPoolSize());

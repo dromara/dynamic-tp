@@ -60,9 +60,10 @@ public class TomcatDtpHandler extends AbstractWebServerDtpHandler {
             return;
         }
 
-        checkParams(properties);
         val executorWrapper = getWrapper();
         ThreadPoolExecutor executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
+        checkParams(executor.getMaximumPoolSize(), properties);
+
         int oldCoreSize = executor.getCorePoolSize();
         int oldMaxSize = executor.getMaximumPoolSize();
         long oldKeepAliveTime = executor.getKeepAliveTime(properties.getUnit());

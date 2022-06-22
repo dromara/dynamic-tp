@@ -90,10 +90,12 @@ public abstract class AbstractDtpHandler implements DtpHandler, ApplicationListe
                         List<NotifyPlatform> platforms,
                         SimpleTpProperties properties) {
 
-        if (Objects.isNull(properties)) {
+        if (Objects.isNull(properties) || Objects.isNull(executorWrapper)) {
             return;
         }
-        checkParams(properties);
+        val e = (ThreadPoolExecutor) executorWrapper.getExecutor();
+        checkParams(e.getMaximumPoolSize(), properties);
+
         DtpMainProp oldProp = ExecutorConverter.convert(executorWrapper);
         doRefresh(executorWrapper, platforms, properties);
         DtpMainProp newProp = ExecutorConverter.convert(executorWrapper);

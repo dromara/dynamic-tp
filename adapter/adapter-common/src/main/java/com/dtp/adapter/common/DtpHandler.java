@@ -62,13 +62,16 @@ public interface DtpHandler {
 
     /**
      * Check update params.
+     *
+     * @param oldMaxPoolSize old maxPoolSize
      * @param properties the targeted properties
      */
-    default void checkParams(SimpleTpProperties properties) {
+    default void checkParams(int oldMaxPoolSize, SimpleTpProperties properties) {
         if (properties.getCorePoolSize() < 0 ||
                 properties.getMaximumPoolSize() <= 0 ||
                 properties.getMaximumPoolSize() < properties.getCorePoolSize() ||
-                properties.getKeepAliveTime() < 0) {
+                properties.getKeepAliveTime() < 0 ||
+                oldMaxPoolSize < properties.getCorePoolSize()) {
             throw new IllegalArgumentException();
         }
     }

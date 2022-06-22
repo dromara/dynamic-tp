@@ -68,14 +68,14 @@ public class UndertowDtpHandler extends AbstractWebServerDtpHandler {
             return;
         }
 
-        checkParams(properties);
-        val executorWrapper = getWrapper();
-        XnioWorker xnioWorker = (XnioWorker) executorWrapper.getExecutor();
-
         try {
+            val executorWrapper = getWrapper();
+            XnioWorker xnioWorker = (XnioWorker) executorWrapper.getExecutor();
+
             int oldCorePoolSize = xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS);
             int oldMaxPoolSize = xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS);
             int oldKeepAliveTime = xnioWorker.getOption(Options.WORKER_TASK_KEEPALIVE);
+            checkParams(oldMaxPoolSize, properties);
 
             int keepAlive = properties.getKeepAliveTime() * 1000;
             xnioWorker.setOption(Options.WORKER_TASK_CORE_THREADS, properties.getCorePoolSize());

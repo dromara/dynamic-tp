@@ -31,6 +31,11 @@ public class UndertowDtpHandler extends AbstractWebServerDtpHandler {
 
     private static final String POOL_NAME = "undertowTp";
 
+    public UndertowDtpHandler() {
+        super();
+        System.setProperty("jboss.threads.eqe.statistics.active-count", "true");
+    }
+
     @Override
     public ExecutorWrapper doGetExecutorWrapper(WebServer webServer) {
 

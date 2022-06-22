@@ -12,6 +12,7 @@ import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
 import com.dtp.core.convert.ExecutorConverter;
+import com.dtp.core.convert.MetricsConverter;
 import com.dtp.core.handler.NotifierHandler;
 import com.dtp.core.notify.AlarmCounter;
 import com.dtp.core.notify.AlarmLimiter;
@@ -73,25 +74,7 @@ public abstract class AbstractDtpHandler implements DtpHandler, ApplicationListe
         }
 
         List<ThreadPoolStats> threadPoolStats = Lists.newArrayList();
-        executorWrappers.forEach((k, v) -> {
-            val e = (ThreadPoolExecutor) v.getExecutor();
-            val stats = ThreadPoolStats.builder()
-                    .corePoolSize(e.getCorePoolSize())
-                    .maximumPoolSize(e.getMaximumPoolSize())
-                    .queueType(e.getQueue().getClass().getSimpleName())
-                    .queueCapacity(e.getQueue().size() + e.getQueue().remainingCapacity())
-                    .queueSize(e.getQueue().size())
-                    .queueRemainingCapacity(e.getQueue().remainingCapacity())
-                    .activeCount(e.getActiveCount())
-                    .taskCount(e.getTaskCount())
-                    .completedTaskCount(e.getCompletedTaskCount())
-                    .largestPoolSize(e.getLargestPoolSize())
-                    .poolSize(e.getPoolSize())
-                    .waitTaskCount(e.getQueue().size())
-                    .poolName(k)
-                    .build();
-            threadPoolStats.add(stats);
-        });
+        executorWrappers.forEach((k, v) -> threadPoolStats.add(MetricsConverter.convert(v)));
         return threadPoolStats;
     }
 

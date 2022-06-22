@@ -71,6 +71,12 @@
         </dependency>
 
         <dependency>
+            <groupId>io.github.lyh200</groupId>
+            <artifactId>dynamic-tp-spring-boot-starter-adapter-webserver</artifactId>
+            <version>${dtp.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>

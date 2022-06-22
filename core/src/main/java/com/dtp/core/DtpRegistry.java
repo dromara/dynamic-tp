@@ -210,12 +210,17 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
     private static void doRefresh(DtpExecutor dtpExecutor, ThreadPoolProperties properties) {
 
-        if (!Objects.equals(dtpExecutor.getCorePoolSize(), properties.getCorePoolSize())) {
+        if (!Objects.equals(dtpExecutor.getCorePoolSize(), properties.getCorePoolSize())
+                && dtpExecutor.getMaximumPoolSize() >= properties.getCorePoolSize()) {
             dtpExecutor.setCorePoolSize(properties.getCorePoolSize());
         }
 
         if (!Objects.equals(dtpExecutor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
             dtpExecutor.setMaximumPoolSize(properties.getMaximumPoolSize());
+        }
+
+        if (!Objects.equals(dtpExecutor.getCorePoolSize(), properties.getCorePoolSize())) {
+            dtpExecutor.setCorePoolSize(properties.getCorePoolSize());
         }
 
         if (!Objects.equals(dtpExecutor.getKeepAliveTime(properties.getUnit()), properties.getKeepAliveTime())) {

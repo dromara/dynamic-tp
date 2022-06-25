@@ -1,15 +1,15 @@
 package com.dtp.common.em;
 
+import com.dtp.common.ex.DtpException;
 import com.dtp.common.queue.MemorySafeLinkedBlockingQueue;
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
-import com.dtp.common.ex.DtpException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
 import java.util.concurrent.*;
 
-import static com.dtp.common.queue.MemorySafeLinkedBlockingQueue.THE_256_MB;
+import static com.dtp.common.constant.DynamicTpConst.M_1;
 
 /**
  * QueueTypeEnum related
@@ -50,7 +50,7 @@ public enum QueueTypeEnum {
         this.name = name;
     }
 
-    public static BlockingQueue<Runnable> buildBlockingQueue(String name, int capacity, boolean fair) {
+    public static BlockingQueue<Runnable> buildLbq(String name, int capacity, boolean fair, int maxFreeMemory) {
         BlockingQueue<Runnable> blockingQueue = null;
         if (Objects.equals(name, ARRAY_BLOCKING_QUEUE.getName())) {
             blockingQueue = new ArrayBlockingQueue<>(capacity);
@@ -69,7 +69,7 @@ public enum QueueTypeEnum {
         } else if (Objects.equals(name, VARIABLE_LINKED_BLOCKING_QUEUE.getName())) {
             blockingQueue = new VariableLinkedBlockingQueue<>(capacity);
         } else if (Objects.equals(name, MEMORY_SAFE_LINKED_BLOCKING_QUEUE.getName())) {
-            blockingQueue = new MemorySafeLinkedBlockingQueue<>(THE_256_MB, capacity);
+            blockingQueue = new MemorySafeLinkedBlockingQueue<>(capacity, maxFreeMemory * M_1);
         }
         if (blockingQueue != null) {
             return blockingQueue;

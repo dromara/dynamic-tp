@@ -25,7 +25,7 @@ import java.util.concurrent.BlockingQueue;
 
 import static com.dtp.common.constant.DynamicTpConst.*;
 import static com.dtp.common.dto.NotifyItem.mergeAllNotifyItems;
-import static com.dtp.common.em.QueueTypeEnum.buildBlockingQueue;
+import static com.dtp.common.em.QueueTypeEnum.buildLbq;
 
 /**
  * DtpBeanDefinitionRegistrar related
@@ -87,9 +87,9 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
 
         BlockingQueue<Runnable> taskQueue;
         if (clazz.equals(EagerDtpExecutor.class)) {
-            taskQueue = new TaskQueue(tpp.getQueueCapacity());
+            taskQueue = new TaskQueue(tpp.getQueueCapacity(), tpp.getMaxFreeMemory() * M_1);
         } else {
-            taskQueue = buildBlockingQueue(tpp.getQueueType(), tpp.getQueueCapacity(), tpp.isFair());
+            taskQueue = buildLbq(tpp.getQueueType(), tpp.getQueueCapacity(), tpp.isFair(), tpp.getMaxFreeMemory());
         }
 
         return new Object[] {

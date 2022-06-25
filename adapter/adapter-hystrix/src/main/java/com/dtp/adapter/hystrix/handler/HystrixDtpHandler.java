@@ -1,6 +1,5 @@
 package com.dtp.adapter.hystrix.handler;
 
-import cn.hutool.core.collection.CollUtil;
 import com.dtp.adapter.common.AbstractDtpHandler;
 import com.dtp.adapter.hystrix.DtpHystrixMetricsPublisher;
 import com.dtp.adapter.hystrix.DtpMetricsPublisherThreadPool;
@@ -42,14 +41,7 @@ public class HystrixDtpHandler extends AbstractDtpHandler {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        val properties = dtpProperties.getHystrixTp();
-        val executorWrappers = getExecutorWrappers();
-        if (CollUtil.isEmpty(properties) || CollUtil.isEmpty(executorWrappers)) {
-            return;
-        }
-
-        val tmpMap = StreamUtil.toMap(properties, SimpleTpProperties::getThreadPoolName);
-        executorWrappers.forEach((k ,v) -> refresh(NAME, v, dtpProperties.getPlatforms(), tmpMap.get(k)));
+        refresh(NAME, dtpProperties.getHystrixTp(), dtpProperties.getPlatforms());
     }
 
     @Override
@@ -93,6 +85,7 @@ public class HystrixDtpHandler extends AbstractDtpHandler {
 
     @Override
     protected void initialize() {
+        super.initialize();
         HystrixEventNotifier eventNotifier = HystrixPlugins.getInstance().getEventNotifier();
         HystrixPropertiesStrategy propertiesStrategy = HystrixPlugins.getInstance().getPropertiesStrategy();
         HystrixCommandExecutionHook commandExecutionHook = HystrixPlugins.getInstance().getCommandExecutionHook();
@@ -106,7 +99,5 @@ public class HystrixDtpHandler extends AbstractDtpHandler {
         HystrixPlugins.getInstance().registerEventNotifier(eventNotifier);
         HystrixPlugins.getInstance().registerPropertiesStrategy(propertiesStrategy);
         HystrixPlugins.getInstance().registerCommandExecutionHook(commandExecutionHook);
-
-        super.initialize();
     }
 }

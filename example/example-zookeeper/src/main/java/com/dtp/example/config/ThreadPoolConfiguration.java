@@ -1,16 +1,17 @@
 package com.dtp.example.config;
 
-import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.core.support.DynamicTp;
+import com.dtp.core.support.ThreadPoolBuilder;
 import com.dtp.core.support.ThreadPoolCreator;
 import com.dtp.core.thread.DtpExecutor;
-import com.dtp.core.support.ThreadPoolBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import static com.dtp.common.em.QueueTypeEnum.SYNCHRONOUS_QUEUE;
 
 /**
  * @author Redick01
@@ -70,7 +71,7 @@ public class ThreadPoolConfiguration {
                 .maximumPoolSize(15)
                 .keepAliveTime(15000)
                 .timeUnit(TimeUnit.MILLISECONDS)
-                .workQueue(QueueTypeEnum.SYNCHRONOUS_QUEUE.getName(), null, false)
+                .workQueue(SYNCHRONOUS_QUEUE.getName(), null, false, null)
                 .waitForTasksToCompleteOnShutdown(true)
                 .awaitTerminationSeconds(5)
                 .buildDynamic();

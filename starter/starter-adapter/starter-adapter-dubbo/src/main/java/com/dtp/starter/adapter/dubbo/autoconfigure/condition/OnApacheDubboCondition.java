@@ -1,7 +1,6 @@
 package com.dtp.starter.adapter.dubbo.autoconfigure.condition;
 
-import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.AnyNestedCondition;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Condition;
 
@@ -11,18 +10,18 @@ import org.springframework.context.annotation.Condition;
  * @author yanhom
  * @since 1.0.6
  */
-public class OnApacheDubboCondition extends AllNestedConditions {
+public class OnApacheDubboCondition extends AnyNestedCondition {
 
     OnApacheDubboCondition() {
         super(ConfigurationPhase.REGISTER_BEAN);
     }
 
-    @ConditionalOnProperty(prefix = "dubbo", name = "enabled", matchIfMissing = true)
+    @ConditionalOnProperty(name = "dubbo.enabled", matchIfMissing = true)
     static class PropertyEnabled {}
 
-    /**
-     * just any common bean.
-     */
-    @ConditionalOnBean(type = "org.apache.dubbo.config.spring.beans.factory.annotation.ReferenceAnnotationBeanPostProcessor")
-    static class AnyCommonBean {}
+    @ConditionalOnProperty(name = "dubbo.application.name")
+    static class DubboAppName {}
+
+    @ConditionalOnProperty(name = "dubbo.registry.address")
+    static class DubboRegistryAddress {}
 }

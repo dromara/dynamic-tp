@@ -9,6 +9,7 @@ import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.util.StreamUtil;
 import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
 import com.dtp.core.convert.ExecutorConverter;
@@ -23,7 +24,7 @@ import com.github.dadiyang.equator.GetterBaseEquator;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 
 import java.util.Collections;
@@ -42,12 +43,12 @@ import static java.util.stream.Collectors.toList;
  * @since 1.0.6
  */
 @Slf4j
-public abstract class AbstractDtpHandler implements DtpHandler, ApplicationListener<ApplicationStartedEvent> {
+public abstract class AbstractDtpHandler implements DtpHandler, ApplicationListener<ApplicationReadyEvent> {
 
     private static final Equator EQUATOR = new GetterBaseEquator();
 
     @Override
-    public void onApplicationEvent(ApplicationStartedEvent event) {
+    public void onApplicationEvent(ApplicationReadyEvent event) {
         try {
             DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
             initialize();
@@ -83,6 +84,16 @@ public abstract class AbstractDtpHandler implements DtpHandler, ApplicationListe
             AlarmLimiter.initAlarmLimiter(poolName, x);
             AlarmCounter.init(poolName, x.getType());
         });
+    }
+
+    public void refresh(String name, List<SimpleTpProperties> properties, List<NotifyPlatform> platforms) {
+        val executorWrappers = getExecutorWrappers();
+        if (CollUtil.isEmpty(properties) || CollUtil.isEmpty(executorWrappers)) {
+            return;
+        }
+
+        val tmpMap = StreamUtil.toMap(properties, SimpleTpProperties::getThreadPoolName);
+        executorWrappers.forEach((k ,v) -> refresh(name, v, platforms, tmpMap.get(k)));
     }
 
     public void refresh(String name,

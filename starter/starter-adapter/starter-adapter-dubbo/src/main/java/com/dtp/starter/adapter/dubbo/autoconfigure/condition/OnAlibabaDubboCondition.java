@@ -1,6 +1,6 @@
 package com.dtp.starter.adapter.dubbo.autoconfigure.condition;
 
-import org.springframework.boot.autoconfigure.condition.AllNestedConditions;
+import org.springframework.boot.autoconfigure.condition.AnyNestedCondition;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Condition;
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Condition;
  * @author yanhom
  * @since 1.0.6
  */
-public class OnAlibabaDubboCondition extends AllNestedConditions {
+public class OnAlibabaDubboCondition extends AnyNestedCondition {
 
     OnAlibabaDubboCondition() {
         super(ConfigurationPhase.REGISTER_BEAN);

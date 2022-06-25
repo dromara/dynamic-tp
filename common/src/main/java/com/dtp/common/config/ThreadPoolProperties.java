@@ -51,6 +51,11 @@ public class ThreadPoolProperties {
     private int queueCapacity = 1024;
 
     /**
+     * Max free memory for MemorySafeLBQ, unit M
+     */
+    private int maxFreeMemory = 256;
+
+    /**
      * Blocking queue type, see {@link QueueTypeEnum}
      */
     private String queueType = QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE.getName();

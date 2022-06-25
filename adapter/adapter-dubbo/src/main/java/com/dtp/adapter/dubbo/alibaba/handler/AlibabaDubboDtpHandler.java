@@ -1,14 +1,11 @@
 package com.dtp.adapter.dubbo.alibaba.handler;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 import com.alibaba.dubbo.common.store.DataStore;
 import com.dtp.adapter.common.AbstractDtpHandler;
 import com.dtp.common.config.DtpProperties;
-import com.dtp.common.config.SimpleTpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
-import com.dtp.common.util.StreamUtil;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -35,22 +32,17 @@ public class AlibabaDubboDtpHandler extends AbstractDtpHandler {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        val properties = dtpProperties.getDubboTp();
-        val executorWrappers = getExecutorWrappers();
-        if (CollUtil.isEmpty(properties) || CollUtil.isEmpty(executorWrappers)) {
-            return;
-        }
-
-        val tmpMap = StreamUtil.toMap(properties, SimpleTpProperties::getThreadPoolName);
-        executorWrappers.forEach((k ,v) -> refresh(NAME, v, dtpProperties.getPlatforms(), tmpMap.get(k)));
+        refresh(NAME, dtpProperties.getDubboTp(), dtpProperties.getPlatforms());
     }
 
     @Override
     public Map<String, ExecutorWrapper> getExecutorWrappers() {
-        if (MapUtil.isNotEmpty(DUBBO_EXECUTORS)) {
-            return DUBBO_EXECUTORS;
-        }
+        return DUBBO_EXECUTORS;
+    }
 
+    @Override
+    protected void initialize() {
+        super.initialize();
         DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
         Map<String, Object> executors = dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY);
         if (MapUtil.isNotEmpty(executors)) {
@@ -61,9 +53,7 @@ public class AlibabaDubboDtpHandler extends AbstractDtpHandler {
                 DUBBO_EXECUTORS.put(name, executorWrapper);
             });
         }
-
         log.info("DynamicTp adapter, alibaba dubbo executors init end, executors: {}", DUBBO_EXECUTORS);
-        return DUBBO_EXECUTORS;
     }
 
     private String genTpName(String port) {

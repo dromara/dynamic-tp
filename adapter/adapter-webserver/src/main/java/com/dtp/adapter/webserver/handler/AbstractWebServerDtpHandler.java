@@ -27,6 +27,7 @@ public abstract class AbstractWebServerDtpHandler implements
     public void onApplicationEvent(ServletWebServerInitializedEvent event) {
         try {
             DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+            initialize();
             refresh(dtpProperties);
         } catch (Exception e) {
             log.error("Init web server thread pool failed.", e);
@@ -35,13 +36,16 @@ public abstract class AbstractWebServerDtpHandler implements
 
     @Override
     public ExecutorWrapper getExecutorWrapper() {
+        return executorWrapper;
+    }
+
+    protected void initialize() {
         if (executorWrapper == null) {
             ApplicationContext applicationContext = ApplicationContextHolder.getInstance();
             WebServer webServer = ((WebServerApplicationContext) applicationContext).getWebServer();
             executorWrapper = doGetExecutorWrapper(webServer);
             log.info("DynamicTp adapter, web server executor init end, executor: {}", executorWrapper.getExecutor());
         }
-        return executorWrapper;
     }
 
     /**

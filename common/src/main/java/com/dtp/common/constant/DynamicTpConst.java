@@ -63,4 +63,9 @@ public class DynamicTpConst {
     public static final String ARR_RIGHT_BRACKET = "]";
 
     public static final List<NotifyTypeEnum> SCHEDULE_ALARM_TYPES = Lists.newArrayList(LIVENESS, CAPACITY);
+
+    /**
+     * unit
+     */
+    public static final Integer M_1 = 1024 * 1024;
 }

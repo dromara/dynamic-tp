@@ -3,12 +3,12 @@ package com.dtp.core.support;
 import cn.hutool.core.collection.CollUtil;
 import com.alibaba.ttl.TtlRunnable;
 import com.alibaba.ttl.threadpool.TtlExecutors;
-import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;
+import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.support.wrapper.TaskWrapper;
 import com.dtp.core.thread.DtpExecutor;
@@ -20,6 +20,8 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.concurrent.*;
+
+import static com.dtp.common.constant.DynamicTpConst.M_1;
 
 /**
  * Builder for creating a ThreadPoolExecutor gracefully.
@@ -65,6 +67,11 @@ public class ThreadPoolBuilder {
      * Queue capacity
      */
     private int queueCapacity = 1024;
+
+    /**
+     * Max free memory for MemorySafeLBQ, unit M
+     */
+    private int maxFreeMemory = 256;
 
     /**
      * RejectedExecutionHandler, see {@link RejectedTypeEnum}
@@ -175,18 +182,25 @@ public class ThreadPoolBuilder {
      * @param queueName queue name
      * @param capacity queue capacity
      * @param fair for SynchronousQueue
+     * @param maxFreeMemory for MemorySafeLBQ
+     *
      * @return the ThreadPoolBuilder instance
      */
-    public ThreadPoolBuilder workQueue(String queueName, Integer capacity, Boolean fair) {
+    public ThreadPoolBuilder workQueue(String queueName, Integer capacity, Boolean fair, Integer maxFreeMemory) {
         if (StringUtils.isNotBlank(queueName)) {
-            workQueue = QueueTypeEnum.buildBlockingQueue(queueName,
-                    capacity != null ? capacity : 1024, fair != null && fair);
+            workQueue = QueueTypeEnum.buildLbq(queueName, capacity != null ? capacity : 1024,
+                    fair != null && fair, maxFreeMemory != null ? maxFreeMemory : 256);
         }
         return this;
     }
 
     public ThreadPoolBuilder queueCapacity(int queueCapacity) {
         this.queueCapacity = queueCapacity;
+        return this;
+    }
+
+    public ThreadPoolBuilder maxFreeMemory(int maxFreeMemory) {
+        this.maxFreeMemory = maxFreeMemory;
         return this;
     }
 
@@ -331,7 +345,7 @@ public class ThreadPoolBuilder {
     private DtpExecutor createInternal(ThreadPoolBuilder builder) {
         DtpExecutor dtpExecutor;
         if (ioIntensive) {
-            TaskQueue taskQueue = new TaskQueue(builder.queueCapacity);
+            TaskQueue taskQueue = new TaskQueue(builder.queueCapacity, builder.maxFreeMemory * M_1);
             dtpExecutor = new EagerDtpExecutor(
                     builder.corePoolSize,
                     builder.maximumPoolSize,

@@ -4,10 +4,8 @@ import cn.hutool.core.collection.CollUtil;
 import com.dtp.adapter.common.AbstractDtpHandler;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
-import com.dtp.common.config.SimpleTpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.util.ReflectionUtil;
-import com.dtp.common.util.StreamUtil;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -17,7 +15,6 @@ import org.apache.rocketmq.client.impl.consumer.ConsumeMessageOrderlyService;
 import org.apache.rocketmq.client.impl.consumer.DefaultMQPushConsumerImpl;
 import org.apache.rocketmq.spring.support.DefaultRocketMQListenerContainer;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -40,25 +37,22 @@ public class RocketMqDtpHandler extends AbstractDtpHandler {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        val properties = dtpProperties.getRocketMqTp();
-        val executorWrappers = getExecutorWrappers();
-        if (CollUtil.isEmpty(properties) || CollUtil.isEmpty(executorWrappers)) {
-            return;
-        }
-
-        val tmpMap = StreamUtil.toMap(properties, SimpleTpProperties::getThreadPoolName);
-        executorWrappers.forEach((k ,v) -> refresh(NAME, v, dtpProperties.getPlatforms(), tmpMap.get(k)));
+        refresh(NAME, dtpProperties.getRocketMqTp(), dtpProperties.getPlatforms());
     }
 
     @Override
     public Map<String, ExecutorWrapper> getExecutorWrappers() {
+        return ROCKETMQ_EXECUTORS;
+    }
 
-        if (CollUtil.isNotEmpty(ROCKETMQ_EXECUTORS)) {
-            return ROCKETMQ_EXECUTORS;
-        }
+    @Override
+    protected void initialize() {
+        super.initialize();
+
         val beans = ApplicationContextHolder.getBeansOfType(DefaultRocketMQListenerContainer.class);
         if (CollUtil.isEmpty(beans)) {
-            return Collections.emptyMap();
+            log.warn("Cannot find beans of type DefaultRocketMQListenerContainer.");
+            return;
         }
         beans.forEach((k, v) -> {
             DefaultRocketMQListenerContainer container = (DefaultRocketMQListenerContainer) v;
@@ -86,6 +80,5 @@ public class RocketMqDtpHandler extends AbstractDtpHandler {
             }
         });
         log.info("DynamicTp adapter, rocketMq consumer executors init end, executors: {}", ROCKETMQ_EXECUTORS);
-        return ROCKETMQ_EXECUTORS;
     }
 }

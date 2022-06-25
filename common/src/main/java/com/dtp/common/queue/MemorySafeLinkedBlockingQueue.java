@@ -42,7 +42,7 @@ public class MemorySafeLinkedBlockingQueue<E> extends VariableLinkedBlockingQueu
         this.maxFreeMemory = maxFreeMemory;
     }
 
-    public MemorySafeLinkedBlockingQueue(final int maxFreeMemory, final int capacity) {
+    public MemorySafeLinkedBlockingQueue(final int capacity, final int maxFreeMemory) {
         super(capacity);
         this.maxFreeMemory = maxFreeMemory;
     }

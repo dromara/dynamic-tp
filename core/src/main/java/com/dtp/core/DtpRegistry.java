@@ -8,6 +8,7 @@ import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.ex.DtpException;
+import com.dtp.common.queue.MemorySafeLinkedBlockingQueue;
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
@@ -37,8 +38,11 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static com.dtp.common.constant.DynamicTpConst.M_1;
 import static com.dtp.common.dto.NotifyItem.mergeAllNotifyItems;
+import static com.dtp.common.em.QueueTypeEnum.MEMORY_SAFE_LINKED_BLOCKING_QUEUE;
 import static com.dtp.common.em.QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE;
+import static com.dtp.core.support.ExecutorType.EAGER;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -242,17 +246,23 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
             dtpExecutor.setTheadPoolAliasName(properties.getTheadPoolAliasName());
         }
 
-        // update work queue capacity
-        if (!Objects.equals(dtpExecutor.getQueueCapacity(), properties.getQueueCapacity()) &&
-                Objects.equals(properties.getQueueType(), VARIABLE_LINKED_BLOCKING_QUEUE.getName())) {
+        // update work queue
+        if (canModifyQueueProp(properties)) {
             val blockingQueue = dtpExecutor.getQueue();
-            if (blockingQueue instanceof VariableLinkedBlockingQueue) {
-                ((VariableLinkedBlockingQueue<Runnable>)blockingQueue).setCapacity(properties.getQueueCapacity());
-            } else {
-                log.error("DynamicTp refresh, the blockingqueue capacity cannot be reset, dtpName: {}, queueType {}",
-                        dtpExecutor.getThreadPoolName(), dtpExecutor.getQueueName());
+            if (!Objects.equals(dtpExecutor.getQueueCapacity(), properties.getQueueCapacity())) {
+                if (blockingQueue instanceof VariableLinkedBlockingQueue) {
+                    ((VariableLinkedBlockingQueue<Runnable>) blockingQueue).setCapacity(properties.getQueueCapacity());
+                } else {
+                    log.error("DynamicTp refresh, the blockingqueue capacity cannot be reset, dtpName: {}, queueType {}",
+                            dtpExecutor.getThreadPoolName(), dtpExecutor.getQueueName());
+                }
+            }
+
+            if (blockingQueue instanceof MemorySafeLinkedBlockingQueue) {
+                ((MemorySafeLinkedBlockingQueue<Runnable>) blockingQueue).setMaxFreeMemory(properties.getMaxFreeMemory() * M_1);
             }
         }
+
         dtpExecutor.setWaitForTasksToCompleteOnShutdown(properties.isWaitForTasksToCompleteOnShutdown());
         dtpExecutor.setAwaitTerminationSeconds(properties.getAwaitTerminationSeconds());
         dtpExecutor.setPreStartAllCoreThreads(properties.isPreStartAllCoreThreads());
@@ -301,6 +311,12 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
                 AlarmCounter.init(k, x.getType());
             });
         });
+    }
+
+    private static boolean canModifyQueueProp(ThreadPoolProperties properties) {
+        return Objects.equals(properties.getQueueType(), VARIABLE_LINKED_BLOCKING_QUEUE.getName()) ||
+                Objects.equals(properties.getQueueType(), MEMORY_SAFE_LINKED_BLOCKING_QUEUE.getName()) ||
+                Objects.equals(properties.getExecutorType(), EAGER.getName());
     }
 
     @Override

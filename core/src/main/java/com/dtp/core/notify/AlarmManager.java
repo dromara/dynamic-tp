@@ -8,7 +8,6 @@ import com.dtp.common.dto.AlarmInfo;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyTypeEnum;
-import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
@@ -24,6 +23,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import static com.dtp.common.em.QueueTypeEnum.LINKED_BLOCKING_QUEUE;
+
 /**
  * AlarmManager related
  *
@@ -38,7 +39,7 @@ public class AlarmManager {
             .threadFactory("dtp-alarm")
             .corePoolSize(2)
             .maximumPoolSize(4)
-            .workQueue(QueueTypeEnum.LINKED_BLOCKING_QUEUE.getName(), 2000, false)
+            .workQueue(LINKED_BLOCKING_QUEUE.getName(), 2000, false, null)
             .rejectedExecutionHandler(RejectedTypeEnum.DISCARD_OLDEST_POLICY.getName())
             .dynamic(false)
             .buildWithTtl();

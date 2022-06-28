@@ -43,12 +43,9 @@ public class ApolloRefresher extends AbstractRefresher implements ConfigChangeLi
             realNamespace = apollo.getNamespace();
         }
 
-        ConfigFileTypeEnum configFileFormat = deduceFileType(realNamespace);
-        namespace = realNamespace.replaceAll("." + configFileFormat.getValue(), "");
-        configFileType = ConfigFileTypeEnum.of(configFileFormat.getValue());
-
+        configFileType = deduceFileType(realNamespace);
+        namespace = realNamespace.replaceAll("." + configFileType.getValue(), "");
         Config config = ConfigService.getConfig(realNamespace);
-
         try {
             config.addChangeListener(this);
             log.info("DynamicTp refresher, add listener success, namespace: {}", realNamespace);

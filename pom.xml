@@ -20,7 +20,7 @@
         <spring-cloud-alibaba.version>2021.1</spring-cloud-alibaba.version>
         <hutool.version>5.8.1</hutool.version>
         <lombok.version>1.18.22</lombok.version>
-        <apollo.version>1.9.1</apollo.version>
+        <apollo.version>1.5.0</apollo.version>
         <logback.version>1.2.10</logback.version>
         <log4j.version>2.17.1</log4j.version>
         <guava.version>31.1-jre</guava.version>

@@ -43,7 +43,7 @@ public class ApolloRefresher extends AbstractRefresher implements ConfigChangeLi
             realNamespace = apollo.getNamespace();
         }
 
-        ConfigFileFormat configFileFormat = deduceFileType(realNamespace);
+        ConfigFileTypeEnum configFileFormat = deduceFileType(realNamespace);
         namespace = realNamespace.replaceAll("." + configFileFormat.getValue(), "");
         configFileType = ConfigFileTypeEnum.of(configFileFormat.getValue());
 
@@ -65,18 +65,18 @@ public class ApolloRefresher extends AbstractRefresher implements ConfigChangeLi
         refresh(content, configFileType);
     }
 
-    private ConfigFileFormat deduceFileType(String namespace) {
-        ConfigFileFormat configFileFormat = ConfigFileFormat.Properties;
-        if (namespace.contains(ConfigFileFormat.YAML.getValue())) {
-            configFileFormat = ConfigFileFormat.YAML;
-        } else if (namespace.contains(ConfigFileFormat.YML.getValue())) {
-            configFileFormat = ConfigFileFormat.YML;
-        } else if (namespace.contains(ConfigFileFormat.JSON.getValue())) {
-            configFileFormat = ConfigFileFormat.JSON;
-        } else if (namespace.contains(ConfigFileFormat.XML.getValue())) {
-            configFileFormat = ConfigFileFormat.XML;
-        } else if (namespace.contains(ConfigFileFormat.TXT.getValue())) {
-            configFileFormat = ConfigFileFormat.TXT;
+    private ConfigFileTypeEnum deduceFileType(String namespace) {
+        ConfigFileTypeEnum configFileFormat = ConfigFileTypeEnum.PROPERTIES;
+        if (namespace.contains(ConfigFileTypeEnum.YAML.getValue())) {
+            configFileFormat = ConfigFileTypeEnum.YAML;
+        } else if (namespace.contains(ConfigFileTypeEnum.YML.getValue())) {
+            configFileFormat = ConfigFileTypeEnum.YML;
+        } else if (namespace.contains(ConfigFileTypeEnum.JSON.getValue())) {
+            configFileFormat = ConfigFileTypeEnum.JSON;
+        } else if (namespace.contains(ConfigFileTypeEnum.XML.getValue())) {
+            configFileFormat = ConfigFileTypeEnum.XML;
+        } else if (namespace.contains(ConfigFileTypeEnum.TXT.getValue())) {
+            configFileFormat = ConfigFileTypeEnum.TXT;
         }
 
         return configFileFormat;

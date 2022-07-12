@@ -2,6 +2,7 @@ package com.dtp.core.spring;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.*;
@@ -14,7 +15,7 @@ import java.util.concurrent.*;
  * @since 1.0.3
  **/
 @Slf4j
-public class DtpLifecycleSupport extends ThreadPoolExecutor implements DisposableBean {
+public abstract class DtpLifecycleSupport extends ThreadPoolExecutor implements InitializingBean, DisposableBean {
 
     /**
      * Uniquely identifies.
@@ -59,6 +60,11 @@ public class DtpLifecycleSupport extends ThreadPoolExecutor implements Disposabl
         return threadPoolName;
     }
 
+    @Override
+    public void afterPropertiesSet() {
+        initialize();
+    }
+
     /**
      * Calls {@code internalShutdown} when the BeanFactory destroys
      * the task executor instance.
@@ -68,6 +74,11 @@ public class DtpLifecycleSupport extends ThreadPoolExecutor implements Disposabl
     public void destroy() {
         internalShutdown();
     }
+
+    /**
+     * Initialize, do sth.
+     */
+    protected abstract void initialize();
 
     /**
      * Perform a shutdown on the underlying ExecutorService.

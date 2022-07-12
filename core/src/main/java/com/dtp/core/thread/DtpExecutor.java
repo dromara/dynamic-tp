@@ -93,10 +93,6 @@ public class DtpExecutor extends DtpLifecycleSupport {
         this.rejectHandlerName = handler.getClass().getSimpleName();
         RejectedExecutionHandler rejectedExecutionHandler = RejectHandlerGetter.getProxy(handler);
         setRejectedExecutionHandler(rejectedExecutionHandler);
-
-        if (preStartAllCoreThreads) {
-            prestartAllCoreThreads();
-        }
     }
 
     @Override
@@ -163,6 +159,13 @@ public class DtpExecutor extends DtpLifecycleSupport {
         }
 
         super.afterExecute(r, t);
+    }
+
+    @Override
+    protected void initialize() {
+        if (preStartAllCoreThreads) {
+            prestartAllCoreThreads();
+        }
     }
 
     public void incRejectCount(int count) {

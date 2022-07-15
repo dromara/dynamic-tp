@@ -16,7 +16,7 @@ star: true
 
 目前框架提供了三种监控数据采集方式，通过 collectType 属性配置监控指标采集类型，默认 logging
 
-1.jsonlog：线程池指标数据会以 json 格式输出到指定的文件里
+1.logging：线程池指标数据会以 json 格式输出到指定的文件里
 
 2.micrometer：采用监控门面，通过引入相关 micrometer 依赖采集到相应的存储平台里（如 Prometheus，InfluxDb...）
 

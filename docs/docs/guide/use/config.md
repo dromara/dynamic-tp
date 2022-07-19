@@ -34,8 +34,8 @@ spring:
       enabled: true
       enabledBanner: true           # 是否开启banner打印，默认true
       enabledCollect: true          # 是否开启监控指标采集，默认false
-      collectorType: micrometer     # 监控数据采集器类型（jsonlog | micrometer），默认logging
-      logPath: /home/logs           # 监控日志数据路径，默认 ${user.home}/logs，采集类型非jsonlog不用配置
+      collectorType: micrometer     # 监控数据采集器类型（logging | micrometer），默认logging
+      logPath: /home/logs           # 监控日志数据路径，默认 ${user.home}/logs，采集类型非logging不用配置
       monitorInterval: 5            # 监控时间间隔（报警判断、指标采集），默认5s
       nacos:                        # nacos配置，不配置有默认值（规则appname-dev.yml这样），cloud应用不需要配置
         dataId: dynamic-tp-demo-dev.yml
@@ -102,7 +102,7 @@ spring:
           preStartAllCoreThreads: false                  # 是否预热所有核心线程，默认false
           runTimeout: 200                                # 任务执行超时阈值，目前只做告警用，单位（ms）
           queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
-          taskWrapperNames: ["ttl"]                          # 任务包装器名称，集成TaskWrapper接口
+          taskWrapperNames: ["ttl"]                      # 任务包装器名称，集成TaskWrapper接口
           notifyItems:                     # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警、拒绝报警、任务超时报警）
             - type: capacity               # 报警项类型，查看源码 NotifyTypeEnum枚举类
               enabled: true

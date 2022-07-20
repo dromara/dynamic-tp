@@ -1,7 +1,7 @@
 package com.dtp.logging.log4j2;
 
-import com.dtp.common.util.LogUtil;
 import com.dtp.logging.AbstractDtpLogging;
+import com.dtp.logging.LogHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Appender;
@@ -66,6 +66,6 @@ public class DtpLog4j2Logging extends AbstractDtpLogging {
 
     @Override
     public void initMonitorLogger() {
-        LogUtil.init(getLogger(MONITOR_LOG_NAME));
+        LogHelper.init(getLogger(MONITOR_LOG_NAME));
     }
 }

@@ -2,10 +2,9 @@ package com.dtp.logging.logback;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.util.ContextInitializer;
-import com.dtp.common.util.LogUtil;
 import com.dtp.logging.AbstractDtpLogging;
+import com.dtp.logging.LogHelper;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.impl.StaticLoggerBinder;
 
 /**
  * DtpLogbackLogging related
@@ -23,7 +22,7 @@ public class DtpLogbackLogging extends AbstractDtpLogging {
     @Override
     public void loadConfiguration() {
         try {
-            loggerContext = (LoggerContext) StaticLoggerBinder.getSingleton().getLoggerFactory();
+            loggerContext = new LoggerContext();
             new ContextInitializer(loggerContext).configureByResource(getResourceUrl(LOGBACK_LOCATION));
         } catch (Exception e) {
             log.error("Cannot initialize dtp logback logging.");
@@ -36,6 +35,6 @@ public class DtpLogbackLogging extends AbstractDtpLogging {
 
     @Override
     public void initMonitorLogger() {
-        LogUtil.init(getLoggerContext().getLogger(MONITOR_LOG_NAME));
+        LogHelper.init(getLoggerContext().getLogger(MONITOR_LOG_NAME));
     }
 }

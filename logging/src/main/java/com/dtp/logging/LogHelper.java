@@ -1,18 +1,22 @@
-package com.dtp.common.util;
+package com.dtp.logging;
 
 import org.slf4j.Logger;
 
 /**
- * LogUtil related
+ * LogHelper related
  *
  * @author: yanhom
  * @since 1.0.0
  **/
-public class LogUtil {
+public class LogHelper {
 
-    private LogUtil() {}
+    private static Logger monitorLogger;
 
-    private static Logger monitorLogger = null;
+    static {
+        DtpLoggingInitializer.getInstance().loadConfiguration();
+    }
+
+    private LogHelper() {}
 
     public static void init(Logger logger) {
         monitorLogger = logger;

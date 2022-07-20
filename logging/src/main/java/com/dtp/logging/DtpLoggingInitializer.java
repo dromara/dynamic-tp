@@ -5,7 +5,6 @@ import com.dtp.logging.logback.DtpLogbackLogging;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * DtpLogging related
@@ -17,8 +16,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class DtpLoggingInitializer {
 
     private static AbstractDtpLogging dtpLogging;
-
-    private final AtomicBoolean init = new AtomicBoolean(false);
 
     static  {
         try {
@@ -44,14 +41,10 @@ public class DtpLoggingInitializer {
     }
 
     public void loadConfiguration() {
-
         if (Objects.isNull(dtpLogging)) {
             return;
         }
-
-        if (this.init.compareAndSet(false, true)) {
-            dtpLogging.loadConfiguration();
-            dtpLogging.initMonitorLogger();
-        }
+        dtpLogging.loadConfiguration();
+        dtpLogging.initMonitorLogger();
     }
 }

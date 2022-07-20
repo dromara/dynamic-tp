@@ -23,13 +23,12 @@ star: true
    collectorType: micrometer
 ```
 
-2.项目中引入 micrometer-prometheus 依赖，注意可能有版本不兼容问题，我测试遇到过
+2.项目中引入 micrometer-prometheus 依赖
 
 ```xml
   <dependency>
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-registry-prometheus</artifactId>
-      <version>1.8.3</version>
   </dependency>
 ```
 
@@ -60,7 +59,7 @@ job配置后prometheus管理台看到如下图所示，说明已经开始正常�
 
 ![采集指标](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/435f0a69790946f8bff7761c40a0a0db~tplv-k3u1fbpfcp-zoom-1.image)
 
-5.然后就是配置grafana数据可视化，配置如下图，需要该panel配置Json的可以加我发你，到这里监控就搭建起来了，其实也很简单，然后就可以实时监控线程池数据指标变动了
+5.然后就是配置grafana数据可视化，配置如下图，需要该pannel配置Json的可以加我发你，到这里监控就搭建起来了，其实也很简单，然后就可以实时监控线程池数据指标变动了
 
 ![监控数据](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a36430c06bf44ca987ff54b500a14172~tplv-k3u1fbpfcp-zoom-1.image)
 

@@ -16,9 +16,9 @@ star: true
 
 目前框架提供了三种监控数据采集方式，通过 collectType 属性配置监控指标采集类型，默认 logging
 
-1.logging：线程池指标数据会以 json 格式输出到指定的文件里
+1.Logging：线程池指标数据会以 Json 格式输出到指定的文件里
 
-2.micrometer：采用监控门面，通过引入相关 micrometer 依赖采集到相应的存储平台里（如 Prometheus，InfluxDb...）
+2.Micrometer：采用监控门面，通过引入相关 Micrometer 依赖采集到相应的存储平台里（如 Prometheus，InfluxDb...）
 
 3.暴露 Endpoint端点，可以通过 http 方式实时获取指标数据
 
@@ -44,7 +44,7 @@ star: true
 
 ### endpoint 
 
-暴露端点(dynamic-tp)，可以通过 http 方式请求
+暴露端点(dynamic-tp)，可以通过 http 方式实时请求
   
   ```json
   [

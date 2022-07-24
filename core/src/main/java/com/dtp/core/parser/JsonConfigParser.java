@@ -23,7 +23,7 @@ import static com.dtp.common.constant.DynamicTpConst.*;
 @SuppressWarnings("unchecked")
 public class JsonConfigParser extends AbstractConfigParser {
 
-    private static final List<ConfigFileTypeEnum> CONFIG_TYPE = Lists.newArrayList(ConfigFileTypeEnum.JSON);
+    private static final List<ConfigFileTypeEnum> CONFIG_TYPES = Lists.newArrayList(ConfigFileTypeEnum.JSON);
 
     private static final ObjectMapper MAPPER;
 
@@ -32,8 +32,8 @@ public class JsonConfigParser extends AbstractConfigParser {
     }
 
     @Override
-    public List<ConfigFileTypeEnum> type() {
-        return CONFIG_TYPE;
+    public List<ConfigFileTypeEnum> types() {
+        return CONFIG_TYPES;
     }
 
     @Override

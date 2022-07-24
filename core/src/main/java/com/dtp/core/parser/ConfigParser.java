@@ -25,7 +25,7 @@ public interface ConfigParser {
      * Type: yaml, properties...
      * @return the parse supports types.
      */
-    List<ConfigFileTypeEnum> type();
+    List<ConfigFileTypeEnum> types();
 
     /**
      * Parse content.

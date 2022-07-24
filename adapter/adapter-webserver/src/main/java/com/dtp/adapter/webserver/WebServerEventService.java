@@ -1,10 +1,9 @@
 package com.dtp.adapter.webserver;
 
-import com.dtp.adapter.common.AbstractDtpHandleListener;
-import com.dtp.adapter.common.DtpHandler;
-import com.dtp.adapter.webserver.handler.AbstractWebServerDtpHandler;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
+import com.dtp.core.adapter.DtpAdapter;
+import com.dtp.core.adapter.DtpAdapterListener;
 import com.dtp.core.handler.CollectorHandler;
 
 import java.util.Optional;
@@ -15,18 +14,12 @@ import java.util.Optional;
  * @author yanhom
  * @since 1.0.6
  */
-public class WebServerEventService extends AbstractDtpHandleListener {
+public class WebServerEventService extends DtpAdapterListener {
 
     @Override
     protected void doCollect(DtpProperties dtpProperties) {
-        DtpHandler webServerTpHandler = ApplicationContextHolder.getBean(AbstractWebServerDtpHandler.class);
-        Optional.ofNullable(webServerTpHandler.getPoolStats())
+        DtpAdapter dtpAdapter = ApplicationContextHolder.getBean(AbstractWebServerDtpAdapter.class);
+        Optional.ofNullable(dtpAdapter.getPoolStats())
                 .ifPresent(p -> CollectorHandler.getInstance().collect(p, dtpProperties.getCollectorType()));
-    }
-
-    @Override
-    protected void doRefresh(DtpProperties dtpProperties) {
-        DtpHandler webServerTpHandler = ApplicationContextHolder.getBean(AbstractWebServerDtpHandler.class);
-        webServerTpHandler.refresh(dtpProperties);
     }
 }

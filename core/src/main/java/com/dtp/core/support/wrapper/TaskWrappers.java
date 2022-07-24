@@ -8,7 +8,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * TaskWrapperHolder related
@@ -34,12 +35,11 @@ public class TaskWrappers {
             return Collections.emptyList();
         }
 
-        return TASK_WRAPPERS.stream().filter(t -> StringUtil.containsIgnoreCase(t.name(), names))
-                .collect(Collectors.toList());
+        return TASK_WRAPPERS.stream().filter(t -> StringUtil.containsIgnoreCase(t.name(), names)).collect(toList());
     }
 
     public static TaskWrappers getInstance() {
-        return TaskWrappers.TaskWrappersHolder.INSTANCE;
+        return TaskWrappersHolder.INSTANCE;
     }
 
     private static class TaskWrappersHolder {

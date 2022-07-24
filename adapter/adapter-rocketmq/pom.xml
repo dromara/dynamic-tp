@@ -11,11 +11,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.github.lyh200</groupId>
-            <artifactId>dynamic-tp-adapter-common</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-spring-boot-starter</artifactId>
             <version>2.2.2</version>

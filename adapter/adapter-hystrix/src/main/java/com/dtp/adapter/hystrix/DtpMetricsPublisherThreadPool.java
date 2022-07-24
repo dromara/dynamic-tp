@@ -1,6 +1,5 @@
 package com.dtp.adapter.hystrix;
 
-import com.dtp.adapter.hystrix.handler.HystrixDtpHandler;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.SimpleTpProperties;
 import com.dtp.common.util.ReflectionUtil;
@@ -54,7 +53,7 @@ public class DtpMetricsPublisherThreadPool implements HystrixMetricsPublisherThr
     @Override
     public void initialize() {
         metricsPublisherForThreadPool.initialize();
-        HystrixDtpHandler hystrixTpHandler = ApplicationContextHolder.getBean(HystrixDtpHandler.class);
+        HystrixDtpAdapter hystrixTpHandler = ApplicationContextHolder.getBean(HystrixDtpAdapter.class);
         hystrixTpHandler.cacheMetricsPublisher(threadPoolKey.name(), this);
         hystrixTpHandler.register(threadPoolKey.name(), metrics.getThreadPool());
     }

@@ -1,7 +1,6 @@
 package com.dtp.starter.adapter.hystrix.autoconfigure;
 
-import com.dtp.adapter.hystrix.HystrixEventService;
-import com.dtp.adapter.hystrix.handler.HystrixDtpHandler;
+import com.dtp.adapter.hystrix.HystrixDtpAdapter;
 import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -22,13 +21,7 @@ public class HystrixTpAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public HystrixDtpHandler hystrixDtpHandler() {
-        return new HystrixDtpHandler();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public HystrixEventService hystrixEventService() {
-        return new HystrixEventService();
+    public HystrixDtpAdapter hystrixDtpHandler() {
+        return new HystrixDtpAdapter();
     }
 }

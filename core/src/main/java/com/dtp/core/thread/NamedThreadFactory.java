@@ -7,7 +7,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Default ThreadFactory used in Dynamic ThreadPoolExecutors.
+ * Default ThreadFactory used in Dynamic ThreadPoolExecutor.
  *
  * @author: yanhom
  * @since 1.0.0

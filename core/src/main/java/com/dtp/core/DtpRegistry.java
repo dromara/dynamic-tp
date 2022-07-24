@@ -3,7 +3,6 @@ package com.dtp.core;
 import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.ThreadPoolProperties;
-import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.em.NotifyTypeEnum;
@@ -14,9 +13,9 @@ import com.dtp.core.context.DtpContext;
 import com.dtp.core.context.DtpContextHolder;
 import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.handler.NotifierHandler;
-import com.dtp.core.notify.AlarmCounter;
-import com.dtp.core.notify.AlarmLimiter;
 import com.dtp.core.notify.NotifyHelper;
+import com.dtp.core.notify.alarm.AlarmCounter;
+import com.dtp.core.notify.alarm.AlarmLimiter;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.support.wrapper.TaskWrapper;
 import com.dtp.core.support.wrapper.TaskWrappers;
@@ -39,6 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static com.dtp.common.constant.DynamicTpConst.M_1;
+import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
 import static com.dtp.common.dto.NotifyItem.mergeAllNotifyItems;
 import static com.dtp.common.em.QueueTypeEnum.MEMORY_SAFE_LINKED_BLOCKING_QUEUE;
 import static com.dtp.common.em.QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE;
@@ -115,7 +115,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      * @param name the name of dynamic thread pool
      * @return the managed DtpExecutor instance
      */
-    public static DtpExecutor getDtpExecutor(String name) {
+    public static DtpExecutor getDtpExecutor(final String name) {
         val executor= DTP_REGISTRY.get(name);
         if (Objects.isNull(executor)) {
             log.error("Cannot find a specified dtpExecutor, name: {}", name);
@@ -129,7 +129,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      * @param name the name of thread pool
      * @return the managed ExecutorWrapper instance
      */
-    public static ExecutorWrapper getCommonExecutor(String name) {
+    public static ExecutorWrapper getCommonExecutor(final String name) {
         val executor= COMMON_REGISTRY.get(name);
         if (Objects.isNull(executor)) {
             log.error("Cannot find a specified commonExecutor, name: {}", name);
@@ -192,13 +192,13 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
                         "allowsCoreThreadTimeOut: [{}]",
                 executor.getThreadPoolName(),
                 diffKeys,
-                String.format(DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getCorePoolSize(), newProp.getCorePoolSize()),
-                String.format(DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getMaxPoolSize(), newProp.getMaxPoolSize()),
-                String.format(DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getQueueType(), newProp.getQueueType()),
-                String.format(DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getQueueCapacity(), newProp.getQueueCapacity()),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getCorePoolSize(), newProp.getCorePoolSize()),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getMaxPoolSize(), newProp.getMaxPoolSize()),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getQueueType(), newProp.getQueueType()),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getQueueCapacity(), newProp.getQueueCapacity()),
                 String.format("%ss => %ss", oldProp.getKeepAliveTime(), newProp.getKeepAliveTime()),
-                String.format(DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getRejectType(), newProp.getRejectType()),
-                String.format(DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE, oldProp.isAllowCoreThreadTimeOut(),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getRejectType(), newProp.getRejectType()),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.isAllowCoreThreadTimeOut(),
                         newProp.isAllowCoreThreadTimeOut()));
 
         val notifyItem = NotifyHelper.getNotifyItem(executor, NotifyTypeEnum.CHANGE);

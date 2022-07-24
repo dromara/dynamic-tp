@@ -8,7 +8,7 @@ import com.dtp.common.event.CollectEvent;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.convert.MetricsConverter;
 import com.dtp.core.handler.CollectorHandler;
-import com.dtp.core.notify.AlarmManager;
+import com.dtp.core.notify.alarm.AlarmManager;
 import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.thread.NamedThreadFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import static com.dtp.common.constant.DynamicTpConst.SCHEDULE_ALARM_TYPES;
-import static com.dtp.core.notify.AlarmManager.doAlarm;
+import static com.dtp.core.notify.alarm.AlarmManager.doAlarm;
 
 /**
  * DtpMonitor related

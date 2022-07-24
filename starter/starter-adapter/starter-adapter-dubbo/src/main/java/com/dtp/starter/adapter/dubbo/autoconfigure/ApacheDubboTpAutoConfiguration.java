@@ -1,7 +1,6 @@
 package com.dtp.starter.adapter.dubbo.autoconfigure;
 
-import com.dtp.adapter.dubbo.apache.ApacheDubboEventService;
-import com.dtp.adapter.dubbo.apache.handler.ApacheDubboDtpHandler;
+import com.dtp.adapter.dubbo.apache.ApacheDubboDtpAdapter;
 import com.dtp.starter.adapter.dubbo.autoconfigure.condition.ConditionOnApacheDubboApp;
 import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -23,13 +22,7 @@ public class ApacheDubboTpAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public ApacheDubboDtpHandler apacheDubboDtpHandler() {
-        return new ApacheDubboDtpHandler();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public ApacheDubboEventService apacheDubboEventService() {
-        return new ApacheDubboEventService();
+    public ApacheDubboDtpAdapter apacheDubboDtpHandler() {
+        return new ApacheDubboDtpAdapter();
     }
 }

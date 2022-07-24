@@ -56,14 +56,13 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
 
         executors.forEach(x -> {
             Class<?> executorTypeClass = ExecutorType.getClass(x.getExecutorType());
-            String beanName = x.getThreadPoolName();
-            Map<String, Object> properties = buildProperties(x);
-            Object[] args = buildArgs(executorTypeClass, x);
-            BeanUtil.registerIfAbsent(registry, beanName, executorTypeClass, properties, args);
+            Map<String, Object> properties = buildPropertyValues(x);
+            Object[] args = buildConstructorArgs(executorTypeClass, x);
+            BeanUtil.registerIfAbsent(registry, x.getThreadPoolName(), executorTypeClass, properties, args);
         });
     }
 
-    private Map<String, Object> buildProperties(ThreadPoolProperties tpp) {
+    private Map<String, Object> buildPropertyValues(ThreadPoolProperties tpp) {
         Map<String, Object> properties = Maps.newHashMap();
         properties.put(THREAD_POOL_NAME, tpp.getThreadPoolName());
         properties.put(THREAD_POOL_ALIAS_NAME, tpp.getTheadPoolAliasName());
@@ -83,7 +82,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         return properties;
     }
 
-    private Object[] buildArgs(Class<?> clazz, ThreadPoolProperties tpp) {
+    private Object[] buildConstructorArgs(Class<?> clazz, ThreadPoolProperties tpp) {
 
         BlockingQueue<Runnable> taskQueue;
         if (clazz.equals(EagerDtpExecutor.class)) {

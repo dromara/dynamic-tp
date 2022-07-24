@@ -19,11 +19,11 @@ import java.util.Properties;
  **/
 public class PropertiesConfigParser extends AbstractConfigParser {
 
-    private static final List<ConfigFileTypeEnum> CONFIG_TYPE = Lists.newArrayList(ConfigFileTypeEnum.PROPERTIES);
+    private static final List<ConfigFileTypeEnum> CONFIG_TYPES = Lists.newArrayList(ConfigFileTypeEnum.PROPERTIES);
 
     @Override
-    public List<ConfigFileTypeEnum> type() {
-        return CONFIG_TYPE;
+    public List<ConfigFileTypeEnum> types() {
+        return CONFIG_TYPES;
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.dtp.starter.adapter.rocketmq.autoconfigure;
 
-import com.dtp.adapter.rocketmq.RocketMqEventService;
-import com.dtp.adapter.rocketmq.handler.RocketMqDtpHandler;
+import com.dtp.adapter.rocketmq.RocketMqDtpAdapter;
 import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -23,13 +22,7 @@ public class RocketMqTpAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public RocketMqDtpHandler rocketMqDtpHandler() {
-        return new RocketMqDtpHandler();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public RocketMqEventService rocketMqEventService() {
-        return new RocketMqEventService();
+    public RocketMqDtpAdapter rocketMqDtpHandler() {
+        return new RocketMqDtpAdapter();
     }
 }

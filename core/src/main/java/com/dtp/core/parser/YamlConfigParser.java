@@ -18,12 +18,12 @@ import java.util.Map;
  **/
 public class YamlConfigParser extends AbstractConfigParser {
 
-    private static final List<ConfigFileTypeEnum> CONFIG_TYPE = Lists.newArrayList(
+    private static final List<ConfigFileTypeEnum> CONFIG_TYPES = Lists.newArrayList(
             ConfigFileTypeEnum.YML, ConfigFileTypeEnum.YAML);
 
     @Override
-    public List<ConfigFileTypeEnum> type() {
-        return CONFIG_TYPE;
+    public List<ConfigFileTypeEnum> types() {
+        return CONFIG_TYPES;
     }
 
     @Override

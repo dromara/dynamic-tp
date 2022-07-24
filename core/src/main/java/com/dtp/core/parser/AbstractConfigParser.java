@@ -15,7 +15,7 @@ public abstract class AbstractConfigParser implements ConfigParser {
 
     @Override
     public boolean supports(ConfigFileTypeEnum type) {
-        return this.type().contains(type);
+        return this.types().contains(type);
     }
 
     @Override

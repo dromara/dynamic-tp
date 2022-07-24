@@ -1,9 +1,9 @@
 package com.dtp.starter.adapter.webserver.autocconfigure;
 
 import com.dtp.adapter.webserver.WebServerEventService;
-import com.dtp.adapter.webserver.handler.JettyDtpHandler;
-import com.dtp.adapter.webserver.handler.TomcatDtpHandler;
-import com.dtp.adapter.webserver.handler.UndertowDtpHandler;
+import com.dtp.adapter.webserver.JettyDtpAdapter;
+import com.dtp.adapter.webserver.TomcatDtpAdapter;
+import com.dtp.adapter.webserver.UndertowDtpAdapter;
 import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -25,20 +25,20 @@ public class WebServerTpAutoConfiguration {
 
     @Bean
     @ConditionalOnBean(name = {"tomcatServletWebServerFactory"})
-    public TomcatDtpHandler tomcatTpHandler() {
-        return new TomcatDtpHandler();
+    public TomcatDtpAdapter tomcatTpHandler() {
+        return new TomcatDtpAdapter();
     }
 
     @Bean
     @ConditionalOnBean(name = {"JettyServletWebServerFactory"})
-    public JettyDtpHandler jettyTpHandler() {
-        return new JettyDtpHandler();
+    public JettyDtpAdapter jettyTpHandler() {
+        return new JettyDtpAdapter();
     }
 
     @Bean
     @ConditionalOnBean(name = {"undertowServletWebServerFactory"})
-    public UndertowDtpHandler undertowTpHandler() {
-        return new UndertowDtpHandler();
+    public UndertowDtpAdapter undertowTpHandler() {
+        return new UndertowDtpAdapter();
     }
 
     @Bean

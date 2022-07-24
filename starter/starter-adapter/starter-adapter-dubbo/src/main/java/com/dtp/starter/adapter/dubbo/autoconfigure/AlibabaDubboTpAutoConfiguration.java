@@ -1,9 +1,8 @@
 package com.dtp.starter.adapter.dubbo.autoconfigure;
 
-import com.dtp.adapter.dubbo.alibaba.AlibabaDubboEventService;
-import com.dtp.adapter.dubbo.alibaba.handler.AlibabaDubboDtpHandler;
-import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
+import com.dtp.adapter.dubbo.alibaba.AlibabaDubboDtpAdapter;
 import com.dtp.starter.adapter.dubbo.autoconfigure.condition.ConditionOnAlibabaDubboApp;
+import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -23,13 +22,7 @@ public class AlibabaDubboTpAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public AlibabaDubboDtpHandler alibabaDubboDtpHandler() {
-        return new AlibabaDubboDtpHandler();
-    }
-
-    @Bean
-    @ConditionalOnMissingBean
-    public AlibabaDubboEventService alibabaDubboEventService() {
-        return new AlibabaDubboEventService();
+    public AlibabaDubboDtpAdapter alibabaDubboDtpHandler() {
+        return new AlibabaDubboDtpAdapter();
     }
 }

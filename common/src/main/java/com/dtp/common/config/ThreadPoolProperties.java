@@ -23,7 +23,7 @@ public class ThreadPoolProperties {
     /**
      * Name of Dynamic ThreadPool.
      */
-    private String threadPoolName = "DefaultDynamicTp";
+    private String threadPoolName = "DynamicTp";
 
     /**
      * Simple Alias Name of Dynamic ThreadPool. Use for notify.

@@ -33,19 +33,19 @@ public abstract class AbstractRefresher implements Refresher {
     private ApplicationEventMulticaster applicationEventMulticaster;
 
     @Override
-    public void refresh(String content, ConfigFileTypeEnum fileTypeEnum) {
+    public void refresh(String content, ConfigFileTypeEnum fileType) {
 
-        if (StringUtils.isBlank(content) || Objects.isNull(fileTypeEnum)) {
+        if (StringUtils.isBlank(content) || Objects.isNull(fileType)) {
             log.warn("DynamicTp refresh, empty content or null fileType.");
             return;
         }
 
         try {
             val configHandler = ConfigHandler.getInstance();
-            val properties = configHandler.parseConfig(content, fileTypeEnum);
+            val properties = configHandler.parseConfig(content, fileType);
             doRefresh(properties);
         } catch (IOException e) {
-            log.error("DynamicTp refresh error, content: {}, fileType: {}", content, fileTypeEnum, e);
+            log.error("DynamicTp refresh error, content: {}, fileType: {}", content, fileType, e);
         }
     }
 

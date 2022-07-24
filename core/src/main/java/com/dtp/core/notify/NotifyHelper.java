@@ -6,6 +6,8 @@ import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.util.StreamUtil;
+import com.dtp.core.notify.alarm.AlarmCounter;
+import com.dtp.core.notify.alarm.AlarmLimiter;
 import com.dtp.core.thread.DtpExecutor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -71,7 +73,7 @@ public class NotifyHelper {
     }
 
     public static NotifyItem getNotifyItem(DtpExecutor executor, NotifyTypeEnum typeEnum) {
-        val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(),  executor, executor.getNotifyItems());
+        val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor, executor.getNotifyItems());
         return getNotifyItem(executorWrapper, typeEnum);
     }
 

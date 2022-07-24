@@ -53,10 +53,10 @@ public class NotifyItem {
             return getSimpleNotifyItems();
         } else {
             val excludeTypes = source.stream().map(NotifyItem::getType).collect(toList());
-            val filterItems = getSimpleNotifyItems().stream()
+            val defaultItems = getSimpleNotifyItems().stream()
                     .filter(t -> !StringUtil.containsIgnoreCase(t.getType(), excludeTypes))
                     .collect(Collectors.toList());
-            source.addAll(filterItems);
+            source.addAll(defaultItems);
             return source;
         }
     }

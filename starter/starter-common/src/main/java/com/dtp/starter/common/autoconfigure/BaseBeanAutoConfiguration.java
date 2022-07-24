@@ -4,8 +4,9 @@ import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.core.DtpRegistry;
+import com.dtp.core.adapter.DtpAdapterListener;
 import com.dtp.core.monitor.DtpMonitor;
-import com.dtp.core.monitor.endpoint.DtpEndpoint;
+import com.dtp.core.monitor.DtpEndpoint;
 import com.dtp.core.spring.DtpPostProcessor;
 import com.dtp.core.support.DtpBannerPrinter;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -62,5 +63,11 @@ public class BaseBeanAutoConfiguration {
     @ConditionalOnAvailableEndpoint
     public DtpEndpoint dtpEndpoint() {
         return new DtpEndpoint();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public DtpAdapterListener dtpAdapterListener() {
+        return new DtpAdapterListener();
     }
 }

@@ -1,6 +1,6 @@
 package com.dtp.core.reject;
 
-import com.dtp.core.notify.AlarmManager;
+import com.dtp.core.notify.alarm.AlarmManager;
 import com.dtp.core.thread.DtpExecutor;
 
 import java.util.concurrent.ThreadPoolExecutor;

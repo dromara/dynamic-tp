@@ -34,7 +34,7 @@ public class ThreadPoolBuilder {
     /**
      * Name of Dynamic ThreadPool.
      */
-    private String threadPoolName = "DefaultDynamicTp";
+    private String threadPoolName = "DynamicTp";
 
     /**
      * CoreSize of ThreadPool.
@@ -81,7 +81,7 @@ public class ThreadPoolBuilder {
     /**
      * Default inner thread factory.
      */
-    private ThreadFactory threadFactory = new NamedThreadFactory("dynamic-tp");
+    private ThreadFactory threadFactory = new NamedThreadFactory("dtp");
 
     /**
      * If allow core thread timeout.

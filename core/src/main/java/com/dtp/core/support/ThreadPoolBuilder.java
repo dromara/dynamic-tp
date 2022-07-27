@@ -183,13 +183,28 @@ public class ThreadPoolBuilder {
      * @param capacity queue capacity
      * @param fair for SynchronousQueue
      * @param maxFreeMemory for MemorySafeLBQ
-     *
      * @return the ThreadPoolBuilder instance
      */
     public ThreadPoolBuilder workQueue(String queueName, Integer capacity, Boolean fair, Integer maxFreeMemory) {
         if (StringUtils.isNotBlank(queueName)) {
-            workQueue = QueueTypeEnum.buildLbq(queueName, capacity != null ? capacity : 1024,
-                    fair != null && fair, maxFreeMemory != null ? maxFreeMemory : 256);
+            workQueue = QueueTypeEnum.buildLbq(queueName, capacity != null ? capacity : this.queueCapacity,
+                    fair != null && fair, maxFreeMemory != null ? maxFreeMemory : this.maxFreeMemory);
+        }
+        return this;
+    }
+
+    /**
+     * Create work queue
+     *
+     * @param queueName queue name
+     * @param capacity queue capacity
+     * @param fair for SynchronousQueue
+     * @return the ThreadPoolBuilder instance
+     */
+    public ThreadPoolBuilder workQueue(String queueName, Integer capacity, Boolean fair) {
+        if (StringUtils.isNotBlank(queueName)) {
+            workQueue = QueueTypeEnum.buildLbq(queueName, capacity != null ? capacity : this.queueCapacity,
+                    fair != null && fair, maxFreeMemory);
         }
         return this;
     }

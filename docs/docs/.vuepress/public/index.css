@@ -1,0 +1,12 @@
+.com-box-f{
+    padding: 1em 1em 30px;
+    text-align: center;}
+.com-box-f h2{font-size: 30px; color: #000; font-weight: 400;}
+.com-box{display: flex; flex-wrap: wrap; width: 100%; margin-bottom: 50px; justify-content: flex-start;}
+.com-box a{display: block; flex: 0 0 13%; margin: 5px; cursor: pointer; border: 0px #ddd solid;}
+.com-box a{line-height: 75px;}
+.com-box a img{transition: all 0.2s; vertical-align: middle; min-width: 60%; max-width: 100%; max-height: 100%;}
+.com-box a img:hover{transform: scale(1.05, 1.05);}
+.com-box-you a img:hover{transform: none;}
+.com-box-you a{flex: 0 0 14.5%; line-height: 60px; height: 60px; margin: 10px;}
+.com-box-you a img{min-width: 60%; max-width: 85%; vertical-align: middle; max-height: 100%;}

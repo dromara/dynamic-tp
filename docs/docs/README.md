@@ -132,7 +132,7 @@ features:
             <a href="https://www.jeesuite.com/" target="_blank">
                 <img src="/images/mendmix.png" msg="开源分布式云原生架构一站式解决方案">
             </a>
-            <a href="https://www.x-easypdf.cn" target="_blank">
+            <a href="https://gitee.com/dromara/koalas-rpc" target="_blank">
                 <img src="/images/koalas-rpc2.png" msg="企业生产级百亿日PV高可用可拓展的RPC框架。">
             </a>
             <a href="https://async.sizegang.cn/" target="_blank">

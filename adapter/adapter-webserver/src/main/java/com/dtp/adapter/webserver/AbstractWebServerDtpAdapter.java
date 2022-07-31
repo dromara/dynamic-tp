@@ -3,13 +3,17 @@ package com.dtp.adapter.webserver;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
+import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.core.adapter.DtpAdapter;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.context.WebServerApplicationContext;
 import org.springframework.boot.web.server.WebServer;
 import org.springframework.boot.web.servlet.context.ServletWebServerInitializedEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
+
+import java.util.List;
 
 /**
  * AbstractWebServerDtpAdapter related
@@ -37,6 +41,11 @@ public abstract class AbstractWebServerDtpAdapter implements
     @Override
     public ExecutorWrapper getExecutorWrapper() {
         return executorWrapper;
+    }
+
+    @Override
+    public List<ThreadPoolStats> getMultiPoolStats() {
+        return Lists.newArrayList(getPoolStats());
     }
 
     protected void initialize() {

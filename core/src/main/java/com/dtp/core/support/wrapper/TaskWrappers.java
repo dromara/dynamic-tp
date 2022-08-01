@@ -28,6 +28,7 @@ public class TaskWrappers {
         }
 
         TASK_WRAPPERS.add(new TtlTaskWrapper());
+        TASK_WRAPPERS.add(new MdcTaskWrapper());
     }
 
     public List<TaskWrapper> getByNames(Set<String> names) {

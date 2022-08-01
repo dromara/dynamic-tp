@@ -36,6 +36,7 @@
         <module>starter</module>
         <module>logging</module>
         <module>example</module>
+        <module>extension</module>
     </modules>
 
     <dependencies>

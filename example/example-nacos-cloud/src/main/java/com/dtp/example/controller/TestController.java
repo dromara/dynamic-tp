@@ -1,7 +1,7 @@
 package com.dtp.example.controller;
 
 import com.dtp.core.DtpRegistry;
-import com.dtp.core.support.NamedRunnable;
+import com.dtp.core.support.runnable.NamedRunnable;
 import com.dtp.core.thread.DtpExecutor;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;

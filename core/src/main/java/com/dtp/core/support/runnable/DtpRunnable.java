@@ -1,4 +1,4 @@
-package com.dtp.core.support;
+package com.dtp.core.support.runnable;
 
 /**
  * DtpRunnable related

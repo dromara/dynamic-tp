@@ -70,9 +70,12 @@ public interface DtpAdapter {
         if (properties.getCorePoolSize() < 0 ||
                 properties.getMaximumPoolSize() <= 0 ||
                 properties.getMaximumPoolSize() < properties.getCorePoolSize() ||
-                properties.getKeepAliveTime() < 0 ||
-                oldMaxPoolSize < properties.getCorePoolSize()) {
-            throw new IllegalArgumentException();
+                properties.getKeepAliveTime() < 0) {
+            throw new IllegalArgumentException("Invalid thread pool params.");
+        }
+
+        if (oldMaxPoolSize < properties.getCorePoolSize()) {
+            throw new IllegalArgumentException("New corePoolSize cannot greater than current maximumPoolSize.");
         }
     }
 }

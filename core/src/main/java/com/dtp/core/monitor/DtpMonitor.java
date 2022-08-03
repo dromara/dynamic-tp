@@ -1,5 +1,6 @@
 package com.dtp.core.monitor;
 
+import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;
@@ -14,7 +15,6 @@ import com.dtp.core.thread.NamedThreadFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.event.ApplicationEventMulticaster;
 import org.springframework.core.Ordered;
 
 import javax.annotation.Resource;
@@ -40,9 +40,6 @@ public class DtpMonitor implements ApplicationRunner, Ordered {
 
     @Resource
     private DtpProperties dtpProperties;
-
-    @Resource
-    private ApplicationEventMulticaster applicationEventMulticaster;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -93,12 +90,12 @@ public class DtpMonitor implements ApplicationRunner, Ordered {
 
     private void publishCollectEvent() {
         CollectEvent event = new CollectEvent(this, dtpProperties);
-        applicationEventMulticaster.multicastEvent(event);
+        ApplicationContextHolder.publishEvent(event);
     }
 
     private void publishAlarmCheckEvent() {
         AlarmCheckEvent event = new AlarmCheckEvent(this, dtpProperties);
-        applicationEventMulticaster.multicastEvent(event);
+        ApplicationContextHolder.publishEvent(event);
     }
 
     @Override

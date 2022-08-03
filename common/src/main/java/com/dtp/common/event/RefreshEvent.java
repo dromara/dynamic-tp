@@ -18,7 +18,6 @@ public class RefreshEvent extends ApplicationEvent {
         this.dtpProperties = dtpProperties;
     }
 
-
     public DtpProperties getDtpProperties() {
         return dtpProperties;
     }

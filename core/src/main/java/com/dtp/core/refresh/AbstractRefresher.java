@@ -1,6 +1,7 @@
 package com.dtp.core.refresh;
 
 import cn.hutool.core.map.MapUtil;
+import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.em.ConfigFileTypeEnum;
 import com.dtp.common.event.RefreshEvent;
@@ -10,7 +11,6 @@ import com.dtp.core.support.PropertiesBinder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.event.ApplicationEventMulticaster;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -28,9 +28,6 @@ public abstract class AbstractRefresher implements Refresher {
 
     @Resource
     private DtpProperties dtpProperties;
-
-    @Resource
-    private ApplicationEventMulticaster applicationEventMulticaster;
 
     @Override
     public void refresh(String content, ConfigFileTypeEnum fileType) {
@@ -65,6 +62,6 @@ public abstract class AbstractRefresher implements Refresher {
 
     private void publishEvent(DtpProperties dtpProperties) {
         RefreshEvent event = new RefreshEvent(this, dtpProperties);
-        applicationEventMulticaster.multicastEvent(event);
+        ApplicationContextHolder.publishEvent(event);
     }
 }

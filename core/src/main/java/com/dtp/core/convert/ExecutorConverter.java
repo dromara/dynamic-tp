@@ -44,4 +44,13 @@ public class ExecutorConverter {
         mainProp.setAllowCoreThreadTimeOut(executor.allowsCoreThreadTimeOut());
         return mainProp;
     }
+
+    public static DtpMainProp ofSimple(String name, int corePoolSize, int maxPoolSize, long keepAliveTime) {
+        DtpMainProp mainProp = new DtpMainProp();
+        mainProp.setThreadPoolName(name);
+        mainProp.setCorePoolSize(corePoolSize);
+        mainProp.setMaxPoolSize(maxPoolSize);
+        mainProp.setKeepAliveTime(keepAliveTime);
+        return mainProp;
+    }
 }

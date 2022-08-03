@@ -4,6 +4,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 
@@ -42,6 +43,10 @@ public class ApplicationContextHolder implements ApplicationContextAware {
 
     public static Environment getEnvironment() {
         return getInstance().getEnvironment();
+    }
+
+    public static void publishEvent(ApplicationEvent event) {
+        context.publishEvent(event);
     }
 
     public static ConfigurableListableBeanFactory getConfigurableListableBeanFactory() {

@@ -2,9 +2,11 @@ package com.dtp.adapter.webserver;
 
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;
+import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.common.ex.DtpException;
+import com.dtp.core.convert.ExecutorConverter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
@@ -64,19 +66,35 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter {
         ThreadPoolExecutor executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
         checkParams(executor.getMaximumPoolSize(), properties);
 
-        int oldCoreSize = executor.getCorePoolSize();
-        int oldMaxSize = executor.getMaximumPoolSize();
-        long oldKeepAliveTime = executor.getKeepAliveTime(properties.getUnit());
-
-        executor.setCorePoolSize(properties.getCorePoolSize());
-        executor.setMaximumPoolSize(properties.getMaximumPoolSize());
-        executor.setKeepAliveTime(properties.getKeepAliveTime(), properties.getUnit());
-
-        log.info("DynamicTp adapter [{}}] refreshed end, corePoolSize: [{}], maxPoolSize: [{}], " +
+        DtpMainProp oldProp = ExecutorConverter.ofSimple(POOL_NAME, executor.getCorePoolSize(),
+                executor.getMaximumPoolSize(), executor.getKeepAliveTime(properties.getUnit()));
+        doRefresh(executor, properties);
+        DtpMainProp newProp = ExecutorConverter.ofSimple(POOL_NAME, executor.getCorePoolSize(),
+                executor.getMaximumPoolSize(), executor.getKeepAliveTime(properties.getUnit()));
+        if (oldProp.equals(newProp)) {
+            log.warn("DynamicTp adapter refresh, main properties of [{}] have not changed.", POOL_NAME);
+            return;
+        }
+        log.info("DynamicTp adapter [{}] refreshed end, corePoolSize: [{}], maxPoolSize: [{}], " +
                         "keepAliveTime: [{}]", POOL_NAME,
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldCoreSize, properties.getCorePoolSize()),
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaxSize, properties.getMaximumPoolSize()),
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldKeepAliveTime, properties.getKeepAliveTime()));
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getCorePoolSize(), newProp.getCorePoolSize()),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getMaxPoolSize(), newProp.getMaxPoolSize()),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getKeepAliveTime(), newProp.getKeepAliveTime()));
+    }
+
+    private void doRefresh(ThreadPoolExecutor executor, SimpleTpProperties properties) {
+
+        if (!Objects.equals(executor.getKeepAliveTime(properties.getUnit()), properties.getKeepAliveTime())) {
+            executor.setKeepAliveTime(properties.getKeepAliveTime(), properties.getUnit());
+        }
+
+        if (!Objects.equals(executor.getCorePoolSize(), properties.getCorePoolSize())) {
+            executor.setCorePoolSize(properties.getCorePoolSize());
+        }
+
+        if (!Objects.equals(executor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
+            executor.setMaximumPoolSize(properties.getMaximumPoolSize());
+        }
     }
 
     private ExecutorWrapper getWrapper() {

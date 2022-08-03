@@ -121,9 +121,9 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
         log.info("DynamicTp {} adapter, [{}] refreshed end, changed keys: {}, corePoolSize: [{}], " +
                         "maxPoolSize: [{}], keepAliveTime: [{}]",
                 name, executorWrapper.getThreadPoolName(), diffKeys,
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getCorePoolSize(), properties.getCorePoolSize()),
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getMaxPoolSize(), properties.getMaximumPoolSize()),
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getKeepAliveTime(), properties.getKeepAliveTime()));
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getCorePoolSize(), newProp.getCorePoolSize()),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getMaxPoolSize(), newProp.getMaxPoolSize()),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getKeepAliveTime(), newProp.getKeepAliveTime()));
 
         val notifyItem = NotifyHelper.getNotifyItem(executorWrapper, NotifyTypeEnum.CHANGE);
         boolean ifNotice = CollUtil.isNotEmpty(platforms) && Objects.nonNull(notifyItem) && notifyItem.isEnabled();

@@ -2,9 +2,11 @@ package com.dtp.adapter.webserver;
 
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;
+import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.common.ex.DtpException;
+import com.dtp.core.convert.ExecutorConverter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -64,13 +66,28 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter {
         int oldMaxSize = threadPool.getMaxThreads();
         checkParams(oldMaxSize, properties);
 
-        threadPool.setMinThreads(properties.getCorePoolSize());
-        threadPool.setMaxThreads(properties.getMaximumPoolSize());
-
-        log.info("DynamicTp adapter [{}}] refreshed end, corePoolSize: [{}], maxPoolSize: [{}]",
+        DtpMainProp oldProp = ExecutorConverter.ofSimple(POOL_NAME, oldCoreSize, oldMaxSize, 0L);
+        doRefresh(threadPool, properties);
+        DtpMainProp newProp = ExecutorConverter.ofSimple(properties.getThreadPoolName(), threadPool.getMinThreads(),
+                threadPool.getMaxThreads(), 0L);
+        if (oldProp.equals(newProp)) {
+            log.warn("DynamicTp adapter refresh, main properties of [{}] have not changed.", POOL_NAME);
+            return;
+        }
+        log.info("DynamicTp adapter [{}] refreshed end, corePoolSize: [{}], maxPoolSize: [{}]",
                 POOL_NAME,
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldCoreSize, properties.getCorePoolSize()),
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaxSize, properties.getMaximumPoolSize()));
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldCoreSize, newProp.getCorePoolSize()),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaxSize, newProp.getMaxPoolSize()));
+    }
+
+    private void doRefresh(ThreadPool.SizedThreadPool threadPool, SimpleTpProperties properties) {
+        if (!Objects.equals(threadPool.getMinThreads(), properties.getCorePoolSize())) {
+            threadPool.setMinThreads(properties.getCorePoolSize());
+        }
+
+        if (!Objects.equals(threadPool.getMaxThreads(), properties.getMaximumPoolSize())) {
+            threadPool.setMaxThreads(properties.getMaximumPoolSize());
+        }
     }
 
     private ExecutorWrapper getWrapper() {

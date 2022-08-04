@@ -73,7 +73,13 @@ public class AlarmManager {
     }
 
     public static void doAlarm(ExecutorWrapper executorWrapper, NotifyTypeEnum typeEnum) {
-        if (!preCheck(executorWrapper, typeEnum)) {
+
+        NotifyItem notifyItem = NotifyHelper.getNotifyItem(executorWrapper, typeEnum);
+        if (Objects.isNull(notifyItem) || !satisfyBaseCondition(notifyItem)) {
+            return;
+        }
+
+        if (!checkThreshold(executorWrapper, typeEnum, notifyItem)) {
             return;
         }
         boolean ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), typeEnum.getValue());
@@ -82,12 +88,6 @@ public class AlarmManager {
                     executorWrapper.getThreadPoolName(), typeEnum.getValue());
             return;
         }
-        DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-        NotifyItem notifyItem = NotifyHelper.getNotifyItem(executorWrapper, typeEnum);
-        if (Objects.isNull(notifyItem)) {
-            return;
-        }
-
         synchronized (SEND_LOCK) {
             // recheck alarm limit.
             ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), typeEnum.getValue());
@@ -99,6 +99,7 @@ public class AlarmManager {
             AlarmLimiter.putVal(executorWrapper.getThreadPoolName(), typeEnum.getValue());
         }
 
+        DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
         AlarmInfo alarmInfo = AlarmCounter.getAlarmInfo(executorWrapper.getThreadPoolName(), notifyItem.getType());
         DtpContext dtpContext = DtpContext.builder()
                 .executorWrapper(executorWrapper)
@@ -111,38 +112,31 @@ public class AlarmManager {
         AlarmCounter.reset(executorWrapper.getThreadPoolName(), notifyItem.getType());
     }
 
-    private static boolean preCheck(ExecutorWrapper executorWrapper, NotifyTypeEnum typeEnum) {
-        switch (typeEnum) {
-            case REJECT:
-                return checkReject(executorWrapper);
+    private static boolean checkThreshold(ExecutorWrapper executor, NotifyTypeEnum notifyType, NotifyItem notifyItem) {
+
+        switch (notifyType) {
             case CAPACITY:
-                return checkCapacity(executorWrapper);
+                return checkCapacity(executor, notifyItem);
             case LIVENESS:
-                return checkLiveness(executorWrapper);
+                return checkLiveness(executor, notifyItem);
+            case REJECT:
             case RUN_TIMEOUT:
-                return checkRunTimeout(executorWrapper);
             case QUEUE_TIMEOUT:
-                return checkQueueTimeout(executorWrapper);
+                return checkWithAlarmInfo(executor, notifyItem);
             default:
-                log.error("Unsupported alarm type, type: {}", typeEnum);
+                log.error("Unsupported alarm type, type: {}", notifyType);
                 return false;
         }
     }
 
-    private static boolean checkLiveness(ExecutorWrapper executorWrapper) {
-
-        NotifyItem notifyItem = NotifyHelper.getNotifyItem(executorWrapper, NotifyTypeEnum.LIVENESS);
-        if (Objects.isNull(notifyItem)) {
-            return false;
-        }
-
+    private static boolean checkLiveness(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
         val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
         int maximumPoolSize = executor.getMaximumPoolSize();
         double div = NumberUtil.div(executor.getActiveCount(), maximumPoolSize, 2) * 100;
-        return satisfyBaseCondition(notifyItem) && div >= notifyItem.getThreshold();
+        return div >= notifyItem.getThreshold();
     }
 
-    private static boolean checkCapacity(ExecutorWrapper executorWrapper) {
+    private static boolean checkCapacity(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
 
         val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
         BlockingQueue<Runnable> workQueue = executor.getQueue();
@@ -150,47 +144,14 @@ public class AlarmManager {
             return false;
         }
 
-        NotifyItem notifyItem = NotifyHelper.getNotifyItem(executorWrapper, NotifyTypeEnum.CAPACITY);
-        if (Objects.isNull(notifyItem)) {
-            return false;
-        }
-
         int queueCapacity = executor.getQueue().size() + executor.getQueue().remainingCapacity();
         double div = NumberUtil.div(workQueue.size(), queueCapacity, 2) * 100;
-        return satisfyBaseCondition(notifyItem) && div >= notifyItem.getThreshold();
+        return div >= notifyItem.getThreshold();
     }
 
-    private static boolean checkReject(ExecutorWrapper executorWrapper) {
-        NotifyItem notifyItem = NotifyHelper.getNotifyItem(executorWrapper, NotifyTypeEnum.REJECT);
-        if (Objects.isNull(notifyItem)) {
-            return false;
-        }
-
+    private static boolean checkWithAlarmInfo(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
         AlarmInfo alarmInfo = AlarmCounter.getAlarmInfo(executorWrapper.getThreadPoolName(), notifyItem.getType());
-        int rejectCount = alarmInfo.getCount();
-        return satisfyBaseCondition(notifyItem) && rejectCount >= notifyItem.getThreshold();
-    }
-
-    private static boolean checkRunTimeout(ExecutorWrapper executorWrapper) {
-        NotifyItem notifyItem = NotifyHelper.getNotifyItem(executorWrapper, NotifyTypeEnum.RUN_TIMEOUT);
-        if (Objects.isNull(notifyItem)) {
-            return false;
-        }
-
-        AlarmInfo alarmInfo = AlarmCounter.getAlarmInfo(executorWrapper.getThreadPoolName(), notifyItem.getType());
-        int runTimeoutTaskCount = alarmInfo.getCount();
-        return satisfyBaseCondition(notifyItem) && runTimeoutTaskCount >= notifyItem.getThreshold();
-    }
-
-    private static boolean checkQueueTimeout(ExecutorWrapper executorWrapper) {
-        NotifyItem notifyItem = NotifyHelper.getNotifyItem(executorWrapper, NotifyTypeEnum.QUEUE_TIMEOUT);
-        if (Objects.isNull(notifyItem)) {
-            return false;
-        }
-
-        AlarmInfo alarmInfo = AlarmCounter.getAlarmInfo(executorWrapper.getThreadPoolName(), notifyItem.getType());
-        int queueTimeoutTaskCount = alarmInfo.getCount();
-        return satisfyBaseCondition(notifyItem) && queueTimeoutTaskCount >= notifyItem.getThreshold();
+        return alarmInfo.getCount() >= notifyItem.getThreshold();
     }
 
     private static boolean satisfyBaseCondition(NotifyItem notifyItem) {

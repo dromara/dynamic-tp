@@ -72,19 +72,19 @@ public class NotifyHelper {
         return keys;
     }
 
-    public static NotifyItem getNotifyItem(DtpExecutor executor, NotifyTypeEnum typeEnum) {
+    public static NotifyItem getNotifyItem(DtpExecutor executor, NotifyTypeEnum notifyType) {
         val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor, executor.getNotifyItems());
-        return getNotifyItem(executorWrapper, typeEnum);
+        return getNotifyItem(executorWrapper, notifyType);
     }
 
-    public static NotifyItem getNotifyItem(ExecutorWrapper executorWrapper, NotifyTypeEnum typeEnum) {
+    public static NotifyItem getNotifyItem(ExecutorWrapper executorWrapper, NotifyTypeEnum notifyType) {
         List<NotifyItem> notifyItems = executorWrapper.getNotifyItems();
         val notifyItemOpt = notifyItems.stream()
-                .filter(x -> typeEnum.getValue().equalsIgnoreCase(x.getType()) && x.isEnabled())
+                .filter(x -> notifyType.getValue().equalsIgnoreCase(x.getType()))
                 .findFirst();
         if (!notifyItemOpt.isPresent()) {
             log.debug("DynamicTp notify, no such [{}] notify item configured, threadPoolName: {}",
-                    typeEnum.getValue(), executorWrapper.getThreadPoolName());
+                    notifyType.getValue(), executorWrapper.getThreadPoolName());
             return null;
         }
 
@@ -92,8 +92,8 @@ public class NotifyHelper {
     }
 
     public static void fillPlatforms(List<NotifyPlatform> platforms, List<NotifyItem> notifyItems) {
-        if (CollUtil.isEmpty(platforms)) {
-            log.warn("DynamicTp notify, no notify platforms configured.");
+        if (CollUtil.isEmpty(platforms) || CollUtil.isEmpty(notifyItems)) {
+            log.warn("DynamicTp notify, no notify platforms or items configured.");
             return;
         }
 

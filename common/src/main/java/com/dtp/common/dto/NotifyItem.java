@@ -52,9 +52,9 @@ public class NotifyItem {
         if (CollUtil.isEmpty(source)) {
             return getSimpleNotifyItems();
         } else {
-            val excludeTypes = source.stream().map(NotifyItem::getType).collect(toList());
+            val configuredTypes = source.stream().map(NotifyItem::getType).collect(toList());
             val defaultItems = getSimpleNotifyItems().stream()
-                    .filter(t -> !StringUtil.containsIgnoreCase(t.getType(), excludeTypes))
+                    .filter(t -> !StringUtil.containsIgnoreCase(t.getType(), configuredTypes))
                     .collect(Collectors.toList());
             source.addAll(defaultItems);
             return source;
@@ -73,7 +73,7 @@ public class NotifyItem {
         capacityNotify.setType(NotifyTypeEnum.CAPACITY.getValue());
         capacityNotify.setThreshold(70);
 
-        List<NotifyItem> notifyItems = new ArrayList<>(6);
+        List<NotifyItem> notifyItems = new ArrayList<>(3);
         notifyItems.add(livenessNotify);
         notifyItems.add(changeNotify);
         notifyItems.add(capacityNotify);
@@ -86,11 +86,11 @@ public class NotifyItem {
         if (CollUtil.isEmpty(source)) {
             return getAllNotifyItems();
         } else {
-            val excludeTypes = source.stream().map(NotifyItem::getType).collect(toList());
-            val filterItems = getAllNotifyItems().stream()
-                    .filter(t -> !StringUtil.containsIgnoreCase(t.getType(), excludeTypes))
+            val configuredTypes = source.stream().map(NotifyItem::getType).collect(toList());
+            val defaultItems = getAllNotifyItems().stream()
+                    .filter(t -> !StringUtil.containsIgnoreCase(t.getType(), configuredTypes))
                     .collect(Collectors.toList());
-            source.addAll(filterItems);
+            source.addAll(defaultItems);
             return source;
         }
     }

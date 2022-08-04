@@ -173,7 +173,8 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         }
 
         if (executor.getMaximumPoolSize() < properties.getCorePoolSize()) {
-            log.error("DynamicTp refresh, new corePoolSize cannot greater than current maximumPoolSize.");
+            log.error("DynamicTp refresh, new corePoolSize [{}] cannot greater than current maximumPoolSize [{}].",
+                    properties.getCorePoolSize(), executor.getMaximumPoolSize());
             return;
         }
 

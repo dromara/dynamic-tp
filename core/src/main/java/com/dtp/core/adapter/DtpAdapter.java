@@ -75,7 +75,8 @@ public interface DtpAdapter {
         }
 
         if (oldMaxPoolSize < properties.getCorePoolSize()) {
-            throw new IllegalArgumentException("New corePoolSize cannot greater than current maximumPoolSize.");
+            throw new IllegalArgumentException(String.format("New corePoolSize [%d] cannot greater than " +
+                    "current maximumPoolSize [%d]", properties.getCorePoolSize(), oldMaxPoolSize));
         }
     }
 }

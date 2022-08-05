@@ -24,6 +24,8 @@ import static com.dtp.common.em.NotifyTypeEnum.*;
  **/
 public class AlarmCounter {
 
+    private static final String DEFAULT_MSG = UNKNOWN + " / " + UNKNOWN;
+
     private AlarmCounter() {}
 
     private static final Map<String, AlarmInfo> ALARM_INFO_CACHE = new ConcurrentHashMap<>();
@@ -39,6 +41,15 @@ public class AlarmCounter {
     public static AlarmInfo getAlarmInfo(String threadPoolName, String notifyType) {
         String key = buildKey(threadPoolName, notifyType);
         return ALARM_INFO_CACHE.get(key);
+    }
+
+    public static String getCount(String threadPoolName, String notifyType) {
+        String key = buildKey(threadPoolName, notifyType);
+        val alarmInfo = ALARM_INFO_CACHE.get(key);
+        if (Objects.nonNull(alarmInfo)) {
+            return String.valueOf(alarmInfo.getCount());
+        }
+        return UNKNOWN;
     }
 
     public static void reset(String threadPoolName, String notifyType) {
@@ -58,30 +69,19 @@ public class AlarmCounter {
     public static Triple<String, String, String> countRrq(String threadPoolName, ThreadPoolExecutor executor) {
 
         String rejectCount;
-        if (executor instanceof DtpExecutor) {
-            val rejectAlarm = getAlarmInfo(threadPoolName, REJECT.getValue());
-            val leftCount = rejectAlarm == null ? UNKNOWN : String.valueOf(rejectAlarm.getCount());
-            rejectCount = leftCount + " / " + ((DtpExecutor) executor).getRejectCount();
-        } else {
-            rejectCount = UNKNOWN + " / " + UNKNOWN;
-        }
-
         String runTimeoutCount;
-        if (executor instanceof DtpExecutor) {
-            val runTimeoutAlarm = getAlarmInfo(threadPoolName, RUN_TIMEOUT.getValue());
-            val leftCount = runTimeoutAlarm == null ? UNKNOWN : String.valueOf(runTimeoutAlarm.getCount());
-            runTimeoutCount = leftCount + " / " + ((DtpExecutor) executor).getRunTimeoutCount();
-        } else {
-            runTimeoutCount = UNKNOWN + " / " + UNKNOWN;
-        }
-
         String queueTimeoutCount;
         if (executor instanceof DtpExecutor) {
-            val queueTimeoutAlarm = getAlarmInfo(threadPoolName, QUEUE_TIMEOUT.getValue());
-            val leftCount = queueTimeoutAlarm == null ? UNKNOWN : String.valueOf(queueTimeoutAlarm.getCount());
-            queueTimeoutCount = leftCount + " / " + ((DtpExecutor) executor).getQueueTimeoutCount();
+            DtpExecutor dtpExecutor = (DtpExecutor) executor;
+            rejectCount = getCount(threadPoolName, REJECT.getValue()) + " / " + dtpExecutor.getRejectCount();
+            runTimeoutCount = getCount(threadPoolName, RUN_TIMEOUT.getValue()) + " / " +
+                    dtpExecutor.getRunTimeoutCount();
+            queueTimeoutCount = getCount(threadPoolName, QUEUE_TIMEOUT.getValue()) + " / " +
+                    dtpExecutor.getQueueTimeoutCount();
         } else {
-            queueTimeoutCount = UNKNOWN + " / " + UNKNOWN;
+            rejectCount = DEFAULT_MSG;
+            runTimeoutCount = DEFAULT_MSG;
+            queueTimeoutCount = DEFAULT_MSG;
         }
 
         return new ImmutableTriple<>(rejectCount, runTimeoutCount, queueTimeoutCount);

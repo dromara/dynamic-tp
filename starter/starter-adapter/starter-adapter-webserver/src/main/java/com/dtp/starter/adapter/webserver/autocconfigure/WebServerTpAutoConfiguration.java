@@ -28,14 +28,32 @@ public class WebServerTpAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnBean(name = {"JettyServletWebServerFactory"})
+    @ConditionalOnBean(name = {"tomcatReactiveWebServerFactory"})
+    public TomcatDtpAdapter tomcatReactiveTpHandler() {
+        return new TomcatDtpAdapter();
+    }
+
+    @Bean
+    @ConditionalOnBean(name = {"jettyServletWebServerFactory"})
     public JettyDtpAdapter jettyTpHandler() {
+        return new JettyDtpAdapter();
+    }
+
+    @Bean
+    @ConditionalOnBean(name = {"jettyReactiveWebServerFactory"})
+    public JettyDtpAdapter jettyReactiveTpHandler() {
         return new JettyDtpAdapter();
     }
 
     @Bean
     @ConditionalOnBean(name = {"undertowServletWebServerFactory"})
     public UndertowDtpAdapter undertowTpHandler() {
+        return new UndertowDtpAdapter();
+    }
+
+    @Bean
+    @ConditionalOnBean(name = {"undertowReactiveWebServerFactory"})
+    public UndertowDtpAdapter undertowReactiveTpHandler() {
         return new UndertowDtpAdapter();
     }
 }

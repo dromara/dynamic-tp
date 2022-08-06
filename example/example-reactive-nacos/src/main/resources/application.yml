@@ -1,0 +1,27 @@
+server:
+  port: 8888
+  servlet:
+    context-path: "/dynamic-tp"
+
+spring:
+  application:
+    name: dynamic-tp-nacos-demo
+  profiles:
+    active: dev
+
+nacos:
+  config:
+    server-addr: 127.0.0.1:8848
+    type: yaml
+    data-ids: dynamic-tp-nacos-demo-dev.yml,dynamic-tp-nacos-demo-dtp-dev.yml
+    auto-refresh: true
+    group: DEFAULT_GROUP
+    bootstrap:
+      enable: true
+      log-enable: true
+
+
+logging:
+  level:
+    #root: DEBUG
+    com.alibaba.nacos.client.config.impl: WARN

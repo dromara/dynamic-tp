@@ -210,11 +210,11 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
     private String populatePoolName(String poolName, ExecutorWrapper executorWrapper) {
 
-        String poolAlisaName = null;
+        String poolAlisaName;
         if (executorWrapper.getExecutor() instanceof DtpExecutor) {
             poolAlisaName = ((DtpExecutor) executorWrapper.getExecutor()).getTheadPoolAliasName();
-        }else{
-            poolAlisaName =  executorWrapper.getTheadPoolAliasName();
+        } else {
+            poolAlisaName = executorWrapper.getTheadPoolAliasName();
         }
         if (StringUtils.isBlank(poolAlisaName)) {
             return poolName;

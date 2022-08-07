@@ -73,6 +73,14 @@ features:
 - **中间件线程池管理**：集成管理常用第三方组件的线程池，已集成Tomcat、Jetty、Undertow、Dubbo、RocketMq、Hystrix等组件的线程池管理（调参、监控报警）
 
 
+## 技术架构 
+
+![技术架构](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/38e4bf71d2c84b7ba67d7059b5432a7e~tplv-k3u1fbpfcp-zoom-1.image)
+
+## star趋势 ❤️
+
+[![Stargazers over time](https://starchart.cc/dromara/dynamic-tp.svg)](https://starchart.cc/dromara/dynamic-tp)
+
 <div>
     <div class="com-box-f s-width">
         <div class="s-fenge"></div>

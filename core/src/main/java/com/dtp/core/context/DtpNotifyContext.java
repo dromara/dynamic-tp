@@ -5,7 +5,6 @@ import com.dtp.common.dto.AlarmInfo;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
-import com.dtp.core.thread.DtpExecutor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.val;
@@ -16,14 +15,14 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.toMap;
 
 /**
- * DtpContentWrapper related
+ * DtpNotifyContext related
  *
  * @author: yanhom
  * @since 1.0.0
  */
 @Builder
 @Data
-public class DtpContext {
+public class DtpNotifyContext {
 
     private ExecutorWrapper executorWrapper;
 

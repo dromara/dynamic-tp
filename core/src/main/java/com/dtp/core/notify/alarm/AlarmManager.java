@@ -9,8 +9,8 @@ import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;
-import com.dtp.core.context.DtpContext;
-import com.dtp.core.context.DtpContextHolder;
+import com.dtp.core.context.DtpNotifyContext;
+import com.dtp.core.context.DtpNotifyContextHolder;
 import com.dtp.core.handler.NotifierHandler;
 import com.dtp.core.notify.NotifyHelper;
 import com.dtp.core.support.ThreadPoolBuilder;
@@ -58,57 +58,57 @@ public class AlarmManager {
         ALARM_EXECUTOR.execute(runnable);
     }
 
-    public static void doAlarm(DtpExecutor executor, List<NotifyTypeEnum> typeEnums) {
+    public static void doAlarm(DtpExecutor executor, List<NotifyTypeEnum> notifyTypes) {
         val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor, executor.getNotifyItems());
-        doAlarm(executorWrapper, typeEnums);
+        doAlarm(executorWrapper, notifyTypes);
     }
 
-    public static void doAlarm(ExecutorWrapper executorWrapper, List<NotifyTypeEnum> typeEnums) {
-        typeEnums.forEach(x -> doAlarm(executorWrapper, x));
+    public static void doAlarm(ExecutorWrapper executorWrapper, List<NotifyTypeEnum> notifyTypes) {
+        notifyTypes.forEach(x -> doAlarm(executorWrapper, x));
     }
 
-    public static void doAlarm(DtpExecutor executor, NotifyTypeEnum typeEnum) {
+    public static void doAlarm(DtpExecutor executor, NotifyTypeEnum notifyType) {
         val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor, executor.getNotifyItems());
-        doAlarm(executorWrapper, typeEnum);
+        doAlarm(executorWrapper, notifyType);
     }
 
-    public static void doAlarm(ExecutorWrapper executorWrapper, NotifyTypeEnum typeEnum) {
+    public static void doAlarm(ExecutorWrapper executorWrapper, NotifyTypeEnum notifyType) {
 
-        NotifyItem notifyItem = NotifyHelper.getNotifyItem(executorWrapper, typeEnum);
+        NotifyItem notifyItem = NotifyHelper.getNotifyItem(executorWrapper, notifyType);
         if (Objects.isNull(notifyItem) || !satisfyBaseCondition(notifyItem)) {
             return;
         }
 
-        if (!checkThreshold(executorWrapper, typeEnum, notifyItem)) {
+        if (!checkThreshold(executorWrapper, notifyType, notifyItem)) {
             return;
         }
-        boolean ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), typeEnum.getValue());
+        boolean ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyType.getValue());
         if (!ifAlarm) {
             log.debug("DynamicTp notify, alarm limit, dtpName: {}, type: {}",
-                    executorWrapper.getThreadPoolName(), typeEnum.getValue());
+                    executorWrapper.getThreadPoolName(), notifyType.getValue());
             return;
         }
         synchronized (SEND_LOCK) {
             // recheck alarm limit.
-            ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), typeEnum.getValue());
+            ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyType.getValue());
             if (!ifAlarm) {
                 log.warn("DynamicTp notify, concurrent send, alarm limit, dtpName: {}, type: {}",
-                        executorWrapper.getThreadPoolName(), typeEnum.getValue());
+                        executorWrapper.getThreadPoolName(), notifyType.getValue());
                 return;
             }
-            AlarmLimiter.putVal(executorWrapper.getThreadPoolName(), typeEnum.getValue());
+            AlarmLimiter.putVal(executorWrapper.getThreadPoolName(), notifyType.getValue());
         }
 
         DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
         AlarmInfo alarmInfo = AlarmCounter.getAlarmInfo(executorWrapper.getThreadPoolName(), notifyItem.getType());
-        DtpContext dtpContext = DtpContext.builder()
+        DtpNotifyContext dtpNotifyContext = DtpNotifyContext.builder()
                 .executorWrapper(executorWrapper)
                 .platforms(dtpProperties.getPlatforms())
                 .notifyItem(notifyItem)
                 .alarmInfo(alarmInfo)
                 .build();
-        DtpContextHolder.set(dtpContext);
-        NotifierHandler.getInstance().sendAlarm(typeEnum);
+        DtpNotifyContextHolder.set(dtpNotifyContext);
+        NotifierHandler.getInstance().sendAlarm(notifyType);
         AlarmCounter.reset(executorWrapper.getThreadPoolName(), notifyItem.getType());
     }
 

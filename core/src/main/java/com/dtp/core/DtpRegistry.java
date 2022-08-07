@@ -9,8 +9,8 @@ import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.ex.DtpException;
 import com.dtp.common.queue.MemorySafeLinkedBlockingQueue;
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
-import com.dtp.core.context.DtpContext;
-import com.dtp.core.context.DtpContextHolder;
+import com.dtp.core.context.DtpNotifyContext;
+import com.dtp.core.context.DtpNotifyContextHolder;
 import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.handler.NotifierHandler;
 import com.dtp.core.notify.NotifyHelper;
@@ -202,19 +202,18 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.isAllowCoreThreadTimeOut(),
                         newProp.isAllowCoreThreadTimeOut()));
 
+        val platforms = dtpProperties.getPlatforms();
         val notifyItem = NotifyHelper.getNotifyItem(executor, NotifyTypeEnum.CHANGE);
-        boolean ifNotice = CollUtil.isNotEmpty(dtpProperties.getPlatforms()) &&
-                Objects.nonNull(notifyItem) &&
-                notifyItem.isEnabled();
+        boolean ifNotice = CollUtil.isNotEmpty(platforms) && Objects.nonNull(notifyItem) && notifyItem.isEnabled();
         if (!ifNotice) {
             return;
         }
-        DtpContext context = DtpContext.builder()
+        DtpNotifyContext context = DtpNotifyContext.builder()
                 .executorWrapper(new ExecutorWrapper(executor.getThreadPoolName(), executor))
-                .platforms(dtpProperties.getPlatforms())
+                .platforms(platforms)
                 .notifyItem(notifyItem)
                 .build();
-        DtpContextHolder.set(context);
+        DtpNotifyContextHolder.set(context);
         NotifierHandler.getInstance().sendNoticeAsync(oldProp, diffKeys);
     }
 
@@ -274,10 +273,10 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         dtpExecutor.setTaskWrappers(taskWrappers);
 
         // update notify items
-        properties.setNotifyItems(mergeAllNotifyItems(properties.getNotifyItems()));
-        val items = NotifyHelper.fillNotifyItems(properties.getNotifyItems(), dtpProperties.getPlatforms());
-        NotifyHelper.initAlarm(dtpExecutor.getThreadPoolName(), dtpExecutor.getNotifyItems(), items);
-        dtpExecutor.setNotifyItems(items);
+        val allNotifyItems = mergeAllNotifyItems(properties.getNotifyItems());
+        NotifyHelper.fillPlatforms(dtpProperties.getPlatforms(), allNotifyItems);
+        NotifyHelper.initAlarm(dtpExecutor.getThreadPoolName(), dtpExecutor.getNotifyItems(), allNotifyItems);
+        dtpExecutor.setNotifyItems(allNotifyItems);
     }
 
     @Autowired

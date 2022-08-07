@@ -102,8 +102,8 @@ public class DtpMetricsPublisherThreadPool implements HystrixMetricsPublisherThr
                                                         Integer builderOverrideValue,
                                                         Integer defaultValue) {
         return forInteger()
-                .add(PROPERTY_PREFIX + ".threadpool." + key.name() + "." + instanceProperty, builderOverrideValue)
-                .add(PROPERTY_PREFIX + ".threadpool.default." + instanceProperty, defaultValue)
+                .add(getPropertyName(key.name(), instanceProperty), builderOverrideValue)
+                .add(getDefaultPropertyName(instanceProperty), defaultValue)
                 .build();
     }
 
@@ -112,8 +112,16 @@ public class DtpMetricsPublisherThreadPool implements HystrixMetricsPublisherThr
                                                         Boolean builderOverrideValue,
                                                         Boolean defaultValue) {
         return forBoolean()
-                .add(PROPERTY_PREFIX + ".threadpool." + key.name() + "." + instanceProperty, builderOverrideValue)
-                .add(PROPERTY_PREFIX + ".threadpool.default." + instanceProperty, defaultValue)
+                .add(getPropertyName(key.name(), instanceProperty), builderOverrideValue)
+                .add(getDefaultPropertyName(instanceProperty), defaultValue)
                 .build();
+    }
+
+    private static String getPropertyName(String key, String instanceProperty) {
+        return PROPERTY_PREFIX + ".threadpool." + key + "." + instanceProperty;
+    }
+
+    private static String getDefaultPropertyName(String instanceProperty) {
+        return PROPERTY_PREFIX + ".threadpool.default." + instanceProperty;
     }
 }

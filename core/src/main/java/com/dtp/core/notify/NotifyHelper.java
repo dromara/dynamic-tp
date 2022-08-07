@@ -105,14 +105,6 @@ public class NotifyHelper {
         });
     }
 
-    public static List<NotifyItem> fillNotifyItems(List<NotifyItem> notifyItems, List<NotifyPlatform> platforms) {
-        if (CollUtil.isEmpty(platforms) || CollUtil.isEmpty(notifyItems)) {
-            return Collections.emptyList();
-        }
-        fillPlatforms(platforms, notifyItems);
-        return notifyItems;
-    }
-
     public static void initAlarm(String poolName, List<NotifyItem> oldItems, List<NotifyItem> newItems) {
 
         if (CollectionUtils.isEmpty(newItems)) {

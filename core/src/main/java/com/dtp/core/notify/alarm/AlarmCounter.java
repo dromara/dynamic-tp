@@ -24,7 +24,7 @@ import static com.dtp.common.em.NotifyTypeEnum.*;
  **/
 public class AlarmCounter {
 
-    private static final String DEFAULT_MSG = UNKNOWN + " / " + UNKNOWN;
+    private static final String DEFAULT_COUNT_STR = UNKNOWN + " / " + UNKNOWN;
 
     private AlarmCounter() {}
 
@@ -66,24 +66,18 @@ public class AlarmCounter {
         }
     }
 
-    public static Triple<String, String, String> countRrq(String threadPoolName, ThreadPoolExecutor executor) {
+    public static Triple<String, String, String> countStrRrq(String threadPoolName, ThreadPoolExecutor executor) {
 
-        String rejectCount;
-        String runTimeoutCount;
-        String queueTimeoutCount;
-        if (executor instanceof DtpExecutor) {
-            DtpExecutor dtpExecutor = (DtpExecutor) executor;
-            rejectCount = getCount(threadPoolName, REJECT.getValue()) + " / " + dtpExecutor.getRejectCount();
-            runTimeoutCount = getCount(threadPoolName, RUN_TIMEOUT.getValue()) + " / " +
-                    dtpExecutor.getRunTimeoutCount();
-            queueTimeoutCount = getCount(threadPoolName, QUEUE_TIMEOUT.getValue()) + " / " +
-                    dtpExecutor.getQueueTimeoutCount();
-        } else {
-            rejectCount = DEFAULT_MSG;
-            runTimeoutCount = DEFAULT_MSG;
-            queueTimeoutCount = DEFAULT_MSG;
+        if (!(executor instanceof DtpExecutor)) {
+            return new ImmutableTriple<>(DEFAULT_COUNT_STR, DEFAULT_COUNT_STR, DEFAULT_COUNT_STR);
         }
 
+        DtpExecutor dtpExecutor = (DtpExecutor) executor;
+        String rejectCount = getCount(threadPoolName, REJECT.getValue()) + " / " + dtpExecutor.getRejectCount();
+        String runTimeoutCount = getCount(threadPoolName, RUN_TIMEOUT.getValue()) + " / " +
+                dtpExecutor.getRunTimeoutCount();
+        String queueTimeoutCount = getCount(threadPoolName, QUEUE_TIMEOUT.getValue()) + " / " +
+                dtpExecutor.getQueueTimeoutCount();
         return new ImmutableTriple<>(rejectCount, runTimeoutCount, queueTimeoutCount);
     }
 

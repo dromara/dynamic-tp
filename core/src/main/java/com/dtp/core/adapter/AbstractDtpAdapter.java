@@ -10,8 +10,8 @@ import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.util.StreamUtil;
-import com.dtp.core.context.DtpContext;
-import com.dtp.core.context.DtpContextHolder;
+import com.dtp.core.context.DtpNotifyContext;
+import com.dtp.core.context.DtpNotifyContextHolder;
 import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.convert.MetricsConverter;
 import com.dtp.core.handler.NotifierHandler;
@@ -34,7 +34,7 @@ import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
-import static com.dtp.common.dto.NotifyItem.mergeSimpleNotifyItems;
+import static com.dtp.common.dto.NotifyItem.mergeAllNotifyItems;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -131,12 +131,12 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
         if (!ifNotice) {
             return;
         }
-        DtpContext context = DtpContext.builder()
+        DtpNotifyContext context = DtpNotifyContext.builder()
                 .executorWrapper(executorWrapper)
                 .platforms(platforms)
                 .notifyItem(notifyItem)
                 .build();
-        DtpContextHolder.set(context);
+        DtpNotifyContextHolder.set(context);
         NotifierHandler.getInstance().sendNoticeAsync(oldProp, diffKeys);
     }
 
@@ -162,9 +162,9 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
         }
 
         // update notify items
-        properties.setNotifyItems(mergeSimpleNotifyItems(properties.getNotifyItems()));
-        val items = NotifyHelper.fillNotifyItems(properties.getNotifyItems(), platforms);
-        NotifyHelper.initAlarm(executorWrapper.getThreadPoolName(), executorWrapper.getNotifyItems(), items);
-        executorWrapper.setNotifyItems(items);
+        val allNotifyItems = mergeAllNotifyItems(properties.getNotifyItems());
+        NotifyHelper.fillPlatforms(platforms, allNotifyItems);
+        NotifyHelper.initAlarm(executorWrapper.getThreadPoolName(), executorWrapper.getNotifyItems(), allNotifyItems);
+        executorWrapper.setNotifyItems(allNotifyItems);
     }
 }

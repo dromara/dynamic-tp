@@ -3,7 +3,7 @@ package com.dtp.core.handler;
 import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyTypeEnum;
-import com.dtp.core.context.DtpContextHolder;
+import com.dtp.core.context.DtpNotifyContextHolder;
 import com.dtp.core.notify.DtpNotifier;
 import com.dtp.core.notify.base.DingNotifier;
 import com.dtp.core.notify.base.LarkNotifier;
@@ -54,7 +54,7 @@ public class NotifierHandler {
     public void sendNotice(DtpMainProp prop, List<String> diffs) {
 
         try {
-            NotifyItem notifyItem = DtpContextHolder.get().getNotifyItem();
+            NotifyItem notifyItem = DtpNotifyContextHolder.get().getNotifyItem();
             for (String platform : notifyItem.getPlatforms()) {
                 DtpNotifier notifier = NOTIFIERS.get(platform.toLowerCase());
                 if (notifier != null) {
@@ -62,21 +62,21 @@ public class NotifierHandler {
                 }
             }
         } finally {
-            DtpContextHolder.remove();
+            DtpNotifyContextHolder.remove();
         }
     }
 
-    public void sendAlarm(NotifyTypeEnum typeEnum) {
+    public void sendAlarm(NotifyTypeEnum notifyType) {
         try {
-            NotifyItem notifyItem = DtpContextHolder.get().getNotifyItem();
+            NotifyItem notifyItem = DtpNotifyContextHolder.get().getNotifyItem();
             for (String platform : notifyItem.getPlatforms()) {
                 DtpNotifier notifier = NOTIFIERS.get(platform.toLowerCase());
                 if (notifier != null) {
-                    notifier.sendAlarmMsg(typeEnum);
+                    notifier.sendAlarmMsg(notifyType);
                 }
             }
         } finally {
-            DtpContextHolder.remove();
+            DtpNotifyContextHolder.remove();
         }
     }
 

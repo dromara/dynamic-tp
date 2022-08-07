@@ -27,9 +27,9 @@ public class CollectorHandler {
             COLLECTORS.add(collector);
         }
 
-        MetricsCollector defaultCollector = new MicroMeterCollector();
+        MetricsCollector microMeterCollector = new MicroMeterCollector();
         LogCollector logCollector = new LogCollector();
-        COLLECTORS.add(defaultCollector);
+        COLLECTORS.add(microMeterCollector);
         COLLECTORS.add(logCollector);
     }
 

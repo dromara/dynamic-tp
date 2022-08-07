@@ -14,7 +14,7 @@ import java.util.List;
 public interface DtpNotifier {
 
     /**
-     * Get the send platform name.
+     * Get the platform name.
      *
      * @return platform
      */

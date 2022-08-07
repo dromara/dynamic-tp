@@ -6,8 +6,8 @@ import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.*;
 import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.em.NotifyTypeEnum;
-import com.dtp.core.context.DtpContext;
-import com.dtp.core.context.DtpContextHolder;
+import com.dtp.core.context.DtpNotifyContext;
+import com.dtp.core.context.DtpNotifyContextHolder;
 import com.dtp.core.notify.alarm.AlarmCounter;
 import com.dtp.core.notify.base.Notifier;
 import com.dtp.core.thread.DtpExecutor;
@@ -76,8 +76,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
     @Override
     public void sendChangeMsg(DtpMainProp oldProp, List<String> diffs) {
-        DtpContext contextWrapper = DtpContextHolder.get();
-        NotifyPlatform platform = contextWrapper.getPlatform(platform());
+        NotifyPlatform platform = DtpNotifyContextHolder.get().getPlatform(platform());
         String content = buildNoticeContent(platform, getNoticeTemplate(), oldProp, diffs);
         if (StringUtils.isBlank(content)) {
             return;
@@ -87,8 +86,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
     @Override
     public void sendAlarmMsg(NotifyTypeEnum typeEnum) {
-        DtpContext contextWrapper = DtpContextHolder.get();
-        NotifyPlatform platform = contextWrapper.getPlatform(platform());
+        NotifyPlatform platform = DtpNotifyContextHolder.get().getPlatform(platform());
         String content = buildAlarmContent(platform, typeEnum, getAlarmTemplate());
         if (StringUtils.isBlank(content)) {
             return;
@@ -118,13 +116,13 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     protected abstract Pair<String, String> getColors();
 
     private String buildAlarmContent(NotifyPlatform platform, NotifyTypeEnum typeEnum, String template) {
-        DtpContext context = DtpContextHolder.get();
+        DtpNotifyContext context = DtpNotifyContextHolder.get();
         String threadPoolName = context.getExecutorWrapper().getThreadPoolName();
         val executor = (ThreadPoolExecutor) context.getExecutorWrapper().getExecutor();
         NotifyItem notifyItem = context.getNotifyItem();
         AlarmInfo alarmInfo = context.getAlarmInfo();
 
-        val triple = AlarmCounter.countRrq(threadPoolName, executor);
+        val alarmCounter = AlarmCounter.countStrRrq(threadPoolName, executor);
         String receivesStr = getReceives(platform.getPlatform(), platform.getReceivers());
 
         String content = String.format(
@@ -148,9 +146,9 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 executor.getQueue().size(),
                 executor.getQueue().remainingCapacity(),
                 getRejectHandlerName(executor),
-                triple.getLeft(),
-                triple.getMiddle(),
-                triple.getRight(),
+                alarmCounter.getLeft(),
+                alarmCounter.getMiddle(),
+                alarmCounter.getRight(),
                 alarmInfo.getLastAlarmTime() == null ? UNKNOWN : alarmInfo.getLastAlarmTime(),
                 DateUtil.now(),
                 receivesStr,
@@ -164,7 +162,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                                      DtpMainProp oldProp,
                                      List<String> diffs) {
         String threadPoolName = oldProp.getThreadPoolName();
-        DtpContext context = DtpContextHolder.get();
+        DtpNotifyContext context = DtpNotifyContextHolder.get();
         val executor = (ThreadPoolExecutor) context.getExecutorWrapper().getExecutor();
         String receivesStr = getReceives(platform.getPlatform(), platform.getReceivers());
 
@@ -240,7 +238,6 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         }
 
         Pair<String, String> pair = getColors();
-
         for (String field : diffs) {
             content = content.replace(field, pair.getLeft());
         }
@@ -257,11 +254,9 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
         Set<String> colorKeys = getAlarmKeys(typeEnum);
         Pair<String, String> pair = getColors();
-
         for (String field : colorKeys) {
             content = content.replace(field, pair.getLeft());
         }
-
         for (String field : getAllAlarmKeys()) {
             content = content.replace(field, pair.getRight());
         }

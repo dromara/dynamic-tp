@@ -15,8 +15,6 @@
             <groupId>org.apache.skywalking</groupId>
             <artifactId>apm-toolkit-trace</artifactId>
             <version>8.11.0</version>
-            <scope>compile</scope>
-            <optional>true</optional>
         </dependency>
     </dependencies>
 

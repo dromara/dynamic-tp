@@ -27,28 +27,28 @@ public class AlarmLimiter {
             return;
         }
 
-        String outerKey = buildOuterKey(threadPoolName, notifyItem.getType());
+        String key = genKey(threadPoolName, notifyItem.getType());
         Cache<String, String> cache = CacheBuilder.newBuilder()
                 .expireAfterWrite(notifyItem.getInterval(), TimeUnit.SECONDS)
                 .build();
-        ALARM_LIMITER.put(outerKey, cache);
+        ALARM_LIMITER.put(key, cache);
     }
 
     public static void putVal(String threadPoolName, String type) {
-        String outerKey = buildOuterKey(threadPoolName, type);
-        ALARM_LIMITER.get(outerKey).put(type, type);
+        String key = genKey(threadPoolName, type);
+        ALARM_LIMITER.get(key).put(type, type);
     }
 
-    public static String getAlarmLimitInfo(String outerKey, String innerKey) {
-        return ALARM_LIMITER.get(outerKey).getIfPresent(innerKey);
+    public static String getAlarmLimitInfo(String key, String type) {
+        return ALARM_LIMITER.get(key).getIfPresent(type);
     }
 
     public static boolean ifAlarm(String threadPoolName, String type) {
-        String key = buildOuterKey(threadPoolName, type);
+        String key = genKey(threadPoolName, type);
         return StringUtils.isBlank(getAlarmLimitInfo(key, type));
     }
 
-    public static String buildOuterKey(String threadPoolName, String type) {
+    public static String genKey(String threadPoolName, String type) {
         return threadPoolName + ":" + type;
     }
 }

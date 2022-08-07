@@ -99,13 +99,12 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
                     String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaxPoolSize, newMaxPoolSize),
                     String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldKeepAliveTime, newKeepAliveTime));
         } catch (IOException e) {
-            log.error("Update undertow web server threadPool failed.", e);
+            log.error("Refresh undertow web server threadPool failed.", e);
         }
     }
 
     private void doRefresh(XnioWorker xnioWorker, SimpleTpProperties properties) {
 
-        int keepAlive = properties.getKeepAliveTime() * 1000;
         try {
             if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS), properties.getCorePoolSize())) {
                 xnioWorker.setOption(Options.WORKER_TASK_CORE_THREADS, properties.getCorePoolSize());
@@ -113,6 +112,7 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
             if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS), properties.getMaximumPoolSize())) {
                 xnioWorker.setOption(Options.WORKER_TASK_MAX_THREADS, properties.getMaximumPoolSize());
             }
+            int keepAlive = properties.getKeepAliveTime() * 1000;
             if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_KEEPALIVE), keepAlive)) {
                 xnioWorker.setOption(Options.WORKER_TASK_KEEPALIVE, keepAlive);
             }

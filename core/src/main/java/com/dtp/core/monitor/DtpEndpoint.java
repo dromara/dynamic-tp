@@ -30,15 +30,14 @@ public class DtpEndpoint {
     @ReadOperation
     public List<Metrics> invoke() {
 
-        List<String> dtpNames = DtpRegistry.listAllDtpNames();
-        List<String> commonNames = DtpRegistry.listAllCommonNames();
-
         List<Metrics> metricsList = Lists.newArrayList();
+        List<String> dtpNames = DtpRegistry.listAllDtpNames();
         dtpNames.forEach(x -> {
             DtpExecutor executor = DtpRegistry.getDtpExecutor(x);
             metricsList.add(MetricsConverter.convert(executor));
         });
 
+        List<String> commonNames = DtpRegistry.listAllCommonNames();
         commonNames.forEach(x -> {
             ExecutorWrapper wrapper = DtpRegistry.getCommonExecutor(x);
             metricsList.add(MetricsConverter.convert(wrapper));

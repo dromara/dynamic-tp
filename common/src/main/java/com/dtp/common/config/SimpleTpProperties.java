@@ -22,6 +22,11 @@ public class SimpleTpProperties {
     private String threadPoolName;
 
     /**
+     * Simple Alias Name of  ThreadPool. Use for notify.
+     */
+    private String theadPoolAliasName;
+
+    /**
      * CoreSize of ThreadPool.
      */
     private int corePoolSize;

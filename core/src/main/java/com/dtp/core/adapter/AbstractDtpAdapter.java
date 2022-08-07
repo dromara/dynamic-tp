@@ -24,6 +24,7 @@ import com.github.dadiyang.equator.GetterBaseEquator;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 
@@ -129,6 +130,9 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
         boolean ifNotice = CollUtil.isNotEmpty(platforms) && Objects.nonNull(notifyItem) && notifyItem.isEnabled();
         if (!ifNotice) {
             return;
+        }
+        if(StringUtils.isNotBlank(properties.getTheadPoolAliasName())){
+            executorWrapper.setTheadPoolAliasName(properties.getTheadPoolAliasName());
         }
         DtpContext context = DtpContext.builder()
                 .executorWrapper(executorWrapper)

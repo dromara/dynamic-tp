@@ -32,26 +32,7 @@
 
 如果你有以上痛点，动态可监控线程池（DynamicTp）或许能帮助到你。
 
-如果看过 ThreadPoolExecutor 的源码，大概可以知道它对核心参数基本都有提供 set / get 方法以及一些扩展方法，可以在运行时动态修改、获取相应的值，这些方法有：
-
-```java
-public void setCorePoolSize(int corePoolSize);
-public void setMaximumPoolSize(int maximumPoolSize);
-public void setKeepAliveTime(long time, TimeUnit unit);
-public void setThreadFactory(ThreadFactory threadFactory);
-public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
-public void allowCoreThreadTimeOut(boolean value);
-
-public int getCorePoolSize();
-public int getMaximumPoolSize();
-public long getKeepAliveTime(TimeUnit unit);
-public BlockingQueue<Runnable> getQueue();
-public RejectedExecutionHandler getRejectedExecutionHandler();
-public boolean allowsCoreThreadTimeOut();
-
-protected void beforeExecute(Thread t, Runnable r);
-protected void afterExecute(Runnable r, Throwable t);
-```
+如果看过 ThreadPoolExecutor 的源码，大概可以知道它对核心参数基本都有提供 set / get 方法以及一些扩展方法，可以在运行时动态修改、获取相应的值。
 
 现在大多数的互联网项目其实都会微服务化部署，有一套自己的服务治理体系，微服务组件中的分布式配置中心扮演的就是动态修改配置，
 实时生效的角色。那么我们是否可以结合配置中心来做运行时线程池参数的动态调整呢？答案是肯定的，而且配置中心相对都是高可用的，
@@ -121,55 +102,7 @@ protected void afterExecute(Runnable r, Throwable t);
 >
 > 5.通知告警模块
 
-- 配置变更监听模块
-
-  1.监听特定配置中心的指定配置文件（已实现 Nacos、Apollo、Zookeeper、Consul），可通过内部提供的SPI接口扩展其他实现
-
-  2.解析配置文件内容，内置实现 yml、properties、json 配置文件的解析，可通过内部提供的 SPI 接口扩展其他实现
-
-  3.通知线程池管理模块实现参数的刷新
-
-- 服务内部线程池管理模块
-
-  1.服务启动时从配置中心拉取配置，生成线程池实例注册到内部线程池注册中心以及Spring容器中
-
-  2.接受配置监听模块的刷新事件，实现线程池参数的刷新
-
-  3.代码中通过依赖注入（推荐）或者 DtpRegistry.getExecutor() 方法根据线程池名称来获取线程池实例
-
-- 三方组件线程池管理
-
-  1.服务启动获取第三方中间件的线程池，被框架管理起来
-
-  2.接受参数刷新、指标收集、通知报警事件，进行相应的处理
-
-- 监控模块
-
-  实现监控指标采集以及输出，默认提供以下三种方式，也可通过内部提供的 SPI 接口扩展其他实现
-
-  1.默认实现 JsonLog 输出到磁盘，可以自己采集解析日志，存储展示
-
-  2.MicroMeter采集，引入 MicroMeter 相关依赖，暴露相关端点，采集指标数据，结合 Grafana 做监控大盘
-
-  3.暴雷自定义 Endpoint 端点（dynamic-tp），可通过 http 方式实时访问
-
-- 通知告警模块
-
-  对接办公平台，实现通知告警功能，已支持钉钉、企微、飞书，可通过内部提供的 SPI 接口扩展其他实现，通知告警类型如下
-
-  1.线程池主要参数变更通知
-
-  2.阻塞队列容量达到设置的告警阈值
-
-  3.线程池活性达到设置的告警阈值
-
-  4.触发拒绝策略告警，格式：A/B，A：该报警项前后两次报警区间累加数量，B：该报警项累计总数
-
-  5.任务执行超时告警，格式：A/B，A：该报警项前后两次报警区间累加数量，B：该报警项累计总数
-
-  6.任务等待超时告警，格式：A/B，A：该报警项前后两次报警区间累加数量，B：该报警项累计总数
-
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/91ea4c3e1166426e8dca9903dacfd9eb~tplv-k3u1fbpfcp-zoom-1.image)
+详细查看官网文档，[架构设计](https://dynamictp.cn/guide/introduction/architecture.html)
 
 ---
 
@@ -204,7 +137,6 @@ protected void afterExecute(Runnable r, Throwable t);
   更多见官网文档，[通知报警](https://dynamictp.cn/guide/notice/alarm.html)
 
 ![告警](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d65151e3e9ca460eac18f30ea6be05d3~tplv-k3u1fbpfcp-zoom-1.image)
-
 
 - 配置变更会推送通知消息，且会高亮变更的字段
 
@@ -256,6 +188,11 @@ protected void afterExecute(Runnable r, Throwable t);
   ```
 
 ---
+
+
+## star趋势❤️
+
+[![Stargazers over time](https://starchart.cc/dromara/dynamic-tp.svg)](https://starchart.cc/dromara/dynamic-tp)
 
 ## 联系我
 

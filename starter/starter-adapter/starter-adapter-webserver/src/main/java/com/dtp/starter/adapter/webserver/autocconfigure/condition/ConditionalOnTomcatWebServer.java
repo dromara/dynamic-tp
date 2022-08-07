@@ -9,7 +9,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @link Condition} that checks if the application is a Tomcat WebServer
+ * {@link Conditional @Conditional} that checks if the application is a Tomcat WebServer
+ *
  * @author liu.guorong
  * @Date 2022/8/7
  */

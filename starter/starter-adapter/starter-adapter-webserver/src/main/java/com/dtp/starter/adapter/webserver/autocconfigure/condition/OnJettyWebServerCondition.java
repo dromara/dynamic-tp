@@ -14,8 +14,10 @@ public class OnJettyWebServerCondition extends AnyNestedCondition {
     public OnJettyWebServerCondition() {
         super(ConfigurationPhase.REGISTER_BEAN);
     }
-    @ConditionalOnBean(name = {"jettyServletWebServerFactory"})
+
+    @ConditionalOnBean(name = {"JettyServletWebServerFactory"})
     static class ServletWebServer{}
-    @ConditionalOnBean(name = {"jettyReactiveWebServerFactory"})
+
+    @ConditionalOnBean(name = {"JettyReactiveWebServerFactory"})
     static class ReactiveWebServer{}
 }

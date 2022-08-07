@@ -163,7 +163,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                                      DtpMainProp oldProp,
                                      List<String> diffs) {
         String threadPoolName = oldProp.getThreadPoolName();
-        DtpContext context = DtpContextHolder.get();
+        DtpNotifyContext context = DtpNotifyContextHolder.get();
         ExecutorWrapper executorWrapper = context.getExecutorWrapper();
         val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
         String receivesStr = getReceives(platform.getPlatform(), platform.getReceivers());

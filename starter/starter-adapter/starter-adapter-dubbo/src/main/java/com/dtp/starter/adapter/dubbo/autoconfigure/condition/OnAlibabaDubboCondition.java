@@ -23,6 +23,6 @@ public class OnAlibabaDubboCondition extends AnyNestedCondition {
     /**
      * just any common bean.
      */
-    @ConditionalOnBean(type = "com.alibaba.dubbo.config.spring.beans.factory.annotation.ReferenceAnnotationBeanPostProcessor")
+    @ConditionalOnBean(type = "com.alibaba.dubbo.config.ProtocolConfig")
     static class AnyCommonBean {}
 }

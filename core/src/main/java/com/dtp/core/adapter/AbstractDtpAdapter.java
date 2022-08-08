@@ -24,6 +24,7 @@ import com.github.dadiyang.equator.GetterBaseEquator;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 
@@ -154,6 +155,10 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
 
         if (!Objects.equals(executor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
             executor.setMaximumPoolSize(properties.getMaximumPoolSize());
+        }
+
+        if(StringUtils.isNotBlank(properties.getTheadPoolAliasName())){
+            executorWrapper.setTheadPoolAliasName(properties.getTheadPoolAliasName());
         }
 
         // update notify items

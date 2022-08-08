@@ -19,6 +19,8 @@ public class ExecutorWrapper {
 
     private Executor executor;
 
+    private String theadPoolAliasName;
+
     /**
      * Notify items, see {@link NotifyTypeEnum}.
      */

@@ -8,8 +8,8 @@ import com.dtp.core.adapter.DtpAdapter;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.context.WebServerApplicationContext;
+import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.boot.web.server.WebServer;
-import org.springframework.boot.web.servlet.context.ServletWebServerInitializedEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 
@@ -23,12 +23,12 @@ import java.util.List;
  */
 @Slf4j
 public abstract class AbstractWebServerDtpAdapter implements
-        DtpAdapter, ApplicationListener<ServletWebServerInitializedEvent> {
+        DtpAdapter, ApplicationListener<WebServerInitializedEvent> {
 
     protected ExecutorWrapper executorWrapper;
 
     @Override
-    public void onApplicationEvent(ServletWebServerInitializedEvent event) {
+    public void onApplicationEvent(WebServerInitializedEvent event) {
         try {
             DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
             initialize();

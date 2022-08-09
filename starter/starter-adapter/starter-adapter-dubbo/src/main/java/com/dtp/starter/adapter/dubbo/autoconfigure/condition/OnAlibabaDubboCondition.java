@@ -2,7 +2,6 @@ package com.dtp.starter.adapter.dubbo.autoconfigure.condition;
 
 import org.springframework.boot.autoconfigure.condition.AnyNestedCondition;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Condition;
 
 /**
@@ -17,12 +16,12 @@ public class OnAlibabaDubboCondition extends AnyNestedCondition {
         super(ConfigurationPhase.REGISTER_BEAN);
     }
 
-    @ConditionalOnProperty(prefix = "spring.dubbo", name = "server", havingValue = "true")
-    static class PropertyEnabled {}
+    @ConditionalOnBean(type = "com.alibaba.dubbo.config.spring.beans.factory.annotation.ServiceAnnotationBeanPostProcessor")
+    static class ServiceAnnotationBpp {}
 
     /**
      * just any common bean.
      */
     @ConditionalOnBean(type = "com.alibaba.dubbo.config.ProtocolConfig")
-    static class AnyCommonBean {}
+    static class ProtocolConf {}
 }

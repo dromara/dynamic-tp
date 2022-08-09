@@ -1,6 +1,7 @@
 package com.dtp.core.handler;
 
 import com.dtp.common.dto.ThreadPoolStats;
+import com.dtp.core.monitor.collector.InternalLogCollector;
 import com.dtp.core.monitor.collector.LogCollector;
 import com.dtp.core.monitor.collector.MetricsCollector;
 import com.dtp.core.monitor.collector.MicroMeterCollector;
@@ -29,8 +30,10 @@ public class CollectorHandler {
 
         MetricsCollector microMeterCollector = new MicroMeterCollector();
         LogCollector logCollector = new LogCollector();
+        InternalLogCollector internalLogCollector = new InternalLogCollector();
         COLLECTORS.add(microMeterCollector);
         COLLECTORS.add(logCollector);
+        COLLECTORS.add(internalLogCollector);
     }
 
     public void collect(ThreadPoolStats poolStats, String type) {

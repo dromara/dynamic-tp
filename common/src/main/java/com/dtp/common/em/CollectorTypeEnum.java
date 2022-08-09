@@ -16,5 +16,7 @@ public enum CollectorTypeEnum {
      */
     LOGGING,
 
-    MICROMETER
+    MICROMETER,
+
+    INTERNAL_LOGGING
 }

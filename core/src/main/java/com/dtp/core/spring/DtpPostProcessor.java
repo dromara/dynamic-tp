@@ -15,6 +15,8 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 
 import java.util.concurrent.ThreadPoolExecutor;
+import org.springframework.lang.NonNull;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 /**
  * BeanPostProcessor that handles all related beans managed by Spring.
@@ -26,9 +28,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class DtpPostProcessor implements BeanPostProcessor {
 
     @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+    public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
 
-        if (!(bean instanceof ThreadPoolExecutor)) {
+        if (!(bean instanceof ThreadPoolExecutor) && !(bean instanceof ThreadPoolTaskExecutor)) {
             return bean;
         }
 
@@ -54,7 +56,12 @@ public class DtpPostProcessor implements BeanPostProcessor {
         }
 
         String poolName = StringUtils.isNotBlank(dynamicTp.value()) ? dynamicTp.value() : beanName;
-        registerCommon(poolName, (ThreadPoolExecutor) bean);
+        if (bean instanceof ThreadPoolTaskExecutor) {
+            ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) bean;
+            registerCommon(poolName, taskExecutor.getThreadPoolExecutor());
+        } else {
+            registerCommon(poolName, (ThreadPoolExecutor) bean);
+        }
         return bean;
     }
 

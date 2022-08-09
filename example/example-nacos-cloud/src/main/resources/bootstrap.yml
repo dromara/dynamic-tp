@@ -18,13 +18,3 @@ spring:
             group: DEFAULT_GROUP
             refresh: true  # 必须配置，负责自动刷新不生效
         refresh-enabled: true
-
-dubbo:
-  protocol:
-    port: 20880
-    server: netty4
-    name: dubbo
-  scan:
-    base-packages: com.dtp
-  registry:
-    address: nacos://localhost:8848

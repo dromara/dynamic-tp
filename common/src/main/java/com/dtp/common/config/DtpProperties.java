@@ -45,6 +45,11 @@ public class DtpProperties {
     private Zookeeper zookeeper;
 
     /**
+     * Etcd config.
+     */
+    private Etcd etcd;
+
+    /**
      * Config file type.
      */
     private String configType = "yml";
@@ -137,5 +142,26 @@ public class DtpProperties {
         private String node;
 
         private String configKey;
+    }
+
+    /**
+     * Etcd config.
+     */
+    @Data
+    public static class Etcd {
+
+        private String endpoints;
+
+        private String user;
+
+        private String password;
+
+        private String charset = "UTF-8";
+
+        private Boolean authEnable = false;
+
+        private String authority = "ssl";
+
+        private String key;
     }
 }

@@ -24,7 +24,7 @@
         <dependency>
             <groupId>io.etcd</groupId>
             <artifactId>jetcd-core</artifactId>
-            <version>0.7.1</version>
+            <version>0.5.5</version>
             <scope>provided</scope>
             <optional>true</optional>
         </dependency>

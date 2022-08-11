@@ -27,7 +27,7 @@ public class EtcdConfigEnvironmentProcessor implements EnvironmentPostProcessor,
         DtpProperties dtpProperties = new DtpProperties();
         PropertiesBinder.bindDtpProperties(environment, dtpProperties);
         DtpProperties.Etcd etcd = dtpProperties.getEtcd();
-        val properties = EtcdUtil.getConfigContent(etcd, dtpProperties.getConfigType());
+        val properties = EtcdUtil.getConfigMap(etcd, dtpProperties.getConfigType());
         if (!checkPropertyExist(environment)) {
             createPropertySource(environment, properties);
         }
@@ -50,9 +50,9 @@ public class EtcdConfigEnvironmentProcessor implements EnvironmentPostProcessor,
      */
     private void createPropertySource(ConfigurableEnvironment environment, Map<Object, Object> properties) {
         MutablePropertySources propertySources = environment.getPropertySources();
-        OriginTrackedMapPropertySource zkSource = new OriginTrackedMapPropertySource(ETCD_PROPERTY_SOURCE_NAME,
+        OriginTrackedMapPropertySource source = new OriginTrackedMapPropertySource(ETCD_PROPERTY_SOURCE_NAME,
                 properties);
-        propertySources.addLast(zkSource);
+        propertySources.addLast(source);
     }
 
     @Override

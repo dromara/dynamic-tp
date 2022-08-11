@@ -34,9 +34,6 @@ public class NacosRefresher extends AbstractRefresher implements InitializingBea
     private ConfigService configService;
 
     @Resource
-    private DtpProperties dtpProperties;
-
-    @Resource
     private Environment environment;
 
     @Override

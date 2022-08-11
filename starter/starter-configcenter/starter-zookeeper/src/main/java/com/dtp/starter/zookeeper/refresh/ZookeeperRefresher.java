@@ -1,6 +1,5 @@
 package com.dtp.starter.zookeeper.refresh;
 
-import com.dtp.common.config.DtpProperties;
 import com.dtp.core.refresh.AbstractRefresher;
 import com.dtp.starter.zookeeper.util.CuratorUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +13,6 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 
-import javax.annotation.Resource;
-
 import static com.dtp.starter.zookeeper.autoconfigure.ZkConfigEnvironmentProcessor.ZK_PROPERTY_SOURCE_NAME;
 
 /**
@@ -23,9 +20,6 @@ import static com.dtp.starter.zookeeper.autoconfigure.ZkConfigEnvironmentProcess
  */
 @Slf4j
 public class ZookeeperRefresher extends AbstractRefresher implements EnvironmentAware, InitializingBean {
-
-    @Resource
-    private DtpProperties dtpProperties;
 
     @Override
     public void afterPropertiesSet() {

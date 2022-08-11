@@ -1,14 +1,11 @@
 package com.dtp.starter.cloud.nacos.refresh;
 
-import com.dtp.common.config.DtpProperties;
 import com.dtp.core.refresh.AbstractRefresher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.SmartApplicationListener;
 import org.springframework.lang.NonNull;
-
-import javax.annotation.Resource;
 
 /**
  * CloudNacosRefresher related
@@ -18,9 +15,6 @@ import javax.annotation.Resource;
  **/
 @Slf4j
 public class CloudNacosRefresher extends AbstractRefresher implements SmartApplicationListener {
-
-    @Resource
-    private DtpProperties dtpProperties;
 
     @Override
     public boolean supportsEventType(@NonNull Class<? extends ApplicationEvent> eventType) {

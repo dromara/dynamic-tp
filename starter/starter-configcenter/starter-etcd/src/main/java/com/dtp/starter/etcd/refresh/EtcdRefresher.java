@@ -4,13 +4,11 @@ import com.dtp.common.config.DtpProperties;
 import com.dtp.core.refresh.AbstractRefresher;
 import com.dtp.core.support.PropertiesBinder;
 import com.dtp.starter.etcd.util.EtcdUtil;
-import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.Ordered;
+
+import java.util.Map;
 
 /**
  * @author Redick01
@@ -18,11 +16,8 @@ import org.springframework.core.Ordered;
 @Slf4j
 public class EtcdRefresher extends AbstractRefresher implements InitializingBean, Ordered {
 
-    @Resource
-    private DtpProperties dtpProperties;
-
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         DtpProperties.Etcd etcd = dtpProperties.getEtcd();
         Map<Object, Object> map = loadConfig(etcd);
         if (map.size() > 0) {

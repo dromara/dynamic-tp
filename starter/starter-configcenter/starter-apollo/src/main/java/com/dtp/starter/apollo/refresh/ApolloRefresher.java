@@ -14,8 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 
-import javax.annotation.Resource;
-
 /**
  * NacosRefresher related
  *
@@ -29,9 +27,6 @@ public class ApolloRefresher extends AbstractRefresher implements ConfigChangeLi
     private String namespace;
 
     private ConfigFileTypeEnum configFileType;
-
-    @Resource
-    private DtpProperties dtpProperties;
 
     @Override
     public void afterPropertiesSet() {

@@ -27,7 +27,7 @@ import java.util.Objects;
 public abstract class AbstractRefresher implements Refresher {
 
     @Resource
-    private DtpProperties dtpProperties;
+    protected DtpProperties dtpProperties;
 
     @Override
     public void refresh(String content, ConfigFileTypeEnum fileType) {

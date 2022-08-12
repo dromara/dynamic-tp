@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.github.lyh200</groupId>
+        <groupId>cn.dynamictp</groupId>
         <artifactId>dynamic-tp-starter-adapter</artifactId>
         <version>1.0.8</version>
     </parent>
@@ -12,12 +12,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.github.lyh200</groupId>
+            <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>io.github.lyh200</groupId>
+            <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-adapter-webserver</artifactId>
         </dependency>
     </dependencies>

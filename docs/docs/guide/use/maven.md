@@ -18,7 +18,7 @@ star: true
 1. apollo 应用用接入用此依赖
    ```xml
        <dependency>
-           <groupId>io.github.lyh200</groupId>
+           <groupId>cn.dynamictp</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-apollo</artifactId>
            <version>1.0.7</version>
        </dependency>
@@ -27,7 +27,7 @@ star: true
 2. spring-cloud 场景下的 nacos 应用接入用此依赖
    ```xml
        <dependency>
-           <groupId>io.github.lyh200</groupId>
+           <groupId>cn.dynamictp</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-nacos</artifactId>
            <version>1.0.7</version>
        </dependency>
@@ -36,7 +36,7 @@ star: true
 3. 非 spring-cloud 场景下的 nacos 应用接入用此依赖
    ```xml
        <dependency>
-           <groupId>io.github.lyh200</groupId>
+           <groupId>cn.dynamictp</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-nacos</artifactId>
            <version>1.0.7</version>
        </dependency>
@@ -47,7 +47,7 @@ star: true
 5. zookeeper 应用接入用此依赖
    ```xml
        <dependency>
-           <groupId>io.github.lyh200</groupId>
+           <groupId>cn.dynamictp</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-zookeeper</artifactId>
            <version>1.0.7</version>
        </dependency>
@@ -72,7 +72,7 @@ star: true
 6. spring-cloud 场景下 zookeeper 应用接入用此依赖
    ```xml
        <dependency>
-           <groupId>io.github.lyh200</groupId>
+           <groupId>cn.dynamictp</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-zookeeper</artifactId>
            <version>1.0.7</version>
        </dependency>
@@ -83,7 +83,7 @@ star: true
 7. spring-cloud 场景 consul 应用接入用此依赖
    ```xml
        <dependency>
-           <groupId>io.github.lyh200</groupId>
+           <groupId>cn.dynamictp</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-consul</artifactId>
            <version>1.0.7</version>
        </dependency>

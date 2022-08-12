@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>dynamic-tp-example</artifactId>
-        <groupId>io.github.lyh200</groupId>
+        <groupId>cn.dynamictp</groupId>
         <version>1.0.8</version>
     </parent>
     <artifactId>dynamic-example-zookeeper-cloud</artifactId>
@@ -32,25 +32,25 @@
             <artifactId>spring-cloud-starter-zookeeper-config</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.lyh200</groupId>
+            <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-cloud-starter-zookeeper</artifactId>
             <version>${dtp.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>io.github.lyh200</groupId>
+            <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-adapter-dubbo</artifactId>
             <version>${dtp.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>io.github.lyh200</groupId>
+            <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-adapter-rocketmq</artifactId>
             <version>${dtp.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>io.github.lyh200</groupId>
+            <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-adapter-hystrix</artifactId>
             <version>${dtp.version}</version>
         </dependency>

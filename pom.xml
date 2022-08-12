@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.lyh200</groupId>
+    <groupId>cn.dynamictp</groupId>
     <artifactId>dynamic-tp-all</artifactId>
     <version>1.0.8</version>
     <packaging>pom</packaging>
@@ -84,61 +84,61 @@
         <dependencies>
 
             <dependency>
-                <groupId>io.github.lyh200</groupId>
+                <groupId>cn.dynamictp</groupId>
                 <artifactId>dynamic-tp-adapter</artifactId>
                 <version>${dtp.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>io.github.lyh200</groupId>
+                <groupId>cn.dynamictp</groupId>
                 <artifactId>dynamic-tp-common</artifactId>
                 <version>${dtp.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>io.github.lyh200</groupId>
+                <groupId>cn.dynamictp</groupId>
                 <artifactId>dynamic-tp-core</artifactId>
                 <version>${dtp.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>io.github.lyh200</groupId>
+                <groupId>cn.dynamictp</groupId>
                 <artifactId>dynamic-tp-logging</artifactId>
                 <version>${dtp.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>io.github.lyh200</groupId>
+                <groupId>cn.dynamictp</groupId>
                 <artifactId>dynamic-tp-adapter-webserver</artifactId>
                 <version>${dtp.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>io.github.lyh200</groupId>
+                <groupId>cn.dynamictp</groupId>
                 <artifactId>dynamic-tp-adapter-dubbo</artifactId>
                 <version>${dtp.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>io.github.lyh200</groupId>
+                <groupId>cn.dynamictp</groupId>
                 <artifactId>dynamic-tp-adapter-rocketmq</artifactId>
                 <version>${dtp.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>io.github.lyh200</groupId>
+                <groupId>cn.dynamictp</groupId>
                 <artifactId>dynamic-tp-adapter-hystrix</artifactId>
                 <version>${dtp.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>io.github.lyh200</groupId>
+                <groupId>cn.dynamictp</groupId>
                 <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
                 <version>${dtp.version}</version>
             </dependency>
 
             <dependency>
-                <groupId>io.github.lyh200</groupId>
+                <groupId>cn.dynamictp</groupId>
                 <artifactId>dynamic-tp-spring-boot-starter-adapter-webserver</artifactId>
                 <version>${dtp.version}</version>
             </dependency>

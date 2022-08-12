@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.github.lyh200</groupId>
+        <groupId>cn.dynamictp</groupId>
         <artifactId>dynamic-tp-all</artifactId>
         <version>1.0.8</version>
     </parent>
@@ -19,17 +19,17 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.github.lyh200</groupId>
+            <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-common</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>io.github.lyh200</groupId>
+            <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-core</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>io.github.lyh200</groupId>
+            <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-logging</artifactId>
         </dependency>
     </dependencies>

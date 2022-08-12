@@ -1,0 +1,17 @@
+server:
+  port: 8888
+
+spring:
+  dynamic:
+    tp:
+      config-type: properties
+      etcd:
+        endpoints: http://127.0.0.1:2379
+        auth-enable: false
+        key: /config/dynamic-tp-etcd-demo
+  application:
+    name: dynamic-tp-etcd-demo
+
+logging:
+  level:
+    root: INFO

@@ -21,6 +21,7 @@
         <module>example-zookeeper</module>
         <module>example-zookeeper-cloud</module>
         <module>example-consul-cloud</module>
+        <module>example-etcd</module>
     </modules>
 
 </project>

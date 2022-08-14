@@ -2,11 +2,14 @@ package com.dtp.common.config;
 
 import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.dto.NotifyPlatform;
+import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
+
+import static com.dtp.common.em.CollectorTypeEnum.LOGGING;
 
 /**
  * Main properties that maintain by config center.
@@ -60,12 +63,12 @@ public class DtpProperties {
     private boolean enabledCollect = false;
 
     /**
-     * Metrics collector type.
+     * Metrics collector types, default is logging.
      */
-    public String collectorType = "logging";
+    public List<String> collectorTypes = Lists.newArrayList(LOGGING.name());
 
     /**
-     * MetricsLog storage path
+     * Metrics log storage path, just for "logging" type.
      */
     public String logPath;
 

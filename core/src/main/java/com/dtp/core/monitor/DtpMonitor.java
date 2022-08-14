@@ -82,7 +82,7 @@ public class DtpMonitor implements ApplicationRunner, Ordered {
 
     private void doCollect(ThreadPoolStats threadPoolStats) {
         try {
-            CollectorHandler.getInstance().collect(threadPoolStats, dtpProperties.getCollectorType());
+            CollectorHandler.getInstance().collect(threadPoolStats, dtpProperties.getCollectorTypes());
         } catch (Exception e) {
             log.error("DynamicTp monitor, metrics collect error.", e);
         }

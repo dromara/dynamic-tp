@@ -5,10 +5,12 @@ import com.dtp.core.monitor.collector.InternalLogCollector;
 import com.dtp.core.monitor.collector.LogCollector;
 import com.dtp.core.monitor.collector.MetricsCollector;
 import com.dtp.core.monitor.collector.MicroMeterCollector;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.ServiceLoader;
 
 /**
@@ -20,30 +22,30 @@ import java.util.ServiceLoader;
 @Slf4j
 public class CollectorHandler {
 
-    private static final List<MetricsCollector> COLLECTORS = Lists.newArrayList();
+    private static final Map<String, MetricsCollector> COLLECTORS = Maps.newHashMap();
 
     private CollectorHandler() {
         ServiceLoader<MetricsCollector> loader = ServiceLoader.load(MetricsCollector.class);
         for (MetricsCollector collector : loader) {
-            COLLECTORS.add(collector);
+            COLLECTORS.put(collector.type(), collector);
         }
 
         MetricsCollector microMeterCollector = new MicroMeterCollector();
         LogCollector logCollector = new LogCollector();
         InternalLogCollector internalLogCollector = new InternalLogCollector();
-        COLLECTORS.add(microMeterCollector);
-        COLLECTORS.add(logCollector);
-        COLLECTORS.add(internalLogCollector);
+        COLLECTORS.put(microMeterCollector.type(), microMeterCollector);
+        COLLECTORS.put(logCollector.type(), logCollector);
+        COLLECTORS.put(internalLogCollector.type(), internalLogCollector);
     }
 
-    public void collect(ThreadPoolStats poolStats, String type) {
-        if (poolStats == null) {
+    public void collect(ThreadPoolStats poolStats, List<String> types) {
+        if (poolStats == null || CollectionUtils.isEmpty(types)) {
             return;
         }
-        for (MetricsCollector collector : COLLECTORS) {
-            if (collector.support(type)) {
+        for (String collectorType : types) {
+            MetricsCollector collector = COLLECTORS.get(collectorType.toLowerCase());
+            if (collector != null) {
                 collector.collect(poolStats);
-                break;
             }
         }
     }

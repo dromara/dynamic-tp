@@ -27,6 +27,6 @@ public class LogCollector extends AbstractCollector {
 
     @Override
     public String type() {
-        return CollectorTypeEnum.LOGGING.name();
+        return CollectorTypeEnum.LOGGING.name().toLowerCase();
     }
 }

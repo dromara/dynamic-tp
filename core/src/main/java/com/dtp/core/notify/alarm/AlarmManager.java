@@ -79,13 +79,14 @@ public class AlarmManager {
             return;
         }
 
-        if (!checkThreshold(executorWrapper, notifyType, notifyItem)) {
-            return;
-        }
         boolean ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyType.getValue());
         if (!ifAlarm) {
             log.debug("DynamicTp notify, alarm limit, dtpName: {}, type: {}",
                     executorWrapper.getThreadPoolName(), notifyType.getValue());
+            return;
+        }
+
+        if (!checkThreshold(executorWrapper, notifyType, notifyItem)) {
             return;
         }
         synchronized (SEND_LOCK) {

@@ -34,7 +34,7 @@ import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
-import static com.dtp.common.dto.NotifyItem.mergeAllNotifyItems;
+import static com.dtp.common.dto.NotifyItem.mergeSimpleNotifyItems;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -162,7 +162,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
         }
 
         // update notify items
-        val allNotifyItems = mergeAllNotifyItems(properties.getNotifyItems());
+        val allNotifyItems = mergeSimpleNotifyItems(properties.getNotifyItems());
         NotifyHelper.fillPlatforms(platforms, allNotifyItems);
         NotifyHelper.initAlarm(executorWrapper.getThreadPoolName(), executorWrapper.getNotifyItems(), allNotifyItems);
         executorWrapper.setNotifyItems(allNotifyItems);

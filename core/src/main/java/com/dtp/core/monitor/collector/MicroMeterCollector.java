@@ -47,7 +47,7 @@ public class MicroMeterCollector extends AbstractCollector {
 
     @Override
     public String type() {
-        return CollectorTypeEnum.MICROMETER.name();
+        return CollectorTypeEnum.MICROMETER.name().toLowerCase();
     }
 
     public void gauge(ThreadPoolStats poolStats) {

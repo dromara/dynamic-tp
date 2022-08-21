@@ -7,6 +7,7 @@
         <artifactId>dynamic-tp-starter</artifactId>
         <version>1.0.8</version>
     </parent>
+
     <artifactId>dynamic-tp-starter-extension</artifactId>
     <packaging>pom</packaging>
 

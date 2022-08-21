@@ -1,7 +1,6 @@
 package com.dtp.extension.limiter.redis.ratelimiter;
 
 import cn.hutool.core.collection.CollUtil;
-import com.dtp.common.ex.RateLimitException;
 import com.dtp.common.pattern.filter.Invoker;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.notify.filter.NotifyFilter;
@@ -26,25 +25,29 @@ public class NotifyRedisRateLimiterFilter implements NotifyFilter {
     private RedisRateLimiter<List<Long>> redisScriptRateLimiter;
 
     @Override
-    public int order() {
+    public int getOrder() {
         return 10;
     }
 
     @Override
     public void doFilter(BaseNotifyCtx context, Invoker<BaseNotifyCtx> nextFilter) {
         String notifyName = context.getExecutorWrapper().getThreadPoolName() + ":" + context.getNotifyType().getValue();
-        check(notifyName, context.getNotifyItem().getClusterLimit(), context.getNotifyItem().getInterval());
-        nextFilter.invoke(context);
+        boolean checkResult = check(notifyName, context.getNotifyItem().getClusterLimit(),
+                context.getNotifyItem().getInterval());
+        if (checkResult) {
+            nextFilter.invoke(context);
+        }
     }
 
-    private void check(String notifyName, int limit, long interval) {
+    private boolean check(String notifyName, int limit, long interval) {
         val res = redisScriptRateLimiter.isAllowed(notifyName, interval, limit);
         if (CollUtil.isEmpty(res)) {
-            return;
+            return true;
         }
         if (res.get(LUA_RES_REMAIN_INDEX) <= 0) {
             log.debug("DynamicTp notify trigger rate limit, limitKey:{}", res.get(0));
-            throw new RateLimitException("DynamicTp notify trigger rate limit");
+            return false;
         }
+        return true;
     }
 }

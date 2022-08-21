@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
 
-import static com.dtp.common.em.CollectorTypeEnum.LOGGING;
+import static com.dtp.common.em.CollectorTypeEnum.MICROMETER;
 
 /**
  * Main properties that maintain by config center.
@@ -65,12 +65,12 @@ public class DtpProperties {
     /**
      * Metrics collector types, default is logging.
      */
-    public List<String> collectorTypes = Lists.newArrayList(LOGGING.name());
+    private List<String> collectorTypes = Lists.newArrayList(MICROMETER.name());
 
     /**
      * Metrics log storage path, just for "logging" type.
      */
-    public String logPath;
+    private String logPath;
 
     /**
      * Monitor interval, time unit（s）

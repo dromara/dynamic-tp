@@ -1,5 +1,6 @@
 package com.dtp.core.support;
 
+import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.core.thread.DtpExecutor;
 
 import java.util.concurrent.ExecutorService;
@@ -29,25 +30,78 @@ public class ThreadPoolCreator {
                 .buildWithTtl();
     }
 
-    public static DtpExecutor createDynamicFast(String name) {
-        return createDynamicFast(name, name);
+    public static DtpExecutor createDynamicFast(String poolName) {
+        return createDynamicFast(poolName, poolName);
     }
 
-    public static DtpExecutor createDynamicFast(String name, String threadPrefix) {
+    public static DtpExecutor createDynamicFast(String poolName, String threadPrefix) {
         return ThreadPoolBuilder.newBuilder()
-                .threadPoolName(name)
+                .threadPoolName(poolName)
                 .threadFactory(threadPrefix)
                 .buildDynamic();
     }
 
-    public static ExecutorService createDynamicWithTtl(String name) {
-        return createDynamicWithTtl(name, name);
+    public static ExecutorService createDynamicWithTtl(String poolName) {
+        return createDynamicWithTtl(poolName, poolName);
     }
 
-    public static ExecutorService createDynamicWithTtl(String name, String threadPrefix) {
+    public static ExecutorService createDynamicWithTtl(String poolName, String threadPrefix) {
         return ThreadPoolBuilder.newBuilder()
-                .threadPoolName(name)
+                .threadPoolName(poolName)
                 .threadFactory(threadPrefix)
                 .buildWithTtl();
+    }
+
+    public static ThreadPoolExecutor newSingleThreadPool(String threadPrefix, int queueCapacity) {
+        return newFixedThreadPool(threadPrefix, 1, queueCapacity);
+    }
+
+    public static ThreadPoolExecutor newFixedThreadPool(String threadPrefix, int poolSize, int queueCapacity) {
+        return ThreadPoolBuilder.newBuilder()
+                .corePoolSize(poolSize)
+                .maximumPoolSize(poolSize)
+                .workQueue(QueueTypeEnum.MEMORY_SAFE_LINKED_BLOCKING_QUEUE.getName(), queueCapacity, null)
+                .threadFactory(threadPrefix)
+                .buildDynamic();
+    }
+
+    public static ExecutorService newCachedThreadPool(String threadPrefix, int maximumPoolSize) {
+        return ThreadPoolBuilder.newBuilder()
+                .corePoolSize(0)
+                .maximumPoolSize(maximumPoolSize)
+                .workQueue(QueueTypeEnum.SYNCHRONOUS_QUEUE.getName(), null, null)
+                .threadFactory(threadPrefix)
+                .buildDynamic();
+    }
+
+    public static ThreadPoolExecutor newThreadPool(String threadPrefix, int corePoolSize,
+                                                   int maximumPoolSize, int queueCapacity) {
+        return ThreadPoolBuilder.newBuilder()
+                .corePoolSize(corePoolSize)
+                .maximumPoolSize(maximumPoolSize)
+                .workQueue(QueueTypeEnum.MEMORY_SAFE_LINKED_BLOCKING_QUEUE.getName(), queueCapacity, null)
+                .threadFactory(threadPrefix)
+                .buildDynamic();
+    }
+
+    /**
+     * 阻塞系数 = 阻塞时间／（阻塞时间+使用CPU的时间）
+     * 建议线程数 = CPU可用核心数 / (1 - 阻塞系数)
+     * 计算密集型任务的阻塞系数为0，而IO密集型任务的阻塞系数则接近于1。
+     *
+     * @param blockingCoefficient 阻塞系数，阻塞因子介于0~1之间的数，阻塞因子越大，线程池中的线程数越多。
+     * @return {@link ThreadPoolExecutor}
+     * @since 3.0.6
+     */
+    public static ThreadPoolExecutor newExecutorByBlockingCoefficient(float blockingCoefficient) {
+        if (blockingCoefficient >= 1 || blockingCoefficient < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        int poolSize = (int) (Runtime.getRuntime().availableProcessors() / (1 - blockingCoefficient));
+        return ThreadPoolBuilder.newBuilder()
+                .corePoolSize(poolSize)
+                .maximumPoolSize(poolSize)
+                .buildDynamic();
     }
 }

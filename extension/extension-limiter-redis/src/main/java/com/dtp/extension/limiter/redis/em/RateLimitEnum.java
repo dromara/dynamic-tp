@@ -14,7 +14,7 @@ public enum RateLimitEnum {
     /**
      * rate limit
      */
-    SLIDING_WINDOW("dtp_sw_rt", "sliding_window_rate_limiter.lua"),
+    SLIDING_WINDOW("sw_rt", "sliding_window_rate_limiter.lua"),
     ;
 
     private final String keyName;

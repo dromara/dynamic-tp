@@ -22,7 +22,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @SuppressWarnings("all")
 public abstract class AbstractRedistRateLimiter implements RedisRateLimiter<List<Long>> {
 
-    public static final String SCRIPT_PATH = "/scripts/";
+    private static final String SCRIPT_PATH = "/scripts/";
+
+    protected static final String PREFIX = "dtp";
 
     private final RedisScript<List<Long>> script;
 
@@ -45,7 +47,7 @@ public abstract class AbstractRedistRateLimiter implements RedisRateLimiter<List
 
     @Override
     public List<String> getKeys(final String key) {
-        String cacheKey = getKeyPrefix() + ":" + key;
+        String cacheKey = PREFIX + ":" + key;
         return Collections.singletonList(cacheKey);
     }
 
@@ -57,13 +59,6 @@ public abstract class AbstractRedistRateLimiter implements RedisRateLimiter<List
         return Collections.unmodifiableList((List) Objects.requireNonNull(stringRedisTemplate.execute(script, keys,
                 doubleToString(windowSize), doubleToString(limit), doubleToString(Instant.now().getEpochSecond()))));
     }
-
-    /**
-     * get key prefix
-     *
-     * @return the key prefix
-     */
-    protected abstract String getKeyPrefix();
 
     private String doubleToString(final double param) {
         return String.valueOf(param);

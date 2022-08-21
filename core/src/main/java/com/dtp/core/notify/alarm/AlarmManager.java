@@ -58,7 +58,9 @@ public class AlarmManager {
         val filters = ApplicationContextHolder.getBeansOfType(NotifyFilter.class);
         Collection<NotifyFilter> alarmFilters = Lists.newArrayList(filters.values());
         alarmFilters.add(new AlarmBaseFilter());
-        alarmFilters = alarmFilters.stream().sorted(Comparator.comparing(Filter::order)).collect(Collectors.toList());
+        alarmFilters = alarmFilters.stream()
+                .sorted(Comparator.comparing(Filter::getOrder))
+                .collect(Collectors.toList());
         ALARM_FILTER_CHAIN = FilterChainFactory.buildFilterChain(new AlarmInvoker(),
                 alarmFilters.toArray(new NotifyFilter[0]));
     }

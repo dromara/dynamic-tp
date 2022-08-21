@@ -23,7 +23,7 @@ public class AlarmBaseFilter implements NotifyFilter {
     private static final Object SEND_LOCK = new Object();
 
     @Override
-    public int order() {
+    public int getOrder() {
         return 0;
     }
 

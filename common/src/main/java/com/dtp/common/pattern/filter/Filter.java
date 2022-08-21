@@ -13,7 +13,7 @@ public interface Filter<T> {
      *
      * @return int val
      */
-    int order();
+    int getOrder();
 
     /**
      * Do filter.

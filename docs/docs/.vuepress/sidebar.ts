@@ -1,4 +1,4 @@
-import { sidebar } from "vuepress-theme-hope";
+import {sidebar} from "vuepress-theme-hope";
 
 export default sidebar([
   {
@@ -56,6 +56,12 @@ export default sidebar([
         collapsable: false,
         link: "/guide/use/code"
       },
+      {
+        text: "任务包装器",
+        icon: "code",
+        collapsable: false,
+        link: "/guide/use/wrapper"
+      },
     ],
   },
 
@@ -65,17 +71,23 @@ export default sidebar([
     prefix: "/guide",
     children: [
       {
-        text: "通知",
+        text: "调参通知",
         icon: "notice",
         collapsable: false,
         link: "/guide/notice/notice"
       },
       {
-        text: "报警",
+        text: "运行报警",
         icon: "warn",
         collapsable: false,
         link: "/guide/notice/alarm"
-      }
+      },
+      {
+        text: "推送限流",
+        icon: "notice",
+        collapsable: false,
+        link: "/guide/notice/ratelimiter"
+      },
     ],
   },
 

@@ -11,9 +11,10 @@ import org.springframework.core.env.Environment;
  * @author yanhom
  * @since 1.0.0
  */
-public class NacosUtil {
+public final class NacosUtil {
 
-    private NacosUtil() {}
+    private NacosUtil() {
+    }
 
     public static String deduceDataId(DtpProperties.Nacos nacos,
                                       Environment environment,

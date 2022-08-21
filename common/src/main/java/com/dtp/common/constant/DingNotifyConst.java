@@ -6,9 +6,10 @@ package com.dtp.common.constant;
  * @author: yanhom
  * @since 1.0.0
  **/
-public class DingNotifyConst {
+public final class DingNotifyConst {
 
-    private DingNotifyConst() {}
+    private DingNotifyConst() {
+    }
 
     public static final String DING_WEBHOOK = "https://oapi.dingtalk.com/robot/send?access_token=";
 

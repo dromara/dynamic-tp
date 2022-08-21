@@ -10,9 +10,10 @@ import java.util.Collection;
  * @author: yanhom
  * @since 1.0.4
  **/
-public class StringUtil {
+public final class StringUtil {
 
-    private StringUtil() {}
+    private StringUtil() {
+    }
 
     public static boolean isEmpty(CharSequence str) {
         return null == str || str.length() == 0;
@@ -32,7 +33,7 @@ public class StringUtil {
         }
         CharSequence[] array = testStrList.toArray(new CharSequence[0]);
         int size = testStrList.size();
-        for(int i = 0; i < size; ++i) {
+        for (int i = 0; i < size; ++i) {
             CharSequence testStr = array[i];
             if (containsIgnoreCase(str, testStr)) {
                 return testStr.toString();

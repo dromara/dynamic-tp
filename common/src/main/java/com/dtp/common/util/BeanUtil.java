@@ -16,9 +16,10 @@ import java.util.Map;
  * @since 1.0.4
  **/
 @Slf4j
-public class BeanUtil {
+public final class BeanUtil {
 
-    private BeanUtil() {}
+    private BeanUtil() {
+    }
 
     public static void registerIfAbsent(BeanDefinitionRegistry registry,
                                         String beanName,

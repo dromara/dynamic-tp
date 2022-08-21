@@ -6,9 +6,10 @@ package com.dtp.common.constant;
  * @author: yanhom
  * @since 1.0.0
  **/
-public class WechatNotifyConst {
+public final class WechatNotifyConst {
 
-    private WechatNotifyConst() {}
+    private WechatNotifyConst() {
+    }
 
     public static final String WECHAT_WEH_HOOK = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=";
 

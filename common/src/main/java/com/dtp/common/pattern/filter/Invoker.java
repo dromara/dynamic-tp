@@ -13,5 +13,5 @@ public interface Invoker<T> {
      *
      * @param context context
      */
-    default void invoke(T context) {}
+    default void invoke(T context) { }
 }

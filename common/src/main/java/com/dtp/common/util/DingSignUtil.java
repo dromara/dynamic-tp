@@ -16,9 +16,10 @@ import java.nio.charset.StandardCharsets;
  * @since 1.0.0
  */
 @Slf4j
-public class DingSignUtil {
+public final class DingSignUtil {
 
-    private DingSignUtil() {}
+    private DingSignUtil() {
+    }
 
     /**
      * The default encoding

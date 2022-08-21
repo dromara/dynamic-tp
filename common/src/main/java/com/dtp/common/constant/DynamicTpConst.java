@@ -14,9 +14,10 @@ import static com.dtp.common.em.NotifyTypeEnum.LIVENESS;
  * @author: yanhom
  * @since 1.0.0
  **/
-public class DynamicTpConst {
+public final class DynamicTpConst {
 
-    private DynamicTpConst() {}
+    private DynamicTpConst() {
+    }
 
     public static final String MAIN_PROPERTIES_PREFIX = "spring.dynamic.tp";
 

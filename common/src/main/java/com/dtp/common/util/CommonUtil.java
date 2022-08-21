@@ -15,9 +15,10 @@ import java.net.UnknownHostException;
  * @author yanhom
  */
 @Slf4j
-public class CommonUtil {
+public final class CommonUtil {
 
-    private CommonUtil() {}
+    private CommonUtil() {
+    }
 
     private static final Instance INSTANCE;
 

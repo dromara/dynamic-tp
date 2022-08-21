@@ -12,9 +12,10 @@ import java.util.Objects;
  * @author yanhom
  * @since 1.0.6
  */
-public class ReflectionUtil {
+public final class ReflectionUtil {
 
-    private ReflectionUtil() {}
+    private ReflectionUtil() {
+    }
 
     public static Object getFieldValue(Class<?> targetClass, String fieldName, Object targetObj) {
         val field = getField(targetClass, fieldName);

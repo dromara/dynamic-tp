@@ -6,9 +6,9 @@ package com.dtp.common.pattern.filter;
  * @author: yanhom
  * @since 1.0.8
  **/
-public class FilterChainFactory {
+public final class FilterChainFactory {
 
-    private FilterChainFactory() {}
+    private FilterChainFactory() { }
 
     @SafeVarargs
     public static<T> FilterChain<T> buildFilterChain(Invoker<T> target, Filter<T>... filters) {
@@ -18,7 +18,7 @@ public class FilterChainFactory {
         for (int i = filters.length - 1; i >= 0; i--) {
             Invoker<T> next = last;
             Filter<T> filter = filters[i];
-            last = new Invoker<T>(){
+            last = new Invoker<T>() {
                 @Override
                 public void invoke(T context) {
                     filter.doFilter(context, next);

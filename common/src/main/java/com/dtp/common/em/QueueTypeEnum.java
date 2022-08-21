@@ -24,23 +24,23 @@ public enum QueueTypeEnum {
     /**
      * BlockingQueue type.
      */
-    ARRAY_BLOCKING_QUEUE(1,"ArrayBlockingQueue"),
+    ARRAY_BLOCKING_QUEUE(1, "ArrayBlockingQueue"),
 
-    LINKED_BLOCKING_QUEUE(2,"LinkedBlockingQueue"),
+    LINKED_BLOCKING_QUEUE(2, "LinkedBlockingQueue"),
 
-    PRIORITY_BLOCKING_QUEUE(3,"PriorityBlockingQueue"),
+    PRIORITY_BLOCKING_QUEUE(3, "PriorityBlockingQueue"),
 
-    DELAY_QUEUE(4,"DelayQueue"),
+    DELAY_QUEUE(4, "DelayQueue"),
 
-    SYNCHRONOUS_QUEUE(5,"SynchronousQueue"),
+    SYNCHRONOUS_QUEUE(5, "SynchronousQueue"),
 
-    LINKED_TRANSFER_QUEUE(6,"LinkedTransferQueue"),
+    LINKED_TRANSFER_QUEUE(6, "LinkedTransferQueue"),
 
-    LINKED_BLOCKING_DEQUE(7,"LinkedBlockingDeque"),
+    LINKED_BLOCKING_DEQUE(7, "LinkedBlockingDeque"),
 
-    VARIABLE_LINKED_BLOCKING_QUEUE(8,"VariableLinkedBlockingQueue"),
+    VARIABLE_LINKED_BLOCKING_QUEUE(8, "VariableLinkedBlockingQueue"),
 
-    MEMORY_SAFE_LINKED_BLOCKING_QUEUE(9,"MemorySafeLinkedBlockingQueue");
+    MEMORY_SAFE_LINKED_BLOCKING_QUEUE(9, "MemorySafeLinkedBlockingQueue");
 
     private final Integer code;
     private final String name;

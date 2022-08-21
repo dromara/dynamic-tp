@@ -10,7 +10,7 @@ public class FilterChain<T> {
 
     private Invoker<T> head;
 
-    public void fire(T context){
+    public void fire(T context) {
         head.invoke(context);
     }
 

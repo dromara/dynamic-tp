@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * {@link Conditional @Conditional} that checks if the application is a Tomcat WebServer
  *
  * @author liu.guorong
- * @Date 2022/8/7
+ * @since 1.0.8
  */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)

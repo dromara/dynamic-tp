@@ -6,7 +6,7 @@ import com.dtp.common.dto.NotifyPlatform;
  * Notifier related
  *
  * @author yanhom
- * @date 2022-07-24 1:38 PM
+ * @since 1.0.8
  */
 public interface Notifier {
 

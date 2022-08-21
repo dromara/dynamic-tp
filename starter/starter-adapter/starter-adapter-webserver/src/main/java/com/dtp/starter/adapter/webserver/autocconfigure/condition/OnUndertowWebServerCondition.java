@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Condition;
  * {@link Condition} that checks if the application is an Undertow WebServer
  *
  * @author liu.guorong
- * @Date 2022/8/7
+ * @since 1.0.8
  */
 public class OnUndertowWebServerCondition extends AnyNestedCondition {
 

@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Condition;
 /**
  * {@link Condition} that checks if the application is a Jetty WebServer
  * @author liu.guorong
- * @Date 2022/8/7
+ * @since 1.0.8
  */
 public class OnJettyWebServerCondition extends AnyNestedCondition {
 

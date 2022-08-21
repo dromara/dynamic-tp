@@ -87,11 +87,10 @@ public class ThreadPoolCreator {
     /**
      * 阻塞系数 = 阻塞时间／（阻塞时间+使用CPU的时间）
      * 建议线程数 = CPU可用核心数 / (1 - 阻塞系数)
-     * 计算密集型任务的阻塞系数为0，而IO密集型任务的阻塞系数则接近于1。
+     * 计算密集型任务的阻塞系数为0，而IO密集型任务的阻塞系数则接近于1
      *
-     * @param blockingCoefficient 阻塞系数，阻塞因子介于0~1之间的数，阻塞因子越大，线程池中的线程数越多。
+     * @param blockingCoefficient 阻塞系数，阻塞因子介于0~1之间的数，阻塞因子越大，线程池中的线程数越多
      * @return {@link ThreadPoolExecutor}
-     * @since 3.0.6
      */
     public static ThreadPoolExecutor newExecutorByBlockingCoefficient(float blockingCoefficient) {
         if (blockingCoefficient >= 1 || blockingCoefficient < 0) {

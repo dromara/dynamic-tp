@@ -53,6 +53,8 @@ public class TaskQueue extends MemorySafeLinkedBlockingQueue<Runnable> {
      * Force offer task
      *
      * @param o task
+     * @param timeout timeout
+     * @param unit unit
      * @return offer success or not
      * @throws RejectedExecutionException if executor is terminated.
      * @throws InterruptedException if interrupted while waiting.

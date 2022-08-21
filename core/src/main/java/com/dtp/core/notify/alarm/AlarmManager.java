@@ -3,26 +3,33 @@ package com.dtp.core.notify.alarm;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.NumberUtil;
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.config.DtpProperties;
 import com.dtp.common.dto.AlarmInfo;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;
-import com.dtp.core.context.DtpNotifyContext;
-import com.dtp.core.context.DtpNotifyContextHolder;
-import com.dtp.core.handler.NotifierHandler;
+import com.dtp.common.pattern.filter.Filter;
+import com.dtp.common.pattern.filter.FilterChain;
+import com.dtp.common.pattern.filter.FilterChainFactory;
+import com.dtp.core.context.AlarmCtx;
+import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.notify.NotifyHelper;
+import com.dtp.core.notify.filter.AlarmBaseFilter;
+import com.dtp.core.notify.filter.NotifyFilter;
+import com.dtp.core.notify.invoker.AlarmInvoker;
 import com.dtp.core.support.ThreadPoolBuilder;
 import com.dtp.core.thread.DtpExecutor;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 import static com.dtp.common.em.QueueTypeEnum.LINKED_BLOCKING_QUEUE;
 
@@ -45,7 +52,16 @@ public class AlarmManager {
             .dynamic(false)
             .buildWithTtl();
 
-    private static final Object SEND_LOCK = new Object();
+    private static final FilterChain<BaseNotifyCtx> ALARM_FILTER_CHAIN;
+
+    static {
+        val filters = ApplicationContextHolder.getBeansOfType(NotifyFilter.class);
+        Collection<NotifyFilter> alarmFilters = Lists.newArrayList(filters.values());
+        alarmFilters.add(new AlarmBaseFilter());
+        alarmFilters = alarmFilters.stream().sorted(Comparator.comparing(Filter::order)).collect(Collectors.toList());
+        ALARM_FILTER_CHAIN = FilterChainFactory.buildFilterChain(new AlarmInvoker(),
+                alarmFilters.toArray(new NotifyFilter[0]));
+    }
 
     private AlarmManager() {}
 
@@ -73,47 +89,15 @@ public class AlarmManager {
     }
 
     public static void doAlarm(ExecutorWrapper executorWrapper, NotifyTypeEnum notifyType) {
-
         NotifyItem notifyItem = NotifyHelper.getNotifyItem(executorWrapper, notifyType);
-        if (Objects.isNull(notifyItem) || !satisfyBaseCondition(notifyItem)) {
+        if (notifyItem == null) {
             return;
         }
-
-        boolean ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyType.getValue());
-        if (!ifAlarm) {
-            log.debug("DynamicTp notify, alarm limit, dtpName: {}, type: {}",
-                    executorWrapper.getThreadPoolName(), notifyType.getValue());
-            return;
-        }
-
-        if (!checkThreshold(executorWrapper, notifyType, notifyItem)) {
-            return;
-        }
-        synchronized (SEND_LOCK) {
-            // recheck alarm limit.
-            ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyType.getValue());
-            if (!ifAlarm) {
-                log.warn("DynamicTp notify, concurrent send, alarm limit, dtpName: {}, type: {}",
-                        executorWrapper.getThreadPoolName(), notifyType.getValue());
-                return;
-            }
-            AlarmLimiter.putVal(executorWrapper.getThreadPoolName(), notifyType.getValue());
-        }
-
-        DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-        AlarmInfo alarmInfo = AlarmCounter.getAlarmInfo(executorWrapper.getThreadPoolName(), notifyItem.getType());
-        DtpNotifyContext dtpNotifyContext = DtpNotifyContext.builder()
-                .executorWrapper(executorWrapper)
-                .platforms(dtpProperties.getPlatforms())
-                .notifyItem(notifyItem)
-                .alarmInfo(alarmInfo)
-                .build();
-        DtpNotifyContextHolder.set(dtpNotifyContext);
-        NotifierHandler.getInstance().sendAlarm(notifyType);
-        AlarmCounter.reset(executorWrapper.getThreadPoolName(), notifyItem.getType());
+        AlarmCtx alarmCtx = new AlarmCtx(executorWrapper, notifyItem, notifyType);
+        ALARM_FILTER_CHAIN.fire(alarmCtx);
     }
 
-    private static boolean checkThreshold(ExecutorWrapper executor, NotifyTypeEnum notifyType, NotifyItem notifyItem) {
+    public static boolean checkThreshold(ExecutorWrapper executor, NotifyTypeEnum notifyType, NotifyItem notifyItem) {
 
         switch (notifyType) {
             case CAPACITY:
@@ -128,6 +112,10 @@ public class AlarmManager {
                 log.error("Unsupported alarm type, type: {}", notifyType);
                 return false;
         }
+    }
+
+    public static boolean satisfyBaseCondition(NotifyItem notifyItem) {
+        return notifyItem.isEnabled() && CollUtil.isNotEmpty(notifyItem.getPlatforms());
     }
 
     private static boolean checkLiveness(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
@@ -153,9 +141,5 @@ public class AlarmManager {
     private static boolean checkWithAlarmInfo(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
         AlarmInfo alarmInfo = AlarmCounter.getAlarmInfo(executorWrapper.getThreadPoolName(), notifyItem.getType());
         return alarmInfo.getCount() >= notifyItem.getThreshold();
-    }
-
-    private static boolean satisfyBaseCondition(NotifyItem notifyItem) {
-        return notifyItem.isEnabled() && CollUtil.isNotEmpty(notifyItem.getPlatforms());
     }
 }

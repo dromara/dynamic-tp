@@ -18,3 +18,6 @@ spring:
             group: DEFAULT_GROUP
             refresh: true  # 必须配置，负责自动刷新不生效
         refresh-enabled: true
+  redis:
+    host: localhost
+    port: 6379

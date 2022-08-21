@@ -9,10 +9,9 @@ import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.ex.DtpException;
 import com.dtp.common.queue.MemorySafeLinkedBlockingQueue;
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
-import com.dtp.core.context.DtpNotifyContext;
-import com.dtp.core.context.DtpNotifyContextHolder;
+import com.dtp.core.context.NoticeCtx;
 import com.dtp.core.convert.ExecutorConverter;
-import com.dtp.core.handler.NotifierHandler;
+import com.dtp.core.notify.NoticeManager;
 import com.dtp.core.notify.NotifyHelper;
 import com.dtp.core.notify.alarm.AlarmCounter;
 import com.dtp.core.notify.alarm.AlarmLimiter;
@@ -208,13 +207,11 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         if (!ifNotice) {
             return;
         }
-        DtpNotifyContext context = DtpNotifyContext.builder()
-                .executorWrapper(new ExecutorWrapper(executor.getThreadPoolName(), executor))
-                .platforms(platforms)
-                .notifyItem(notifyItem)
-                .build();
-        DtpNotifyContextHolder.set(context);
-        NotifierHandler.getInstance().sendNoticeAsync(oldProp, diffKeys);
+
+        val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor);
+        NoticeCtx context = new NoticeCtx(executorWrapper, notifyItem, NotifyTypeEnum.CHANGE,
+                platforms, oldProp, diffKeys);
+        NoticeManager.doNotice(context);
     }
 
     private static void doRefresh(DtpExecutor dtpExecutor, ThreadPoolProperties properties) {

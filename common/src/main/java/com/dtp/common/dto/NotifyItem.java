@@ -47,6 +47,11 @@ public class NotifyItem {
      */
     private int interval = 120;
 
+    /**
+     * Cluster notify limit.
+     */
+    private int clusterLimit = 1;
+
     public static List<NotifyItem> mergeSimpleNotifyItems(List<NotifyItem> source) {
         // update notify items
         if (CollUtil.isEmpty(source)) {

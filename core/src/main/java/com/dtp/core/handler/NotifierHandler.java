@@ -3,14 +3,14 @@ package com.dtp.core.handler;
 import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyTypeEnum;
-import com.dtp.core.context.DtpNotifyContextHolder;
+import com.dtp.core.context.DtpNotifyCtxHolder;
+import com.dtp.core.notify.DtpDingNotifier;
+import com.dtp.core.notify.DtpLarkNotifier;
 import com.dtp.core.notify.DtpNotifier;
+import com.dtp.core.notify.DtpWechatNotifier;
 import com.dtp.core.notify.base.DingNotifier;
 import com.dtp.core.notify.base.LarkNotifier;
 import com.dtp.core.notify.base.WechatNotifier;
-import com.dtp.core.notify.DtpDingNotifier;
-import com.dtp.core.notify.DtpLarkNotifier;
-import com.dtp.core.notify.DtpWechatNotifier;
 import com.dtp.core.support.ThreadPoolCreator;
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,7 +54,7 @@ public class NotifierHandler {
     public void sendNotice(DtpMainProp prop, List<String> diffs) {
 
         try {
-            NotifyItem notifyItem = DtpNotifyContextHolder.get().getNotifyItem();
+            NotifyItem notifyItem = DtpNotifyCtxHolder.get().getNotifyItem();
             for (String platform : notifyItem.getPlatforms()) {
                 DtpNotifier notifier = NOTIFIERS.get(platform.toLowerCase());
                 if (notifier != null) {
@@ -62,13 +62,14 @@ public class NotifierHandler {
                 }
             }
         } finally {
-            DtpNotifyContextHolder.remove();
+            DtpNotifyCtxHolder.remove();
         }
     }
 
     public void sendAlarm(NotifyTypeEnum notifyType) {
+
         try {
-            NotifyItem notifyItem = DtpNotifyContextHolder.get().getNotifyItem();
+            NotifyItem notifyItem = DtpNotifyCtxHolder.get().getNotifyItem();
             for (String platform : notifyItem.getPlatforms()) {
                 DtpNotifier notifier = NOTIFIERS.get(platform.toLowerCase());
                 if (notifier != null) {
@@ -76,7 +77,7 @@ public class NotifierHandler {
                 }
             }
         } finally {
-            DtpNotifyContextHolder.remove();
+            DtpNotifyCtxHolder.remove();
         }
     }
 

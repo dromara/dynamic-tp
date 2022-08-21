@@ -2,25 +2,23 @@ package com.dtp.core.notify;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.*;
 import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.em.NotifyTypeEnum;
-import com.dtp.core.context.DtpNotifyContext;
-import com.dtp.core.context.DtpNotifyContextHolder;
+import com.dtp.common.util.CommonUtil;
+import com.dtp.core.context.AlarmCtx;
+import com.dtp.core.context.BaseNotifyCtx;
+import com.dtp.core.context.DtpNotifyCtxHolder;
 import com.dtp.core.notify.alarm.AlarmCounter;
 import com.dtp.core.notify.base.Notifier;
 import com.dtp.core.thread.DtpExecutor;
 import com.google.common.base.Joiner;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.core.env.Environment;
 
 import java.lang.reflect.Field;
-import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -42,41 +40,15 @@ import static com.dtp.core.notify.NotifyHelper.getAllAlarmKeys;
 @Slf4j
 public abstract class AbstractDtpNotifier implements DtpNotifier {
 
-    private Instance instance;
-
     private final Notifier notifier;
-
-    public Instance getInstance() {
-        return instance;
-    }
 
     protected AbstractDtpNotifier(Notifier notifier) {
         this.notifier = notifier;
-        init();
-    }
-
-    @SneakyThrows
-    public void init() {
-        Environment environment = ApplicationContextHolder.getEnvironment();
-
-        String appName = environment.getProperty("spring.application.name");
-        appName = StringUtils.isNoneBlank(appName) ? appName : "application";
-
-        String portStr = environment.getProperty("server.port");
-        int port = StringUtils.isNotBlank(portStr) ? Integer.parseInt(portStr) : 0;
-
-        String address = InetAddress.getLocalHost().getHostAddress();
-
-        String[] profiles = environment.getActiveProfiles();
-        if (profiles.length < 1) {
-            profiles = environment.getDefaultProfiles();
-        }
-        instance = new Instance(address, port, appName, profiles[0]);
     }
 
     @Override
     public void sendChangeMsg(DtpMainProp oldProp, List<String> diffs) {
-        NotifyPlatform platform = DtpNotifyContextHolder.get().getPlatform(platform());
+        NotifyPlatform platform = DtpNotifyCtxHolder.get().getPlatform(platform());
         String content = buildNoticeContent(platform, getNoticeTemplate(), oldProp, diffs);
         if (StringUtils.isBlank(content)) {
             return;
@@ -86,7 +58,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
     @Override
     public void sendAlarmMsg(NotifyTypeEnum typeEnum) {
-        NotifyPlatform platform = DtpNotifyContextHolder.get().getPlatform(platform());
+        NotifyPlatform platform = DtpNotifyCtxHolder.get().getPlatform(platform());
         String content = buildAlarmContent(platform, typeEnum, getAlarmTemplate());
         if (StringUtils.isBlank(content)) {
             return;
@@ -116,7 +88,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     protected abstract Pair<String, String> getColors();
 
     private String buildAlarmContent(NotifyPlatform platform, NotifyTypeEnum typeEnum, String template) {
-        DtpNotifyContext context = DtpNotifyContextHolder.get();
+        AlarmCtx context = (AlarmCtx) DtpNotifyCtxHolder.get();
         String threadPoolName = context.getExecutorWrapper().getThreadPoolName();
         ExecutorWrapper executorWrapper = context.getExecutorWrapper();
         val executor = (ThreadPoolExecutor) context.getExecutorWrapper().getExecutor();
@@ -128,9 +100,9 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
         String content = String.format(
                 template,
-                getInstance().getServiceName(),
-                getInstance().getIp() + ":" + getInstance().getPort(),
-                getInstance().getEnv(),
+                CommonUtil.getInstance().getServiceName(),
+                CommonUtil.getInstance().getIp() + ":" + CommonUtil.getInstance().getPort(),
+                CommonUtil.getInstance().getEnv(),
                 populatePoolName(threadPoolName, executorWrapper),
                 typeEnum.getValue(),
                 notifyItem.getThreshold(),
@@ -163,16 +135,16 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                                      DtpMainProp oldProp,
                                      List<String> diffs) {
         String threadPoolName = oldProp.getThreadPoolName();
-        DtpNotifyContext context = DtpNotifyContextHolder.get();
+        BaseNotifyCtx context = DtpNotifyCtxHolder.get();
         ExecutorWrapper executorWrapper = context.getExecutorWrapper();
         val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
         String receivesStr = getReceives(platform.getPlatform(), platform.getReceivers());
 
         String content = String.format(
                 template,
-                getInstance().getServiceName(),
-                getInstance().getIp() + ":" + getInstance().getPort(),
-                getInstance().getEnv(),
+                CommonUtil.getInstance().getServiceName(),
+                CommonUtil.getInstance().getIp() + ":" + CommonUtil.getInstance().getPort(),
+                CommonUtil.getInstance().getEnv(),
                 populatePoolName(threadPoolName, executorWrapper),
                 oldProp.getCorePoolSize(),
                 executor.getCorePoolSize(),

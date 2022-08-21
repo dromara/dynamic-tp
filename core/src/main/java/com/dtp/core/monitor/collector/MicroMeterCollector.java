@@ -54,7 +54,7 @@ public class MicroMeterCollector extends AbstractCollector {
 
         Iterable<Tag> tags = Lists.newArrayList(
                 Tag.of(POOL_NAME_TAG, poolStats.getPoolName()),
-                Tag.of(APP_NAME_TAG, CommonUtil.getAppName()));
+                Tag.of(APP_NAME_TAG, CommonUtil.getInstance().getServiceName()));
 
         Metrics.gauge(metricName("core.size"), tags, poolStats, ThreadPoolStats::getCorePoolSize);
         Metrics.gauge(metricName("maximum.size"), tags, poolStats, ThreadPoolStats::getMaximumPoolSize);

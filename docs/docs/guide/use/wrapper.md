@@ -1,6 +1,6 @@
 ---
 title: 任务包装
-icon: install
+icon: wrap
 order: 1
 author: yanhom
 date: 2022-08-15

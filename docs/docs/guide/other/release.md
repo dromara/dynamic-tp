@@ -12,6 +12,75 @@ star: true
 
 ::: tip
 
+## v1.0.8 发布记录
+
+距离 v1.0.7 发布已经有差不多 2 个月时间，这个版本新增了好些功能，同时优化重构了一些代码设计，欢迎大家升级体验哦！
+
+
+#### Features
+
++ 新增内存安全队列 MemorySafeLinkedBlockingQueue，感谢 @dragon-zhang 提供实现
+
++ WebServer 线程池管理支持 Reactive 环境下使用，感谢 @abbottliu.liu 提供实现
+
++ 支持 Dubbox 线程池管理，感谢 @Redick01 提供实现
+
++ 支持 Spring 中的 ThreadPoolTaskExecutor 线程池管理，感谢 @Redick01 提供实现
+
++ 支持 Etcd 配置中心接入，感谢 @Redick01 提供实现
+
++ 三方中间件线程池通知告警支持别名配置，感谢 @renbiao002 提供实现
+
++ 三方中间件线程池管理支持通知告警功能
+
++ 新增 MdcTaskWrapper 任务包装器，支持 MDC 上下文传递
+
++ 新增 SwTraceTaskWrapper 任务包装器，支持 Skywalking TID 传递
+
++ 监控数据输出新增输出到应用日志中的 collector
+
++ 指标数据采集支持配置多个采集方式
+
++ 新增通知告警集群限流插件，见 starter-extension-limiter-redis 模块
+
++ ThreadPoolCreator 类新增一些内存安全快捷创建线程池方法
+
+
+#### BugFix
+
++ 兼容 JDK11 当前要设置核心线程数不能大于上次设置的最大线程数限制
+
++ 修复核心线程预热设置 preStartAllCoreThreads 不生效问题
+
++ 修复 Hystrix 线程池获取失败 & 调参被覆盖问题
+
+
+#### Refactor
+
++ 重构 logging 模块，去掉事件监听依赖
+
++ 重构抽象 adapter 模块代码
+
++ 责任链模式重构 notify 模块
+
+
+#### Optimize
+
++ example 添加 Hystrix 线程池的测试例子
+
++ 低版本 Apollo 配置文件格式兼容
+
++ Undertow 容器开启活跃线程池数获取功能
+
++ Endpoint 端点接口支持三方中间件线程池状态获取
+
++ 优化三方中间件参数刷新逻辑，增加校验判断逻辑
+
+:::
+
+
+::: tip
+
 ## v1.0.7 发布记录
 
 明细：https://juejin.cn/post/7108551236609114149

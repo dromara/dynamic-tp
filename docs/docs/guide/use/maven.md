@@ -20,7 +20,7 @@ star: true
        <dependency>
            <groupId>cn.dynamictp</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-apollo</artifactId>
-           <version>1.0.7</version>
+           <version>1.0.8</version>
        </dependency>
    ```
 
@@ -29,7 +29,7 @@ star: true
        <dependency>
            <groupId>cn.dynamictp</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-nacos</artifactId>
-           <version>1.0.7</version>
+           <version>1.0.8</version>
        </dependency>
    ```
 
@@ -38,7 +38,7 @@ star: true
        <dependency>
            <groupId>cn.dynamictp</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-nacos</artifactId>
-           <version>1.0.7</version>
+           <version>1.0.8</version>
        </dependency>
    ```
    注意版本：nacos-config-spring-boot-starter 0.2.10 及以下版本对应 springboot 2.3.12.RELEASE及以下版本，
@@ -49,7 +49,7 @@ star: true
        <dependency>
            <groupId>cn.dynamictp</groupId>
            <artifactId>dynamic-tp-spring-boot-starter-zookeeper</artifactId>
-           <version>1.0.7</version>
+           <version>1.0.8</version>
        </dependency>
    ```
    application.yml 需配置 zk 地址节点信息
@@ -74,7 +74,7 @@ star: true
        <dependency>
            <groupId>cn.dynamictp</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-zookeeper</artifactId>
-           <version>1.0.7</version>
+           <version>1.0.8</version>
        </dependency>
    ```
    
@@ -85,7 +85,7 @@ star: true
        <dependency>
            <groupId>cn.dynamictp</groupId>
            <artifactId>dynamic-tp-spring-cloud-starter-consul</artifactId>
-           <version>1.0.7</version>
+           <version>1.0.8</version>
        </dependency>
    ```
 

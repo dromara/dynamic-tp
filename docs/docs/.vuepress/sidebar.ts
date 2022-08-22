@@ -58,7 +58,7 @@ export default sidebar([
       },
       {
         text: "任务包装器",
-        icon: "code",
+        icon: "wrap",
         collapsable: false,
         link: "/guide/use/wrapper"
       },
@@ -84,7 +84,7 @@ export default sidebar([
       },
       {
         text: "推送限流",
-        icon: "notice",
+        icon: "decorate",
         collapsable: false,
         link: "/guide/notice/ratelimiter"
       },

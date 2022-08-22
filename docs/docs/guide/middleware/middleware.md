@@ -39,7 +39,7 @@ star: true
    <dependency>
         <groupId>cn.dynamictp</groupId>
         <artifactId>dynamic-tp-spring-boot-starter-adapter-webserver</artifactId>
-        <version>1.0.7</version>
+        <version>1.0.8</version>
     </dependency>
 ```
 
@@ -47,7 +47,7 @@ star: true
    <dependency>
         <groupId>cn.dynamictp</groupId>
         <artifactId>dynamic-tp-spring-boot-starter-adapter-dubbo</artifactId>
-        <version>1.0.7</version>
+        <version>1.0.8</version>
     </dependency>
 ```
 
@@ -55,7 +55,7 @@ star: true
     <dependency>
         <groupId>cn.dynamictp</groupId>
         <artifactId>dynamic-tp-spring-boot-starter-adapter-rocketmq</artifactId>
-        <version>1.0.7</version>
+        <version>1.0.8</version>
     </dependency>
 ```
 
@@ -63,7 +63,7 @@ star: true
     <dependency>
         <groupId>cn.dynamictp</groupId>
         <artifactId>dynamic-tp-spring-boot-starter-adapter-hystrix</artifactId>
-        <version>1.0.7</version>
+        <version>1.0.8</version>
     </dependency>
 ```
 

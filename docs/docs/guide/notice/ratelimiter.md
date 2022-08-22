@@ -1,6 +1,6 @@
 ---
 title: 通知限流
-icon: notice
+icon: decorate
 order: 1
 author: yanhom
 date: 2022-06-11

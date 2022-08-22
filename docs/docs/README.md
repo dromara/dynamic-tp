@@ -83,8 +83,7 @@ features:
 
 ## 知识星球
 
-![微信图片_20220822181315.jpg](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3f8bbcbd50d34ccd83e0e5f3294afadf~tplv-k3u1fbpfcp-watermark.image?)
-
+![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/894a4e918ff14c13b4a66d3f30f7ff7e~tplv-k3u1fbpfcp-zoom-1.image)
 
 <div>
     <div class="com-box-f s-width">

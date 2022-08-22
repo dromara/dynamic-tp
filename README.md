@@ -196,6 +196,14 @@
 
 [![Stargazers over time](https://starchart.cc/dromara/dynamic-tp.svg)](https://starchart.cc/dromara/dynamic-tp)
 
+---
+
+## 知识星球
+
+![微信图片_20220822181315.jpg](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3f8bbcbd50d34ccd83e0e5f3294afadf~tplv-k3u1fbpfcp-watermark.image?)
+
+---
+
 ## 联系我
 
 看到这儿，**请给项目一个star**，你的支持是我们前进的动力！

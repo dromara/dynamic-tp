@@ -40,7 +40,11 @@ import static com.dtp.core.notify.NotifyHelper.getAllAlarmKeys;
 @Slf4j
 public abstract class AbstractDtpNotifier implements DtpNotifier {
 
-    private final Notifier notifier;
+    protected Notifier notifier;
+
+    protected AbstractDtpNotifier() {
+
+    }
 
     protected AbstractDtpNotifier(Notifier notifier) {
         this.notifier = notifier;

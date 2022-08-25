@@ -226,9 +226,9 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/lyh200/dynamic-tp/tree/master</url>
-        <connection>scm:git:git://github.com/lyh200/dynamic-tp.git</connection>
-        <developerConnection>scm:git:ssh://github.com:lyh200/dynamic-tp.git</developerConnection>
+        <url>https://github.com/yanhom1314/dynamic-tp/tree/master</url>
+        <connection>scm:git:git://github.com/yanhom1314/dynamic-tp.git</connection>
+        <developerConnection>scm:git:ssh://github.com:yanhom1314/dynamic-tp.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
@@ -237,13 +237,13 @@
             <id>yanhom</id>
             <name>yanhom</name>
             <email>yanhom1314@gmail.com</email>
-            <url>https://github.com/lyh200</url>
+            <url>https://github.com/yanhom1314</url>
         </developer>
     </developers>
 
     <issueManagement>
         <system>Github Issue</system>
-        <url>https://github.com/lyh200/dynamic-tp/issues</url>
+        <url>https://github.com/yanhom1314/dynamic-tp/issues</url>
     </issueManagement>
 
     <distributionManagement>

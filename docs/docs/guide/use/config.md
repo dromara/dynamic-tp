@@ -34,7 +34,7 @@ spring:
       enabled: true
       enabledBanner: true           # 是否开启banner打印，默认true
       enabledCollect: true          # 是否开启监控指标采集，默认false
-      collectorType: micrometer     # 监控数据采集器类型（logging | micrometer），默认logging
+      collectorTypes: micrometer,logging     # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
       logPath: /home/logs           # 监控日志数据路径，默认 ${user.home}/logs，采集类型非logging不用配置
       monitorInterval: 5            # 监控时间间隔（报警判断、指标采集），默认5s
       nacos:                        # nacos配置，不配置有默认值（规则appname-dev.yml这样），cloud应用不需要配置
@@ -72,6 +72,7 @@ spring:
           keepAliveTime: 60
       dubboTp:                                     # dubbo 线程池配置
         - threadPoolName: dubboTp#20880            # 名称规则：dubboTp + "#" + 协议端口
+          theadPoolAliasName: 测试线程池             # dubbo线程池
           corePoolSize: 100
           maximumPoolSize: 200
           keepAliveTime: 60
@@ -88,6 +89,7 @@ spring:
           keepAliveTime: 60
       executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
         - threadPoolName: dtpExecutor1
+          theadPoolAliasName: 测试线程池             # 线程池别名
           executorType: common                     # 线程池类型common、eager：适用于io密集型
           corePoolSize: 6
           maximumPoolSize: 8

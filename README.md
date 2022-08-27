@@ -1,5 +1,5 @@
 <p align="center">
-	<img alt="logo" src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2e3db95e1e3245dca83a6f0404120f14~tplv-k3u1fbpfcp-zoom-1.image" width="50%">
+	<img alt="logo" src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3a70070ebc4546aba734e3ba97e7b193~tplv-k3u1fbpfcp-zoom-1.image" width="50%">
 </p>
 <p align="center">
 	<strong>基于配置中心的轻量级动态线程池，内置监控告警功能，可通过SPI自定义扩展实现</strong>

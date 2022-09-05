@@ -55,7 +55,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
             DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
             Map<String, Object> executors = dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY);
             if (MapUtil.isNotEmpty(executors)) {
-                executors.forEach((k, v) -> doInit(k.toString(), (ThreadPoolExecutor) v));
+                executors.forEach((k, v) -> doInit(k, (ThreadPoolExecutor) v));
             }
             return;
         }

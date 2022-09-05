@@ -53,10 +53,14 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
         String currVersion = Version.getVersion();
         if (DubboVersion.compare(DubboVersion.VERSION_2_7_5, currVersion) > 0) {
             DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
+            if (Objects.isNull(dataStore)) {
+                return;
+            }
             Map<String, Object> executors = dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY);
             if (MapUtil.isNotEmpty(executors)) {
                 executors.forEach((k, v) -> doInit(k, (ThreadPoolExecutor) v));
             }
+            log.info("DynamicTp adapter, apache dubbo executors init end, executors: {}", DUBBO_EXECUTORS);
             return;
         }
 
@@ -77,7 +81,6 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
         if (MapUtil.isNotEmpty(executorMap)) {
             executorMap.forEach((k, v) -> doInit(k.toString(), (ThreadPoolExecutor) v));
         }
-
         log.info("DynamicTp adapter, apache dubbo executors init end, executors: {}", DUBBO_EXECUTORS);
     }
 

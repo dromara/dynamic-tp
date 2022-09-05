@@ -28,7 +28,7 @@ public class ThreadPoolProperties {
     /**
      * Simple Alias Name of Dynamic ThreadPool. Use for notify.
      */
-    private String theadPoolAliasName;
+    private String threadPoolAliasName;
 
     /**
      * Executor type, used in create phase.

@@ -72,7 +72,7 @@ spring:
           keepAliveTime: 60
       dubboTp:                                     # dubbo 线程池配置
         - threadPoolName: dubboTp#20880            # 名称规则：dubboTp + "#" + 协议端口
-          theadPoolAliasName: 测试线程池             # dubbo线程池
+          threadPoolAliasName: 测试线程池             # dubbo线程池
           corePoolSize: 100
           maximumPoolSize: 200
           keepAliveTime: 60
@@ -89,7 +89,7 @@ spring:
           keepAliveTime: 60
       executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
         - threadPoolName: dtpExecutor1
-          theadPoolAliasName: 测试线程池             # 线程池别名
+          threadPoolAliasName: 测试线程池             # 线程池别名
           executorType: common                     # 线程池类型common、eager：适用于io密集型
           corePoolSize: 6
           maximumPoolSize: 8

@@ -239,8 +239,8 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         }
 
         // update Alias Name
-        if (!Objects.equals(dtpExecutor.getTheadPoolAliasName(), properties.getTheadPoolAliasName())) {
-            dtpExecutor.setTheadPoolAliasName(properties.getTheadPoolAliasName());
+        if (!Objects.equals(dtpExecutor.getThreadPoolAliasName(), properties.getThreadPoolAliasName())) {
+            dtpExecutor.setThreadPoolAliasName(properties.getThreadPoolAliasName());
         }
 
         // update work queue

@@ -188,9 +188,9 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
         String poolAlisaName;
         if (executorWrapper.getExecutor() instanceof DtpExecutor) {
-            poolAlisaName = ((DtpExecutor) executorWrapper.getExecutor()).getTheadPoolAliasName();
+            poolAlisaName = ((DtpExecutor) executorWrapper.getExecutor()).getThreadPoolAliasName();
         } else {
-            poolAlisaName = executorWrapper.getTheadPoolAliasName();
+            poolAlisaName = executorWrapper.getThreadPoolAliasName();
         }
         if (StringUtils.isBlank(poolAlisaName)) {
             return poolName;

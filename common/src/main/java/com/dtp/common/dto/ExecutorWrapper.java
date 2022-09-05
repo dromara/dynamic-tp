@@ -19,7 +19,7 @@ public class ExecutorWrapper {
 
     private Executor executor;
 
-    private String theadPoolAliasName;
+    private String threadPoolAliasName;
 
     /**
      * Notify items, see {@link NotifyTypeEnum}.

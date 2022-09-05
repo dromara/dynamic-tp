@@ -45,7 +45,7 @@ public class DtpExecutor extends DtpLifecycleSupport {
     /**
      * Simple Business alias Name of Dynamic ThreadPool. Use for notify.
      */
-    private String theadPoolAliasName;
+    private String threadPoolAliasName;
 
     /**
      * Notify items, see {@link NotifyTypeEnum}.
@@ -233,11 +233,11 @@ public class DtpExecutor extends DtpLifecycleSupport {
         allowCoreThreadTimeOut(allowCoreThreadTimeOut);
     }
 
-    public String getTheadPoolAliasName() {
-        return theadPoolAliasName;
+    public String getThreadPoolAliasName() {
+        return threadPoolAliasName;
     }
 
-    public void setTheadPoolAliasName(String theadPoolAliasName) {
-        this.theadPoolAliasName = theadPoolAliasName;
+    public void setThreadPoolAliasName(String threadPoolAliasName) {
+        this.threadPoolAliasName = threadPoolAliasName;
     }
 }

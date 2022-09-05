@@ -153,8 +153,8 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
             executor.setMaximumPoolSize(properties.getMaximumPoolSize());
         }
 
-        if(StringUtils.isNotBlank(properties.getTheadPoolAliasName())){
-            executorWrapper.setTheadPoolAliasName(properties.getTheadPoolAliasName());
+        if(StringUtils.isNotBlank(properties.getThreadPoolAliasName())){
+            executorWrapper.setThreadPoolAliasName(properties.getThreadPoolAliasName());
         }
 
         // update notify items

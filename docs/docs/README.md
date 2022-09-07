@@ -85,16 +85,13 @@ features:
 
 ![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/894a4e918ff14c13b4a66d3f30f7ff7e~tplv-k3u1fbpfcp-zoom-1.image)
 
+# Dromara 成员项目
+
 <div>
     <div class="com-box-f s-width">
-        <div class="s-fenge"></div>
-        <br>
-        <h2 class="s-title">
-            Dromara 成员项目
-        </h2>
         <div class="com-box com-box-you">
             <a href="https://gitee.com/dromara/TLog" target="_blank">
-                <img src="/images/tlog2.png" msg="一个轻量级的分布式日志标记追踪神器，10分钟即可接入，自动对日志打标签完成微服务的链路追踪">
+                <img src="/images/tlog-logo.png" msg="一个轻量级的分布式日志标记追踪神器，10分钟即可接入，自动对日志打标签完成微服务的链路追踪">
             </a>
             <a href="https://gitee.com/dromara/liteFlow" target="_blank">
                 <img src="/images/lite-flow.png" msg="轻量，快速，稳定，可编排的组件式流程引擎">

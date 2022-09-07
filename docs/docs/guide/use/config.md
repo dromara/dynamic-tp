@@ -133,7 +133,7 @@ spring:
       spring.dynamic.tp.enabled=true
       spring.dynamic.tp.enabledBanner=true
       spring.dynamic.tp.enabledCollect=true
-      spring.dynamic.tp.collectorType=logging
+      spring.dynamic.tp.collectorTypes=logging
       spring.dynamic.tp.monitorInterval=5
       spring.dynamic.tp.executors[0].threadPoolName=dynamic-tp-test-1
       spring.dynamic.tp.executors[0].corePoolSize=50
@@ -173,7 +173,7 @@ spring:
 ```
 {
   "enabled":true,
-  "collectorType":"logging",
+  "collectorTypes":"logging",
   "monitorInterval":5,
   "enabledBanner":true,
   "enabledCollect":true,
@@ -242,7 +242,7 @@ spring:
 /configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.enabled=true
 /configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.enabledBanner=true
 /configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.enabledCollect=true
-/configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.collectorType=logging
+/configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.collectorTypes=logging
 /configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.monitorInterval=5
 /configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.executors[0].threadPoolName=dtpExecutor1
 /configserver/dev/dynamic-tp-cloud-zookeeper-demo,dev=spring.dynamic.tp.executors[0].corePoolSize=50

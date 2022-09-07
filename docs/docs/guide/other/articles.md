@@ -24,3 +24,5 @@ star: true
 [线程池，我是谁？我在哪儿？](https://juejin.cn/post/7125681203599900702)
 
 [基于开源的配置中心的轻量动态线程池dynamic-tp实践与源码原理分析](https://juejin.cn/post/7114911821944864775)
+
+[线程池面试那些事儿](https://juejin.cn/post/7137186083074703391)

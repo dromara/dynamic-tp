@@ -159,6 +159,9 @@ features:
             <a href="https://www.herodotus.cn/" target="_blank">
 				<img src="/images/dantecloud.png" msg="Dante-Cloud 是一款企业级微服务架构和服务能力开发平台。">
             </a>
+            <a href="https://www.mtruning.club/" target="_blank">
+				<img src="/images/go-view.png" msg="GoView 是一个高效的拖拽式低代码数据可视化开发平台。">
+            </a>
         </div>
         <div style="height: 10px; clear: both;"></div>
         <p>

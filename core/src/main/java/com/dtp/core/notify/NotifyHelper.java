@@ -5,18 +5,17 @@ import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.em.NotifyTypeEnum;
-import com.dtp.common.util.StreamUtil;
-import com.dtp.core.notify.alarm.AlarmCounter;
-import com.dtp.core.notify.alarm.AlarmLimiter;
 import com.dtp.core.thread.DtpExecutor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.dtp.common.em.NotifyTypeEnum.*;
@@ -105,19 +104,4 @@ public class NotifyHelper {
         });
     }
 
-    public static void initAlarm(String poolName, List<NotifyItem> oldItems, List<NotifyItem> newItems) {
-
-        if (CollectionUtils.isEmpty(newItems)) {
-            return;
-        }
-        Map<String, NotifyItem> oldNotifyItemMap = StreamUtil.toMap(oldItems, NotifyItem::getType);
-        newItems.forEach(x -> {
-            NotifyItem oldNotifyItem = oldNotifyItemMap.get(x.getType());
-            if (Objects.nonNull(oldNotifyItem) && oldNotifyItem.getInterval() == x.getInterval()) {
-                return;
-            }
-            AlarmLimiter.initAlarmLimiter(poolName, x);
-            AlarmCounter.init(poolName, x.getType());
-        });
-    }
 }

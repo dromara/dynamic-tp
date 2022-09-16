@@ -13,8 +13,7 @@ import com.dtp.core.context.NoticeCtx;
 import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.notify.NoticeManager;
 import com.dtp.core.notify.NotifyHelper;
-import com.dtp.core.notify.alarm.AlarmCounter;
-import com.dtp.core.notify.alarm.AlarmLimiter;
+import com.dtp.core.notify.alarm.AlarmManager;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.support.wrapper.TaskWrapper;
 import com.dtp.core.support.wrapper.TaskWrappers;
@@ -272,7 +271,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         // update notify items
         val allNotifyItems = mergeAllNotifyItems(properties.getNotifyItems());
         NotifyHelper.fillPlatforms(dtpProperties.getPlatforms(), allNotifyItems);
-        NotifyHelper.initAlarm(dtpExecutor.getThreadPoolName(), dtpExecutor.getNotifyItems(), allNotifyItems);
+        AlarmManager.refreshAlarm(dtpExecutor.getThreadPoolName(), dtpExecutor.getNotifyItems(), allNotifyItems);
         dtpExecutor.setNotifyItems(allNotifyItems);
     }
 
@@ -298,16 +297,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
         if (CollUtil.isEmpty(dtpProperties.getPlatforms())) {
             log.warn("DtpRegistry initialization end, no notify platforms configured.");
-            DTP_REGISTRY.forEach((k, v) -> v.setNotifyItems(Collections.emptyList()));
-            return;
         }
-        DTP_REGISTRY.forEach((k, v) -> {
-            NotifyHelper.fillPlatforms(dtpProperties.getPlatforms(), v.getNotifyItems());
-            v.getNotifyItems().forEach(x -> {
-                AlarmLimiter.initAlarmLimiter(k, x);
-                AlarmCounter.init(k, x.getType());
-            });
-        });
     }
 
     private static boolean canModifyQueueProp(ThreadPoolProperties properties) {

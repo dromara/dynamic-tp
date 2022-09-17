@@ -6,11 +6,13 @@ import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.AlarmInfo;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
+import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.common.pattern.filter.Filter;
 import com.dtp.common.pattern.filter.FilterChain;
 import com.dtp.common.pattern.filter.FilterChainFactory;
+import com.dtp.common.util.StreamUtil;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.notify.NotifyHelper;
@@ -22,10 +24,9 @@ import com.dtp.core.thread.DtpExecutor;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.util.CollectionUtils;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -66,6 +67,43 @@ public class AlarmManager {
     }
 
     private AlarmManager() {}
+
+    public static void initAlarm(DtpExecutor executor, List<NotifyPlatform> platforms) {
+        if (CollUtil.isEmpty(platforms)) {
+            executor.setNotifyItems(Lists.newArrayList());
+            return;
+        }
+        if (CollUtil.isEmpty(executor.getNotifyItems())) {
+            log.warn("DynamicTp notify, no notify items configured, name {}", executor.getThreadPoolName());
+            return;
+        }
+
+        NotifyHelper.fillPlatforms(platforms, executor.getNotifyItems());
+        initAlarm(executor.getThreadPoolName(), executor.getNotifyItems());
+    }
+
+    public static void initAlarm(String poolName, List<NotifyItem> notifyItems) {
+        notifyItems.forEach(x -> {
+            AlarmLimiter.initAlarmLimiter(poolName, x);
+            AlarmCounter.init(poolName, x.getType());
+        });
+    }
+
+    public static void refreshAlarm(String poolName, List<NotifyItem> oldItems, List<NotifyItem> newItems) {
+        if (CollectionUtils.isEmpty(newItems)) {
+            return;
+        }
+
+        Map<String, NotifyItem> oldNotifyItemMap = StreamUtil.toMap(oldItems, NotifyItem::getType);
+        newItems.forEach(x -> {
+            NotifyItem oldNotifyItem = oldNotifyItemMap.get(x.getType());
+            if (Objects.nonNull(oldNotifyItem) && oldNotifyItem.getInterval() == x.getInterval()) {
+                return;
+            }
+            AlarmLimiter.initAlarmLimiter(poolName, x);
+            AlarmCounter.init(poolName, x.getType());
+        });
+    }
 
     public static void triggerAlarm(String dtpName, String notifyType, Runnable runnable) {
         AlarmCounter.incAlarmCounter(dtpName, notifyType);

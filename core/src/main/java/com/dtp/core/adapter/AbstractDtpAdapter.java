@@ -15,8 +15,7 @@ import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.convert.MetricsConverter;
 import com.dtp.core.notify.NoticeManager;
 import com.dtp.core.notify.NotifyHelper;
-import com.dtp.core.notify.alarm.AlarmCounter;
-import com.dtp.core.notify.alarm.AlarmLimiter;
+import com.dtp.core.notify.alarm.AlarmManager;
 import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
@@ -80,10 +79,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
     }
 
     public void initNotifyItems(String poolName, ExecutorWrapper executorWrapper) {
-        executorWrapper.getNotifyItems().forEach(x -> {
-            AlarmLimiter.initAlarmLimiter(poolName, x);
-            AlarmCounter.init(poolName, x.getType());
-        });
+        AlarmManager.initAlarm(poolName, executorWrapper.getNotifyItems());
     }
 
     public void refresh(String name, List<SimpleTpProperties> properties, List<NotifyPlatform> platforms) {
@@ -160,7 +156,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
         // update notify items
         val allNotifyItems = mergeSimpleNotifyItems(properties.getNotifyItems());
         NotifyHelper.fillPlatforms(platforms, allNotifyItems);
-        NotifyHelper.initAlarm(executorWrapper.getThreadPoolName(), executorWrapper.getNotifyItems(), allNotifyItems);
+        AlarmManager.refreshAlarm(executorWrapper.getThreadPoolName(), executorWrapper.getNotifyItems(), allNotifyItems);
         executorWrapper.setNotifyItems(allNotifyItems);
     }
 }

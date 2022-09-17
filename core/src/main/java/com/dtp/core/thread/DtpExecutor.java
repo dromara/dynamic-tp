@@ -1,6 +1,7 @@
 package com.dtp.core.thread;
 
 import cn.hutool.core.collection.CollUtil;
+import com.dtp.common.config.DtpProperties;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.core.notify.alarm.AlarmManager;
@@ -162,7 +163,9 @@ public class DtpExecutor extends DtpLifecycleSupport {
     }
 
     @Override
-    protected void initialize() {
+    protected void initialize(DtpProperties dtpProperties) {
+        AlarmManager.initAlarm(this, dtpProperties.getPlatforms());
+
         if (preStartAllCoreThreads) {
             prestartAllCoreThreads();
         }

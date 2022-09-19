@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 /**
  * LogHelper related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 public class LogHelper {

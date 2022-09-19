@@ -13,7 +13,7 @@ import static com.dtp.common.constant.DingNotifyConst.DING_CHANGE_NOTICE_TEMPLAT
 /**
  * DtpDingNotifier related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Slf4j

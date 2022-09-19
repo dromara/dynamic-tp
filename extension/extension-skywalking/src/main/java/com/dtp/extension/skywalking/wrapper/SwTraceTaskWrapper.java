@@ -6,7 +6,7 @@ import org.apache.skywalking.apm.toolkit.trace.RunnableWrapper;
 /**
  * SwTraceTaskWrapper related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.8
  **/
 public class SwTraceTaskWrapper implements TaskWrapper {

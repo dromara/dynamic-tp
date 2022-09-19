@@ -13,7 +13,7 @@ import java.util.concurrent.*;
  * DtpLifecycleSupport which mainly implements Spring bean's lifecycle methods,
  * mimics spring internal thread pool {@link ThreadPoolTaskExecutor}.
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.3
  **/
 @Slf4j

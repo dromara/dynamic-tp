@@ -5,7 +5,7 @@ import com.dtp.common.em.ConfigFileTypeEnum;
 /**
  * Refresher related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 public interface Refresher {

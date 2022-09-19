@@ -10,7 +10,7 @@ import static com.dtp.common.em.NotifyTypeEnum.REJECT;
 /**
  * RejectedAware related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 public interface RejectedAware {

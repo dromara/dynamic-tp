@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * DtpAutoConfiguration for spring cloud nacos application.
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Configuration

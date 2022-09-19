@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * SimpleTpProperties main properties.
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.6
  **/
 @Data

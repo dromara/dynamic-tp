@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * NoticeCtx related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.8
  */
 @Data

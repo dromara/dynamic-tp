@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * MarkdownReq related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  */
 @Data

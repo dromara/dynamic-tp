@@ -27,7 +27,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 /**
  * BeanPostProcessor that handles all related beans managed by Spring.
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Slf4j

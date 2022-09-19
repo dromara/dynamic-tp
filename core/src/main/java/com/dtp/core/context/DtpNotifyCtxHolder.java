@@ -5,7 +5,7 @@ import com.alibaba.ttl.TransmittableThreadLocal;
 /**
  * DtpNotifyCtxHolder, wraps ThreadLocal with ttl.
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  */
 public class DtpNotifyCtxHolder {

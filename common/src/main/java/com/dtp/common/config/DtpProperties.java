@@ -14,7 +14,7 @@ import static com.dtp.common.em.CollectorTypeEnum.MICROMETER;
 /**
  * Main properties that maintain by config center.
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Slf4j

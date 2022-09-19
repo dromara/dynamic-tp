@@ -5,7 +5,7 @@ import lombok.Getter;
 /**
  * Config file type.
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Getter

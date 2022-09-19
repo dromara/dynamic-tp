@@ -24,7 +24,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * NotifyHelper related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  */
 @Slf4j

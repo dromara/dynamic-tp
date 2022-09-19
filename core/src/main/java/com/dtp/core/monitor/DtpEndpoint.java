@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * DtpEndpoint related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Endpoint(id = "dynamic-tp")

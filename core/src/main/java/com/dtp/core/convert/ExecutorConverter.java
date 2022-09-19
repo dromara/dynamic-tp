@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * ExecutorConverter related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 public class ExecutorConverter {

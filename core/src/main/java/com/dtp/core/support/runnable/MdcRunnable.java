@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * MdcRunnable related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.8
  **/
 public class MdcRunnable implements Runnable{

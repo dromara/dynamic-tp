@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * ThreadPool main properties.
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Data

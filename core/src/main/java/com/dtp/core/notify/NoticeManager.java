@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * NoticeManager related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.8
  */
 public class NoticeManager {

@@ -15,7 +15,7 @@ import static com.dtp.common.constant.DynamicTpConst.MAIN_PROPERTIES_PREFIX;
 /**
  * PropertiesBinder related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.3
  **/
 public class PropertiesBinder {

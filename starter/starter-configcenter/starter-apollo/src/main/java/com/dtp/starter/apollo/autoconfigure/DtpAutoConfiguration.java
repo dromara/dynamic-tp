@@ -15,7 +15,7 @@ import static com.ctrip.framework.apollo.spring.config.PropertySourcesConstants.
 /**
  * DtpAutoConfiguration for apollo config center.
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Configuration

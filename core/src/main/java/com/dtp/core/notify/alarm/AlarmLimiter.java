@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * AlarmLimiter related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  */
 public class AlarmLimiter {

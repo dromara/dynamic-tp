@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * StreamUtil related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 public final class StreamUtil {

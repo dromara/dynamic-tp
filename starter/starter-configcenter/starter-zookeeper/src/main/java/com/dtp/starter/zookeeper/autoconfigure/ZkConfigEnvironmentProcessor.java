@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * ZkConfigEnvironmentProcessor related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.4
  **/
 public class ZkConfigEnvironmentProcessor implements EnvironmentPostProcessor, Ordered {

@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * create new thread instead of putting task into blocking queue,
  * mainly used in io intensive scenario.
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.3
  **/
 public class EagerDtpExecutor extends DtpExecutor {

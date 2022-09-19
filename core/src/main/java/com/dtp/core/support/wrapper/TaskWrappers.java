@@ -14,7 +14,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * TaskWrapperHolder related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.4
  **/
 public class TaskWrappers {

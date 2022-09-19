@@ -20,7 +20,7 @@ import org.springframework.context.annotation.DependsOn;
 /**
  * BaseBeanAutoConfiguration related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Configuration

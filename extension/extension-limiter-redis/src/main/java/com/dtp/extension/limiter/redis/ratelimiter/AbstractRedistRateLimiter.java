@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * AbstractRedistRateLimiter related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.8
  **/
 @SuppressWarnings("all")

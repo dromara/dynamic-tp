@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * SlidingWindowRateLimiter related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.8
  **/
 public class SlidingWindowRateLimiter extends AbstractRedistRateLimiter {

@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 /**
  * NacosRefresher related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Slf4j

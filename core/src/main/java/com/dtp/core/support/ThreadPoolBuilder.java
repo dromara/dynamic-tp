@@ -26,7 +26,7 @@ import static com.dtp.common.constant.DynamicTpConst.M_1;
 /**
  * Builder for creating a ThreadPoolExecutor gracefully.
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 public class ThreadPoolBuilder {

@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  * TaskQueue in the EagerDtpExecutor。
  * Mainly used in io intensive scenario.
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.3
  **/
 public class TaskQueue extends MemorySafeLinkedBlockingQueue<Runnable> {

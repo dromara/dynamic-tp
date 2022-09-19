@@ -34,7 +34,7 @@ import static com.dtp.core.notify.NotifyHelper.getAllAlarmKeys;
 /**
  * AbstractDtpNotifier related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Slf4j

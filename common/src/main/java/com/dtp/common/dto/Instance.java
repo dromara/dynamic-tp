@@ -6,7 +6,7 @@ import lombok.Data;
 /**
  * Instance related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Data

@@ -27,7 +27,7 @@ import static com.dtp.common.em.ConfigFileTypeEnum.PROPERTIES;
 /**
  * CuratorUtil related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.4
  **/
 @Slf4j

@@ -29,7 +29,7 @@ import static com.dtp.core.notify.alarm.AlarmManager.doAlarm;
 /**
  * DtpMonitor related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Slf4j

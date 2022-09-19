@@ -37,7 +37,7 @@ import static com.dtp.common.em.QueueTypeEnum.LINKED_BLOCKING_QUEUE;
 /**
  * AlarmManager related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  */
 @Slf4j

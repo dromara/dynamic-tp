@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * MicroMeterCollector related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  */
 @Slf4j

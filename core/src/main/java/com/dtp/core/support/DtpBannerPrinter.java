@@ -10,7 +10,7 @@ import org.springframework.boot.ansi.AnsiStyle;
 /**
  * DtpBannerPrinter related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Slf4j

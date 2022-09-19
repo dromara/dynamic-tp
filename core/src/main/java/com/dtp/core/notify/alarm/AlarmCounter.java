@@ -19,7 +19,7 @@ import static com.dtp.common.em.NotifyTypeEnum.*;
 /**
  * AlarmCounter related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.4
  **/
 public class AlarmCounter {

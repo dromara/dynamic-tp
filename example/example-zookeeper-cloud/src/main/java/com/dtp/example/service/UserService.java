@@ -3,7 +3,7 @@ package com.dtp.example.service;
 /**
  * UserService related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 public interface UserService {

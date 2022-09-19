@@ -3,7 +3,7 @@ package com.dtp.common.em;
 /**
  * Notify platform type.
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 public enum NotifyPlatformEnum {

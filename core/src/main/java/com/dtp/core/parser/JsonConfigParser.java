@@ -16,7 +16,7 @@ import static com.dtp.common.constant.DynamicTpConst.*;
 /**
  * JsonConfigParser related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.5
  **/
 @Slf4j

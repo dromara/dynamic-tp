@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * RedisLimiterAutoConfiguration related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.8
  **/
 @Configuration

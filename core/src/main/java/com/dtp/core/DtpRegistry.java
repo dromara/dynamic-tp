@@ -46,7 +46,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * Core Registry, which keeps all registered Dynamic ThreadPoolExecutors.
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Slf4j

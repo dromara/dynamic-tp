@@ -10,7 +10,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * Offer a fast dtp creator, use only in simple scenario.
  * It is best to use ThreadPoolBuilder and assign relevant values.
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 public class ThreadPoolCreator {

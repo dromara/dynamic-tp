@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 /**
  * ThreadPoolStats related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @EqualsAndHashCode(callSuper = true)

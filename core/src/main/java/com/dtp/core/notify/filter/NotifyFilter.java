@@ -6,7 +6,7 @@ import com.dtp.core.context.BaseNotifyCtx;
 /**
  * NotifyFilter related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.8
  **/
 public interface NotifyFilter extends Filter<BaseNotifyCtx> {

@@ -9,7 +9,7 @@ import java.util.concurrent.Executor;
 /**
  * Executor wrapper
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.3
  **/
 @Data

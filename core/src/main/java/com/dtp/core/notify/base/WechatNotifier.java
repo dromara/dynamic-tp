@@ -14,7 +14,7 @@ import java.util.Objects;
 /**
  * WechatNotifier related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Slf4j

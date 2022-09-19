@@ -14,7 +14,7 @@ import static com.dtp.common.em.RejectedTypeEnum.*;
 /**
  * RejectHandlerGetter related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Slf4j

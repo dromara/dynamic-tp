@@ -14,7 +14,7 @@ import static com.dtp.common.constant.DynamicTpConst.M_1;
 /**
  * QueueTypeEnum related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Slf4j

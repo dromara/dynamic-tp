@@ -7,7 +7,7 @@ import lombok.Getter;
 /**
  * ExecutorType related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.4
  **/
 @Getter

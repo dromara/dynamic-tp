@@ -3,7 +3,7 @@ package com.dtp.common.constant;
 /**
  * DingNotifyConst related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 public final class DingNotifyConst {

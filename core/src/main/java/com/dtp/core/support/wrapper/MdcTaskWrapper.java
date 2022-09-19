@@ -5,7 +5,7 @@ import com.dtp.core.support.runnable.MdcRunnable;
 /**
  * MdcTaskWrapper related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.8
  **/
 public class MdcTaskWrapper implements TaskWrapper {

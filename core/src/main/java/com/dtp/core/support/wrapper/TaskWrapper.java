@@ -3,7 +3,7 @@ package com.dtp.core.support.wrapper;
 /**
  * TaskWrapper related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.3
  **/
 @FunctionalInterface

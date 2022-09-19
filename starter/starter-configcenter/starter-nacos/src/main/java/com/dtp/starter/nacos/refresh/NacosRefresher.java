@@ -20,7 +20,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * NacosRefresher related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Slf4j

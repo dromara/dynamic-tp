@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * AbstractConfigParser related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 public abstract class AbstractConfigParser implements ConfigParser {

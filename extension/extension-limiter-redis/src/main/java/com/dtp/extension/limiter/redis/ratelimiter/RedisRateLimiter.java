@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * RedisRateLimiter related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.8
  **/
 public interface RedisRateLimiter<T> {

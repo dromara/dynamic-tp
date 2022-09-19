@@ -13,7 +13,7 @@ import static com.dtp.common.constant.WechatNotifyConst.WECHAT_CHANGE_NOTICE_TEM
 /**
  * DtpWechatNotifier related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Slf4j

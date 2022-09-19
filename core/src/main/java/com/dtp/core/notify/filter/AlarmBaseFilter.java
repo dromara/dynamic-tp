@@ -14,7 +14,7 @@ import java.util.Objects;
 /**
  * AlarmBaseFilter related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.8
  **/
 @Slf4j

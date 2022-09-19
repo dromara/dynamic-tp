@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * BeanUtil related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.4
  **/
 @Slf4j

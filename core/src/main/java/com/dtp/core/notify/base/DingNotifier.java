@@ -21,7 +21,7 @@ import static com.dtp.common.constant.DingNotifyConst.DING_NOTICE_TITLE;
 /**
  * DingNotifier related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 @Slf4j

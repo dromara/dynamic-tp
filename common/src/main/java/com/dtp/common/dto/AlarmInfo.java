@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * AlarmInfo related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.4
  **/
 @Data

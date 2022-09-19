@@ -11,7 +11,7 @@ import static com.dtp.common.em.NotifyTypeEnum.LIVENESS;
 /**
  * DynamicTpConst related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 public final class DynamicTpConst {

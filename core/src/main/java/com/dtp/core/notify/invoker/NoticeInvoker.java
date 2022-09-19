@@ -9,7 +9,7 @@ import com.dtp.core.handler.NotifierHandler;
 /**
  * NoticeInvoker related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.8
  */
 public class NoticeInvoker implements Invoker<BaseNotifyCtx> {

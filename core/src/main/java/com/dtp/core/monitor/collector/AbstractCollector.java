@@ -3,7 +3,7 @@ package com.dtp.core.monitor.collector;
 /**
  * AbstractCollector related
  *
- * @author: linyanhong@ihuman.com
+ * @author linyanhong@ihuman.com
  * @since 1.0.0
  **/
 public abstract class AbstractCollector implements MetricsCollector {

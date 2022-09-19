@@ -5,7 +5,7 @@ import lombok.Getter;
 /**
  * RateLimitEnum related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.8
  **/
 @Getter

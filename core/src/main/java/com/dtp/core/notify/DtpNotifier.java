@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * DtpNotifier related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.0
  **/
 public interface DtpNotifier {

@@ -7,7 +7,7 @@ import java.util.Collection;
 /**
  * StringUtil related
  *
- * @author: yanhom
+ * @author yanhom
  * @since 1.0.4
  **/
 public final class StringUtil {

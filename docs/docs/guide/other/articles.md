@@ -32,8 +32,6 @@ star: true
 
 [动态线程池dynamic-tp快速接入](https://juejin.cn/post/7073764210039062559)
 
-[基于开源的配置中心的轻量动态线程池dynamic-tp实践与源码原理分析](https://juejin.cn/post/7114911821944864775)
-
 ## By JAVA学思(公众号)
 
 [动态线程池DynamicTp系列五之源码分析](https://mp.weixin.qq.com/s/VEsyV-RgmrD1HvRJiSEAOQ)

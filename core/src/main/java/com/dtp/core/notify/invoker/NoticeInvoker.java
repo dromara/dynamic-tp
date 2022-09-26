@@ -18,6 +18,6 @@ public class NoticeInvoker implements Invoker<BaseNotifyCtx> {
     public void invoke(BaseNotifyCtx context) {
         DtpNotifyCtxHolder.set(context);
         NoticeCtx noticeCtx = (NoticeCtx) context;
-        NotifierHandler.getInstance().sendNoticeAsync(noticeCtx.getProp(), noticeCtx.getDiffs());
+        NotifierHandler.getInstance().sendNotice(noticeCtx.getProp(), noticeCtx.getDiffs());
     }
 }

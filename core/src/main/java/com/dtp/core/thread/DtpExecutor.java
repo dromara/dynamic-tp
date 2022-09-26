@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyTypeEnum;
-import com.dtp.core.notify.alarm.AlarmManager;
+import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.spring.DtpLifecycleSupport;
 import com.dtp.core.support.runnable.DtpRunnable;

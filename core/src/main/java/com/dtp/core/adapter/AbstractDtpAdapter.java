@@ -13,9 +13,9 @@ import com.dtp.common.util.StreamUtil;
 import com.dtp.core.context.NoticeCtx;
 import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.convert.MetricsConverter;
-import com.dtp.core.notify.NoticeManager;
+import com.dtp.core.notify.manager.NoticeManager;
 import com.dtp.core.notify.NotifyHelper;
-import com.dtp.core.notify.alarm.AlarmManager;
+import com.dtp.core.notify.manager.AlarmManager;
 import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
@@ -129,7 +129,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
 
         NoticeCtx context = new NoticeCtx(executorWrapper, notifyItem, NotifyTypeEnum.CHANGE,
                 platforms, oldProp, diffKeys);
-        NoticeManager.doNotice(context);
+        NoticeManager.doNoticeAsync(context);
     }
 
     private void doRefresh(ExecutorWrapper executorWrapper,

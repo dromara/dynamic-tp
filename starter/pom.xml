@@ -21,11 +21,6 @@
     <dependencies>
         <dependency>
             <groupId>cn.dynamictp</groupId>
-            <artifactId>dynamic-tp-common</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-core</artifactId>
         </dependency>
 

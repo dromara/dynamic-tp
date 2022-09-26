@@ -6,7 +6,7 @@ import com.dtp.common.event.AlarmCheckEvent;
 import com.dtp.common.event.CollectEvent;
 import com.dtp.common.event.RefreshEvent;
 import com.dtp.core.handler.CollectorHandler;
-import com.dtp.core.notify.alarm.AlarmManager;
+import com.dtp.core.notify.manager.AlarmManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationEvent;
@@ -16,7 +16,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.util.CollectionUtils;
 
 import static com.dtp.common.constant.DynamicTpConst.SCHEDULE_ALARM_TYPES;
-import static com.dtp.core.notify.alarm.AlarmManager.doAlarm;
+import static com.dtp.core.notify.manager.AlarmManager.doAlarm;
 
 /**
  * DtpAdapterListener related

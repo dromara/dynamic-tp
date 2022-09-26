@@ -5,7 +5,7 @@ import com.dtp.common.pattern.filter.Invoker;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.notify.NotifyHelper;
 import com.dtp.core.notify.alarm.AlarmLimiter;
-import com.dtp.core.notify.alarm.AlarmManager;
+import com.dtp.core.notify.manager.AlarmManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 

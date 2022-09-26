@@ -1,24 +1,20 @@
-package com.dtp.core.notify.alarm;
+package com.dtp.core.notify.manager;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.NumberUtil;
-import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.AlarmInfo;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;
-import com.dtp.common.pattern.filter.Filter;
 import com.dtp.common.pattern.filter.FilterChain;
-import com.dtp.common.pattern.filter.FilterChainFactory;
 import com.dtp.common.util.StreamUtil;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.notify.NotifyHelper;
-import com.dtp.core.notify.filter.AlarmBaseFilter;
-import com.dtp.core.notify.filter.NotifyFilter;
-import com.dtp.core.notify.invoker.AlarmInvoker;
+import com.dtp.core.notify.alarm.AlarmCounter;
+import com.dtp.core.notify.alarm.AlarmLimiter;
 import com.dtp.core.support.ThreadPoolBuilder;
 import com.dtp.core.thread.DtpExecutor;
 import com.google.common.collect.Lists;
@@ -26,11 +22,12 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.stream.Collectors;
 
 import static com.dtp.common.em.QueueTypeEnum.LINKED_BLOCKING_QUEUE;
 
@@ -50,20 +47,12 @@ public class AlarmManager {
             .maximumPoolSize(4)
             .workQueue(LINKED_BLOCKING_QUEUE.getName(), 2000, false, null)
             .rejectedExecutionHandler(RejectedTypeEnum.DISCARD_OLDEST_POLICY.getName())
-            .dynamic(false)
             .buildWithTtl();
 
     private static final FilterChain<BaseNotifyCtx> ALARM_FILTER_CHAIN;
 
     static {
-        val filters = ApplicationContextHolder.getBeansOfType(NotifyFilter.class);
-        Collection<NotifyFilter> alarmFilters = Lists.newArrayList(filters.values());
-        alarmFilters.add(new AlarmBaseFilter());
-        alarmFilters = alarmFilters.stream()
-                .sorted(Comparator.comparing(Filter::getOrder))
-                .collect(Collectors.toList());
-        ALARM_FILTER_CHAIN = FilterChainFactory.buildFilterChain(new AlarmInvoker(),
-                alarmFilters.toArray(new NotifyFilter[0]));
+        ALARM_FILTER_CHAIN = NotifyFilterBuilder.getAlarmNoticeFilter();
     }
 
     private AlarmManager() {}

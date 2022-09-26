@@ -11,9 +11,9 @@ import com.dtp.common.queue.MemorySafeLinkedBlockingQueue;
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.core.context.NoticeCtx;
 import com.dtp.core.convert.ExecutorConverter;
-import com.dtp.core.notify.NoticeManager;
+import com.dtp.core.notify.manager.NoticeManager;
 import com.dtp.core.notify.NotifyHelper;
-import com.dtp.core.notify.alarm.AlarmManager;
+import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.support.wrapper.TaskWrapper;
 import com.dtp.core.support.wrapper.TaskWrappers;
@@ -210,7 +210,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor);
         NoticeCtx context = new NoticeCtx(executorWrapper, notifyItem, NotifyTypeEnum.CHANGE,
                 platforms, oldProp, diffKeys);
-        NoticeManager.doNotice(context);
+        NoticeManager.doNoticeAsync(context);
     }
 
     private static void doRefresh(DtpExecutor dtpExecutor, ThreadPoolProperties properties) {

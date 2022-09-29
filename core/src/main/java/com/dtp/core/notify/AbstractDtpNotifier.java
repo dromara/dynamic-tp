@@ -91,7 +91,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
      */
     protected abstract Pair<String, String> getColors();
 
-    private String buildAlarmContent(NotifyPlatform platform, NotifyTypeEnum typeEnum, String template) {
+    protected String buildAlarmContent(NotifyPlatform platform, NotifyTypeEnum typeEnum, String template) {
         AlarmCtx context = (AlarmCtx) DtpNotifyCtxHolder.get();
         String threadPoolName = context.getExecutorWrapper().getThreadPoolName();
         ExecutorWrapper executorWrapper = context.getExecutorWrapper();
@@ -134,7 +134,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         return highlightAlarmContent(content, typeEnum);
     }
 
-    private String buildNoticeContent(NotifyPlatform platform,
+    protected String buildNoticeContent(NotifyPlatform platform,
                                      String template,
                                      DtpMainProp oldProp,
                                      List<String> diffs) {
@@ -184,7 +184,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         }
     }
 
-    private String populatePoolName(String poolName, ExecutorWrapper executorWrapper) {
+    protected String populatePoolName(String poolName, ExecutorWrapper executorWrapper) {
 
         String poolAlisaName;
         if (executorWrapper.getExecutor() instanceof DtpExecutor) {
@@ -198,14 +198,14 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         return poolName + "("+poolAlisaName+")";
     }
 
-    private String getRejectHandlerName(ThreadPoolExecutor executor) {
+    protected String getRejectHandlerName(ThreadPoolExecutor executor) {
         if (executor instanceof DtpExecutor) {
             return ((DtpExecutor) executor).getRejectHandlerName();
         }
         return executor.getRejectedExecutionHandler().getClass().getSimpleName();
     }
 
-    private int getQueueCapacity(ThreadPoolExecutor executor) {
+    protected int getQueueCapacity(ThreadPoolExecutor executor) {
         if (executor instanceof DtpExecutor) {
             return ((DtpExecutor) executor).getQueueCapacity();
         }

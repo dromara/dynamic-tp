@@ -13,6 +13,7 @@
 
     <modules>
         <module>starter-extension-limiter-redis</module>
+        <module>starter-extension-notify-email</module>
     </modules>
 
 </project>

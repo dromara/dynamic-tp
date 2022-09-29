@@ -17,6 +17,7 @@
     <modules>
         <module>example-nacos</module>
         <module>example-nacos-cloud</module>
+        <module>example-nacos-notify-email</module>
         <module>example-apollo</module>
         <module>example-zookeeper</module>
         <module>example-zookeeper-cloud</module>

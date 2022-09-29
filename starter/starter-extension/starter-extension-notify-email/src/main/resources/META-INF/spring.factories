@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.dtp.start.extension.notify.email.autoconfigure.NotifyEmailAutoConfiguration

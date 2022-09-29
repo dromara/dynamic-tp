@@ -1,0 +1,390 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title></title>
+    <!--[if !mso]><!-->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!--<![endif]-->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style type="text/css">
+        #outlook a {
+            padding: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+
+        table,
+        td {
+            border-collapse: collapse;
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+
+        img {
+            border: 0;
+            height: auto;
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
+            -ms-interpolation-mode: bicubic;
+        }
+
+        p {
+            display: block;
+            margin: 13px 0;
+        }
+    </style>
+    <!--[if mso]>
+    <noscript>
+        <xml>
+            <o:OfficeDocumentSettings>
+                <o:AllowPNG/>
+                <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+    </noscript>
+    <![endif]-->
+    <!--[if lte mso 11]>
+    <style type="text/css">
+        .mj-outlook-group-fix { width:100% !important; }
+    </style>
+    <![endif]-->
+    <style type="text/css">
+        @media only screen and (min-width:480px) {
+            .mj-column-per-100 {
+                width: 100% !important;
+                max-width: 100%;
+            }
+        }
+    </style>
+    <style media="screen and (min-width:480px)">
+        .moz-text-html .mj-column-per-100 {
+            width: 100% !important;
+            max-width: 100%;
+        }
+    </style>
+    <style type="text/css">
+        @media only screen and (max-width:480px) {
+            table.mj-full-width-mobile {
+                width: 100% !important;
+            }
+
+            td.mj-full-width-mobile {
+                width: auto !important;
+            }
+        }
+    </style>
+    <style type="text/css">
+        @media (max-width: 479px) {
+            .hide-on-mobile {
+                display: none !important;
+            }
+        }
+
+        .gr-headerviewonline-cnfkdu a,
+        .gr-headerviewonline-cnfkdu a:visited {
+            color: #000000;
+            text-decoration: none;
+        }
+
+        .gr-mltext-uiqhsv a,
+        .gr-mltext-uiqhsv a:visited {
+            text-decoration: none;
+        }
+
+        .gr-mlimage-sixyhe img {
+            box-sizing: border-box;
+        }
+
+        @media (min-width: 480px) {
+            .gr-mlimage-lxibar {
+                height: 316px !important;
+            }
+        }
+
+        .gr-mltext-mdawsq a,
+        .gr-mltext-mdawsq a:visited {
+            text-decoration: none;
+        }
+
+        .gr-footer-ofumnv a,
+        .gr-footer-ofumnv a:visited {
+            color: #00BAFF;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body style="word-spacing:normal;background-color:#FFFFFF;">
+<div style="background-color:#FFFFFF;">
+    <!--[if mso | IE]><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" bgcolor="#F1F4F9" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+    <div style="background:#F1F4F9;background-color:#F1F4F9;margin:0px auto;max-width:600px;">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation"
+               style="background:#F1F4F9;background-color:#F1F4F9;width:100%;">
+            <tbody>
+            <tr>
+                <td
+                        style="border-bottom:0 none #000000;border-left:0 none #000000;border-right:0 none #000000;border-top:0 none #000000;direction:ltr;font-size:0px;padding:10px 0 0 0;text-align:center;">
+                    <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:600px;" ><![endif]-->
+                    <div class="mj-column-per-100 mj-outlook-group-fix"
+                         style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                        <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
+                            <tbody>
+                            <tr>
+                                <td
+                                        style="background-color:transparent;border-bottom:none;border-left:none;border-right:none;border-top:none;vertical-align:top;padding:0;">
+                                    <table border="0" cellpadding="0" cellspacing="0"
+                                           role="presentation" width="100%">
+                                        <tbody>
+                                        <tr>
+                                            <td align="left"
+                                                class="gr-mltext-ovgxcl gr-mltext-uiqhsv"
+                                                style="font-size:0px;padding:10px;word-break:break-word;">
+                                                <div
+                                                        style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:1.4;text-align:left;color:#000000;">
+                                                    <div style="text-align: center;">
+                                                        <p
+                                                                style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+																				<span style="color: #e50e1f"><strong><span
+                                                                                        style="font-size: 32px"><span
+                                                                                        style="font-family: Roboto Slab, Arial, serif">动态线程池运行告警</span></span></strong></span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center"
+                                                class="gr-mlimage-sixyhe gr-mlimage-lxibar link-id-"
+                                                style="font-size:0px;padding:0;word-break:break-word;">
+                                                <table border="0" cellpadding="0" cellspacing="0"
+                                                       role="presentation"
+                                                       style="border-collapse:collapse;border-spacing:0px;">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td style="width:500px;"><img alt=""
+                                                                                      height="auto"
+                                                                                      src="https://s3.amazonaws.com/gr-share-us/email-marketing/message-templates/Sd/a4cb477d-98ec-4f04-9519-923f5bebf0d2.png"
+                                                                                      style="border:0;border-left:0 none #000000;border-right:0 none #000000;border-top:0 none #000000;border-bottom:0 none #000000;border-radius:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;"
+                                                                                      width="500"></td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:0px;word-break:break-word;">
+                                                <div style="height:20px;line-height:20px;">&#8202;
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--[if mso | IE]></td></tr></table><![endif]-->
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!--[if mso | IE]></td></tr></table><table align="center" border="0" cellpadding="0" cellspacing="0" class="" role="presentation" style="width:600px;" width="600" ><tr><td style="line-height:0px;font-size:0px;mso-line-height-rule:exactly;"><![endif]-->
+    <div style="margin:0px auto;max-width:600px;">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation"
+               style="width:100%;">
+            <tbody>
+            <tr>
+                <td
+                        style="border-bottom:0 none #000000;border-left:0 none #000000;border-right:0 none #000000;border-top:0 none #000000;direction:ltr;font-size:0px;padding:0;text-align:center;">
+                    <!--[if mso | IE]><table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td class="" style="vertical-align:top;width:600px;" ><![endif]-->
+                    <div class="mj-column-per-100 mj-outlook-group-fix"
+                         style="font-size:0px;text-align:left;direction:ltr;display:inline-block;vertical-align:top;width:100%;">
+                        <table border="0" cellpadding="0" cellspacing="0" role="presentation" width="100%">
+                            <tbody>
+                            <tr>
+                                <td
+                                        style="background-color:transparent;border-bottom:none;border-left:none;border-right:none;border-top:none;vertical-align:top;padding:0;">
+                                    <table border="0" cellpadding="0" cellspacing="0"
+                                           role="presentation" width="100%">
+                                        <tbody>
+                                        <tr>
+                                            <td style="font-size:0px;word-break:break-word;">
+                                                <div style="height:10px;line-height:40px;">&#8202;
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="left"
+                                                class="gr-mltext-ovgxcl gr-mltext-mdawsq"
+                                                style="font-size:0px;padding:10px;word-break:break-word;">
+                                                <div
+                                                        style="font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:13px;line-height:2;text-align:left;color:#000000;">
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <strong>服务名称：</strong><span th:text="${serviceName}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <strong>实例信息：</strong><span th:text="${serviceAddress}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <strong>环境：</strong><span th:text="${serviceEnv}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <strong>线程池名称：</strong><span th:text="${poolName}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <span th:if="${#sets.contains(highlightVariables, 'alarmType')}" style="color: #ff0013">
+                                                            🔴
+                                                        </span>
+                                                        <strong>报警类型：</strong><span th:text="${alarmType}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <span th:if="${#sets.contains(highlightVariables, 'threshold')}" style="color: #ff0013">
+                                                            🔴
+                                                        </span>
+                                                        <strong>报警阈值：</strong><span th:text="${threshold}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <span th:if="${#sets.contains(highlightVariables, 'corePoolSize')}" style="color: #ff0013">
+                                                            🔴
+                                                        </span>
+                                                        <strong>核心线程数：</strong><span th:text="${corePoolSize}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <span th:if="${#sets.contains(highlightVariables, 'maximumPoolSize')}" style="color: #ff0013">
+                                                            🔴
+                                                        </span>
+                                                        <strong>最大线程数：</strong><span th:text="${maximumPoolSize}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <span th:if="${#sets.contains(highlightVariables, 'poolSize')}" style="color: #ff0013">
+                                                            🔴
+                                                        </span>
+                                                        <strong>当前线程数：</strong><span th:text="${poolSize}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <span th:if="${#sets.contains(highlightVariables, 'activeCount')}" style="color: #ff0013">
+                                                            🔴
+                                                        </span>
+                                                        <strong>活跃线程数：</strong><span th:text="${activeCount}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <strong>历史最大线程数：</strong><span th:text="${largestPoolSize}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <strong>任务总数：</strong><span th:text="${taskCount}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <strong>执行完成任务数：</strong><span th:text="${completedTaskCount}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <strong>等待执行任务数：</strong><span th:text="${waitingTaskCount}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <span th:if="${#sets.contains(highlightVariables, 'queueType')}" style="color: #ff0013">
+                                                            🔴
+                                                        </span>
+                                                        <strong>队列类型：</strong><span th:text="${queueType}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <span th:if="${#sets.contains(highlightVariables, 'queueCapacity')}" style="color: #ff0013">
+                                                            🔴
+                                                        </span>
+                                                        <strong>队列容量：</strong><span th:text="${queueCapacity}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <span th:if="${#sets.contains(highlightVariables, 'queueSize')}" style="color: #ff0013">
+                                                            🔴
+                                                        </span>
+                                                        <strong>队列任务数量：</strong><span th:text="${queueSize}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <span th:if="${#sets.contains(highlightVariables, 'queueRemaining')}" style="color: #ff0013">
+                                                            🔴
+                                                        </span>
+                                                        <strong>队列剩余容量：</strong><span th:text="${queueRemaining}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <span th:if="${#sets.contains(highlightVariables, 'rejectType')}" style="color: #ff0013">
+                                                            🔴
+                                                        </span>
+                                                        <strong>拒绝策略：</strong><span th:text="${rejectType}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <span th:if="${#sets.contains(highlightVariables, 'rejectCount')}" style="color: #ff0013">
+                                                            🔴
+                                                        </span>
+                                                        <strong>拒绝任务数量：</strong><span th:text="${rejectCount}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <span th:if="${#sets.contains(highlightVariables, 'runTimeoutCount')}" style="color: #ff0013">
+                                                            🔴
+                                                        </span>
+                                                        <strong>执行超时任务数量：</strong><span th:text="${runTimeoutCount}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <span th:if="${#sets.contains(highlightVariables, 'queueTimeoutCount')}" style="color: #ff0013">
+                                                            🔴
+                                                        </span>
+                                                        <strong>等待超时任务数量：</strong><span th:text="${queueTimeoutCount}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <strong>上次报警时间：</strong><span th:text="${lastAlarmTime}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <strong>报警时间：</strong><span th:text="${alarmTime}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <strong>报警间隔：</strong><span th:text="${alarmInterval}"></span> s</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:0px;word-break:break-word;">
+                                                <div style="height:40px;line-height:40px;">&#8202;
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size:0px;word-break:break-word;">
+                                                <div
+                                                        style="padding: 0;font-size: 13px;word-break: break-word;font-family: Arial, sans-serif;">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!--[if mso | IE]></td></tr></table><![endif]-->
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!--[if mso | IE]></td></tr></table><![endif]-->
+    <table align="center"
+           style="font-family: 'Roboto', Helvetica, sans-serif; font-weight: 400; letter-spacing: .018em; text-align: center; font-size: 10px;">
+        <tr>
+            <td style="padding-bottom: 20px"><br />
+                <div style="color: #939598;">Powered by:</div><a
+                        href="https://dynamictp.cn/"><img
+                        src="https://dynamictp.cn/logo.png"
+                        alt="dynamictp" border="0" style="display:block;" width="120" height="24" /></a>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

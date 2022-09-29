@@ -62,12 +62,12 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
     @Override
     protected String buildAlarmContent(NotifyPlatform platform, NotifyTypeEnum typeEnum, String template) {
         AlarmCtx alarmCtx = (AlarmCtx) DtpNotifyCtxHolder.get();
-        String threadPoolName = alarmCtx.getExecutorWrapper().getThreadPoolName();
         ExecutorWrapper executorWrapper = alarmCtx.getExecutorWrapper();
         val executor = (ThreadPoolExecutor) alarmCtx.getExecutorWrapper().getExecutor();
         NotifyItem notifyItem = alarmCtx.getNotifyItem();
         AlarmInfo alarmInfo = alarmCtx.getAlarmInfo();
 
+        String threadPoolName = alarmCtx.getExecutorWrapper().getThreadPoolName();
         val alarmCounter = AlarmCounter.countStrRrq(threadPoolName, executor);
 
         Context context = new Context();

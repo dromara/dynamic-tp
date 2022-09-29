@@ -49,8 +49,9 @@ public class EmailNotifier implements Notifier {
             messageHelper.setSentDate(new Date());
             messageHelper.setText(content, true);
             javaMailSender.send(mimeMessage);
+            log.info("DynamicTp notify, email send success.");
         } catch (Exception e) {
-            log.error("DynamicTp notify, email send fail...", e);
+            log.error("DynamicTp notify, email send failed...", e);
         }
     }
 

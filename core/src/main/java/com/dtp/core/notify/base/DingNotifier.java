@@ -59,16 +59,14 @@ public class DingNotifier implements Notifier {
         markdownReq.setAt(at);
 
         String hookUrl = getTargetUrl(platform.getSecret(), platform.getUrlKey());
-        HttpResponse response = null;
         try {
-            response = HttpRequest.post(hookUrl).body(JSONUtil.toJsonStr(markdownReq)).execute();
-        } catch (Exception e) {
-            log.error("DynamicTp notify, ding send fail...", e);
-        } finally {
+            HttpResponse response = HttpRequest.post(hookUrl).body(JSONUtil.toJsonStr(markdownReq)).execute();
             if (Objects.nonNull(response)) {
                 log.info("DynamicTp notify, ding send success, response: {}, request: {}",
                         response.body(), JSONUtil.toJsonStr(markdownReq));
             }
+        } catch (Exception e) {
+            log.error("DynamicTp notify, ding send failed...", e);
         }
     }
 

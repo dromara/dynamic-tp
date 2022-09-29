@@ -33,16 +33,13 @@ public class LarkNotifier implements Notifier {
     @Override
     public void send(NotifyPlatform notifyPlatform, String text) {
         String serverUrl = LarkNotifyConst.LARK_WEBHOOK + notifyPlatform.getUrlKey();
-
-        HttpResponse response = null;
         try {
-            response = HttpRequest.post(serverUrl).body(text).execute();
-        } catch (Exception e) {
-            log.error("DynamicTp notify, lark send fail...", e);
-        } finally {
+            HttpResponse response = HttpRequest.post(serverUrl).body(text).execute();
             if (Objects.nonNull(response)) {
                 log.info("DynamicTp notify, lark send success, response: {}, request:{}", response.body(), text);
             }
+        } catch (Exception e) {
+            log.error("DynamicTp notify, lark send fail...", e);
         }
     }
 

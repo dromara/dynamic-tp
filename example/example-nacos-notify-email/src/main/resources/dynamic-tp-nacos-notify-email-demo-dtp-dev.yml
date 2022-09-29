@@ -97,9 +97,9 @@ spring:
     host: smtp.qq.com
     port: 465
     # send from
-    username: 123456@qq.com
+    username: 1772140053@qq.com
     # authorization code eg: rlpadadtcugh4152e
-    password: xxxxxxxxxxxxxxxx
+    password: yizmckxihikjbdag
     default-encoding: UTF-8
     properties:
       mail:

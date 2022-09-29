@@ -40,16 +40,14 @@ public class WechatNotifier implements Notifier {
         markdown.setContent(text);
         markdownReq.setMarkdown(markdown);
 
-        HttpResponse response = null;
         try {
-             response = HttpRequest.post(serverUrl).body(JSONUtil.toJsonStr(markdownReq)).execute();
-        } catch (Exception e) {
-            log.error("DynamicTp notify, wechat send fail...", e);
-        } finally {
+            HttpResponse response = HttpRequest.post(serverUrl).body(JSONUtil.toJsonStr(markdownReq)).execute();
             if (Objects.nonNull(response)) {
                 log.info("DynamicTp notify, wechat send success, response: {}, request:{}",
                         response.body(), JSONUtil.toJsonStr(markdownReq));
             }
+        } catch (Exception e) {
+            log.error("DynamicTp notify, wechat send failed...", e);
         }
     }
 }

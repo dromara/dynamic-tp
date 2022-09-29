@@ -4,23 +4,21 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>cn.dynamictp</groupId>
-        <artifactId>dynamic-tp-all</artifactId>
+        <artifactId>dynamic-tp-extension</artifactId>
         <version>1.0.8</version>
     </parent>
-
-    <artifactId>dynamic-tp-extension</artifactId>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>extension-skywalking</module>
-        <module>extension-limiter-redis</module>
-        <module>extension-notify-email</module>
-    </modules>
+    <artifactId>dynamic-tp-extension-notify-email</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>cn.dynamictp</groupId>
-            <artifactId>dynamic-tp-core</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
     </dependencies>
+
 </project>

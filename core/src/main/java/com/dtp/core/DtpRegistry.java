@@ -12,7 +12,7 @@ import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.core.context.NoticeCtx;
 import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.notify.manager.NoticeManager;
-import com.dtp.core.notify.NotifyHelper;
+import com.dtp.core.notify.manager.NotifyItemManager;
 import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.support.wrapper.TaskWrapper;
@@ -201,7 +201,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
                         newProp.isAllowCoreThreadTimeOut()));
 
         val platforms = dtpProperties.getPlatforms();
-        val notifyItem = NotifyHelper.getNotifyItem(executor, NotifyTypeEnum.CHANGE);
+        val notifyItem = NotifyItemManager.getNotifyItem(executor, NotifyTypeEnum.CHANGE);
         boolean ifNotice = CollUtil.isNotEmpty(platforms) && Objects.nonNull(notifyItem) && notifyItem.isEnabled();
         if (!ifNotice) {
             return;
@@ -270,8 +270,8 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
         // update notify items
         val allNotifyItems = mergeAllNotifyItems(properties.getNotifyItems());
-        NotifyHelper.fillPlatforms(dtpProperties.getPlatforms(), allNotifyItems);
-        AlarmManager.refreshAlarm(dtpExecutor.getThreadPoolName(), dtpExecutor.getNotifyItems(), allNotifyItems);
+        AlarmManager.refreshAlarm(dtpExecutor.getThreadPoolName(), dtpProperties.getPlatforms(),
+                dtpExecutor.getNotifyItems(), allNotifyItems);
         dtpExecutor.setNotifyItems(allNotifyItems);
     }
 

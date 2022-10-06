@@ -1,4 +1,4 @@
-package com.dtp.core.notify;
+package com.dtp.core.notify.manager;
 
 import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.dto.ExecutorWrapper;
@@ -28,7 +28,7 @@ import static java.util.stream.Collectors.toList;
  * @since 1.0.0
  */
 @Slf4j
-public class NotifyHelper {
+public class NotifyItemManager {
 
     private static final List<String> COMMON_ALARM_KEYS = Lists.newArrayList("alarmType", "threshold");
 
@@ -59,7 +59,7 @@ public class NotifyHelper {
         ALL_ALARM_KEYS.addAll(COMMON_ALARM_KEYS);
     }
 
-    private NotifyHelper() {}
+    private NotifyItemManager() {}
 
     public static Set<String> getAllAlarmKeys() {
         return ALL_ALARM_KEYS;

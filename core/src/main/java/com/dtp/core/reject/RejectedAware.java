@@ -17,6 +17,7 @@ public interface RejectedAware {
 
     /**
      * Do sth before reject.
+     *
      * @param executor ThreadPoolExecutor instance
      */
     default void beforeReject(ThreadPoolExecutor executor) {

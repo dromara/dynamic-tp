@@ -10,7 +10,8 @@ package com.dtp.core.support.wrapper;
 public interface TaskWrapper {
 
     /**
-     * Task wrapper name, for config
+     * Task wrapper name, for config.
+     *
      * @return name
      */
     default String name() {
@@ -19,6 +20,7 @@ public interface TaskWrapper {
 
     /**
      * Enhance the given runnable.
+     *
      * @param runnable source runnable
      * @return target runnable
      */

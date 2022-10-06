@@ -16,6 +16,7 @@ public interface ConfigParser {
 
     /**
      * Judge type.
+     *
      * @param type config file type
      * @return true if the parse supports this type, else false
      */
@@ -23,12 +24,14 @@ public interface ConfigParser {
 
     /**
      * Type: yaml, properties...
+     *
      * @return the parse supports types.
      */
     List<ConfigFileTypeEnum> types();
 
     /**
      * Parse content.
+     *
      * @param content content
      * @return k-v properties
      * @throws IOException if occurs error while parsing
@@ -37,6 +40,7 @@ public interface ConfigParser {
 
     /**
      * Parse content.
+     *
      * @param content content
      * @param prefix key prefix
      * @return k-v properties

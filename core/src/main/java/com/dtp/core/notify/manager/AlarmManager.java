@@ -12,7 +12,6 @@ import com.dtp.common.pattern.filter.FilterChain;
 import com.dtp.common.util.StreamUtil;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
-import com.dtp.core.notify.NotifyHelper;
 import com.dtp.core.notify.alarm.AlarmCounter;
 import com.dtp.core.notify.alarm.AlarmLimiter;
 import com.dtp.core.support.ThreadPoolBuilder;
@@ -68,7 +67,7 @@ public class AlarmManager {
             return;
         }
 
-        NotifyHelper.fillPlatforms(platforms, executor.getNotifyItems());
+        NotifyItemManager.fillPlatforms(platforms, executor.getNotifyItems());
         initAlarm(executor.getThreadPoolName(), executor.getNotifyItems());
     }
 
@@ -79,11 +78,14 @@ public class AlarmManager {
         });
     }
 
-    public static void refreshAlarm(String poolName, List<NotifyItem> oldItems, List<NotifyItem> newItems) {
+    public static void refreshAlarm(String poolName,
+                                    List<NotifyPlatform> platforms,
+                                    List<NotifyItem> oldItems,
+                                    List<NotifyItem> newItems) {
         if (CollectionUtils.isEmpty(newItems)) {
             return;
         }
-
+        NotifyItemManager.fillPlatforms(platforms, newItems);
         Map<String, NotifyItem> oldNotifyItemMap = StreamUtil.toMap(oldItems, NotifyItem::getType);
         newItems.forEach(x -> {
             NotifyItem oldNotifyItem = oldNotifyItemMap.get(x.getType());
@@ -119,7 +121,7 @@ public class AlarmManager {
     }
 
     public static void doAlarm(ExecutorWrapper executorWrapper, NotifyTypeEnum notifyType) {
-        NotifyItem notifyItem = NotifyHelper.getNotifyItem(executorWrapper, notifyType);
+        NotifyItem notifyItem = NotifyItemManager.getNotifyItem(executorWrapper, notifyType);
         if (notifyItem == null) {
             return;
         }

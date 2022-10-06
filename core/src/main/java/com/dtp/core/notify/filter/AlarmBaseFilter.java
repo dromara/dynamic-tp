@@ -3,7 +3,7 @@ package com.dtp.core.notify.filter;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.pattern.filter.Invoker;
 import com.dtp.core.context.BaseNotifyCtx;
-import com.dtp.core.notify.NotifyHelper;
+import com.dtp.core.notify.manager.NotifyItemManager;
 import com.dtp.core.notify.alarm.AlarmLimiter;
 import com.dtp.core.notify.manager.AlarmManager;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class AlarmBaseFilter implements NotifyFilter {
 
         val executorWrapper = context.getExecutorWrapper();
         val notifyType = context.getNotifyType();
-        NotifyItem notifyItem = NotifyHelper.getNotifyItem(executorWrapper, context.getNotifyType());
+        NotifyItem notifyItem = NotifyItemManager.getNotifyItem(executorWrapper, context.getNotifyType());
         if (Objects.isNull(notifyItem) || !AlarmManager.satisfyBaseCondition(notifyItem)) {
             return;
         }

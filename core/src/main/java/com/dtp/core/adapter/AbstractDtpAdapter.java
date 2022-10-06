@@ -13,9 +13,9 @@ import com.dtp.common.util.StreamUtil;
 import com.dtp.core.context.NoticeCtx;
 import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.convert.MetricsConverter;
-import com.dtp.core.notify.manager.NoticeManager;
-import com.dtp.core.notify.NotifyHelper;
 import com.dtp.core.notify.manager.AlarmManager;
+import com.dtp.core.notify.manager.NoticeManager;
+import com.dtp.core.notify.manager.NotifyItemManager;
 import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
@@ -121,7 +121,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getMaxPoolSize(), newProp.getMaxPoolSize()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getKeepAliveTime(), newProp.getKeepAliveTime()));
 
-        val notifyItem = NotifyHelper.getNotifyItem(executorWrapper, NotifyTypeEnum.CHANGE);
+        val notifyItem = NotifyItemManager.getNotifyItem(executorWrapper, NotifyTypeEnum.CHANGE);
         boolean ifNotice = CollUtil.isNotEmpty(platforms) && Objects.nonNull(notifyItem) && notifyItem.isEnabled();
         if (!ifNotice) {
             return;
@@ -155,8 +155,8 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
 
         // update notify items
         val allNotifyItems = mergeSimpleNotifyItems(properties.getNotifyItems());
-        NotifyHelper.fillPlatforms(platforms, allNotifyItems);
-        AlarmManager.refreshAlarm(executorWrapper.getThreadPoolName(), executorWrapper.getNotifyItems(), allNotifyItems);
+        AlarmManager.refreshAlarm(executorWrapper.getThreadPoolName(), platforms,
+                executorWrapper.getNotifyItems(), allNotifyItems);
         executorWrapper.setNotifyItems(allNotifyItems);
     }
 }

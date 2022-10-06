@@ -22,7 +22,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import static com.dtp.common.constant.DynamicTpConst.UNKNOWN;
-import static com.dtp.core.notify.NotifyHelper.getAlarmKeys;
+import static com.dtp.core.notify.manager.NotifyItemManager.getAlarmKeys;
 
 /**
  * DtpEmailNotifier related

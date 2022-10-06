@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
 
 import static com.dtp.common.constant.DynamicTpConst.UNKNOWN;
 import static com.dtp.common.constant.LarkNotifyConst.*;
-import static com.dtp.core.notify.NotifyHelper.getAlarmKeys;
-import static com.dtp.core.notify.NotifyHelper.getAllAlarmKeys;
+import static com.dtp.core.notify.manager.NotifyItemManager.getAlarmKeys;
+import static com.dtp.core.notify.manager.NotifyItemManager.getAllAlarmKeys;
 
 /**
  * AbstractDtpNotifier related

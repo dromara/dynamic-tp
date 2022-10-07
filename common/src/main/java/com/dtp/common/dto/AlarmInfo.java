@@ -1,7 +1,7 @@
 package com.dtp.common.dto;
 
 import cn.hutool.core.date.DateUtil;
-import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.NotifyItemEnum;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Builder
 public class AlarmInfo {
 
-    private NotifyTypeEnum type;
+    private NotifyItemEnum notifyItem;
 
     private String lastAlarmTime;
 

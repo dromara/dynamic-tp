@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
-import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.NotifyItemEnum;
 import lombok.Data;
 import lombok.val;
 
@@ -28,14 +28,11 @@ public class BaseNotifyCtx {
 
     private NotifyItem notifyItem;
 
-    private NotifyTypeEnum notifyType;
-
     public BaseNotifyCtx() {}
 
-    public BaseNotifyCtx(ExecutorWrapper wrapper, NotifyItem notifyItem, NotifyTypeEnum notifyType) {
+    public BaseNotifyCtx(ExecutorWrapper wrapper, NotifyItem notifyItem) {
         this.executorWrapper = wrapper;
         this.notifyItem = notifyItem;
-        this.notifyType = notifyType;
     }
 
     public NotifyPlatform getPlatform(String platform) {
@@ -45,5 +42,9 @@ public class BaseNotifyCtx {
         val map = platforms.stream()
                 .collect(toMap(x -> x.getPlatform().toLowerCase(), Function.identity(), (v1, v2) -> v2));
         return map.get(platform.toLowerCase());
+    }
+
+    public NotifyItemEnum getNotifyItemEnum() {
+        return NotifyItemEnum.of(notifyItem.getType());
     }
 }

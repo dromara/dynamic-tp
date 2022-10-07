@@ -2,7 +2,7 @@ package com.dtp.common.config;
 
 import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.dto.NotifyItem;
-import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;
 import lombok.Data;
@@ -93,7 +93,7 @@ public class ThreadPoolProperties {
     private String threadNamePrefix = "dynamic-tp";
 
     /**
-     * Notify items, see {@link NotifyTypeEnum}
+     * Notify items, see {@link NotifyItemEnum}
      */
     private List<NotifyItem> notifyItems;
 

@@ -8,7 +8,7 @@ import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.dto.ThreadPoolStats;
-import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.util.StreamUtil;
 import com.dtp.core.context.NoticeCtx;
 import com.dtp.core.convert.ExecutorConverter;
@@ -121,14 +121,13 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getMaxPoolSize(), newProp.getMaxPoolSize()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getKeepAliveTime(), newProp.getKeepAliveTime()));
 
-        val notifyItem = NotifyItemManager.getNotifyItem(executorWrapper, NotifyTypeEnum.CHANGE);
+        val notifyItem = NotifyItemManager.getNotifyItem(executorWrapper, NotifyItemEnum.CHANGE);
         boolean ifNotice = CollUtil.isNotEmpty(platforms) && Objects.nonNull(notifyItem) && notifyItem.isEnabled();
         if (!ifNotice) {
             return;
         }
 
-        NoticeCtx context = new NoticeCtx(executorWrapper, notifyItem, NotifyTypeEnum.CHANGE,
-                platforms, oldProp, diffKeys);
+        NoticeCtx context = new NoticeCtx(executorWrapper, notifyItem, platforms, oldProp, diffKeys);
         NoticeManager.doNoticeAsync(context);
     }
 

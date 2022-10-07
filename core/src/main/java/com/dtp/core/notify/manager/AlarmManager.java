@@ -6,7 +6,7 @@ import com.dtp.common.dto.AlarmInfo;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
-import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.common.pattern.filter.FilterChain;
 import com.dtp.common.util.StreamUtil;
@@ -106,32 +106,32 @@ public class AlarmManager {
         ALARM_EXECUTOR.execute(runnable);
     }
 
-    public static void doAlarm(DtpExecutor executor, List<NotifyTypeEnum> notifyTypes) {
+    public static void doAlarm(DtpExecutor executor, List<NotifyItemEnum> notifyItemEnums) {
         val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor, executor.getNotifyItems());
-        doAlarm(executorWrapper, notifyTypes);
+        doAlarm(executorWrapper, notifyItemEnums);
     }
 
-    public static void doAlarm(ExecutorWrapper executorWrapper, List<NotifyTypeEnum> notifyTypes) {
-        notifyTypes.forEach(x -> doAlarm(executorWrapper, x));
+    public static void doAlarm(ExecutorWrapper executorWrapper, List<NotifyItemEnum> notifyItemEnums) {
+        notifyItemEnums.forEach(x -> doAlarm(executorWrapper, x));
     }
 
-    public static void doAlarm(DtpExecutor executor, NotifyTypeEnum notifyType) {
+    public static void doAlarm(DtpExecutor executor, NotifyItemEnum notifyItemEnum) {
         val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor, executor.getNotifyItems());
-        doAlarm(executorWrapper, notifyType);
+        doAlarm(executorWrapper, notifyItemEnum);
     }
 
-    public static void doAlarm(ExecutorWrapper executorWrapper, NotifyTypeEnum notifyType) {
-        NotifyItem notifyItem = NotifyItemManager.getNotifyItem(executorWrapper, notifyType);
+    public static void doAlarm(ExecutorWrapper executorWrapper, NotifyItemEnum notifyItemEnum) {
+        NotifyItem notifyItem = NotifyItemManager.getNotifyItem(executorWrapper, notifyItemEnum);
         if (notifyItem == null) {
             return;
         }
-        AlarmCtx alarmCtx = new AlarmCtx(executorWrapper, notifyItem, notifyType);
+        AlarmCtx alarmCtx = new AlarmCtx(executorWrapper, notifyItem);
         ALARM_FILTER_CHAIN.fire(alarmCtx);
     }
 
-    public static boolean checkThreshold(ExecutorWrapper executor, NotifyTypeEnum notifyType, NotifyItem notifyItem) {
+    public static boolean checkThreshold(ExecutorWrapper executor, NotifyItemEnum itemEnum, NotifyItem notifyItem) {
 
-        switch (notifyType) {
+        switch (itemEnum) {
             case CAPACITY:
                 return checkCapacity(executor, notifyItem);
             case LIVENESS:
@@ -141,7 +141,7 @@ public class AlarmManager {
             case QUEUE_TIMEOUT:
                 return checkWithAlarmInfo(executor, notifyItem);
             default:
-                log.error("Unsupported alarm type, type: {}", notifyType);
+                log.error("Unsupported alarm type, type: {}", itemEnum);
                 return false;
         }
     }

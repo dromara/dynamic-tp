@@ -3,7 +3,7 @@ package com.dtp.core.thread;
 import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.dto.NotifyItem;
-import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.spring.DtpLifecycleSupport;
@@ -21,8 +21,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.dtp.common.em.NotifyTypeEnum.QUEUE_TIMEOUT;
-import static com.dtp.common.em.NotifyTypeEnum.RUN_TIMEOUT;
+import static com.dtp.common.em.NotifyItemEnum.QUEUE_TIMEOUT;
+import static com.dtp.common.em.NotifyItemEnum.RUN_TIMEOUT;
 
 /**
  * Dynamic ThreadPoolExecutor inherits DtpLifecycleSupport, and extends some features.
@@ -49,7 +49,7 @@ public class DtpExecutor extends DtpLifecycleSupport {
     private String threadPoolAliasName;
 
     /**
-     * Notify items, see {@link NotifyTypeEnum}.
+     * Notify items, see {@link NotifyItemEnum}.
      */
     private List<NotifyItem> notifyItems;
 

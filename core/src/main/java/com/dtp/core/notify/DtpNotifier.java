@@ -1,7 +1,7 @@
 package com.dtp.core.notify;
 
 import com.dtp.common.dto.DtpMainProp;
-import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.NotifyItemEnum;
 
 import java.util.List;
 
@@ -30,7 +30,8 @@ public interface DtpNotifier {
 
     /**
      * Send alarm message.
-     * @param typeEnum notify type
+     *
+     * @param notifyItemEnum notify item enum
      */
-    void sendAlarmMsg(NotifyTypeEnum typeEnum);
+    void sendAlarmMsg(NotifyItemEnum notifyItemEnum);
 }

@@ -1,7 +1,7 @@
 package com.dtp.core.notify.alarm;
 
 import com.dtp.common.dto.NotifyItem;
-import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.NotifyItemEnum;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +23,7 @@ public class AlarmLimiter {
     private AlarmLimiter() {}
 
     public static void initAlarmLimiter(String threadPoolName, NotifyItem notifyItem) {
-        if (NotifyTypeEnum.CHANGE.getValue().equalsIgnoreCase(notifyItem.getType())) {
+        if (NotifyItemEnum.CHANGE.getValue().equalsIgnoreCase(notifyItem.getType())) {
             return;
         }
 

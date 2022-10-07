@@ -1,12 +1,12 @@
 package com.dtp.common.constant;
 
-import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.NotifyItemEnum;
 import com.google.common.collect.Lists;
 
 import java.util.List;
 
-import static com.dtp.common.em.NotifyTypeEnum.CAPACITY;
-import static com.dtp.common.em.NotifyTypeEnum.LIVENESS;
+import static com.dtp.common.em.NotifyItemEnum.CAPACITY;
+import static com.dtp.common.em.NotifyItemEnum.LIVENESS;
 
 /**
  * DynamicTpConst related
@@ -63,7 +63,7 @@ public final class DynamicTpConst {
 
     public static final String ARR_RIGHT_BRACKET = "]";
 
-    public static final List<NotifyTypeEnum> SCHEDULE_ALARM_TYPES = Lists.newArrayList(LIVENESS, CAPACITY);
+    public static final List<NotifyItemEnum> SCHEDULE_NOTIFY_ITEMS = Lists.newArrayList(LIVENESS, CAPACITY);
 
     /**
      * unit

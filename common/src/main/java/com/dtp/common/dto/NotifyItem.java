@@ -2,7 +2,7 @@ package com.dtp.common.dto;
 
 import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.em.NotifyPlatformEnum;
-import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.util.StringUtil;
 import lombok.Data;
 import lombok.val;
@@ -33,7 +33,7 @@ public class NotifyItem {
     private boolean enabled = true;
 
     /**
-     * Notify type, see {@link NotifyTypeEnum}
+     * Notify item, see {@link NotifyItemEnum}
      */
     private String type;
 
@@ -68,14 +68,14 @@ public class NotifyItem {
 
     public static List<NotifyItem> getSimpleNotifyItems() {
         NotifyItem changeNotify = new NotifyItem();
-        changeNotify.setType(NotifyTypeEnum.CHANGE.getValue());
+        changeNotify.setType(NotifyItemEnum.CHANGE.getValue());
 
         NotifyItem livenessNotify = new NotifyItem();
-        livenessNotify.setType(NotifyTypeEnum.LIVENESS.getValue());
+        livenessNotify.setType(NotifyItemEnum.LIVENESS.getValue());
         livenessNotify.setThreshold(70);
 
         NotifyItem capacityNotify = new NotifyItem();
-        capacityNotify.setType(NotifyTypeEnum.CAPACITY.getValue());
+        capacityNotify.setType(NotifyItemEnum.CAPACITY.getValue());
         capacityNotify.setThreshold(70);
 
         List<NotifyItem> notifyItems = new ArrayList<>(3);
@@ -102,15 +102,15 @@ public class NotifyItem {
 
     public static List<NotifyItem> getAllNotifyItems() {
         NotifyItem rejectNotify = new NotifyItem();
-        rejectNotify.setType(NotifyTypeEnum.REJECT.getValue());
+        rejectNotify.setType(NotifyItemEnum.REJECT.getValue());
         rejectNotify.setThreshold(1);
 
         NotifyItem runTimeoutNotify = new NotifyItem();
-        runTimeoutNotify.setType(NotifyTypeEnum.RUN_TIMEOUT.getValue());
+        runTimeoutNotify.setType(NotifyItemEnum.RUN_TIMEOUT.getValue());
         runTimeoutNotify.setThreshold(1);
 
         NotifyItem queueTimeoutNotify = new NotifyItem();
-        queueTimeoutNotify.setType(NotifyTypeEnum.QUEUE_TIMEOUT.getValue());
+        queueTimeoutNotify.setType(NotifyItemEnum.QUEUE_TIMEOUT.getValue());
         queueTimeoutNotify.setThreshold(1);
 
         List<NotifyItem> notifyItems = new ArrayList<>(6);

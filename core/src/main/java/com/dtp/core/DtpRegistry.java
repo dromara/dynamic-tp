@@ -5,15 +5,15 @@ import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.ThreadPoolProperties;
 import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.ExecutorWrapper;
-import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.ex.DtpException;
 import com.dtp.common.queue.MemorySafeLinkedBlockingQueue;
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.core.context.NoticeCtx;
 import com.dtp.core.convert.ExecutorConverter;
+import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.notify.manager.NoticeManager;
 import com.dtp.core.notify.manager.NotifyItemManager;
-import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.support.wrapper.TaskWrapper;
 import com.dtp.core.support.wrapper.TaskWrappers;
@@ -201,15 +201,14 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
                         newProp.isAllowCoreThreadTimeOut()));
 
         val platforms = dtpProperties.getPlatforms();
-        val notifyItem = NotifyItemManager.getNotifyItem(executor, NotifyTypeEnum.CHANGE);
+        val notifyItem = NotifyItemManager.getNotifyItem(executor, NotifyItemEnum.CHANGE);
         boolean ifNotice = CollUtil.isNotEmpty(platforms) && Objects.nonNull(notifyItem) && notifyItem.isEnabled();
         if (!ifNotice) {
             return;
         }
 
         val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor);
-        NoticeCtx context = new NoticeCtx(executorWrapper, notifyItem, NotifyTypeEnum.CHANGE,
-                platforms, oldProp, diffKeys);
+        NoticeCtx context = new NoticeCtx(executorWrapper, notifyItem, platforms, oldProp, diffKeys);
         NoticeManager.doNoticeAsync(context);
     }
 

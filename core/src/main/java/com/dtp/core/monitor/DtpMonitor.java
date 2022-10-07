@@ -23,7 +23,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static com.dtp.common.constant.DynamicTpConst.SCHEDULE_ALARM_TYPES;
+import static com.dtp.common.constant.DynamicTpConst.SCHEDULE_NOTIFY_ITEMS;
 import static com.dtp.core.notify.manager.AlarmManager.doAlarm;
 
 /**
@@ -75,7 +75,7 @@ public class DtpMonitor implements ApplicationRunner, Ordered {
     private void checkAlarm(List<String> dtpNames) {
         dtpNames.forEach(x -> {
             DtpExecutor executor = DtpRegistry.getDtpExecutor(x);
-            AlarmManager.triggerAlarm(() -> doAlarm(executor, SCHEDULE_ALARM_TYPES));
+            AlarmManager.triggerAlarm(() -> doAlarm(executor, SCHEDULE_NOTIFY_ITEMS));
         });
         publishAlarmCheckEvent();
     }

@@ -2,7 +2,7 @@ package com.dtp.core.handler;
 
 import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.NotifyItem;
-import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.core.context.DtpNotifyCtxHolder;
 import com.dtp.core.notify.DtpDingNotifier;
 import com.dtp.core.notify.DtpLarkNotifier;
@@ -58,14 +58,14 @@ public class NotifierHandler {
         }
     }
 
-    public void sendAlarm(NotifyTypeEnum notifyType) {
+    public void sendAlarm(NotifyItemEnum notifyItemEnum) {
 
         try {
             NotifyItem notifyItem = DtpNotifyCtxHolder.get().getNotifyItem();
             for (String platform : notifyItem.getPlatforms()) {
                 DtpNotifier notifier = NOTIFIERS.get(platform.toLowerCase());
                 if (notifier != null) {
-                    notifier.sendAlarmMsg(notifyType);
+                    notifier.sendAlarmMsg(notifyItemEnum);
                 }
             }
         } finally {

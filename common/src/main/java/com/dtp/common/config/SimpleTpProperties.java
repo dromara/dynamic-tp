@@ -1,7 +1,7 @@
 package com.dtp.common.config;
 
 import com.dtp.common.dto.NotifyItem;
-import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.NotifyItemEnum;
 import lombok.Data;
 
 import java.util.List;
@@ -49,7 +49,7 @@ public class SimpleTpProperties {
     private TimeUnit unit = TimeUnit.SECONDS;
 
     /**
-     * Notify items, see {@link NotifyTypeEnum}
+     * Notify items, see {@link NotifyItemEnum}
      */
     private List<NotifyItem> notifyItems;
 }

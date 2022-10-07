@@ -31,31 +31,31 @@ public class AlarmBaseFilter implements NotifyFilter {
     public void doFilter(BaseNotifyCtx context, Invoker<BaseNotifyCtx> nextFilter) {
 
         val executorWrapper = context.getExecutorWrapper();
-        val notifyType = context.getNotifyType();
-        NotifyItem notifyItem = NotifyItemManager.getNotifyItem(executorWrapper, context.getNotifyType());
+        val notifyItemEnum = context.getNotifyItemEnum();
+        NotifyItem notifyItem = NotifyItemManager.getNotifyItem(executorWrapper, notifyItemEnum);
         if (Objects.isNull(notifyItem) || !AlarmManager.satisfyBaseCondition(notifyItem)) {
             return;
         }
 
-        boolean ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyType.getValue());
+        boolean ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyItemEnum.getValue());
         if (!ifAlarm) {
-            log.debug("DynamicTp notify, alarm limit, dtpName: {}, type: {}",
-                    executorWrapper.getThreadPoolName(), notifyType.getValue());
+            log.debug("DynamicTp notify, alarm limit, dtpName: {}, notifyItem: {}",
+                    executorWrapper.getThreadPoolName(), notifyItemEnum.getValue());
             return;
         }
 
-        if (!AlarmManager.checkThreshold(executorWrapper, notifyType, notifyItem)) {
+        if (!AlarmManager.checkThreshold(executorWrapper, notifyItemEnum, notifyItem)) {
             return;
         }
         synchronized (SEND_LOCK) {
             // recheck alarm limit.
-            ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyType.getValue());
+            ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyItemEnum.getValue());
             if (!ifAlarm) {
-                log.warn("DynamicTp notify, concurrent send, alarm limit, dtpName: {}, type: {}",
-                        executorWrapper.getThreadPoolName(), notifyType.getValue());
+                log.warn("DynamicTp notify, concurrent send, alarm limit, dtpName: {}, notifyItem: {}",
+                        executorWrapper.getThreadPoolName(), notifyItemEnum.getValue());
                 return;
             }
-            AlarmLimiter.putVal(executorWrapper.getThreadPoolName(), notifyType.getValue());
+            AlarmLimiter.putVal(executorWrapper.getThreadPoolName(), notifyItemEnum.getValue());
         }
 
         nextFilter.invoke(context);

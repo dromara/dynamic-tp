@@ -1,6 +1,6 @@
 package com.dtp.common.dto;
 
-import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.NotifyItemEnum;
 import lombok.Data;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class ExecutorWrapper {
     private String threadPoolAliasName;
 
     /**
-     * Notify items, see {@link NotifyTypeEnum}.
+     * Notify items, see {@link NotifyItemEnum}.
      */
     private List<NotifyItem> notifyItems;
 

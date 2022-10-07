@@ -3,7 +3,6 @@ package com.dtp.core.context;
 import com.dtp.common.dto.AlarmInfo;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
-import com.dtp.common.em.NotifyTypeEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -19,7 +18,7 @@ public class AlarmCtx extends BaseNotifyCtx {
 
     private AlarmInfo alarmInfo;
 
-    public AlarmCtx(ExecutorWrapper wrapper, NotifyItem notifyItem, NotifyTypeEnum notifyType) {
-        super(wrapper, notifyItem, notifyType);
+    public AlarmCtx(ExecutorWrapper wrapper, NotifyItem notifyItem) {
+        super(wrapper, notifyItem);
     }
 }

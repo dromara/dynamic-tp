@@ -31,7 +31,7 @@ public class NotifyRedisRateLimiterFilter implements NotifyFilter {
 
     @Override
     public void doFilter(BaseNotifyCtx context, Invoker<BaseNotifyCtx> nextFilter) {
-        String notifyName = context.getExecutorWrapper().getThreadPoolName() + ":" + context.getNotifyType().getValue();
+        String notifyName = context.getExecutorWrapper().getThreadPoolName() + ":" + context.getNotifyItemEnum().getValue();
         boolean checkResult = check(notifyName, context.getNotifyItem().getClusterLimit(),
                 context.getNotifyItem().getInterval());
         if (checkResult) {

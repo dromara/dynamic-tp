@@ -4,7 +4,7 @@ import cn.hutool.core.date.DateTime;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.*;
 import com.dtp.common.em.NotifyPlatformEnum;
-import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.util.CommonUtil;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
@@ -60,7 +60,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
     }
 
     @Override
-    protected String buildAlarmContent(NotifyPlatform platform, NotifyTypeEnum typeEnum, String template) {
+    protected String buildAlarmContent(NotifyPlatform platform, NotifyItemEnum notifyItemEnum, String template) {
         AlarmCtx alarmCtx = (AlarmCtx) DtpNotifyCtxHolder.get();
         ExecutorWrapper executorWrapper = alarmCtx.getExecutorWrapper();
         val executor = (ThreadPoolExecutor) alarmCtx.getExecutorWrapper().getExecutor();
@@ -75,7 +75,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("serviceAddress", CommonUtil.getInstance().getIp() + ":" + CommonUtil.getInstance().getPort());
         context.setVariable("serviceEnv", CommonUtil.getInstance().getEnv());
         context.setVariable("poolName", populatePoolName(threadPoolName, executorWrapper));
-        context.setVariable("alarmType", typeEnum.getValue());
+        context.setVariable("alarmType", notifyItemEnum.getValue());
         context.setVariable("threshold", notifyItem.getThreshold());
         context.setVariable("corePoolSize", executor.getCorePoolSize());
         context.setVariable("maximumPoolSize", executor.getMaximumPoolSize());
@@ -96,7 +96,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("lastAlarmTime", alarmInfo.getLastAlarmTime() == null ? UNKNOWN : alarmInfo.getLastAlarmTime());
         context.setVariable("alarmTime", DateTime.now());
         context.setVariable("alarmInterval", notifyItem.getInterval());
-        context.setVariable("highlightVariables", getAlarmKeys(typeEnum));
+        context.setVariable("highlightVariables", getAlarmKeys(notifyItemEnum));
         return emailNotifier.processTemplateContent("alarm", context);
     }
 

@@ -3,6 +3,7 @@ package com.dtp.core.notify.invoker;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.dto.AlarmInfo;
+import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.pattern.filter.Invoker;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
@@ -24,8 +25,8 @@ public class AlarmInvoker implements Invoker<BaseNotifyCtx> {
 
         AlarmCtx alarmCtx = (AlarmCtx) context;
         val executorWrapper = alarmCtx.getExecutorWrapper();
-        val notifyType = alarmCtx.getNotifyType();
         val notifyItem = alarmCtx.getNotifyItem();
+        val notifyItemEnum = NotifyItemEnum.of(notifyItem.getType());
 
         DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
         AlarmInfo alarmInfo = AlarmCounter.getAlarmInfo(executorWrapper.getThreadPoolName(), notifyItem.getType());
@@ -33,7 +34,7 @@ public class AlarmInvoker implements Invoker<BaseNotifyCtx> {
         alarmCtx.setAlarmInfo(alarmInfo);
 
         DtpNotifyCtxHolder.set(context);
-        NotifierHandler.getInstance().sendAlarm(notifyType);
+        NotifierHandler.getInstance().sendAlarm(notifyItemEnum);
         AlarmCounter.reset(executorWrapper.getThreadPoolName(), notifyItem.getType());
     }
 }

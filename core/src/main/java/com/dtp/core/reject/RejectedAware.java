@@ -5,7 +5,7 @@ import com.dtp.core.thread.DtpExecutor;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
-import static com.dtp.common.em.NotifyTypeEnum.REJECT;
+import static com.dtp.common.em.NotifyItemEnum.REJECT;
 
 /**
  * RejectedAware related

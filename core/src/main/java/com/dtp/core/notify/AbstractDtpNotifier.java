@@ -4,7 +4,7 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.dtp.common.dto.*;
 import com.dtp.common.em.NotifyPlatformEnum;
-import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.util.CommonUtil;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
@@ -61,9 +61,9 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     }
 
     @Override
-    public void sendAlarmMsg(NotifyTypeEnum typeEnum) {
+    public void sendAlarmMsg(NotifyItemEnum notifyItemEnum) {
         NotifyPlatform platform = DtpNotifyCtxHolder.get().getPlatform(platform());
-        String content = buildAlarmContent(platform, typeEnum, getAlarmTemplate());
+        String content = buildAlarmContent(platform, notifyItemEnum, getAlarmTemplate());
         if (StringUtils.isBlank(content)) {
             return;
         }
@@ -91,7 +91,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
      */
     protected abstract Pair<String, String> getColors();
 
-    protected String buildAlarmContent(NotifyPlatform platform, NotifyTypeEnum typeEnum, String template) {
+    protected String buildAlarmContent(NotifyPlatform platform, NotifyItemEnum notifyItemEnum, String template) {
         AlarmCtx context = (AlarmCtx) DtpNotifyCtxHolder.get();
         String threadPoolName = context.getExecutorWrapper().getThreadPoolName();
         ExecutorWrapper executorWrapper = context.getExecutorWrapper();
@@ -108,7 +108,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 CommonUtil.getInstance().getIp() + ":" + CommonUtil.getInstance().getPort(),
                 CommonUtil.getInstance().getEnv(),
                 populatePoolName(threadPoolName, executorWrapper),
-                typeEnum.getValue(),
+                notifyItemEnum.getValue(),
                 notifyItem.getThreshold(),
                 executor.getCorePoolSize(),
                 executor.getMaximumPoolSize(),
@@ -131,7 +131,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 receivesStr,
                 notifyItem.getInterval()
         );
-        return highlightAlarmContent(content, typeEnum);
+        return highlightAlarmContent(content, notifyItemEnum);
     }
 
     protected String buildNoticeContent(NotifyPlatform platform,
@@ -227,12 +227,12 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         return content;
     }
 
-    private String highlightAlarmContent(String content, NotifyTypeEnum typeEnum) {
+    private String highlightAlarmContent(String content, NotifyItemEnum notifyItemEnum) {
         if (StringUtils.isBlank(content)) {
             return content;
         }
 
-        Set<String> colorKeys = getAlarmKeys(typeEnum);
+        Set<String> colorKeys = getAlarmKeys(notifyItemEnum);
         Pair<String, String> pair = getColors();
         for (String field : colorKeys) {
             content = content.replace(field, pair.getLeft());

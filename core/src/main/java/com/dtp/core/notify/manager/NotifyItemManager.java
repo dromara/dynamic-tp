@@ -4,7 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
-import com.dtp.common.em.NotifyTypeEnum;
+import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.core.thread.DtpExecutor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.dtp.common.em.NotifyTypeEnum.*;
+import static com.dtp.common.em.NotifyItemEnum.*;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -65,25 +65,25 @@ public class NotifyItemManager {
         return ALL_ALARM_KEYS;
     }
 
-    public static Set<String> getAlarmKeys(NotifyTypeEnum typeEnum) {
-        val keys = ALARM_KEYS.get(typeEnum.name());
+    public static Set<String> getAlarmKeys(NotifyItemEnum notifyItemEnum) {
+        val keys = ALARM_KEYS.get(notifyItemEnum.name());
         keys.addAll(COMMON_ALARM_KEYS);
         return keys;
     }
 
-    public static NotifyItem getNotifyItem(DtpExecutor executor, NotifyTypeEnum notifyType) {
+    public static NotifyItem getNotifyItem(DtpExecutor executor, NotifyItemEnum notifyItemEnum) {
         val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor, executor.getNotifyItems());
-        return getNotifyItem(executorWrapper, notifyType);
+        return getNotifyItem(executorWrapper, notifyItemEnum);
     }
 
-    public static NotifyItem getNotifyItem(ExecutorWrapper executorWrapper, NotifyTypeEnum notifyType) {
+    public static NotifyItem getNotifyItem(ExecutorWrapper executorWrapper, NotifyItemEnum notifyItemEnum) {
         List<NotifyItem> notifyItems = executorWrapper.getNotifyItems();
         val notifyItemOpt = notifyItems.stream()
-                .filter(x -> notifyType.getValue().equalsIgnoreCase(x.getType()))
+                .filter(x -> notifyItemEnum.getValue().equalsIgnoreCase(x.getType()))
                 .findFirst();
         if (!notifyItemOpt.isPresent()) {
             log.debug("DynamicTp notify, no such [{}] notify item configured, threadPoolName: {}",
-                    notifyType.getValue(), executorWrapper.getThreadPoolName());
+                    notifyItemEnum.getValue(), executorWrapper.getThreadPoolName());
             return null;
         }
 

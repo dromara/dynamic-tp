@@ -15,7 +15,7 @@ import org.springframework.core.ResolvableType;
 import org.springframework.lang.NonNull;
 import org.springframework.util.CollectionUtils;
 
-import static com.dtp.common.constant.DynamicTpConst.SCHEDULE_ALARM_TYPES;
+import static com.dtp.common.constant.DynamicTpConst.SCHEDULE_NOTIFY_ITEMS;
 import static com.dtp.core.notify.manager.AlarmManager.doAlarm;
 
 /**
@@ -89,7 +89,7 @@ public class DtpAdapterListener implements GenericApplicationListener {
         }
         handlerMap.forEach((k, v) -> {
             val executorWrapper = v.getExecutorWrappers();
-            executorWrapper.forEach((kk, vv) -> AlarmManager.triggerAlarm(() -> doAlarm(vv, SCHEDULE_ALARM_TYPES)));
+            executorWrapper.forEach((kk, vv) -> AlarmManager.triggerAlarm(() -> doAlarm(vv, SCHEDULE_NOTIFY_ITEMS)));
         });
     }
 }

@@ -18,6 +18,7 @@
 package com.dtp.common.queue;
 
 import java.util.Collection;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -76,7 +77,10 @@ public class MemorySafeLinkedBlockingQueue<E> extends VariableLinkedBlockingQueu
      * @return true if has free memory
      */
     public boolean hasRemainedMemory() {
-        return MemoryLimitCalculator.maxAvailable() > maxFreeMemory;
+        if (MemoryLimitCalculator.maxAvailable() > maxFreeMemory) {
+            return true;
+        }
+        throw new RejectedExecutionException("No more memory can be used.");
     }
 
     @Override

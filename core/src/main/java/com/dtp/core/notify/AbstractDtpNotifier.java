@@ -107,7 +107,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 CommonUtil.getInstance().getServiceName(),
                 CommonUtil.getInstance().getIp() + ":" + CommonUtil.getInstance().getPort(),
                 CommonUtil.getInstance().getEnv(),
-                populatePoolName(threadPoolName, executorWrapper),
+                populatePoolName(executorWrapper),
                 notifyItemEnum.getValue(),
                 notifyItem.getThreshold(),
                 executor.getCorePoolSize(),
@@ -135,10 +135,9 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     }
 
     protected String buildNoticeContent(NotifyPlatform platform,
-                                     String template,
-                                     DtpMainProp oldProp,
-                                     List<String> diffs) {
-        String threadPoolName = oldProp.getThreadPoolName();
+                                        String template,
+                                        DtpMainProp oldProp,
+                                        List<String> diffs) {
         BaseNotifyCtx context = DtpNotifyCtxHolder.get();
         ExecutorWrapper executorWrapper = context.getExecutorWrapper();
         val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
@@ -149,7 +148,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 CommonUtil.getInstance().getServiceName(),
                 CommonUtil.getInstance().getIp() + ":" + CommonUtil.getInstance().getPort(),
                 CommonUtil.getInstance().getEnv(),
-                populatePoolName(threadPoolName, executorWrapper),
+                populatePoolName(executorWrapper),
                 oldProp.getCorePoolSize(),
                 executor.getCorePoolSize(),
                 oldProp.getMaxPoolSize(),
@@ -184,7 +183,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         }
     }
 
-    protected String populatePoolName(String poolName, ExecutorWrapper executorWrapper) {
+    protected String populatePoolName(ExecutorWrapper executorWrapper) {
 
         String poolAlisaName;
         if (executorWrapper.getExecutor() instanceof DtpExecutor) {
@@ -193,9 +192,9 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
             poolAlisaName = executorWrapper.getThreadPoolAliasName();
         }
         if (StringUtils.isBlank(poolAlisaName)) {
-            return poolName;
+            return executorWrapper.getThreadPoolName();
         }
-        return poolName + "("+poolAlisaName+")";
+        return executorWrapper.getThreadPoolName() + "("+poolAlisaName+")";
     }
 
     protected String getRejectHandlerName(ThreadPoolExecutor executor) {

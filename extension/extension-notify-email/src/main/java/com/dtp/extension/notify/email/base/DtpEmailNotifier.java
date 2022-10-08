@@ -3,8 +3,8 @@ package com.dtp.extension.notify.email.base;
 import cn.hutool.core.date.DateTime;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.*;
-import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.em.NotifyItemEnum;
+import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.util.CommonUtil;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
@@ -70,11 +70,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         String threadPoolName = alarmCtx.getExecutorWrapper().getThreadPoolName();
         val alarmCounter = AlarmCounter.countStrRrq(threadPoolName, executor);
 
-        Context context = new Context();
-        context.setVariable("serviceName", CommonUtil.getInstance().getServiceName());
-        context.setVariable("serviceAddress", CommonUtil.getInstance().getIp() + ":" + CommonUtil.getInstance().getPort());
-        context.setVariable("serviceEnv", CommonUtil.getInstance().getEnv());
-        context.setVariable("poolName", populatePoolName(threadPoolName, executorWrapper));
+        Context context = newContext(executorWrapper);
         context.setVariable("alarmType", notifyItemEnum.getValue());
         context.setVariable("threshold", notifyItem.getThreshold());
         context.setVariable("corePoolSize", executor.getCorePoolSize());
@@ -102,16 +98,11 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
 
     @Override
     protected String buildNoticeContent(NotifyPlatform platform, String template, DtpMainProp oldProp, List<String> diffs) {
-        String threadPoolName = oldProp.getThreadPoolName();
         BaseNotifyCtx notifyCtx = DtpNotifyCtxHolder.get();
         ExecutorWrapper executorWrapper = notifyCtx.getExecutorWrapper();
         val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
 
-        Context context = new Context();
-        context.setVariable("serviceName", CommonUtil.getInstance().getServiceName());
-        context.setVariable("serviceAddress", CommonUtil.getInstance().getIp() + ":" + CommonUtil.getInstance().getPort());
-        context.setVariable("serviceEnv", CommonUtil.getInstance().getEnv());
-        context.setVariable("poolName", populatePoolName(threadPoolName, executorWrapper));
+        Context context = newContext(executorWrapper);
         context.setVariable("oldCorePoolSize", oldProp.getCorePoolSize());
         context.setVariable("newCorePoolSize", executor.getCorePoolSize());
         context.setVariable("oldMaxPoolSize", oldProp.getMaxPoolSize());
@@ -130,4 +121,12 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         return emailNotifier.processTemplateContent("notice", context);
     }
 
+    private Context newContext(ExecutorWrapper executorWrapper) {
+        Context context = new Context();
+        context.setVariable("serviceName", CommonUtil.getInstance().getServiceName());
+        context.setVariable("serviceAddress", CommonUtil.getInstance().getIp() + ":" + CommonUtil.getInstance().getPort());
+        context.setVariable("serviceEnv", CommonUtil.getInstance().getEnv());
+        context.setVariable("poolName", populatePoolName(executorWrapper));
+        return context;
+    }
 }

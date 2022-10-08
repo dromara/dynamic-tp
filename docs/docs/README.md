@@ -135,7 +135,7 @@ features:
             <a href="https://hertzbeat.com/" target="_blank">
                 <img src="/images/hertzbeat-logo.png" msg="易用友好的云监控系统">
             </a>
-            <a href="https://plugins.sheng90.wang/fast-request/" target="_blank">
+            <a href="https://dromara.gitee.io/fast-request/" target="_blank">
                 <img src="/images/fast-request.png" msg="Idea 版 Postman，为简化调试API而生">
             </a>
             <a href="https://www.jeesuite.com/" target="_blank">

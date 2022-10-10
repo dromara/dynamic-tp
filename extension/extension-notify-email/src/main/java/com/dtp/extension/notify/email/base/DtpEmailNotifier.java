@@ -33,10 +33,8 @@ import static com.dtp.core.notify.manager.NotifyItemManager.getAlarmKeys;
 @Slf4j
 public class DtpEmailNotifier extends AbstractDtpNotifier {
 
-    private static EmailNotifier emailNotifier;
-
     public DtpEmailNotifier() {
-        super(emailNotifier = ApplicationContextHolder.getBean(EmailNotifier.class));
+        super(ApplicationContextHolder.getBean(EmailNotifier.class));
     }
 
     @Override
@@ -60,7 +58,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
     }
 
     @Override
-    protected String buildAlarmContent(NotifyPlatform platform, NotifyItemEnum notifyItemEnum, String template) {
+    protected String buildAlarmContent(NotifyPlatform platform, NotifyItemEnum notifyItemEnum) {
         AlarmCtx alarmCtx = (AlarmCtx) DtpNotifyCtxHolder.get();
         ExecutorWrapper executorWrapper = alarmCtx.getExecutorWrapper();
         val executor = (ThreadPoolExecutor) alarmCtx.getExecutorWrapper().getExecutor();
@@ -93,11 +91,11 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("alarmTime", DateTime.now());
         context.setVariable("alarmInterval", notifyItem.getInterval());
         context.setVariable("highlightVariables", getAlarmKeys(notifyItemEnum));
-        return emailNotifier.processTemplateContent("alarm", context);
+        return ((EmailNotifier) notifier).processTemplateContent("alarm", context);
     }
 
     @Override
-    protected String buildNoticeContent(NotifyPlatform platform, String template, DtpMainProp oldProp, List<String> diffs) {
+    protected String buildNoticeContent(NotifyPlatform platform, DtpMainProp oldProp, List<String> diffs) {
         BaseNotifyCtx notifyCtx = DtpNotifyCtxHolder.get();
         ExecutorWrapper executorWrapper = notifyCtx.getExecutorWrapper();
         val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
@@ -118,7 +116,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("newRejectType", getRejectHandlerName(executor));
         context.setVariable("notifyTime", DateTime.now());
         context.setVariable("diffs", diffs != null ? diffs : Collections.emptySet());
-        return emailNotifier.processTemplateContent("notice", context);
+        return ((EmailNotifier) notifier).processTemplateContent("notice", context);
     }
 
     private Context newContext(ExecutorWrapper executorWrapper) {

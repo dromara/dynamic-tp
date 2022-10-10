@@ -25,11 +25,13 @@ public class EmailNotifier implements Notifier {
 
     @Value("${spring.mail.username}")
     private String sendFrom;
+
     @Value("${spring.mail.title:ThreadPool Notify}")
     private String title;
 
     @Resource
     private JavaMailSender javaMailSender;
+
     @Resource
     private TemplateEngine templateEngine;
 

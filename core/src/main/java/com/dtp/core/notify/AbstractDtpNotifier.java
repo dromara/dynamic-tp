@@ -3,8 +3,8 @@ package com.dtp.core.notify;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.dtp.common.dto.*;
-import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.em.NotifyItemEnum;
+import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.util.CommonUtil;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
@@ -53,7 +53,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     @Override
     public void sendChangeMsg(DtpMainProp oldProp, List<String> diffs) {
         NotifyPlatform platform = DtpNotifyCtxHolder.get().getPlatform(platform());
-        String content = buildNoticeContent(platform, getNoticeTemplate(), oldProp, diffs);
+        String content = buildNoticeContent(platform, oldProp, diffs);
         if (StringUtils.isBlank(content)) {
             return;
         }
@@ -63,7 +63,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     @Override
     public void sendAlarmMsg(NotifyItemEnum notifyItemEnum) {
         NotifyPlatform platform = DtpNotifyCtxHolder.get().getPlatform(platform());
-        String content = buildAlarmContent(platform, notifyItemEnum, getAlarmTemplate());
+        String content = buildAlarmContent(platform, notifyItemEnum);
         if (StringUtils.isBlank(content)) {
             return;
         }
@@ -91,7 +91,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
      */
     protected abstract Pair<String, String> getColors();
 
-    protected String buildAlarmContent(NotifyPlatform platform, NotifyItemEnum notifyItemEnum, String template) {
+    protected String buildAlarmContent(NotifyPlatform platform, NotifyItemEnum notifyItemEnum) {
         AlarmCtx context = (AlarmCtx) DtpNotifyCtxHolder.get();
         String threadPoolName = context.getExecutorWrapper().getThreadPoolName();
         ExecutorWrapper executorWrapper = context.getExecutorWrapper();
@@ -103,7 +103,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         String receivesStr = getReceives(platform.getPlatform(), platform.getReceivers());
 
         String content = String.format(
-                template,
+                getAlarmTemplate(),
                 CommonUtil.getInstance().getServiceName(),
                 CommonUtil.getInstance().getIp() + ":" + CommonUtil.getInstance().getPort(),
                 CommonUtil.getInstance().getEnv(),
@@ -134,17 +134,14 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         return highlightAlarmContent(content, notifyItemEnum);
     }
 
-    protected String buildNoticeContent(NotifyPlatform platform,
-                                        String template,
-                                        DtpMainProp oldProp,
-                                        List<String> diffs) {
+    protected String buildNoticeContent(NotifyPlatform platform, DtpMainProp oldProp, List<String> diffs) {
         BaseNotifyCtx context = DtpNotifyCtxHolder.get();
         ExecutorWrapper executorWrapper = context.getExecutorWrapper();
         val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
         String receivesStr = getReceives(platform.getPlatform(), platform.getReceivers());
 
         String content = String.format(
-                template,
+                getNoticeTemplate(),
                 CommonUtil.getInstance().getServiceName(),
                 CommonUtil.getInstance().getIp() + ":" + CommonUtil.getInstance().getPort(),
                 CommonUtil.getInstance().getEnv(),

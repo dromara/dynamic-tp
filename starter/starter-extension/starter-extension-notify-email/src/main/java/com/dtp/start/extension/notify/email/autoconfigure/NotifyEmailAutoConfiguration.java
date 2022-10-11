@@ -6,6 +6,7 @@ import com.dtp.extension.notify.email.base.DtpEmailNotifier;
 import com.dtp.extension.notify.email.base.EmailNotifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 1.0.8
  **/
 @Configuration
+@ConditionalOnProperty(prefix = "spring.mail", name = "host")
 public class NotifyEmailAutoConfiguration {
 
     @Bean

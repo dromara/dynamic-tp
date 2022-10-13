@@ -46,8 +46,7 @@ public class AlarmManager {
             .maximumPoolSize(4)
             .workQueue(LINKED_BLOCKING_QUEUE.getName(), 2000, false, null)
             .rejectedExecutionHandler(RejectedTypeEnum.DISCARD_OLDEST_POLICY.getName())
-            .dynamic(false)
-            .buildWithTtl();
+            .buildCommon();
 
     private static final FilterChain<BaseNotifyCtx> ALARM_FILTER_CHAIN;
 

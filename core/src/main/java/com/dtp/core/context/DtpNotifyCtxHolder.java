@@ -1,16 +1,14 @@
 package com.dtp.core.context;
 
-import com.alibaba.ttl.TransmittableThreadLocal;
-
 /**
- * DtpNotifyCtxHolder, wraps ThreadLocal with ttl.
+ * DtpNotifyCtxHolder related.
  *
  * @author yanhom
  * @since 1.0.0
  */
 public class DtpNotifyCtxHolder {
 
-    private static final TransmittableThreadLocal<BaseNotifyCtx> CONTEXT = new TransmittableThreadLocal<>();
+    private static final ThreadLocal<BaseNotifyCtx> CONTEXT = new ThreadLocal<>();
 
     private DtpNotifyCtxHolder() {}
 

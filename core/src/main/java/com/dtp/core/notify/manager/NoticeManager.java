@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutorService;
  */
 public class NoticeManager {
 
-    private static final ExecutorService NOTICE_EXECUTOR = ThreadPoolCreator.createCommonWithTtl("dtp-notify");
+    private static final ExecutorService NOTICE_EXECUTOR = ThreadPoolCreator.createCommonFast("dtp-notify");
 
     private NoticeManager() {}
 

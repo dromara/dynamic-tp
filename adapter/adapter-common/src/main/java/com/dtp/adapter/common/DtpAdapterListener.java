@@ -1,4 +1,4 @@
-package com.dtp.core.adapter;
+package com.dtp.adapter.common;
 
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;

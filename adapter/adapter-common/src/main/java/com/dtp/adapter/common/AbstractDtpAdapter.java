@@ -1,4 +1,4 @@
-package com.dtp.core.adapter;
+package com.dtp.adapter.common;
 
 import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.ApplicationContextHolder;
@@ -101,7 +101,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
             return;
         }
         val e = (ThreadPoolExecutor) executorWrapper.getExecutor();
-        checkParams(e.getMaximumPoolSize(), properties);
+        checkRefreshParams(e.getMaximumPoolSize(), properties);
 
         DtpMainProp oldProp = ExecutorConverter.convert(executorWrapper);
         doRefresh(executorWrapper, platforms, properties);

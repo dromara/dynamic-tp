@@ -31,7 +31,7 @@ public class EtcdRefresher extends AbstractRefresher implements InitializingBean
 
     /**
      * load config.
-     * @param etcd {@link com.dtp.common.config.DtpProperties.Etcd}
+     * @param etcd {@link DtpProperties.Etcd}
      */
     private Map<Object, Object> loadConfig(final DtpProperties.Etcd etcd) {
         Map<Object, Object> properties = EtcdUtil.getConfigMap(etcd, dtpProperties.getConfigType());

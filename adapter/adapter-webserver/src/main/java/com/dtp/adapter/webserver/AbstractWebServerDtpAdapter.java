@@ -1,10 +1,10 @@
 package com.dtp.adapter.webserver;
 
+import com.dtp.adapter.common.DtpAdapter;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;
-import com.dtp.core.adapter.DtpAdapter;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.context.WebServerApplicationContext;

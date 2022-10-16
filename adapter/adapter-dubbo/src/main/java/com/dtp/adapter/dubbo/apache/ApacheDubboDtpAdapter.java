@@ -1,10 +1,10 @@
 package com.dtp.adapter.dubbo.apache;
 
 import cn.hutool.core.map.MapUtil;
+import com.dtp.adapter.common.AbstractDtpAdapter;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.util.ReflectionUtil;
-import com.dtp.core.adapter.AbstractDtpAdapter;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

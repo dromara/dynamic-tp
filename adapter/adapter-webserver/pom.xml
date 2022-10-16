@@ -11,6 +11,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>cn.dynamictp</groupId>
+            <artifactId>dynamic-tp-adapter-common</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <scope>compile</scope>

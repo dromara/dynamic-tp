@@ -1,12 +1,12 @@
 package com.dtp.adapter.hystrix;
 
+import com.dtp.adapter.common.AbstractDtpAdapter;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.util.StreamUtil;
-import com.dtp.core.adapter.AbstractDtpAdapter;
 import com.google.common.collect.Maps;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;

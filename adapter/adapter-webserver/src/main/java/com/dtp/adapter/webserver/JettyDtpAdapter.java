@@ -64,7 +64,7 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter {
         ThreadPool.SizedThreadPool threadPool = (ThreadPool.SizedThreadPool) executorWrapper.getExecutor();
         int oldCoreSize = threadPool.getMinThreads();
         int oldMaxSize = threadPool.getMaxThreads();
-        checkParams(oldMaxSize, properties);
+        checkRefreshParams(oldMaxSize, properties);
 
         DtpMainProp oldProp = ExecutorConverter.ofSimple(POOL_NAME, oldCoreSize, oldMaxSize, 0L);
         doRefresh(threadPool, properties);

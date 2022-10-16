@@ -1,12 +1,11 @@
-package com.dtp.core.adapter;
+package com.dtp.adapter.common;
 
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
-import com.dtp.common.dto.ThreadPoolStats;
+import com.dtp.core.support.MetricsAware;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,7 +14,7 @@ import java.util.Map;
  * @author yanhom
  * @since 1.0.6
  */
-public interface DtpAdapter {
+public interface DtpAdapter extends MetricsAware {
 
     /**
      * Get specify thread pool executor wrapper.
@@ -43,30 +42,12 @@ public interface DtpAdapter {
     void refresh(DtpProperties dtpProperties);
 
     /**
-     * Get thread pool stats.
-     *
-     * @return the thread pool stats
-     */
-    default ThreadPoolStats getPoolStats() {
-        return null;
-    }
-
-    /**
-     * Get multi thread pool stats.
-     *
-     * @return thead pools stats
-     */
-    default List<ThreadPoolStats> getMultiPoolStats() {
-        return Collections.emptyList();
-    }
-
-    /**
      * Check update params.
      *
      * @param oldMaxPoolSize old maxPoolSize
      * @param properties the targeted properties
      */
-    default void checkParams(int oldMaxPoolSize, SimpleTpProperties properties) {
+    default void checkRefreshParams(int oldMaxPoolSize, SimpleTpProperties properties) {
         if (properties.getCorePoolSize() < 0 ||
                 properties.getMaximumPoolSize() <= 0 ||
                 properties.getMaximumPoolSize() < properties.getCorePoolSize() ||

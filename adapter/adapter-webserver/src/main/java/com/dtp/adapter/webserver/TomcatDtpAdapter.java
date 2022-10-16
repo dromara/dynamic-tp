@@ -64,7 +64,7 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter {
 
         val executorWrapper = getWrapper();
         ThreadPoolExecutor executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
-        checkParams(executor.getMaximumPoolSize(), properties);
+        checkRefreshParams(executor.getMaximumPoolSize(), properties);
 
         DtpMainProp oldProp = ExecutorConverter.ofSimple(POOL_NAME, executor.getCorePoolSize(),
                 executor.getMaximumPoolSize(), executor.getKeepAliveTime(properties.getUnit()));

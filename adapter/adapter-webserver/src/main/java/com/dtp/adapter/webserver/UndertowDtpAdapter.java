@@ -77,7 +77,7 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
             int oldCorePoolSize = xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS);
             int oldMaxPoolSize = xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS);
             int oldKeepAliveTime = xnioWorker.getOption(Options.WORKER_TASK_KEEPALIVE);
-            checkParams(oldMaxPoolSize, properties);
+            checkRefreshParams(oldMaxPoolSize, properties);
 
             DtpMainProp oldProp = ExecutorConverter.ofSimple(properties.getThreadPoolName(), oldCorePoolSize,
                     oldMaxPoolSize, oldKeepAliveTime);

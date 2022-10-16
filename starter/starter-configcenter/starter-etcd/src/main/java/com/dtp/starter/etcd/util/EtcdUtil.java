@@ -37,7 +37,7 @@ public final class EtcdUtil {
 
     /**
      * {@link Client}.
-     * @param etcd {@link com.dtp.common.config.DtpProperties.Etcd}
+     * @param etcd {@link DtpProperties.Etcd}
      * @return Client
      */
     public static Client client(DtpProperties.Etcd etcd) {
@@ -64,7 +64,7 @@ public final class EtcdUtil {
 
     /**
      * get config content.
-     * @param etcd {@link com.dtp.common.config.DtpProperties.Etcd}
+     * @param etcd {@link DtpProperties.Etcd}
      * @param configType config type
      * @return config content
      */
@@ -109,7 +109,7 @@ public final class EtcdUtil {
     /**
      * init config watcher.
      * @param etcdRefresher {@link EtcdRefresher}
-     * @param dtpProperties {@link com.dtp.common.config.DtpProperties}
+     * @param dtpProperties {@link DtpProperties}
      * @param map get watch key from the map
      */
     public static void initWatcher(final EtcdRefresher etcdRefresher, final DtpProperties dtpProperties

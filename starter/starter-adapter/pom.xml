@@ -11,10 +11,10 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>starter-adapter-common</module>
         <module>starter-adapter-dubbo</module>
         <module>starter-adapter-hystrix</module>
         <module>starter-adapter-rocketmq</module>
         <module>starter-adapter-webserver</module>
     </modules>
-
 </project>

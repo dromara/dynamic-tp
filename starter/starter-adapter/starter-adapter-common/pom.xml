@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>cn.dynamictp</groupId>
-        <artifactId>dynamic-tp-adapter</artifactId>
+        <artifactId>dynamic-tp-starter-adapter</artifactId>
         <version>1.0.8</version>
     </parent>
-    <artifactId>dynamic-tp-adapter-dubbo</artifactId>
+    <artifactId>dynamic-tp-spring-boot-starter-adapter-common</artifactId>
 
     <dependencies>
         <dependency>
@@ -16,19 +17,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.dubbo</groupId>
-            <artifactId>dubbo-spring-boot-starter</artifactId>
-            <version>3.0.7</version>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>com.alibaba.spring.boot</groupId>
-            <artifactId>dubbo-spring-boot-starter</artifactId>
-            <version>2.0.0</version>
-            <scope>compile</scope>
-            <optional>true</optional>
+            <groupId>cn.dynamictp</groupId>
+            <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -138,12 +138,11 @@
   
   更多见官网文档，[通知报警](https://dynamictp.cn/guide/notice/alarm.html)
 
-![告警](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d65151e3e9ca460eac18f30ea6be05d3~tplv-k3u1fbpfcp-zoom-1.image)
+<img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d65151e3e9ca460eac18f30ea6be05d3~tplv-k3u1fbpfcp-zoom-1.image" alt="告警" width="50%" />
 
 - 配置变更会推送通知消息，且会高亮变更的字段
 
-![变更通知](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/30093a6ede914887bb5566139352fb8b~tplv-k3u1fbpfcp-zoom-1.image)
-
+<img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/30093a6ede914887bb5566139352fb8b~tplv-k3u1fbpfcp-zoom-1.image" alt="变更通知" width="50%" />
 
 ---
 
@@ -191,10 +190,9 @@
 
 ---
 
+## Star History
 
-## star趋势❤️
-
-[![Stargazers over time](https://starchart.cc/dromara/dynamic-tp.svg)](https://starchart.cc/dromara/dynamic-tp)
+[![Star History Chart](https://api.star-history.com/svg?repos=dromara/dynamic-tp&type=Date)](https://star-history.com/#dromara/dynamic-tp&Date)
 
 ---
 

@@ -124,6 +124,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
     /**
      * Get common ThreadPoolExecutor by name.
+     *
      * @param name the name of thread pool
      * @return the managed ExecutorWrapper instance
      */
@@ -204,6 +205,8 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         val notifyItem = NotifyItemManager.getNotifyItem(executor, NotifyItemEnum.CHANGE);
         boolean ifNotice = CollUtil.isNotEmpty(platforms) && Objects.nonNull(notifyItem) && notifyItem.isEnabled();
         if (!ifNotice) {
+            log.debug("DynamicTp refresh, change notification is not enabled, poolName: {}",
+                    executor.getThreadPoolName());
             return;
         }
 

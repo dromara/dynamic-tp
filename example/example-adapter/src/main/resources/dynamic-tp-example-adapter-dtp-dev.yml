@@ -47,8 +47,9 @@ spring:
           corePoolSize: 200
           maximumPoolSize: 400
           keepAliveTime: 60
-      grpcServerTp:                                # grpc server线程池配置
-        - corePoolSize: 100
+      grpcTp:                                      # grpc 线程池配置
+        - threadPoolName: grpcServerTp
+          corePoolSize: 100
           maximumPoolSize: 400
           keepAliveTime: 60
       executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量

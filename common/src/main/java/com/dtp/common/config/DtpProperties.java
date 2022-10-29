@@ -113,6 +113,11 @@ public class DtpProperties {
     private List<SimpleTpProperties> rocketMqTp;
 
     /**
+     * Grpc thread pools.
+     */
+    private List<SimpleTpProperties> grpcTp;
+
+    /**
      * Notify platform configs.
      */
     private List<NotifyPlatform> platforms;

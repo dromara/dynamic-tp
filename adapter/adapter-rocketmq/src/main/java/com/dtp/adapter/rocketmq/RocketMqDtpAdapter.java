@@ -6,7 +6,6 @@ import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.util.ReflectionUtil;
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
@@ -15,7 +14,6 @@ import org.apache.rocketmq.client.impl.consumer.ConsumeMessageOrderlyService;
 import org.apache.rocketmq.client.impl.consumer.DefaultMQPushConsumerImpl;
 import org.apache.rocketmq.spring.support.DefaultRocketMQListenerContainer;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -33,16 +31,9 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
 
     private static final String CONSUME_EXECUTOR_FIELD_NAME = "consumeExecutor";
 
-    private static final Map<String, ExecutorWrapper> ROCKETMQ_EXECUTORS = Maps.newHashMap();
-
     @Override
     public void refresh(DtpProperties dtpProperties) {
         refresh(NAME, dtpProperties.getRocketMqTp(), dtpProperties.getPlatforms());
-    }
-
-    @Override
-    public Map<String, ExecutorWrapper> getExecutorWrappers() {
-        return ROCKETMQ_EXECUTORS;
     }
 
     @Override
@@ -76,9 +67,9 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
             if (Objects.nonNull(executor)) {
                 val executorWrapper = new ExecutorWrapper(key, executor);
                 initNotifyItems(key, executorWrapper);
-                ROCKETMQ_EXECUTORS.put(key, executorWrapper);
+                EXECUTORS.put(key, executorWrapper);
             }
         });
-        log.info("DynamicTp adapter, rocketMq consumer executors init end, executors: {}", ROCKETMQ_EXECUTORS);
+        log.info("DynamicTp adapter, rocketMq consumer executors init end, executors: {}", EXECUTORS);
     }
 }

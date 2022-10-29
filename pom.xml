@@ -139,6 +139,12 @@
 
             <dependency>
                 <groupId>cn.dynamictp</groupId>
+                <artifactId>dynamic-tp-adapter-grpc</artifactId>
+                <version>${dtp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.dynamictp</groupId>
                 <artifactId>dynamic-tp-extension-limiter-redis</artifactId>
                 <version>${dtp.version}</version>
             </dependency>

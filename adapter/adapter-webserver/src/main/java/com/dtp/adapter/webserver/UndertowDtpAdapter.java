@@ -5,7 +5,6 @@ import com.dtp.common.config.SimpleTpProperties;
 import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;
-import com.dtp.common.ex.DtpException;
 import com.dtp.common.util.ReflectionUtil;
 import com.dtp.core.convert.ExecutorConverter;
 import io.undertow.Undertow;
@@ -19,6 +18,7 @@ import org.xnio.management.XnioWorkerMXBean;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.concurrent.Executor;
 
 import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
 
@@ -51,7 +51,12 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
 
     @Override
     public ThreadPoolStats getPoolStats() {
-        XnioWorker xnioWorker = (XnioWorker) getWrapper().getExecutor();
+
+        Executor executor = getExecutor();
+        if (Objects.isNull(executor)) {
+            return null;
+        }
+        XnioWorker xnioWorker = (XnioWorker) executor;
         XnioWorkerMXBean mxBean = xnioWorker.getMXBean();
         return ThreadPoolStats.builder()
                 .corePoolSize(mxBean.getCoreWorkerPoolSize())
@@ -71,8 +76,11 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
         }
 
         try {
-            val executorWrapper = getWrapper();
-            XnioWorker xnioWorker = (XnioWorker) executorWrapper.getExecutor();
+            Executor executor = getExecutor();
+            if (Objects.isNull(executor)) {
+                return;
+            }
+            XnioWorker xnioWorker = (XnioWorker) executor;
 
             int oldCorePoolSize = xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS);
             int oldMaxPoolSize = xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS);
@@ -119,14 +127,5 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
         } catch (IOException e) {
             log.error("Update undertow web server threadPool failed.", e);
         }
-    }
-
-    private ExecutorWrapper getWrapper() {
-        ExecutorWrapper executorWrapper = getExecutorWrapper();
-        if (Objects.isNull(executorWrapper) || Objects.isNull(executorWrapper.getExecutor())) {
-            log.warn("Undertow web server threadPool is null.");
-            throw new DtpException("Undertow web server threadPool is null.");
-        }
-        return executorWrapper;
     }
 }

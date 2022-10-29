@@ -6,7 +6,6 @@ import com.alibaba.dubbo.common.store.DataStore;
 import com.dtp.adapter.common.AbstractDtpAdapter;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -28,16 +27,9 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter {
 
     private static final String NAME = "dubboTp";
 
-    private static final Map<String, ExecutorWrapper> DUBBO_EXECUTORS = Maps.newHashMap();
-
     @Override
     public void refresh(DtpProperties dtpProperties) {
         refresh(NAME, dtpProperties.getDubboTp(), dtpProperties.getPlatforms());
-    }
-
-    @Override
-    public Map<String, ExecutorWrapper> getExecutorWrappers() {
-        return DUBBO_EXECUTORS;
     }
 
     @Override
@@ -50,10 +42,10 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter {
                 val name = genTpName(k);
                 val executorWrapper = new ExecutorWrapper(name, (ThreadPoolExecutor) v);
                 initNotifyItems(name, executorWrapper);
-                DUBBO_EXECUTORS.put(name, executorWrapper);
+                EXECUTORS.put(name, executorWrapper);
             });
         }
-        log.info("DynamicTp adapter, alibaba dubbo executors init end, executors: {}", DUBBO_EXECUTORS);
+        log.info("DynamicTp adapter, alibaba dubbo provider executors init end, executors: {}", EXECUTORS);
     }
 
     private String genTpName(String port) {

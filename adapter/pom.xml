@@ -16,6 +16,7 @@
         <module>adapter-dubbo</module>
         <module>adapter-rocketmq</module>
         <module>adapter-hystrix</module>
+        <module>adapter-grpc</module>
     </modules>
 
     <dependencies>

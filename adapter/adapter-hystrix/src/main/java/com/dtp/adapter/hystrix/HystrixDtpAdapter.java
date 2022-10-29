@@ -33,8 +33,6 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
 
     private static final String NAME = "hystrixTp";
 
-    private static final Map<String, ExecutorWrapper> HYSTRIX_EXECUTORS = Maps.newHashMap();
-
     private static final Map<String, DtpMetricsPublisherThreadPool> METRICS_PUBLISHERS = Maps.newHashMap();
 
     @Override
@@ -56,18 +54,13 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
     }
 
     @Override
-    public Map<String, ExecutorWrapper> getExecutorWrappers() {
-        return HYSTRIX_EXECUTORS;
-    }
-
-    @Override
     public void register(String poolName, ThreadPoolExecutor threadPoolExecutor) {
-        if (HYSTRIX_EXECUTORS.containsKey(poolName)) {
+        if (EXECUTORS.containsKey(poolName)) {
             return;
         }
         val executorWrapper = new ExecutorWrapper(poolName, threadPoolExecutor);
         initNotifyItems(poolName, executorWrapper);
-        HYSTRIX_EXECUTORS.put(poolName, executorWrapper);
+        EXECUTORS.put(poolName, executorWrapper);
 
         DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
         val properties = dtpProperties.getHystrixTp();

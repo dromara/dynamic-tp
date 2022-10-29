@@ -20,6 +20,7 @@ import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -28,6 +29,7 @@ import org.springframework.context.ApplicationListener;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -46,6 +48,8 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
 
     private static final Equator EQUATOR = new GetterBaseEquator();
 
+    protected final Map<String, ExecutorWrapper> EXECUTORS = Maps.newHashMap();
+
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         try {
@@ -60,6 +64,10 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
     protected void initialize() {}
 
     public void register(String poolName, ThreadPoolExecutor threadPoolExecutor) {}
+
+    public Map<String, ExecutorWrapper> getExecutorWrappers() {
+        return EXECUTORS;
+    }
 
     /**
      * Get multi thread pool stats.

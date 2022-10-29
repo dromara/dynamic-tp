@@ -5,7 +5,6 @@ import com.dtp.adapter.common.AbstractDtpAdapter;
 import com.dtp.common.config.DtpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.util.ReflectionUtil;
-import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.dubbo.common.Version;
@@ -33,18 +32,11 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
 
     private static final String NAME = "dubboTp";
 
-    private static final Map<String, ExecutorWrapper> DUBBO_EXECUTORS = Maps.newHashMap();
-
     private static final String EXECUTOR_SERVICE_COMPONENT_KEY = ExecutorService.class.getName();
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
         refresh(NAME, dtpProperties.getDubboTp(), dtpProperties.getPlatforms());
-    }
-
-    @Override
-    public Map<String, ExecutorWrapper> getExecutorWrappers() {
-        return DUBBO_EXECUTORS;
     }
 
     @Override
@@ -60,7 +52,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
             if (MapUtil.isNotEmpty(executors)) {
                 executors.forEach((k, v) -> doInit(k, (ThreadPoolExecutor) v));
             }
-            log.info("DynamicTp adapter, apache dubbo executors init end, executors: {}", DUBBO_EXECUTORS);
+            log.info("DynamicTp adapter, apache dubbo provider executors init end, executors: {}", EXECUTORS);
             return;
         }
 
@@ -81,14 +73,14 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
         if (MapUtil.isNotEmpty(executorMap)) {
             executorMap.forEach((k, v) -> doInit(k.toString(), (ThreadPoolExecutor) v));
         }
-        log.info("DynamicTp adapter, apache dubbo executors init end, executors: {}", DUBBO_EXECUTORS);
+        log.info("DynamicTp adapter, apache dubbo provider executors init end, executors: {}", EXECUTORS);
     }
 
     private void doInit(String port, ThreadPoolExecutor executor) {
         val name = genTpName(port);
         val executorWrapper = new ExecutorWrapper(name, executor);
         initNotifyItems(name, executorWrapper);
-        DUBBO_EXECUTORS.put(name, executorWrapper);
+        EXECUTORS.put(name, executorWrapper);
     }
 
     private String genTpName(String port) {

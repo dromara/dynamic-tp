@@ -11,7 +11,7 @@ import java.util.Map;
  * @author yanhom
  * @since 1.0.8
  **/
-public class MdcRunnable implements Runnable{
+public class MdcRunnable implements Runnable {
 
     private final Runnable runnable;
 

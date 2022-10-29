@@ -14,6 +14,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.Executor;
 
 /**
  * AbstractWebServerDtpAdapter related
@@ -55,6 +57,15 @@ public abstract class AbstractWebServerDtpAdapter implements
             executorWrapper = doGetExecutorWrapper(webServer);
             log.info("DynamicTp adapter, web server executor init end, executor: {}", executorWrapper.getExecutor());
         }
+    }
+
+    protected Executor getExecutor() {
+        ExecutorWrapper wrapper = getExecutorWrapper();
+        if (Objects.isNull(wrapper) || Objects.isNull(wrapper.getExecutor())) {
+            log.warn("Web server threadPool is null.");
+            return null;
+        }
+        return wrapper.getExecutor();
     }
 
     /**

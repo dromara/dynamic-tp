@@ -6,7 +6,7 @@ import org.apache.dubbo.config.annotation.DubboService;
  * DubboUserServiceImpl related
  *
  * @author yanhom
- * @since 1.0.0
+ * @since 1.0.9
  **/
 @DubboService
 public class DubboUserServiceImpl implements DubboUserService {

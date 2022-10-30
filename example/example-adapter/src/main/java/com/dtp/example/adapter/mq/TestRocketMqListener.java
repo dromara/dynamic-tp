@@ -13,7 +13,7 @@ import static com.dtp.example.adapter.mq.TestRocketMqListener.TOPIC;
  * TestRocketMqListener related
  *
  * @author yanhom
- * @since 1.0.6
+ * @since 1.0.9
  */
 @Slf4j
 @Component

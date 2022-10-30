@@ -23,7 +23,7 @@ import java.util.concurrent.Executor;
 @Slf4j
 public class GrpcDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String NAME = "grpcServerTp";
+    private static final String NAME = "grpcTp";
 
     private static final String SERVER_FIELD = "server";
 
@@ -48,12 +48,23 @@ public class GrpcDtpAdapter extends AbstractDtpAdapter {
             }
             val serverImpl = (ServerImpl) server;
             val executor = (Executor) ReflectionUtil.getFieldValue(ServerImpl.class, EXECUTOR_FIELD, serverImpl);
+            String tpName = genTpName(k);
             if (Objects.nonNull(executor)) {
-                val executorWrapper = new ExecutorWrapper(NAME, executor);
-                initNotifyItems(NAME, executorWrapper);
-                EXECUTORS.put(NAME, executorWrapper);
+                val executorWrapper = new ExecutorWrapper(tpName, executor);
+                initNotifyItems(tpName, executorWrapper);
+                executors.put(tpName, executorWrapper);
             }
         });
-        log.info("DynamicTp adapter, grpc server executors init end, executors: {}", EXECUTORS);
+        log.info("DynamicTp adapter, grpc server executors init end, executors: {}", executors);
+    }
+
+    /**
+     * Gen tp name.
+     *
+     * @param serverLifeCycleName (shadedNettyGrpcServerLifecycle / inProcessGrpcServerLifecycle / nettyGrpcServerLifecycle)
+     * @return tp name
+     */
+    private String genTpName(String serverLifeCycleName) {
+        return serverLifeCycleName.replace("LifeCycle", "Tp");
     }
 }

@@ -67,9 +67,9 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
             if (Objects.nonNull(executor)) {
                 val executorWrapper = new ExecutorWrapper(key, executor);
                 initNotifyItems(key, executorWrapper);
-                EXECUTORS.put(key, executorWrapper);
+                executors.put(key, executorWrapper);
             }
         });
-        log.info("DynamicTp adapter, rocketMq consumer executors init end, executors: {}", EXECUTORS);
+        log.info("DynamicTp adapter, rocketMq consumer executors init end, executors: {}", executors);
     }
 }

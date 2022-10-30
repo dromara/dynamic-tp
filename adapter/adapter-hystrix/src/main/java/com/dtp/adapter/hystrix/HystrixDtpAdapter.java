@@ -55,12 +55,12 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
 
     @Override
     public void register(String poolName, ThreadPoolExecutor threadPoolExecutor) {
-        if (EXECUTORS.containsKey(poolName)) {
+        if (executors.containsKey(poolName)) {
             return;
         }
         val executorWrapper = new ExecutorWrapper(poolName, threadPoolExecutor);
         initNotifyItems(poolName, executorWrapper);
-        EXECUTORS.put(poolName, executorWrapper);
+        executors.put(poolName, executorWrapper);
 
         DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
         val properties = dtpProperties.getHystrixTp();

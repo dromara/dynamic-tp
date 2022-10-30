@@ -48,11 +48,11 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
             if (Objects.isNull(dataStore)) {
                 return;
             }
-            Map<String, Object> executors = dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY);
+            Map<String, Object> executorMap = dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY);
             if (MapUtil.isNotEmpty(executors)) {
-                executors.forEach((k, v) -> doInit(k, (ThreadPoolExecutor) v));
+                executorMap.forEach((k, v) -> doInit(k, (ThreadPoolExecutor) v));
             }
-            log.info("DynamicTp adapter, apache dubbo provider executors init end, executors: {}", EXECUTORS);
+            log.info("DynamicTp adapter, apache dubbo provider executors init end, executors: {}", executors);
             return;
         }
 
@@ -73,14 +73,14 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
         if (MapUtil.isNotEmpty(executorMap)) {
             executorMap.forEach((k, v) -> doInit(k.toString(), (ThreadPoolExecutor) v));
         }
-        log.info("DynamicTp adapter, apache dubbo provider executors init end, executors: {}", EXECUTORS);
+        log.info("DynamicTp adapter, apache dubbo provider executors init end, executors: {}", executors);
     }
 
     private void doInit(String port, ThreadPoolExecutor executor) {
         val name = genTpName(port);
         val executorWrapper = new ExecutorWrapper(name, executor);
         initNotifyItems(name, executorWrapper);
-        EXECUTORS.put(name, executorWrapper);
+        executors.put(name, executorWrapper);
     }
 
     private String genTpName(String port) {

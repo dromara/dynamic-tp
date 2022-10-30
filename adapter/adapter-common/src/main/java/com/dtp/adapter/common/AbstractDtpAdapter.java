@@ -48,7 +48,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
 
     private static final Equator EQUATOR = new GetterBaseEquator();
 
-    protected final Map<String, ExecutorWrapper> EXECUTORS = Maps.newHashMap();
+    protected final Map<String, ExecutorWrapper> executors = Maps.newHashMap();
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
@@ -65,8 +65,9 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
 
     public void register(String poolName, ThreadPoolExecutor threadPoolExecutor) {}
 
+    @Override
     public Map<String, ExecutorWrapper> getExecutorWrappers() {
-        return EXECUTORS;
+        return executors;
     }
 
     /**

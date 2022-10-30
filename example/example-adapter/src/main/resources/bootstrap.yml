@@ -39,6 +39,7 @@ rocketmq:
 grpc:
   server:
     port: 9999
+    in-process-name: test
 
   client:
     cloud-grpc-server:

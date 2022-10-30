@@ -42,10 +42,10 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter {
                 val name = genTpName(k);
                 val executorWrapper = new ExecutorWrapper(name, (ThreadPoolExecutor) v);
                 initNotifyItems(name, executorWrapper);
-                EXECUTORS.put(name, executorWrapper);
+                executors.put(name, executorWrapper);
             });
         }
-        log.info("DynamicTp adapter, alibaba dubbo provider executors init end, executors: {}", EXECUTORS);
+        log.info("DynamicTp adapter, alibaba dubbo provider executors init end, executors: {}", executors);
     }
 
     private String genTpName(String port) {

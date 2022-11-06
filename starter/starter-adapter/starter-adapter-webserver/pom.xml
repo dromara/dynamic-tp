@@ -6,7 +6,7 @@
     <parent>
         <groupId>cn.dynamictp</groupId>
         <artifactId>dynamic-tp-starter-adapter</artifactId>
-        <version>1.0.8</version>
+        <version>1.0.9</version>
     </parent>
     <artifactId>dynamic-tp-spring-boot-starter-adapter-webserver</artifactId>
 

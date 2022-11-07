@@ -4,6 +4,7 @@ import com.dtp.common.config.DtpProperties;
 import com.dtp.common.config.SimpleTpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.core.support.MetricsAware;
+import org.slf4j.Logger;
 
 import java.util.Collections;
 import java.util.Map;
@@ -44,20 +45,18 @@ public interface DtpAdapter extends MetricsAware {
     /**
      * Check update params.
      *
-     * @param oldMaxPoolSize old maxPoolSize
      * @param properties the targeted properties
+     * @param log logger
+     * @return true or false
      */
-    default void checkRefreshParams(int oldMaxPoolSize, SimpleTpProperties properties) {
+    default boolean containsInvalidParams(SimpleTpProperties properties, Logger log) {
         if (properties.getCorePoolSize() < 0 ||
                 properties.getMaximumPoolSize() <= 0 ||
                 properties.getMaximumPoolSize() < properties.getCorePoolSize() ||
                 properties.getKeepAliveTime() < 0) {
-            throw new IllegalArgumentException("Invalid thread pool params.");
+            log.error("DynamicTp adapter refresh, invalid parameters exist, properties: {}", properties);
+            return true;
         }
-
-        if (oldMaxPoolSize < properties.getCorePoolSize()) {
-            throw new IllegalArgumentException(String.format("New corePoolSize [%d] cannot greater than " +
-                    "current maximumPoolSize [%d]", properties.getCorePoolSize(), oldMaxPoolSize));
-        }
+        return false;
     }
 }

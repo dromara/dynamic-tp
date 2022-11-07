@@ -61,16 +61,15 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter {
     @Override
     public void refresh(DtpProperties dtpProperties) {
         SimpleTpProperties properties = dtpProperties.getTomcatTp();
-        if (Objects.isNull(properties)) {
+        if (Objects.isNull(properties) || containsInvalidParams(properties, log)) {
             return;
         }
         Executor executor = getExecutor();
         if (Objects.isNull(executor)) {
             return;
         }
-        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) executor;
-        checkRefreshParams(threadPoolExecutor.getMaximumPoolSize(), properties);
 
+        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) executor;
         DtpMainProp oldProp = ExecutorConverter.ofSimple(POOL_NAME, threadPoolExecutor.getCorePoolSize(),
                 threadPoolExecutor.getMaximumPoolSize(), threadPoolExecutor.getKeepAliveTime(properties.getUnit()));
         doRefresh(threadPoolExecutor, properties);
@@ -89,16 +88,24 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter {
 
     private void doRefresh(ThreadPoolExecutor executor, SimpleTpProperties properties) {
 
+        if (properties.getMaximumPoolSize() >= executor.getMaximumPoolSize()) {
+            if (!Objects.equals(executor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
+                executor.setMaximumPoolSize(properties.getMaximumPoolSize());
+            }
+            if (!Objects.equals(executor.getCorePoolSize(), properties.getCorePoolSize())) {
+                executor.setCorePoolSize(properties.getCorePoolSize());
+            }
+        } else {
+            if (!Objects.equals(executor.getCorePoolSize(), properties.getCorePoolSize())) {
+                executor.setCorePoolSize(properties.getCorePoolSize());
+            }
+            if (!Objects.equals(executor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
+                executor.setMaximumPoolSize(properties.getMaximumPoolSize());
+            }
+        }
+
         if (!Objects.equals(executor.getKeepAliveTime(properties.getUnit()), properties.getKeepAliveTime())) {
             executor.setKeepAliveTime(properties.getKeepAliveTime(), properties.getUnit());
-        }
-
-        if (!Objects.equals(executor.getCorePoolSize(), properties.getCorePoolSize())) {
-            executor.setCorePoolSize(properties.getCorePoolSize());
-        }
-
-        if (!Objects.equals(executor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
-            executor.setMaximumPoolSize(properties.getMaximumPoolSize());
         }
     }
 }

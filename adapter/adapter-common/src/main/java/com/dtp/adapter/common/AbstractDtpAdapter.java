@@ -106,11 +106,9 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
                         List<NotifyPlatform> platforms,
                         SimpleTpProperties properties) {
 
-        if (Objects.isNull(properties) || Objects.isNull(executorWrapper)) {
+        if (Objects.isNull(properties) || Objects.isNull(executorWrapper) || containsInvalidParams(properties, log)) {
             return;
         }
-        val e = (ThreadPoolExecutor) executorWrapper.getExecutor();
-        checkRefreshParams(e.getMaximumPoolSize(), properties);
 
         DtpMainProp oldProp = ExecutorConverter.convert(executorWrapper);
         doRefresh(executorWrapper, platforms, properties);
@@ -145,16 +143,24 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
                            SimpleTpProperties properties) {
 
         val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
-        if (!Objects.equals(executor.getCorePoolSize(), properties.getCorePoolSize())) {
-            executor.setCorePoolSize(properties.getCorePoolSize());
+        if (executor.getMaximumPoolSize() >= properties.getMaximumPoolSize()) {
+            if (!Objects.equals(executor.getCorePoolSize(), properties.getCorePoolSize())) {
+                executor.setCorePoolSize(properties.getCorePoolSize());
+            }
+            if (!Objects.equals(executor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
+                executor.setMaximumPoolSize(properties.getMaximumPoolSize());
+            }
+        } else {
+            if (!Objects.equals(executor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
+                executor.setMaximumPoolSize(properties.getMaximumPoolSize());
+            }
+            if (!Objects.equals(executor.getCorePoolSize(), properties.getCorePoolSize())) {
+                executor.setCorePoolSize(properties.getCorePoolSize());
+            }
         }
 
         if (!Objects.equals(executor.getKeepAliveTime(properties.getUnit()), properties.getKeepAliveTime())) {
             executor.setKeepAliveTime(properties.getKeepAliveTime(), properties.getUnit());
-        }
-
-        if (!Objects.equals(executor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
-            executor.setMaximumPoolSize(properties.getMaximumPoolSize());
         }
 
         if(StringUtils.isNotBlank(properties.getThreadPoolAliasName())){

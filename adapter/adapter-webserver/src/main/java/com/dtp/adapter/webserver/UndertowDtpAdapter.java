@@ -71,22 +71,19 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
     @Override
     public void refresh(DtpProperties dtpProperties) {
         SimpleTpProperties properties = dtpProperties.getUndertowTp();
-        if (Objects.isNull(properties)) {
+        if (Objects.isNull(properties) || containsInvalidParams(properties, log)) {
+            return;
+        }
+        Executor executor = getExecutor();
+        if (Objects.isNull(executor)) {
             return;
         }
 
+        XnioWorker xnioWorker = (XnioWorker) executor;
         try {
-            Executor executor = getExecutor();
-            if (Objects.isNull(executor)) {
-                return;
-            }
-            XnioWorker xnioWorker = (XnioWorker) executor;
-
             int oldCorePoolSize = xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS);
             int oldMaxPoolSize = xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS);
             int oldKeepAliveTime = xnioWorker.getOption(Options.WORKER_TASK_KEEPALIVE);
-            checkRefreshParams(oldMaxPoolSize, properties);
-
             DtpMainProp oldProp = ExecutorConverter.ofSimple(properties.getThreadPoolName(), oldCorePoolSize,
                     oldMaxPoolSize, oldKeepAliveTime);
             doRefresh(xnioWorker, properties);
@@ -114,11 +111,20 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
     private void doRefresh(XnioWorker xnioWorker, SimpleTpProperties properties) {
 
         try {
-            if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS), properties.getCorePoolSize())) {
-                xnioWorker.setOption(Options.WORKER_TASK_CORE_THREADS, properties.getCorePoolSize());
-            }
-            if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS), properties.getMaximumPoolSize())) {
-                xnioWorker.setOption(Options.WORKER_TASK_MAX_THREADS, properties.getMaximumPoolSize());
+            if (properties.getMaximumPoolSize() < xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS)) {
+                if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS), properties.getCorePoolSize())) {
+                    xnioWorker.setOption(Options.WORKER_TASK_CORE_THREADS, properties.getCorePoolSize());
+                }
+                if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS), properties.getMaximumPoolSize())) {
+                    xnioWorker.setOption(Options.WORKER_TASK_MAX_THREADS, properties.getMaximumPoolSize());
+                }
+            } else {
+                if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS), properties.getMaximumPoolSize())) {
+                    xnioWorker.setOption(Options.WORKER_TASK_MAX_THREADS, properties.getMaximumPoolSize());
+                }
+                if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS), properties.getCorePoolSize())) {
+                    xnioWorker.setOption(Options.WORKER_TASK_CORE_THREADS, properties.getCorePoolSize());
+                }
             }
             int keepAlive = properties.getKeepAliveTime() * 1000;
             if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_KEEPALIVE), keepAlive)) {

@@ -171,12 +171,6 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
             return;
         }
 
-        if (executor.getMaximumPoolSize() < properties.getCorePoolSize()) {
-            log.error("DynamicTp refresh, new corePoolSize [{}] cannot greater than current maximumPoolSize [{}].",
-                    properties.getCorePoolSize(), executor.getMaximumPoolSize());
-            return;
-        }
-
         DtpMainProp oldProp = ExecutorConverter.convert(executor);
         doRefresh(executor, properties);
         DtpMainProp newProp = ExecutorConverter.convert(executor);
@@ -217,16 +211,20 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
     private static void doRefresh(DtpExecutor dtpExecutor, ThreadPoolProperties properties) {
 
-        if (properties.getMaximumPoolSize() < dtpExecutor.getCorePoolSize()) {
-            return;
-        }
-
-        if (!Objects.equals(dtpExecutor.getCorePoolSize(), properties.getCorePoolSize())) {
-            dtpExecutor.setCorePoolSize(properties.getCorePoolSize());
-        }
-
-        if (!Objects.equals(dtpExecutor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
-            dtpExecutor.setMaximumPoolSize(properties.getMaximumPoolSize());
+        if (properties.getMaximumPoolSize() < dtpExecutor.getMaximumPoolSize()) {
+            if (!Objects.equals(dtpExecutor.getCorePoolSize(), properties.getCorePoolSize())) {
+                dtpExecutor.setCorePoolSize(properties.getCorePoolSize());
+            }
+            if (!Objects.equals(dtpExecutor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
+                dtpExecutor.setMaximumPoolSize(properties.getMaximumPoolSize());
+            }
+        } else {
+            if (!Objects.equals(dtpExecutor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
+                dtpExecutor.setMaximumPoolSize(properties.getMaximumPoolSize());
+            }
+            if (!Objects.equals(dtpExecutor.getCorePoolSize(), properties.getCorePoolSize())) {
+                dtpExecutor.setCorePoolSize(properties.getCorePoolSize());
+            }
         }
 
         if (!Objects.equals(dtpExecutor.getKeepAliveTime(properties.getUnit()), properties.getKeepAliveTime())) {

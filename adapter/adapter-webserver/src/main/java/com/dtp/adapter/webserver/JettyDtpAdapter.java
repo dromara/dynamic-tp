@@ -61,7 +61,7 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter {
     @Override
     public void refresh(DtpProperties dtpProperties) {
         SimpleTpProperties properties = dtpProperties.getJettyTp();
-        if (Objects.isNull(properties)) {
+        if (Objects.isNull(properties) || containsInvalidParams(properties, log)) {
             return;
         }
         Executor executor = getExecutor();
@@ -72,8 +72,6 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter {
         ThreadPool.SizedThreadPool threadPool = (ThreadPool.SizedThreadPool) executor;
         int oldCoreSize = threadPool.getMinThreads();
         int oldMaxSize = threadPool.getMaxThreads();
-        checkRefreshParams(oldMaxSize, properties);
-
         DtpMainProp oldProp = ExecutorConverter.ofSimple(POOL_NAME, oldCoreSize, oldMaxSize, 0L);
         doRefresh(threadPool, properties);
         DtpMainProp newProp = ExecutorConverter.ofSimple(properties.getThreadPoolName(), threadPool.getMinThreads(),
@@ -89,12 +87,21 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter {
     }
 
     private void doRefresh(ThreadPool.SizedThreadPool threadPool, SimpleTpProperties properties) {
-        if (!Objects.equals(threadPool.getMinThreads(), properties.getCorePoolSize())) {
-            threadPool.setMinThreads(properties.getCorePoolSize());
-        }
 
-        if (!Objects.equals(threadPool.getMaxThreads(), properties.getMaximumPoolSize())) {
-            threadPool.setMaxThreads(properties.getMaximumPoolSize());
+        if (properties.getMaximumPoolSize() < threadPool.getMaxThreads()) {
+            if (!Objects.equals(threadPool.getMinThreads(), properties.getCorePoolSize())) {
+                threadPool.setMinThreads(properties.getCorePoolSize());
+            }
+            if (!Objects.equals(threadPool.getMaxThreads(), properties.getMaximumPoolSize())) {
+                threadPool.setMaxThreads(properties.getMaximumPoolSize());
+            }
+        } else {
+            if (!Objects.equals(threadPool.getMaxThreads(), properties.getMaximumPoolSize())) {
+                threadPool.setMaxThreads(properties.getMaximumPoolSize());
+            }
+            if (!Objects.equals(threadPool.getMinThreads(), properties.getCorePoolSize())) {
+                threadPool.setMinThreads(properties.getCorePoolSize());
+            }
         }
     }
 }

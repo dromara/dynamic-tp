@@ -14,7 +14,7 @@ star: true
 
 ::: tip 
 
-目前框架提供了三种监控数据采集方式，通过 collectType 属性配置监控指标采集类型，默认 logging
+目前框架提供了三种监控数据采集方式，通过 collectTypes 属性配置监控指标采集类型，默认 logging
 
 1.Logging：线程池指标数据会以 Json 格式输出到指定的文件里
 

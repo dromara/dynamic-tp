@@ -1,6 +1,6 @@
 package com.dtp.core.support;
 
-import com.dtp.common.config.DtpProperties;
+import com.dtp.common.properties.DtpProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.ansi.AnsiColor;

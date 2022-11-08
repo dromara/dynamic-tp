@@ -1,7 +1,7 @@
 package com.dtp.adapter.webserver;
 
-import com.dtp.common.config.DtpProperties;
-import com.dtp.common.config.SimpleTpProperties;
+import com.dtp.common.properties.DtpProperties;
+import com.dtp.common.properties.SimpleTpProperties;
 import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;
@@ -88,9 +88,10 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter {
 
     private void doRefresh(ThreadPoolExecutor executor, SimpleTpProperties properties) {
 
-        if (properties.getMaximumPoolSize() >= executor.getMaximumPoolSize()) {
-            if (!Objects.equals(executor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
-                executor.setMaximumPoolSize(properties.getMaximumPoolSize());
+        int newMaxPoolSize = properties.getMaximumPoolSize();
+        if (newMaxPoolSize >= executor.getMaximumPoolSize()) {
+            if (!Objects.equals(executor.getMaximumPoolSize(), newMaxPoolSize)) {
+                executor.setMaximumPoolSize(newMaxPoolSize);
             }
             if (!Objects.equals(executor.getCorePoolSize(), properties.getCorePoolSize())) {
                 executor.setCorePoolSize(properties.getCorePoolSize());
@@ -99,8 +100,8 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter {
             if (!Objects.equals(executor.getCorePoolSize(), properties.getCorePoolSize())) {
                 executor.setCorePoolSize(properties.getCorePoolSize());
             }
-            if (!Objects.equals(executor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
-                executor.setMaximumPoolSize(properties.getMaximumPoolSize());
+            if (!Objects.equals(executor.getMaximumPoolSize(), newMaxPoolSize)) {
+                executor.setMaximumPoolSize(newMaxPoolSize);
             }
         }
 

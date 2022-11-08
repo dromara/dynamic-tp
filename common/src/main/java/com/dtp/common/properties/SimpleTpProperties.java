@@ -1,4 +1,4 @@
-package com.dtp.common.config;
+package com.dtp.common.properties;
 
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;

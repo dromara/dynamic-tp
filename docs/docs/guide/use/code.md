@@ -14,7 +14,7 @@ star: true
 
 - 线程池实例定义
  
-  建议直接配置在配置中心，但是如果想后期再添加到配置中心，可以先用@Bean 编码式声明（方便spring依赖注入）
+  建议直接配置在配置中心，但是如果想后期再添加到配置中心，可以先用 @Bean 编码式声明（方便spring依赖注入）
 
   ```java
   @Configuration
@@ -83,7 +83,7 @@ star: true
 
 - 代码调用
 
-  从DtpRegistry中根据线程池名称获取，或者通过依赖注入方式(推荐，更优雅)
+  从 DtpRegistry 中根据线程池名称获取，或者通过依赖注入方式(推荐，更优雅)
 
   1）依赖注入方式使用，优先推荐依赖注入方式，不能使用依赖注入的场景可以使用方式2
   
@@ -96,7 +96,7 @@ star: true
   }
   ```
   
-  2）通过DtpRegistry注册器获取
+  2）通过 DtpRegistry 注册器获取
   
   ```java
   public static void main(String[] args) {

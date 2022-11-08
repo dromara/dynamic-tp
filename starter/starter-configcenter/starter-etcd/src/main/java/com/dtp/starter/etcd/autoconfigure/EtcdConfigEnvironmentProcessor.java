@@ -1,6 +1,6 @@
 package com.dtp.starter.etcd.autoconfigure;
 
-import com.dtp.common.config.DtpProperties;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.support.PropertiesBinder;
 import com.dtp.starter.etcd.util.EtcdUtil;
 import java.util.Map;

@@ -1,8 +1,8 @@
 package com.dtp.starter.etcd.util;
 
 import cn.hutool.core.util.StrUtil;
-import com.dtp.common.config.DtpProperties;
-import com.dtp.common.config.DtpProperties.Etcd;
+import com.dtp.common.properties.DtpProperties;
+import com.dtp.common.properties.DtpProperties.Etcd;
 import com.dtp.common.em.ConfigFileTypeEnum;
 import com.dtp.core.handler.ConfigHandler;
 import com.dtp.starter.etcd.refresh.EtcdListener;

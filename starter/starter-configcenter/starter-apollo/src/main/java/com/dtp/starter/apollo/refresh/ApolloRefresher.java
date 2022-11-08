@@ -3,7 +3,7 @@ package com.dtp.starter.apollo.refresh;
 import com.ctrip.framework.apollo.*;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.model.ConfigFileChangeEvent;
-import com.dtp.common.config.DtpProperties;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.em.ConfigFileTypeEnum;
 import com.dtp.core.refresh.AbstractRefresher;
 import lombok.extern.slf4j.Slf4j;

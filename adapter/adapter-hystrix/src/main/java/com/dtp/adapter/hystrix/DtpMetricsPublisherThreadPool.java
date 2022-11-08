@@ -1,7 +1,7 @@
 package com.dtp.adapter.hystrix;
 
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.config.SimpleTpProperties;
+import com.dtp.common.properties.SimpleTpProperties;
 import com.dtp.common.util.ReflectionUtil;
 import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.HystrixThreadPoolMetrics;

@@ -1,7 +1,7 @@
 package com.dtp.core.spring;
 
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.config.DtpProperties;
+import com.dtp.common.properties.DtpProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;

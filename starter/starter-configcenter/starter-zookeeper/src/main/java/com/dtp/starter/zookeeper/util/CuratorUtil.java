@@ -1,6 +1,6 @@
 package com.dtp.starter.zookeeper.util;
 
-import com.dtp.common.config.DtpProperties;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.handler.ConfigHandler;
 import com.google.common.collect.Maps;
 import lombok.SneakyThrows;

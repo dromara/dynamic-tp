@@ -4,7 +4,7 @@ import cn.hutool.core.map.MapUtil;
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 import com.alibaba.dubbo.common.store.DataStore;
 import com.dtp.adapter.common.AbstractDtpAdapter;
-import com.dtp.common.config.DtpProperties;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

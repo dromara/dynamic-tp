@@ -35,7 +35,7 @@ star: true
         <dependency>
             <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-extension-skywalking</artifactId>
-            <version>1.0.8</version>
+            <version>1.0.9</version>
         </dependency>
     ```
    

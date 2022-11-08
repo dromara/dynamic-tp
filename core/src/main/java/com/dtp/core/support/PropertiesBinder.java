@@ -1,6 +1,6 @@
 package com.dtp.core.support;
 
-import com.dtp.common.config.DtpProperties;
+import com.dtp.common.properties.DtpProperties;
 import org.springframework.boot.context.properties.bind.Bindable;
 import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.context.properties.source.ConfigurationPropertySource;

@@ -1,7 +1,7 @@
 package com.dtp.core.monitor;
 
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.config.DtpProperties;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.common.event.AlarmCheckEvent;

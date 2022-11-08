@@ -2,7 +2,7 @@ package com.dtp.adapter.webserver;
 
 import com.dtp.adapter.common.DtpAdapter;
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.config.DtpProperties;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.google.common.collect.Lists;

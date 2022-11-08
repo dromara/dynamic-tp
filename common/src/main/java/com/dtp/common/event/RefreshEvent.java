@@ -1,6 +1,6 @@
 package com.dtp.common.event;
 
-import com.dtp.common.config.DtpProperties;
+import com.dtp.common.properties.DtpProperties;
 import org.springframework.context.ApplicationEvent;
 
 /**

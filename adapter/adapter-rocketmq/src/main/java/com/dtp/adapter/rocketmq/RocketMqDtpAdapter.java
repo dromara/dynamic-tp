@@ -3,7 +3,7 @@ package com.dtp.adapter.rocketmq;
 import cn.hutool.core.collection.CollUtil;
 import com.dtp.adapter.common.AbstractDtpAdapter;
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.config.DtpProperties;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.util.ReflectionUtil;
 import lombok.extern.slf4j.Slf4j;

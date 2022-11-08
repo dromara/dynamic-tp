@@ -1,7 +1,7 @@
 package com.dtp.adapter.webserver;
 
-import com.dtp.common.config.DtpProperties;
-import com.dtp.common.config.SimpleTpProperties;
+import com.dtp.common.properties.DtpProperties;
+import com.dtp.common.properties.SimpleTpProperties;
 import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;

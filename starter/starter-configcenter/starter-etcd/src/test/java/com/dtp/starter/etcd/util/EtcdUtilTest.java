@@ -2,7 +2,7 @@ package com.dtp.starter.etcd.util;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.dtp.common.config.DtpProperties.Etcd;
+import com.dtp.common.properties.DtpProperties.Etcd;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

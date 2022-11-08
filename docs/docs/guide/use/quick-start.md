@@ -21,7 +21,7 @@ star: true
 
 3.启动类加 @EnableDynamicTp 注解
 
-4.使用 @Resource 或 @Autowired 进行依赖注入，或通过 DtpRegistry.getDtpExecutor("name")获取
+4.使用 @Resource 或 @Autowired 进行依赖注入，或通过 DtpRegistry.getDtpExecutor("name") 获取
 
 5.通过以上4步就可以使用了，是不是感觉很简单啊
 
@@ -51,7 +51,7 @@ star: true
 
 1.普通 JUC 线程池想要被监控，可以 @Bean 定义时加 @DynamicTp 注解
 
-2.动态线程池实例服务启动时会根据配置中心的配置动态注册到Spring容器中，建议不要用@Bean编程式重复声明同一线程池实例，直接配置在配置中心就行
+2.动态线程池实例服务启动时会根据配置中心的配置动态注册到 Spring 容器中，建议不要用 @Bean 编程式重复声明同一线程池实例，直接配置在配置中心就行
 
 3.阻塞队列只有 VariableLinkedBlockingQueue 类型可以修改 capacity，该类型功能和 LinkedBlockingQueue 相似， 只是 capacity 不是
 final 类型，可以修改， VariableLinkedBlockingQueue 参考 RabbitMq 的实现

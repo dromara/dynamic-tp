@@ -1,8 +1,8 @@
 package com.dtp.core;
 
 import cn.hutool.core.collection.CollUtil;
-import com.dtp.common.config.DtpProperties;
-import com.dtp.common.config.ThreadPoolProperties;
+import com.dtp.common.properties.DtpProperties;
+import com.dtp.common.properties.ThreadPoolProperties;
 import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.em.NotifyItemEnum;
@@ -246,23 +246,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
             dtpExecutor.setThreadPoolAliasName(properties.getThreadPoolAliasName());
         }
 
-        // update work queue
-        if (canModifyQueueProp(properties)) {
-            val blockingQueue = dtpExecutor.getQueue();
-            if (!Objects.equals(dtpExecutor.getQueueCapacity(), properties.getQueueCapacity())) {
-                if (blockingQueue instanceof VariableLinkedBlockingQueue) {
-                    ((VariableLinkedBlockingQueue<Runnable>) blockingQueue).setCapacity(properties.getQueueCapacity());
-                } else {
-                    log.error("DynamicTp refresh, the blockingqueue capacity cannot be reset, dtpName: {}, queueType {}",
-                            dtpExecutor.getThreadPoolName(), dtpExecutor.getQueueName());
-                }
-            }
-
-            if (blockingQueue instanceof MemorySafeLinkedBlockingQueue) {
-                ((MemorySafeLinkedBlockingQueue<Runnable>) blockingQueue).setMaxFreeMemory(properties.getMaxFreeMemory() * M_1);
-            }
-        }
-
+        updateQueueProp(properties, dtpExecutor);
         dtpExecutor.setWaitForTasksToCompleteOnShutdown(properties.isWaitForTasksToCompleteOnShutdown());
         dtpExecutor.setAwaitTerminationSeconds(properties.getAwaitTerminationSeconds());
         dtpExecutor.setPreStartAllCoreThreads(properties.isPreStartAllCoreThreads());
@@ -297,10 +281,29 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         val localDtpExecutors = CollUtil.subtract(registeredDtpExecutors, remoteExecutors);
         val localCommonExecutors = COMMON_REGISTRY.keySet();
         log.info("DtpRegistry initialization end, remote dtpExecutors: {}, local dtpExecutors: {}," +
-                        " local commonExecutors: {}", remoteExecutors, localDtpExecutors, localCommonExecutors);
-
+                " local commonExecutors: {}", remoteExecutors, localDtpExecutors, localCommonExecutors);
         if (CollUtil.isEmpty(dtpProperties.getPlatforms())) {
             log.warn("DtpRegistry initialization end, no notify platforms configured.");
+        }
+    }
+
+    private static void updateQueueProp(ThreadPoolProperties properties, DtpExecutor dtpExecutor) {
+        // update work queue
+        if (!canModifyQueueProp(properties)) {
+            return;
+        }
+        val blockingQueue = dtpExecutor.getQueue();
+        if (!Objects.equals(dtpExecutor.getQueueCapacity(), properties.getQueueCapacity())) {
+            if (blockingQueue instanceof VariableLinkedBlockingQueue) {
+                ((VariableLinkedBlockingQueue<Runnable>) blockingQueue).setCapacity(properties.getQueueCapacity());
+            } else {
+                log.error("DynamicTp refresh, the blockingqueue capacity cannot be reset, dtpName: {}, queueType {}",
+                        dtpExecutor.getThreadPoolName(), dtpExecutor.getQueueName());
+            }
+        }
+
+        if (blockingQueue instanceof MemorySafeLinkedBlockingQueue) {
+            ((MemorySafeLinkedBlockingQueue<Runnable>) blockingQueue).setMaxFreeMemory(properties.getMaxFreeMemory() * M_1);
         }
     }
 

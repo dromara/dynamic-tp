@@ -16,7 +16,7 @@ star: true
 ::: tip
 1.动态线程池配置文件，建议单独开一个文件放到配置中心
 
-2.建议最好使用yml文件配置，可读性、可操作性更友好
+2.建议最好使用 yml 文件配置，可读性、可操作性更友好
 
 3.给出的是全配置项，使用不到的项或者使用默认值的项都可以删除，减少配置项
 :::
@@ -67,6 +67,11 @@ spring:
         keepAliveTime: 60
       hystrixTp:                                   # hystrix 线程池配置
         - threadPoolName: hystrix1
+          corePoolSize: 100
+          maximumPoolSize: 200
+          keepAliveTime: 60
+      grpcTp:                                      # grpc 线程池配置
+        - threadPoolName: inProcessGrpcServerTp
           corePoolSize: 100
           maximumPoolSize: 200
           keepAliveTime: 60

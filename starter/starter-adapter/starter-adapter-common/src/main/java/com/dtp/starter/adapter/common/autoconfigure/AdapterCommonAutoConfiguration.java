@@ -1,7 +1,7 @@
 package com.dtp.starter.adapter.common.autoconfigure;
 
 import com.dtp.adapter.common.DtpAdapterListener;
-import com.dtp.common.config.DtpProperties;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.constant.DynamicTpConst;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

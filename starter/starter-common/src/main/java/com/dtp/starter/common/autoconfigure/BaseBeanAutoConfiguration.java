@@ -1,7 +1,7 @@
 package com.dtp.starter.common.autoconfigure;
 
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.config.DtpProperties;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.monitor.DtpEndpoint;

@@ -4,7 +4,7 @@ import com.alibaba.nacos.api.annotation.NacosInjected;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
-import com.dtp.common.config.DtpProperties;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.em.ConfigFileTypeEnum;
 import com.dtp.common.util.NacosUtil;
 import com.dtp.core.refresh.AbstractRefresher;

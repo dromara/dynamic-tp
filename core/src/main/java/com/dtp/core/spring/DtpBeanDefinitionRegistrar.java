@@ -1,8 +1,8 @@
 package com.dtp.core.spring;
 
 import cn.hutool.core.collection.CollUtil;
-import com.dtp.common.config.DtpProperties;
-import com.dtp.common.config.ThreadPoolProperties;
+import com.dtp.common.properties.DtpProperties;
+import com.dtp.common.properties.ThreadPoolProperties;
 import com.dtp.common.util.BeanUtil;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.support.ExecutorType;

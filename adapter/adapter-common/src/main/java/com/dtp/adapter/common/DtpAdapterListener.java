@@ -1,7 +1,7 @@
 package com.dtp.adapter.common;
 
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.config.DtpProperties;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.event.AlarmCheckEvent;
 import com.dtp.common.event.CollectEvent;
 import com.dtp.common.event.RefreshEvent;

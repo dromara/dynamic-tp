@@ -1,7 +1,7 @@
 package com.dtp.common.util;
 
 import com.dtp.common.em.ConfigFileTypeEnum;
-import com.dtp.common.config.DtpProperties;
+import com.dtp.common.properties.DtpProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 

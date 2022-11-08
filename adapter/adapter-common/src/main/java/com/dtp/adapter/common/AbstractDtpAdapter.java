@@ -2,8 +2,8 @@ package com.dtp.adapter.common;
 
 import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.config.DtpProperties;
-import com.dtp.common.config.SimpleTpProperties;
+import com.dtp.common.properties.DtpProperties;
+import com.dtp.common.properties.SimpleTpProperties;
 import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyPlatform;
@@ -143,19 +143,19 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
                            SimpleTpProperties properties) {
 
         val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
-        if (executor.getMaximumPoolSize() >= properties.getMaximumPoolSize()) {
-            if (!Objects.equals(executor.getCorePoolSize(), properties.getCorePoolSize())) {
-                executor.setCorePoolSize(properties.getCorePoolSize());
-            }
-            if (!Objects.equals(executor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
+        if (properties.getMaximumPoolSize() >= executor.getMaximumPoolSize()) {
+            if (!Objects.equals(properties.getMaximumPoolSize(), executor.getMaximumPoolSize())) {
                 executor.setMaximumPoolSize(properties.getMaximumPoolSize());
+            }
+            if (!Objects.equals(properties.getCorePoolSize(), executor.getCorePoolSize())) {
+                executor.setCorePoolSize(properties.getCorePoolSize());
             }
         } else {
-            if (!Objects.equals(executor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
-                executor.setMaximumPoolSize(properties.getMaximumPoolSize());
-            }
-            if (!Objects.equals(executor.getCorePoolSize(), properties.getCorePoolSize())) {
+            if (!Objects.equals(properties.getCorePoolSize(), executor.getCorePoolSize())) {
                 executor.setCorePoolSize(properties.getCorePoolSize());
+            }
+            if (!Objects.equals(properties.getMaximumPoolSize(), executor.getMaximumPoolSize())) {
+                executor.setMaximumPoolSize(properties.getMaximumPoolSize());
             }
         }
 

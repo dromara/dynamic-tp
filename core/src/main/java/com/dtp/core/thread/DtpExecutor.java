@@ -1,7 +1,7 @@
 package com.dtp.core.thread;
 
 import cn.hutool.core.collection.CollUtil;
-import com.dtp.common.config.DtpProperties;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.core.notify.manager.AlarmManager;

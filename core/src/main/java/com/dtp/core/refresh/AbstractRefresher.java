@@ -2,7 +2,7 @@ package com.dtp.core.refresh;
 
 import cn.hutool.core.map.MapUtil;
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.config.DtpProperties;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.em.ConfigFileTypeEnum;
 import com.dtp.common.event.RefreshEvent;
 import com.dtp.core.DtpRegistry;

@@ -54,6 +54,8 @@ spring:
         - platform: lark
           urlKey: 0d944ae7-b24a-40                 # 替换
           receivers: test1,test2                   # 接受人飞书名称/openid
+        - platform: email
+          receivers: 123456@qq.com,789789@qq.com   # 收件人
       tomcatTp:                                    # tomcat webserver线程池配置
         corePoolSize: 100
         maximumPoolSize: 200
@@ -77,7 +79,7 @@ spring:
           keepAliveTime: 60
       dubboTp:                                     # dubbo 线程池配置
         - threadPoolName: dubboTp#20880            # 名称规则：dubboTp + "#" + 协议端口
-          threadPoolAliasName: 测试线程池             # dubbo线程池
+          threadPoolAliasName: 测试线程池            
           corePoolSize: 100
           maximumPoolSize: 200
           keepAliveTime: 60

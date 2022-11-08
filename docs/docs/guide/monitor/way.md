@@ -14,20 +14,22 @@ star: true
 
 ::: tip 
 
-目前框架提供了三种监控数据采集方式，通过 collectTypes 属性配置监控指标采集类型，默认 logging
+目前框架提供了四种监控数据采集方式，通过 collectorTypes 属性配置监控指标采集类型，默认 Micrometer
 
-1.Logging：线程池指标数据会以 Json 格式输出到指定的文件里
+1.Logging：线程池指标数据会以 Json 格式输出到指定的日志文件里
 
-2.Micrometer：采用监控门面，通过引入相关 Micrometer 依赖采集到相应的存储平台里（如 Prometheus，InfluxDb...）
+2.Internal_logging：线程池指标数据会以 Json 格式输出到项目日志文件里
 
-3.暴露 Endpoint端点，可以通过 http 方式实时获取指标数据
+3.Micrometer：采用监控门面，通过引入相关 Micrometer 依赖采集到相应的存储平台里（如 Prometheus，InfluxDb...）
+
+4.暴露 Endpoint端点，可以通过 http 方式实时获取指标数据
 
 :::
 
 
 ### micrometer
 
-引入prometheus（也可以用其他） 对应依赖，job配置后prometheus管理台看到如下图所示，说明已经开始正常采集指标配置
+引入 prometheus（也可以用其他） 对应依赖，job 配置后 prometheus 管理台看到如下图所示，说明已经开始正常采集指标配置
 
 ![采集指标](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/435f0a69790946f8bff7761c40a0a0db~tplv-k3u1fbpfcp-zoom-1.image)
 

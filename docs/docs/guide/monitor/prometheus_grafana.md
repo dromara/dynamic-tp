@@ -20,7 +20,7 @@ star: true
 
 ```yaml
    enabledCollect: true
-   collectorType: micrometer
+   collectorTypes: micrometer
 ```
 
 2.项目中引入 micrometer-prometheus 依赖

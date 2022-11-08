@@ -49,7 +49,7 @@ star: true
 
 ::: warning
 
-1.普通 JUC 线程池想要被监控，可以 @Bean 定义时加 @DynamicTp 注解
+1.普通 JUC 线程池或者 Spring 线程池想要被监控，可以 @Bean 定义时加 @DynamicTp 注解
 
 2.动态线程池实例服务启动时会根据配置中心的配置动态注册到 Spring 容器中，建议不要用 @Bean 编程式重复声明同一线程池实例，直接配置在配置中心就行
 

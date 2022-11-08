@@ -12,6 +12,50 @@ star: true
 
 ::: tip
 
+## v1.0.9 发布记录
+
+#### Features
+
++ 告警类型新增邮件告警渠道，感谢 @林林林 提供实现
+
++ adapter 模块新增 grpc 服务端线程池管理
+
+
+#### BugFix
+
++ AbstractDtpNotifier 添加无参构造函数，修复 SPI 自定义无法接入问题
+
++ ApolloRefresher 调整为实现 ConfigFileChangeListener 接口，解决配置类型为 properties 类型时，多次修改参数间隔生效的问题，感谢 @NY 提供实现
+
++ 调整线程池告警配置初始化时机，修复提前使用因告警项没初始化导致的 NPE 问题，感谢 @林林林 提供实现
+
+
+#### Refactor
+
++ 将 core 模块中 adapter 包迁移到 adapter-common 模块中，彻底解耦
+
++ 重构 notify 模块
+
++ 重构抽象 adapter 模块代码
+
++ 责任链模式重构 notify 模块
+
+
+#### Optimize
+
++ 兼容低版本 dubbo（2.7.3） 线程池监控，感谢 @songxiaohua 提供实现
+
++ 兼容 Spring 5.2 以下 applicationContext.findAnnotationOnBean 获取不到注解的情况，感谢 @Redick01 提供实现
+
++ MemorySafeLinkedBlockingQueue 阻塞队列添加拒绝策略
+
++ 优化项目日志输出
+
+:::
+
+
+::: tip
+
 ## v1.0.8 发布记录
 
 距离 v1.0.7 发布已经有差不多 2 个月时间，这个版本新增了好些功能，同时优化重构了一些代码设计，欢迎大家升级体验哦！

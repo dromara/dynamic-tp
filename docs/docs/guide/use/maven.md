@@ -15,7 +15,7 @@ star: true
 
 **maven 依赖**
 
-1. apollo 应用用接入用此依赖
+1. apollo 应用接入用此依赖
    ```xml
        <dependency>
            <groupId>cn.dynamictp</groupId>

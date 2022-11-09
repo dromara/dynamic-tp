@@ -180,23 +180,23 @@ star: true
 
 ## v1.0.5
 
-### Features
+#### Features
 
 + logging模块添加log4j2支持
 
 + 配置文件支持json格式，zk已支持json、properties格式配置
 
 
-### BugFix
+#### BugFix
 
 + [#I54B4R](https://gitee.com/dromara/dynamic-tp/issues/I54B4R)  
 
 
-### Refactor
+#### Refactor
 
 + 部分代码优化
 
-### Dependency
+#### Dependency
 
 + transmittable-thread-local升级到2.12.6
 
@@ -208,7 +208,7 @@ star: true
 
 ## v1.0.4
 
-### Features
+#### Features
 
 + 配置中心支持Consul
 
@@ -226,7 +226,7 @@ star: true
 
 ## v1.0.3
 
-### Features
+#### Features
 
 + 配置中心支持Zookeeper
 
@@ -244,7 +244,7 @@ star: true
 
 ## v1.0.2
 
-### Features
+#### Features
 
 + 配置中心支持Nacos、Apollo、Zookeeper
 

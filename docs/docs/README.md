@@ -83,7 +83,7 @@ features:
 
 # 知识星球
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/894a4e918ff14c13b4a66d3f30f7ff7e~tplv-k3u1fbpfcp-zoom-1.image)
+![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/894a4e9Ï18ff14c13b4a66d3f30f7ff7e~tplv-k3u1fbpfcp-zoom-1.image)
 
 # Dromara 成员项目
 

@@ -105,7 +105,7 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter {
             }
         }
 
-        if (!Objects.equals(executor.getKeepAliveTime(properties.getUnit()), properties.getKeepAliveTime())) {
+        if (executor.getKeepAliveTime(properties.getUnit()) != properties.getKeepAliveTime()) {
             executor.setKeepAliveTime(properties.getKeepAliveTime(), properties.getUnit());
         }
     }

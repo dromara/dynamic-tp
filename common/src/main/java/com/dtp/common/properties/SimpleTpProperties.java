@@ -41,7 +41,7 @@ public class SimpleTpProperties {
      * this is the maximum time that excess idle threads
      * will wait for new tasks before terminating.
      */
-    private int keepAliveTime = 60;
+    private long keepAliveTime = 60;
 
     /**
      * Timeout unit.

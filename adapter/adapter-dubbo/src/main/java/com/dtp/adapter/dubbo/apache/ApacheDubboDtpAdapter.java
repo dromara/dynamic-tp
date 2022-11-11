@@ -49,7 +49,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
                 return;
             }
             Map<String, Object> executorMap = dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY);
-            if (MapUtil.isNotEmpty(executors)) {
+            if (MapUtil.isNotEmpty(executorMap)) {
                 executorMap.forEach((k, v) -> doInit(k, (ThreadPoolExecutor) v));
             }
             log.info("DynamicTp adapter, apache dubbo provider executors init end, executors: {}", executors);

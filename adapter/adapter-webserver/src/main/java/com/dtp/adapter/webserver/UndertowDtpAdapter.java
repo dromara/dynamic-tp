@@ -126,7 +126,7 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
                     xnioWorker.setOption(Options.WORKER_TASK_CORE_THREADS, properties.getCorePoolSize());
                 }
             }
-            int keepAlive = properties.getKeepAliveTime() * 1000;
+            int keepAlive = (int)properties.getKeepAliveTime() * 1000;
             if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_KEEPALIVE), keepAlive)) {
                 xnioWorker.setOption(Options.WORKER_TASK_KEEPALIVE, keepAlive);
             }

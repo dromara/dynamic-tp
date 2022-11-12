@@ -88,6 +88,10 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter {
 
     private void doRefresh(ThreadPoolExecutor executor, SimpleTpProperties properties) {
 
+        if (executor.getKeepAliveTime(properties.getUnit()) != properties.getKeepAliveTime()) {
+            executor.setKeepAliveTime(properties.getKeepAliveTime(), properties.getUnit());
+        }
+
         int newMaxPoolSize = properties.getMaximumPoolSize();
         if (newMaxPoolSize >= executor.getMaximumPoolSize()) {
             if (!Objects.equals(executor.getMaximumPoolSize(), newMaxPoolSize)) {
@@ -96,17 +100,14 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter {
             if (!Objects.equals(executor.getCorePoolSize(), properties.getCorePoolSize())) {
                 executor.setCorePoolSize(properties.getCorePoolSize());
             }
-        } else {
-            if (!Objects.equals(executor.getCorePoolSize(), properties.getCorePoolSize())) {
-                executor.setCorePoolSize(properties.getCorePoolSize());
-            }
-            if (!Objects.equals(executor.getMaximumPoolSize(), newMaxPoolSize)) {
-                executor.setMaximumPoolSize(newMaxPoolSize);
-            }
+            return;
         }
 
-        if (executor.getKeepAliveTime(properties.getUnit()) != properties.getKeepAliveTime()) {
-            executor.setKeepAliveTime(properties.getKeepAliveTime(), properties.getUnit());
+        if (!Objects.equals(executor.getCorePoolSize(), properties.getCorePoolSize())) {
+            executor.setCorePoolSize(properties.getCorePoolSize());
+        }
+        if (!Objects.equals(executor.getMaximumPoolSize(), newMaxPoolSize)) {
+            executor.setMaximumPoolSize(newMaxPoolSize);
         }
     }
 }

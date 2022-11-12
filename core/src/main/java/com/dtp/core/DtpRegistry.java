@@ -1,12 +1,12 @@
 package com.dtp.core;
 
 import cn.hutool.core.collection.CollUtil;
-import com.dtp.common.properties.DtpProperties;
-import com.dtp.common.properties.ThreadPoolProperties;
 import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.ex.DtpException;
+import com.dtp.common.properties.DtpProperties;
+import com.dtp.common.properties.ThreadPoolProperties;
 import com.dtp.common.queue.MemorySafeLinkedBlockingQueue;
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.core.context.NoticeCtx;
@@ -33,6 +33,7 @@ import org.springframework.core.Ordered;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 import static com.dtp.common.constant.DynamicTpConst.M_1;
@@ -210,23 +211,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
     }
 
     private static void doRefresh(DtpExecutor dtpExecutor, ThreadPoolProperties properties) {
-
-        if (properties.getMaximumPoolSize() < dtpExecutor.getMaximumPoolSize()) {
-            if (!Objects.equals(dtpExecutor.getCorePoolSize(), properties.getCorePoolSize())) {
-                dtpExecutor.setCorePoolSize(properties.getCorePoolSize());
-            }
-            if (!Objects.equals(dtpExecutor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
-                dtpExecutor.setMaximumPoolSize(properties.getMaximumPoolSize());
-            }
-        } else {
-            if (!Objects.equals(dtpExecutor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
-                dtpExecutor.setMaximumPoolSize(properties.getMaximumPoolSize());
-            }
-            if (!Objects.equals(dtpExecutor.getCorePoolSize(), properties.getCorePoolSize())) {
-                dtpExecutor.setCorePoolSize(properties.getCorePoolSize());
-            }
-        }
-
+        doRefreshPoolSize(dtpExecutor, properties);
         if (!Objects.equals(dtpExecutor.getKeepAliveTime(properties.getUnit()), properties.getKeepAliveTime())) {
             dtpExecutor.setKeepAliveTime(properties.getKeepAliveTime(), properties.getUnit());
         }
@@ -284,6 +269,24 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
                 " local commonExecutors: {}", remoteExecutors, localDtpExecutors, localCommonExecutors);
         if (CollUtil.isEmpty(dtpProperties.getPlatforms())) {
             log.warn("DtpRegistry initialization end, no notify platforms configured.");
+        }
+    }
+
+    private static void doRefreshPoolSize(ThreadPoolExecutor dtpExecutor, ThreadPoolProperties properties) {
+        if (properties.getMaximumPoolSize() < dtpExecutor.getMaximumPoolSize()) {
+            if (!Objects.equals(dtpExecutor.getCorePoolSize(), properties.getCorePoolSize())) {
+                dtpExecutor.setCorePoolSize(properties.getCorePoolSize());
+            }
+            if (!Objects.equals(dtpExecutor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
+                dtpExecutor.setMaximumPoolSize(properties.getMaximumPoolSize());
+            }
+            return;
+        }
+        if (!Objects.equals(dtpExecutor.getMaximumPoolSize(), properties.getMaximumPoolSize())) {
+            dtpExecutor.setMaximumPoolSize(properties.getMaximumPoolSize());
+        }
+        if (!Objects.equals(dtpExecutor.getCorePoolSize(), properties.getCorePoolSize())) {
+            dtpExecutor.setCorePoolSize(properties.getCorePoolSize());
         }
     }
 

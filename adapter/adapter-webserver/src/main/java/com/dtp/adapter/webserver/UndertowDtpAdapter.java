@@ -111,6 +111,11 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
     private void doRefresh(XnioWorker xnioWorker, SimpleTpProperties properties) {
 
         try {
+            int keepAlive = (int) properties.getKeepAliveTime() * 1000;
+            if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_KEEPALIVE), keepAlive)) {
+                xnioWorker.setOption(Options.WORKER_TASK_KEEPALIVE, keepAlive);
+            }
+
             if (properties.getMaximumPoolSize() < xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS)) {
                 if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS), properties.getCorePoolSize())) {
                     xnioWorker.setOption(Options.WORKER_TASK_CORE_THREADS, properties.getCorePoolSize());
@@ -118,17 +123,14 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
                 if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS), properties.getMaximumPoolSize())) {
                     xnioWorker.setOption(Options.WORKER_TASK_MAX_THREADS, properties.getMaximumPoolSize());
                 }
-            } else {
-                if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS), properties.getMaximumPoolSize())) {
-                    xnioWorker.setOption(Options.WORKER_TASK_MAX_THREADS, properties.getMaximumPoolSize());
-                }
-                if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS), properties.getCorePoolSize())) {
-                    xnioWorker.setOption(Options.WORKER_TASK_CORE_THREADS, properties.getCorePoolSize());
-                }
+                return;
             }
-            int keepAlive = (int)properties.getKeepAliveTime() * 1000;
-            if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_KEEPALIVE), keepAlive)) {
-                xnioWorker.setOption(Options.WORKER_TASK_KEEPALIVE, keepAlive);
+
+            if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS), properties.getMaximumPoolSize())) {
+                xnioWorker.setOption(Options.WORKER_TASK_MAX_THREADS, properties.getMaximumPoolSize());
+            }
+            if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS), properties.getCorePoolSize())) {
+                xnioWorker.setOption(Options.WORKER_TASK_CORE_THREADS, properties.getCorePoolSize());
             }
         } catch (IOException e) {
             log.error("Update undertow web server threadPool failed.", e);

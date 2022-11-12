@@ -87,7 +87,6 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter {
     }
 
     private void doRefresh(ThreadPool.SizedThreadPool threadPool, SimpleTpProperties properties) {
-
         if (properties.getMaximumPoolSize() < threadPool.getMaxThreads()) {
             if (!Objects.equals(threadPool.getMinThreads(), properties.getCorePoolSize())) {
                 threadPool.setMinThreads(properties.getCorePoolSize());
@@ -95,13 +94,14 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter {
             if (!Objects.equals(threadPool.getMaxThreads(), properties.getMaximumPoolSize())) {
                 threadPool.setMaxThreads(properties.getMaximumPoolSize());
             }
-        } else {
-            if (!Objects.equals(threadPool.getMaxThreads(), properties.getMaximumPoolSize())) {
-                threadPool.setMaxThreads(properties.getMaximumPoolSize());
-            }
-            if (!Objects.equals(threadPool.getMinThreads(), properties.getCorePoolSize())) {
-                threadPool.setMinThreads(properties.getCorePoolSize());
-            }
+            return;
+        }
+
+        if (!Objects.equals(threadPool.getMaxThreads(), properties.getMaximumPoolSize())) {
+            threadPool.setMaxThreads(properties.getMaximumPoolSize());
+        }
+        if (!Objects.equals(threadPool.getMinThreads(), properties.getCorePoolSize())) {
+            threadPool.setMinThreads(properties.getCorePoolSize());
         }
     }
 }

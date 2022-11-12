@@ -143,26 +143,10 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
                            SimpleTpProperties properties) {
 
         val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
-        if (properties.getMaximumPoolSize() >= executor.getMaximumPoolSize()) {
-            if (!Objects.equals(properties.getMaximumPoolSize(), executor.getMaximumPoolSize())) {
-                executor.setMaximumPoolSize(properties.getMaximumPoolSize());
-            }
-            if (!Objects.equals(properties.getCorePoolSize(), executor.getCorePoolSize())) {
-                executor.setCorePoolSize(properties.getCorePoolSize());
-            }
-        } else {
-            if (!Objects.equals(properties.getCorePoolSize(), executor.getCorePoolSize())) {
-                executor.setCorePoolSize(properties.getCorePoolSize());
-            }
-            if (!Objects.equals(properties.getMaximumPoolSize(), executor.getMaximumPoolSize())) {
-                executor.setMaximumPoolSize(properties.getMaximumPoolSize());
-            }
-        }
-
+        doRefreshPoolSize(executor, properties);
         if (!Objects.equals(executor.getKeepAliveTime(properties.getUnit()), properties.getKeepAliveTime())) {
             executor.setKeepAliveTime(properties.getKeepAliveTime(), properties.getUnit());
         }
-
         if(StringUtils.isNotBlank(properties.getThreadPoolAliasName())){
             executorWrapper.setThreadPoolAliasName(properties.getThreadPoolAliasName());
         }
@@ -172,5 +156,24 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
         AlarmManager.refreshAlarm(executorWrapper.getThreadPoolName(), platforms,
                 executorWrapper.getNotifyItems(), allNotifyItems);
         executorWrapper.setNotifyItems(allNotifyItems);
+    }
+
+    private void doRefreshPoolSize(ThreadPoolExecutor executor, SimpleTpProperties properties) {
+        if (properties.getMaximumPoolSize() >= executor.getMaximumPoolSize()) {
+            if (!Objects.equals(properties.getMaximumPoolSize(), executor.getMaximumPoolSize())) {
+                executor.setMaximumPoolSize(properties.getMaximumPoolSize());
+            }
+            if (!Objects.equals(properties.getCorePoolSize(), executor.getCorePoolSize())) {
+                executor.setCorePoolSize(properties.getCorePoolSize());
+            }
+            return;
+        }
+
+        if (!Objects.equals(properties.getCorePoolSize(), executor.getCorePoolSize())) {
+            executor.setCorePoolSize(properties.getCorePoolSize());
+        }
+        if (!Objects.equals(properties.getMaximumPoolSize(), executor.getMaximumPoolSize())) {
+            executor.setMaximumPoolSize(properties.getMaximumPoolSize());
+        }
     }
 }

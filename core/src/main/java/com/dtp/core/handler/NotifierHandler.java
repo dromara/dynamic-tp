@@ -25,7 +25,7 @@ import java.util.ServiceLoader;
  * @since 1.0.0
  **/
 @Slf4j
-public class NotifierHandler {
+public final class NotifierHandler {
 
     private static final Map<String, DtpNotifier> NOTIFIERS = new HashMap<>();
 

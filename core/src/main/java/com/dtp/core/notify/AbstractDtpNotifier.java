@@ -171,8 +171,8 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         }
         if (NotifyPlatformEnum.LARK.name().toLowerCase().equals(platform)) {
             return Arrays.stream(receives.split(","))
-                    .map(receive -> StringUtils.startsWith(receive, LARK_OPENID_PREFIX) ?
-                            String.format(LARK_AT_FORMAT_OPENID, receive) : String.format(LARK_AT_FORMAT_USERNAME, receive))
+                    .map(receive -> StringUtils.startsWith(receive, LARK_OPENID_PREFIX)
+                            ? String.format(LARK_AT_FORMAT_OPENID, receive) : String.format(LARK_AT_FORMAT_USERNAME, receive))
                     .collect(Collectors.joining(" "));
         } else {
             String[] receivers = StringUtils.split(receives, ',');
@@ -191,7 +191,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         if (StringUtils.isBlank(poolAlisaName)) {
             return executorWrapper.getThreadPoolName();
         }
-        return executorWrapper.getThreadPoolName() + "("+poolAlisaName+")";
+        return executorWrapper.getThreadPoolName() + "(" + poolAlisaName + ")";
     }
 
     protected String getRejectHandlerName(ThreadPoolExecutor executor) {

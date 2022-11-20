@@ -20,7 +20,7 @@ import static com.dtp.common.constant.DynamicTpConst.MAIN_PROPERTIES_PREFIX;
  **/
 public class PropertiesBinder {
 
-    private PropertiesBinder() {}
+    private PropertiesBinder() { }
 
     public static void bindDtpProperties(Map<?, Object> properties, DtpProperties dtpProperties) {
         ConfigurationPropertySource sources = new MapConfigurationPropertySource(properties);

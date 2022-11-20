@@ -17,11 +17,11 @@ public class OnAlibabaDubboCondition extends AnyNestedCondition {
     }
 
     @ConditionalOnBean(type = "com.alibaba.dubbo.config.spring.beans.factory.annotation.ServiceAnnotationBeanPostProcessor")
-    static class ServiceAnnotationBpp {}
+    static class ServiceAnnotationBpp { }
 
     /**
      * just any common bean.
      */
     @ConditionalOnBean(type = "com.alibaba.dubbo.config.ProtocolConfig")
-    static class ProtocolConf {}
+    static class ProtocolConf { }
 }

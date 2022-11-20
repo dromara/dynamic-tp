@@ -84,8 +84,8 @@ public final class EtcdUtil {
                 if (Objects.isNull(keyValue)) {
                     return resultMap;
                 }
-                resultMap = ConfigHandler.getInstance().parseConfig(keyValue.getValue().toString(Charset.forName(etcd.getCharset()))
-                        , ConfigFileTypeEnum.of(configType));
+                resultMap = ConfigHandler.getInstance().parseConfig(keyValue.getValue().toString(Charset.forName(etcd.getCharset())),
+                        ConfigFileTypeEnum.of(configType));
             } else if (ConfigFileTypeEnum.of(configType).equals(ConfigFileTypeEnum.PROPERTIES)) {
                 ByteSequence key = bytesOf(etcd.getKey());
                 GetOption getOption = GetOption.newBuilder().withPrefix(key).build();
@@ -112,8 +112,8 @@ public final class EtcdUtil {
      * @param dtpProperties {@link DtpProperties}
      * @param map get watch key from the map
      */
-    public static void initWatcher(final EtcdRefresher etcdRefresher, final DtpProperties dtpProperties
-            , final Map<Object, Object> map) {
+    public static void initWatcher(final EtcdRefresher etcdRefresher, final DtpProperties dtpProperties,
+                                   final Map<Object, Object> map) {
         if (null != client) {
             String configType = dtpProperties.getConfigType();
             if (ConfigFileTypeEnum.of(configType).equals(ConfigFileTypeEnum.JSON)) {
@@ -142,8 +142,8 @@ public final class EtcdUtil {
         Etcd etcd = dtpProperties.getEtcd();
         if (ConfigFileTypeEnum.of(configType).equals(ConfigFileTypeEnum.JSON)) {
             KeyValue keyValue = events.get(0).getKeyValue();
-            resultMap = ConfigHandler.getInstance().parseConfig(keyValue.getValue().toString(Charset.forName(etcd.getCharset()))
-                    , ConfigFileTypeEnum.of(configType));
+            resultMap = ConfigHandler.getInstance().parseConfig(keyValue.getValue().toString(Charset.forName(etcd.getCharset())),
+                    ConfigFileTypeEnum.of(configType));
         } else if (ConfigFileTypeEnum.of(configType).equals(ConfigFileTypeEnum.PROPERTIES)) {
             events.forEach(event -> {
                 KeyValue keyValue = event.getKeyValue();

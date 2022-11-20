@@ -29,7 +29,8 @@ public final class ReflectionUtil {
         return fieldObj;
     }
 
-    public static void setFieldValue(Class<?> targetClass, String fieldName, Object targetObj, Object targetVal) throws IllegalAccessException {
+    public static void setFieldValue(Class<?> targetClass, String fieldName, Object targetObj, Object targetVal)
+            throws IllegalAccessException {
         val field = getField(targetClass, fieldName);
         if (Objects.isNull(field)) {
             return;

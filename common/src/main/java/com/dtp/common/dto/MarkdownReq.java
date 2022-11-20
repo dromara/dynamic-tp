@@ -25,8 +25,12 @@ public class MarkdownReq {
 
     private At at;
 
+    /**
+     * Markdown entity.
+     */
     @Data
     public static class Markdown {
+
         private String title;
 
         // for wechat
@@ -36,6 +40,9 @@ public class MarkdownReq {
         private String text;
     }
 
+    /**
+     * At info.
+     */
     @Data
     public static class At {
 

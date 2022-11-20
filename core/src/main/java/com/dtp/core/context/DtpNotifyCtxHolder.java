@@ -10,7 +10,7 @@ public class DtpNotifyCtxHolder {
 
     private static final ThreadLocal<BaseNotifyCtx> CONTEXT = new ThreadLocal<>();
 
-    private DtpNotifyCtxHolder() {}
+    private DtpNotifyCtxHolder() { }
 
     public static void set(BaseNotifyCtx dtpContext) {
         CONTEXT.set(dtpContext);

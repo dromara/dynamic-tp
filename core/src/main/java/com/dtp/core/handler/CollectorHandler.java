@@ -20,7 +20,7 @@ import java.util.ServiceLoader;
  * @since 1.0.0
  **/
 @Slf4j
-public class CollectorHandler {
+public final class CollectorHandler {
 
     private static final Map<String, MetricsCollector> COLLECTORS = Maps.newHashMap();
 

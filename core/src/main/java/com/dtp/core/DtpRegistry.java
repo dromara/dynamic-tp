@@ -115,7 +115,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      * @return the managed DtpExecutor instance
      */
     public static DtpExecutor getDtpExecutor(final String name) {
-        val executor= DTP_REGISTRY.get(name);
+        val executor = DTP_REGISTRY.get(name);
         if (Objects.isNull(executor)) {
             log.error("Cannot find a specified dtpExecutor, name: {}", name);
             throw new DtpException("Cannot find a specified dtpExecutor, name: " + name);
@@ -130,7 +130,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      * @return the managed ExecutorWrapper instance
      */
     public static ExecutorWrapper getCommonExecutor(final String name) {
-        val executor= COMMON_REGISTRY.get(name);
+        val executor = COMMON_REGISTRY.get(name);
         if (Objects.isNull(executor)) {
             log.error("Cannot find a specified commonExecutor, name: {}", name);
             throw new DtpException("Cannot find a specified commonExecutor, name: " + name);
@@ -164,10 +164,10 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
     private static void refresh(DtpExecutor executor, ThreadPoolProperties properties) {
 
-        if (properties.getCorePoolSize() < 0 ||
-                properties.getMaximumPoolSize() <= 0 ||
-                properties.getMaximumPoolSize() < properties.getCorePoolSize() ||
-                properties.getKeepAliveTime() < 0) {
+        if (properties.getCorePoolSize() < 0
+                || properties.getMaximumPoolSize() <= 0
+                || properties.getMaximumPoolSize() < properties.getCorePoolSize()
+                || properties.getKeepAliveTime() < 0) {
             log.error("DynamicTp refresh, invalid parameters exist, properties: {}", properties);
             return;
         }
@@ -182,9 +182,8 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
         List<FieldInfo> diffFields = EQUATOR.getDiffFields(oldProp, newProp);
         List<String> diffKeys = diffFields.stream().map(FieldInfo::getFieldName).collect(toList());
-        log.info("DynamicTp refresh, name: [{}], changed keys: {}, corePoolSize: [{}], maxPoolSize: [{}], " +
-                        "queueType: [{}], queueCapacity: [{}], keepAliveTime: [{}], rejectedType: [{}], " +
-                        "allowsCoreThreadTimeOut: [{}]",
+        log.info("DynamicTp refresh, name: [{}], changed keys: {}, corePoolSize: [{}], maxPoolSize: [{}], queueType: [{}], " +
+                        "queueCapacity: [{}], keepAliveTime: [{}], rejectedType: [{}], allowsCoreThreadTimeOut: [{}]",
                 executor.getThreadPoolName(),
                 diffKeys,
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getCorePoolSize(), newProp.getCorePoolSize()),
@@ -265,8 +264,8 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         val registeredDtpExecutors = Sets.newHashSet(DTP_REGISTRY.keySet());
         val localDtpExecutors = CollUtil.subtract(registeredDtpExecutors, remoteExecutors);
         val localCommonExecutors = COMMON_REGISTRY.keySet();
-        log.info("DtpRegistry initialization end, remote dtpExecutors: {}, local dtpExecutors: {}," +
-                " local commonExecutors: {}", remoteExecutors, localDtpExecutors, localCommonExecutors);
+        log.info("DtpRegistry initialization end, remote dtpExecutors: {}, local dtpExecutors: {}, local commonExecutors: {}",
+                remoteExecutors, localDtpExecutors, localCommonExecutors);
         if (CollUtil.isEmpty(dtpProperties.getPlatforms())) {
             log.warn("DtpRegistry initialization end, no notify platforms configured.");
         }
@@ -311,9 +310,9 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
     }
 
     private static boolean canModifyQueueProp(ThreadPoolProperties properties) {
-        return Objects.equals(properties.getQueueType(), VARIABLE_LINKED_BLOCKING_QUEUE.getName()) ||
-                Objects.equals(properties.getQueueType(), MEMORY_SAFE_LINKED_BLOCKING_QUEUE.getName()) ||
-                Objects.equals(properties.getExecutorType(), EAGER.getName());
+        return Objects.equals(properties.getQueueType(), VARIABLE_LINKED_BLOCKING_QUEUE.getName())
+                || Objects.equals(properties.getQueueType(), MEMORY_SAFE_LINKED_BLOCKING_QUEUE.getName())
+                || Objects.equals(properties.getExecutorType(), EAGER.getName());
     }
 
     @Override

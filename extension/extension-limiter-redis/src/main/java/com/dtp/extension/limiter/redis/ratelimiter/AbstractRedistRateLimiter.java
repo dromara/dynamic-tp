@@ -31,7 +31,7 @@ public abstract class AbstractRedistRateLimiter implements RedisRateLimiter<List
     @Resource
     protected StringRedisTemplate stringRedisTemplate;
 
-    protected final static AtomicInteger COUNTER = new AtomicInteger(0);
+    protected static final AtomicInteger COUNTER = new AtomicInteger(0);
 
     public AbstractRedistRateLimiter(String scriptName) {
         DefaultRedisScript redisScript = new DefaultRedisScript<>();

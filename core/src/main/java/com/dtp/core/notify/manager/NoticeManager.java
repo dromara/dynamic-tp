@@ -17,7 +17,7 @@ public class NoticeManager {
 
     private static final ExecutorService NOTICE_EXECUTOR = ThreadPoolCreator.createCommonFast("dtp-notify");
 
-    private NoticeManager() {}
+    private NoticeManager() { }
 
     private static final FilterChain<BaseNotifyCtx> NOTICE_FILTER_CHAIN;
 

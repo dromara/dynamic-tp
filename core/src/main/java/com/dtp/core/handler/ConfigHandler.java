@@ -19,7 +19,7 @@ import java.util.ServiceLoader;
  * @author yanhom
  * @since 1.0.0
  **/
-public class ConfigHandler {
+public final class ConfigHandler {
 
     private static final List<ConfigParser> PARSERS = Lists.newArrayList();
 

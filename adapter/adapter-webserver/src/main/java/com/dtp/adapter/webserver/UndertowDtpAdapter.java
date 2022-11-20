@@ -98,8 +98,8 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
                 return;
             }
 
-            log.info("DynamicTp adapter [{}] refreshed end, corePoolSize: [{}], maxPoolSize: [{}], " +
-                            "keepAliveTime: [{}]", POOL_NAME,
+            log.info("DynamicTp adapter [{}] refreshed end, corePoolSize: [{}], maxPoolSize: [{}], keepAliveTime: [{}]",
+                    POOL_NAME,
                     String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldCorePoolSize, newCorePoolSize),
                     String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaxPoolSize, newMaxPoolSize),
                     String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldKeepAliveTime, newKeepAliveTime));

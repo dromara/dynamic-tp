@@ -50,10 +50,10 @@ public interface DtpAdapter extends MetricsAware {
      * @return true or false
      */
     default boolean containsInvalidParams(SimpleTpProperties properties, Logger log) {
-        if (properties.getCorePoolSize() < 0 ||
-                properties.getMaximumPoolSize() <= 0 ||
-                properties.getMaximumPoolSize() < properties.getCorePoolSize() ||
-                properties.getKeepAliveTime() < 0) {
+        if (properties.getCorePoolSize() < 0
+                || properties.getMaximumPoolSize() <= 0
+                || properties.getMaximumPoolSize() < properties.getCorePoolSize()
+                || properties.getKeepAliveTime() < 0) {
             log.error("DynamicTp adapter refresh, invalid parameters exist, properties: {}", properties);
             return true;
         }

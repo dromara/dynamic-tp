@@ -27,7 +27,8 @@ public class ZookeeperRefresher extends AbstractRefresher implements Environment
         final ConnectionStateListener connectionStateListener = (client, newState) -> {
             if (newState == ConnectionState.RECONNECTED) {
                 loadAndRefresh();
-            }};
+            }
+        };
 
         final CuratorListener curatorListener = (client, curatorEvent) -> {
             final WatchedEvent watchedEvent = curatorEvent.getWatchedEvent();
@@ -40,7 +41,8 @@ public class ZookeeperRefresher extends AbstractRefresher implements Environment
                     default:
                         break;
                 }
-            }};
+            }
+        };
 
         CuratorFramework curatorFramework = CuratorUtil.getCuratorFramework(dtpProperties);
         String nodePath = CuratorUtil.nodePath(dtpProperties);

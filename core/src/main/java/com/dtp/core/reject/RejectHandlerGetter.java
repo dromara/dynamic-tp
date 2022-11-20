@@ -20,7 +20,7 @@ import static com.dtp.common.em.RejectedTypeEnum.*;
 @Slf4j
 public class RejectHandlerGetter {
 
-    private RejectHandlerGetter() {}
+    private RejectHandlerGetter() { }
 
     public static RejectedExecutionHandler buildRejectedHandler(String name) {
         if (Objects.equals(name, ABORT_POLICY.getName())) {

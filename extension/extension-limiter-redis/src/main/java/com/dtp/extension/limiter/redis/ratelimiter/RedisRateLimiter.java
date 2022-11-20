@@ -5,8 +5,9 @@ import org.springframework.data.redis.core.script.RedisScript;
 import java.util.List;
 
 /**
- * RedisRateLimiter related
+ * RedisRateLimiter related.
  *
+ * @param <T>
  * @author yanhom
  * @since 1.0.8
  **/

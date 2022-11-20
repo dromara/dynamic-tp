@@ -62,7 +62,7 @@ public class NamedThreadFactory implements ThreadFactory {
         return t;
     }
 
-    public static class DtpUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler{
+    public static class DtpUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
         @Override
         public void uncaughtException(Thread t, Throwable e) {
             log.error("thread {} throw exception {}", t, e);

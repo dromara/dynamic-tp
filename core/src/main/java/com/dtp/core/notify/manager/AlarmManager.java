@@ -54,7 +54,7 @@ public class AlarmManager {
         ALARM_FILTER_CHAIN = NotifyFilterBuilder.getAlarmNoticeFilter();
     }
 
-    private AlarmManager() {}
+    private AlarmManager() { }
 
     public static void initAlarm(DtpExecutor executor, List<NotifyPlatform> platforms) {
         if (CollUtil.isEmpty(platforms)) {

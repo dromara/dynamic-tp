@@ -26,7 +26,7 @@ public class AlarmCounter {
 
     private static final String DEFAULT_COUNT_STR = UNKNOWN + " / " + UNKNOWN;
 
-    private AlarmCounter() {}
+    private AlarmCounter() { }
 
     private static final Map<String, AlarmInfo> ALARM_INFO_CACHE = new ConcurrentHashMap<>();
 
@@ -74,10 +74,10 @@ public class AlarmCounter {
 
         DtpExecutor dtpExecutor = (DtpExecutor) executor;
         String rejectCount = getCount(threadPoolName, REJECT.getValue()) + " / " + dtpExecutor.getRejectCount();
-        String runTimeoutCount = getCount(threadPoolName, RUN_TIMEOUT.getValue()) + " / " +
-                dtpExecutor.getRunTimeoutCount();
-        String queueTimeoutCount = getCount(threadPoolName, QUEUE_TIMEOUT.getValue()) + " / " +
-                dtpExecutor.getQueueTimeoutCount();
+        String runTimeoutCount = getCount(threadPoolName, RUN_TIMEOUT.getValue()) + " / "
+                + dtpExecutor.getRunTimeoutCount();
+        String queueTimeoutCount = getCount(threadPoolName, QUEUE_TIMEOUT.getValue()) + " / "
+                + dtpExecutor.getQueueTimeoutCount();
         return new ImmutableTriple<>(rejectCount, runTimeoutCount, queueTimeoutCount);
     }
 

@@ -28,7 +28,7 @@ public class BaseNotifyCtx {
 
     private NotifyItem notifyItem;
 
-    public BaseNotifyCtx() {}
+    public BaseNotifyCtx() { }
 
     public BaseNotifyCtx(ExecutorWrapper wrapper, NotifyItem notifyItem) {
         this.executorWrapper = wrapper;

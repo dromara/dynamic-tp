@@ -59,7 +59,7 @@ public class NotifyItemManager {
         ALL_ALARM_KEYS.addAll(COMMON_ALARM_KEYS);
     }
 
-    private NotifyItemManager() {}
+    private NotifyItemManager() { }
 
     public static Set<String> getAllAlarmKeys() {
         return ALL_ALARM_KEYS;

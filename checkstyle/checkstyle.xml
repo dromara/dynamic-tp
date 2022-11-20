@@ -18,7 +18,7 @@
     <!-- import检查-->
     <!-- 避免使用* -->
     <module name="AvoidStarImport">
-      <property name="excludes" value="java.io,java.net,java.lang.Math"/>
+      <property name="excludes" value="java.io,java.util,java.net,java.lang.Math,java.util.concurrent,java.lang.annotation,com.dtp.common.dto,com.ctrip.framework.apollo"/>
       <!-- 实例；import java.util.*;.-->
       <property name="allowClassImports" value="false"/>
       <!-- 实例 ；import static org.junit.Assert.*;-->
@@ -31,21 +31,13 @@
     <!-- 没用的import检查，比如：1.没有被用到2.重复的3.import java.lang的4.import 与该类在同一个package的 -->
     <module name="UnusedImports" />
 
-
     <!-- 注释检查 -->
     <!-- 检查方法和构造函数的javadoc -->
     <module name="JavadocType">
+      <property name="tokens" value="INTERFACE_DEF"/>
       <property name="allowUnknownTags" value="true"/>
-      <property name="allowMissingParamTags" value="true"/>
       <message key="javadoc.missing" value="类注释：缺少Javadoc注释。"/>
     </module>
-    <module name="JavadocMethod">
-      <property name="tokens" value="METHOD_DEF" />
-      <!--允许get set 方法没有注释-->
-      <property name="allowMissingPropertyJavadoc" value="true"/>
-      <message key="javadoc.missing" value="方法注释：缺少Javadoc注释。"/>
-    </module>
-
     <!-- 命名检查 -->
     <!-- 局部的final变量，包括catch中的参数的检查 -->
     <module name="LocalFinalVariableName" />
@@ -79,10 +71,6 @@
     <module name="UpperEll"/>
 
     <!-- 长度检查 -->
-    <!-- 每行不超过120个字符 -->
-    <module name="LineLength">
-      <property name="max" value="120" />
-    </module>
     <!-- 方法不超过50行 -->
     <module name="MethodLength">
       <property name="tokens" value="METHOD_DEF" />
@@ -104,8 +92,6 @@
     <module name="NoWhitespaceAfter"/>
     <!-- 检查在某个特定关键字之前应保留空格 -->
     <module name="NoWhitespaceBefore"/>
-    <!-- 操作符换行策略检查 -->
-    <module name="OperatorWrap"/>
     <!-- 圆括号空白 -->
     <module name="ParenPad"/>
     <!-- 检查分隔符是否在空白之后 -->
@@ -126,10 +112,10 @@
     <module name="EmptyBlock"/>
     <!-- 检查左大括号位置 -->
     <module name="LeftCurly"/>
-    <!-- 检查代码块是否缺失{} -->
-    <module name="NeedBraces"/>
     <!-- 检查右大括号位置 -->
     <module name="RightCurly"/>
+    <!-- 检查代码块是否缺失{} -->
+    <module name="NeedBraces"/>
 
     <!-- 代码检查 -->
     <!-- 检查空的代码段 -->
@@ -138,15 +124,7 @@
     <module name="EqualsHashCode"/>
     <!-- 检查是否使用工厂方法实例化 -->
     <module name="IllegalInstantiation"/>
-    <!-- 检查子表达式中是否有赋值操作 -->
-    <module name="InnerAssignment"/>
     <!-- 检查是否有"魔术"数字 -->
-    <module name="MagicNumber">
-      <property name="ignoreNumbers" value="0, 1, 2"/>
-      <property name="ignoreAnnotation" value="true"/>
-      <property name="ignoreHashCodeMethod" value="true"/>
-      <property name="ignoreFieldDeclaration" value="true"/>
-    </module>
     <!-- 检查switch语句是否有default -->
     <module name="MissingSwitchDefault"/>
     <!-- 检查是否有过度复杂的布尔表达式 -->
@@ -156,8 +134,6 @@
 
     <!-- 类设计检查 -->
     <!-- 检查类是否为扩展设计l -->
-    <!-- 检查只有private构造函数的类是否声明为final -->
-    <module name="FinalClass"/>
     <!-- 检查接口是否仅定义类型 -->
     <module name="InterfaceIsType"/>
     <!-- 检查类成员的可见度 检查类成员的可见性。只有static final 成员是public的
@@ -187,10 +163,6 @@
       <property name="format" value="System\.out\.println"/>
       <property name="illegalPattern" value="true"/>
     </module>
-    <!-- return个数 3个-->
-    <module name="ReturnCount">
-      <property name="max" value="3"/>
-    </module>
     <!--try catch 异常处理数量 3-->
     <module name="NestedTryDepth ">
       <property name="max" value="3"/>
@@ -199,7 +171,5 @@
     <module name="SuperClone" />
     <!-- finalize 必须调用了super.finalize() -->
     <module name="SuperFinalize" />
-
-
   </module>
 </module>

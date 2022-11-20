@@ -137,7 +137,7 @@ public class ThreadPoolBuilder {
      */
     private List<NotifyItem> notifyItems = NotifyItem.getAllNotifyItems();
 
-    private ThreadPoolBuilder() {}
+    private ThreadPoolBuilder() { }
 
     public static ThreadPoolBuilder newBuilder() {
         return new ThreadPoolBuilder();

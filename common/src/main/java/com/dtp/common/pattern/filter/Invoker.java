@@ -3,6 +3,7 @@ package com.dtp.common.pattern.filter;
 /**
  * Invoker related
  *
+ * @param <T> the source type
  * @author yanhom
  * @since 1.0.8
  **/

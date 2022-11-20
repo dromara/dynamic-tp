@@ -61,9 +61,9 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
         }
     }
 
-    protected void initialize() {}
+    protected void initialize() { }
 
-    public void register(String poolName, ThreadPoolExecutor threadPoolExecutor) {}
+    public void register(String poolName, ThreadPoolExecutor threadPoolExecutor) { }
 
     @Override
     public Map<String, ExecutorWrapper> getExecutorWrappers() {
@@ -98,7 +98,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
         }
 
         val tmpMap = StreamUtil.toMap(properties, SimpleTpProperties::getThreadPoolName);
-        executorWrappers.forEach((k ,v) -> refresh(name, v, platforms, tmpMap.get(k)));
+        executorWrappers.forEach((k, v) -> refresh(name, v, platforms, tmpMap.get(k)));
     }
 
     public void refresh(String name,
@@ -121,8 +121,8 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
 
         List<FieldInfo> diffFields = EQUATOR.getDiffFields(oldProp, newProp);
         List<String> diffKeys = diffFields.stream().map(FieldInfo::getFieldName).collect(toList());
-        log.info("DynamicTp {} adapter, [{}] refreshed end, changed keys: {}, corePoolSize: [{}], " +
-                        "maxPoolSize: [{}], keepAliveTime: [{}]",
+        log.info("DynamicTp {} adapter, [{}] refreshed end, changed keys: {}, corePoolSize: [{}], "
+                        + "maxPoolSize: [{}], keepAliveTime: [{}]",
                 name, executorWrapper.getThreadPoolName(), diffKeys,
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getCorePoolSize(), newProp.getCorePoolSize()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getMaxPoolSize(), newProp.getMaxPoolSize()),
@@ -147,7 +147,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
         if (!Objects.equals(executor.getKeepAliveTime(properties.getUnit()), properties.getKeepAliveTime())) {
             executor.setKeepAliveTime(properties.getKeepAliveTime(), properties.getUnit());
         }
-        if(StringUtils.isNotBlank(properties.getThreadPoolAliasName())){
+        if (StringUtils.isNotBlank(properties.getThreadPoolAliasName())) {
             executorWrapper.setThreadPoolAliasName(properties.getThreadPoolAliasName());
         }
 

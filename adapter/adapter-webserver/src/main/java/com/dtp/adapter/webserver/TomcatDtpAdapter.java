@@ -79,8 +79,8 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter {
             log.warn("DynamicTp adapter refresh, main properties of [{}] have not changed.", POOL_NAME);
             return;
         }
-        log.info("DynamicTp adapter [{}] refreshed end, corePoolSize: [{}], maxPoolSize: [{}], " +
-                        "keepAliveTime: [{}]", POOL_NAME,
+        log.info("DynamicTp adapter [{}] refreshed end, corePoolSize: [{}], maxPoolSize: [{}], keepAliveTime: [{}]",
+                POOL_NAME,
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getCorePoolSize(), newProp.getCorePoolSize()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getMaxPoolSize(), newProp.getMaxPoolSize()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getKeepAliveTime(), newProp.getKeepAliveTime()));

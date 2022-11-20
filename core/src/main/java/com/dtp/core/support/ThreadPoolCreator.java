@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  **/
 public class ThreadPoolCreator {
 
-    private ThreadPoolCreator() {}
+    private ThreadPoolCreator() { }
 
     public static ThreadPoolExecutor createCommonFast(String threadPrefix) {
         return ThreadPoolBuilder.newBuilder()

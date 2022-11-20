@@ -73,7 +73,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         properties.put(RUN_TIMEOUT, tpp.getRunTimeout());
         properties.put(QUEUE_TIMEOUT, tpp.getQueueTimeout());
 
-        val notifyItems= mergeAllNotifyItems(tpp.getNotifyItems());
+        val notifyItems = mergeAllNotifyItems(tpp.getNotifyItems());
         properties.put(NOTIFY_ITEMS, notifyItems);
 
         val taskWrappers = TaskWrappers.getInstance().getByNames(tpp.getTaskWrapperNames());

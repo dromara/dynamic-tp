@@ -26,8 +26,7 @@ public class DtpLoggingInitializer {
                 Class.forName("org.apache.logging.log4j.LogManager");
                 dtpLogging = new DtpLog4j2Logging();
             } catch (ClassNotFoundException classNotFoundException) {
-                log.error("DynamicTp initialize logging failed, " +
-                        "please check whether logback or log4j related dependencies exist.");
+                log.error("DynamicTp initialize logging failed, please check whether logback or log4j related dependencies exist.");
             }
         }
     }

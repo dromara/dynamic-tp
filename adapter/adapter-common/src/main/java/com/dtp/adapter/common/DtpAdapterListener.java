@@ -31,9 +31,9 @@ public class DtpAdapterListener implements GenericApplicationListener {
     public boolean supportsEventType(ResolvableType resolvableType) {
         Class<?> type = resolvableType.getRawClass();
         if (type != null) {
-            return RefreshEvent.class.isAssignableFrom(type) ||
-                    CollectEvent.class.isAssignableFrom(type) ||
-                    AlarmCheckEvent.class.isAssignableFrom(type);
+            return RefreshEvent.class.isAssignableFrom(type)
+                    || CollectEvent.class.isAssignableFrom(type)
+                    || AlarmCheckEvent.class.isAssignableFrom(type);
         }
         return false;
     }

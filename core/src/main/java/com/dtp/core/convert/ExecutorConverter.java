@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  **/
 public class ExecutorConverter {
 
-    private ExecutorConverter() {}
+    private ExecutorConverter() { }
 
     public static DtpMainProp convert(DtpExecutor dtpExecutor) {
         DtpMainProp mainProp = new DtpMainProp();

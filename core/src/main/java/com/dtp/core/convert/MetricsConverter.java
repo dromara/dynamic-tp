@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  **/
 public class MetricsConverter {
 
-    private MetricsConverter() {}
+    private MetricsConverter() { }
 
     public static ThreadPoolStats convert(DtpExecutor executor) {
         if (executor == null) {

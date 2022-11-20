@@ -37,7 +37,7 @@ public class CuratorUtil {
 
     private static final CountDownLatch COUNT_DOWN_LATCH = new CountDownLatch(1);
 
-    private CuratorUtil() {}
+    private CuratorUtil() { }
 
     public static CuratorFramework getCuratorFramework(DtpProperties dtpProperties) {
         if (curatorFramework == null) {
@@ -47,7 +47,8 @@ public class CuratorUtil {
             final ConnectionStateListener connectionStateListener = (client, newState) -> {
                 if (newState == ConnectionState.CONNECTED) {
                     COUNT_DOWN_LATCH.countDown();
-                }};
+                }
+            };
             curatorFramework.getConnectionStateListenable().addListener(connectionStateListener);
             curatorFramework.start();
             try {

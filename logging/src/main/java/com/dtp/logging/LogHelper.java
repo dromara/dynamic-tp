@@ -8,7 +8,7 @@ import org.slf4j.Logger;
  * @author yanhom
  * @since 1.0.0
  **/
-public class LogHelper {
+public final class LogHelper {
 
     private static Logger monitorLogger;
 
@@ -16,7 +16,7 @@ public class LogHelper {
         DtpLoggingInitializer.getInstance().loadConfiguration();
     }
 
-    private LogHelper() {}
+    private LogHelper() { }
 
     public static void init(Logger logger) {
         monitorLogger = logger;

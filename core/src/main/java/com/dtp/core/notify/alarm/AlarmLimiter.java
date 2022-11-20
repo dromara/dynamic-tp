@@ -20,7 +20,7 @@ public class AlarmLimiter {
 
     private static final Map<String, Cache<String, String>> ALARM_LIMITER = new ConcurrentHashMap<>();
 
-    private AlarmLimiter() {}
+    private AlarmLimiter() { }
 
     public static void initAlarmLimiter(String threadPoolName, NotifyItem notifyItem) {
         if (NotifyItemEnum.CHANGE.getValue().equalsIgnoreCase(notifyItem.getType())) {

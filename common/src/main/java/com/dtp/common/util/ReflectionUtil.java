@@ -14,8 +14,7 @@ import java.util.Objects;
  */
 public final class ReflectionUtil {
 
-    private ReflectionUtil() {
-    }
+    private ReflectionUtil() { }
 
     public static Object getFieldValue(Class<?> targetClass, String fieldName, Object targetObj) {
         val field = getField(targetClass, fieldName);

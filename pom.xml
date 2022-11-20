@@ -37,6 +37,7 @@
         <module>logging</module>
         <module>example</module>
         <module>extension</module>
+        <module>test</module>
     </modules>
 
     <dependencies>
@@ -70,6 +71,12 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
 

@@ -12,8 +12,7 @@ import java.util.Collection;
  **/
 public final class StringUtil {
 
-    private StringUtil() {
-    }
+    private StringUtil() { }
 
     public static boolean isEmpty(CharSequence str) {
         return null == str || str.length() == 0;

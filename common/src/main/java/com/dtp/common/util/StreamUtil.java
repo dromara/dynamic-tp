@@ -17,8 +17,7 @@ import java.util.stream.Collectors;
  **/
 public final class StreamUtil {
 
-    private StreamUtil() {
-    }
+    private StreamUtil() { }
 
     public static <P, O> Map<O, P> toMap(Collection<P> coll, Function<P, O> key) {
         if (CollUtil.isEmpty(coll) || Objects.isNull(key)) {

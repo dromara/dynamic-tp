@@ -1,6 +1,7 @@
-package com.dtp.common.util;
+package com.dtp.test.common.util;
 
 import com.dtp.common.dto.Instance;
+import com.dtp.common.util.ReflectionUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

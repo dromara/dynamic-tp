@@ -13,8 +13,7 @@ import org.springframework.core.env.Environment;
  */
 public final class NacosUtil {
 
-    private NacosUtil() {
-    }
+    private NacosUtil() { }
 
     public static String deduceDataId(DtpProperties.Nacos nacos,
                                       Environment environment,

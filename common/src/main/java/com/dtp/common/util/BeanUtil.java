@@ -18,8 +18,7 @@ import java.util.Map;
 @Slf4j
 public final class BeanUtil {
 
-    private BeanUtil() {
-    }
+    private BeanUtil() { }
 
     public static void registerIfAbsent(BeanDefinitionRegistry registry,
                                         String beanName,

@@ -1,10 +1,10 @@
-package com.dtp.test.starter;
+package com.dtp.test.configcenter;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TestStarterApplicationTests {
+class TestConfigCenterApplicationTests {
 
     @Test
     void contextLoads() {

@@ -8,4 +8,21 @@
         <version>1.0.9</version>
     </parent>
     <artifactId>dynamic-tp-test-extension</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>cn.dynamictp</groupId>
+            <artifactId>dynamic-tp-extension-limiter-redis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.dynamictp</groupId>
+            <artifactId>dynamic-tp-extension-notify-email</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.dynamictp</groupId>
+            <artifactId>dynamic-tp-extension-skywalking</artifactId>
+        </dependency>
+    </dependencies>
 </project>

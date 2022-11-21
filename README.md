@@ -84,7 +84,7 @@
 
 - **支持多配置中心**：基于主流配置中心实现线程池参数动态调整，实时生效，已支持 Nacos、Apollo、Zookeeper、Consul、Etcd，同时也提供 SPI 接口可自定义扩展实现
 
-- **中间件线程池管理**：集成管理常用第三方组件的线程池，已集成Tomcat、Jetty、Undertow、Dubbo、RocketMq、Hystrix、Grpc 等组件的线程池管理（调参、监控报警）
+- **中间件线程池管理**：集成管理常用第三方组件的线程池，已集成 Tomcat、Jetty、Undertow、Dubbo、RocketMq、Hystrix、Grpc 等组件的线程池管理（调参、监控报警）
 
 ---
 
@@ -112,7 +112,7 @@
 
 - 接入步骤
 
-  1.引入相应配置中心的依赖，具体见下述 maven依赖
+  1.引入相应配置中心的依赖，具体见下述 maven 依赖
 
   2.配置中心配置线程池实例，配置见下述（给出的是全配置项，不用的可以删除）
 
@@ -120,7 +120,7 @@
 
   4.使用 @Resource 或 @Autowired 进行依赖注入，或通过 DtpRegistry.getDtpExecutor("name")获取
 
-  5.通过以上4步就可以使用了，是不是感觉超简单
+  5.通过以上 4 步就可以使用了，是不是感觉超简单
 
 - maven 依赖，见官网文档，[maven 依赖](https://dynamictp.cn/guide/use/maven.html)
 
@@ -135,7 +135,7 @@
 ## 通知报警
 
 - 触发报警阈值会推送相应报警消息（活性、容量、拒绝、任务等待超时、任务执行超时），且会高亮显示相应字段
-  
+
   更多见官网文档，[通知报警](https://dynamictp.cn/guide/notice/alarm.html)
 
 <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d65151e3e9ca460eac18f30ea6be05d3~tplv-k3u1fbpfcp-zoom-1.image" alt="告警" width="50%" />
@@ -204,10 +204,20 @@
 
 ## 联系我
 
-看到这儿，**请给项目一个star**，你的支持是我们前进的动力！
+看到这儿，**请给项目一个 star**，你的支持是我们前进的动力！
 
 使用过程中有任何问题，或者对项目有什么想法或者建议，可以加入社群，跟 500+ 群友一起交流讨论。
 
-微信群已满200人，可以关注微信公众号，加我个人微信拉群（备注：dynamic-tp）。
+微信群已满 200 人，可以关注微信公众号，加我个人微信拉群（备注：dynamic-tp）。
 
 ![](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/530709dc29604630b6d1537d7c160ea5~tplv-k3u1fbpfcp-watermark.image)
+
+---
+
+## 鸣谢
+
+感谢 JetBrains 对开源项目的支持
+
+<a href="https://jb.gg/OpenSourceSupport">
+  <img src="https://user-images.githubusercontent.com/8643542/160519107-199319dc-e1cf-4079-94b7-01b6b8d23aa6.png" align="left" height="150" width="150" alt="JetBrains">
+</a>

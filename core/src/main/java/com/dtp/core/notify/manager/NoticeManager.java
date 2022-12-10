@@ -1,6 +1,6 @@
 package com.dtp.core.notify.manager;
 
-import com.dtp.common.pattern.filter.FilterChain;
+import com.dtp.common.pattern.filter.InvokerChain;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.context.NoticeCtx;
 import com.dtp.core.support.ThreadPoolCreator;
@@ -19,14 +19,14 @@ public class NoticeManager {
 
     private NoticeManager() { }
 
-    private static final FilterChain<BaseNotifyCtx> NOTICE_FILTER_CHAIN;
+    private static final InvokerChain<BaseNotifyCtx> NOTICE_FILTER_CHAIN;
 
     static {
         NOTICE_FILTER_CHAIN = NotifyFilterBuilder.getCommonNoticeFilter();
     }
 
     public static void doNotice(NoticeCtx noticeCtx) {
-        NOTICE_FILTER_CHAIN.fire(noticeCtx);
+        NOTICE_FILTER_CHAIN.proceed(noticeCtx);
     }
 
     public static void doNoticeAsync(NoticeCtx noticeCtx) {

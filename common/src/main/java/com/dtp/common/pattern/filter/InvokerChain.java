@@ -1,16 +1,16 @@
 package com.dtp.common.pattern.filter;
 
 /**
- * FilterChain related
+ * InvokerChain related
  *
  * @author yanhom
  * @since 1.0.8
  **/
-public class FilterChain<T> {
+public class InvokerChain<T> {
 
     private Invoker<T> head;
 
-    public void fire(T context) {
+    public void proceed(T context) {
         head.invoke(context);
     }
 
@@ -18,3 +18,5 @@ public class FilterChain<T> {
         this.head = head;
     }
 }
+
+

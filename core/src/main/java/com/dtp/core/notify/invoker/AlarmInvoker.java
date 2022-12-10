@@ -1,10 +1,10 @@
 package com.dtp.core.notify.invoker;
 
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.dto.AlarmInfo;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.pattern.filter.Invoker;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.context.DtpNotifyCtxHolder;

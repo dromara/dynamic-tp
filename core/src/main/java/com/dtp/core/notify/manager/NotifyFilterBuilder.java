@@ -3,8 +3,8 @@ package com.dtp.core.notify.manager;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.pattern.filter.Filter;
-import com.dtp.common.pattern.filter.FilterChain;
-import com.dtp.common.pattern.filter.FilterChainFactory;
+import com.dtp.common.pattern.filter.InvokerChain;
+import com.dtp.common.pattern.filter.InvokerChainFactory;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.notify.filter.AlarmBaseFilter;
 import com.dtp.core.notify.filter.NotifyFilter;
@@ -25,11 +25,9 @@ import java.util.stream.Collectors;
  */
 public class NotifyFilterBuilder {
 
-    private NotifyFilterBuilder() {
+    private NotifyFilterBuilder() { }
 
-    }
-
-    public static FilterChain<BaseNotifyCtx> getAlarmNoticeFilter() {
+    public static InvokerChain<BaseNotifyCtx> getAlarmNoticeFilter() {
         val filters = ApplicationContextHolder.getBeansOfType(NotifyFilter.class);
         Collection<NotifyFilter> alarmNoticeFilters = Lists.newArrayList(filters.values());
         alarmNoticeFilters.add(new AlarmBaseFilter());
@@ -37,18 +35,18 @@ public class NotifyFilterBuilder {
                 .filter(x -> x.supports(NotifyTypeEnum.ALARM))
                 .sorted(Comparator.comparing(Filter::getOrder))
                 .collect(Collectors.toList());
-        return FilterChainFactory.buildFilterChain(new AlarmInvoker(),
+        return InvokerChainFactory.buildInvokerChain(new AlarmInvoker(),
                 alarmNoticeFilters.toArray(new NotifyFilter[0]));
     }
 
-    public static FilterChain<BaseNotifyCtx> getCommonNoticeFilter() {
+    public static InvokerChain<BaseNotifyCtx> getCommonNoticeFilter() {
         val filters = ApplicationContextHolder.getBeansOfType(NotifyFilter.class);
         Collection<NotifyFilter> commonNoticeFilters = Lists.newArrayList(filters.values());
         commonNoticeFilters = commonNoticeFilters.stream()
                 .filter(x -> x.supports(NotifyTypeEnum.COMMON))
                 .sorted(Comparator.comparing(Filter::getOrder))
                 .collect(Collectors.toList());
-        return FilterChainFactory.buildFilterChain(new NoticeInvoker(),
+        return InvokerChainFactory.buildInvokerChain(new NoticeInvoker(),
                 commonNoticeFilters.toArray(new NotifyFilter[0]));
     }
 }

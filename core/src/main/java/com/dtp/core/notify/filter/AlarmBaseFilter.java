@@ -3,9 +3,9 @@ package com.dtp.core.notify.filter;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.pattern.filter.Invoker;
 import com.dtp.core.context.BaseNotifyCtx;
-import com.dtp.core.notify.manager.NotifyItemManager;
 import com.dtp.core.notify.alarm.AlarmLimiter;
 import com.dtp.core.notify.manager.AlarmManager;
+import com.dtp.core.notify.manager.NotifyItemManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -57,7 +57,6 @@ public class AlarmBaseFilter implements NotifyFilter {
             }
             AlarmLimiter.putVal(executorWrapper.getThreadPoolName(), notifyItemEnum.getValue());
         }
-
         nextFilter.invoke(context);
     }
 }

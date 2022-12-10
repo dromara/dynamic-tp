@@ -3,7 +3,7 @@ package com.dtp.common.pattern.filter;
 /**
  * Invoker related
  *
- * @param <T> the source type
+ * @param <T> the param type
  * @author yanhom
  * @since 1.0.8
  **/
@@ -14,5 +14,5 @@ public interface Invoker<T> {
      *
      * @param context context
      */
-    default void invoke(T context) { }
+    void invoke(T context);
 }

@@ -3,7 +3,7 @@ package com.dtp.common.pattern.filter;
 /**
  * Filter related
  *
- * @param <T> the source type
+ * @param <T> the param type
  * @author yanhom
  * @since 1.0.8
  **/
@@ -20,7 +20,7 @@ public interface Filter<T> {
      * Do filter.
      *
      * @param context context
-     * @param nextFilter next filter
+     * @param nextInvoker next invoker
      */
-    void doFilter(T context, Invoker<T> nextFilter);
+    void doFilter(T context, Invoker<T> nextInvoker);
 }

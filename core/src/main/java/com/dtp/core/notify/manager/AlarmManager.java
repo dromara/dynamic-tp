@@ -8,7 +8,7 @@ import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.RejectedTypeEnum;
-import com.dtp.common.pattern.filter.FilterChain;
+import com.dtp.common.pattern.filter.InvokerChain;
 import com.dtp.common.util.StreamUtil;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
@@ -48,7 +48,7 @@ public class AlarmManager {
             .rejectedExecutionHandler(RejectedTypeEnum.DISCARD_OLDEST_POLICY.getName())
             .buildCommon();
 
-    private static final FilterChain<BaseNotifyCtx> ALARM_FILTER_CHAIN;
+    private static final InvokerChain<BaseNotifyCtx> ALARM_FILTER_CHAIN;
 
     static {
         ALARM_FILTER_CHAIN = NotifyFilterBuilder.getAlarmNoticeFilter();
@@ -125,7 +125,7 @@ public class AlarmManager {
             return;
         }
         AlarmCtx alarmCtx = new AlarmCtx(executorWrapper, notifyItem);
-        ALARM_FILTER_CHAIN.fire(alarmCtx);
+        ALARM_FILTER_CHAIN.proceed(alarmCtx);
     }
 
     public static boolean checkThreshold(ExecutorWrapper executor, NotifyItemEnum itemEnum, NotifyItem notifyItem) {

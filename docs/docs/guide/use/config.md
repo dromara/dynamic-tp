@@ -77,6 +77,16 @@ spring:
           corePoolSize: 100
           maximumPoolSize: 200
           keepAliveTime: 60
+      motanTp:                                      # motan server 线程池配置
+        - threadPoolName: motanTp#8002
+          corePoolSize: 100
+          maximumPoolSize: 200
+          keepAliveTime: 60
+      okhttp3Tp:                                      # okhttp3 线程池配置
+        - threadPoolName: okHttpClientTp
+          corePoolSize: 100
+          maximumPoolSize: 200
+          keepAliveTime: 60
       dubboTp:                                     # dubbo 线程池配置
         - threadPoolName: dubboTp#20880            # 名称规则：dubboTp + "#" + 协议端口
           threadPoolAliasName: 测试线程池            

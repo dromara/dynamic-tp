@@ -152,6 +152,12 @@
 
             <dependency>
                 <groupId>cn.dynamictp</groupId>
+                <artifactId>dynamic-tp-adapter-motan</artifactId>
+                <version>${dtp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.dynamictp</groupId>
                 <artifactId>dynamic-tp-extension-limiter-redis</artifactId>
                 <version>${dtp.version}</version>
             </dependency>

@@ -17,6 +17,7 @@
         <module>adapter-rocketmq</module>
         <module>adapter-hystrix</module>
         <module>adapter-grpc</module>
+        <module>adapter-motan</module>
     </modules>
 
     <dependencies>

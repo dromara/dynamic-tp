@@ -11,8 +11,8 @@
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
+        <motan.version>1.1.13</motan.version> <!--use the latest version from maven central-->
     </properties>
-
     <dependencies>
 
         <dependency>
@@ -73,6 +73,12 @@
         <dependency>
             <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-adapter-webserver</artifactId>
+            <version>${dtp.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.dynamictp</groupId>
+            <artifactId>dynamic-tp-spring-boot-starter-adapter-motan</artifactId>
             <version>${dtp.version}</version>
         </dependency>
 
@@ -165,6 +171,24 @@
             <artifactId>grpc-spring-boot-starter</artifactId>
             <version>2.13.1.RELEASE</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.weibo</groupId>
+            <artifactId>motan-core</artifactId>
+            <version>${motan.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.weibo</groupId>
+            <artifactId>motan-transport-netty</artifactId>
+            <version>${motan.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.weibo</groupId>
+            <artifactId>motan-springsupport</artifactId>
+            <version>${motan.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>

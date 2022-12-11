@@ -17,5 +17,6 @@
         <module>starter-adapter-rocketmq</module>
         <module>starter-adapter-webserver</module>
         <module>starter-adapter-grpc</module>
+        <module>starter-adapter-motan</module>
     </modules>
 </project>

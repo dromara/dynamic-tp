@@ -118,6 +118,11 @@ public class DtpProperties {
     private List<SimpleTpProperties> grpcTp;
 
     /**
+     * Motan server thread pools.
+     */
+    private List<SimpleTpProperties> motanTp;
+
+    /**
      * Notify platform configs.
      */
     private List<NotifyPlatform> platforms;

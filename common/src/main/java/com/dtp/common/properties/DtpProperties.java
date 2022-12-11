@@ -123,6 +123,11 @@ public class DtpProperties {
     private List<SimpleTpProperties> motanTp;
 
     /**
+     * Okhttp3 thread pools.
+     */
+    private List<SimpleTpProperties> okhttp3Tp;
+
+    /**
      * Notify platform configs.
      */
     private List<NotifyPlatform> platforms;

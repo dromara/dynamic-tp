@@ -65,6 +65,6 @@ public class GrpcDtpAdapter extends AbstractDtpAdapter {
      * @return tp name
      */
     private String genTpName(String serverLifeCycleName) {
-        return serverLifeCycleName.replace("Lifecycle", "Tp");
+        return serverLifeCycleName.replace("GrpcServerLifecycle", "Tp");
     }
 }

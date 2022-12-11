@@ -18,5 +18,6 @@
         <module>starter-adapter-webserver</module>
         <module>starter-adapter-grpc</module>
         <module>starter-adapter-motan</module>
+        <module>starter-adapter-okhttp3</module>
     </modules>
 </project>

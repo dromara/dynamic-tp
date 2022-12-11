@@ -11,10 +11,11 @@
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
-        <motan.version>1.1.13</motan.version> <!--use the latest version from maven central-->
+        <motan.version>1.1.13</motan.version>
+        <okhttp.version>3.14.9</okhttp.version>
     </properties>
-    <dependencies>
 
+    <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -85,6 +86,12 @@
         <dependency>
             <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-adapter-grpc</artifactId>
+            <version>${dtp.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.dynamictp</groupId>
+            <artifactId>dynamic-tp-spring-boot-starter-adapter-okhttp3</artifactId>
             <version>${dtp.version}</version>
         </dependency>
 
@@ -187,6 +194,12 @@
             <groupId>com.weibo</groupId>
             <artifactId>motan-springsupport</artifactId>
             <version>${motan.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp.version}</version>
         </dependency>
 
     </dependencies>

@@ -18,6 +18,7 @@
         <module>adapter-hystrix</module>
         <module>adapter-grpc</module>
         <module>adapter-motan</module>
+        <module>adapter-okhttp3</module>
     </modules>
 
     <dependencies>

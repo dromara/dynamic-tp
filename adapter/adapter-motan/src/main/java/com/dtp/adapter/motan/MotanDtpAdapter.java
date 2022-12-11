@@ -64,8 +64,7 @@ public class MotanDtpAdapter extends AbstractDtpAdapter {
                 val nettyServer = (NettyServer) server;
                 val executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(NettyServer.class, EXECUTOR_FIELD_NAME, nettyServer);
                 if (Objects.nonNull(executor)) {
-                    val port = nettyServer.getUrl().getPort();
-                    String key = NAME + "#" + port;
+                    String key = NAME + "#" + nettyServer.getUrl().getPort();
                     val executorWrapper = new ExecutorWrapper(key, executor);
                     initNotifyItems(key, executorWrapper);
                     executors.put(key, executorWrapper);

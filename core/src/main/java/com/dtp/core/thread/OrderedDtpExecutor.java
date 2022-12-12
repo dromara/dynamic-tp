@@ -6,16 +6,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import static com.dtp.common.em.QueueTypeEnum.buildLbq;
 
 /**
  * {@link OrderedDtpExecutor} can ensure that the delivered tasks are executed
@@ -40,12 +35,10 @@ public class OrderedDtpExecutor extends DtpExecutor {
                               BlockingQueue<Runnable> workQueue,
                               ThreadFactory threadFactory,
                               RejectedExecutionHandler handler) {
-        super(corePoolSize, maximumPoolSize, keepAliveTime, unit,
-                workQueue, threadFactory, handler);
+        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
         for (int i = 0; i < corePoolSize; i++) {
             executors.add(new DtpExecutor(1, 1,
-                    0, TimeUnit.MILLISECONDS,
-                    new LinkedBlockingQueue<>(), threadFactory, handler));
+                    0, TimeUnit.MILLISECONDS, workQueue, threadFactory, handler));
         }
     }
     
@@ -111,7 +104,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
         }
         for (int i = 0; i < corePoolSize - this.executors.size(); i++) {
             this.executors.add(new DtpExecutor(1, 1,
-                    0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(),
+                    0, TimeUnit.MILLISECONDS, buildLbq(getQueueName(), getQueueCapacity()),
                     getThreadFactory(), getRejectedExecutionHandler()));
         }
     }
@@ -135,7 +128,21 @@ public class OrderedDtpExecutor extends DtpExecutor {
     public final int getMaximumPoolSize() {
         return getCorePoolSize();
     }
-    
+
+    @Override
+    public void allowCoreThreadTimeOut(boolean value) {
+        for (ThreadPoolExecutor executor : this.executors) {
+            executor.allowCoreThreadTimeOut(value);
+        }
+    }
+
+    @Override
+    public void setRejectedExecutionHandler(RejectedExecutionHandler handler) {
+        for (ThreadPoolExecutor executor : this.executors) {
+            executor.setRejectedExecutionHandler(handler);
+        }
+    }
+
     @Override
     public void shutdown() {
         for (ExecutorService executor : this.executors) {

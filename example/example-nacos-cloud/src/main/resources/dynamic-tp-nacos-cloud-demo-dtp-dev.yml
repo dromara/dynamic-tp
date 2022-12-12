@@ -82,3 +82,13 @@ spring:
             - type: queue_timeout
               enabled: true
               threshold: 1
+        - threadPoolName: orderedDtpExecutor
+          executorType: ordered
+          corePoolSize: 4
+          maximumPoolSize: 6
+          queueCapacity: 2000
+          queueType: VariableLinkedBlockingQueue
+          rejectedHandlerType: CallerRunsPolicy
+          keepAliveTime: 50
+          allowCoreThreadTimeOut: false
+          threadNamePrefix: test

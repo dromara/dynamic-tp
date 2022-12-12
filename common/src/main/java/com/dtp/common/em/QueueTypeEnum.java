@@ -50,6 +50,10 @@ public enum QueueTypeEnum {
         this.name = name;
     }
 
+    public static BlockingQueue<Runnable> buildLbq(String name, int capacity) {
+        return buildLbq(name, capacity, false, 256);
+    }
+
     public static BlockingQueue<Runnable> buildLbq(String name, int capacity, boolean fair, int maxFreeMemory) {
         BlockingQueue<Runnable> blockingQueue = null;
         if (Objects.equals(name, ARRAY_BLOCKING_QUEUE.getName())) {

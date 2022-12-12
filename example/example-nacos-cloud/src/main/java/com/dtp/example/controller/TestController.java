@@ -35,7 +35,7 @@ public class TestController {
 
     @GetMapping("/dtp-nacos-cloud-example/test_ordered")
     public String testOrdered(String name) throws InterruptedException {
-        orderedDtpExecutor.execute(name, () -> System.out.println(name));
+        orderedDtpExecutor.execute(name, () -> log.info(name));
         return "success";
     }
 

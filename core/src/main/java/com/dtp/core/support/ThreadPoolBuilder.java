@@ -14,6 +14,7 @@ import com.dtp.core.support.wrapper.TaskWrapper;
 import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.thread.EagerDtpExecutor;
 import com.dtp.core.thread.NamedThreadFactory;
+import com.dtp.core.thread.OrderedDtpExecutor;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
@@ -111,6 +112,12 @@ public class ThreadPoolBuilder {
      * default false, true indicate cpu intensive thread pool.
      */
     private boolean ioIntensive = false;
+
+    /**
+     * If ordered thread pool.
+     * default false, true ordered thread pool.
+     */
+    private boolean ordered = false;
 
     /**
      * If pre start all core threads.
@@ -258,6 +265,11 @@ public class ThreadPoolBuilder {
         return this;
     }
 
+    public ThreadPoolBuilder ordered(boolean ordered) {
+        this.ordered = ordered;
+        return this;
+    }
+
     public ThreadPoolBuilder preStartAllCoreThreads(boolean preStartAllCoreThreads) {
         this.preStartAllCoreThreads = preStartAllCoreThreads;
         return this;
@@ -370,6 +382,15 @@ public class ThreadPoolBuilder {
                     builder.threadFactory,
                     builder.rejectedExecutionHandler);
             taskQueue.setExecutor((EagerDtpExecutor) dtpExecutor);
+        } else if (ordered) {
+            dtpExecutor = new OrderedDtpExecutor(
+                    builder.corePoolSize,
+                    builder.maximumPoolSize,
+                    builder.keepAliveTime,
+                    builder.timeUnit,
+                    builder.workQueue,
+                    builder.threadFactory,
+                    builder.rejectedExecutionHandler);
         } else {
             dtpExecutor = new DtpExecutor(
                     builder.corePoolSize,

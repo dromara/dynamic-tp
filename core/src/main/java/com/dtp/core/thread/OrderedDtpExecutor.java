@@ -19,7 +19,6 @@ import static com.dtp.common.em.QueueTypeEnum.buildLbq;
  * are run in a certain order.
  *
  * @author dragon-zhang
- * @date 2022/12/12 09:46
  */
 @Slf4j
 public class OrderedDtpExecutor extends DtpExecutor {

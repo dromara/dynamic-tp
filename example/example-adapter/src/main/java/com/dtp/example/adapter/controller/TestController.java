@@ -1,5 +1,6 @@
 package com.dtp.example.adapter.controller;
 
+import com.dtp.example.adapter.brpc.BrpcClientService;
 import com.dtp.example.adapter.dubbo.DubboUserService;
 import com.dtp.example.adapter.grpc.GrpcClientService;
 import com.dtp.example.adapter.hystrix.HystrixTester;
@@ -30,6 +31,9 @@ public class TestController {
     @Resource
     private Okhttp3Service okhttp3Service;
 
+    @Resource
+    private BrpcClientService brpcClientService;
+
     @GetMapping("/dtp-example-adapter/testHystrix")
     public String testHystrix() throws InterruptedException {
         return hystrixTester.testHystrix();
@@ -49,5 +53,10 @@ public class TestController {
     public String testOkhttp3() throws InterruptedException {
         okhttp3Service.call("https://api.bilibili.com/x/web-interface/popular?ps=20&pn=1");
         return "";
+    }
+
+    @GetMapping("/dtp-example-adapter/testBrpc")
+    public String testBrpc() throws InterruptedException {
+        return brpcClientService.getUserName(111L);
     }
 }

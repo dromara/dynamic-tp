@@ -82,8 +82,13 @@ spring:
           corePoolSize: 100
           maximumPoolSize: 200
           keepAliveTime: 60
-      okhttp3Tp:                                      # okhttp3 线程池配置
+      okhttp3Tp:                                    # okhttp3 线程池配置
         - threadPoolName: okHttpClientTp
+          corePoolSize: 100
+          maximumPoolSize: 200
+          keepAliveTime: 60
+      brpcTp:                                       # brpc 线程池配置
+        - threadPoolName: biz1#server               # 名称规则：biz_thread_pool_name + "#" + client/server
           corePoolSize: 100
           maximumPoolSize: 200
           keepAliveTime: 60

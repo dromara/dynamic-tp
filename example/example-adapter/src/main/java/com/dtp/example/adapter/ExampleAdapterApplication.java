@@ -1,5 +1,6 @@
 package com.dtp.example.adapter;
 
+import com.baidu.cloud.starlight.springcloud.server.annotation.StarlightScan;
 import com.dtp.core.spring.EnableDynamicTp;
 import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.boot.SpringApplication;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.ImportResource;
 @EnableDubbo
 @ImportResource(locations = {"classpath:motan_server.xml"})
 @SpringBootApplication
+@StarlightScan
 public class ExampleAdapterApplication {
 
     public static void main(String[] args) {

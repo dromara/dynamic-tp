@@ -19,6 +19,7 @@
         <module>adapter-grpc</module>
         <module>adapter-motan</module>
         <module>adapter-okhttp3</module>
+        <module>adapter-brpc</module>
     </modules>
 
     <dependencies>

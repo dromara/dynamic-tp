@@ -47,3 +47,8 @@ grpc:
       enableKeepAlive: true
       keepAliveWithoutCalls: true
       negotiationType: plaintext
+
+starlight:
+  server:
+    enable: true
+    port: 8777

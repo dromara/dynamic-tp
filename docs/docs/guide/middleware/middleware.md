@@ -39,6 +39,8 @@ star: true
 9. Okhttp3 线程池管理
 
 10. Brpc 线程池管理
+
+11. Tars 线程池管理
 :::
 
 依赖如下，使用时需要手动引入对应依赖
@@ -106,13 +108,21 @@ star: true
         <version>1.1.0</version>
     </dependency>
 ```
+
+```xml
+    <dependency>
+        <groupId>cn.dynamictp</groupId>
+        <artifactId>dynamic-tp-spring-boot-starter-adapter-tars</artifactId>
+        <version>1.1.0</version>
+    </dependency>
+```
 ::: tip
 
 1.三方组件线程池配置请参考 快速使用 / 配置文件
 
 2.Tomcat、Jetty、Undertow 线程池目前只享有动态调参和监控功能，没通知报警功能
 
-3.Dubbo、RocketMq、Hystrix、Grpc、Motan、Okhttp3、Brpc 享有动态调参、监控、通知告警完整的功能
+3.Dubbo、RocketMq、Hystrix、Grpc、Motan、Okhttp3、Brpc、Tars 享有动态调参、监控、通知告警完整的功能
 
 4.注意配置时 threadPoolName 规则，配置文件有注释
 

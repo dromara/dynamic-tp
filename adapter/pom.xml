@@ -20,6 +20,7 @@
         <module>adapter-motan</module>
         <module>adapter-okhttp3</module>
         <module>adapter-brpc</module>
+        <module>adapter-tars</module>
     </modules>
 
     <dependencies>

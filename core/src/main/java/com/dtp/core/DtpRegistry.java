@@ -195,17 +195,9 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.isAllowCoreThreadTimeOut(),
                         newProp.isAllowCoreThreadTimeOut()));
 
-        val platforms = dtpProperties.getPlatforms();
         val notifyItem = NotifyItemManager.getNotifyItem(executor, NotifyItemEnum.CHANGE);
-        boolean ifNotice = CollUtil.isNotEmpty(platforms) && Objects.nonNull(notifyItem) && notifyItem.isEnabled();
-        if (!ifNotice) {
-            log.debug("DynamicTp refresh, change notification is not enabled, poolName: {}",
-                    executor.getThreadPoolName());
-            return;
-        }
-
-        val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor);
-        NoticeCtx context = new NoticeCtx(executorWrapper, notifyItem, platforms, oldProp, diffKeys);
+        val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor, properties.isNotifyEnabled());
+        NoticeCtx context = new NoticeCtx(executorWrapper, notifyItem, dtpProperties.getPlatforms(), oldProp, diffKeys);
         NoticeManager.doNoticeAsync(context);
     }
 
@@ -245,6 +237,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         AlarmManager.refreshAlarm(dtpExecutor.getThreadPoolName(), dtpProperties.getPlatforms(),
                 dtpExecutor.getNotifyItems(), allNotifyItems);
         dtpExecutor.setNotifyItems(allNotifyItems);
+        dtpExecutor.setNotifyEnabled(properties.isNotifyEnabled());
     }
 
     @Autowired

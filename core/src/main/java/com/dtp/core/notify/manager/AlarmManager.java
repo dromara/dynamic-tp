@@ -106,7 +106,8 @@ public class AlarmManager {
     }
 
     public static void doAlarm(DtpExecutor executor, List<NotifyItemEnum> notifyItemEnums) {
-        val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor, executor.getNotifyItems());
+        val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor,
+                executor.getNotifyItems(), executor.isNotifyEnabled());
         doAlarm(executorWrapper, notifyItemEnums);
     }
 
@@ -115,7 +116,8 @@ public class AlarmManager {
     }
 
     public static void doAlarm(DtpExecutor executor, NotifyItemEnum notifyItemEnum) {
-        val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor, executor.getNotifyItems());
+        val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor,
+                executor.getNotifyItems(), executor.isNotifyEnabled());
         doAlarm(executorWrapper, notifyItemEnum);
     }
 
@@ -143,10 +145,6 @@ public class AlarmManager {
                 log.error("Unsupported alarm type, type: {}", itemEnum);
                 return false;
         }
-    }
-
-    public static boolean satisfyBaseCondition(NotifyItem notifyItem) {
-        return notifyItem.isEnabled() && CollUtil.isNotEmpty(notifyItem.getPlatforms());
     }
 
     private static boolean checkLiveness(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {

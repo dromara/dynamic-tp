@@ -7,6 +7,7 @@ import com.dtp.common.pattern.filter.InvokerChain;
 import com.dtp.common.pattern.filter.InvokerChainFactory;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.notify.filter.AlarmBaseFilter;
+import com.dtp.core.notify.filter.NoticeBaseFilter;
 import com.dtp.core.notify.filter.NotifyFilter;
 import com.dtp.core.notify.invoker.AlarmInvoker;
 import com.dtp.core.notify.invoker.NoticeInvoker;
@@ -42,6 +43,7 @@ public class NotifyFilterBuilder {
     public static InvokerChain<BaseNotifyCtx> getCommonNoticeFilter() {
         val filters = ApplicationContextHolder.getBeansOfType(NotifyFilter.class);
         Collection<NotifyFilter> commonNoticeFilters = Lists.newArrayList(filters.values());
+        commonNoticeFilters.add(new NoticeBaseFilter());
         commonNoticeFilters = commonNoticeFilters.stream()
                 .filter(x -> x.supports(NotifyTypeEnum.COMMON))
                 .sorted(Comparator.comparing(Filter::getOrder))

@@ -28,13 +28,6 @@
             <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-logging</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>com.alipay.sofa</groupId>
-            <artifactId>sofa-rpc-all</artifactId>
-            <version>${sofa-rpc-all.version}</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
 </project>

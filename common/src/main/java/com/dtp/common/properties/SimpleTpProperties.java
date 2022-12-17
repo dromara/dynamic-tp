@@ -52,4 +52,9 @@ public class SimpleTpProperties {
      * Notify items, see {@link NotifyItemEnum}
      */
     private List<NotifyItem> notifyItems;
+
+    /**
+     * If enable notify.
+     */
+    private boolean notifyEnabled = true;
 }

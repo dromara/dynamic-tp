@@ -1,9 +1,9 @@
 package com.dtp.core.thread;
 
 import cn.hutool.core.collection.CollUtil;
-import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.spring.DtpLifecycleSupport;
@@ -54,6 +54,11 @@ public class DtpExecutor extends DtpLifecycleSupport {
     private List<NotifyItem> notifyItems;
 
     /**
+     * If enable notify.
+     */
+    private boolean notifyEnabled;
+
+    /**
      * Task wrappers, do sth enhanced.
      */
     private List<TaskWrapper> taskWrappers = Lists.newArrayList();
@@ -92,8 +97,7 @@ public class DtpExecutor extends DtpLifecycleSupport {
                        RejectedExecutionHandler handler) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);
         this.rejectHandlerName = handler.getClass().getSimpleName();
-        RejectedExecutionHandler rejectedExecutionHandler = RejectHandlerGetter.getProxy(handler);
-        setRejectedExecutionHandler(rejectedExecutionHandler);
+        setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
     }
 
     @Override
@@ -242,5 +246,13 @@ public class DtpExecutor extends DtpLifecycleSupport {
 
     public void setThreadPoolAliasName(String threadPoolAliasName) {
         this.threadPoolAliasName = threadPoolAliasName;
+    }
+
+    public boolean isNotifyEnabled() {
+        return notifyEnabled;
+    }
+
+    public void setNotifyEnabled(boolean notifyEnabled) {
+        this.notifyEnabled = notifyEnabled;
     }
 }

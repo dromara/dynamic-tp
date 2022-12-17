@@ -98,6 +98,11 @@ public class ThreadPoolProperties {
     private List<NotifyItem> notifyItems;
 
     /**
+     * If enable notify.
+     */
+    private boolean notifyEnabled = true;
+
+    /**
      * Whether to wait for scheduled tasks to complete on shutdown,
      * not interrupting running tasks and executing all tasks in the queue.
      */

@@ -1,5 +1,6 @@
 package com.dtp.core.thread;
 
+import com.dtp.core.reject.RejectHandlerGetter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -36,8 +37,9 @@ public class OrderedDtpExecutor extends DtpExecutor {
                               RejectedExecutionHandler handler) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
         for (int i = 0; i < corePoolSize; i++) {
-            executors.add(new DtpExecutor(1, 1,
-                    0, TimeUnit.MILLISECONDS, workQueue, threadFactory, handler));
+            executors.add(new DtpExecutor(1, 1, keepAliveTime, unit,
+                    buildLbq(getQueueName(), getQueueCapacity()),
+                    threadFactory, RejectHandlerGetter.getProxy(handler)));
         }
     }
     
@@ -103,8 +105,9 @@ public class OrderedDtpExecutor extends DtpExecutor {
         }
         for (int i = 0; i < corePoolSize - this.executors.size(); i++) {
             this.executors.add(new DtpExecutor(1, 1,
-                    0, TimeUnit.MILLISECONDS, buildLbq(getQueueName(), getQueueCapacity()),
-                    getThreadFactory(), getRejectedExecutionHandler()));
+                    getKeepAliveTime(TimeUnit.SECONDS), TimeUnit.SECONDS,
+                    buildLbq(getQueueName(), getQueueCapacity()),
+                    getThreadFactory(), RejectHandlerGetter.getProxy(getRejectHandlerName())));
         }
     }
     
@@ -126,20 +129,6 @@ public class OrderedDtpExecutor extends DtpExecutor {
     @Override
     public final int getMaximumPoolSize() {
         return getCorePoolSize();
-    }
-
-    @Override
-    public void allowCoreThreadTimeOut(boolean value) {
-        for (ThreadPoolExecutor executor : this.executors) {
-            executor.allowCoreThreadTimeOut(value);
-        }
-    }
-
-    @Override
-    public void setRejectedExecutionHandler(RejectedExecutionHandler handler) {
-        for (ThreadPoolExecutor executor : this.executors) {
-            executor.setRejectedExecutionHandler(handler);
-        }
     }
 
     @Override

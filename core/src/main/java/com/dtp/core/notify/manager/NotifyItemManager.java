@@ -72,7 +72,8 @@ public class NotifyItemManager {
     }
 
     public static NotifyItem getNotifyItem(DtpExecutor executor, NotifyItemEnum notifyItemEnum) {
-        val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor, executor.getNotifyItems());
+        val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor,
+                executor.getNotifyItems(), executor.isNotifyEnabled());
         return getNotifyItem(executorWrapper, notifyItemEnum);
     }
 

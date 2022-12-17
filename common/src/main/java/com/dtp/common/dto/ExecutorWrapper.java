@@ -26,15 +26,26 @@ public class ExecutorWrapper {
      */
     private List<NotifyItem> notifyItems;
 
+    private boolean notifyEnabled = true;
+
     public ExecutorWrapper(String threadPoolName, Executor executor) {
         this.threadPoolName = threadPoolName;
         this.executor = executor;
         this.notifyItems = NotifyItem.getSimpleNotifyItems();
     }
 
-    public ExecutorWrapper(String threadPoolName, Executor executor, List<NotifyItem> notifyItems) {
+    public ExecutorWrapper(String threadPoolName, Executor executor, boolean notifyEnabled) {
+        this.threadPoolName = threadPoolName;
+        this.executor = executor;
+        this.notifyItems = NotifyItem.getSimpleNotifyItems();
+        this.notifyEnabled = notifyEnabled;
+    }
+
+    public ExecutorWrapper(String threadPoolName, Executor executor,
+                           List<NotifyItem> notifyItems, boolean notifyEnabled) {
         this.threadPoolName = threadPoolName;
         this.executor = executor;
         this.notifyItems = notifyItems;
+        this.notifyEnabled = notifyEnabled;
     }
 }

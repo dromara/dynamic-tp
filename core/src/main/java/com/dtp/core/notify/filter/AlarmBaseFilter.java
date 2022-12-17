@@ -1,5 +1,7 @@
 package com.dtp.core.notify.filter;
 
+import cn.hutool.core.collection.CollUtil;
+import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.pattern.filter.Invoker;
 import com.dtp.core.context.BaseNotifyCtx;
@@ -33,7 +35,7 @@ public class AlarmBaseFilter implements NotifyFilter {
         val executorWrapper = context.getExecutorWrapper();
         val notifyItemEnum = context.getNotifyItemEnum();
         NotifyItem notifyItem = NotifyItemManager.getNotifyItem(executorWrapper, notifyItemEnum);
-        if (Objects.isNull(notifyItem) || !AlarmManager.satisfyBaseCondition(notifyItem)) {
+        if (Objects.isNull(notifyItem) || !satisfyBaseCondition(notifyItem, executorWrapper)) {
             return;
         }
 
@@ -58,5 +60,11 @@ public class AlarmBaseFilter implements NotifyFilter {
             AlarmLimiter.putVal(executorWrapper.getThreadPoolName(), notifyItemEnum.getValue());
         }
         nextFilter.invoke(context);
+    }
+
+    public boolean satisfyBaseCondition(NotifyItem notifyItem, ExecutorWrapper executor) {
+        return executor.isNotifyEnabled()
+                && notifyItem.isEnabled()
+                && CollUtil.isNotEmpty(notifyItem.getPlatforms());
     }
 }

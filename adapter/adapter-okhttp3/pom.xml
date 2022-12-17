@@ -9,10 +9,6 @@
     </parent>
     <artifactId>dynamic-tp-adapter-okhttp3</artifactId>
 
-    <properties>
-        <okhttp.version>3.14.9</okhttp.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>cn.dynamictp</groupId>

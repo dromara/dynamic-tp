@@ -9,10 +9,6 @@
     </parent>
     <artifactId>dynamic-tp-adapter-tars</artifactId>
 
-    <properties>
-        <tars.version>1.7.2</tars.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>cn.dynamictp</groupId>

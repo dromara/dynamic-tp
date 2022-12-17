@@ -27,6 +27,19 @@
         <jackson-core.version>2.13.2</jackson-core.version>
         <jackson-databind.version>2.13.2.1</jackson-databind.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sofa-rpc-all.version>5.4.0</sofa-rpc-all.version>
+        <brpc.version>2022.2.0</brpc.version>
+        <apache-dubbo.version>3.0.7</apache-dubbo.version>
+        <alibaba-dubbo.version>2.0.0</alibaba-dubbo.version>
+        <grpc.version>2.13.1.RELEASE</grpc.version>
+        <hystrix.version>1.5.18</hystrix.version>
+        <motan.version>1.1.13</motan.version>
+        <okhttp.version>3.14.9</okhttp.version>
+        <rocketmq.version>2.2.2</rocketmq.version>
+        <tars.version>1.7.2</tars.version>
+        <skywalking.version>8.11.0</skywalking.version>
+        <nacos.version>2.0.4</nacos.version>
+        <zookeeper.version>5.2.1</zookeeper.version>
     </properties>
 
     <modules>

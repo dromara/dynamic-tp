@@ -9,10 +9,6 @@
     </parent>
     <artifactId>dynamic-tp-adapter-brpc</artifactId>
 
-    <properties>
-        <brpc.version>2022.2.0</brpc.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>cn.dynamictp</groupId>

@@ -62,6 +62,10 @@ public class NamedThreadFactory implements ThreadFactory {
         return t;
     }
 
+    public String getNamePrefix() {
+        return namePrefix;
+    }
+
     public static class DtpUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
         @Override
         public void uncaughtException(Thread t, Throwable e) {

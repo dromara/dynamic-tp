@@ -38,8 +38,8 @@ public class OrderedDtpExecutor extends DtpExecutor {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
         for (int i = 0; i < corePoolSize; i++) {
             executors.add(new DtpExecutor(1, 1, keepAliveTime, unit,
-                    buildLbq(getQueueName(), getQueueCapacity()),
-                    threadFactory, RejectHandlerGetter.getProxy(handler)));
+                    buildLbq(getQueueName(), getQueueCapacity()), buildThreadFactory(i),
+                    RejectHandlerGetter.getProxy(handler)));
         }
     }
     
@@ -103,11 +103,11 @@ public class OrderedDtpExecutor extends DtpExecutor {
         if (corePoolSize < this.executors.size()) {
             throw new IllegalArgumentException();
         }
-        for (int i = 0; i < corePoolSize - this.executors.size(); i++) {
+        for (int i = this.executors.size(); i < corePoolSize; i++) {
             this.executors.add(new DtpExecutor(1, 1,
                     getKeepAliveTime(TimeUnit.SECONDS), TimeUnit.SECONDS,
-                    buildLbq(getQueueName(), getQueueCapacity()),
-                    getThreadFactory(), RejectHandlerGetter.getProxy(getRejectHandlerName())));
+                    buildLbq(getQueueName(), getQueueCapacity()), buildThreadFactory(i),
+                    RejectHandlerGetter.getProxy(getRejectHandlerName())));
         }
     }
     
@@ -171,5 +171,13 @@ public class OrderedDtpExecutor extends DtpExecutor {
             result = result && executor.awaitTermination(timeout, unit);
         }
         return result;
+    }
+
+    private ThreadFactory buildThreadFactory(int index) {
+        if (getThreadFactory() instanceof NamedThreadFactory) {
+            String prefix = ((NamedThreadFactory) getThreadFactory()).getNamePrefix() + "#" + index;
+            return new NamedThreadFactory(prefix);
+        }
+        return getThreadFactory();
     }
 }

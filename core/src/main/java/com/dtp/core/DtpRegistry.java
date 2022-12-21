@@ -173,12 +173,12 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         }
 
         DtpMainProp oldProp = ExecutorConverter.convert(executor);
-        doRefresh(executor, properties);
         DtpMainProp newProp = ExecutorConverter.convert(executor);
         if (oldProp.equals(newProp)) {
             log.warn("DynamicTp refresh, main properties of [{}] have not changed.", executor.getThreadPoolName());
             return;
         }
+        doRefresh(executor, properties);
 
         List<FieldInfo> diffFields = EQUATOR.getDiffFields(oldProp, newProp);
         List<String> diffKeys = diffFields.stream().map(FieldInfo::getFieldName).collect(toList());

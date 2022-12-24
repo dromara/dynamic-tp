@@ -163,11 +163,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
     }
 
     private static void refresh(DtpExecutor executor, ThreadPoolProperties properties) {
-
-        if (properties.getCorePoolSize() < 0
-                || properties.getMaximumPoolSize() <= 0
-                || properties.getMaximumPoolSize() < properties.getCorePoolSize()
-                || properties.getKeepAliveTime() < 0) {
+        if (existInvalidProp(properties)) {
             log.error("DynamicTp refresh, invalid parameters exist, properties: {}", properties);
             return;
         }
@@ -306,6 +302,12 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         return Objects.equals(properties.getQueueType(), VARIABLE_LINKED_BLOCKING_QUEUE.getName())
                 || Objects.equals(properties.getQueueType(), MEMORY_SAFE_LINKED_BLOCKING_QUEUE.getName())
                 || Objects.equals(properties.getExecutorType(), EAGER.getName());
+    }
+
+    private static boolean existInvalidProp(ThreadPoolProperties properties) {
+        return (properties.getCorePoolSize() | properties.getMaximumPoolSize()
+                | (properties.getMaximumPoolSize() - properties.getCorePoolSize())
+                | properties.getKeepAliveTime()) < 0 || properties.getMaximumPoolSize() == 0;
     }
 
     @Override

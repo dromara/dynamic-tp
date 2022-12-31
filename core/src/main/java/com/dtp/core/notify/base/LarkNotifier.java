@@ -39,7 +39,7 @@ public class LarkNotifier implements Notifier {
                 log.info("DynamicTp notify, lark send success, response: {}, request:{}", response.body(), text);
             }
         } catch (Exception e) {
-            log.error("DynamicTp notify, lark send fail...", e);
+            log.error("DynamicTp notify, lark send failed...", e);
         }
     }
 

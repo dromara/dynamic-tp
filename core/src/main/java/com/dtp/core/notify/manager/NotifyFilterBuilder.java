@@ -28,27 +28,25 @@ public class NotifyFilterBuilder {
 
     private NotifyFilterBuilder() { }
 
-    public static InvokerChain<BaseNotifyCtx> getAlarmNoticeFilter() {
+    public static InvokerChain<BaseNotifyCtx> getAlarmInvokerChain() {
         val filters = ApplicationContextHolder.getBeansOfType(NotifyFilter.class);
-        Collection<NotifyFilter> alarmNoticeFilters = Lists.newArrayList(filters.values());
-        alarmNoticeFilters.add(new AlarmBaseFilter());
-        alarmNoticeFilters = alarmNoticeFilters.stream()
+        Collection<NotifyFilter> alarmFilters = Lists.newArrayList(filters.values());
+        alarmFilters.add(new AlarmBaseFilter());
+        alarmFilters = alarmFilters.stream()
                 .filter(x -> x.supports(NotifyTypeEnum.ALARM))
                 .sorted(Comparator.comparing(Filter::getOrder))
                 .collect(Collectors.toList());
-        return InvokerChainFactory.buildInvokerChain(new AlarmInvoker(),
-                alarmNoticeFilters.toArray(new NotifyFilter[0]));
+        return InvokerChainFactory.buildInvokerChain(new AlarmInvoker(), alarmFilters.toArray(new NotifyFilter[0]));
     }
 
-    public static InvokerChain<BaseNotifyCtx> getCommonNoticeFilter() {
+    public static InvokerChain<BaseNotifyCtx> getCommonInvokerChain() {
         val filters = ApplicationContextHolder.getBeansOfType(NotifyFilter.class);
-        Collection<NotifyFilter> commonNoticeFilters = Lists.newArrayList(filters.values());
-        commonNoticeFilters.add(new NoticeBaseFilter());
-        commonNoticeFilters = commonNoticeFilters.stream()
+        Collection<NotifyFilter> noticeFilters = Lists.newArrayList(filters.values());
+        noticeFilters.add(new NoticeBaseFilter());
+        noticeFilters = noticeFilters.stream()
                 .filter(x -> x.supports(NotifyTypeEnum.COMMON))
                 .sorted(Comparator.comparing(Filter::getOrder))
                 .collect(Collectors.toList());
-        return InvokerChainFactory.buildInvokerChain(new NoticeInvoker(),
-                commonNoticeFilters.toArray(new NotifyFilter[0]));
+        return InvokerChainFactory.buildInvokerChain(new NoticeInvoker(), noticeFilters.toArray(new NotifyFilter[0]));
     }
 }

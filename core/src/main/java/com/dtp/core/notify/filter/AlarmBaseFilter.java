@@ -30,7 +30,7 @@ public class AlarmBaseFilter implements NotifyFilter {
     }
 
     @Override
-    public void doFilter(BaseNotifyCtx context, Invoker<BaseNotifyCtx> nextFilter) {
+    public void doFilter(BaseNotifyCtx context, Invoker<BaseNotifyCtx> nextInvoker) {
 
         val executorWrapper = context.getExecutorWrapper();
         val notifyItemEnum = context.getNotifyItemEnum();
@@ -59,7 +59,7 @@ public class AlarmBaseFilter implements NotifyFilter {
             }
             AlarmLimiter.putVal(executorWrapper.getThreadPoolName(), notifyItemEnum.getValue());
         }
-        nextFilter.invoke(context);
+        nextInvoker.invoke(context);
     }
 
     public boolean satisfyBaseCondition(NotifyItem notifyItem, ExecutorWrapper executor) {

@@ -26,7 +26,7 @@ public class NoticeBaseFilter implements NotifyFilter {
     }
 
     @Override
-    public void doFilter(BaseNotifyCtx context, Invoker<BaseNotifyCtx> nextFilter) {
+    public void doFilter(BaseNotifyCtx context, Invoker<BaseNotifyCtx> nextInvoker) {
 
         val executorWrapper = context.getExecutorWrapper();
         NotifyItem notifyItem = NotifyItemManager.getNotifyItem(executorWrapper, context.getNotifyItemEnum());
@@ -35,7 +35,7 @@ public class NoticeBaseFilter implements NotifyFilter {
                     executorWrapper.getThreadPoolName());
             return;
         }
-        nextFilter.invoke(context);
+        nextInvoker.invoke(context);
     }
 
     public boolean satisfyBaseCondition(NotifyItem notifyItem, ExecutorWrapper executor) {

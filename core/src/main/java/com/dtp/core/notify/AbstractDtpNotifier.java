@@ -42,9 +42,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
     protected Notifier notifier;
 
-    protected AbstractDtpNotifier() {
-
-    }
+    protected AbstractDtpNotifier() { }
 
     protected AbstractDtpNotifier(Notifier notifier) {
         this.notifier = notifier;

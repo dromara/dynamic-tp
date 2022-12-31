@@ -2,6 +2,7 @@ package com.dtp.core.notify.manager;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.NumberUtil;
+import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.AlarmInfo;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
@@ -9,6 +10,7 @@ import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.common.pattern.filter.InvokerChain;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.StreamUtil;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
@@ -48,10 +50,10 @@ public class AlarmManager {
             .rejectedExecutionHandler(RejectedTypeEnum.DISCARD_OLDEST_POLICY.getName())
             .buildCommon();
 
-    private static final InvokerChain<BaseNotifyCtx> ALARM_FILTER_CHAIN;
+    private static final InvokerChain<BaseNotifyCtx> ALARM_INVOKER_CHAIN;
 
     static {
-        ALARM_FILTER_CHAIN = NotifyFilterBuilder.getAlarmNoticeFilter();
+        ALARM_INVOKER_CHAIN = NotifyFilterBuilder.getAlarmInvokerChain();
     }
 
     private AlarmManager() { }
@@ -127,7 +129,9 @@ public class AlarmManager {
             return;
         }
         AlarmCtx alarmCtx = new AlarmCtx(executorWrapper, notifyItem);
-        ALARM_FILTER_CHAIN.proceed(alarmCtx);
+        DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+        alarmCtx.setPlatforms(dtpProperties.getPlatforms());
+        ALARM_INVOKER_CHAIN.proceed(alarmCtx);
     }
 
     public static boolean checkThreshold(ExecutorWrapper executor, NotifyItemEnum itemEnum, NotifyItem notifyItem) {

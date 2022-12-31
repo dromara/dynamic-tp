@@ -19,14 +19,14 @@ public class NoticeManager {
 
     private NoticeManager() { }
 
-    private static final InvokerChain<BaseNotifyCtx> NOTICE_FILTER_CHAIN;
+    private static final InvokerChain<BaseNotifyCtx> NOTICE_INVOKER_CHAIN;
 
     static {
-        NOTICE_FILTER_CHAIN = NotifyFilterBuilder.getCommonNoticeFilter();
+        NOTICE_INVOKER_CHAIN = NotifyFilterBuilder.getCommonInvokerChain();
     }
 
     public static void doNotice(NoticeCtx noticeCtx) {
-        NOTICE_FILTER_CHAIN.proceed(noticeCtx);
+        NOTICE_INVOKER_CHAIN.proceed(noticeCtx);
     }
 
     public static void doNoticeAsync(NoticeCtx noticeCtx) {

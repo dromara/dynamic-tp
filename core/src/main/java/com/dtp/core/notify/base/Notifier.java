@@ -24,5 +24,4 @@ public interface Notifier {
      * @param content content
      */
     void send(NotifyPlatform platform, String content);
-
 }

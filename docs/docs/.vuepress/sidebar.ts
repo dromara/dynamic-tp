@@ -94,6 +94,12 @@ export default sidebar([
         collapsable: false,
         link: "/guide/notice/ratelimiter"
       },
+      {
+        text: "邮件通知",
+        icon: "at",
+        collapsable: false,
+        link: "/guide/notice/email"
+      }
     ],
   },
 

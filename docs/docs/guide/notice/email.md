@@ -5,11 +5,11 @@ order: 1
 author: yanhom
 date: 2022-06-11
 category:
-- 邮件通知
-  tag:
-- 邮件通知
-  sticky: true
-  star: true
+  - 邮件通知
+tag:
+  - 邮件通知
+sticky: true
+star: true
 ---
 
 

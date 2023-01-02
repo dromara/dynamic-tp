@@ -22,7 +22,7 @@ star: true
         <dependency>
             <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-extension-limiter-redis</artifactId>
-            <version>1.0.9</version>
+            <version>1.1.0</version>
         </dependency>
     ```
 3. 通知项配置 clusterLimit 字段

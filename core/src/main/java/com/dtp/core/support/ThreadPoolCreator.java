@@ -60,7 +60,7 @@ public class ThreadPoolCreator {
         return ThreadPoolBuilder.newBuilder()
                 .corePoolSize(poolSize)
                 .maximumPoolSize(poolSize)
-                .workQueue(QueueTypeEnum.MEMORY_SAFE_LINKED_BLOCKING_QUEUE.getName(), queueCapacity, null)
+                .workQueue(QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE.getName(), queueCapacity, null)
                 .threadFactory(threadPrefix)
                 .buildDynamic();
     }
@@ -79,7 +79,7 @@ public class ThreadPoolCreator {
         return ThreadPoolBuilder.newBuilder()
                 .corePoolSize(corePoolSize)
                 .maximumPoolSize(maximumPoolSize)
-                .workQueue(QueueTypeEnum.MEMORY_SAFE_LINKED_BLOCKING_QUEUE.getName(), queueCapacity, null)
+                .workQueue(QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE.getName(), queueCapacity, null)
                 .threadFactory(threadPrefix)
                 .buildDynamic();
     }

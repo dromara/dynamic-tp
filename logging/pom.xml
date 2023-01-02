@@ -5,7 +5,7 @@
     <parent>
         <groupId>cn.dynamictp</groupId>
         <artifactId>dynamic-tp-all</artifactId>
-        <version>1.0.9</version>
+        <version>1.1.0</version>
     </parent>
     <artifactId>dynamic-tp-logging</artifactId>
 

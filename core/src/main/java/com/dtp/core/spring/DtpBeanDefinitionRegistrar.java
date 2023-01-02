@@ -87,7 +87,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
 
         BlockingQueue<Runnable> taskQueue;
         if (clazz.equals(EagerDtpExecutor.class)) {
-            taskQueue = new TaskQueue(tpp.getQueueCapacity(), tpp.getMaxFreeMemory() * M_1);
+            taskQueue = new TaskQueue(tpp.getQueueCapacity());
         } else {
             taskQueue = buildLbq(tpp.getQueueType(), tpp.getQueueCapacity(), tpp.isFair(), tpp.getMaxFreeMemory());
         }

@@ -1,6 +1,6 @@
 package com.dtp.core.support;
 
-import com.dtp.common.queue.MemorySafeLinkedBlockingQueue;
+import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.core.thread.EagerDtpExecutor;
 import org.springframework.lang.NonNull;
 
@@ -14,14 +14,14 @@ import java.util.concurrent.TimeUnit;
  * @author yanhom
  * @since 1.0.3
  **/
-public class TaskQueue extends MemorySafeLinkedBlockingQueue<Runnable> {
+public class TaskQueue extends VariableLinkedBlockingQueue<Runnable> {
 
     private static final long serialVersionUID = -1L;
 
     private transient EagerDtpExecutor executor;
 
-    public TaskQueue(int queueCapacity, int maxFreeMemory) {
-        super(queueCapacity, maxFreeMemory);
+    public TaskQueue(int queueCapacity) {
+        super(queueCapacity);
     }
 
     public void setExecutor(EagerDtpExecutor exec) {

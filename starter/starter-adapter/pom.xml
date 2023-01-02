@@ -5,7 +5,7 @@
     <parent>
         <groupId>cn.dynamictp</groupId>
         <artifactId>dynamic-tp-starter</artifactId>
-        <version>1.0.9</version>
+        <version>1.1.0</version>
     </parent>
     <artifactId>dynamic-tp-starter-adapter</artifactId>
     <packaging>pom</packaging>
@@ -21,5 +21,6 @@
         <module>starter-adapter-okhttp3</module>
         <module>starter-adapter-brpc</module>
         <module>starter-adapter-tars</module>
+        <module>starter-adapter-liteflow</module>
     </modules>
 </project>

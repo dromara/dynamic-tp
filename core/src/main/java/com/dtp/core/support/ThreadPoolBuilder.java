@@ -22,8 +22,6 @@ import org.springframework.util.Assert;
 import java.util.List;
 import java.util.concurrent.*;
 
-import static com.dtp.common.constant.DynamicTpConst.M_1;
-
 /**
  * Builder for creating a ThreadPoolExecutor gracefully.
  *
@@ -372,7 +370,7 @@ public class ThreadPoolBuilder {
     private DtpExecutor createInternal(ThreadPoolBuilder builder) {
         DtpExecutor dtpExecutor;
         if (ioIntensive) {
-            TaskQueue taskQueue = new TaskQueue(builder.queueCapacity, builder.maxFreeMemory * M_1);
+            TaskQueue taskQueue = new TaskQueue(builder.queueCapacity);
             dtpExecutor = new EagerDtpExecutor(
                     builder.corePoolSize,
                     builder.maximumPoolSize,

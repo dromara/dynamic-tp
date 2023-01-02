@@ -136,7 +136,12 @@ public class DtpProperties {
      * Tars thread pools.
      */
     private List<SimpleTpProperties> tarsTp;
-    
+
+    /**
+     * Liteflow thread pools.
+     */
+    private List<SimpleTpProperties> liteflowTp;
+
     /**
      * Notify platform configs.
      */

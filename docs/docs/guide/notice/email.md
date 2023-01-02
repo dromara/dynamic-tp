@@ -23,7 +23,7 @@ star: true
         <dependency>
             <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-extension-notify-email</artifactId>
-            <version>1.0.9</version>
+            <version>1.1.0</version>
         </dependency>   
     ```
 3. 加入邮件相关配置

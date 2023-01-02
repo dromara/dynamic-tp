@@ -33,7 +33,7 @@
         <alibaba-dubbo.version>2.0.0</alibaba-dubbo.version>
         <grpc.version>2.13.1.RELEASE</grpc.version>
         <hystrix.version>1.5.18</hystrix.version>
-        <motan.version>1.1.13</motan.version>
+        <motan.version>1.2.0</motan.version>
         <okhttp.version>3.14.9</okhttp.version>
         <rocketmq.version>2.2.2</rocketmq.version>
         <tars.version>1.7.2</tars.version>
@@ -184,12 +184,6 @@
             <dependency>
                 <groupId>cn.dynamictp</groupId>
                 <artifactId>dynamic-tp-adapter-tars</artifactId>
-                <version>${dtp.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.dynamictp</groupId>
-                <artifactId>dynamic-tp-adapter-liteflow</artifactId>
                 <version>${dtp.version}</version>
             </dependency>
 

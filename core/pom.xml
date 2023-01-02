@@ -23,7 +23,6 @@
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-core</artifactId>
-            <version>1.8.5</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>

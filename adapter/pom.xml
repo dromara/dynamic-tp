@@ -21,7 +21,6 @@
         <module>adapter-okhttp3</module>
         <module>adapter-brpc</module>
         <module>adapter-tars</module>
-        <module>adapter-liteflow</module>
     </modules>
 
     <dependencies>

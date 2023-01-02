@@ -11,7 +11,6 @@
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
-        <motan.version>1.1.13</motan.version>
         <okhttp.version>3.14.9</okhttp.version>
         <brpc.version>2022.2.0</brpc.version>
     </properties>
@@ -99,12 +98,6 @@
         <dependency>
             <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-adapter-brpc</artifactId>
-            <version>${dtp.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>cn.dynamictp</groupId>
-            <artifactId>dynamic-tp-spring-boot-starter-adapter-liteflow</artifactId>
             <version>${dtp.version}</version>
         </dependency>
 
@@ -225,12 +218,6 @@
                     <artifactId>logback-classic</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>com.yomahub</groupId>
-            <artifactId>liteflow-spring-boot-starter</artifactId>
-            <version>2.9.6</version>
         </dependency>
     </dependencies>
 

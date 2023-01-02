@@ -32,7 +32,7 @@ features:
 
   - title: 三方包集成
     icon: grid
-    details: 集成三方中间件线程池管理，已接入dubbo、rocketmq、hystrix、grpc、tomcat、undertow、jetty等组件线程池管理
+    details: 集成三方中间件线程池管理，已接入dubbo、rocketmq、hystrix、grpc、tomcat、undertow、jetty、grpc、okhttp等组件线程池管理
     link: "/guide/middleware/middleware"
 ---
 

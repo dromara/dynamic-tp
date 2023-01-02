@@ -50,6 +50,5 @@
             <artifactId>spring-cloud-context</artifactId>
             <optional>true</optional>
         </dependency>
-
     </dependencies>
 </project>

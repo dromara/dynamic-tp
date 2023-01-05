@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.dtp.starter.adapter.rocketmq.autoconfigure.RocketMqTpAutoConfiguration
+  com.dtp.starter.adapter.rocketmq.autoconfigure.RocketMqTpAutoConfiguration,\
+  com.dtp.starter.adapter.rocketmq.autoconfigure.StreamRocketMqTpAutoConfiguration

@@ -1,6 +1,6 @@
 package com.dtp.common.util;
 
-import cn.hutool.core.collection.CollUtil;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -20,7 +20,7 @@ public final class StreamUtil {
     private StreamUtil() { }
 
     public static <P, O> Map<O, P> toMap(Collection<P> coll, Function<P, O> key) {
-        if (CollUtil.isEmpty(coll) || Objects.isNull(key)) {
+        if (CollectionUtils.isEmpty(coll) || Objects.isNull(key)) {
             return Collections.emptyMap();
         }
 

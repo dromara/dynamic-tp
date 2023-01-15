@@ -1,6 +1,5 @@
 package com.dtp.core;
 
-import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.em.NotifyItemEnum;
@@ -25,6 +24,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -144,7 +144,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      * @param properties the main properties that maintain by config center
      */
     public static void refresh(DtpProperties properties) {
-        if (Objects.isNull(properties) || CollUtil.isEmpty(properties.getExecutors())) {
+        if (Objects.isNull(properties) || CollectionUtils.isEmpty(properties.getExecutors())) {
             log.warn("DynamicTp refresh, empty threadPoolProperties.");
             return;
         }
@@ -248,19 +248,18 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
     @Override
     public void run(ApplicationArguments args) {
         Set<String> remoteExecutors = Collections.emptySet();
-        if (CollUtil.isNotEmpty(dtpProperties.getExecutors())) {
+        if (CollectionUtils.isNotEmpty(dtpProperties.getExecutors())) {
             remoteExecutors = dtpProperties.getExecutors().stream()
                     .map(ThreadPoolProperties::getThreadPoolName)
                     .collect(Collectors.toSet());
         }
 
         val registeredDtpExecutors = Sets.newHashSet(DTP_REGISTRY.keySet());
-        val localDtpExecutors = CollUtil.subtract(registeredDtpExecutors, remoteExecutors);
-        val localCommonExecutors = COMMON_REGISTRY.keySet();
-        log.info("DtpRegistry initialization end, remote dtpExecutors: {}, local dtpExecutors: {}, local commonExecutors: {}",
-                remoteExecutors, localDtpExecutors, localCommonExecutors);
-        if (CollUtil.isEmpty(dtpProperties.getPlatforms())) {
-            log.warn("DtpRegistry initialization end, no notify platforms configured.");
+        val localDtpExecutors = CollectionUtils.subtract(registeredDtpExecutors, remoteExecutors);
+        log.info("DtpRegistry initialization is complete, remote dtpExecutors: {}, local dtpExecutors: {}, local commonExecutors: {}",
+                remoteExecutors, localDtpExecutors, COMMON_REGISTRY.keySet());
+        if (CollectionUtils.isEmpty(dtpProperties.getPlatforms())) {
+            log.warn("DtpRegistry initialization is complete, no notify platforms configured.");
         }
     }
 

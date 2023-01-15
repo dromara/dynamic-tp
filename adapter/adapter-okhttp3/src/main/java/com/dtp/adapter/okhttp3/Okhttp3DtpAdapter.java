@@ -1,6 +1,5 @@
 package com.dtp.adapter.okhttp3;
 
-import cn.hutool.core.collection.CollUtil;
 import com.dtp.adapter.common.AbstractDtpAdapter;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.ExecutorWrapper;
@@ -8,6 +7,7 @@ import com.dtp.common.properties.DtpProperties;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import okhttp3.OkHttpClient;
+import org.apache.commons.collections.MapUtils;
 
 /**
  * Okhttp3DtpAdapter related
@@ -29,7 +29,7 @@ public class Okhttp3DtpAdapter extends AbstractDtpAdapter {
     protected void initialize() {
         super.initialize();
         val beans = ApplicationContextHolder.getBeansOfType(OkHttpClient.class);
-        if (CollUtil.isEmpty(beans)) {
+        if (MapUtils.isEmpty(beans)) {
             log.warn("Cannot find beans of type OkHttpClient.");
             return;
         }

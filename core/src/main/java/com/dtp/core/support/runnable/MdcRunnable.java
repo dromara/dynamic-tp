@@ -1,6 +1,6 @@
 package com.dtp.core.support.runnable;
 
-import cn.hutool.core.map.MapUtil;
+import org.apache.commons.collections.MapUtils;
 import org.slf4j.MDC;
 
 import java.util.Map;
@@ -32,7 +32,7 @@ public class MdcRunnable implements Runnable {
     @Override
     public void run() {
 
-        if (MapUtil.isEmpty(parentMdc)) {
+        if (MapUtils.isEmpty(parentMdc)) {
             runnable.run();
             return;
         }

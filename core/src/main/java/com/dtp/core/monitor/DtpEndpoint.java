@@ -1,6 +1,5 @@
 package com.dtp.core.monitor;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.system.RuntimeInfo;
 import com.dtp.common.ApplicationContextHolder;
@@ -13,6 +12,7 @@ import com.dtp.core.support.MetricsAware;
 import com.dtp.core.thread.DtpExecutor;
 import com.google.common.collect.Lists;
 import lombok.val;
+import org.apache.commons.collections.MapUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
@@ -44,7 +44,7 @@ public class DtpEndpoint {
         });
 
         val handlerMap = ApplicationContextHolder.getBeansOfType(MetricsAware.class);
-        if (CollUtil.isNotEmpty(handlerMap)) {
+        if (MapUtils.isNotEmpty(handlerMap)) {
             handlerMap.forEach((k, v) -> metricsList.addAll(v.getMultiPoolStats()));
         }
 

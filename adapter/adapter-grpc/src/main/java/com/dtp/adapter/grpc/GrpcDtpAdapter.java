@@ -1,15 +1,15 @@
 package com.dtp.adapter.grpc;
 
-import cn.hutool.core.collection.CollUtil;
 import com.dtp.adapter.common.AbstractDtpAdapter;
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.ReflectionUtil;
 import io.grpc.internal.ServerImpl;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.devh.boot.grpc.server.serverfactory.GrpcServerLifecycle;
+import org.apache.commons.collections.MapUtils;
 
 import java.util.Objects;
 import java.util.concurrent.Executor;
@@ -37,7 +37,7 @@ public class GrpcDtpAdapter extends AbstractDtpAdapter {
     @Override
     protected void initialize() {
         val beans = ApplicationContextHolder.getBeansOfType(GrpcServerLifecycle.class);
-        if (CollUtil.isEmpty(beans)) {
+        if (MapUtils.isEmpty(beans)) {
             log.warn("Cannot find beans of type GrpcServerLifecycle.");
             return;
         }

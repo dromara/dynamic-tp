@@ -1,6 +1,5 @@
 package com.dtp.core.support;
 
-import cn.hutool.core.collection.CollUtil;
 import com.alibaba.ttl.TtlRunnable;
 import com.alibaba.ttl.threadpool.TtlExecutors;
 import com.dtp.common.constant.DynamicTpConst;
@@ -16,6 +15,7 @@ import com.dtp.core.thread.EagerDtpExecutor;
 import com.dtp.core.thread.NamedThreadFactory;
 import com.dtp.core.thread.OrderedDtpExecutor;
 import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
@@ -294,7 +294,7 @@ public class ThreadPoolBuilder {
     }
 
     public ThreadPoolBuilder notifyItems(List<NotifyItem> notifyItemList) {
-        if (CollUtil.isNotEmpty(notifyItemList)) {
+        if (CollectionUtils.isNotEmpty(notifyItemList)) {
             notifyItems = notifyItemList;
         }
         return this;

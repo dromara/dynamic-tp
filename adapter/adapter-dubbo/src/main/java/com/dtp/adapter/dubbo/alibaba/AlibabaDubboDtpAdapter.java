@@ -1,13 +1,13 @@
 package com.dtp.adapter.dubbo.alibaba;
 
-import cn.hutool.core.map.MapUtil;
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 import com.alibaba.dubbo.common.store.DataStore;
 import com.dtp.adapter.common.AbstractDtpAdapter;
-import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
+import com.dtp.common.properties.DtpProperties;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections.MapUtils;
 
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -37,7 +37,7 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter {
         super.initialize();
         DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
         Map<String, Object> executors = dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY);
-        if (MapUtil.isNotEmpty(executors)) {
+        if (MapUtils.isNotEmpty(executors)) {
             executors.forEach((k, v) -> {
                 val name = genTpName(k);
                 val executorWrapper = new ExecutorWrapper(name, (ThreadPoolExecutor) v);

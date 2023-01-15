@@ -1,6 +1,5 @@
 package com.dtp.adapter.motan;
 
-import cn.hutool.core.collection.CollUtil;
 import com.dtp.adapter.common.AbstractDtpAdapter;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.ExecutorWrapper;
@@ -13,6 +12,8 @@ import com.weibo.api.motan.transport.Server;
 import com.weibo.api.motan.transport.netty.NettyServer;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -43,13 +44,13 @@ public class MotanDtpAdapter extends AbstractDtpAdapter {
         super.initialize();
 
         val beans = ApplicationContextHolder.getBeansOfType(ServiceConfigBean.class);
-        if (CollUtil.isEmpty(beans)) {
+        if (MapUtils.isEmpty(beans)) {
             log.warn("Cannot find beans of type ServiceConfigBean.");
             return;
         }
         beans.forEach((k, v) -> {
             List<Exporter<?>> exporters = v.getExporters();
-            if (CollUtil.isEmpty(exporters)) {
+            if (CollectionUtils.isEmpty(exporters)) {
                 return;
             }
             exporters.forEach(e -> {

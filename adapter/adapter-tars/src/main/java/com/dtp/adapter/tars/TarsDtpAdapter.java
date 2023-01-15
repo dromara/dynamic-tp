@@ -1,6 +1,5 @@
 package com.dtp.adapter.tars;
 
-import cn.hutool.core.map.MapUtil;
 import com.dtp.adapter.common.AbstractDtpAdapter;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.properties.DtpProperties;
@@ -9,6 +8,7 @@ import com.qq.tars.client.Communicator;
 import com.qq.tars.client.CommunicatorFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections.MapUtils;
 
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,7 +44,7 @@ public class TarsDtpAdapter extends AbstractDtpAdapter {
         CommunicatorFactory communicatorFactory = CommunicatorFactory.getInstance();
         val communicatorMap = (ConcurrentHashMap<Object, Communicator>) ReflectionUtil.getFieldValue(
                 CommunicatorFactory.class, COMMUNICATORS_FIELD, communicatorFactory);
-        if (MapUtil.isEmpty(communicatorMap)) {
+        if (MapUtils.isEmpty(communicatorMap)) {
             log.warn("Cannot find instances of type Communicator.");
             return;
         }

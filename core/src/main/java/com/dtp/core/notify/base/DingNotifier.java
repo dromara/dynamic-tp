@@ -1,7 +1,5 @@
 package com.dtp.core.notify.base;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.json.JSONUtil;
@@ -10,7 +8,9 @@ import com.dtp.common.dto.MarkdownReq;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.util.DingSignUtil;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -47,9 +47,9 @@ public class DingNotifier implements Notifier {
 
         MarkdownReq.At at = new MarkdownReq.At();
 
-        List<String> mobiles = StrUtil.split(platform.getReceivers(), ',');
+        List<String> mobiles = Lists.newArrayList(StringUtils.split(platform.getReceivers(), ','));
         at.setAtMobiles(mobiles);
-        if (CollUtil.isEmpty(mobiles)) {
+        if (CollectionUtils.isEmpty(mobiles)) {
             at.setAtAll(true);
         }
 

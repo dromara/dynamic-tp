@@ -1,6 +1,5 @@
 package com.dtp.core.spring;
 
-import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.properties.ThreadPoolProperties;
 import com.dtp.common.util.BeanUtil;
@@ -14,6 +13,7 @@ import com.dtp.core.thread.NamedThreadFactory;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -49,7 +49,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         DtpProperties dtpProperties = new DtpProperties();
         PropertiesBinder.bindDtpProperties(environment, dtpProperties);
         val executors = dtpProperties.getExecutors();
-        if (CollUtil.isEmpty(executors)) {
+        if (CollectionUtils.isEmpty(executors)) {
             log.warn("DynamicTp registrar, no executors are configured.");
             return;
         }

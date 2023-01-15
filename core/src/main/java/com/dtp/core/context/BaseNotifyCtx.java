@@ -1,12 +1,12 @@
 package com.dtp.core.context;
 
-import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.em.NotifyItemEnum;
 import lombok.Data;
 import lombok.val;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
 import java.util.function.Function;
@@ -36,7 +36,7 @@ public class BaseNotifyCtx {
     }
 
     public NotifyPlatform getPlatform(String platform) {
-        if (CollUtil.isEmpty(platforms)) {
+        if (CollectionUtils.isEmpty(platforms)) {
             return null;
         }
         val map = platforms.stream()

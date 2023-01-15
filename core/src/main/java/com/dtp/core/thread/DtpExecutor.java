@@ -1,6 +1,5 @@
 package com.dtp.core.thread;
 
-import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.properties.DtpProperties;
@@ -12,6 +11,7 @@ import com.dtp.core.support.runnable.NamedRunnable;
 import com.dtp.core.support.wrapper.TaskWrapper;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -32,11 +32,6 @@ import static com.dtp.common.em.NotifyItemEnum.RUN_TIMEOUT;
  **/
 @Slf4j
 public class DtpExecutor extends DtpLifecycleSupport {
-
-    /**
-     * Total reject count.
-     */
-    private final LongAdder rejectCount = new LongAdder();
 
     /**
      * RejectHandler name.
@@ -79,6 +74,11 @@ public class DtpExecutor extends DtpLifecycleSupport {
     private long queueTimeout;
 
     /**
+     * Total reject count.
+     */
+    private final LongAdder rejectCount = new LongAdder();
+
+    /**
      * Count run timeout tasks.
      */
     private final LongAdder runTimeoutCount = new LongAdder();
@@ -107,7 +107,7 @@ public class DtpExecutor extends DtpLifecycleSupport {
             taskName = ((NamedRunnable) command).getName();
         }
 
-        if (CollUtil.isNotEmpty(taskWrappers)) {
+        if (CollectionUtils.isNotEmpty(taskWrappers)) {
             for (TaskWrapper t : taskWrappers) {
                 command = t.wrap(command);
             }
@@ -175,14 +175,6 @@ public class DtpExecutor extends DtpLifecycleSupport {
         }
     }
 
-    public void incRejectCount(int count) {
-        rejectCount.add(count);
-    }
-
-    public long getRejectCount() {
-        return rejectCount.sum();
-    }
-
     public List<NotifyItem> getNotifyItems() {
         return notifyItems;
     }
@@ -214,6 +206,14 @@ public class DtpExecutor extends DtpLifecycleSupport {
 
     public void setPreStartAllCoreThreads(boolean preStartAllCoreThreads) {
         this.preStartAllCoreThreads = preStartAllCoreThreads;
+    }
+
+    public void incRejectCount(int count) {
+        rejectCount.add(count);
+    }
+
+    public long getRejectCount() {
+        return rejectCount.sum();
     }
 
     public void setRunTimeout(long runTimeout) {

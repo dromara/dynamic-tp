@@ -1,6 +1,5 @@
 package com.dtp.core.notify.manager;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.NumberUtil;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.AlarmInfo;
@@ -59,11 +58,11 @@ public class AlarmManager {
     private AlarmManager() { }
 
     public static void initAlarm(DtpExecutor executor, List<NotifyPlatform> platforms) {
-        if (CollUtil.isEmpty(platforms)) {
+        if (CollectionUtils.isEmpty(platforms)) {
             executor.setNotifyItems(Lists.newArrayList());
             return;
         }
-        if (CollUtil.isEmpty(executor.getNotifyItems())) {
+        if (CollectionUtils.isEmpty(executor.getNotifyItems())) {
             log.warn("DynamicTp notify, no notify items configured, name {}", executor.getThreadPoolName());
             return;
         }
@@ -162,7 +161,7 @@ public class AlarmManager {
 
         val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
         BlockingQueue<Runnable> workQueue = executor.getQueue();
-        if (CollUtil.isEmpty(workQueue)) {
+        if (CollectionUtils.isEmpty(workQueue)) {
             return false;
         }
 

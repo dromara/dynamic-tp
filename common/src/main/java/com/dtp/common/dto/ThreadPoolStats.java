@@ -73,7 +73,7 @@ public class ThreadPoolStats extends Metrics {
     /**
      * 拒绝的任务数量
      */
-    private int rejectCount;
+    private long rejectCount;
 
     /**
      * 拒绝策略名称
@@ -88,10 +88,10 @@ public class ThreadPoolStats extends Metrics {
     /**
      * 执行超时任务数量
      */
-    private int runTimeoutCount;
+    private long runTimeoutCount;
 
     /**
      * 在队列等待超时任务数量
      */
-    private int queueTimeoutCount;
+    private long queueTimeoutCount;
 }

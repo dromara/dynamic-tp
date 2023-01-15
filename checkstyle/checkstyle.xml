@@ -37,6 +37,7 @@
     <module name="JavadocType">
       <property name="tokens" value="INTERFACE_DEF"/>
       <property name="allowUnknownTags" value="true"/>
+      <property name="allowedAnnotations" value="Generated"/>
       <message key="javadoc.missing" value="类注释：缺少Javadoc注释。"/>
     </module>
     <!-- 命名检查 -->

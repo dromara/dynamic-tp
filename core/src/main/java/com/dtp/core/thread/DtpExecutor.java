@@ -19,7 +19,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 
 import static com.dtp.common.em.NotifyItemEnum.QUEUE_TIMEOUT;
 import static com.dtp.common.em.NotifyItemEnum.RUN_TIMEOUT;
@@ -36,7 +36,7 @@ public class DtpExecutor extends DtpLifecycleSupport {
     /**
      * Total reject count.
      */
-    private final AtomicInteger rejectCount = new AtomicInteger(0);
+    private final LongAdder rejectCount = new LongAdder();
 
     /**
      * RejectHandler name.
@@ -81,12 +81,12 @@ public class DtpExecutor extends DtpLifecycleSupport {
     /**
      * Count run timeout tasks.
      */
-    private final AtomicInteger runTimeoutCount = new AtomicInteger();
+    private final LongAdder runTimeoutCount = new LongAdder();
 
     /**
      * Count queue wait timeout tasks.
      */
-    private final AtomicInteger queueTimeoutCount = new AtomicInteger();
+    private final LongAdder queueTimeoutCount = new LongAdder();
 
     public DtpExecutor(int corePoolSize,
                        int maximumPoolSize,
@@ -133,7 +133,7 @@ public class DtpExecutor extends DtpLifecycleSupport {
         if (queueTimeout > 0) {
             long waitTime = currTime - runnable.getSubmitTime();
             if (waitTime > queueTimeout) {
-                queueTimeoutCount.incrementAndGet();
+                queueTimeoutCount.increment();
                 Runnable alarmTask = () -> AlarmManager.doAlarm(this, QUEUE_TIMEOUT);
                 AlarmManager.triggerAlarm(this.getThreadPoolName(), QUEUE_TIMEOUT.getValue(), alarmTask);
                 if (StringUtils.isNotBlank(runnable.getTaskName())) {
@@ -153,7 +153,7 @@ public class DtpExecutor extends DtpLifecycleSupport {
             DtpRunnable runnable = (DtpRunnable) r;
             long runTime = System.currentTimeMillis() - runnable.getStartTime();
             if (runTime > runTimeout) {
-                runTimeoutCount.incrementAndGet();
+                runTimeoutCount.increment();
                 Runnable alarmTask = () -> AlarmManager.doAlarm(this, RUN_TIMEOUT);
                 AlarmManager.triggerAlarm(this.getThreadPoolName(), RUN_TIMEOUT.getValue(), alarmTask);
                 if (StringUtils.isNotBlank(runnable.getTaskName())) {
@@ -176,11 +176,11 @@ public class DtpExecutor extends DtpLifecycleSupport {
     }
 
     public void incRejectCount(int count) {
-        rejectCount.addAndGet(count);
+        rejectCount.add(count);
     }
 
-    public int getRejectCount() {
-        return rejectCount.get();
+    public long getRejectCount() {
+        return rejectCount.sum();
     }
 
     public List<NotifyItem> getNotifyItems() {
@@ -220,12 +220,12 @@ public class DtpExecutor extends DtpLifecycleSupport {
         this.runTimeout = runTimeout;
     }
 
-    public int getRunTimeoutCount() {
-        return runTimeoutCount.get();
+    public long getRunTimeoutCount() {
+        return runTimeoutCount.sum();
     }
 
-    public int getQueueTimeoutCount() {
-        return queueTimeoutCount.get();
+    public long getQueueTimeoutCount() {
+        return queueTimeoutCount.sum();
     }
 
     public void setQueueTimeout(long queueTimeout) {

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
  * GrpcClientService related
  *
  * @author yanhom
- * @date 2022-10-29 9:06 PM
  */
 @Service
 @Slf4j

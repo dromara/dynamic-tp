@@ -1,6 +1,6 @@
 package com.dtp.common.util;
 
-import cn.hutool.core.collection.CollUtil;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.Collection;
 
@@ -27,7 +27,7 @@ public final class StringUtil {
     }
 
     public static String getContainsStrIgnoreCase(CharSequence str, Collection<? extends CharSequence> testStrList) {
-        if (isEmpty(str) || CollUtil.isEmpty(testStrList)) {
+        if (isEmpty(str) || CollectionUtils.isEmpty(testStrList)) {
             return null;
         }
         CharSequence[] array = testStrList.toArray(new CharSequence[0]);

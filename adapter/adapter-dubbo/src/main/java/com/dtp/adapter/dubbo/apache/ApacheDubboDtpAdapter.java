@@ -1,12 +1,12 @@
 package com.dtp.adapter.dubbo.apache;
 
-import cn.hutool.core.map.MapUtil;
 import com.dtp.adapter.common.AbstractDtpAdapter;
-import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.ReflectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections.MapUtils;
 import org.apache.dubbo.common.Version;
 import org.apache.dubbo.common.extension.ExtensionLoader;
 import org.apache.dubbo.common.store.DataStore;
@@ -49,7 +49,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
                 return;
             }
             Map<String, Object> executorMap = dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY);
-            if (MapUtil.isNotEmpty(executorMap)) {
+            if (MapUtils.isNotEmpty(executorMap)) {
                 executorMap.forEach((k, v) -> doInit(k, (ThreadPoolExecutor) v));
             }
             log.info("DynamicTp adapter, apache dubbo provider executors init end, executors: {}", executors);
@@ -70,7 +70,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
         }
 
         Map<Integer, ExecutorService> executorMap = data.get(EXECUTOR_SERVICE_COMPONENT_KEY);
-        if (MapUtil.isNotEmpty(executorMap)) {
+        if (MapUtils.isNotEmpty(executorMap)) {
             executorMap.forEach((k, v) -> doInit(k.toString(), (ThreadPoolExecutor) v));
         }
         log.info("DynamicTp adapter, apache dubbo provider executors init end, executors: {}", executors);

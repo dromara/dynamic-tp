@@ -1,11 +1,11 @@
 package com.dtp.core.parser;
 
-import cn.hutool.core.map.MapUtil;
 import com.dtp.common.em.ConfigFileTypeEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -56,7 +56,7 @@ public class JsonConfigParser extends AbstractConfigParser {
 
     private void flatMap(Map<Object, Object> result, Map<String, Object> dataMap, String prefix) {
 
-        if (MapUtil.isEmpty(dataMap)) {
+        if (MapUtils.isEmpty(dataMap)) {
             return;
         }
 

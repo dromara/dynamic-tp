@@ -1,6 +1,6 @@
 package com.dtp.adapter.common;
 
-import cn.hutool.core.collection.CollUtil;
+
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.ExecutorWrapper;
@@ -23,6 +23,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
@@ -78,7 +80,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
     @Override
     public List<ThreadPoolStats> getMultiPoolStats() {
         val executorWrappers = getExecutorWrappers();
-        if (CollUtil.isEmpty(executorWrappers)) {
+        if (MapUtils.isEmpty(executorWrappers)) {
             return Collections.emptyList();
         }
 
@@ -93,7 +95,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
 
     public void refresh(String name, List<SimpleTpProperties> properties, List<NotifyPlatform> platforms) {
         val executorWrappers = getExecutorWrappers();
-        if (CollUtil.isEmpty(properties) || CollUtil.isEmpty(executorWrappers)) {
+        if (CollectionUtils.isEmpty(properties) || MapUtils.isEmpty(executorWrappers)) {
             return;
         }
 

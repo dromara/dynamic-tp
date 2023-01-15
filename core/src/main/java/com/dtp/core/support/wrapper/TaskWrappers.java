@@ -1,8 +1,8 @@
 package com.dtp.core.support.wrapper;
 
-import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.util.StringUtil;
 import com.google.common.collect.Lists;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,7 +32,7 @@ public class TaskWrappers {
     }
 
     public List<TaskWrapper> getByNames(Set<String> names) {
-        if (CollUtil.isEmpty(names)) {
+        if (CollectionUtils.isEmpty(names)) {
             return Collections.emptyList();
         }
 

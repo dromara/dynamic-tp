@@ -1,11 +1,11 @@
 package com.dtp.extension.limiter.redis.ratelimiter;
 
-import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.pattern.filter.Invoker;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.notify.filter.NotifyFilter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -41,7 +41,7 @@ public class NotifyRedisRateLimiterFilter implements NotifyFilter {
 
     private boolean check(String notifyName, int limit, long interval) {
         val res = redisScriptRateLimiter.isAllowed(notifyName, interval, limit);
-        if (CollUtil.isEmpty(res)) {
+        if (CollectionUtils.isEmpty(res)) {
             return true;
         }
         if (res.get(LUA_RES_REMAIN_INDEX) <= 0) {

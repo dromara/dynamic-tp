@@ -1,6 +1,5 @@
 package com.dtp.adapter.rocketmq;
 
-import cn.hutool.core.collection.CollUtil;
 import com.alibaba.cloud.stream.binder.rocketmq.integration.RocketMQInboundChannelAdapter;
 import com.dtp.adapter.common.AbstractDtpAdapter;
 import com.dtp.common.ApplicationContextHolder;
@@ -9,6 +8,7 @@ import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.ReflectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections.MapUtils;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.impl.consumer.ConsumeMessageConcurrentlyService;
 import org.apache.rocketmq.client.impl.consumer.ConsumeMessageOrderlyService;
@@ -45,7 +45,7 @@ public class StreamRocketMqDtpAdapter extends AbstractDtpAdapter {
         super.initialize();
 
         val beans = ApplicationContextHolder.getBeansOfType(BindingService.class);
-        if (CollUtil.isEmpty(beans)) {
+        if (MapUtils.isEmpty(beans)) {
             log.warn("Cannot find beans of type BindingService.");
             return;
         }
@@ -53,7 +53,7 @@ public class StreamRocketMqDtpAdapter extends AbstractDtpAdapter {
         beans.forEach((bindingServiceName, bindingService) -> {
             val consumerBindings = (Map<String, List<Binding<?>>>) ReflectionUtil.getFieldValue(BindingService.class,
                     "consumerBindings", bindingService);
-            if (CollUtil.isEmpty(consumerBindings)) {
+            if (MapUtils.isEmpty(consumerBindings)) {
                 return;
             }
             consumerBindings.forEach((bindingName, messageChannelBinders) -> {

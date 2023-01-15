@@ -1,6 +1,5 @@
 package com.dtp.core.notify.filter;
 
-import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.pattern.filter.Invoker;
@@ -8,6 +7,7 @@ import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.notify.manager.NotifyItemManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.Objects;
 
@@ -41,6 +41,6 @@ public class NoticeBaseFilter implements NotifyFilter {
     public boolean satisfyBaseCondition(NotifyItem notifyItem, ExecutorWrapper executor) {
         return executor.isNotifyEnabled()
                 && notifyItem.isEnabled()
-                && CollUtil.isNotEmpty(notifyItem.getPlatforms());
+                && CollectionUtils.isNotEmpty(notifyItem.getPlatforms());
     }
 }

@@ -1,6 +1,6 @@
 package com.dtp.apapter.brpc.client;
 
-import cn.hutool.core.collection.CollUtil;
+
 import com.baidu.cloud.starlight.api.rpc.StarlightClient;
 import com.baidu.cloud.starlight.api.rpc.threadpool.ThreadPoolFactory;
 import com.baidu.cloud.starlight.core.rpc.SingleStarlightClient;
@@ -14,6 +14,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -51,13 +53,13 @@ public class StarlightClientDtpAdapter extends AbstractDtpAdapter {
         }
 
         List<StarlightClient> starlightClients = Lists.newArrayList();
-        if (CollUtil.isNotEmpty(scBeans)) {
+        if (MapUtils.isNotEmpty(scBeans)) {
             starlightClients.addAll(scBeans.values());
         }
-        if (Objects.nonNull(sscManager) && CollUtil.isNotEmpty(sscManager.allSingleClients())) {
+        if (Objects.nonNull(sscManager) && MapUtils.isNotEmpty(sscManager.allSingleClients())) {
             starlightClients.addAll(sscManager.allSingleClients().values());
         }
-        if (CollUtil.isEmpty(starlightClients)) {
+        if (CollectionUtils.isEmpty(starlightClients)) {
             log.warn("Cannot find beans of type StarlightClient.");
             return;
         }

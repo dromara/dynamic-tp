@@ -1,6 +1,5 @@
 package com.dtp.core.notify.manager;
 
-import cn.hutool.core.collection.CollUtil;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
@@ -11,6 +10,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -92,14 +92,14 @@ public class NotifyItemManager {
     }
 
     public static void fillPlatforms(List<NotifyPlatform> platforms, List<NotifyItem> notifyItems) {
-        if (CollUtil.isEmpty(platforms) || CollUtil.isEmpty(notifyItems)) {
+        if (CollectionUtils.isEmpty(platforms) || CollectionUtils.isEmpty(notifyItems)) {
             log.warn("DynamicTp notify, no notify platforms or items configured.");
             return;
         }
 
         List<String> platformNames = platforms.stream().map(NotifyPlatform::getPlatform).collect(toList());
         notifyItems.forEach(n -> {
-            if (CollUtil.isEmpty(n.getPlatforms())) {
+            if (CollectionUtils.isEmpty(n.getPlatforms())) {
                 n.setPlatforms(platformNames);
             }
         });

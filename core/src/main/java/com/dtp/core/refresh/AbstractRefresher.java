@@ -1,15 +1,15 @@
 package com.dtp.core.refresh;
 
-import cn.hutool.core.map.MapUtil;
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.em.ConfigFileTypeEnum;
 import com.dtp.common.event.RefreshEvent;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.handler.ConfigHandler;
 import com.dtp.core.support.PropertiesBinder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Resource;
@@ -47,7 +47,7 @@ public abstract class AbstractRefresher implements Refresher {
     }
 
     protected void doRefresh(Map<Object, Object> properties) {
-        if (MapUtil.isEmpty(properties)) {
+        if (MapUtils.isEmpty(properties)) {
             log.warn("DynamicTp refresh, empty properties.");
             return;
         }

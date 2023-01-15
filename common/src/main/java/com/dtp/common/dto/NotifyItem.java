@@ -1,11 +1,11 @@
 package com.dtp.common.dto;
 
-import cn.hutool.core.collection.CollUtil;
-import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.em.NotifyItemEnum;
+import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.util.StringUtil;
 import lombok.Data;
 import lombok.val;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +54,7 @@ public class NotifyItem {
 
     public static List<NotifyItem> mergeSimpleNotifyItems(List<NotifyItem> source) {
         // update notify items
-        if (CollUtil.isEmpty(source)) {
+        if (CollectionUtils.isEmpty(source)) {
             return getSimpleNotifyItems();
         } else {
             val configuredTypes = source.stream().map(NotifyItem::getType).collect(toList());
@@ -88,7 +88,7 @@ public class NotifyItem {
 
     public static List<NotifyItem> mergeAllNotifyItems(List<NotifyItem> source) {
         // update notify items
-        if (CollUtil.isEmpty(source)) {
+        if (CollectionUtils.isEmpty(source)) {
             return getAllNotifyItems();
         } else {
             val configuredTypes = source.stream().map(NotifyItem::getType).collect(toList());

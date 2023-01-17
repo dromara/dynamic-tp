@@ -21,5 +21,6 @@
         <module>starter-adapter-okhttp3</module>
         <module>starter-adapter-brpc</module>
         <module>starter-adapter-tars</module>
+        <module>starter-adapter-sofa</module>
     </modules>
 </project>

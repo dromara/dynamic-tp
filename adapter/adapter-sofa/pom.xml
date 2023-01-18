@@ -4,29 +4,25 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>cn.dynamictp</groupId>
-        <artifactId>dynamic-tp-all</artifactId>
+        <artifactId>dynamic-tp-adapter</artifactId>
         <version>1.1.0</version>
     </parent>
-    <artifactId>dynamic-tp-starter</artifactId>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>starter-common</module>
-        <module>starter-configcenter</module>
-        <module>starter-adapter</module>
-        <module>starter-extension</module>
-    </modules>
+    <artifactId>dynamic-tp-adapter-sofa</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>cn.dynamictp</groupId>
-            <artifactId>dynamic-tp-core</artifactId>
+            <artifactId>dynamic-tp-adapter-common</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>cn.dynamictp</groupId>
-            <artifactId>dynamic-tp-logging</artifactId>
+            <groupId>com.alipay.sofa</groupId>
+            <artifactId>sofa-rpc-all</artifactId>
+            <version>${sofa-rpc.version}</version>
+            <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
+
     </dependencies>
 
 </project>

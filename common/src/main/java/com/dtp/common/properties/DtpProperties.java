@@ -138,6 +138,11 @@ public class DtpProperties {
     private List<SimpleTpProperties> tarsTp;
 
     /**
+     * Sofa thread pools.
+     */
+    private List<SimpleTpProperties> sofaTp;
+
+    /**
      * Liteflow thread pools.
      */
     private List<SimpleTpProperties> liteflowTp;

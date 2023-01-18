@@ -28,7 +28,7 @@
         <jackson-core.version>2.13.2</jackson-core.version>
         <jackson-databind.version>2.13.2.1</jackson-databind.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sofa-rpc-all.version>5.4.0</sofa-rpc-all.version>
+        <sofa-rpc.version>5.9.1</sofa-rpc.version>
         <brpc.version>2022.2.0</brpc.version>
         <apache-dubbo.version>3.0.7</apache-dubbo.version>
         <alibaba-dubbo.version>2.0.0</alibaba-dubbo.version>
@@ -191,6 +191,12 @@
             <dependency>
                 <groupId>cn.dynamictp</groupId>
                 <artifactId>dynamic-tp-adapter-tars</artifactId>
+                <version>${dtp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.dynamictp</groupId>
+                <artifactId>dynamic-tp-adapter-sofa</artifactId>
                 <version>${dtp.version}</version>
             </dependency>
 

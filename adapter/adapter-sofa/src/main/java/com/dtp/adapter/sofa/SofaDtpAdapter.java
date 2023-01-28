@@ -78,12 +78,12 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
         });
 
         if (hasUserThread) {
-            handleUserThreadPool();
+            handleUserThreadPools();
         }
         log.info("DynamicTp adapter, sofa executors init end, executors: {}", executors);
     }
 
-    private void handleUserThreadPool() {
+    private void handleUserThreadPools() {
         try {
             Field f = UserThreadPoolManager.class.getDeclaredField(USER_THREAD_FIELD_NAME);
             f.setAccessible(true);
@@ -96,7 +96,7 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
                 });
             }
         } catch (Exception e) {
-            log.warn("UserThreadPoolManager deals error", e);
+            log.warn("UserThreadPoolManager handles failed", e);
         }
     }
 }

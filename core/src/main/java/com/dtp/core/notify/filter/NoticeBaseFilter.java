@@ -35,12 +35,15 @@ public class NoticeBaseFilter implements NotifyFilter {
                     executorWrapper.getThreadPoolName());
             return;
         }
+        if (CollectionUtils.isEmpty(notifyItem.getPlatforms()) && CollectionUtils.isEmpty(context.getPlatforms())) {
+            log.debug("DynamicTp refresh, change notification platform not found, threadPoolName: {}",
+                    executorWrapper.getThreadPoolName());
+            return;
+        }
         nextInvoker.invoke(context);
     }
 
     public boolean satisfyBaseCondition(NotifyItem notifyItem, ExecutorWrapper executor) {
-        return executor.isNotifyEnabled()
-                && notifyItem.isEnabled()
-                && CollectionUtils.isNotEmpty(notifyItem.getPlatforms());
+        return executor.isNotifyEnabled() && notifyItem.isEnabled();
     }
 }

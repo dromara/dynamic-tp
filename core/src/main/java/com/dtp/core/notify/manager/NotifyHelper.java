@@ -1,9 +1,11 @@
 package com.dtp.core.notify.manager;
 
+import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.em.NotifyItemEnum;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.thread.DtpExecutor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -16,10 +18,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.dtp.common.em.NotifyItemEnum.*;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * NotifyHelper related
@@ -28,7 +32,7 @@ import static java.util.stream.Collectors.toList;
  * @since 1.0.0
  */
 @Slf4j
-public class NotifyItemManager {
+public class NotifyHelper {
 
     private static final List<String> COMMON_ALARM_KEYS = Lists.newArrayList("alarmType", "threshold");
 
@@ -59,7 +63,7 @@ public class NotifyItemManager {
         ALL_ALARM_KEYS.addAll(COMMON_ALARM_KEYS);
     }
 
-    private NotifyItemManager() { }
+    private NotifyHelper() { }
 
     public static Set<String> getAllAlarmKeys() {
         return ALL_ALARM_KEYS;
@@ -103,5 +107,15 @@ public class NotifyItemManager {
                 n.setPlatforms(platformNames);
             }
         });
+    }
+
+    public static NotifyPlatform getPlatform(String platform) {
+        DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+        if (CollectionUtils.isEmpty(dtpProperties.getPlatforms())) {
+            return null;
+        }
+        val map = dtpProperties.getPlatforms().stream()
+                .collect(toMap(x -> x.getPlatform().toLowerCase(), Function.identity(), (v1, v2) -> v2));
+        return map.get(platform.toLowerCase());
     }
 }

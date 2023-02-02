@@ -1,7 +1,6 @@
 package com.dtp.core.notify.manager;
 
 import cn.hutool.core.util.NumberUtil;
-import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.AlarmInfo;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
@@ -9,7 +8,6 @@ import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.common.pattern.filter.InvokerChain;
-import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.StreamUtil;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
@@ -67,7 +65,7 @@ public class AlarmManager {
             return;
         }
 
-        NotifyItemManager.fillPlatforms(platforms, executor.getNotifyItems());
+        NotifyHelper.fillPlatforms(platforms, executor.getNotifyItems());
         initAlarm(executor.getThreadPoolName(), executor.getNotifyItems());
     }
 
@@ -85,7 +83,7 @@ public class AlarmManager {
         if (CollectionUtils.isEmpty(newItems)) {
             return;
         }
-        NotifyItemManager.fillPlatforms(platforms, newItems);
+        NotifyHelper.fillPlatforms(platforms, newItems);
         Map<String, NotifyItem> oldNotifyItemMap = StreamUtil.toMap(oldItems, NotifyItem::getType);
         newItems.forEach(x -> {
             NotifyItem oldNotifyItem = oldNotifyItemMap.get(x.getType());
@@ -123,13 +121,11 @@ public class AlarmManager {
     }
 
     public static void doAlarm(ExecutorWrapper executorWrapper, NotifyItemEnum notifyItemEnum) {
-        NotifyItem notifyItem = NotifyItemManager.getNotifyItem(executorWrapper, notifyItemEnum);
+        NotifyItem notifyItem = NotifyHelper.getNotifyItem(executorWrapper, notifyItemEnum);
         if (notifyItem == null) {
             return;
         }
         AlarmCtx alarmCtx = new AlarmCtx(executorWrapper, notifyItem);
-        DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-        alarmCtx.setPlatforms(dtpProperties.getPlatforms());
         ALARM_INVOKER_CHAIN.proceed(alarmCtx);
     }
 

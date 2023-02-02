@@ -12,7 +12,7 @@ import com.dtp.core.context.NoticeCtx;
 import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.notify.manager.NoticeManager;
-import com.dtp.core.notify.manager.NotifyItemManager;
+import com.dtp.core.notify.manager.NotifyHelper;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.support.wrapper.TaskWrapper;
 import com.dtp.core.support.wrapper.TaskWrappers;
@@ -195,9 +195,9 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.isAllowCoreThreadTimeOut(),
                         newProp.isAllowCoreThreadTimeOut()));
 
-        val notifyItem = NotifyItemManager.getNotifyItem(executor, NotifyItemEnum.CHANGE);
+        val notifyItem = NotifyHelper.getNotifyItem(executor, NotifyItemEnum.CHANGE);
         val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor, properties.isNotifyEnabled());
-        NoticeCtx context = new NoticeCtx(executorWrapper, notifyItem, dtpProperties.getPlatforms(), oldProp, diffKeys);
+        NoticeCtx context = new NoticeCtx(executorWrapper, notifyItem, oldProp, diffKeys);
         NoticeManager.doNoticeAsync(context);
     }
 

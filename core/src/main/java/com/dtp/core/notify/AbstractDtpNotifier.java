@@ -11,6 +11,7 @@ import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.context.DtpNotifyCtxHolder;
 import com.dtp.core.notify.alarm.AlarmCounter;
 import com.dtp.core.notify.base.Notifier;
+import com.dtp.core.notify.manager.NotifyHelper;
 import com.dtp.core.thread.DtpExecutor;
 import com.google.common.base.Joiner;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -28,8 +30,8 @@ import java.util.stream.Collectors;
 
 import static com.dtp.common.constant.DynamicTpConst.UNKNOWN;
 import static com.dtp.common.constant.LarkNotifyConst.*;
-import static com.dtp.core.notify.manager.NotifyItemManager.getAlarmKeys;
-import static com.dtp.core.notify.manager.NotifyItemManager.getAllAlarmKeys;
+import static com.dtp.core.notify.manager.NotifyHelper.getAlarmKeys;
+import static com.dtp.core.notify.manager.NotifyHelper.getAllAlarmKeys;
 
 /**
  * AbstractDtpNotifier related
@@ -50,7 +52,10 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
     @Override
     public void sendChangeMsg(DtpMainProp oldProp, List<String> diffs) {
-        NotifyPlatform platform = DtpNotifyCtxHolder.get().getPlatform(platform());
+        NotifyPlatform platform = NotifyHelper.getPlatform(platform());
+        if (Objects.isNull(platform)) {
+            return;
+        }
         String content = buildNoticeContent(platform, oldProp, diffs);
         if (StringUtils.isBlank(content)) {
             return;
@@ -60,7 +65,10 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
     @Override
     public void sendAlarmMsg(NotifyItemEnum notifyItemEnum) {
-        NotifyPlatform platform = DtpNotifyCtxHolder.get().getPlatform(platform());
+        NotifyPlatform platform = NotifyHelper.getPlatform(platform());
+        if (Objects.isNull(platform)) {
+            return;
+        }
         String content = buildAlarmContent(platform, notifyItemEnum);
         if (StringUtils.isBlank(content)) {
             return;

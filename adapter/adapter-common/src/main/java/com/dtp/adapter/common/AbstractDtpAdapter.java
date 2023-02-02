@@ -15,7 +15,7 @@ import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.convert.MetricsConverter;
 import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.notify.manager.NoticeManager;
-import com.dtp.core.notify.manager.NotifyItemManager;
+import com.dtp.core.notify.manager.NotifyHelper;
 import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
@@ -130,8 +130,8 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getMaxPoolSize(), newProp.getMaxPoolSize()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getKeepAliveTime(), newProp.getKeepAliveTime()));
 
-        val notifyItem = NotifyItemManager.getNotifyItem(executorWrapper, NotifyItemEnum.CHANGE);
-        NoticeCtx context = new NoticeCtx(executorWrapper, notifyItem, platforms, oldProp, diffKeys);
+        val notifyItem = NotifyHelper.getNotifyItem(executorWrapper, NotifyItemEnum.CHANGE);
+        NoticeCtx context = new NoticeCtx(executorWrapper, notifyItem, oldProp, diffKeys);
         NoticeManager.doNoticeAsync(context);
     }
 

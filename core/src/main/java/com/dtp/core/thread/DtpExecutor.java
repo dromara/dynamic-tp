@@ -7,6 +7,7 @@ import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.notify.manager.NotifyHelper;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.spring.DtpLifecycleSupport;
+import com.dtp.core.spring.SpringExecutor;
 import com.dtp.core.support.runnable.DtpRunnable;
 import com.dtp.core.support.runnable.NamedRunnable;
 import com.dtp.core.support.wrapper.TaskWrapper;
@@ -32,7 +33,7 @@ import static com.dtp.common.em.NotifyItemEnum.RUN_TIMEOUT;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpExecutor extends DtpLifecycleSupport {
+public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
 
     /**
      * Simple Business alias Name of Dynamic ThreadPool. Use for notify.
@@ -99,6 +100,11 @@ public class DtpExecutor extends DtpLifecycleSupport {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);
         this.rejectHandlerName = handler.getClass().getSimpleName();
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
+    }
+
+    @Override
+    public void execute(Runnable task, long startTimeout) {
+        execute(task);
     }
 
     @Override

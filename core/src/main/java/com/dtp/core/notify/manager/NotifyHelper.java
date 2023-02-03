@@ -90,6 +90,8 @@ public class NotifyHelper {
         return notifyItemOpt.get();
     }
 
+
+    @SuppressWarnings("unchecked")
     public static void fillPlatforms(List<NotifyPlatform> platforms, List<NotifyItem> notifyItems) {
         if (CollectionUtils.isEmpty(platforms) || CollectionUtils.isEmpty(notifyItems)) {
             log.warn("DynamicTp notify, no notify platforms or items configured.");
@@ -100,6 +102,8 @@ public class NotifyHelper {
         notifyItems.forEach(n -> {
             if (CollectionUtils.isEmpty(n.getPlatforms())) {
                 n.setPlatforms(platformNames);
+            } else {
+                n.setPlatforms((List<String>) CollectionUtils.intersection(platformNames, n.getPlatforms()));
             }
         });
     }
@@ -124,7 +128,7 @@ public class NotifyHelper {
             log.warn("DynamicTp notify, no notify items configured, name {}", executor.getThreadPoolName());
             return;
         }
-        NotifyHelper.fillPlatforms(platforms, executor.getNotifyItems());
+        fillPlatforms(platforms, executor.getNotifyItems());
         AlarmManager.initAlarm(executor.getThreadPoolName(), executor.getNotifyItems());
     }
 
@@ -132,7 +136,7 @@ public class NotifyHelper {
                                     List<NotifyPlatform> platforms,
                                     List<NotifyItem> oldItems,
                                     List<NotifyItem> newItems) {
-        NotifyHelper.fillPlatforms(platforms, newItems);
+        fillPlatforms(platforms, newItems);
         Map<String, NotifyItem> oldNotifyItemMap = StreamUtil.toMap(oldItems, NotifyItem::getType);
         newItems.forEach(x -> {
             NotifyItem oldNotifyItem = oldNotifyItemMap.get(x.getType());

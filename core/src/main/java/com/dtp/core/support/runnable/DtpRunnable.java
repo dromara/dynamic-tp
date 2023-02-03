@@ -1,5 +1,7 @@
 package com.dtp.core.support.runnable;
 
+import com.dtp.common.util.TimeUtil;
+
 /**
  * DtpRunnable related
  *
@@ -18,7 +20,7 @@ public class DtpRunnable implements Runnable {
 
     public DtpRunnable(Runnable runnable, String taskName) {
         this.runnable = runnable;
-        submitTime = System.currentTimeMillis();
+        submitTime = TimeUtil.currentTimeMillis();
         this.taskName = taskName;
     }
 

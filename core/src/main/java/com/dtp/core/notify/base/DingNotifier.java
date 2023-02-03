@@ -8,6 +8,7 @@ import com.dtp.common.dto.MarkdownReq;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.util.DingSignUtil;
+import com.dtp.common.util.TimeUtil;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -80,7 +81,7 @@ public class DingNotifier implements Notifier {
         if (StringUtils.isBlank(secret)) {
             return DingNotifyConst.DING_WEBHOOK + accessToken;
         }
-        long timestamp = System.currentTimeMillis();
+        long timestamp = TimeUtil.currentTimeMillis();
         String sign = DingSignUtil.dingSign(secret, timestamp);
         return DingNotifyConst.DING_WEBHOOK + accessToken + "&timestamp=" + timestamp + "&sign=" + sign;
     }

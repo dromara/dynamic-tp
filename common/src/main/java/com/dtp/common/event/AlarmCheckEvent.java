@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationEvent;
  */
 public class AlarmCheckEvent extends ApplicationEvent {
 
-    private final DtpProperties dtpProperties;
+    private final transient DtpProperties dtpProperties;
 
     public AlarmCheckEvent(Object source, DtpProperties dtpProperties) {
         super(source);

@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationEvent;
  */
 public class CollectEvent extends ApplicationEvent {
 
-    private final DtpProperties dtpProperties;
+    private final transient DtpProperties dtpProperties;
 
     public CollectEvent(Object source, DtpProperties dtpProperties) {
         super(source);

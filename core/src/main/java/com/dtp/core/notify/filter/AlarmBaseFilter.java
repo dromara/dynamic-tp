@@ -24,18 +24,11 @@ public class AlarmBaseFilter implements NotifyFilter {
     private static final Object SEND_LOCK = new Object();
 
     @Override
-    public int getOrder() {
-        return 0;
-    }
-
-    @Override
     public void doFilter(BaseNotifyCtx context, Invoker<BaseNotifyCtx> nextInvoker) {
 
         val executorWrapper = context.getExecutorWrapper();
-        NotifyItem notifyItem = context.getNotifyItem();
+        val notifyItem = context.getNotifyItem();
         if (Objects.isNull(notifyItem) || !satisfyBaseCondition(notifyItem, executorWrapper)) {
-            log.debug("DynamicTp notify, no platforms configured or notification is not enabled, threadPoolName: {}",
-                    executorWrapper.getThreadPoolName());
             return;
         }
 
@@ -62,9 +55,14 @@ public class AlarmBaseFilter implements NotifyFilter {
         nextInvoker.invoke(context);
     }
 
-    public boolean satisfyBaseCondition(NotifyItem notifyItem, ExecutorWrapper executor) {
+    private boolean satisfyBaseCondition(NotifyItem notifyItem, ExecutorWrapper executor) {
         return executor.isNotifyEnabled()
                 && notifyItem.isEnabled()
                 && CollectionUtils.isNotEmpty(notifyItem.getPlatforms());
+    }
+
+    @Override
+    public int getOrder() {
+        return 0;
     }
 }

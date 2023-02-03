@@ -5,6 +5,7 @@ import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.context.DtpNotifyCtxHolder;
 import com.dtp.core.context.NoticeCtx;
 import com.dtp.core.handler.NotifierHandler;
+import lombok.val;
 
 /**
  * NoticeInvoker related
@@ -17,7 +18,7 @@ public class NoticeInvoker implements Invoker<BaseNotifyCtx> {
     @Override
     public void invoke(BaseNotifyCtx context) {
         DtpNotifyCtxHolder.set(context);
-        NoticeCtx noticeCtx = (NoticeCtx) context;
+        val noticeCtx = (NoticeCtx) context;
         NotifierHandler.getInstance().sendNotice(noticeCtx.getProp(), noticeCtx.getDiffs());
     }
 }

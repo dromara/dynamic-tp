@@ -1,10 +1,10 @@
 package com.dtp.adapter.common;
 
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.event.AlarmCheckEvent;
 import com.dtp.common.event.CollectEvent;
 import com.dtp.common.event.RefreshEvent;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.handler.CollectorHandler;
 import com.dtp.core.notify.manager.AlarmManager;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,6 @@ import org.springframework.lang.NonNull;
 import org.springframework.util.CollectionUtils;
 
 import static com.dtp.common.constant.DynamicTpConst.SCHEDULE_NOTIFY_ITEMS;
-import static com.dtp.core.notify.manager.AlarmManager.doAlarm;
 
 /**
  * DtpAdapterListener related
@@ -89,7 +88,7 @@ public class DtpAdapterListener implements GenericApplicationListener {
         }
         handlerMap.forEach((k, v) -> {
             val executorWrapper = v.getExecutorWrappers();
-            executorWrapper.forEach((kk, vv) -> AlarmManager.triggerAlarm(() -> doAlarm(vv, SCHEDULE_NOTIFY_ITEMS)));
+            executorWrapper.forEach((kk, vv) -> AlarmManager.doAlarmAsync(vv, SCHEDULE_NOTIFY_ITEMS));
         });
     }
 }

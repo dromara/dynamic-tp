@@ -1,11 +1,11 @@
 package com.dtp.core.monitor;
 
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.common.event.AlarmCheckEvent;
 import com.dtp.common.event.CollectEvent;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.convert.MetricsConverter;
 import com.dtp.core.handler.CollectorHandler;
@@ -24,7 +24,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import static com.dtp.common.constant.DynamicTpConst.SCHEDULE_NOTIFY_ITEMS;
-import static com.dtp.core.notify.manager.AlarmManager.doAlarm;
 
 /**
  * DtpMonitor related
@@ -75,7 +74,7 @@ public class DtpMonitor implements ApplicationRunner, Ordered {
     private void checkAlarm(List<String> dtpNames) {
         dtpNames.forEach(x -> {
             DtpExecutor executor = DtpRegistry.getDtpExecutor(x);
-            AlarmManager.triggerAlarm(() -> doAlarm(executor, SCHEDULE_NOTIFY_ITEMS));
+            AlarmManager.doAlarmAsync(executor, SCHEDULE_NOTIFY_ITEMS);
         });
         publishAlarmCheckEvent();
     }

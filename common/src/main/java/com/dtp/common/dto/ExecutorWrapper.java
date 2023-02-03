@@ -34,13 +34,6 @@ public class ExecutorWrapper {
         this.notifyItems = NotifyItem.getSimpleNotifyItems();
     }
 
-    public ExecutorWrapper(String threadPoolName, Executor executor, boolean notifyEnabled) {
-        this.threadPoolName = threadPoolName;
-        this.executor = executor;
-        this.notifyItems = NotifyItem.getSimpleNotifyItems();
-        this.notifyEnabled = notifyEnabled;
-    }
-
     public ExecutorWrapper(String threadPoolName, Executor executor,
                            List<NotifyItem> notifyItems, boolean notifyEnabled) {
         this.threadPoolName = threadPoolName;

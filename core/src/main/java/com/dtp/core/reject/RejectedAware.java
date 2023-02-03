@@ -24,8 +24,7 @@ public interface RejectedAware {
         if (executor instanceof DtpExecutor) {
             DtpExecutor dtpExecutor = (DtpExecutor) executor;
             dtpExecutor.incRejectCount(1);
-            Runnable runnable = () -> AlarmManager.doAlarm(dtpExecutor, REJECT);
-            AlarmManager.triggerAlarm(dtpExecutor.getThreadPoolName(), REJECT.getValue(), runnable);
+            AlarmManager.doAlarmAsync(dtpExecutor, REJECT);
         }
     }
 }

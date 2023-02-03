@@ -4,8 +4,10 @@ import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.notify.manager.AlarmManager;
+import com.dtp.core.notify.manager.NotifyHelper;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.spring.DtpLifecycleSupport;
+import com.dtp.core.spring.SpringExecutor;
 import com.dtp.core.support.runnable.DtpRunnable;
 import com.dtp.core.support.runnable.NamedRunnable;
 import com.dtp.core.support.wrapper.TaskWrapper;
@@ -31,12 +33,7 @@ import static com.dtp.common.em.NotifyItemEnum.RUN_TIMEOUT;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpExecutor extends DtpLifecycleSupport {
-
-    /**
-     * RejectHandler name.
-     */
-    private String rejectHandlerName;
+public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
 
     /**
      * Simple Business alias Name of Dynamic ThreadPool. Use for notify.
@@ -88,6 +85,11 @@ public class DtpExecutor extends DtpLifecycleSupport {
      */
     private final LongAdder queueTimeoutCount = new LongAdder();
 
+    /**
+     * RejectHandler name.
+     */
+    private String rejectHandlerName;
+
     public DtpExecutor(int corePoolSize,
                        int maximumPoolSize,
                        long keepAliveTime,
@@ -98,6 +100,11 @@ public class DtpExecutor extends DtpLifecycleSupport {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);
         this.rejectHandlerName = handler.getClass().getSimpleName();
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
+    }
+
+    @Override
+    public void execute(Runnable task, long startTimeout) {
+        execute(task);
     }
 
     @Override
@@ -134,8 +141,7 @@ public class DtpExecutor extends DtpLifecycleSupport {
             long waitTime = currTime - runnable.getSubmitTime();
             if (waitTime > queueTimeout) {
                 queueTimeoutCount.increment();
-                Runnable alarmTask = () -> AlarmManager.doAlarm(this, QUEUE_TIMEOUT);
-                AlarmManager.triggerAlarm(this.getThreadPoolName(), QUEUE_TIMEOUT.getValue(), alarmTask);
+                AlarmManager.doAlarmAsync(this, QUEUE_TIMEOUT);
                 if (StringUtils.isNotBlank(runnable.getTaskName())) {
                     log.warn("DynamicTp execute, queue timeout, poolName: {}, taskName: {}, waitTime: {}ms",
                             this.getThreadPoolName(), runnable.getTaskName(), waitTime);
@@ -154,8 +160,7 @@ public class DtpExecutor extends DtpLifecycleSupport {
             long runTime = System.currentTimeMillis() - runnable.getStartTime();
             if (runTime > runTimeout) {
                 runTimeoutCount.increment();
-                Runnable alarmTask = () -> AlarmManager.doAlarm(this, RUN_TIMEOUT);
-                AlarmManager.triggerAlarm(this.getThreadPoolName(), RUN_TIMEOUT.getValue(), alarmTask);
+                AlarmManager.doAlarmAsync(this, RUN_TIMEOUT);
                 if (StringUtils.isNotBlank(runnable.getTaskName())) {
                     log.warn("DynamicTp execute, run timeout, poolName: {}, taskName: {}, runTime: {}ms",
                             this.getThreadPoolName(), runnable.getTaskName(), runTime);
@@ -168,7 +173,7 @@ public class DtpExecutor extends DtpLifecycleSupport {
 
     @Override
     protected void initialize(DtpProperties dtpProperties) {
-        AlarmManager.initAlarm(this, dtpProperties.getPlatforms());
+        NotifyHelper.initNotify(this, dtpProperties.getPlatforms());
 
         if (preStartAllCoreThreads) {
             prestartAllCoreThreads();

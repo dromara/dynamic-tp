@@ -1,30 +1,23 @@
 package com.dtp.core.notify.manager;
 
 import cn.hutool.core.util.NumberUtil;
-import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.AlarmInfo;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
-import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.common.pattern.filter.InvokerChain;
-import com.dtp.common.properties.DtpProperties;
-import com.dtp.common.util.StreamUtil;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.notify.alarm.AlarmCounter;
 import com.dtp.core.notify.alarm.AlarmLimiter;
 import com.dtp.core.support.ThreadPoolBuilder;
 import com.dtp.core.thread.DtpExecutor;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -57,79 +50,35 @@ public class AlarmManager {
 
     private AlarmManager() { }
 
-    public static void initAlarm(DtpExecutor executor, List<NotifyPlatform> platforms) {
-        if (CollectionUtils.isEmpty(platforms)) {
-            executor.setNotifyItems(Lists.newArrayList());
-            return;
-        }
-        if (CollectionUtils.isEmpty(executor.getNotifyItems())) {
-            log.warn("DynamicTp notify, no notify items configured, name {}", executor.getThreadPoolName());
-            return;
-        }
-
-        NotifyItemManager.fillPlatforms(platforms, executor.getNotifyItems());
-        initAlarm(executor.getThreadPoolName(), executor.getNotifyItems());
-    }
-
     public static void initAlarm(String poolName, List<NotifyItem> notifyItems) {
-        notifyItems.forEach(x -> {
-            AlarmLimiter.initAlarmLimiter(poolName, x);
-            AlarmCounter.init(poolName, x.getType());
-        });
+        notifyItems.forEach(x -> initAlarm(poolName, x));
     }
 
-    public static void refreshAlarm(String poolName,
-                                    List<NotifyPlatform> platforms,
-                                    List<NotifyItem> oldItems,
-                                    List<NotifyItem> newItems) {
-        if (CollectionUtils.isEmpty(newItems)) {
-            return;
-        }
-        NotifyItemManager.fillPlatforms(platforms, newItems);
-        Map<String, NotifyItem> oldNotifyItemMap = StreamUtil.toMap(oldItems, NotifyItem::getType);
-        newItems.forEach(x -> {
-            NotifyItem oldNotifyItem = oldNotifyItemMap.get(x.getType());
-            if (Objects.nonNull(oldNotifyItem) && oldNotifyItem.getInterval() == x.getInterval()) {
-                return;
-            }
-            AlarmLimiter.initAlarmLimiter(poolName, x);
-            AlarmCounter.init(poolName, x.getType());
-        });
+    public static void initAlarm(String poolName, NotifyItem notifyItem) {
+        AlarmLimiter.initAlarmLimiter(poolName, notifyItem);
+        AlarmCounter.init(poolName, notifyItem.getType());
     }
 
-    public static void triggerAlarm(String dtpName, String notifyType, Runnable runnable) {
-        AlarmCounter.incAlarmCounter(dtpName, notifyType);
-        ALARM_EXECUTOR.execute(runnable);
-    }
-
-    public static void triggerAlarm(Runnable runnable) {
-        ALARM_EXECUTOR.execute(runnable);
-    }
-
-    public static void doAlarm(DtpExecutor executor, List<NotifyItemEnum> notifyItemEnums) {
+    public static void doAlarmAsync(DtpExecutor executor, NotifyItemEnum notifyType) {
+        AlarmCounter.incAlarmCounter(executor.getThreadPoolName(), notifyType.getValue());
         val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor,
                 executor.getNotifyItems(), executor.isNotifyEnabled());
-        doAlarm(executorWrapper, notifyItemEnums);
+        ALARM_EXECUTOR.execute(() -> doAlarm(executorWrapper, notifyType));
     }
 
-    public static void doAlarm(ExecutorWrapper executorWrapper, List<NotifyItemEnum> notifyItemEnums) {
-        notifyItemEnums.forEach(x -> doAlarm(executorWrapper, x));
-    }
-
-    public static void doAlarm(DtpExecutor executor, NotifyItemEnum notifyItemEnum) {
+    public static void doAlarmAsync(DtpExecutor executor, List<NotifyItemEnum> notifyItemEnums) {
         val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor,
                 executor.getNotifyItems(), executor.isNotifyEnabled());
-        doAlarm(executorWrapper, notifyItemEnum);
+        doAlarmAsync(executorWrapper, notifyItemEnums);
+    }
+
+    public static void doAlarmAsync(ExecutorWrapper executorWrapper, List<NotifyItemEnum> notifyItemEnums) {
+        ALARM_EXECUTOR.execute(() -> notifyItemEnums.forEach(x -> doAlarm(executorWrapper, x)));
     }
 
     public static void doAlarm(ExecutorWrapper executorWrapper, NotifyItemEnum notifyItemEnum) {
-        NotifyItem notifyItem = NotifyItemManager.getNotifyItem(executorWrapper, notifyItemEnum);
-        if (notifyItem == null) {
-            return;
-        }
-        AlarmCtx alarmCtx = new AlarmCtx(executorWrapper, notifyItem);
-        DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-        alarmCtx.setPlatforms(dtpProperties.getPlatforms());
+        val notifyItem = NotifyHelper.getNotifyItem(executorWrapper, notifyItemEnum);
+        val alarmCtx = new AlarmCtx(executorWrapper, notifyItem);
         ALARM_INVOKER_CHAIN.proceed(alarmCtx);
     }
 

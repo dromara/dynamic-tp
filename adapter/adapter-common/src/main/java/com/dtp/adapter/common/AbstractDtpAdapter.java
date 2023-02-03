@@ -6,16 +6,14 @@ import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.dto.ThreadPoolStats;
-import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.properties.SimpleTpProperties;
 import com.dtp.common.util.StreamUtil;
-import com.dtp.core.context.NoticeCtx;
 import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.convert.MetricsConverter;
 import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.notify.manager.NoticeManager;
-import com.dtp.core.notify.manager.NotifyItemManager;
+import com.dtp.core.notify.manager.NotifyHelper;
 import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
@@ -130,9 +128,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getMaxPoolSize(), newProp.getMaxPoolSize()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getKeepAliveTime(), newProp.getKeepAliveTime()));
 
-        val notifyItem = NotifyItemManager.getNotifyItem(executorWrapper, NotifyItemEnum.CHANGE);
-        NoticeCtx context = new NoticeCtx(executorWrapper, notifyItem, platforms, oldProp, diffKeys);
-        NoticeManager.doNoticeAsync(context);
+        NoticeManager.doNoticeAsync(executorWrapper, oldProp, diffKeys);
     }
 
     private void doRefresh(ExecutorWrapper executorWrapper,
@@ -150,7 +146,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
 
         // update notify items
         val allNotifyItems = mergeSimpleNotifyItems(properties.getNotifyItems());
-        AlarmManager.refreshAlarm(executorWrapper.getThreadPoolName(), platforms,
+        NotifyHelper.refreshNotify(executorWrapper.getThreadPoolName(), platforms,
                 executorWrapper.getNotifyItems(), allNotifyItems);
         executorWrapper.setNotifyItems(allNotifyItems);
         executorWrapper.setNotifyEnabled(properties.isNotifyEnabled());

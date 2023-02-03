@@ -6,7 +6,6 @@ import com.dtp.common.pattern.filter.Invoker;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.notify.alarm.AlarmLimiter;
 import com.dtp.core.notify.manager.AlarmManager;
-import com.dtp.core.notify.manager.NotifyItemManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections.CollectionUtils;
@@ -25,46 +24,45 @@ public class AlarmBaseFilter implements NotifyFilter {
     private static final Object SEND_LOCK = new Object();
 
     @Override
-    public int getOrder() {
-        return 0;
-    }
-
-    @Override
     public void doFilter(BaseNotifyCtx context, Invoker<BaseNotifyCtx> nextInvoker) {
 
         val executorWrapper = context.getExecutorWrapper();
-        val notifyItemEnum = context.getNotifyItemEnum();
-        NotifyItem notifyItem = NotifyItemManager.getNotifyItem(executorWrapper, notifyItemEnum);
+        val notifyItem = context.getNotifyItem();
         if (Objects.isNull(notifyItem) || !satisfyBaseCondition(notifyItem, executorWrapper)) {
             return;
         }
 
-        boolean ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyItemEnum.getValue());
+        boolean ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyItem.getType());
         if (!ifAlarm) {
-            log.debug("DynamicTp notify, alarm limit, dtpName: {}, notifyItem: {}",
-                    executorWrapper.getThreadPoolName(), notifyItemEnum.getValue());
+            log.debug("DynamicTp notify, alarm limit, threadPoolName: {}, notifyItem: {}",
+                    executorWrapper.getThreadPoolName(), notifyItem.getType());
             return;
         }
 
-        if (!AlarmManager.checkThreshold(executorWrapper, notifyItemEnum, notifyItem)) {
+        if (!AlarmManager.checkThreshold(executorWrapper, context.getNotifyItemEnum(), notifyItem)) {
             return;
         }
         synchronized (SEND_LOCK) {
             // recheck alarm limit.
-            ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyItemEnum.getValue());
+            ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyItem.getType());
             if (!ifAlarm) {
-                log.warn("DynamicTp notify, concurrent send, alarm limit, dtpName: {}, notifyItem: {}",
-                        executorWrapper.getThreadPoolName(), notifyItemEnum.getValue());
+                log.warn("DynamicTp notify, concurrent send, alarm limit, threadPoolName: {}, notifyItem: {}",
+                        executorWrapper.getThreadPoolName(), notifyItem.getType());
                 return;
             }
-            AlarmLimiter.putVal(executorWrapper.getThreadPoolName(), notifyItemEnum.getValue());
+            AlarmLimiter.putVal(executorWrapper.getThreadPoolName(), notifyItem.getType());
         }
         nextInvoker.invoke(context);
     }
 
-    public boolean satisfyBaseCondition(NotifyItem notifyItem, ExecutorWrapper executor) {
+    private boolean satisfyBaseCondition(NotifyItem notifyItem, ExecutorWrapper executor) {
         return executor.isNotifyEnabled()
                 && notifyItem.isEnabled()
                 && CollectionUtils.isNotEmpty(notifyItem.getPlatforms());
+    }
+
+    @Override
+    public int getOrder() {
+        return 0;
     }
 }

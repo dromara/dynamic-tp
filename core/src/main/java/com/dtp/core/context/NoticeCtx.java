@@ -3,7 +3,6 @@ package com.dtp.core.context;
 import com.dtp.common.dto.DtpMainProp;
 import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
-import com.dtp.common.dto.NotifyPlatform;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -23,10 +22,8 @@ public class NoticeCtx extends BaseNotifyCtx {
 
     private List<String> diffs;
 
-    public NoticeCtx(ExecutorWrapper wrapper, NotifyItem notifyItem, List<NotifyPlatform> platforms,
-                     DtpMainProp prop, List<String> diffs) {
+    public NoticeCtx(ExecutorWrapper wrapper, NotifyItem notifyItem, DtpMainProp prop, List<String> diffs) {
         super(wrapper, notifyItem);
-        setPlatforms(platforms);
         this.prop = prop;
         this.diffs = diffs;
     }

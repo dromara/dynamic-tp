@@ -4,7 +4,6 @@ import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.pattern.filter.Invoker;
 import com.dtp.core.context.BaseNotifyCtx;
-import com.dtp.core.notify.manager.NotifyItemManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections.CollectionUtils;
@@ -21,29 +20,26 @@ import java.util.Objects;
 public class NoticeBaseFilter implements NotifyFilter {
 
     @Override
-    public int getOrder() {
-        return 0;
-    }
-
-    @Override
     public void doFilter(BaseNotifyCtx context, Invoker<BaseNotifyCtx> nextInvoker) {
 
         val executorWrapper = context.getExecutorWrapper();
-        NotifyItem notifyItem = NotifyItemManager.getNotifyItem(executorWrapper, context.getNotifyItemEnum());
+        val notifyItem = context.getNotifyItem();
         if (Objects.isNull(notifyItem) || !satisfyBaseCondition(notifyItem, executorWrapper)) {
-            log.debug("DynamicTp refresh, change notification is not enabled, threadPoolName: {}",
-                    executorWrapper.getThreadPoolName());
-            return;
-        }
-        if (CollectionUtils.isEmpty(notifyItem.getPlatforms()) && CollectionUtils.isEmpty(context.getPlatforms())) {
-            log.debug("DynamicTp refresh, change notification platform not found, threadPoolName: {}",
+            log.debug("DynamicTp notify, no platforms configured or notification is not enabled, threadPoolName: {}",
                     executorWrapper.getThreadPoolName());
             return;
         }
         nextInvoker.invoke(context);
     }
 
-    public boolean satisfyBaseCondition(NotifyItem notifyItem, ExecutorWrapper executor) {
-        return executor.isNotifyEnabled() && notifyItem.isEnabled();
+    private boolean satisfyBaseCondition(NotifyItem notifyItem, ExecutorWrapper executor) {
+        return executor.isNotifyEnabled()
+                && notifyItem.isEnabled()
+                && CollectionUtils.isNotEmpty(notifyItem.getPlatforms());
+    }
+
+    @Override
+    public int getOrder() {
+        return 0;
     }
 }

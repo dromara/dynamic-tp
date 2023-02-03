@@ -143,11 +143,6 @@ public class DtpProperties {
     private List<SimpleTpProperties> sofaTp;
 
     /**
-     * Liteflow thread pools.
-     */
-    private List<SimpleTpProperties> liteflowTp;
-
-    /**
      * Notify platform configs.
      */
     private List<NotifyPlatform> platforms;

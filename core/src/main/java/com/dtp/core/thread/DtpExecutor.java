@@ -42,14 +42,19 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     private String threadPoolAliasName;
 
     /**
-     * Notify items, see {@link NotifyItemEnum}.
+     * RejectHandler name.
      */
-    private List<NotifyItem> notifyItems;
+    private String rejectHandlerName;
 
     /**
      * If enable notify.
      */
     private boolean notifyEnabled;
+
+    /**
+     * Notify items, see {@link NotifyItemEnum}.
+     */
+    private List<NotifyItem> notifyItems;
 
     /**
      * Task wrappers, do sth enhanced.
@@ -85,11 +90,6 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
      * Count queue wait timeout tasks.
      */
     private final LongAdder queueTimeoutCount = new LongAdder();
-
-    /**
-     * RejectHandler name.
-     */
-    private String rejectHandlerName;
 
     public DtpExecutor(int corePoolSize,
                        int maximumPoolSize,

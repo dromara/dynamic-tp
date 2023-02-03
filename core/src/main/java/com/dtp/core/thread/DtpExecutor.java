@@ -3,6 +3,7 @@ package com.dtp.core.thread;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.properties.DtpProperties;
+import com.dtp.common.util.TimeUtil;
 import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.notify.manager.NotifyHelper;
 import com.dtp.core.reject.RejectHandlerGetter;
@@ -133,7 +134,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
             return;
         }
         DtpRunnable runnable = (DtpRunnable) r;
-        long currTime = System.currentTimeMillis();
+        long currTime = TimeUtil.currentTimeMillis();
         if (runTimeout > 0) {
             runnable.setStartTime(currTime);
         }
@@ -157,7 +158,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
 
         if (runTimeout > 0) {
             DtpRunnable runnable = (DtpRunnable) r;
-            long runTime = System.currentTimeMillis() - runnable.getStartTime();
+            long runTime = TimeUtil.currentTimeMillis() - runnable.getStartTime();
             if (runTime > runTimeout) {
                 runTimeoutCount.increment();
                 AlarmManager.doAlarmAsync(this, RUN_TIMEOUT);

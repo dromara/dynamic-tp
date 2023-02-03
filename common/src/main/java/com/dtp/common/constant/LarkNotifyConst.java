@@ -7,6 +7,7 @@ package com.dtp.common.constant;
  *  参考文档：
  *  <a href="https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/create">机器人发送消息</a>
  *  <a href="https://open.feishu.cn/document/ukTMukTMukTM/ucTM5YjL3ETO24yNxkjN#4996824a">自定义机器人指南</a>
+ *  <a href="https://open.feishu.cn/document/ukTMukTMukTM/ucTM5YjL3ETO24yNxkjN#348211be>自定义机器人签名校验</a>
  * </p>
  *
  * @author fxbin
@@ -42,6 +43,10 @@ public class LarkNotifyConst {
     public static final String INFO_COLOR = "";
 
     public static final String COMMENT_COLOR = "";
+
+    public static final String SIGN_REPLACE = "{";
+
+    public static final String SIGN_PARAM = SIGN_REPLACE + "\"timestamp\": \"%s\",\"sign\": \"%s\",";
 
 
     /**

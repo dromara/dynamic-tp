@@ -1,6 +1,6 @@
 package com.dtp.core.notify.filter;
 
-import com.dtp.common.dto.ExecutorWrapper;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.pattern.filter.Invoker;
 import com.dtp.core.context.BaseNotifyCtx;

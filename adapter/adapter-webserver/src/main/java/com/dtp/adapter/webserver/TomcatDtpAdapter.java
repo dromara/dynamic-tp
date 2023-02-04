@@ -3,7 +3,7 @@ package com.dtp.adapter.webserver;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.properties.SimpleTpProperties;
 import com.dtp.common.dto.DtpMainProp;
-import com.dtp.common.dto.ExecutorWrapper;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.core.convert.ExecutorConverter;
 import lombok.extern.slf4j.Slf4j;

@@ -2,7 +2,7 @@ package com.dtp.adapter.common;
 
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.properties.SimpleTpProperties;
-import com.dtp.common.dto.ExecutorWrapper;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.MetricsAware;
 import org.slf4j.Logger;
 

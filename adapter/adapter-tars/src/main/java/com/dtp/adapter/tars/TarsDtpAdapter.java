@@ -1,7 +1,7 @@
 package com.dtp.adapter.tars;
 
 import com.dtp.adapter.common.AbstractDtpAdapter;
-import com.dtp.common.dto.ExecutorWrapper;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.ReflectionUtil;
 import com.qq.tars.client.Communicator;

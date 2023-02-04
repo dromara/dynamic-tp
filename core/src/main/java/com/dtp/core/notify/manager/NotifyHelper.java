@@ -1,7 +1,7 @@
 package com.dtp.core.notify.manager;
 
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.dto.ExecutorWrapper;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.em.NotifyItemEnum;

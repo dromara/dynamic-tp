@@ -1,7 +1,7 @@
 package com.dtp.core.spring;
 
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.dto.ExecutorWrapper;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.support.DynamicTp;
 import com.dtp.core.support.TaskQueue;

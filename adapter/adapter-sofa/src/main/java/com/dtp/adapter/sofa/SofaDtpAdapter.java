@@ -8,7 +8,7 @@ import com.alipay.sofa.rpc.server.UserThreadPool;
 import com.alipay.sofa.rpc.server.bolt.BoltServer;
 import com.alipay.sofa.rpc.server.http.AbstractHttpServer;
 import com.dtp.adapter.common.AbstractDtpAdapter;
-import com.dtp.common.dto.ExecutorWrapper;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.ReflectionUtil;
 import lombok.extern.slf4j.Slf4j;

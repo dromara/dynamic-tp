@@ -3,7 +3,7 @@ package com.dtp.adapter.webserver;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.properties.SimpleTpProperties;
 import com.dtp.common.dto.DtpMainProp;
-import com.dtp.common.dto.ExecutorWrapper;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.common.util.ReflectionUtil;
 import com.dtp.core.convert.ExecutorConverter;

@@ -3,7 +3,7 @@ package com.dtp.adapter.common;
 
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.dto.DtpMainProp;
-import com.dtp.common.dto.ExecutorWrapper;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.dto.NotifyPlatform;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.common.properties.DtpProperties;

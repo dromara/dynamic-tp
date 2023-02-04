@@ -2,7 +2,6 @@ package com.dtp.core.notify.manager;
 
 import cn.hutool.core.util.NumberUtil;
 import com.dtp.common.dto.AlarmInfo;
-import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.RejectedTypeEnum;
@@ -11,6 +10,7 @@ import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.notify.alarm.AlarmCounter;
 import com.dtp.core.notify.alarm.AlarmLimiter;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.ThreadPoolBuilder;
 import com.dtp.core.thread.DtpExecutor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,15 +61,11 @@ public class AlarmManager {
 
     public static void doAlarmAsync(DtpExecutor executor, NotifyItemEnum notifyType) {
         AlarmCounter.incAlarmCounter(executor.getThreadPoolName(), notifyType.getValue());
-        val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor,
-                executor.getNotifyItems(), executor.isNotifyEnabled());
-        ALARM_EXECUTOR.execute(() -> doAlarm(executorWrapper, notifyType));
+        ALARM_EXECUTOR.execute(() -> doAlarm(new ExecutorWrapper(executor), notifyType));
     }
 
     public static void doAlarmAsync(DtpExecutor executor, List<NotifyItemEnum> notifyItemEnums) {
-        val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor,
-                executor.getNotifyItems(), executor.isNotifyEnabled());
-        doAlarmAsync(executorWrapper, notifyItemEnums);
+        doAlarmAsync(new ExecutorWrapper(executor), notifyItemEnums);
     }
 
     public static void doAlarmAsync(ExecutorWrapper executorWrapper, List<NotifyItemEnum> notifyItemEnums) {

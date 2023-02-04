@@ -1,6 +1,6 @@
 package com.dtp.core.context;
 
-import com.dtp.common.dto.ExecutorWrapper;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;
 import lombok.Data;

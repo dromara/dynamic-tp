@@ -1,6 +1,6 @@
 package com.dtp.core.convert;
 
-import com.dtp.common.dto.ExecutorWrapper;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.dto.ThreadPoolStats;
 import com.dtp.core.thread.DtpExecutor;
 

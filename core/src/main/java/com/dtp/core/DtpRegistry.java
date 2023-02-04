@@ -1,7 +1,6 @@
 package com.dtp.core;
 
 import com.dtp.common.dto.DtpMainProp;
-import com.dtp.common.dto.ExecutorWrapper;
 import com.dtp.common.ex.DtpException;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.properties.ThreadPoolProperties;
@@ -11,6 +10,7 @@ import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.notify.manager.NoticeManager;
 import com.dtp.core.notify.manager.NotifyHelper;
 import com.dtp.core.reject.RejectHandlerGetter;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.wrapper.TaskWrapper;
 import com.dtp.core.support.wrapper.TaskWrappers;
 import com.dtp.core.thread.DtpExecutor;
@@ -191,10 +191,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getRejectType(), newProp.getRejectType()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.isAllowCoreThreadTimeOut(),
                         newProp.isAllowCoreThreadTimeOut()));
-
-        val executorWrapper = new ExecutorWrapper(executor.getThreadPoolName(), executor,
-                executor.getNotifyItems(), properties.isNotifyEnabled());
-        NoticeManager.doNoticeAsync(executorWrapper, oldProp, diffKeys);
+        NoticeManager.doNoticeAsync(new ExecutorWrapper(executor), oldProp, diffKeys);
     }
 
     private static void doRefresh(DtpExecutor dtpExecutor, ThreadPoolProperties properties) {

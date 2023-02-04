@@ -1,6 +1,8 @@
-package com.dtp.common.dto;
+package com.dtp.core.support;
 
+import com.dtp.common.dto.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;
+import com.dtp.core.thread.DtpExecutor;
 import lombok.Data;
 
 import java.util.List;
@@ -34,11 +36,10 @@ public class ExecutorWrapper {
         this.notifyItems = NotifyItem.getSimpleNotifyItems();
     }
 
-    public ExecutorWrapper(String threadPoolName, Executor executor,
-                           List<NotifyItem> notifyItems, boolean notifyEnabled) {
-        this.threadPoolName = threadPoolName;
+    public ExecutorWrapper(DtpExecutor executor) {
+        this.threadPoolName = executor.getThreadPoolName();
         this.executor = executor;
-        this.notifyItems = notifyItems;
-        this.notifyEnabled = notifyEnabled;
+        this.notifyItems = executor.getNotifyItems();
+        this.notifyEnabled = executor.isNotifyEnabled();
     }
 }

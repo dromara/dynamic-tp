@@ -3,7 +3,7 @@ package com.dtp.core.monitor;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.system.RuntimeInfo;
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.dto.ExecutorWrapper;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.dto.JvmStats;
 import com.dtp.common.dto.Metrics;
 import com.dtp.core.DtpRegistry;

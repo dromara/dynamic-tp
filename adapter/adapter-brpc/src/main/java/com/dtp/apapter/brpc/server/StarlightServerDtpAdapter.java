@@ -9,7 +9,7 @@ import com.baidu.cloud.starlight.core.rpc.ServerProcessor;
 import com.baidu.cloud.starlight.transport.netty.NettyServer;
 import com.dtp.adapter.common.AbstractDtpAdapter;
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.dto.ExecutorWrapper;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.ReflectionUtil;
 import lombok.extern.slf4j.Slf4j;

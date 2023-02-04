@@ -2,9 +2,12 @@ package com.dtp.core.notify;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import com.dtp.common.entity.*;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.NotifyPlatformEnum;
+import com.dtp.common.entity.AlarmInfo;
+import com.dtp.common.entity.DtpMainProp;
+import com.dtp.common.entity.NotifyItem;
+import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.util.CommonUtil;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
@@ -23,7 +26,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -53,28 +55,24 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
     @Override
     public void sendChangeMsg(DtpMainProp oldProp, List<String> diffs) {
-        NotifyPlatform platform = NotifyHelper.getPlatform(platform());
-        if (Objects.isNull(platform)) {
-            return;
-        }
-        String content = buildNoticeContent(platform, oldProp, diffs);
-        if (StringUtils.isBlank(content)) {
-            return;
-        }
-        notifier.send(platform, content);
+        NotifyHelper.getPlatform(platform()).ifPresent(platform -> {
+            String content = buildNoticeContent(platform, oldProp, diffs);
+            if (StringUtils.isBlank(content)) {
+                return;
+            }
+            notifier.send(platform, content);
+        });
     }
 
     @Override
     public void sendAlarmMsg(NotifyItemEnum notifyItemEnum) {
-        NotifyPlatform platform = NotifyHelper.getPlatform(platform());
-        if (Objects.isNull(platform)) {
-            return;
-        }
-        String content = buildAlarmContent(platform, notifyItemEnum);
-        if (StringUtils.isBlank(content)) {
-            return;
-        }
-        notifier.send(platform, content);
+        NotifyHelper.getPlatform(platform()).ifPresent(platform -> {
+            String content = buildAlarmContent(platform, notifyItemEnum);
+            if (StringUtils.isBlank(content)) {
+                return;
+            }
+            notifier.send(platform, content);
+        });
     }
 
     /**

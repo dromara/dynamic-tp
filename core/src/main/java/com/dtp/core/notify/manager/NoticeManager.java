@@ -1,16 +1,17 @@
 package com.dtp.core.notify.manager;
 
 import com.dtp.common.entity.DtpMainProp;
-import com.dtp.core.support.ExecutorWrapper;
-import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.pattern.filter.InvokerChain;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.context.NoticeCtx;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.ThreadPoolCreator;
 import lombok.val;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+
+import static com.dtp.common.em.NotifyItemEnum.CHANGE;
 
 /**
  * NoticeManager related
@@ -35,8 +36,9 @@ public class NoticeManager {
     }
 
     public static void doNotice(ExecutorWrapper executor, DtpMainProp oldProp, List<String> diffKeys) {
-        val notifyItem = NotifyHelper.getNotifyItem(executor, NotifyItemEnum.CHANGE);
-        val noticeCtx = new NoticeCtx(executor, notifyItem, oldProp, diffKeys);
-        NOTICE_INVOKER_CHAIN.proceed(noticeCtx);
+        NotifyHelper.getNotifyItem(executor, CHANGE).ifPresent(notifyItem -> {
+            val noticeCtx = new NoticeCtx(executor, notifyItem, oldProp, diffKeys);
+            NOTICE_INVOKER_CHAIN.proceed(noticeCtx);
+        });
     }
 }

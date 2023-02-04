@@ -19,6 +19,10 @@
         <module>test-configcenter</module>
     </modules>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>cn.dynamictp</groupId>

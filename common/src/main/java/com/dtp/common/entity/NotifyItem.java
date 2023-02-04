@@ -69,6 +69,7 @@ public class NotifyItem {
     public static List<NotifyItem> getSimpleNotifyItems() {
         NotifyItem changeNotify = new NotifyItem();
         changeNotify.setType(NotifyItemEnum.CHANGE.getValue());
+        changeNotify.setInterval(1);
 
         NotifyItem livenessNotify = new NotifyItem();
         livenessNotify.setType(NotifyItemEnum.LIVENESS.getValue());

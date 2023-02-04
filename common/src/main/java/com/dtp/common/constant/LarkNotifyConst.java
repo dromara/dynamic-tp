@@ -1,18 +1,15 @@
 package com.dtp.common.constant;
 
 /**
- * LarkNotifyConst
- *
- * 参考文档：
- * <a href="https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/create">机器人发送消息</a>
- * <a href="https://open.feishu.cn/document/ukTMukTMukTM/ucTM5YjL3ETO24yNxkjN#4996824a">自定义机器人指南</a>
- * <a href="https://open.feishu.cn/document/ukTMukTMukTM/ucTM5YjL3ETO24yNxkjN#348211be>自定义机器人签名校验</a>
+ * LarkNotifyConst related
  *
  * @author fxbin
  * @version v1.0
  * @since 2022/4/28 23:27
  */
 public class LarkNotifyConst {
+
+    private LarkNotifyConst() { }
 
     /**
      * lark bot url

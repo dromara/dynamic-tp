@@ -821,7 +821,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
      * deserialize it).
      * @param s the stream
      * @throws java.io.IOException if an I/O error occurs
-     * @throws ClassCastException if a Class cast error occurs
+     * @throws java.lang.ClassCastException if a Class cast error occurs
      */
     private void readObject(java.io.ObjectInputStream s)
             throws java.io.IOException, ClassNotFoundException {

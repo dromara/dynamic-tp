@@ -1,6 +1,6 @@
 package com.dtp.core;
 
-import com.dtp.common.dto.DtpMainProp;
+import com.dtp.common.entity.DtpMainProp;
 import com.dtp.common.ex.DtpException;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.properties.ThreadPoolProperties;
@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 import static com.dtp.common.constant.DynamicTpConst.M_1;
 import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
-import static com.dtp.common.dto.NotifyItem.mergeAllNotifyItems;
+import static com.dtp.common.entity.NotifyItem.mergeAllNotifyItems;
 import static com.dtp.common.em.QueueTypeEnum.MEMORY_SAFE_LINKED_BLOCKING_QUEUE;
 import static com.dtp.common.em.QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE;
 import static com.dtp.core.support.ExecutorType.EAGER;
@@ -179,6 +179,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
         List<FieldInfo> diffFields = EQUATOR.getDiffFields(oldProp, newProp);
         List<String> diffKeys = diffFields.stream().map(FieldInfo::getFieldName).collect(toList());
+        NoticeManager.doNoticeAsync(new ExecutorWrapper(executor), oldProp, diffKeys);
         log.info("DynamicTp refresh, name: [{}], changed keys: {}, corePoolSize: [{}], maxPoolSize: [{}], queueType: [{}], " +
                         "queueCapacity: [{}], keepAliveTime: [{}], rejectedType: [{}], allowsCoreThreadTimeOut: [{}]",
                 executor.getThreadPoolName(),
@@ -191,7 +192,6 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getRejectType(), newProp.getRejectType()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.isAllowCoreThreadTimeOut(),
                         newProp.isAllowCoreThreadTimeOut()));
-        NoticeManager.doNoticeAsync(new ExecutorWrapper(executor), oldProp, diffKeys);
     }
 
     private static void doRefresh(DtpExecutor dtpExecutor, ThreadPoolProperties properties) {

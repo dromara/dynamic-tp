@@ -1,7 +1,7 @@
 package com.dtp.common.properties;
 
 import com.dtp.common.constant.DynamicTpConst;
-import com.dtp.common.dto.NotifyItem;
+import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;

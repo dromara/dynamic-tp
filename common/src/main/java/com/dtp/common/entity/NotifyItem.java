@@ -1,4 +1,4 @@
-package com.dtp.common.dto;
+package com.dtp.common.entity;
 
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.NotifyPlatformEnum;

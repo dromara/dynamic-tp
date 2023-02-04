@@ -2,8 +2,8 @@ package com.dtp.core.notify.manager;
 
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.core.support.ExecutorWrapper;
-import com.dtp.common.dto.NotifyItem;
-import com.dtp.common.dto.NotifyPlatform;
+import com.dtp.common.entity.NotifyItem;
+import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.StreamUtil;
@@ -89,7 +89,6 @@ public class NotifyHelper {
 
         return notifyItemOpt.get();
     }
-
 
     @SuppressWarnings("unchecked")
     public static void fillPlatforms(List<NotifyPlatform> platforms, List<NotifyItem> notifyItems) {

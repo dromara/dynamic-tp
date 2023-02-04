@@ -8,16 +8,13 @@ package com.dtp.common.constant;
  **/
 public final class DingNotifyConst {
 
-    private DingNotifyConst() {
-    }
+    private DingNotifyConst() { }
 
     public static final String DING_WEBHOOK = "https://oapi.dingtalk.com/robot/send?access_token=";
 
     public static final String WARNING_COLOR = "#EA9F00";
 
     public static final String CONTENT_COLOR = "#664B4B";
-
-    public static final String DING_ALARM_TITLE = "动态线程池告警";
 
     public static final String DING_NOTICE_TITLE = "动态线程池通知";
 

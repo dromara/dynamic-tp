@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 import static com.dtp.common.constant.DynamicTpConst.*;
-import static com.dtp.common.dto.NotifyItem.mergeAllNotifyItems;
+import static com.dtp.common.entity.NotifyItem.mergeAllNotifyItems;
 import static com.dtp.common.em.QueueTypeEnum.buildLbq;
 
 /**

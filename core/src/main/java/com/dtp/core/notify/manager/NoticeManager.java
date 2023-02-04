@@ -1,6 +1,6 @@
 package com.dtp.core.notify.manager;
 
-import com.dtp.common.dto.DtpMainProp;
+import com.dtp.common.entity.DtpMainProp;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.pattern.filter.InvokerChain;

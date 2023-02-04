@@ -1,6 +1,6 @@
 package com.dtp.core.notify.base;
 
-import com.dtp.common.dto.NotifyPlatform;
+import com.dtp.common.entity.NotifyPlatform;
 
 /**
  * Notifier related

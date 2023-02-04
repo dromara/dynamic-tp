@@ -19,7 +19,7 @@
     <!-- 避免使用* -->
     <module name="AvoidStarImport">
       <property name="excludes" value="java.io,java.util,java.net,java.lang.Math,java.util.concurrent,
-      java.lang.annotation,com.dtp.common.dto,com.ctrip.framework.apollo,okhttp3"/>
+      java.lang.annotation,com.dtp.common.entity,com.ctrip.framework.apollo,okhttp3"/>
       <!-- 实例；import java.util.*;.-->
       <property name="allowClassImports" value="false"/>
       <!-- 实例 ；import static org.junit.Assert.*;-->

@@ -1,6 +1,6 @@
 package com.dtp.core.thread;
 
-import com.dtp.common.dto.NotifyItem;
+import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.TimeUtil;

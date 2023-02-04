@@ -1,6 +1,6 @@
 package com.dtp.core.support;
 
-import com.dtp.common.dto.ThreadPoolStats;
+import com.dtp.common.entity.ThreadPoolStats;
 
 import java.util.Collections;
 import java.util.List;

@@ -794,6 +794,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
      * its elements (each an <tt>Object</tt>) in the proper order,
      * followed by a null
      * @param s the stream
+     * @throws java.io.IOException if an I/O error occurs
      */
     private void writeObject(java.io.ObjectOutputStream s)
             throws java.io.IOException {
@@ -819,6 +820,8 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
      * Reconstitute this queue instance from a stream (that is,
      * deserialize it).
      * @param s the stream
+     * @throws java.io.IOException if an I/O error occurs
+     * @throws ClassCastException if a Class cast error occurs
      */
     private void readObject(java.io.ObjectInputStream s)
             throws java.io.IOException, ClassNotFoundException {

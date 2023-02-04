@@ -1,7 +1,7 @@
 package com.dtp.common.properties;
 
 import com.dtp.common.constant.DynamicTpConst;
-import com.dtp.common.dto.NotifyPlatform;
+import com.dtp.common.entity.NotifyPlatform;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

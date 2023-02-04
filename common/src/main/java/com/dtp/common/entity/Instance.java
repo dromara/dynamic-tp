@@ -1,4 +1,4 @@
-package com.dtp.common.dto;
+package com.dtp.common.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -5,7 +5,7 @@ import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.properties.SimpleTpProperties;
 import com.dtp.core.support.ExecutorWrapper;
-import com.dtp.common.dto.NotifyPlatform;
+import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.util.StreamUtil;
 import com.google.common.collect.Maps;
 import com.netflix.hystrix.strategy.HystrixPlugins;

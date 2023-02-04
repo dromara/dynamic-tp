@@ -2,7 +2,7 @@ package com.dtp.extension.notify.email.base;
 
 import cn.hutool.core.date.DateTime;
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.dto.*;
+import com.dtp.common.entity.*;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.util.CommonUtil;

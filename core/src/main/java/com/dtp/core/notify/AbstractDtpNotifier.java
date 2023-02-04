@@ -2,7 +2,7 @@ package com.dtp.core.notify;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import com.dtp.common.dto.*;
+import com.dtp.common.entity.*;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.util.CommonUtil;

@@ -1,7 +1,7 @@
 package com.dtp.core.handler;
 
-import com.dtp.common.dto.DtpMainProp;
-import com.dtp.common.dto.NotifyItem;
+import com.dtp.common.entity.DtpMainProp;
+import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.core.context.DtpNotifyCtxHolder;
 import com.dtp.core.notify.DtpDingNotifier;

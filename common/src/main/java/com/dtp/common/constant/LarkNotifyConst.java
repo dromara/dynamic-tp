@@ -3,12 +3,10 @@ package com.dtp.common.constant;
 /**
  * LarkNotifyConst
  *
- * <p>
- *  参考文档：
- *  <a href="https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/create">机器人发送消息</a>
- *  <a href="https://open.feishu.cn/document/ukTMukTMukTM/ucTM5YjL3ETO24yNxkjN#4996824a">自定义机器人指南</a>
- *  <a href="https://open.feishu.cn/document/ukTMukTMukTM/ucTM5YjL3ETO24yNxkjN#348211be>自定义机器人签名校验</a>
- * </p>
+ * 参考文档：
+ * <a href="https://open.feishu.cn/document/uAjLw4CM/ukTMukTMukTM/reference/im-v1/message/create">机器人发送消息</a>
+ * <a href="https://open.feishu.cn/document/ukTMukTMukTM/ucTM5YjL3ETO24yNxkjN#4996824a">自定义机器人指南</a>
+ * <a href="https://open.feishu.cn/document/ukTMukTMukTM/ucTM5YjL3ETO24yNxkjN#348211be>自定义机器人签名校验</a>
  *
  * @author fxbin
  * @version v1.0
@@ -48,7 +46,6 @@ public class LarkNotifyConst {
 
     public static final String SIGN_PARAM = SIGN_REPLACE + "\"timestamp\": \"%s\",\"sign\": \"%s\",";
 
-
     /**
      * lark alarm json str
      */
@@ -60,6 +57,5 @@ public class LarkNotifyConst {
      */
     public static final String LARK_CHANGE_NOTICE_JSON_STR =
             "{\"msg_type\":\"interactive\",\"card\":{\"config\":{\"wide_screen_mode\":true},\"header\":{\"template\":\"green\",\"title\":{\"tag\":\"plain_text\",\"content\":\"【通知】动态线程池参数变更\"}},\"elements\":[{\"tag\":\"div\",\"fields\":[{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"**服务名称: ** \\n %s\"}},{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"**实例信息：**\\n %s\"}}]},{\"tag\":\"div\",\"fields\":[{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"**环境：**\\n %s\"}},{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"**线程池名称：**\\n %s\"}}]},{\"tag\":\"hr\"},{\"tag\":\"div\",\"fields\":[{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"corePoolSize **核心线程数：**\\n %s => %s\"}},{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"maxPoolSize **最大线程数：**\\n %s => %s\"}}]},{\"tag\":\"div\",\"fields\":[{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"allowCoreThreadTimeOut **允许核心线程超时：**\\n %s => %s\"}},{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"keepAliveTime **线程存活时间：**\\n %s => %s\"}}]},{\"tag\":\"hr\"},{\"tag\":\"div\",\"fields\":[{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"**队列类型：**\\n %s\"}},{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"queueCapacity **队列容量：**\\n %s => %s\"}}]},{\"tag\":\"div\",\"fields\":[{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"rejectType **拒绝策略：**\\n %s => %s\"}}]},{\"tag\":\"hr\"},{\"tag\":\"div\",\"fields\":[{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"**接收人：**\\n %s\"}},{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"**通知时间：**\\n %s\"}}]}]}}";
-
 
 }

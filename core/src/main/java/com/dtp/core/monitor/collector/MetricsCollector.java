@@ -1,6 +1,6 @@
 package com.dtp.core.monitor.collector;
 
-import com.dtp.common.dto.ThreadPoolStats;
+import com.dtp.common.entity.ThreadPoolStats;
 
 /**
  * MetricsCollector related

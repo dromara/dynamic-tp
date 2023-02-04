@@ -1,8 +1,8 @@
 package com.dtp.core.context;
 
-import com.dtp.common.dto.AlarmInfo;
+import com.dtp.common.entity.AlarmInfo;
 import com.dtp.core.support.ExecutorWrapper;
-import com.dtp.common.dto.NotifyItem;
+import com.dtp.common.entity.NotifyItem;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

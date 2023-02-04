@@ -1,7 +1,7 @@
 package com.dtp.core.notify.filter;
 
 import com.dtp.core.support.ExecutorWrapper;
-import com.dtp.common.dto.NotifyItem;
+import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.pattern.filter.Invoker;
 import com.dtp.core.context.BaseNotifyCtx;
 import lombok.extern.slf4j.Slf4j;

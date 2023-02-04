@@ -1,6 +1,6 @@
 package com.dtp.core.handler;
 
-import com.dtp.common.dto.ThreadPoolStats;
+import com.dtp.common.entity.ThreadPoolStats;
 import com.dtp.core.monitor.collector.InternalLogCollector;
 import com.dtp.core.monitor.collector.LogCollector;
 import com.dtp.core.monitor.collector.MetricsCollector;

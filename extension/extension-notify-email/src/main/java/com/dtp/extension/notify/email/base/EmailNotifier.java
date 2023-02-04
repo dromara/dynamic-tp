@@ -1,6 +1,6 @@
 package com.dtp.extension.notify.email.base;
 
-import com.dtp.common.dto.NotifyPlatform;
+import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.core.notify.base.Notifier;
 import lombok.extern.slf4j.Slf4j;

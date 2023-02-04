@@ -1,6 +1,6 @@
 package com.dtp.core.notify;
 
-import com.dtp.common.dto.DtpMainProp;
+import com.dtp.common.entity.DtpMainProp;
 import com.dtp.common.em.NotifyItemEnum;
 
 import java.util.List;

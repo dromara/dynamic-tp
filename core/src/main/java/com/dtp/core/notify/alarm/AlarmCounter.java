@@ -1,6 +1,6 @@
 package com.dtp.core.notify.alarm;
 
-import com.dtp.common.dto.AlarmInfo;
+import com.dtp.common.entity.AlarmInfo;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.core.thread.DtpExecutor;
 import lombok.val;

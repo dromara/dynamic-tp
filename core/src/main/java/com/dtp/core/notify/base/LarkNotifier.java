@@ -3,7 +3,7 @@ package com.dtp.core.notify.base;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import com.dtp.common.constant.LarkNotifyConst;
-import com.dtp.common.dto.NotifyPlatform;
+import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -90,5 +90,4 @@ public class LarkNotifier implements Notifier {
         byte[] signData = mac.doFinal(new byte[]{});
         return new String(Base64.encodeBase64(signData));
     }
-
 }

@@ -1,6 +1,6 @@
 package com.dtp.core.notify.alarm;
 
-import com.dtp.common.dto.NotifyItem;
+import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;

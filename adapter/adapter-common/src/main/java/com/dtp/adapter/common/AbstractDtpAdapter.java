@@ -2,10 +2,10 @@ package com.dtp.adapter.common;
 
 
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.dto.DtpMainProp;
+import com.dtp.common.entity.DtpMainProp;
 import com.dtp.core.support.ExecutorWrapper;
-import com.dtp.common.dto.NotifyPlatform;
-import com.dtp.common.dto.ThreadPoolStats;
+import com.dtp.common.entity.NotifyPlatform;
+import com.dtp.common.entity.ThreadPoolStats;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.properties.SimpleTpProperties;
 import com.dtp.common.util.StreamUtil;
@@ -34,7 +34,7 @@ import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
-import static com.dtp.common.dto.NotifyItem.mergeSimpleNotifyItems;
+import static com.dtp.common.entity.NotifyItem.mergeSimpleNotifyItems;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -121,14 +121,13 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
 
         List<FieldInfo> diffFields = EQUATOR.getDiffFields(oldProp, newProp);
         List<String> diffKeys = diffFields.stream().map(FieldInfo::getFieldName).collect(toList());
+        NoticeManager.doNoticeAsync(executorWrapper, oldProp, diffKeys);
         log.info("DynamicTp {} adapter, [{}] refreshed end, changed keys: {}, corePoolSize: [{}], "
                         + "maxPoolSize: [{}], keepAliveTime: [{}]",
                 name, executorWrapper.getThreadPoolName(), diffKeys,
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getCorePoolSize(), newProp.getCorePoolSize()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getMaxPoolSize(), newProp.getMaxPoolSize()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getKeepAliveTime(), newProp.getKeepAliveTime()));
-
-        NoticeManager.doNoticeAsync(executorWrapper, oldProp, diffKeys);
     }
 
     private void doRefresh(ExecutorWrapper executorWrapper,

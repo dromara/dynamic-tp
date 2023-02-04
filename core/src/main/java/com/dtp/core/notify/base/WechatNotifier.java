@@ -4,8 +4,8 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.json.JSONUtil;
 import com.dtp.common.constant.WechatNotifyConst;
-import com.dtp.common.dto.MarkdownReq;
-import com.dtp.common.dto.NotifyPlatform;
+import com.dtp.common.entity.MarkdownReq;
+import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.em.NotifyPlatformEnum;
 import lombok.extern.slf4j.Slf4j;
 

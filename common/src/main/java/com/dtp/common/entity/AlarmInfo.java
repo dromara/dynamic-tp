@@ -1,4 +1,4 @@
-package com.dtp.common.dto;
+package com.dtp.common.entity;
 
 import cn.hutool.core.date.DateUtil;
 import com.dtp.common.em.NotifyItemEnum;

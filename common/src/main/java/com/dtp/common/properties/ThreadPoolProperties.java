@@ -134,4 +134,16 @@ public class ThreadPoolProperties {
      * Task wrapper names.
      */
     private Set<String> taskWrapperNames;
+
+    /**
+     * 检查核心参数
+     *
+     * @return boolean return true means params is inValid
+     */
+    public boolean coreParamIsInValid() {
+        return this.getCorePoolSize() < 0
+                || this.getKeepAliveTime() < 0
+                || this.getMaximumPoolSize() <= 0
+                || this.getMaximumPoolSize() < this.getCorePoolSize();
+    }
 }

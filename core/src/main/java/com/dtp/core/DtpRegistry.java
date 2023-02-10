@@ -150,21 +150,48 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
                 log.warn("DynamicTp refresh, threadPoolName must not be empty.");
                 return;
             }
+            // First look in the DTP_REGISTRY
             val dtpExecutor = DTP_REGISTRY.get(x.getThreadPoolName());
-            if (Objects.isNull(dtpExecutor)) {
-                log.warn("DynamicTp refresh, cannot find specified dtpExecutor, name: {}.", x.getThreadPoolName());
+            if (Objects.nonNull(dtpExecutor)) {
+                refresh(dtpExecutor, x);
                 return;
             }
-            refresh(dtpExecutor, x);
+            // And then look it up in the COMMON_REGISTRY
+            val executorWrapper = COMMON_REGISTRY.get(x.getThreadPoolName());
+            if (Objects.nonNull(executorWrapper)) {
+                refreshCommon(executorWrapper, x);
+                return;
+            }
+            log.warn("DynamicTp refresh, cannot find specified dtpExecutor, name: {}.", x.getThreadPoolName());
         });
+    }
+
+    /**
+     * refresh common executor
+     */
+    private static void refreshCommon(ExecutorWrapper executorWrapper, ThreadPoolProperties properties) {
+
+        if (properties.coreParamIsInValid()) {
+            log.error("DynamicTp refreshCommon, invalid parameters exist, properties: {}", properties);
+            return;
+        }
+
+        DtpMainProp oldProp = ExecutorConverter.convert(executorWrapper);
+        doRefresh(executorWrapper, properties);
+        DtpMainProp newProp = ExecutorConverter.convert(executorWrapper);
+        if (oldProp.equals(newProp)) {
+            log.warn("DynamicTp refreshCommon, main properties of [{}] have not changed.", executorWrapper.getThreadPoolName());
+            return;
+        }
+
+        List<String> diffKeys = EQUATOR.getDiffFields(oldProp, newProp).stream().map(FieldInfo::getFieldName).collect(toList());
+        NoticeManager.doNoticeAsync(executorWrapper, oldProp, diffKeys);
+        printRefreshLog(oldProp, newProp, diffKeys, executorWrapper.getThreadPoolName());
     }
 
     private static void refresh(DtpExecutor executor, ThreadPoolProperties properties) {
 
-        if (properties.getCorePoolSize() < 0
-                || properties.getMaximumPoolSize() <= 0
-                || properties.getMaximumPoolSize() < properties.getCorePoolSize()
-                || properties.getKeepAliveTime() < 0) {
+        if (properties.coreParamIsInValid()) {
             log.error("DynamicTp refresh, invalid parameters exist, properties: {}", properties);
             return;
         }
@@ -179,10 +206,18 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
         List<FieldInfo> diffFields = EQUATOR.getDiffFields(oldProp, newProp);
         List<String> diffKeys = diffFields.stream().map(FieldInfo::getFieldName).collect(toList());
-        NoticeManager.doNoticeAsync(new ExecutorWrapper(executor), oldProp, diffKeys);
+        ExecutorWrapper executorWrapper = new ExecutorWrapper(executor);
+        NoticeManager.doNoticeAsync(executorWrapper, oldProp, diffKeys);
+        printRefreshLog(oldProp, newProp, diffKeys, executor.getThreadPoolName());
+    }
+
+    private static void printRefreshLog(DtpMainProp oldProp,
+                                        DtpMainProp newProp,
+                                        List<String> diffKeys,
+                                        String threadPoolName) {
         log.info("DynamicTp refresh, name: [{}], changed keys: {}, corePoolSize: [{}], maxPoolSize: [{}], queueType: [{}], " +
                         "queueCapacity: [{}], keepAliveTime: [{}], rejectedType: [{}], allowsCoreThreadTimeOut: [{}]",
-                executor.getThreadPoolName(),
+                threadPoolName,
                 diffKeys,
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getCorePoolSize(), newProp.getCorePoolSize()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getMaxPoolSize(), newProp.getMaxPoolSize()),
@@ -192,6 +227,27 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getRejectType(), newProp.getRejectType()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.isAllowCoreThreadTimeOut(),
                         newProp.isAllowCoreThreadTimeOut()));
+    }
+
+    private static void doRefresh(ExecutorWrapper executorWrapper, ThreadPoolProperties properties) {
+        // Handles the java.util.concurrent.ThreadPoolExecutor type
+        if (executorWrapper.getExecutor() instanceof ThreadPoolExecutor) {
+            ThreadPoolExecutor executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
+            doRefreshPoolSize(executor, properties);
+            if (!Objects.equals(executor.getKeepAliveTime(properties.getUnit()), properties.getKeepAliveTime())) {
+                executor.setKeepAliveTime(properties.getKeepAliveTime(), properties.getUnit());
+            }
+
+            if (!Objects.equals(executor.allowsCoreThreadTimeOut(), properties.isAllowCoreThreadTimeOut())) {
+                executor.allowCoreThreadTimeOut(properties.isAllowCoreThreadTimeOut());
+            }
+
+            // update reject handler
+            if (!Objects.equals(executor.getRejectedExecutionHandler().getClass().getSimpleName(), properties.getRejectedHandlerType())) {
+                executor.setRejectedExecutionHandler(RejectHandlerGetter.buildRejectedHandler(properties.getRejectedHandlerType()));
+            }
+        }
+        // handle other type ...
     }
 
     private static void doRefresh(DtpExecutor dtpExecutor, ThreadPoolProperties properties) {

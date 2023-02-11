@@ -53,8 +53,8 @@ public final class NotifierHandler {
                     notifier.sendChangeMsg(prop, diffs);
                 }
             }
-        } finally {
-            DtpNotifyCtxHolder.remove();
+        } catch (Exception e) {
+            log.error("DynamicTp, sendNotice error", e);
         }
     }
 

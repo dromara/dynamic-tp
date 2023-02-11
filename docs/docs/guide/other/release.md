@@ -12,6 +12,50 @@ star: true
 
 ::: tip
 
+## v1.1.0 发布记录
+
+#### Features
+
+- adapter 模块新增 motan rpc 框架线程池管理
+
+- adapter 模块新增 okhttp3 线程池管理
+
+- 新增 OrderedDtpExecutor，感谢 @hailang 提供实现
+
+- adapter 模块新增 brpc（starlight） 线程池管理
+
+- adapter 模块新增 tars rpc 线程池管理
+
+- 线程池配置添加 notifyEnabled 字段，可以全局控制通知功能开启与否
+
+- 新增 StreamRocketMqDtpAdapter，Rocketmq 线程池管理支持 Stream 场景下使用，感谢 @MIEAPP 提供实现
+
+- adapter 模块新增 sofa-rpc 框架线程池管理
+
+- 通过 SpringExecutor 支持 Spring 线程池
+
+- 支持飞书验签，感谢@ZhaoGZ 提供实现
+
+#### BugFix
+
+- ApacheDubbo 线程池初始化失败问题修复，感谢 @hdgaadd 提供实现
+
+- SimpleTpProperties keepAliveTime 字段数据类型错误问题修复
+
+#### Optimize
+
+- 要修改的核心线程数大于当前最大线程数不能修改问题优化
+
+- 引入 commons-collections，优化 hutool 高低版本不兼容问题
+
+- notify 模块相关代码重构
+
+- 采用 checkstyle 调整代码风格
+- 
+:::
+
+::: tip
+
 ## v1.0.9 发布记录
 
 #### Features

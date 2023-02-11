@@ -1,6 +1,5 @@
 package com.dtp.adapter.common;
 
-
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.entity.DtpMainProp;
 import com.dtp.core.support.ExecutorWrapper;

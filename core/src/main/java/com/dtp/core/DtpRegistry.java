@@ -36,10 +36,7 @@ import java.util.stream.Collectors;
 import static com.dtp.common.constant.DynamicTpConst.M_1;
 import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
 import static com.dtp.common.entity.NotifyItem.mergeAllNotifyItems;
-import static com.dtp.common.em.QueueTypeEnum.MEMORY_SAFE_LINKED_BLOCKING_QUEUE;
-import static com.dtp.common.em.QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE;
 import static com.dtp.common.entity.NotifyItem.mergeSimpleNotifyItems;
-import static com.dtp.core.support.ExecutorType.EAGER;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -262,9 +259,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         executor.setPreStartAllCoreThreads(properties.isPreStartAllCoreThreads());
         executor.setRunTimeout(properties.getRunTimeout());
         executor.setQueueTimeout(properties.getQueueTimeout());
-
         updateQueueProp(properties, executor);
-
         List<TaskWrapper> taskWrappers = TaskWrappers.getInstance().getByNames(properties.getTaskWrapperNames());
         executor.setTaskWrappers(taskWrappers);
 
@@ -295,32 +290,21 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
     }
 
     private static void updateQueueProp(ThreadPoolProperties properties, ThreadPoolExecutor executor) {
-        // update work queue
-        if (!canModifyQueueProp(properties, executor)) {
-            return;
-        }
+
         val blockingQueue = executor.getQueue();
         if (blockingQueue instanceof MemorySafeLinkedBlockingQueue) {
             ((MemorySafeLinkedBlockingQueue<Runnable>) blockingQueue).setMaxFreeMemory(properties.getMaxFreeMemory() * M_1);
         }
+        if (!(blockingQueue instanceof VariableLinkedBlockingQueue)) {
+            log.warn("DynamicTp refresh, the blockingqueue capacity cannot be reset, poolName: {}, queueType {}",
+                    properties.getThreadPoolName(), blockingQueue.getClass().getSimpleName());
+            return;
+        }
 
         int capacity = blockingQueue.size() + blockingQueue.remainingCapacity();
-        if (Objects.equals(capacity, properties.getQueueCapacity())) {
-            return;
-        }
-        if (blockingQueue instanceof VariableLinkedBlockingQueue) {
+        if (!Objects.equals(capacity, properties.getQueueCapacity())) {
             ((VariableLinkedBlockingQueue<Runnable>) blockingQueue).setCapacity(properties.getQueueCapacity());
-            return;
         }
-        log.error("DynamicTp refresh, the blockingqueue capacity cannot be reset, poolName: {}, queueType {}",
-                properties.getThreadPoolName(), blockingQueue.getClass().getSimpleName());
-    }
-
-    private static boolean canModifyQueueProp(ThreadPoolProperties properties, ThreadPoolExecutor executor) {
-        return Objects.equals(executor.getQueue().getClass().getSimpleName(), VARIABLE_LINKED_BLOCKING_QUEUE.getName())
-                || Objects.equals(properties.getQueueType(), VARIABLE_LINKED_BLOCKING_QUEUE.getName())
-                || Objects.equals(properties.getQueueType(), MEMORY_SAFE_LINKED_BLOCKING_QUEUE.getName())
-                || Objects.equals(properties.getExecutorType(), EAGER.getName());
     }
 
     @Autowired

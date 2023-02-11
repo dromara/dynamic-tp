@@ -101,7 +101,9 @@ public class OrderedDtpExecutor extends DtpExecutor {
     @Override
     public void setCorePoolSize(int corePoolSize) {
         if (corePoolSize < this.executors.size()) {
-            throw new IllegalArgumentException();
+            log.error("Except corePoolSize must >= {}, newCorePoolSize: {}, threadPoolName: {}",
+                    this.executors.size(), corePoolSize, threadPoolName);
+            return;
         }
         for (int i = this.executors.size(); i < corePoolSize; i++) {
             this.executors.add(new DtpExecutor(1, 1,
@@ -114,11 +116,6 @@ public class OrderedDtpExecutor extends DtpExecutor {
     @Override
     public int getCorePoolSize() {
         return this.executors.size();
-    }
-    
-    @Override
-    public final void setMaximumPoolSize(int maximumPoolSize) {
-        setCorePoolSize(maximumPoolSize);
     }
     
     @Override

@@ -40,8 +40,12 @@ public class ExecutorConverter {
         mainProp.setKeepAliveTime(executor.getKeepAliveTime(TimeUnit.SECONDS));
         mainProp.setQueueType(executor.getQueue().getClass().getSimpleName());
         mainProp.setQueueCapacity(executor.getQueue().size() + executor.getQueue().remainingCapacity());
-        mainProp.setRejectType(executor.getRejectedExecutionHandler().getClass().getSimpleName());
         mainProp.setAllowCoreThreadTimeOut(executor.allowsCoreThreadTimeOut());
+        if (executor instanceof DtpExecutor) {
+            mainProp.setRejectType(((DtpExecutor) executor).getRejectHandlerName());
+        } else {
+            mainProp.setRejectType(executor.getRejectedExecutionHandler().getClass().getSimpleName());
+        }
         return mainProp;
     }
 

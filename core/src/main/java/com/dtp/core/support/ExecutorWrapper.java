@@ -30,16 +30,20 @@ public class ExecutorWrapper {
 
     private boolean notifyEnabled = true;
 
+    public ExecutorWrapper(DtpExecutor executor) {
+        this.threadPoolName = executor.getThreadPoolName();
+        this.executor = executor;
+        this.notifyItems = executor.getNotifyItems();
+        this.notifyEnabled = executor.isNotifyEnabled();
+    }
+
     public ExecutorWrapper(String threadPoolName, Executor executor) {
         this.threadPoolName = threadPoolName;
         this.executor = executor;
         this.notifyItems = NotifyItem.getSimpleNotifyItems();
     }
 
-    public ExecutorWrapper(DtpExecutor executor) {
-        this.threadPoolName = executor.getThreadPoolName();
-        this.executor = executor;
-        this.notifyItems = executor.getNotifyItems();
-        this.notifyEnabled = executor.isNotifyEnabled();
+    public static ExecutorWrapper of(DtpExecutor executor) {
+        return new ExecutorWrapper(executor);
     }
 }

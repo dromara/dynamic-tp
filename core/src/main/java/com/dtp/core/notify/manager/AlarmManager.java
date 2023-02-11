@@ -61,11 +61,11 @@ public class AlarmManager {
 
     public static void doAlarmAsync(DtpExecutor executor, NotifyItemEnum notifyType) {
         AlarmCounter.incAlarmCounter(executor.getThreadPoolName(), notifyType.getValue());
-        ALARM_EXECUTOR.execute(() -> doAlarm(new ExecutorWrapper(executor), notifyType));
+        ALARM_EXECUTOR.execute(() -> doAlarm(ExecutorWrapper.of(executor), notifyType));
     }
 
     public static void doAlarmAsync(DtpExecutor executor, List<NotifyItemEnum> notifyItemEnums) {
-        doAlarmAsync(new ExecutorWrapper(executor), notifyItemEnums);
+        doAlarmAsync(ExecutorWrapper.of(executor), notifyItemEnums);
     }
 
     public static void doAlarmAsync(ExecutorWrapper executorWrapper, List<NotifyItemEnum> notifyItemEnums) {

@@ -38,6 +38,7 @@ import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYL
 import static com.dtp.common.entity.NotifyItem.mergeAllNotifyItems;
 import static com.dtp.common.em.QueueTypeEnum.MEMORY_SAFE_LINKED_BLOCKING_QUEUE;
 import static com.dtp.common.em.QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE;
+import static com.dtp.common.entity.NotifyItem.mergeSimpleNotifyItems;
 import static com.dtp.core.support.ExecutorType.EAGER;
 import static java.util.stream.Collectors.toList;
 
@@ -101,7 +102,8 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      * @param source the source of the call to register method
      */
     public static void registerCommon(ExecutorWrapper wrapper, String source) {
-        log.info("DynamicTp register commonExecutor, source: {}, name: {}", source, wrapper.getThreadPoolName());
+        log.info("DynamicTp register commonExecutor, source: {}, name: {}",
+                source, wrapper.getThreadPoolName());
         COMMON_REGISTRY.putIfAbsent(wrapper.getThreadPoolName(), wrapper);
     }
 
@@ -150,75 +152,44 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
                 log.warn("DynamicTp refresh, threadPoolName must not be empty.");
                 return;
             }
-            // First look in the DTP_REGISTRY
+
+            // First look it up in the DTP_REGISTRY
             val dtpExecutor = DTP_REGISTRY.get(x.getThreadPoolName());
             if (Objects.nonNull(dtpExecutor)) {
-                refresh(dtpExecutor, x);
+                refresh(ExecutorWrapper.of(dtpExecutor), x);
                 return;
             }
+
             // And then look it up in the COMMON_REGISTRY
             val executorWrapper = COMMON_REGISTRY.get(x.getThreadPoolName());
             if (Objects.nonNull(executorWrapper)) {
-                refreshCommon(executorWrapper, x);
+                refresh(executorWrapper, x);
                 return;
             }
             log.warn("DynamicTp refresh, cannot find specified dtpExecutor, name: {}.", x.getThreadPoolName());
         });
     }
 
-    /**
-     * refresh common executor
-     */
-    private static void refreshCommon(ExecutorWrapper executorWrapper, ThreadPoolProperties properties) {
-
-        if (properties.coreParamIsInValid()) {
-            log.error("DynamicTp refreshCommon, invalid parameters exist, properties: {}", properties);
-            return;
-        }
-
-        DtpMainProp oldProp = ExecutorConverter.convert(executorWrapper);
-        doRefresh(executorWrapper, properties);
-        DtpMainProp newProp = ExecutorConverter.convert(executorWrapper);
-        if (oldProp.equals(newProp)) {
-            log.warn("DynamicTp refreshCommon, main properties of [{}] have not changed.", executorWrapper.getThreadPoolName());
-            return;
-        }
-
-        List<String> diffKeys = EQUATOR.getDiffFields(oldProp, newProp).stream().map(FieldInfo::getFieldName).collect(toList());
-        NoticeManager.doNoticeAsync(executorWrapper, oldProp, diffKeys);
-        printRefreshLog(oldProp, newProp, diffKeys, executorWrapper.getThreadPoolName());
-    }
-
-    private static void refresh(DtpExecutor executor, ThreadPoolProperties properties) {
+    private static void refresh(ExecutorWrapper executorWrapper, ThreadPoolProperties properties) {
 
         if (properties.coreParamIsInValid()) {
             log.error("DynamicTp refresh, invalid parameters exist, properties: {}", properties);
             return;
         }
-
-        DtpMainProp oldProp = ExecutorConverter.convert(executor);
-        doRefresh(executor, properties);
-        DtpMainProp newProp = ExecutorConverter.convert(executor);
+        DtpMainProp oldProp = ExecutorConverter.convert(executorWrapper);
+        doRefresh(executorWrapper, properties);
+        DtpMainProp newProp = ExecutorConverter.convert(executorWrapper);
         if (oldProp.equals(newProp)) {
-            log.warn("DynamicTp refresh, main properties of [{}] have not changed.", executor.getThreadPoolName());
+            log.warn("DynamicTp refresh, main properties of [{}] have not changed.", executorWrapper.getThreadPoolName());
             return;
         }
 
-        List<FieldInfo> diffFields = EQUATOR.getDiffFields(oldProp, newProp);
-        List<String> diffKeys = diffFields.stream().map(FieldInfo::getFieldName).collect(toList());
-        ExecutorWrapper executorWrapper = new ExecutorWrapper(executor);
+        List<String> diffKeys = EQUATOR.getDiffFields(oldProp, newProp)
+                .stream().map(FieldInfo::getFieldName).collect(toList());
         NoticeManager.doNoticeAsync(executorWrapper, oldProp, diffKeys);
-        printRefreshLog(oldProp, newProp, diffKeys, executor.getThreadPoolName());
-    }
-
-    private static void printRefreshLog(DtpMainProp oldProp,
-                                        DtpMainProp newProp,
-                                        List<String> diffKeys,
-                                        String threadPoolName) {
-        log.info("DynamicTp refresh, name: [{}], changed keys: {}, corePoolSize: [{}], maxPoolSize: [{}], queueType: [{}], " +
-                        "queueCapacity: [{}], keepAliveTime: [{}], rejectedType: [{}], allowsCoreThreadTimeOut: [{}]",
-                threadPoolName,
-                diffKeys,
+        log.info("DynamicTp refresh, name: [{}], changed keys: {}, corePoolSize: [{}], maxPoolSize: [{}]," +
+                        " queueType: [{}], queueCapacity: [{}], keepAliveTime: [{}], rejectedType: [{}]," +
+                        " allowsCoreThreadTimeOut: [{}]", executorWrapper.getThreadPoolName(), diffKeys,
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getCorePoolSize(), newProp.getCorePoolSize()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getMaxPoolSize(), newProp.getMaxPoolSize()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getQueueType(), newProp.getQueueType()),
@@ -230,83 +201,79 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
     }
 
     private static void doRefresh(ExecutorWrapper executorWrapper, ThreadPoolProperties properties) {
-        // Handles the java.util.concurrent.ThreadPoolExecutor type
-        if (executorWrapper.getExecutor() instanceof ThreadPoolExecutor) {
-            ThreadPoolExecutor executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
-            doRefreshPoolSize(executor, properties);
-            if (!Objects.equals(executor.getKeepAliveTime(properties.getUnit()), properties.getKeepAliveTime())) {
-                executor.setKeepAliveTime(properties.getKeepAliveTime(), properties.getUnit());
-            }
 
-            if (!Objects.equals(executor.allowsCoreThreadTimeOut(), properties.isAllowCoreThreadTimeOut())) {
-                executor.allowCoreThreadTimeOut(properties.isAllowCoreThreadTimeOut());
-            }
-
-            // update reject handler
-            if (!Objects.equals(executor.getRejectedExecutionHandler().getClass().getSimpleName(), properties.getRejectedHandlerType())) {
-                executor.setRejectedExecutionHandler(RejectHandlerGetter.buildRejectedHandler(properties.getRejectedHandlerType()));
-            }
+        if (!(executorWrapper.getExecutor() instanceof ThreadPoolExecutor)) {
+            log.warn("DynamicTp refresh, cannot handle this executor, class: {}",
+                    executorWrapper.getExecutor().getClass().getSimpleName());
+            return;
         }
-        // handle other type ...
+
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
+        doRefreshPoolSize(executor, properties);
+        if (!Objects.equals(executor.getKeepAliveTime(properties.getUnit()), properties.getKeepAliveTime())) {
+            executor.setKeepAliveTime(properties.getKeepAliveTime(), properties.getUnit());
+        }
+        if (!Objects.equals(executor.allowsCoreThreadTimeOut(), properties.isAllowCoreThreadTimeOut())) {
+            executor.allowCoreThreadTimeOut(properties.isAllowCoreThreadTimeOut());
+        }
+        if (executor instanceof DtpExecutor) {
+            doRefreshDtp((DtpExecutor) executor, properties);
+            return;
+        }
+        doRefreshCommon(executorWrapper, properties);
     }
 
-    private static void doRefresh(DtpExecutor dtpExecutor, ThreadPoolProperties properties) {
-        doRefreshPoolSize(dtpExecutor, properties);
-        if (!Objects.equals(dtpExecutor.getKeepAliveTime(properties.getUnit()), properties.getKeepAliveTime())) {
-            dtpExecutor.setKeepAliveTime(properties.getKeepAliveTime(), properties.getUnit());
+    private static void doRefreshCommon(ExecutorWrapper executorWrapper, ThreadPoolProperties properties) {
+
+        if (StringUtils.isNotBlank(properties.getThreadPoolAliasName())) {
+            executorWrapper.setThreadPoolAliasName(properties.getThreadPoolAliasName());
         }
 
-        if (!Objects.equals(dtpExecutor.allowsCoreThreadTimeOut(), properties.isAllowCoreThreadTimeOut())) {
-            dtpExecutor.allowCoreThreadTimeOut(properties.isAllowCoreThreadTimeOut());
-        }
-
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
         // update reject handler
-        if (!Objects.equals(dtpExecutor.getRejectHandlerName(), properties.getRejectedHandlerType())) {
-            dtpExecutor.setRejectedExecutionHandler(RejectHandlerGetter.getProxy(properties.getRejectedHandlerType()));
-            dtpExecutor.setRejectHandlerName(properties.getRejectedHandlerType());
+        if (!Objects.equals(executor.getRejectedExecutionHandler().getClass().getSimpleName(),
+                properties.getRejectedHandlerType())) {
+            val rejectHandler = RejectHandlerGetter.buildRejectedHandler(properties.getRejectedHandlerType());
+            executor.setRejectedExecutionHandler(rejectHandler);
         }
 
-        // update Alias Name
-        if (!Objects.equals(dtpExecutor.getThreadPoolAliasName(), properties.getThreadPoolAliasName())) {
-            dtpExecutor.setThreadPoolAliasName(properties.getThreadPoolAliasName());
-        }
+        updateQueueProp(properties, executor);
 
-        updateQueueProp(properties, dtpExecutor);
-        dtpExecutor.setWaitForTasksToCompleteOnShutdown(properties.isWaitForTasksToCompleteOnShutdown());
-        dtpExecutor.setAwaitTerminationSeconds(properties.getAwaitTerminationSeconds());
-        dtpExecutor.setPreStartAllCoreThreads(properties.isPreStartAllCoreThreads());
-        dtpExecutor.setRunTimeout(properties.getRunTimeout());
-        dtpExecutor.setQueueTimeout(properties.getQueueTimeout());
+        // update notify related
+        executorWrapper.setNotifyEnabled(properties.isNotifyEnabled());
+        val allNotifyItems = mergeSimpleNotifyItems(properties.getNotifyItems());
+        NotifyHelper.refreshNotify(executorWrapper.getThreadPoolName(), dtpProperties.getPlatforms(),
+                executorWrapper.getNotifyItems(), allNotifyItems);
+        executorWrapper.setNotifyItems(allNotifyItems);
+    }
+
+    private static void doRefreshDtp(DtpExecutor executor, ThreadPoolProperties properties) {
+
+        if (StringUtils.isNotBlank(properties.getThreadPoolAliasName())) {
+            executor.setThreadPoolAliasName(properties.getThreadPoolAliasName());
+        }
+        // update reject handler
+        if (!Objects.equals(executor.getRejectHandlerName(), properties.getRejectedHandlerType())) {
+            executor.setRejectedExecutionHandler(RejectHandlerGetter.getProxy(properties.getRejectedHandlerType()));
+            executor.setRejectHandlerName(properties.getRejectedHandlerType());
+        }
+        executor.setWaitForTasksToCompleteOnShutdown(properties.isWaitForTasksToCompleteOnShutdown());
+        executor.setAwaitTerminationSeconds(properties.getAwaitTerminationSeconds());
+        executor.setPreStartAllCoreThreads(properties.isPreStartAllCoreThreads());
+        executor.setRunTimeout(properties.getRunTimeout());
+        executor.setQueueTimeout(properties.getQueueTimeout());
+
+        updateQueueProp(properties, executor);
 
         List<TaskWrapper> taskWrappers = TaskWrappers.getInstance().getByNames(properties.getTaskWrapperNames());
-        dtpExecutor.setTaskWrappers(taskWrappers);
+        executor.setTaskWrappers(taskWrappers);
 
-        // update notify items
+        // update notify related
         val allNotifyItems = mergeAllNotifyItems(properties.getNotifyItems());
-        NotifyHelper.refreshNotify(dtpExecutor.getThreadPoolName(), dtpProperties.getPlatforms(),
-                dtpExecutor.getNotifyItems(), allNotifyItems);
-        dtpExecutor.setNotifyItems(allNotifyItems);
-        dtpExecutor.setNotifyEnabled(properties.isNotifyEnabled());
-    }
-
-    @Autowired
-    public void setDtpProperties(DtpProperties dtpProperties) {
-        DtpRegistry.dtpProperties = dtpProperties;
-    }
-
-    @Override
-    public void run(ApplicationArguments args) {
-        Set<String> remoteExecutors = Collections.emptySet();
-        if (CollectionUtils.isNotEmpty(dtpProperties.getExecutors())) {
-            remoteExecutors = dtpProperties.getExecutors().stream()
-                    .map(ThreadPoolProperties::getThreadPoolName)
-                    .collect(Collectors.toSet());
-        }
-
-        val registeredDtpExecutors = Sets.newHashSet(DTP_REGISTRY.keySet());
-        val localDtpExecutors = CollectionUtils.subtract(registeredDtpExecutors, remoteExecutors);
-        log.info("DtpRegistry initialization is complete, remote dtpExecutors: {}, local dtpExecutors: {}, local commonExecutors: {}",
-                remoteExecutors, localDtpExecutors, COMMON_REGISTRY.keySet());
+        NotifyHelper.refreshNotify(executor.getThreadPoolName(), dtpProperties.getPlatforms(),
+                executor.getNotifyItems(), allNotifyItems);
+        executor.setNotifyItems(allNotifyItems);
+        executor.setNotifyEnabled(properties.isNotifyEnabled());
     }
 
     private static void doRefreshPoolSize(ThreadPoolExecutor dtpExecutor, ThreadPoolProperties properties) {
@@ -327,34 +294,58 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         }
     }
 
-    private static void updateQueueProp(ThreadPoolProperties properties, DtpExecutor dtpExecutor) {
+    private static void updateQueueProp(ThreadPoolProperties properties, ThreadPoolExecutor executor) {
         // update work queue
-        if (!canModifyQueueProp(properties)) {
+        if (!canModifyQueueProp(properties, executor)) {
             return;
         }
-        val blockingQueue = dtpExecutor.getQueue();
-        if (!Objects.equals(dtpExecutor.getQueueCapacity(), properties.getQueueCapacity())) {
-            if (blockingQueue instanceof VariableLinkedBlockingQueue) {
-                ((VariableLinkedBlockingQueue<Runnable>) blockingQueue).setCapacity(properties.getQueueCapacity());
-            } else {
-                log.error("DynamicTp refresh, the blockingqueue capacity cannot be reset, dtpName: {}, queueType {}",
-                        dtpExecutor.getThreadPoolName(), dtpExecutor.getQueueName());
-            }
-        }
-
+        val blockingQueue = executor.getQueue();
         if (blockingQueue instanceof MemorySafeLinkedBlockingQueue) {
             ((MemorySafeLinkedBlockingQueue<Runnable>) blockingQueue).setMaxFreeMemory(properties.getMaxFreeMemory() * M_1);
         }
+
+        int capacity = blockingQueue.size() + blockingQueue.remainingCapacity();
+        if (Objects.equals(capacity, properties.getQueueCapacity())) {
+            return;
+        }
+        if (blockingQueue instanceof VariableLinkedBlockingQueue) {
+            ((VariableLinkedBlockingQueue<Runnable>) blockingQueue).setCapacity(properties.getQueueCapacity());
+            return;
+        }
+        log.error("DynamicTp refresh, the blockingqueue capacity cannot be reset, poolName: {}, queueType {}",
+                properties.getThreadPoolName(), blockingQueue.getClass().getSimpleName());
     }
 
-    private static boolean canModifyQueueProp(ThreadPoolProperties properties) {
-        return Objects.equals(properties.getQueueType(), VARIABLE_LINKED_BLOCKING_QUEUE.getName())
+    private static boolean canModifyQueueProp(ThreadPoolProperties properties, ThreadPoolExecutor executor) {
+        return Objects.equals(executor.getQueue().getClass().getSimpleName(), VARIABLE_LINKED_BLOCKING_QUEUE.getName())
+                || Objects.equals(properties.getQueueType(), VARIABLE_LINKED_BLOCKING_QUEUE.getName())
                 || Objects.equals(properties.getQueueType(), MEMORY_SAFE_LINKED_BLOCKING_QUEUE.getName())
                 || Objects.equals(properties.getExecutorType(), EAGER.getName());
+    }
+
+    @Autowired
+    public void setDtpProperties(DtpProperties dtpProperties) {
+        DtpRegistry.dtpProperties = dtpProperties;
     }
 
     @Override
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE + 1;
+    }
+
+    @Override
+    public void run(ApplicationArguments args) {
+        Set<String> remoteExecutors = Collections.emptySet();
+        if (CollectionUtils.isNotEmpty(dtpProperties.getExecutors())) {
+            remoteExecutors = dtpProperties.getExecutors().stream()
+                    .map(ThreadPoolProperties::getThreadPoolName)
+                    .collect(Collectors.toSet());
+        }
+
+        val registeredExecutors = Sets.newHashSet(DTP_REGISTRY.keySet());
+        registeredExecutors.addAll(COMMON_REGISTRY.keySet());
+        val localExecutors = CollectionUtils.subtract(registeredExecutors, remoteExecutors);
+        log.info("DtpRegistry initialization is complete, remote executors: {}, local executors: {}",
+                remoteExecutors, localExecutors);
     }
 }

@@ -44,32 +44,22 @@ public final class NotifierHandler {
     }
 
     public void sendNotice(DtpMainProp prop, List<String> diffs) {
-
-        try {
-            NotifyItem notifyItem = DtpNotifyCtxHolder.get().getNotifyItem();
-            for (String platform : notifyItem.getPlatforms()) {
-                DtpNotifier notifier = NOTIFIERS.get(platform.toLowerCase());
-                if (notifier != null) {
-                    notifier.sendChangeMsg(prop, diffs);
-                }
+        NotifyItem notifyItem = DtpNotifyCtxHolder.get().getNotifyItem();
+        for (String platform : notifyItem.getPlatforms()) {
+            DtpNotifier notifier = NOTIFIERS.get(platform.toLowerCase());
+            if (notifier != null) {
+                notifier.sendChangeMsg(prop, diffs);
             }
-        } catch (Exception e) {
-            log.error("DynamicTp, sendNotice error", e);
         }
     }
 
     public void sendAlarm(NotifyItemEnum notifyItemEnum) {
-
-        try {
-            NotifyItem notifyItem = DtpNotifyCtxHolder.get().getNotifyItem();
-            for (String platform : notifyItem.getPlatforms()) {
-                DtpNotifier notifier = NOTIFIERS.get(platform.toLowerCase());
-                if (notifier != null) {
-                    notifier.sendAlarmMsg(notifyItemEnum);
-                }
+        NotifyItem notifyItem = DtpNotifyCtxHolder.get().getNotifyItem();
+        for (String platform : notifyItem.getPlatforms()) {
+            DtpNotifier notifier = NOTIFIERS.get(platform.toLowerCase());
+            if (notifier != null) {
+                notifier.sendAlarmMsg(notifyItemEnum);
             }
-        } finally {
-            DtpNotifyCtxHolder.remove();
         }
     }
 

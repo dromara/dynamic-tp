@@ -17,9 +17,12 @@ public class NoticeInvoker implements Invoker<BaseNotifyCtx> {
 
     @Override
     public void invoke(BaseNotifyCtx context) {
-        DtpNotifyCtxHolder.set(context);
-        val noticeCtx = (NoticeCtx) context;
-        NotifierHandler.getInstance().sendNotice(noticeCtx.getProp(), noticeCtx.getDiffs());
-        DtpNotifyCtxHolder.remove();
+        try {
+            DtpNotifyCtxHolder.set(context);
+            val noticeCtx = (NoticeCtx) context;
+            NotifierHandler.getInstance().sendNotice(noticeCtx.getProp(), noticeCtx.getDiffs());
+        } finally {
+            DtpNotifyCtxHolder.remove();
+        }
     }
 }

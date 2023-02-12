@@ -109,17 +109,23 @@ export default sidebar([
     prefix: "/guide",
     children: [
       {
-        text: "采集方式",
+        text: "数据采集",
         icon: "ability",
         collapsable: false,
         link: "/guide/monitor/way"
       },
       {
-        text: "micrometer集成步骤",
+        text: "prometheus+grafana 监控",
         icon: "config",
         collapsable: false,
         link: "/guide/monitor/prometheus_grafana"
       },
+      {
+        text: "hertzbeat 监控",
+        icon: "config",
+        collapsable: false,
+        link: "/guide/monitor/hertzbeat"
+      }
     ],
   },
 

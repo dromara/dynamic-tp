@@ -202,6 +202,12 @@
 
 ---
 
+## 友情链接
+
+- [HertzBeat](https://github.com/dromara/hertzbeat) : 易用友好的实时监控告警系统，无需Agent，强大自定义监控能力.
+
+---
+
 ## 联系我
 
 看到这儿，**请给项目一个 star**，你的支持是我们前进的动力！

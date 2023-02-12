@@ -164,7 +164,8 @@
   {"datetime": "2022-04-17 11:35:15.209", "app_name": "dynamic-tp-nacos-cloud-demo", "thread_pool_metrics": {"activeCount":0,"queueSize":0,"largestPoolSize":100,"poolSize":100,"queueCapacity":2147483647,"fair":false,"queueTimeoutCount":0,"rejectCount":0,"waitTaskCount":0,"taskCount":177,"runTimeoutCount":0,"queueRemainingCapacity":2147483647,"corePoolSize":100,"queueType":"TaskQueue","completedTaskCount":177,"dynamic":false,"maximumPoolSize":400,"poolName":"tomcatWebServerTp"}}
   ```
 
-- 暴露 EndPoint 端点(dynamic-tp)，可以通过 http 方式请求
+- 暴露 EndPoint 端点(dynamic-tp)，可以通过 http 方式请求，HertzBeat 已做接入集成，详细看官网
+- 
   ```json
   [
       {

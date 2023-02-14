@@ -98,9 +98,9 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
                        BlockingQueue<Runnable> workQueue,
                        ThreadFactory threadFactory,
                        RejectedExecutionHandler handler) {
-        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);
+        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+                threadFactory, RejectHandlerGetter.getProxy(handler));
         this.rejectHandlerName = handler.getClass().getSimpleName();
-        setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
     }
 
     @Override

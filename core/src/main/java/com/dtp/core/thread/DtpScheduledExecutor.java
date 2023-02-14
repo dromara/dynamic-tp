@@ -72,7 +72,8 @@ public class DtpScheduledExecutor extends DtpExecutor implements ScheduledExecut
     }
 
     @Override
-    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException {
+    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+            throws InterruptedException {
         return delegate.invokeAll(tasks, timeout, unit);
     }
 
@@ -82,7 +83,8 @@ public class DtpScheduledExecutor extends DtpExecutor implements ScheduledExecut
     }
 
     @Override
-    public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
+            throws InterruptedException, ExecutionException, TimeoutException {
         return delegate.invokeAny(tasks, timeout, unit);
     }
 
@@ -118,7 +120,7 @@ public class DtpScheduledExecutor extends DtpExecutor implements ScheduledExecut
 
     @Override
     public RejectedExecutionHandler getRejectedExecutionHandler() {
-        return super.getRejectedExecutionHandler();
+        return delegate.getRejectedExecutionHandler();
     }
 
     @Override
@@ -129,6 +131,62 @@ public class DtpScheduledExecutor extends DtpExecutor implements ScheduledExecut
     @Override
     public int getCorePoolSize() {
         return delegate.getCorePoolSize();
+    }
+
+    @Override
+    public void setMaximumPoolSize(int maximumPoolSize) {
+        delegate.setMaximumPoolSize(maximumPoolSize);
+    }
+
+    @Override
+    public int getMaximumPoolSize() {
+        return delegate.getMaximumPoolSize();
+    }
+
+    @Override
+    public String getQueueName() {
+        return delegate.getQueue().getClass().getSimpleName();
+    }
+
+    @Override
+    public int getQueueCapacity() {
+        int capacity = delegate.getQueue().size() + delegate.getQueue().remainingCapacity();
+        return capacity < 0 ? Integer.MAX_VALUE : capacity;
+    }
+
+    @Override
+    public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
+        delegate.allowCoreThreadTimeOut(allowCoreThreadTimeOut);
+    }
+
+    @Override
+    public void setThreadFactory(ThreadFactory threadFactory) {
+        delegate.setThreadFactory(threadFactory);
+    }
+
+    @Override
+    public ThreadFactory getThreadFactory() {
+        return delegate.getThreadFactory();
+    }
+
+    @Override
+    public boolean prestartCoreThread() {
+        return delegate.prestartCoreThread();
+    }
+
+    @Override
+    public void setKeepAliveTime(long time, TimeUnit unit) {
+        delegate.setKeepAliveTime(time, unit);
+    }
+
+    @Override
+    public long getKeepAliveTime(TimeUnit unit) {
+        return delegate.getKeepAliveTime(unit);
+    }
+
+    @Override
+    public BlockingQueue<Runnable> getQueue() {
+        return delegate.getQueue();
     }
 
     @Override
@@ -171,3 +229,4 @@ public class DtpScheduledExecutor extends DtpExecutor implements ScheduledExecut
         return delegate.getCompletedTaskCount();
     }
 }
+

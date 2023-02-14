@@ -10,10 +10,7 @@ import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.support.wrapper.TaskWrapper;
-import com.dtp.core.thread.DtpExecutor;
-import com.dtp.core.thread.EagerDtpExecutor;
-import com.dtp.core.thread.NamedThreadFactory;
-import com.dtp.core.thread.OrderedDtpExecutor;
+import com.dtp.core.thread.*;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -116,6 +113,11 @@ public class ThreadPoolBuilder {
      * default false, true ordered thread pool.
      */
     private boolean ordered = false;
+
+    /**
+     * If scheduled executor, default false.
+     */
+    private boolean scheduled = false;
 
     /**
      * If pre start all core threads.
@@ -268,6 +270,11 @@ public class ThreadPoolBuilder {
         return this;
     }
 
+    public ThreadPoolBuilder scheduled(boolean scheduled) {
+        this.scheduled = scheduled;
+        return this;
+    }
+
     public ThreadPoolBuilder preStartAllCoreThreads(boolean preStartAllCoreThreads) {
         this.preStartAllCoreThreads = preStartAllCoreThreads;
         return this;
@@ -382,6 +389,15 @@ public class ThreadPoolBuilder {
             taskQueue.setExecutor((EagerDtpExecutor) dtpExecutor);
         } else if (ordered) {
             dtpExecutor = new OrderedDtpExecutor(
+                    builder.corePoolSize,
+                    builder.maximumPoolSize,
+                    builder.keepAliveTime,
+                    builder.timeUnit,
+                    builder.workQueue,
+                    builder.threadFactory,
+                    builder.rejectedExecutionHandler);
+        } else if (scheduled) {
+            dtpExecutor = new DtpScheduledExecutor(
                     builder.corePoolSize,
                     builder.maximumPoolSize,
                     builder.keepAliveTime,

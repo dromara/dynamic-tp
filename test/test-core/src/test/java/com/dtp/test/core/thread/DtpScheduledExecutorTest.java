@@ -15,8 +15,10 @@ import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 @PropertySource(value = "classpath:/dynamic-tp-nacos-demo-dtp-dev.yml", factory = YamlPropertySourceFactory.class)
-@SpringBootTest(classes= DtpScheduledExecutorTest.class) //获取启动类，加载配置，寻找主配置启动类 （被 @SpringBootApplication 注解的）
-@RunWith(SpringRunner.class) //让JUnit运行Spring的测试环境,获得Spring环境的上下文的支持
+//获取启动类，加载配置，寻找主配置启动类 （被 @SpringBootApplication 注解的）
+@SpringBootTest(classes= DtpScheduledExecutorTest.class)
+//让JUnit运行Spring的测试环境,获得Spring环境的上下文的支持
+@RunWith(SpringRunner.class)
 @EnableDynamicTp
 @EnableAutoConfiguration
 public class DtpScheduledExecutorTest {
@@ -44,9 +46,5 @@ public class DtpScheduledExecutorTest {
 //            System.out.println(Thread.currentThread().getName() + "进来了," +
 //                    "当前时间是 " + LocalDateTime.now());
 //        });
-
-        while (true) {
-
-        }
     }
 }

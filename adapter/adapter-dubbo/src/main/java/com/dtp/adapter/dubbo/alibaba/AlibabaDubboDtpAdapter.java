@@ -3,14 +3,13 @@ package com.dtp.adapter.dubbo.alibaba;
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 import com.alibaba.dubbo.common.store.DataStore;
 import com.dtp.adapter.common.AbstractDtpAdapter;
-import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.properties.DtpProperties;
+import com.dtp.core.support.ExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections.MapUtils;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.alibaba.dubbo.common.Constants.EXECUTOR_SERVICE_COMPONENT_KEY;
@@ -37,7 +36,7 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter {
     protected void initialize() {
         super.initialize();
         DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
-        Map<String, Object> executorMap = new ConcurrentHashMap<>(dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY));
+        Map<String, Object> executorMap = dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY);
         if (MapUtils.isNotEmpty(executorMap)) {
             executorMap.forEach((k, v) -> {
                 val name = genTpName(k);

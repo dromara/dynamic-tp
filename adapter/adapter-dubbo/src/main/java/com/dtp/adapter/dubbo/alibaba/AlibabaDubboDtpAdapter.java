@@ -10,6 +10,7 @@ import lombok.val;
 import org.apache.commons.collections.MapUtils;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.alibaba.dubbo.common.Constants.EXECUTOR_SERVICE_COMPONENT_KEY;
@@ -36,7 +37,7 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter {
     protected void initialize() {
         super.initialize();
         DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
-        Map<String, Object> executors = dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY);
+        Map<String, Object> executors = new ConcurrentHashMap<>(dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY));
         if (MapUtils.isNotEmpty(executors)) {
             executors.forEach((k, v) -> {
                 val name = genTpName(k);

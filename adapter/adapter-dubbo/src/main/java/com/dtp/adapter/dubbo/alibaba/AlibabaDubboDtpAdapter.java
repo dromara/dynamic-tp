@@ -37,9 +37,9 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter {
     protected void initialize() {
         super.initialize();
         DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
-        Map<String, Object> executors = new ConcurrentHashMap<>(dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY));
-        if (MapUtils.isNotEmpty(executors)) {
-            executors.forEach((k, v) -> {
+        Map<String, Object> dubboExecutors = new ConcurrentHashMap<>(dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY));
+        if (MapUtils.isNotEmpty(dubboExecutors)) {
+            dubboExecutors.forEach((k, v) -> {
                 val name = genTpName(k);
                 val executorWrapper = new ExecutorWrapper(name, (ThreadPoolExecutor) v);
                 initNotifyItems(name, executorWrapper);

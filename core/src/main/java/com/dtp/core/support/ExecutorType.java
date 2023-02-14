@@ -1,6 +1,7 @@
 package com.dtp.core.support;
 
 import com.dtp.core.thread.DtpExecutor;
+import com.dtp.core.thread.DtpScheduledExecutor;
 import com.dtp.core.thread.EagerDtpExecutor;
 import com.dtp.core.thread.OrderedDtpExecutor;
 import lombok.Getter;
@@ -19,7 +20,7 @@ public enum ExecutorType {
      */
     COMMON("common", DtpExecutor.class),
     EAGER("eager", EagerDtpExecutor.class),
-
+    SCHEDULED("scheduled", DtpScheduledExecutor.class),
     ORDERED("ordered", OrderedDtpExecutor.class);
 
     private final String name;

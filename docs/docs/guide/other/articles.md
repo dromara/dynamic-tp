@@ -51,3 +51,12 @@ star: true
 ## By 赤耳小永(掘金)
 
 [利用Nacos作为配置中心动态修改线程池核心参数](https://juejin.cn/post/7130595435227381791)
+
+## By windsearcher(有道云笔记)
+[动态线程池DynamicTp源码系列一之相关类简介](https://note.youdao.com/s/axEj5CXk)
+
+[动态线程池DynamicTp源码解读系列二之starter模块](https://note.youdao.com/s/5XS63CDY)
+
+[动态线程池DynamicTp源码解读系列三之监控告警](https://note.youdao.com/s/cYAWav4o)
+
+[动态线程池DynamicTp源码解读系列四之adapter模块](https://note.youdao.com/s/ZF833Lps)

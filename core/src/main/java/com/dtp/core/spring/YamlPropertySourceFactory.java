@@ -1,4 +1,4 @@
-package com.dtp.core.support;
+package com.dtp.core.spring;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;

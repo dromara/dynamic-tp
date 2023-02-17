@@ -1,4 +1,4 @@
-package com.dtp.core.support;
+package com.dtp.core.spring;
 
 import com.dtp.common.properties.DtpProperties;
 import org.springframework.boot.context.properties.bind.Bindable;

@@ -1,8 +1,8 @@
-package com.dtp.test.core.support;
+package com.dtp.test.core.spring;
 
 import com.dtp.common.properties.DtpProperties;
-import com.dtp.core.support.PropertiesBinder;
-import com.dtp.core.support.YamlPropertySourceFactory;
+import com.dtp.core.spring.PropertiesBinder;
+import com.dtp.core.spring.YamlPropertySourceFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.junit.jupiter.api.Assertions;

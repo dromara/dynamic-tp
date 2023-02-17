@@ -2,7 +2,7 @@ package com.dtp.test.core.thread;
 
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.spring.EnableDynamicTp;
-import com.dtp.core.support.YamlPropertySourceFactory;
+import com.dtp.core.spring.YamlPropertySourceFactory;
 import com.dtp.core.thread.DtpScheduledExecutor;
 import org.junit.Test;
 import org.junit.runner.RunWith;

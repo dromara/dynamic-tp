@@ -1,6 +1,10 @@
 package com.dtp.core.support;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * DynamicTp annotation, mainly used to manage juc ThreadPoolExecutor by this framework.

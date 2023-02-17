@@ -2,7 +2,7 @@ package com.dtp.starter.etcd.refresh;
 
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.refresh.AbstractRefresher;
-import com.dtp.core.support.PropertiesBinder;
+import com.dtp.core.spring.PropertiesBinder;
 import com.dtp.starter.etcd.util.EtcdUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;

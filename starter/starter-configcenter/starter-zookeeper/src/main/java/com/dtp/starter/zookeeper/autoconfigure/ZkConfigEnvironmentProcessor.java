@@ -1,7 +1,7 @@
 package com.dtp.starter.zookeeper.autoconfigure;
 
 import com.dtp.common.properties.DtpProperties;
-import com.dtp.core.support.PropertiesBinder;
+import com.dtp.core.spring.PropertiesBinder;
 import com.dtp.starter.zookeeper.util.CuratorUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;

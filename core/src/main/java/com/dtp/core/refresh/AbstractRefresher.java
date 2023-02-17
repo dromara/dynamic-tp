@@ -6,7 +6,7 @@ import com.dtp.common.event.RefreshEvent;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.handler.ConfigHandler;
-import com.dtp.core.support.PropertiesBinder;
+import com.dtp.core.spring.PropertiesBinder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections.MapUtils;

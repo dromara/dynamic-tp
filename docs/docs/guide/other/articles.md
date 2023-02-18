@@ -61,3 +61,6 @@ star: true
 [动态线程池DynamicTp源码解读系列三之监控告警](https://note.youdao.com/s/cYAWav4o)
 
 [动态线程池DynamicTp源码解读系列四之adapter模块](https://note.youdao.com/s/ZF833Lps)
+
+## By MRyan
+[dynamic-tp核心流程源码解读篇](https://www.wormholestack.com/archives/670/)

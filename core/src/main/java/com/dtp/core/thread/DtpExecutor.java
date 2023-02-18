@@ -110,21 +110,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
 
     @Override
     public void execute(Runnable command) {
-        String taskName = null;
-        if (command instanceof NamedRunnable) {
-            taskName = ((NamedRunnable) command).getName();
-        }
-
-        if (CollectionUtils.isNotEmpty(taskWrappers)) {
-            for (TaskWrapper t : taskWrappers) {
-                command = t.wrap(command);
-            }
-        }
-
-        if (runTimeout > 0 || queueTimeout > 0) {
-            command = new DtpRunnable(command, taskName);
-        }
-        super.execute(command);
+        super.execute(wrapTasks(command));
     }
 
     @Override
@@ -179,6 +165,19 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
         if (preStartAllCoreThreads) {
             prestartAllCoreThreads();
         }
+    }
+
+    protected Runnable wrapTasks(Runnable command) {
+        if (CollectionUtils.isNotEmpty(taskWrappers)) {
+            for (TaskWrapper t : taskWrappers) {
+                command = t.wrap(command);
+            }
+        }
+        if (runTimeout > 0 || queueTimeout > 0) {
+            String taskName = (command instanceof NamedRunnable) ? ((NamedRunnable) command).getName() : null;
+            command = new DtpRunnable(command, taskName);
+        }
+        return command;
     }
 
     public List<NotifyItem> getNotifyItems() {

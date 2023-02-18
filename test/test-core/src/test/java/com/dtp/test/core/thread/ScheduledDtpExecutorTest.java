@@ -3,7 +3,7 @@ package com.dtp.test.core.thread;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.spring.EnableDynamicTp;
 import com.dtp.core.spring.YamlPropertySourceFactory;
-import com.dtp.core.thread.DtpScheduledExecutor;
+import com.dtp.core.thread.ScheduledDtpExecutor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -16,16 +16,16 @@ import java.util.concurrent.TimeUnit;
 
 @PropertySource(value = "classpath:/dynamic-tp-nacos-demo-dtp-dev.yml", factory = YamlPropertySourceFactory.class)
 //获取启动类，加载配置，寻找主配置启动类 （被 @SpringBootApplication 注解的）
-@SpringBootTest(classes= DtpScheduledExecutorTest.class)
+@SpringBootTest(classes= ScheduledDtpExecutorTest.class)
 //让JUnit运行Spring的测试环境,获得Spring环境的上下文的支持
 @RunWith(SpringRunner.class)
 @EnableDynamicTp
 @EnableAutoConfiguration
-public class DtpScheduledExecutorTest {
+public class ScheduledDtpExecutorTest {
 
     @Test
     public void schedule() {
-        DtpScheduledExecutor dtpExecutor12 = (DtpScheduledExecutor) DtpRegistry.getDtpExecutor("dtpExecutor12");
+        ScheduledDtpExecutor dtpExecutor12 = (ScheduledDtpExecutor) DtpRegistry.getDtpExecutor("dtpExecutor12");
         System.out.println(dtpExecutor12.getClass());
 //        dtpExecutor12.schedule(() -> {
 //            System.out.println(Thread.currentThread().getName() + "进来了," +

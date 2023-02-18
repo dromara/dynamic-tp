@@ -11,7 +11,7 @@ import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.support.wrapper.TaskWrapper;
 import com.dtp.core.thread.DtpExecutor;
-import com.dtp.core.thread.DtpScheduledExecutor;
+import com.dtp.core.thread.ScheduledDtpExecutor;
 import com.dtp.core.thread.EagerDtpExecutor;
 import com.dtp.core.thread.NamedThreadFactory;
 import com.dtp.core.thread.OrderedDtpExecutor;
@@ -406,7 +406,7 @@ public class ThreadPoolBuilder {
                     builder.threadFactory,
                     builder.rejectedExecutionHandler);
         } else if (scheduled) {
-            dtpExecutor = new DtpScheduledExecutor(
+            dtpExecutor = new ScheduledDtpExecutor(
                     builder.corePoolSize,
                     builder.maximumPoolSize,
                     builder.keepAliveTime,

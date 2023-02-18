@@ -18,15 +18,15 @@ import java.util.concurrent.TimeoutException;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 /**
- * Support ScheduledThreadExecutor.
+ * Support ScheduledDtpExecutor.
  *
  * @author windsearcher
  **/
-public class DtpScheduledExecutor extends DtpExecutor implements ScheduledExecutorService {
+public class ScheduledDtpExecutor extends DtpExecutor implements ScheduledExecutorService {
 
     private final ScheduledThreadPoolExecutor delegate;
 
-    public DtpScheduledExecutor(int corePoolSize,
+    public ScheduledDtpExecutor(int corePoolSize,
                                 int maximumPoolSize,
                                 long keepAliveTime,
                                 TimeUnit unit,
@@ -240,4 +240,5 @@ public class DtpScheduledExecutor extends DtpExecutor implements ScheduledExecut
         return delegate.getCompletedTaskCount();
     }
 }
+
 

@@ -1,0 +1,8 @@
+server:
+  port: 9102
+
+spring:
+  application:
+    name: dynamic-tp-adapter-dubbo-demo
+  profiles:
+    active: dev

@@ -9,9 +9,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @EnableDynamicTp
 @SpringBootApplication
-public class OkhttpExampleApplication {
-
+public class DubboExampleApplication {
     public static void main(String[] args) {
-        SpringApplication.run(OkhttpExampleApplication.class, args);
+        SpringApplication.run(DubboExampleApplication.class, args);
     }
 }

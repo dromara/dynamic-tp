@@ -1,4 +1,4 @@
-package com.dtp.example.adapter.dubbo;
+package com.dtp.example.dubbo;
 
 /**
  * DubboUserService related

@@ -1,4 +1,4 @@
-package com.dtp.example.adapter.grpc;
+package com.dtp.example.grpc;
 
 import io.grpc.StatusRuntimeException;
 import lombok.extern.slf4j.Slf4j;

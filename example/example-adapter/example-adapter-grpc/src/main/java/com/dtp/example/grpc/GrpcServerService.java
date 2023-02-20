@@ -1,4 +1,4 @@
-package com.dtp.example.adapter.grpc;
+package com.dtp.example.grpc;
 
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;

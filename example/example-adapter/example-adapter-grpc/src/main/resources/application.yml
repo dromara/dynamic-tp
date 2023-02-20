@@ -1,0 +1,32 @@
+server:
+  port: 9103
+
+spring:
+  application:
+    name: dynamic-tp-adapter-grpc-demo
+  profiles:
+    active: dev
+
+  dynamic:
+    tp:
+      enabled: true
+      enabledBanner: true           # 是否开启banner打印，默认true
+      enabledCollect: true          # 是否开启监控指标采集，默认false
+      collectorTypes: logging     # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+      monitorInterval: 5
+      grpcTp: # grpc 线程池配置
+        - threadPoolName: inProcessGrpcServerTp
+          corePoolSize: 100
+          maximumPoolSize: 200
+          keepAliveTime: 60
+
+grpc:
+  server:
+    port: 9999
+    in-process-name: test
+
+  client:
+    spring-boot-grpc-server:
+      enableKeepAlive: true
+      keepAliveWithoutCalls: true
+      negotiationType: plaintext

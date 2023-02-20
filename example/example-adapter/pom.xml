@@ -17,7 +17,7 @@
     <modules>
         <module>example-adapter-okhttp3</module>
         <module>example-adapter-dubbo</module>
-<!--        <module>example-adapter-okhttp3</module>-->
+        <module>example-adapter-grpc</module>
 <!--        <module>example-adapter-okhttp3</module>-->
     </modules>
 

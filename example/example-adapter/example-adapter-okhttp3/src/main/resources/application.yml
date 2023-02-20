@@ -1,0 +1,8 @@
+server:
+  port: 9101
+
+spring:
+  application:
+    name: dynamic-tp-adapter-okhttp3-demo
+  profiles:
+    active: dev

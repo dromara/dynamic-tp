@@ -1,4 +1,4 @@
-package com.dtp.example.adapter.okhttp3;
+package com.dtp.example.okhttp3;
 
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;

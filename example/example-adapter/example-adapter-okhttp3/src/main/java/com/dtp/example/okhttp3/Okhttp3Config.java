@@ -1,4 +1,4 @@
-package com.dtp.example.adapter.okhttp3;
+package com.dtp.example.okhttp3;
 
 import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Bean;

@@ -1,0 +1,26 @@
+server:
+  port: 9104
+
+spring:
+  application:
+    name: dynamic-tp-adapter-brpc-demo
+  profiles:
+    active: dev
+
+  dynamic:
+    tp:
+      enabled: true
+      enabledBanner: true           # 是否开启banner打印，默认true
+      enabledCollect: true          # 是否开启监控指标采集，默认false
+      collectorTypes: logging     # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+      monitorInterval: 5
+      brpcTp:                                       # brpc 线程池配置
+        - threadPoolName: biz1#server               # 名称规则：biz_thread_pool_name + "#" + client/server
+          corePoolSize: 100
+          maximumPoolSize: 200
+          keepAliveTime: 60
+
+starlight:
+  server:
+    enable: true
+    port: 8777

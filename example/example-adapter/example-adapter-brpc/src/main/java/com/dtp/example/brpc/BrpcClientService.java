@@ -1,4 +1,4 @@
-package com.dtp.example.adapter.brpc;
+package com.dtp.example.brpc;
 
 import com.baidu.cloud.starlight.springcloud.client.annotation.RpcProxy;
 import org.springframework.stereotype.Service;

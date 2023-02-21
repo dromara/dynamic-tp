@@ -1,4 +1,4 @@
-package com.dtp.example.adapter.brpc;
+package com.dtp.example.brpc;
 
 /**
  * UserService related

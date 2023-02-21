@@ -1,0 +1,21 @@
+server:
+  port: 9105
+
+spring:
+  application:
+    name: dynamic-tp-adapter-hystrix-demo
+  profiles:
+    active: dev
+
+  dynamic:
+    tp:
+      enabled: true
+      enabledBanner: true           # 是否开启banner打印，默认true
+      enabledCollect: true          # 是否开启监控指标采集，默认false
+      collectorTypes: logging     # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+      monitorInterval: 5
+      hystrixTp: # hystrix 线程池配置
+        - threadPoolName: hystrix1
+          corePoolSize: 100
+          maximumPoolSize: 200
+          keepAliveTime: 60

@@ -1,0 +1,32 @@
+server:
+  port: 9101
+
+spring:
+  application:
+    name: dynamic-tp-adapter-okhttp3-demo
+  profiles:
+    active: dev
+
+  dynamic:
+    tp:
+      enabled: true
+      enabledBanner: true           # 是否开启banner打印，默认true
+      enabledCollect: true          # 是否开启监控指标采集，默认false
+      collectorTypes: logging     # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+      monitorInterval: 5
+      okhttp3Tp: # okhttp3 线程池配置
+        - threadPoolName: okHttpClientTp
+          corePoolSize: 100
+          maximumPoolSize: 200
+          keepAliveTime: 60
+
+dubbo:
+  application:
+    name: dynamic-tp-adapter-dubbo-demo
+  registry:
+    id: zookeeper-registry
+    protocol: zookeeper
+    address: zookeeper://127.0.0.1:2181
+  protocol:
+    name: dubbo
+    port: 20880

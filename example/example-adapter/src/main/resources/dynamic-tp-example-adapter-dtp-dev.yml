@@ -1,9 +1,0 @@
-# 动态线程池配置文件，建议单独开一个文件放到配置中心，字段详解看readme介绍
-spring:
-  dynamic:
-    tp:
-      enabled: true
-      enabledBanner: true           # 是否开启banner打印，默认true
-      enabledCollect: true          # 是否开启监控指标采集，默认false
-      collectorTypes: logging     # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
-      logPath: /Users/fabian/logs          # 监控日志数据路径，默认 ${user.home}/logs

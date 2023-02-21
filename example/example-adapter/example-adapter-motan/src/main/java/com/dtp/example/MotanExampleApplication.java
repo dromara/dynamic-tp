@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ImportResource;
 
 /**
- * @author fabian
+ * @author fabian4
  */
 @EnableDynamicTp
 @SpringBootApplication

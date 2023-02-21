@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 
 /**
- * @author fabian
+ * @author fabian4
  */
 @EnableHystrix
 @EnableDynamicTp

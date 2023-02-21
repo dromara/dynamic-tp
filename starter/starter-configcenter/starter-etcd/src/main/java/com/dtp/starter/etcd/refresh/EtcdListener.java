@@ -1,7 +1,7 @@
 package com.dtp.starter.etcd.refresh;
 
 import com.dtp.common.properties.DtpProperties;
-import com.dtp.core.support.PropertiesBinder;
+import com.dtp.core.spring.PropertiesBinder;
 import com.dtp.starter.etcd.util.EtcdUtil;
 import io.etcd.jetcd.Watch;
 import io.etcd.jetcd.watch.WatchEvent;

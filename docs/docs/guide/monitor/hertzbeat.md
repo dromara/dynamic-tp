@@ -88,7 +88,7 @@ management:
 在监控页面填写 DynamicTp **服务IP**，**监控端口**(默认8080)，最后点击确定添加即可。   
 其他参数如**采集间隔**，**超时时间**等可以参考[帮助文档](https://hertzbeat.com/docs/help/dynamic_tp/) https://hertzbeat.com/docs/help/dynamic_tp/
 
-![hertzbeat](/hertzbeat/monitor-dynamic-tp-2.png)
+![hertzbeat](/images/hertzbeat/monitor-dynamic-tp-2.png)
 
 3. 完成✅,现在我们已经添加好对 DynamicTp 的监控了，查看监控列表即可看到我们的添加项。
 

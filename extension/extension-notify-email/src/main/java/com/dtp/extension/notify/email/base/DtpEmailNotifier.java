@@ -2,9 +2,12 @@ package com.dtp.extension.notify.email.base;
 
 import cn.hutool.core.date.DateTime;
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.entity.*;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.NotifyPlatformEnum;
+import com.dtp.common.entity.AlarmInfo;
+import com.dtp.common.entity.DtpMainProp;
+import com.dtp.common.entity.NotifyItem;
+import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.util.CommonUtil;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;

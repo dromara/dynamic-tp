@@ -10,14 +10,23 @@ import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.support.wrapper.TaskWrapper;
-import com.dtp.core.thread.*;
+import com.dtp.core.thread.DtpExecutor;
+import com.dtp.core.thread.ScheduledDtpExecutor;
+import com.dtp.core.thread.EagerDtpExecutor;
+import com.dtp.core.thread.NamedThreadFactory;
+import com.dtp.core.thread.OrderedDtpExecutor;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Builder for creating a ThreadPoolExecutor gracefully.
@@ -397,7 +406,7 @@ public class ThreadPoolBuilder {
                     builder.threadFactory,
                     builder.rejectedExecutionHandler);
         } else if (scheduled) {
-            dtpExecutor = new DtpScheduledExecutor(
+            dtpExecutor = new ScheduledDtpExecutor(
                     builder.corePoolSize,
                     builder.maximumPoolSize,
                     builder.keepAliveTime,

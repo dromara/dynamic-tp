@@ -1,0 +1,26 @@
+server:
+  port: 9107
+
+spring:
+  application:
+    name: dynamic-tp-adapter-rocketmq-demo
+  profiles:
+    active: dev
+
+  dynamic:
+    tp:
+      enabled: true
+      enabledBanner: true           # 是否开启banner打印，默认true
+      enabledCollect: true          # 是否开启监控指标采集，默认false
+      collectorTypes: logging     # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+      monitorInterval: 5
+      rocketMqTp: # rocketmq 线程池配置
+        - threadPoolName: group1#topic1            # 名称规则：group + "#" + topic
+          corePoolSize: 200
+          maximumPoolSize: 200
+          keepAliveTime: 60
+
+rocketmq:
+  name-server: 127.0.0.1:9876
+  producer:
+    group: test

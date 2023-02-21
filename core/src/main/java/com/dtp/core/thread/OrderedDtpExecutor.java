@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
@@ -33,6 +34,35 @@ public class OrderedDtpExecutor extends DtpExecutor {
     protected final AtomicInteger count = new AtomicInteger(0);
     
     protected final List<DtpExecutor> executors = new ArrayList<>();
+    
+    public OrderedDtpExecutor(int corePoolSize,
+                              int maximumPoolSize,
+                              long keepAliveTime,
+                              TimeUnit unit,
+                              BlockingQueue<Runnable> workQueue) {
+        this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+                Executors.defaultThreadFactory(), new AbortPolicy());
+    }
+    
+    public OrderedDtpExecutor(int corePoolSize,
+                              int maximumPoolSize,
+                              long keepAliveTime,
+                              TimeUnit unit,
+                              BlockingQueue<Runnable> workQueue,
+                              ThreadFactory threadFactory) {
+        this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+                threadFactory, new AbortPolicy());
+    }
+    
+    public OrderedDtpExecutor(int corePoolSize,
+                              int maximumPoolSize,
+                              long keepAliveTime,
+                              TimeUnit unit,
+                              BlockingQueue<Runnable> workQueue,
+                              RejectedExecutionHandler handler) {
+        this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+                Executors.defaultThreadFactory(), handler);
+    }
     
     public OrderedDtpExecutor(int corePoolSize,
                               int maximumPoolSize,

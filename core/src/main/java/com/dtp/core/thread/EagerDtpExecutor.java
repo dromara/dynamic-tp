@@ -3,6 +3,7 @@ package com.dtp.core.thread;
 import com.dtp.core.support.TaskQueue;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
@@ -23,7 +24,36 @@ public class EagerDtpExecutor extends DtpExecutor {
      * The number of tasks submitted but not yet finished.
      */
     private final AtomicInteger submittedTaskCount = new AtomicInteger(0);
-
+    
+    public EagerDtpExecutor(int corePoolSize,
+                            int maximumPoolSize,
+                            long keepAliveTime,
+                            TimeUnit unit,
+                            BlockingQueue<Runnable> workQueue) {
+        this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+                Executors.defaultThreadFactory(), new AbortPolicy());
+    }
+    
+    public EagerDtpExecutor(int corePoolSize,
+                            int maximumPoolSize,
+                            long keepAliveTime,
+                            TimeUnit unit,
+                            BlockingQueue<Runnable> workQueue,
+                            ThreadFactory threadFactory) {
+        this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+                threadFactory, new AbortPolicy());
+    }
+    
+    public EagerDtpExecutor(int corePoolSize,
+                            int maximumPoolSize,
+                            long keepAliveTime,
+                            TimeUnit unit,
+                            BlockingQueue<Runnable> workQueue,
+                            RejectedExecutionHandler handler) {
+        this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+                Executors.defaultThreadFactory(), handler);
+    }
+    
     public EagerDtpExecutor(int corePoolSize,
                             int maximumPoolSize,
                             long keepAliveTime,

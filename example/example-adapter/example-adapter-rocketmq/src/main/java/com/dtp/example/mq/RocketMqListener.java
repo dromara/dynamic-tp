@@ -1,4 +1,4 @@
-package com.dtp.example.adapter.mq;
+package com.dtp.example.mq;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.common.message.MessageExt;
@@ -6,8 +6,8 @@ import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.stereotype.Component;
 
-import static com.dtp.example.adapter.mq.TestRocketMqListener.GROUP;
-import static com.dtp.example.adapter.mq.TestRocketMqListener.TOPIC;
+import static com.dtp.example.mq.RocketMqListener.GROUP;
+import static com.dtp.example.mq.RocketMqListener.TOPIC;
 
 /**
  * TestRocketMqListener related
@@ -18,7 +18,7 @@ import static com.dtp.example.adapter.mq.TestRocketMqListener.TOPIC;
 @Slf4j
 @Component
 @RocketMQMessageListener(consumerGroup = GROUP, topic = TOPIC)
-public class TestRocketMqListener implements RocketMQListener<MessageExt> {
+public class RocketMqListener implements RocketMQListener<MessageExt> {
 
     public static final String GROUP = "test";
     public static final String TOPIC = "test";

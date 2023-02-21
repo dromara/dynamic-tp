@@ -19,6 +19,9 @@
         <module>example-adapter-dubbo</module>
         <module>example-adapter-grpc</module>
         <module>example-adapter-brpc</module>
+        <module>example-adapter-hystrix</module>
+        <module>example-adapter-motan</module>
+        <module>example-adapter-rocketmq</module>
     </modules>
 
 

@@ -1,4 +1,6 @@
-package com.dtp.example.adapter.motan;
+package com.dtp.example.motan;
+
+import org.springframework.stereotype.Service;
 
 /**
  * FooServiceImpl related

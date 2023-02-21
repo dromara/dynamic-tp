@@ -1,0 +1,21 @@
+server:
+  port: 9106
+
+spring:
+  application:
+    name: dynamic-tp-adapter-motan-demo
+  profiles:
+    active: dev
+
+  dynamic:
+    tp:
+      enabled: true
+      enabledBanner: true           # 是否开启banner打印，默认true
+      enabledCollect: true          # 是否开启监控指标采集，默认false
+      collectorTypes: logging     # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+      monitorInterval: 5
+      motanTp: # motan server 线程池配置
+        - threadPoolName: motanTp#8002
+          corePoolSize: 100
+          maximumPoolSize: 200
+          keepAliveTime: 60

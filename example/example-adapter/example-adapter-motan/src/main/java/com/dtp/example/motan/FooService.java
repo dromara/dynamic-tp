@@ -1,4 +1,4 @@
-package com.dtp.example.adapter.motan;
+package com.dtp.example.motan;
 
 /**
  * FooService related

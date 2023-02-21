@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
@@ -92,12 +93,41 @@ public class DtpExecutor extends DtpLifecycleSupport {
                        int maximumPoolSize,
                        long keepAliveTime,
                        TimeUnit unit,
+                       BlockingQueue<Runnable> workQueue) {
+        this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+                Executors.defaultThreadFactory(), new AbortPolicy());
+    }
+    
+    public DtpExecutor(int corePoolSize,
+                       int maximumPoolSize,
+                       long keepAliveTime,
+                       TimeUnit unit,
+                       BlockingQueue<Runnable> workQueue,
+                       ThreadFactory threadFactory) {
+        this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+                threadFactory, new AbortPolicy());
+    }
+    
+    public DtpExecutor(int corePoolSize,
+                       int maximumPoolSize,
+                       long keepAliveTime,
+                       TimeUnit unit,
+                       BlockingQueue<Runnable> workQueue,
+                       RejectedExecutionHandler handler) {
+        this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+                Executors.defaultThreadFactory(), handler);
+    }
+    
+    public DtpExecutor(int corePoolSize,
+                       int maximumPoolSize,
+                       long keepAliveTime,
+                       TimeUnit unit,
                        BlockingQueue<Runnable> workQueue,
                        ThreadFactory threadFactory,
                        RejectedExecutionHandler handler) {
-        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);
+        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+                threadFactory, RejectHandlerGetter.getProxy(handler));
         this.rejectHandlerName = handler.getClass().getSimpleName();
-        setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
     }
 
     @Override

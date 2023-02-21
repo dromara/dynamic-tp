@@ -32,6 +32,35 @@ public class OrderedDtpExecutor extends DtpExecutor {
                               int maximumPoolSize,
                               long keepAliveTime,
                               TimeUnit unit,
+                              BlockingQueue<Runnable> workQueue) {
+        this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+                Executors.defaultThreadFactory(), new AbortPolicy());
+    }
+    
+    public OrderedDtpExecutor(int corePoolSize,
+                              int maximumPoolSize,
+                              long keepAliveTime,
+                              TimeUnit unit,
+                              BlockingQueue<Runnable> workQueue,
+                              ThreadFactory threadFactory) {
+        this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+                threadFactory, new AbortPolicy());
+    }
+    
+    public OrderedDtpExecutor(int corePoolSize,
+                              int maximumPoolSize,
+                              long keepAliveTime,
+                              TimeUnit unit,
+                              BlockingQueue<Runnable> workQueue,
+                              RejectedExecutionHandler handler) {
+        this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
+                Executors.defaultThreadFactory(), handler);
+    }
+    
+    public OrderedDtpExecutor(int corePoolSize,
+                              int maximumPoolSize,
+                              long keepAliveTime,
+                              TimeUnit unit,
                               BlockingQueue<Runnable> workQueue,
                               ThreadFactory threadFactory,
                               RejectedExecutionHandler handler) {
@@ -130,7 +159,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
     public final int getMaximumPoolSize() {
         return getCorePoolSize();
     }
-
+    
     @Override
     public void shutdown() {
         for (ExecutorService executor : this.executors) {
@@ -172,7 +201,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
         }
         return result;
     }
-
+    
     private ThreadFactory buildThreadFactory(int index) {
         if (getThreadFactory() instanceof NamedThreadFactory) {
             String prefix = ((NamedThreadFactory) getThreadFactory()).getNamePrefix() + "#" + index;

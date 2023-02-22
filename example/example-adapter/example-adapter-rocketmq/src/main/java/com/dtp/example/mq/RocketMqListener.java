@@ -20,8 +20,8 @@ import static com.dtp.example.mq.RocketMqListener.TOPIC;
 @RocketMQMessageListener(consumerGroup = GROUP, topic = TOPIC)
 public class RocketMqListener implements RocketMQListener<MessageExt> {
 
-    public static final String GROUP = "test";
-    public static final String TOPIC = "test";
+    public static final String GROUP = "group";
+    public static final String TOPIC = "topic";
 
     @Override
     public void onMessage(MessageExt message) {

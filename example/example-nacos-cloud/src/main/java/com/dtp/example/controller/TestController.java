@@ -3,7 +3,6 @@ package com.dtp.example.controller;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.support.runnable.NamedRunnable;
 import com.dtp.core.thread.DtpExecutor;
-import com.dtp.core.thread.OrderedDtpExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,18 +23,9 @@ public class TestController {
     @Resource
     private ThreadPoolExecutor dtpExecutor1;
 
-    @Resource
-    private OrderedDtpExecutor orderedDtpExecutor;
-
     @GetMapping("/dtp-nacos-cloud-example/test")
     public String test() throws InterruptedException {
         task();
-        return "success";
-    }
-
-    @GetMapping("/dtp-nacos-cloud-example/test_ordered")
-    public String testOrdered(String name) throws InterruptedException {
-        orderedDtpExecutor.execute(name, () -> log.info(name));
         return "success";
     }
 

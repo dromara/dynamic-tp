@@ -135,10 +135,64 @@ export default sidebar([
     prefix: "/guide",
     children: [
       {
-        text: "已集成框架",
+        text: "tomcat 线程池管理",
         icon: "plugin",
-        collapsable: false,
-        link: "/guide/middleware/middleware"
+        collapsable: true,
+        link: "/guide/middleware/tomcat"
+      },
+      {
+        text: "undertow 线程池管理",
+        icon: "plugin",
+        collapsable: true,
+        link: "/guide/middleware/undertow"
+      },
+      {
+        text: "jetty 线程池管理",
+        icon: "plugin",
+        collapsable: true,
+        link: "/guide/middleware/jetty"
+      },
+      {
+        text: "dubbo 线程池管理",
+        icon: "plugin",
+        collapsable: true,
+        link: "/guide/middleware/dubbo"
+      },
+      {
+        text: "rocketmq 线程池管理",
+        icon: "plugin",
+        collapsable: true,
+        link: "/guide/middleware/rocketmq"
+      },
+      {
+        text: "hystrix 线程池管理",
+        icon: "plugin",
+        collapsable: true,
+        link: "/guide/middleware/hystrix"
+      },
+      {
+        text: "okhttp3 线程池管理",
+        icon: "plugin",
+        collapsable: true,
+        link: "/guide/middleware/okhttp3"
+      },
+      {
+        text: "grpc 线程池管理",
+        icon: "plugin",
+        collapsable: true,
+        link: "/guide/middleware/grpc"
+      },
+      {
+        text: "brpc 线程池管理",
+        icon: "plugin",
+        collapsable: true,
+        link: "/guide/middleware/brpc"
+      },
+      {
+        text: "motan 线程池管理",
+        icon: "plugin",
+        collapsable: true,
+        link: "/guide/middleware/motan"
       }
     ],
   },

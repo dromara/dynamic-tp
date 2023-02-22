@@ -28,7 +28,7 @@ spring:
         - platform: email
           receivers: 123456@qq.com,789789@qq.com   # 收件人
       hystrixTp:                                   # hystrix 线程池配置
-        - threadPoolName: hystrix1
+        - threadPoolName: testThreadPoolKey
           corePoolSize: 100
           maximumPoolSize: 200
           keepAliveTime: 60

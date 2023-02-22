@@ -8,7 +8,12 @@ spring:
     name: dynamic-tp-apollo-demo
   profiles:
     active: dev
-
+  dynamic:
+    tp:
+      tomcatTp: # tomcat webserver线程池配置
+        corePoolSize: 100
+        maximumPoolSize: 200
+        keepAliveTime: 60
 
 logging:
   level:

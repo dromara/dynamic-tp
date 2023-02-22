@@ -28,7 +28,7 @@ spring:
         - platform: email
           receivers: 123456@qq.com,789789@qq.com   # 收件人
       rocketMqTp:                                  # rocketmq 线程池配置
-        - threadPoolName: group1#topic1            # 名称规则：group + "#" + topic
+        - threadPoolName: group#topic            # 名称规则：group + "#" + topic
           corePoolSize: 200
           maximumPoolSize: 200
           keepAliveTime: 60

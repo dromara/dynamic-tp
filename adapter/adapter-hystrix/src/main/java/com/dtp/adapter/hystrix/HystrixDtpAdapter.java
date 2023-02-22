@@ -2,11 +2,11 @@ package com.dtp.adapter.hystrix;
 
 import com.dtp.adapter.common.AbstractDtpAdapter;
 import com.dtp.common.ApplicationContextHolder;
+import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.properties.SimpleTpProperties;
-import com.dtp.core.support.ExecutorWrapper;
-import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.util.StreamUtil;
+import com.dtp.core.support.ExecutorWrapper;
 import com.google.common.collect.Maps;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
@@ -65,9 +65,8 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
         DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
         val properties = dtpProperties.getHystrixTp();
         val tmpMap = StreamUtil.toMap(properties, SimpleTpProperties::getThreadPoolName);
-
+        log.info("DynamicTp adapter, hystrix init end, executor {}", executorWrapper);
         refresh(NAME, executorWrapper, dtpProperties.getPlatforms(), tmpMap.get(poolName));
-        log.info("DynamicTp adapter, hystrix executor [{}] init end", poolName);
     }
 
     public void cacheMetricsPublisher(String poolName, DtpMetricsPublisherThreadPool metricsPublisher) {

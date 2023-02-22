@@ -122,7 +122,7 @@ export default sidebar([
       },
       {
         text: "hertzbeat 监控",
-        icon: "config",
+        icon: "computer",
         collapsable: false,
         link: "/guide/monitor/hertzbeat"
       }
@@ -136,63 +136,75 @@ export default sidebar([
     children: [
       {
         text: "tomcat 线程池管理",
-        icon: "plugin",
-        collapsable: true,
+        icon: "Apache",
+        collapsable: false,
         link: "/guide/middleware/tomcat"
       },
       {
         text: "undertow 线程池管理",
-        icon: "plugin",
-        collapsable: true,
+        icon: "safari",
+        collapsable: false,
         link: "/guide/middleware/undertow"
       },
       {
         text: "jetty 线程池管理",
-        icon: "plugin",
-        collapsable: true,
+        icon: "alias",
+        collapsable: false,
         link: "/guide/middleware/jetty"
       },
       {
         text: "dubbo 线程池管理",
-        icon: "plugin",
-        collapsable: true,
+        icon: "selection",
+        collapsable: false,
         link: "/guide/middleware/dubbo"
       },
       {
         text: "rocketmq 线程池管理",
-        icon: "plugin",
-        collapsable: true,
+        icon: "angular",
+        collapsable: false,
         link: "/guide/middleware/rocketmq"
       },
       {
         text: "hystrix 线程池管理",
-        icon: "plugin",
-        collapsable: true,
+        icon: "bit",
+        collapsable: false,
         link: "/guide/middleware/hystrix"
       },
       {
         text: "okhttp3 线程池管理",
-        icon: "plugin",
-        collapsable: true,
+        icon: "branch",
+        collapsable: false,
         link: "/guide/middleware/okhttp3"
       },
       {
         text: "grpc 线程池管理",
-        icon: "plugin",
-        collapsable: true,
+        icon: "chrome",
+        collapsable: false,
         link: "/guide/middleware/grpc"
       },
       {
         text: "brpc 线程池管理",
-        icon: "plugin",
-        collapsable: true,
+        icon: "snow",
+        collapsable: false,
         link: "/guide/middleware/brpc"
       },
       {
         text: "motan 线程池管理",
-        icon: "plugin",
-        collapsable: true,
+        icon: "dart",
+        collapsable: false,
         link: "/guide/middleware/motan"
+      },
+      {
+        text: "tars 线程池管理",
+        icon: "function",
+        collapsable: false,
+        link: "/guide/middleware/tars"
+      },
+      {
+        text: "sofarpc 线程池管理",
+        icon: "linter",
+        collapsable: false,
+        link: "/guide/middleware/sofa"
       }
     ],
   },
@@ -216,7 +228,7 @@ export default sidebar([
       },
       {
         text: "发版记录",
-        icon: "note",
+        icon: "list",
         collapsable: false,
         link: "/guide/other/release"
       },

@@ -1,11 +1,11 @@
 ---
-title: brpc
-icon: plugin
+title: brpc 线程池管理
+icon: snow
 order: 1
 author: yanhom
 date: 2023-02-11
 category:
-  - motan
+  - brpc
 tag:
   - brpc
   - rpc

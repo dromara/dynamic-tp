@@ -1,6 +1,6 @@
 ---
-title: dubbo
-icon: plugin
+title: dubbo 线程池管理
+icon: selection
 order: 1
 author: yanhom
 date: 2023-02-11

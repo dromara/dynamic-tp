@@ -1,6 +1,6 @@
 ---
-title: undertow
-icon: plugin
+title: undertow 线程池管理
+icon: safari
 order: 1
 author: yanhom
 date: 2023-02-11
@@ -44,7 +44,7 @@ spring:
 
 3. 启动日志
 
-第一次访问时看到有如下日志输出说明接入成功，如果开启了通知，同时会推送参数修改通知
+服务启动看到有如下日志输出说明接入成功，如果开启了通知，同时会推送参数修改通知
 
 ```bash
 DynamicTp adapter, web server executor init end, executor: org.xnio.nio.NioXnioWorker@17ce31c   

@@ -6,7 +6,7 @@ spring:
     name: dynamic-tp-polaris-cloud-demo
   cloud:
     polaris:
-      address: grpc://127.0.0.1:8091
+      address: grpc://183.47.111.80:8091
       namespace: default # 设置配置中心命名空间
       discovery:
         enabled: true

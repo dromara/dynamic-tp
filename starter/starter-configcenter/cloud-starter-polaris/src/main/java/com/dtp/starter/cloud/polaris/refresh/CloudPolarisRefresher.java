@@ -1,6 +1,5 @@
 package com.dtp.starter.cloud.polaris.refresh;
 
-
 import com.dtp.core.refresh.AbstractRefresher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;

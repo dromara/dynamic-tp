@@ -19,5 +19,6 @@
         <module>cloud-starter-zookeeper</module>
         <module>cloud-starter-consul</module>
         <module>starter-etcd</module>
+        <module>cloud-starter-polaris</module>
     </modules>
 </project>

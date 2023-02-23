@@ -23,6 +23,7 @@
         <module>example-consul-cloud</module>
         <module>example-etcd</module>
         <module>example-adapter</module>
+        <module>example-polaris-cloud</module>
     </modules>
 
     <build>

@@ -1,0 +1,22 @@
+server:
+  port: 9018
+
+spring:
+  application:
+    name: dynamic-tp-polaris-cloud-demo
+  cloud:
+    polaris:
+      address: grpc://127.0.0.1:8091
+      namespace: default # 设置配置中心命名空间
+      discovery:
+        enabled: true
+      stat:
+        enabled: true
+        port: 28082
+      config:
+        auto-refresh: true # auto refresh when config file changed
+        #   目前只支持 refresh_context 模式
+        refresh-type: refresh_context
+        groups:
+          - name: ${spring.application.name} # group name
+            files: [ "config/dynamic-tp.yml" ]

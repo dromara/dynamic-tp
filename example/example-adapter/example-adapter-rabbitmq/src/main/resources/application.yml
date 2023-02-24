@@ -1,0 +1,22 @@
+server:
+  port: 9103
+
+spring:
+  application:
+    name: dynamic-tp-adapter-rabbitmq-demo
+  profiles:
+    active: dev
+
+  rabbitmq:
+    host: 192.168.1.111
+    port: 5672
+    username: admin
+    password: 123456
+
+  dynamic:
+    tp:
+      enabled: true
+      enabledBanner: true           # 是否开启banner打印，默认true
+      enabledCollect: true          # 是否开启监控指标采集，默认false
+      collectorTypes: logging       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+      monitorInterval: 5

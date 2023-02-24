@@ -22,6 +22,7 @@
         <module>adapter-brpc</module>
         <module>adapter-tars</module>
         <module>adapter-sofa</module>
+        <module>adapter-rabbitmq</module>
     </modules>
 
     <dependencies>

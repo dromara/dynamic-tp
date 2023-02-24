@@ -8,7 +8,7 @@
         <groupId>cn.dynamictp</groupId>
         <version>1.1.0</version>
     </parent>
-    <artifactId>dynamic-example-zookeeper-cloud</artifactId>
+    <artifactId>dynamic-tp-example-zookeeper-cloud</artifactId>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>

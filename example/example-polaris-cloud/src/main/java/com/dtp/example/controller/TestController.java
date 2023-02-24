@@ -27,8 +27,7 @@ public class TestController {
 
     @GetMapping("/dtp-polaris-cloud-example/test")
     public String test() throws InterruptedException {
-//        task();
-        System.out.println(dtpProperties.getTomcatTp().getCorePoolSize());
+        task();
         return "Success";
     }
 

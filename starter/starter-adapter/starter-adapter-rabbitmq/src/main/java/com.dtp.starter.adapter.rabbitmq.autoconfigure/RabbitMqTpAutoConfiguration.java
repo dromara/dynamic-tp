@@ -1,5 +1,6 @@
 package com.dtp.starter.adapter.rabbitmq.autoconfigure;
 
+import com.dtp.adapter.rabbitmq.RabbitMqDtpAdapter;
 import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -14,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 1.0.6
  */
 @Configuration
-@ConditionalOnProperty()
+@ConditionalOnProperty(prefix = "rabbitmq")
 @AutoConfigureAfter({BaseBeanAutoConfiguration.class})
 @SuppressWarnings("all")
 public class RabbitMqTpAutoConfiguration {

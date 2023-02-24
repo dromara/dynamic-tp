@@ -22,6 +22,7 @@
         <module>example-adapter-hystrix</module>
         <module>example-adapter-motan</module>
         <module>example-adapter-rocketmq</module>
+        <module>example-adapter-rabbitmq</module>
     </modules>
 
     <dependencies>

@@ -26,7 +26,7 @@
 
         <dependency>
             <groupId>cn.dynamictp</groupId>
-            <artifactId>dynamic-tp-spring-boot-starter-adapter-rocketmq</artifactId>
+            <artifactId>dynamic-tp-spring-boot-starter-adapter-rabbitmq</artifactId>
             <version>${dtp.version}</version>
         </dependency>
     </dependencies>

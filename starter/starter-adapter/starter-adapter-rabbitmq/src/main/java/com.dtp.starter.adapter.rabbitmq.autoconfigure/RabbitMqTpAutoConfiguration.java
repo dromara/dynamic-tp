@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 1.0.6
  */
 @Configuration
-@ConditionalOnProperty(prefix = "rabbitmq")
+@ConditionalOnProperty(prefix = "spring.rabbitmq", value = {"host"})
 @AutoConfigureAfter({BaseBeanAutoConfiguration.class})
 @SuppressWarnings("all")
 public class RabbitMqTpAutoConfiguration {

@@ -160,6 +160,12 @@
 
             <dependency>
                 <groupId>cn.dynamictp</groupId>
+                <artifactId>dynamic-tp-adapter-rabbitmq</artifactId>
+                <version>${dtp.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.dynamictp</groupId>
                 <artifactId>dynamic-tp-adapter-hystrix</artifactId>
                 <version>${dtp.version}</version>
             </dependency>

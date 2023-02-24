@@ -12,6 +12,8 @@ import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.impl.consumer.ConsumeMessageConcurrentlyService;
 import org.apache.rocketmq.client.impl.consumer.ConsumeMessageOrderlyService;
 import org.apache.rocketmq.client.impl.consumer.DefaultMQPushConsumerImpl;
+import org.apache.rocketmq.client.impl.producer.DefaultMQProducerImpl;
+import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.apache.rocketmq.spring.support.DefaultRocketMQListenerContainer;
 
 import java.util.Objects;
@@ -40,12 +42,12 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
     protected void initialize() {
         super.initialize();
 
-        val beans = ApplicationContextHolder.getBeansOfType(DefaultRocketMQListenerContainer.class);
-        if (MapUtils.isEmpty(beans)) {
+        val cusBeans = ApplicationContextHolder.getBeansOfType(DefaultRocketMQListenerContainer.class);
+        if (MapUtils.isEmpty(cusBeans)) {
             log.warn("Cannot find beans of type DefaultRocketMQListenerContainer.");
             return;
         }
-        beans.forEach((k, v) -> {
+        cusBeans.forEach((k, v) -> {
             DefaultRocketMQListenerContainer container = (DefaultRocketMQListenerContainer) v;
             DefaultMQPushConsumer consumer = container.getConsumer();
             val pushConsumer = (DefaultMQPushConsumerImpl) ReflectionUtil.getFieldValue(DefaultMQPushConsumer.class,
@@ -54,7 +56,7 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
                 return;
             }
 
-            String key = container.getConsumerGroup() + "#" + container.getTopic();
+            String cusKey = container.getConsumerGroup() + "#" + container.getTopic();
             ThreadPoolExecutor executor = null;
             val consumeMessageService = pushConsumer.getConsumeMessageService();
             if (consumeMessageService instanceof ConsumeMessageConcurrentlyService) {
@@ -65,11 +67,38 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
                         CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
             }
             if (Objects.nonNull(executor)) {
-                val executorWrapper = new ExecutorWrapper(key, executor);
-                initNotifyItems(key, executorWrapper);
-                executors.put(key, executorWrapper);
+                val executorWrapper = new ExecutorWrapper(cusKey, executor);
+                initNotifyItems(cusKey, executorWrapper);
+                executors.put(cusKey, executorWrapper);
             }
         });
         log.info("DynamicTp adapter, rocketMq consumer executors init end, executors: {}", executors);
+
+        val proBeans = ApplicationContextHolder.getBeansOfType(DefaultMQProducer.class);
+        if (MapUtils.isEmpty(proBeans)) {
+            log.warn("Cannot find beans of type TransactionMQProducer.");
+            return;
+        }
+        proBeans.forEach((k,v)->{
+            DefaultMQProducer defaultMQProducer = (DefaultMQProducer) v;
+            val producer = (DefaultMQProducerImpl) ReflectionUtil.getFieldValue(DefaultMQProducer.class,
+                    "defaultMQProducerImpl", defaultMQProducer);
+            if (Objects.isNull(producer)) {
+                return;
+            }
+
+            String proKey = defaultMQProducer.getProducerGroup() + "#" + defaultMQProducer.getCreateTopicKey();
+            ThreadPoolExecutor executor = (ThreadPoolExecutor) producer.getAsyncSenderExecutor();
+
+            System.out.println(proKey);
+
+            if (Objects.nonNull(executor)) {
+                val executorWrapper = new ExecutorWrapper(proKey, executor);
+                initNotifyItems(proKey, executorWrapper);
+                executors.put(proKey, executorWrapper);
+            }
+        });
+
+        log.info("DynamicTp adapter, rocketMq producer executors init end, executors: {}", executors);
     }
 }

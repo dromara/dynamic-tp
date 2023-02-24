@@ -2,9 +2,9 @@ package com.dtp.adapter.rocketmq;
 
 import com.dtp.adapter.common.AbstractDtpAdapter;
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.ReflectionUtil;
+import com.dtp.core.support.ExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections.MapUtils;
@@ -40,8 +40,15 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
 
     @Override
     protected void initialize() {
-        super.initialize();
 
+        super.initialize();
+        adaptCustomerExecutors();
+        adaptProducerExecutors();
+
+        log.info("DynamicTp adapter, rocketMq consumer and producer executors init end, executors: {}", executors);
+    }
+
+    public void adaptCustomerExecutors() {
         val cusBeans = ApplicationContextHolder.getBeansOfType(DefaultRocketMQListenerContainer.class);
         if (MapUtils.isEmpty(cusBeans)) {
             log.warn("Cannot find beans of type DefaultRocketMQListenerContainer.");
@@ -72,14 +79,15 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
                 executors.put(cusKey, executorWrapper);
             }
         });
-        log.info("DynamicTp adapter, rocketMq consumer executors init end, executors: {}", executors);
+    }
 
+    public void adaptProducerExecutors() {
         val proBeans = ApplicationContextHolder.getBeansOfType(DefaultMQProducer.class);
         if (MapUtils.isEmpty(proBeans)) {
             log.warn("Cannot find beans of type TransactionMQProducer.");
             return;
         }
-        proBeans.forEach((k,v)->{
+        proBeans.forEach((k, v) -> {
             DefaultMQProducer defaultMQProducer = (DefaultMQProducer) v;
             val producer = (DefaultMQProducerImpl) ReflectionUtil.getFieldValue(DefaultMQProducer.class,
                     "defaultMQProducerImpl", defaultMQProducer);
@@ -90,8 +98,6 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
             String proKey = defaultMQProducer.getProducerGroup() + "#" + defaultMQProducer.getCreateTopicKey();
             ThreadPoolExecutor executor = (ThreadPoolExecutor) producer.getAsyncSenderExecutor();
 
-            System.out.println(proKey);
-
             if (Objects.nonNull(executor)) {
                 val executorWrapper = new ExecutorWrapper(proKey, executor);
                 initNotifyItems(proKey, executorWrapper);
@@ -99,6 +105,5 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
             }
         });
 
-        log.info("DynamicTp adapter, rocketMq producer executors init end, executors: {}", executors);
     }
 }

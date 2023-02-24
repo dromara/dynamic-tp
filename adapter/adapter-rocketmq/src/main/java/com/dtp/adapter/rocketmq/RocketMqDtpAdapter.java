@@ -49,12 +49,13 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
     }
 
     public void adaptCustomerExecutors() {
-        val cusBeans = ApplicationContextHolder.getBeansOfType(DefaultRocketMQListenerContainer.class);
-        if (MapUtils.isEmpty(cusBeans)) {
+
+        val beans = ApplicationContextHolder.getBeansOfType(DefaultRocketMQListenerContainer.class);
+        if (MapUtils.isEmpty(beans)) {
             log.warn("Cannot find beans of type DefaultRocketMQListenerContainer.");
             return;
         }
-        cusBeans.forEach((k, v) -> {
+        beans.forEach((k, v) -> {
             DefaultRocketMQListenerContainer container = (DefaultRocketMQListenerContainer) v;
             DefaultMQPushConsumer consumer = container.getConsumer();
             val pushConsumer = (DefaultMQPushConsumerImpl) ReflectionUtil.getFieldValue(DefaultMQPushConsumer.class,
@@ -82,12 +83,13 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
     }
 
     public void adaptProducerExecutors() {
-        val proBeans = ApplicationContextHolder.getBeansOfType(DefaultMQProducer.class);
-        if (MapUtils.isEmpty(proBeans)) {
+
+        val beans = ApplicationContextHolder.getBeansOfType(DefaultMQProducer.class);
+        if (MapUtils.isEmpty(beans)) {
             log.warn("Cannot find beans of type TransactionMQProducer.");
             return;
         }
-        proBeans.forEach((k, v) -> {
+        beans.forEach((k, v) -> {
             DefaultMQProducer defaultMQProducer = (DefaultMQProducer) v;
             val producer = (DefaultMQProducerImpl) ReflectionUtil.getFieldValue(DefaultMQProducer.class,
                     "defaultMQProducerImpl", defaultMQProducer);

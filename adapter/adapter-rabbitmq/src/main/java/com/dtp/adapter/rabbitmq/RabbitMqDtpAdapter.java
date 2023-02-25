@@ -8,11 +8,7 @@ import com.dtp.core.support.ExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections.MapUtils;
-import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.AbstractConnectionFactory;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
-import org.springframework.amqp.rabbit.listener.MessageListenerContainer;
-import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 
 import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -32,7 +28,7 @@ public class RabbitMqDtpAdapter extends AbstractDtpAdapter {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        refresh(NAME, dtpProperties.getRocketMqTp(), dtpProperties.getPlatforms());
+        refresh(NAME, dtpProperties.getRabbitmqTp(), dtpProperties.getPlatforms());
     }
 
     @Override
@@ -46,9 +42,8 @@ public class RabbitMqDtpAdapter extends AbstractDtpAdapter {
         }
         beans.forEach((k, v) -> {
             AbstractConnectionFactory abstractConnectionFactory = (AbstractConnectionFactory) v;
-            ThreadPoolExecutor executor = null;
-            executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(AbstractConnectionFactory.class,
-                    CONSUME_EXECUTOR_FIELD_NAME, abstractConnectionFactory);
+            ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(
+                    AbstractConnectionFactory.class, CONSUME_EXECUTOR_FIELD_NAME, abstractConnectionFactory);
 
             if (Objects.nonNull(executor)) {
                 val executorWrapper = new ExecutorWrapper(NAME, executor);

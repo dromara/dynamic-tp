@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
 
     <name>DynamicTp Project</name>
-    <description>🔥🔥🔥轻量级动态线程池，内置监控告警功能，基于主流配置中心（已支持Nacos、Apollo、Zookeeper、Consul、Etcd，可通过SPI自定义实现）</description>
+    <description>🔥🔥🔥轻量级动态线程池，内置监控告警功能，基于主流配置中心（已支持Nacos、Apollo、Zookeeper、Consul、Etcd、Polaris，可通过SPI自定义实现）</description>
     <url>https://github.com/yanhom1314/dynamic-tp</url>
 
     <properties>

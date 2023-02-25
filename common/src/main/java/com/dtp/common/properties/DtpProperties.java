@@ -143,6 +143,11 @@ public class DtpProperties {
     private List<SimpleTpProperties> sofaTp;
 
     /**
+     * Rabbitmq thread pools.
+     */
+    private List<SimpleTpProperties> rabbitmqTp;
+
+    /**
      * Notify platform configs.
      */
     private List<NotifyPlatform> platforms;

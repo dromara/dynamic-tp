@@ -43,7 +43,8 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
     public ExecutorWrapper doGetExecutorWrapper(WebServer webServer) {
 
         UndertowServletWebServer undertowServletWebServer = (UndertowServletWebServer) webServer;
-        val undertow = (Undertow) ReflectionUtil.getFieldValue(UndertowWebServer.class, "undertow", undertowServletWebServer);
+        val undertow = (Undertow) ReflectionUtil.getFieldValue(UndertowServletWebServer.class,
+                "undertow", undertowServletWebServer);
         if (Objects.isNull(undertow)) {
             return null;
         }

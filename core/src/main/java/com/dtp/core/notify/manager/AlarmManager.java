@@ -12,6 +12,7 @@ import com.dtp.core.notify.alarm.AlarmCounter;
 import com.dtp.core.notify.alarm.AlarmLimiter;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.ThreadPoolBuilder;
+import com.dtp.core.support.runnable.MdcRunnable;
 import com.dtp.core.thread.DtpExecutor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -61,7 +62,7 @@ public class AlarmManager {
 
     public static void doAlarmAsync(DtpExecutor executor, NotifyItemEnum notifyType) {
         AlarmCounter.incAlarmCounter(executor.getThreadPoolName(), notifyType.getValue());
-        ALARM_EXECUTOR.execute(() -> doAlarm(ExecutorWrapper.of(executor), notifyType));
+        ALARM_EXECUTOR.execute(MdcRunnable.get(() -> doAlarm(ExecutorWrapper.of(executor), notifyType)));
     }
 
     public static void doAlarmAsync(DtpExecutor executor, List<NotifyItemEnum> notifyItemEnums) {
@@ -69,7 +70,7 @@ public class AlarmManager {
     }
 
     public static void doAlarmAsync(ExecutorWrapper executorWrapper, List<NotifyItemEnum> notifyItemEnums) {
-        ALARM_EXECUTOR.execute(() -> notifyItemEnums.forEach(x -> doAlarm(executorWrapper, x)));
+        ALARM_EXECUTOR.execute(MdcRunnable.get(() -> notifyItemEnums.forEach(x -> doAlarm(executorWrapper, x))));
     }
 
     public static void doAlarm(ExecutorWrapper executorWrapper, NotifyItemEnum notifyItemEnum) {

@@ -16,6 +16,7 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.MDC;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -24,6 +25,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
+import static com.dtp.common.constant.DynamicTpConst.SW_TRACE_ID;
 import static com.dtp.common.em.NotifyItemEnum.QUEUE_TIMEOUT;
 import static com.dtp.common.em.NotifyItemEnum.RUN_TIMEOUT;
 
@@ -154,7 +156,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
                 }
             }
         }
-
+        MDC.remove(SW_TRACE_ID);
         super.afterExecute(r, t);
     }
 

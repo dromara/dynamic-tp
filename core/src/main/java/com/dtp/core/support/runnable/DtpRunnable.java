@@ -1,6 +1,9 @@
 package com.dtp.core.support.runnable;
 
 import com.dtp.common.util.TimeUtil;
+import org.slf4j.MDC;
+
+import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
 
 /**
  * DtpRunnable related
@@ -18,10 +21,13 @@ public class DtpRunnable implements Runnable {
 
     private final String taskName;
 
+    private final String traceId;
+
     public DtpRunnable(Runnable runnable, String taskName) {
         this.runnable = runnable;
         submitTime = TimeUtil.currentTimeMillis();
         this.taskName = taskName;
+        this.traceId = MDC.get(TRACE_ID);
     }
 
     @Override
@@ -43,5 +49,9 @@ public class DtpRunnable implements Runnable {
 
     public String getTaskName() {
         return taskName;
+    }
+
+    public String getTraceId() {
+        return traceId;
     }
 }

@@ -1,7 +1,12 @@
 package com.dtp.extension.skywalking.wrapper;
 
+import com.dtp.core.support.runnable.MdcRunnable;
 import com.dtp.core.support.wrapper.TaskWrapper;
 import org.apache.skywalking.apm.toolkit.trace.RunnableWrapper;
+import org.apache.skywalking.apm.toolkit.trace.TraceContext;
+import org.slf4j.MDC;
+
+import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
 
 /**
  * SwTraceTaskWrapper related
@@ -20,6 +25,7 @@ public class SwTraceTaskWrapper implements TaskWrapper {
 
     @Override
     public Runnable wrap(Runnable runnable) {
-        return new RunnableWrapper(runnable);
+        MDC.put(TRACE_ID, TraceContext.traceId());
+        return MdcRunnable.get(new RunnableWrapper(runnable));
     }
 }

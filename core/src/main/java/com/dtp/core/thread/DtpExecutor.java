@@ -1,7 +1,7 @@
 package com.dtp.core.thread;
 
-import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;
+import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.TimeUtil;
 import com.dtp.core.notify.manager.AlarmManager;
@@ -16,6 +16,7 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.MDC;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -25,6 +26,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
+import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
 import static com.dtp.common.em.NotifyItemEnum.QUEUE_TIMEOUT;
 import static com.dtp.common.em.NotifyItemEnum.RUN_TIMEOUT;
 
@@ -158,14 +160,13 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
             long waitTime = currTime - runnable.getSubmitTime();
             if (waitTime > queueTimeout) {
                 queueTimeoutCount.increment();
-                AlarmManager.doAlarmAsync(this, QUEUE_TIMEOUT);
+                AlarmManager.doAlarmAsync(this, QUEUE_TIMEOUT, r);
                 if (StringUtils.isNotBlank(runnable.getTaskName())) {
                     log.warn("DynamicTp execute, queue timeout, poolName: {}, taskName: {}, waitTime: {}ms",
                             this.getThreadPoolName(), runnable.getTaskName(), waitTime);
                 }
             }
         }
-
         super.beforeExecute(t, r);
     }
 
@@ -184,7 +185,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
                 }
             }
         }
-
+        clearContext();
         super.afterExecute(r, t);
     }
 
@@ -208,6 +209,10 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
             command = new DtpRunnable(command, taskName);
         }
         return command;
+    }
+
+    private void clearContext() {
+        MDC.remove(TRACE_ID);
     }
 
     public List<NotifyItem> getNotifyItems() {

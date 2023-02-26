@@ -22,17 +22,22 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.MDC;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
 import static com.dtp.common.constant.DynamicTpConst.UNKNOWN;
-import static com.dtp.common.constant.LarkNotifyConst.*;
+import static com.dtp.common.constant.LarkNotifyConst.LARK_AT_FORMAT_OPENID;
+import static com.dtp.common.constant.LarkNotifyConst.LARK_AT_FORMAT_USERNAME;
+import static com.dtp.common.constant.LarkNotifyConst.LARK_OPENID_PREFIX;
 import static com.dtp.core.notify.manager.NotifyHelper.getAlarmKeys;
 import static com.dtp.core.notify.manager.NotifyHelper.getAllAlarmKeys;
 
@@ -134,6 +139,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 alarmInfo.getLastAlarmTime() == null ? UNKNOWN : alarmInfo.getLastAlarmTime(),
                 DateUtil.now(),
                 receivesStr,
+                Optional.ofNullable(MDC.get(TRACE_ID)).orElse(UNKNOWN),
                 notifyItem.getInterval()
         );
         return highlightAlarmContent(content, notifyItemEnum);

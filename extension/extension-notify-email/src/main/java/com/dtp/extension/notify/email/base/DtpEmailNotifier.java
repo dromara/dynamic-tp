@@ -18,13 +18,16 @@ import com.dtp.core.support.ExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.MDC;
 import org.thymeleaf.context.Context;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
 import static com.dtp.common.constant.DynamicTpConst.UNKNOWN;
 import static com.dtp.core.notify.manager.NotifyHelper.getAlarmKeys;
 
@@ -93,6 +96,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("queueTimeoutCount", alarmCounter.getRight());
         context.setVariable("lastAlarmTime", alarmInfo.getLastAlarmTime() == null ? UNKNOWN : alarmInfo.getLastAlarmTime());
         context.setVariable("alarmTime", DateTime.now());
+        context.setVariable("tid", Optional.ofNullable(MDC.get(TRACE_ID)).orElse(UNKNOWN));
         context.setVariable("alarmInterval", notifyItem.getInterval());
         context.setVariable("highlightVariables", getAlarmKeys(notifyItemEnum));
         return ((EmailNotifier) notifier).processTemplateContent("alarm", context);

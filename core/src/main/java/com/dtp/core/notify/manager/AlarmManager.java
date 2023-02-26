@@ -12,9 +12,13 @@ import com.dtp.core.notify.alarm.AlarmCounter;
 import com.dtp.core.notify.alarm.AlarmLimiter;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.ThreadPoolBuilder;
+import com.dtp.core.support.runnable.DtpRunnable;
+import com.dtp.core.support.wrapper.TaskWrappers;
 import com.dtp.core.thread.DtpExecutor;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.slf4j.MDC;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -22,6 +26,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
 import static com.dtp.common.em.QueueTypeEnum.LINKED_BLOCKING_QUEUE;
 
 /**
@@ -36,11 +41,12 @@ public class AlarmManager {
     private static final ExecutorService ALARM_EXECUTOR = ThreadPoolBuilder.newBuilder()
             .threadPoolName("dtp-alarm")
             .threadFactory("dtp-alarm")
-            .corePoolSize(2)
-            .maximumPoolSize(4)
+            .corePoolSize(1)
+            .maximumPoolSize(2)
             .workQueue(LINKED_BLOCKING_QUEUE.getName(), 2000, false, null)
             .rejectedExecutionHandler(RejectedTypeEnum.DISCARD_OLDEST_POLICY.getName())
-            .buildCommon();
+            .taskWrappers(TaskWrappers.getInstance().getByNames(Sets.newHashSet("mdc")))
+            .buildDynamic();
 
     private static final InvokerChain<BaseNotifyCtx> ALARM_INVOKER_CHAIN;
 
@@ -60,6 +66,12 @@ public class AlarmManager {
     }
 
     public static void doAlarmAsync(DtpExecutor executor, NotifyItemEnum notifyType) {
+        AlarmCounter.incAlarmCounter(executor.getThreadPoolName(), notifyType.getValue());
+        ALARM_EXECUTOR.execute(() -> doAlarm(ExecutorWrapper.of(executor), notifyType));
+    }
+
+    public static void doAlarmAsync(DtpExecutor executor, NotifyItemEnum notifyType, Runnable currRunnable) {
+        MDC.put(TRACE_ID, ((DtpRunnable) currRunnable).getTraceId());
         AlarmCounter.incAlarmCounter(executor.getThreadPoolName(), notifyType.getValue());
         ALARM_EXECUTOR.execute(() -> doAlarm(ExecutorWrapper.of(executor), notifyType));
     }

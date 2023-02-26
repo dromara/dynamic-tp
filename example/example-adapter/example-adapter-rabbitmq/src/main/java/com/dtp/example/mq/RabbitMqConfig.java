@@ -19,7 +19,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 public class RabbitMqConfig {
 
     @Bean
-    public Queue Queue() {
+    public Queue queue() {
         return new Queue("testQueue");
     }
 

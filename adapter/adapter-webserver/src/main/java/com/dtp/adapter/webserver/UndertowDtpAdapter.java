@@ -1,17 +1,16 @@
 package com.dtp.adapter.webserver;
 
+import com.dtp.common.entity.DtpMainProp;
+import com.dtp.common.entity.ThreadPoolStats;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.properties.SimpleTpProperties;
-import com.dtp.common.entity.DtpMainProp;
-import com.dtp.core.support.ExecutorWrapper;
-import com.dtp.common.entity.ThreadPoolStats;
 import com.dtp.common.util.ReflectionUtil;
 import com.dtp.core.convert.ExecutorConverter;
+import com.dtp.core.support.ExecutorWrapper;
 import io.undertow.Undertow;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.web.embedded.undertow.UndertowServletWebServer;
-import org.springframework.boot.web.embedded.undertow.UndertowWebServer;
 import org.springframework.boot.web.server.WebServer;
 import org.xnio.Options;
 import org.xnio.XnioWorker;

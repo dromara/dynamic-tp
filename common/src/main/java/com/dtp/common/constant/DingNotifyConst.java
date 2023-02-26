@@ -45,8 +45,8 @@ public final class DingNotifyConst {
             "<font color=#664B4B size=2>上次报警时间：%s</font> \n\n" +
             "<font color=#664B4B size=2>报警时间：%s</font> \n\n" +
             "<font color=#664B4B size=2>接收人：@%s</font> \n\n" +
-            "<font color=#22B838 size=2>报警间隔：%ss</font> \n\n" +
-            "<font color=#22B838 size=2>tid：%s</font> \n\n";;
+            "<font color=#664B4B size=2>tid：%s</font> \n\n" +
+            "<font color=#22B838 size=2>报警间隔：%ss</font> \n\n";
 
     public static final String DING_CHANGE_NOTICE_TEMPLATE =
             "<font color=#5AB030>【通知】</font> 动态线程池参数变更 \n\n " +

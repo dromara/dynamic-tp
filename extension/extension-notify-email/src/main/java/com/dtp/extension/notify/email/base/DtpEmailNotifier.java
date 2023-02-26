@@ -27,7 +27,7 @@ import java.util.Optional;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static com.dtp.common.constant.DynamicTpConst.SW_TRACE_ID;
+import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
 import static com.dtp.common.constant.DynamicTpConst.UNKNOWN;
 import static com.dtp.core.notify.manager.NotifyHelper.getAlarmKeys;
 
@@ -96,8 +96,8 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("queueTimeoutCount", alarmCounter.getRight());
         context.setVariable("lastAlarmTime", alarmInfo.getLastAlarmTime() == null ? UNKNOWN : alarmInfo.getLastAlarmTime());
         context.setVariable("alarmTime", DateTime.now());
+        context.setVariable("tid", Optional.ofNullable(MDC.get(TRACE_ID)).orElse(UNKNOWN));
         context.setVariable("alarmInterval", notifyItem.getInterval());
-        context.setVariable("tid", Optional.ofNullable(MDC.get(SW_TRACE_ID)).orElse(""));
         context.setVariable("highlightVariables", getAlarmKeys(notifyItemEnum));
         return ((EmailNotifier) notifier).processTemplateContent("alarm", context);
     }

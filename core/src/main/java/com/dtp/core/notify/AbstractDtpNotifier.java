@@ -33,9 +33,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.dtp.common.constant.DynamicTpConst.SW_TRACE_ID;
+import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
 import static com.dtp.common.constant.DynamicTpConst.UNKNOWN;
-import static com.dtp.common.constant.LarkNotifyConst.*;
+import static com.dtp.common.constant.LarkNotifyConst.LARK_AT_FORMAT_OPENID;
+import static com.dtp.common.constant.LarkNotifyConst.LARK_AT_FORMAT_USERNAME;
+import static com.dtp.common.constant.LarkNotifyConst.LARK_OPENID_PREFIX;
 import static com.dtp.core.notify.manager.NotifyHelper.getAlarmKeys;
 import static com.dtp.core.notify.manager.NotifyHelper.getAllAlarmKeys;
 
@@ -137,8 +139,8 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 alarmInfo.getLastAlarmTime() == null ? UNKNOWN : alarmInfo.getLastAlarmTime(),
                 DateUtil.now(),
                 receivesStr,
-                notifyItem.getInterval(),
-                Optional.ofNullable(MDC.get(SW_TRACE_ID)).orElse("")
+                Optional.ofNullable(MDC.get(TRACE_ID)).orElse(UNKNOWN),
+                notifyItem.getInterval()
         );
         return highlightAlarmContent(content, notifyItemEnum);
     }

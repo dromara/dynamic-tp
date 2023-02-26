@@ -30,12 +30,12 @@ public class TestController {
     }
 
     public void task() throws InterruptedException {
-        MDC.put("key", UUID.randomUUID().toString());
+        MDC.put("traceId", UUID.randomUUID().toString());
         DtpExecutor dtpExecutor2 = DtpRegistry.getDtpExecutor("dtpExecutor2");
         for (int i = 0; i < 100; i++) {
             Thread.sleep(100);
             dtpExecutor1.execute(() -> {
-                log.info("i am dynamic-tp-test-1 task, mdc: {}", MDC.get("key"));
+                log.info("i am dynamic-tp-test-1 task, mdc: {}", MDC.get("traceId"));
             });
             dtpExecutor2.execute(NamedRunnable.of(() -> {
                 try {
@@ -43,7 +43,7 @@ public class TestController {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                log.info("i am dynamic-tp-test-2 task");
+                log.info("i am dynamic-tp-test-2 task, mdc: {}", MDC.get("traceId"));
             }, "task-" + i));
         }
     }

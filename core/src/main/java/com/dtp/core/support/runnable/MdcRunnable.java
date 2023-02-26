@@ -4,7 +4,8 @@ import org.apache.commons.collections.MapUtils;
 import org.slf4j.MDC;
 
 import java.util.Map;
-import static com.dtp.common.constant.DynamicTpConst.SW_TRACE_ID;
+
+import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
 
 /**
  * MdcRunnable related
@@ -48,7 +49,7 @@ public class MdcRunnable implements Runnable {
         } finally {
             // Remove MDC value at the end of execution
             for (Map.Entry<String, String> entry : parentMdc.entrySet()) {
-                if (!SW_TRACE_ID.equals(entry.getKey())) {
+                if (!TRACE_ID.equals(entry.getKey())) {
                     MDC.remove(entry.getKey());
                 }
             }

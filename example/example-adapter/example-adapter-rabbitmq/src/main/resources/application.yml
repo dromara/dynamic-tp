@@ -8,15 +8,15 @@ spring:
     active: dev
 
   rabbitmq:
-    host: 192.168.1.111
+    host: 127.0.0.1
     port: 5672
     username: admin
-    password: 123456
+    password: admin
 
   dynamic:
     tp:
       enabled: true
       enabledBanner: true           # 是否开启banner打印，默认true
       enabledCollect: true          # 是否开启监控指标采集，默认false
-      collectorTypes: logging       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+      collectorTypes: internal_logging       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
       monitorInterval: 5

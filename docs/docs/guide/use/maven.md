@@ -98,7 +98,16 @@ star: true
        </dependency>
    ```
 
-8. 无配置中心应用接入用此依赖，无动态调整能力，有监控告警能力
+8. polaris 应用接入用此依赖（未发布）
+   ```xml
+       <dependency>
+           <groupId>cn.dynamictp</groupId>
+           <artifactId>dynamic-tp-spring-cloud-starter-polaris</artifactId>
+           <version>1.1.1</version>
+       </dependency>
+   ```
+   
+9. 无配置中心应用接入用此依赖，无动态调整能力，有监控告警能力
    ```xml
        <dependency>
            <groupId>cn.dynamictp</groupId>

@@ -46,12 +46,16 @@ public class RabbitMqDtpAdapter extends AbstractDtpAdapter {
                     AbstractConnectionFactory.class, CONSUME_EXECUTOR_FIELD_NAME, abstractConnectionFactory);
 
             if (Objects.nonNull(executor)) {
-                val executorWrapper = new ExecutorWrapper(NAME, executor);
-                initNotifyItems(NAME, executorWrapper);
-                executors.put(NAME, executorWrapper);
+                String key = genTpName(k);
+                val executorWrapper = new ExecutorWrapper(key, executor);
+                initNotifyItems(key, executorWrapper);
+                executors.put(key, executorWrapper);
             }
         });
-
         log.info("DynamicTp adapter, rabbitmq executors init end, executors: {}", executors);
+    }
+
+    private String genTpName(String beanName) {
+        return beanName + "Tp";
     }
 }

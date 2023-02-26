@@ -36,7 +36,7 @@ public class RabbitMqConfig {
 
         DirectRabbitListenerContainerFactory factory = new DirectRabbitListenerContainerFactory();
         factory.setConnectionFactory(abstractConnectionFactory);
-        factory.setMessageConverter(new Jackson2JsonMessageConverter());
+        factory.setMessageConverter(jackson2JsonMessageConverter());
         factory.setConsumersPerQueue(10);
         abstractConnectionFactory.setExecutor(executor);
         return factory;
@@ -45,7 +45,12 @@ public class RabbitMqConfig {
     @Bean
     public RabbitTemplate rabbitTemplate(CachingConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+        rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter());
         return rabbitTemplate;
+    }
+
+    @Bean
+    public MessageConverter jackson2JsonMessageConverter() {
+        return new Jackson2JsonMessageConverter();
     }
 }

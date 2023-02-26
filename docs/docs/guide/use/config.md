@@ -109,6 +109,11 @@ spring:
           corePoolSize: 200
           maximumPoolSize: 200
           keepAliveTime: 60
+      rabbitmqTp:                                              # rabbitmq 线程池配置
+        - threadPoolName: rabbitConnectionFactoryTp            # 名称规则：ConnectionFactoryBeanName + "Tp"
+          corePoolSize: 200
+          maximumPoolSize: 200
+          keepAliveTime: 60
       executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
         - threadPoolName: dtpExecutor1
           threadPoolAliasName: 测试线程池             # 线程池别名

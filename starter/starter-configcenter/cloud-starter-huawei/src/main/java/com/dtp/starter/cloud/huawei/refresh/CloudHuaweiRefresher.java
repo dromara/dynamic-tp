@@ -8,7 +8,7 @@ import org.springframework.context.event.SmartApplicationListener;
 import org.springframework.lang.NonNull;
 
 /**
- * @author Redick01
+ * @author windsearcher
  */
 @Slf4j
 public class CloudHuaweiRefresher extends AbstractRefresher implements SmartApplicationListener {

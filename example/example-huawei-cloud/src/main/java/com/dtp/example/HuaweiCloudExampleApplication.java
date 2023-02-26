@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * @author fabian4
+ * @author windsearcher
  */
 @EnableDynamicTp
 @SpringBootApplication

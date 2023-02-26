@@ -30,6 +30,8 @@ public final class DynamicTpConst {
 
     public static final String VALUE = "value";
 
+    public static final String SW_TRACE_ID = "swTraceId";
+
     /**
      * Dtp executor properties const.
      */

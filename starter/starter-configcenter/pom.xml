@@ -20,5 +20,6 @@
         <module>cloud-starter-consul</module>
         <module>starter-etcd</module>
         <module>cloud-starter-polaris</module>
+        <module>cloud-starter-huawei</module>
     </modules>
 </project>

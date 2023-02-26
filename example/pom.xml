@@ -24,6 +24,7 @@
         <module>example-etcd</module>
         <module>example-adapter</module>
         <module>example-polaris-cloud</module>
+        <module>example-huawei-cloud</module>
     </modules>
 
     <build>

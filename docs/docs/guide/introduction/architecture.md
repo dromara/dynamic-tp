@@ -33,7 +33,7 @@ star: true
 
 ::: tip
 
-1.adapter 模块：主要是适配一些第三方组件的线程池管理，目前已经实现的有 SpringBoot 内置的三大 web 容器（Tomcat、Jetty、Undertow）、Dubbo、RocketMq、Hystrix、Grpc 的线程池管理，
+1.adapter 模块：主要是适配一些第三方组件的线程池管理，目前已经实现的有 SpringBoot 内置的三大 web 容器（Tomcat、Jetty、Undertow）、Dubbo、RocketMq、Hystrix、Grpc、Motan、Okhttp3、Brpc、Tars、SofaRpc、RabbitMq 的线程池管理，
 后续会接入其他常用组件的线程池管理。
 
 2.common 模块：主要是一些各个模板都会用到的类，解耦依赖，复用代码，大家日常开发中可能也经常会这样做。
@@ -52,7 +52,7 @@ star: true
 
 ## 配置变更监听模块
 
-  1.监听特定配置中心的指定配置文件（已实现 Nacos、Apollo、Zookeeper、Consul、Etcd），可通过内部提供的SPI接口扩展其他实现
+  1.监听特定配置中心的指定配置文件（已实现 Nacos、Apollo、Zookeeper、Consul、Etcd、Polaris），可通过内部提供的SPI接口扩展其他实现
 
   2.解析配置文件内容，内置实现 yml、properties、json 配置文件的解析，可通过内部提供的 SPI 接口扩展其他实现
 

@@ -10,6 +10,7 @@ import com.dtp.core.convert.ExecutorConverter;
 import io.undertow.Undertow;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.boot.web.embedded.undertow.UndertowServletWebServer;
 import org.springframework.boot.web.embedded.undertow.UndertowWebServer;
 import org.springframework.boot.web.server.WebServer;
 import org.xnio.Options;
@@ -41,8 +42,9 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
     @Override
     public ExecutorWrapper doGetExecutorWrapper(WebServer webServer) {
 
-        UndertowWebServer undertowWebServer = (UndertowWebServer) webServer;
-        val undertow = (Undertow) ReflectionUtil.getFieldValue(UndertowWebServer.class, "undertow", undertowWebServer);
+        UndertowServletWebServer undertowServletWebServer = (UndertowServletWebServer) webServer;
+        val undertow = (Undertow) ReflectionUtil.getFieldValue(UndertowServletWebServer.class,
+                "undertow", undertowServletWebServer);
         if (Objects.isNull(undertow)) {
             return null;
         }

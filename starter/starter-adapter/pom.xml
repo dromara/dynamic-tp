@@ -22,5 +22,6 @@
         <module>starter-adapter-brpc</module>
         <module>starter-adapter-tars</module>
         <module>starter-adapter-sofa</module>
+        <module>starter-adapter-rabbitmq</module>
     </modules>
 </project>

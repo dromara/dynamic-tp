@@ -1,0 +1,20 @@
+server:
+  port: 9018
+
+spring:
+  application:
+    # 微服务名称。 微服务名称定义好以后，后续不能变更。
+    name: dynamic-tp-huawei-cloud-demo
+  cloud:
+    servicecomb:
+      config:
+        # 配置中心地址，本示例使用ServiceStage环境变量。建议保留这种配置方式，
+        # 部署的时候，不用手工修改地址。
+        serverAddr: ${PAAS_CSE_CC_ENDPOINT:http://127.0.0.1:30110}
+        serverType: kie
+        # 自定义配置
+        kie:
+          customLabel: public
+          customLabelValue: default
+        # 自定义配置，使用文本的key/value配置项作为yaml格式配置
+        fileSource: application.yaml

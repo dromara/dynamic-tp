@@ -4,7 +4,7 @@ import sidebar from "./sidebar";
 
 export default hopeTheme({
   footer: "MIT Licensed  | Theme by <a href=\"https://vuepress-theme-hope.github.io\">vuepress-theme-hope</a> ",
-  copyright: "Copyright © 2022-present <a href=\"https://github.com/lyh200\">yanhom</a>",
+  copyright: "Copyright © 2022-present <a href=\"https://github.com/yanhom1314\">yanhom</a>",
   hostname: "https://gitee.com/dromara/dynamic-tp",
 
   author: {

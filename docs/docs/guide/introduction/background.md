@@ -57,3 +57,5 @@ protected void afterExecute(Runnable r, Throwable t);
 - **无感知性**：线程池运行过程中的各项指标一般感知不到；需要有套监控报警机制在事前、事中就能让开发人员感知到线程池的运行状况，及时处理
 
 - **高可用性**：配置变更需要及时推送到客户端，需要有高可用的配置管理推送服务，配置中心是现在大多数互联网系统都会使用的组件，与之结合可以极大提高系统可用性
+
+<div class="wwads-cn wwads-vertical wwads-sticky" data-id="212" style="max-width:180px"></div>

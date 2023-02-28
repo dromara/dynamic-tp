@@ -1,4 +1,4 @@
-import { hopeTheme } from "vuepress-theme-hope";
+import {hopeTheme} from "vuepress-theme-hope";
 import navbar from "./navbar";
 import sidebar from "./sidebar";
 
@@ -29,14 +29,6 @@ export default hopeTheme({
 
   pageInfo: ["Author", "Original", "Date", "Category", "Tag", "ReadingTime"],
 
-  plugins: {
-    mdEnhance: {
-      enableAll: true,
-      presentation: {
-        plugins: ["highlight", "math", "search", "notes", "zoom"],
-      },
-    },
-  },
   fullscreen: true,
   themeColor: {
     blue: "#087CFA",

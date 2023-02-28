@@ -99,3 +99,5 @@ star: true
   6.任务等待超时告警，格式：A/B，A：该报警项前后两次报警区间累加数量，B：该报警项累计总数
 
 ![技术架构](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/38e4bf71d2c84b7ba67d7059b5432a7e~tplv-k3u1fbpfcp-zoom-1.image)
+
+<div class="wwads-cn wwads-vertical wwads-sticky" data-id="212" style="max-width:180px"></div>

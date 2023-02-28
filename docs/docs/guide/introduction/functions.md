@@ -51,3 +51,5 @@ star: true
 - **高可扩展**：框架核心功能都提供 SPI 接口供用户自定义个性化实现（配置中心、配置文件解析、通知告警、监控数据采集、任务包装等等）
 
 - **线上大规模应用**：参考[美团线程池实践](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)，美团内部已经有该理论成熟的应用经验
+
+<div class="wwads-cn wwads-vertical wwads-sticky" data-id="212" style="max-width:180px"></div>

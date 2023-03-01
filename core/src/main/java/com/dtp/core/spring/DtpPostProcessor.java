@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
@@ -57,7 +58,11 @@ public class DtpPostProcessor implements BeanPostProcessor {
                 dtpAnnotationVal = dynamicTp.value();
             } else {
                 BeanDefinitionRegistry registry = (BeanDefinitionRegistry) applicationContext;
-                AnnotatedBeanDefinition annotatedBeanDefinition = (AnnotatedBeanDefinition) registry.getBeanDefinition(beanName);
+                BeanDefinition beanDefinition = registry.getBeanDefinition(beanName);
+                if(!(beanDefinition instanceof AnnotatedBeanDefinition)) {
+                    return bean;
+                }
+                AnnotatedBeanDefinition annotatedBeanDefinition = (AnnotatedBeanDefinition) beanDefinition;
                 MethodMetadata methodMetadata = (MethodMetadata) annotatedBeanDefinition.getSource();
                 if (Objects.isNull(methodMetadata) || !methodMetadata.isAnnotated(DynamicTp.class.getName())) {
                     return bean;

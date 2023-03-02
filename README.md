@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-    官网： <a href="https://dynamictp.cn">https://dynamictp.cn</a> 🔥
+    官网： <a href="https://dynamictp.top">https://dynamictp.cn</a> 🔥
 </p>
 
 ---

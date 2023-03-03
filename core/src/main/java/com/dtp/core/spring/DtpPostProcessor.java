@@ -59,7 +59,7 @@ public class DtpPostProcessor implements BeanPostProcessor {
             } else {
                 BeanDefinitionRegistry registry = (BeanDefinitionRegistry) applicationContext;
                 BeanDefinition beanDefinition = registry.getBeanDefinition(beanName);
-                if(!(beanDefinition instanceof AnnotatedBeanDefinition)) {
+                if (!(beanDefinition instanceof AnnotatedBeanDefinition)) {
                     return bean;
                 }
                 AnnotatedBeanDefinition annotatedBeanDefinition = (AnnotatedBeanDefinition) beanDefinition;

@@ -38,7 +38,10 @@ public enum JreEnum {
 
     OTHER;
 
+
     private static final JreEnum VERSION = getJre();
+
+    public static final String DEFAULT_JAVA_VERSION = "1.8";
 
     /**
      * get current JRE version
@@ -64,41 +67,17 @@ public enum JreEnum {
         if (isBlank) {
             log.debug("java.version is blank");
         }
-        if (!isBlank && version.startsWith("1.8")) {
+        if (!isBlank && version.startsWith(DEFAULT_JAVA_VERSION)) {
             return JAVA_8;
         }
+        int majorVersion = 0;
         try {
             // JDK 9+以上版本使用Runtime.version()获取JRE版本
             Object javaRunTimeVersion = MethodUtils.invokeMethod(Runtime.getRuntime(), "version");
-            int majorVersion = (int) MethodUtils.invokeMethod(javaRunTimeVersion, "major");
-            switch (majorVersion) {
-                case 9:
-                    return JAVA_9;
-                case 10:
-                    return JAVA_10;
-                case 11:
-                    return JAVA_11;
-                case 12:
-                    return JAVA_12;
-                case 13:
-                    return JAVA_13;
-                case 14:
-                    return JAVA_14;
-                case 15:
-                    return JAVA_15;
-                case 16:
-                    return JAVA_16;
-                case 17:
-                    return JAVA_17;
-                case 18:
-                    return JAVA_18;
-                case 19:
-                    return JAVA_19;
-                default:
-                    return OTHER;
-            }
+            majorVersion = (int) MethodUtils.invokeMethod(javaRunTimeVersion, "major");
+            return JreEnum.valueOf("JAVA_" + majorVersion);
         } catch (Exception e) {
-            log.debug("can't determine current JRE version", e);
+            log.debug("can't determine current JRE version:{}", majorVersion, e);
         }
         return JAVA_8;
     }

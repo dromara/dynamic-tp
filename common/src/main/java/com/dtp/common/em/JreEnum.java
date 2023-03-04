@@ -34,9 +34,7 @@ public enum JreEnum {
 
     JAVA_18,
 
-    JAVA_19,
-
-    OTHER;
+    JAVA_19;
 
 
     private static final JreEnum VERSION = getJre();

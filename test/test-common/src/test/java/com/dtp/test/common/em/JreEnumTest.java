@@ -7,7 +7,7 @@ import org.junit.jupiter.api.condition.EnabledOnJre;
 import org.junit.jupiter.api.condition.JRE;
 
 /**
- * @author <a href = "kamtohung@gmail.com">KamTo Hung</a>
+ * JreEnumTest related
  */
 public class JreEnumTest {
 

@@ -1,5 +1,7 @@
 package com.dtp.core.thread;
 
+import com.dtp.common.em.JreEnum;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -34,6 +36,11 @@ public class ScheduledDtpExecutor extends DtpExecutor implements ScheduledExecut
                                 ThreadFactory threadFactory,
                                 RejectedExecutionHandler handler) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
+        // 如果是JDK8, corePoolSize为0时, ScheduledThreadPoolExecutor会导致"死循环", CPU100%
+        // https://bugs.openjdk.org/browse/JDK-8065320
+        if (JreEnum.JAVA_8.isCurrentVersion()) {
+            corePoolSize = corePoolSize == 0 ? 1 : corePoolSize;
+        }
         delegate = new ScheduledThreadPoolExecutor(corePoolSize, threadFactory, handler);
     }
 

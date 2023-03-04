@@ -12,11 +12,12 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 @PropertySource(value = "classpath:/dynamic-tp-nacos-demo-dtp-dev.yml", factory = YamlPropertySourceFactory.class)
 //获取启动类，加载配置，寻找主配置启动类 （被 @SpringBootApplication 注解的）
-@SpringBootTest(classes= ScheduledDtpExecutorTest.class)
+@SpringBootTest(classes = ScheduledDtpExecutorTest.class)
 //让JUnit运行Spring的测试环境,获得Spring环境的上下文的支持
 @RunWith(SpringRunner.class)
 @EnableDynamicTp
@@ -47,4 +48,13 @@ public class ScheduledDtpExecutorTest {
 //                    "当前时间是 " + LocalDateTime.now());
 //        });
     }
+
+    @Test
+    public void testScheduleJre8Bug() throws InterruptedException {
+        ScheduledDtpExecutor dtpExecutor12 = (ScheduledDtpExecutor) DtpRegistry.getDtpExecutor("dtpExecutor13");
+        dtpExecutor12.scheduleAtFixedRate(() -> {
+        }, 10, 5, TimeUnit.SECONDS);
+        new CountDownLatch(1).await();
+    }
+
 }

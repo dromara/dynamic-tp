@@ -79,8 +79,7 @@ public class DtpPostProcessor implements BeanPostProcessor {
 
         String poolName = StringUtils.isNotBlank(dtpAnnotationVal) ? dtpAnnotationVal : beanName;
         if (bean instanceof ThreadPoolTaskExecutor) {
-            ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) bean;
-            registerCommon(poolName, taskExecutor.getThreadPoolExecutor());
+            registerCommon(poolName, ((ThreadPoolTaskExecutor) bean).getThreadPoolExecutor());
         } else {
             registerCommon(poolName, (ThreadPoolExecutor) bean);
         }

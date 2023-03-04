@@ -1,17 +1,19 @@
 package com.dtp.common.em;
 
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 
-
 /**
  * JRE version
+ * @author kamtohung
  */
 @Slf4j
 public enum JreEnum {
 
+    /**
+     * JRE version
+     */
     JAVA_8,
 
     JAVA_9,
@@ -35,7 +37,6 @@ public enum JreEnum {
     JAVA_18,
 
     JAVA_19;
-
 
     private static final JreEnum VERSION = getJre();
 
@@ -68,14 +69,13 @@ public enum JreEnum {
         if (!isBlank && version.startsWith(DEFAULT_JAVA_VERSION)) {
             return JAVA_8;
         }
-        int majorVersion = 0;
         try {
             // JDK 9+以上版本使用Runtime.version()获取JRE版本
             Object javaRunTimeVersion = MethodUtils.invokeMethod(Runtime.getRuntime(), "version");
-            majorVersion = (int) MethodUtils.invokeMethod(javaRunTimeVersion, "major");
+            int majorVersion = (int) MethodUtils.invokeMethod(javaRunTimeVersion, "major");
             return JreEnum.valueOf("JAVA_" + majorVersion);
         } catch (Exception e) {
-            log.debug("can't determine current JRE version:{}", majorVersion, e);
+            log.debug("can't determine current JRE version", e);
         }
         return JAVA_8;
     }

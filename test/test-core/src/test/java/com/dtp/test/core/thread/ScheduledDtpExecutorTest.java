@@ -52,8 +52,7 @@ public class ScheduledDtpExecutorTest {
     @Test
     public void testScheduleJre8Bug() throws InterruptedException {
         ScheduledDtpExecutor dtpExecutor12 = (ScheduledDtpExecutor) DtpRegistry.getDtpExecutor("dtpExecutor13");
-        dtpExecutor12.scheduleAtFixedRate(() -> {
-        }, 10, 5, TimeUnit.SECONDS);
+        dtpExecutor12.scheduleAtFixedRate(() -> { }, 10, 5, TimeUnit.SECONDS);
         new CountDownLatch(1).await();
     }
 

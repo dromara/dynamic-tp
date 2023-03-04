@@ -9,7 +9,7 @@ import org.junit.jupiter.api.condition.JRE;
 /**
  * JreEnumTest related
  */
-public class JreEnumTest {
+class JreEnumTest {
 
     @Test
     @EnabledOnJre(value = JRE.JAVA_8)

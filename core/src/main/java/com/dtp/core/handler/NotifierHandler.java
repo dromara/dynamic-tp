@@ -43,22 +43,22 @@ public final class NotifierHandler {
         NOTIFIERS.put(larkNotifier.platform(), larkNotifier);
     }
 
-    public void sendNotice(DtpMainProp prop, List<String> diffs) {
+    public void sendNotice(String threadPoolName, DtpMainProp prop, List<String> diffs) {
         NotifyItem notifyItem = DtpNotifyCtxHolder.get().getNotifyItem();
         for (String platform : notifyItem.getPlatforms()) {
             DtpNotifier notifier = NOTIFIERS.get(platform.toLowerCase());
             if (notifier != null) {
-                notifier.sendChangeMsg(prop, diffs);
+                notifier.sendChangeMsg(threadPoolName, prop, diffs);
             }
         }
     }
 
-    public void sendAlarm(NotifyItemEnum notifyItemEnum) {
+    public void sendAlarm(String threadPoolName, NotifyItemEnum notifyItemEnum) {
         NotifyItem notifyItem = DtpNotifyCtxHolder.get().getNotifyItem();
         for (String platform : notifyItem.getPlatforms()) {
             DtpNotifier notifier = NOTIFIERS.get(platform.toLowerCase());
             if (notifier != null) {
-                notifier.sendAlarmMsg(notifyItemEnum);
+                notifier.sendAlarmMsg(threadPoolName, notifyItemEnum);
             }
         }
     }

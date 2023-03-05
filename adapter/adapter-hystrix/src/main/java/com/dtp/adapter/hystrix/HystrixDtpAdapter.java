@@ -43,9 +43,9 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
     @Override
     public void refresh(String name,
                         ExecutorWrapper executorWrapper,
-                        List<NotifyPlatform> platforms,
+                        List<NotifyPlatform> globalPlatforms,
                         SimpleTpProperties properties) {
-        super.refresh(name, executorWrapper, platforms, properties);
+        super.refresh(name, executorWrapper, globalPlatforms, properties);
         val metricsPublisher = METRICS_PUBLISHERS.get(executorWrapper.getThreadPoolName());
         if (Objects.isNull(metricsPublisher)) {
             return;

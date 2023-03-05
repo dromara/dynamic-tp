@@ -1,10 +1,8 @@
 package com.dtp.core.notify.manager;
 
-import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.entity.NotifyPlatform;
-import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.StreamUtil;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.thread.DtpExecutor;
@@ -21,12 +19,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.dtp.common.em.NotifyItemEnum.*;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 /**
  * NotifyHelper related
@@ -101,14 +97,8 @@ public class NotifyHelper {
         });
     }
 
-    public static Optional<NotifyPlatform> getPlatform(String platform) {
-        DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-        if (CollectionUtils.isEmpty(dtpProperties.getPlatforms())) {
-            return Optional.empty();
-        }
-        val map = dtpProperties.getPlatforms().stream()
-                .collect(toMap(x -> x.getPlatform().toLowerCase(), Function.identity(), (v1, v2) -> v2));
-        return Optional.ofNullable(map.get(platform.toLowerCase()));
+    public static Optional<NotifyPlatform> getPlatform(String threadPoolName, String platform) {
+        return Optional.ofNullable(NotifyPlatformManager.getNotifyPlatform(threadPoolName, platform));
     }
 
     public static void initNotify(DtpExecutor executor, List<NotifyPlatform> platforms) {
@@ -123,12 +113,14 @@ public class NotifyHelper {
         }
         fillPlatforms(platforms, executor.getNotifyItems());
         AlarmManager.initAlarm(executor.getThreadPoolName(), executor.getNotifyItems());
+        // init notify platform
+        NotifyPlatformManager.init(executor.getThreadPoolName(), platforms);
     }
 
     public static void refreshNotify(String poolName,
-                                    List<NotifyPlatform> platforms,
-                                    List<NotifyItem> oldItems,
-                                    List<NotifyItem> newItems) {
+                                     List<NotifyPlatform> platforms,
+                                     List<NotifyItem> oldItems,
+                                     List<NotifyItem> newItems) {
         fillPlatforms(platforms, newItems);
         Map<String, NotifyItem> oldNotifyItemMap = StreamUtil.toMap(oldItems, NotifyItem::getType);
         newItems.forEach(x -> {

@@ -2,7 +2,9 @@ package com.dtp.core.thread;
 
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.entity.NotifyItem;
+import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.properties.DtpProperties;
+import com.dtp.common.properties.ThreadPoolProperties;
 import com.dtp.common.util.TimeUtil;
 import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.notify.manager.NotifyHelper;
@@ -19,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -122,7 +125,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
         this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
                 Executors.defaultThreadFactory(), handler);
     }
-    
+
     public DtpExecutor(int corePoolSize,
                        int maximumPoolSize,
                        long keepAliveTime,
@@ -191,11 +194,24 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
 
     @Override
     protected void initialize(DtpProperties dtpProperties) {
-        NotifyHelper.initNotify(this, dtpProperties.getPlatforms());
-
+        List<NotifyPlatform> platforms = getNotifyPlatforms(dtpProperties);
+        NotifyHelper.initNotify(this, platforms);
         if (preStartAllCoreThreads) {
             prestartAllCoreThreads();
         }
+    }
+
+    private List<NotifyPlatform> getNotifyPlatforms(DtpProperties dtpProperties) {
+        // 如果配置了线程池的通知平台，则使用线程池的通知平台，否则使用全局的通知平台
+        for (ThreadPoolProperties properties : dtpProperties.getExecutors()) {
+            if (Objects.equals(properties.getThreadPoolName(), this.threadPoolName)) {
+                List<NotifyPlatform> platforms = properties.getPlatforms();
+                if (CollectionUtils.isNotEmpty(platforms)) {
+                    return platforms;
+                }
+            }
+        }
+        return dtpProperties.getPlatforms();
     }
 
     protected Runnable wrapTasks(Runnable command) {

@@ -23,15 +23,17 @@ public interface DtpNotifier {
     /**
      * Send change notify message.
      *
-     * @param oldProp old properties
-     * @param diffs the changed keys
+     * @param threadPoolName thread pool name
+     * @param oldProp        old properties
+     * @param diffs          the changed keys
      */
-    void sendChangeMsg(DtpMainProp oldProp, List<String> diffs);
+    void sendChangeMsg(String threadPoolName, DtpMainProp oldProp, List<String> diffs);
 
     /**
      * Send alarm message.
      *
+     * @param threadPoolName thread pool name
      * @param notifyItemEnum notify item enum
      */
-    void sendAlarmMsg(NotifyItemEnum notifyItemEnum);
+    void sendAlarmMsg(String threadPoolName, NotifyItemEnum notifyItemEnum);
 }

@@ -2,6 +2,7 @@ package com.dtp.common.properties;
 
 import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;
+import com.dtp.common.entity.NotifyPlatform;
 import lombok.Data;
 
 import java.util.List;
@@ -52,6 +53,11 @@ public class SimpleTpProperties {
      * Notify items, see {@link NotifyItemEnum}
      */
     private List<NotifyItem> notifyItems;
+
+    /**
+     * Notify platform configs.
+     */
+    private List<NotifyPlatform> platforms;
 
     /**
      * If enable notify.

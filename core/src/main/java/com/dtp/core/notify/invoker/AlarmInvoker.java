@@ -21,6 +21,7 @@ public class AlarmInvoker implements Invoker<BaseNotifyCtx> {
     public void invoke(BaseNotifyCtx context) {
 
         val alarmCtx = (AlarmCtx) context;
+        val threadPoolName = context.getExecutorWrapper().getThreadPoolName();
         val executorWrapper = alarmCtx.getExecutorWrapper();
         val notifyItem = alarmCtx.getNotifyItem();
         val alarmInfo = AlarmCounter.getAlarmInfo(executorWrapper.getThreadPoolName(), notifyItem.getType());
@@ -28,7 +29,7 @@ public class AlarmInvoker implements Invoker<BaseNotifyCtx> {
 
         try {
             DtpNotifyCtxHolder.set(context);
-            NotifierHandler.getInstance().sendAlarm(NotifyItemEnum.of(notifyItem.getType()));
+            NotifierHandler.getInstance().sendAlarm(threadPoolName, NotifyItemEnum.of(notifyItem.getType()));
             AlarmCounter.reset(executorWrapper.getThreadPoolName(), notifyItem.getType());
         } finally {
             DtpNotifyCtxHolder.remove();

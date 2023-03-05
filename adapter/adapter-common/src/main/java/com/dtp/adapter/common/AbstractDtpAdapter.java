@@ -90,19 +90,19 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
         AlarmManager.initAlarm(poolName, executorWrapper.getNotifyItems());
     }
 
-    public void refresh(String name, List<SimpleTpProperties> properties, List<NotifyPlatform> platforms) {
+    public void refresh(String name, List<SimpleTpProperties> properties, List<NotifyPlatform> globalPlatforms) {
         val executorWrappers = getExecutorWrappers();
         if (CollectionUtils.isEmpty(properties) || MapUtils.isEmpty(executorWrappers)) {
             return;
         }
 
         val tmpMap = StreamUtil.toMap(properties, SimpleTpProperties::getThreadPoolName);
-        executorWrappers.forEach((k, v) -> refresh(name, v, platforms, tmpMap.get(k)));
+        executorWrappers.forEach((k, v) -> refresh(name, v, globalPlatforms, tmpMap.get(k)));
     }
 
     public void refresh(String name,
                         ExecutorWrapper executorWrapper,
-                        List<NotifyPlatform> platforms,
+                        List<NotifyPlatform> globalPlatforms,
                         SimpleTpProperties properties) {
 
         if (Objects.isNull(properties) || Objects.isNull(executorWrapper) || containsInvalidParams(properties, log)) {
@@ -110,7 +110,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
         }
 
         DtpMainProp oldProp = ExecutorConverter.convert(executorWrapper);
-        doRefresh(executorWrapper, platforms, properties);
+        doRefresh(executorWrapper, globalPlatforms, properties);
         DtpMainProp newProp = ExecutorConverter.convert(executorWrapper);
         if (oldProp.equals(newProp)) {
             log.warn("DynamicTp adapter refresh, main properties of [{}] have not changed.",
@@ -130,7 +130,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
     }
 
     private void doRefresh(ExecutorWrapper executorWrapper,
-                           List<NotifyPlatform> platforms,
+                           List<NotifyPlatform> globalPlatforms,
                            SimpleTpProperties properties) {
 
         val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
@@ -144,10 +144,17 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
 
         // update notify items
         val allNotifyItems = mergeSimpleNotifyItems(properties.getNotifyItems());
-        NotifyHelper.refreshNotify(executorWrapper.getThreadPoolName(), platforms,
+        // choose notify platforms
+        val allNotifyPlatforms = getAllNotifyPlatforms(globalPlatforms, properties);
+        NotifyHelper.refreshNotify(executorWrapper.getThreadPoolName(), allNotifyPlatforms,
                 executorWrapper.getNotifyItems(), allNotifyItems);
         executorWrapper.setNotifyItems(allNotifyItems);
         executorWrapper.setNotifyEnabled(properties.isNotifyEnabled());
+    }
+
+    private static List<NotifyPlatform> getAllNotifyPlatforms(List<NotifyPlatform> globalPlatforms,
+                                                              SimpleTpProperties properties) {
+        return properties.getPlatforms() == null ? globalPlatforms : properties.getPlatforms();
     }
 
     private void doRefreshPoolSize(ThreadPoolExecutor executor, SimpleTpProperties properties) {

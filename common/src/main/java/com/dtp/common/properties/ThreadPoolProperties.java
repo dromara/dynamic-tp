@@ -5,6 +5,7 @@ import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;
+import com.dtp.common.entity.NotifyPlatform;
 import lombok.Data;
 
 import java.util.List;
@@ -134,6 +135,11 @@ public class ThreadPoolProperties {
      * Task wrapper names.
      */
     private Set<String> taskWrapperNames;
+
+    /**
+     * Notify platform configs.
+     */
+    private List<NotifyPlatform> platforms;
 
     /**
      * 检查核心参数

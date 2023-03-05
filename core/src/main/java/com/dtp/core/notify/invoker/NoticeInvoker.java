@@ -20,7 +20,8 @@ public class NoticeInvoker implements Invoker<BaseNotifyCtx> {
         try {
             DtpNotifyCtxHolder.set(context);
             val noticeCtx = (NoticeCtx) context;
-            NotifierHandler.getInstance().sendNotice(noticeCtx.getProp(), noticeCtx.getDiffs());
+            val threadPoolName = context.getExecutorWrapper().getThreadPoolName();
+            NotifierHandler.getInstance().sendNotice(threadPoolName, noticeCtx.getProp(), noticeCtx.getDiffs());
         } finally {
             DtpNotifyCtxHolder.remove();
         }

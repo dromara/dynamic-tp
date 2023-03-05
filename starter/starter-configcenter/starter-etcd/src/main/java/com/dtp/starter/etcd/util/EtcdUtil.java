@@ -46,7 +46,7 @@ public final class EtcdUtil {
                 log.debug("Etcd endpoints is null.");
                 return client;
             }
-            if (!etcd.getAuthEnable()) {
+            if (!etcd.isAuthEnable()) {
                 client = Client.builder()
                         .endpoints(etcd.getEndpoints().split(","))
                         .build();

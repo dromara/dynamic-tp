@@ -62,7 +62,8 @@ public class NotifyHelper {
         ALL_ALARM_KEYS.addAll(COMMON_ALARM_KEYS);
     }
 
-    private NotifyHelper() { }
+    private NotifyHelper() {
+    }
 
     public static Set<String> getAllAlarmKeys() {
         return ALL_ALARM_KEYS;
@@ -129,6 +130,9 @@ public class NotifyHelper {
                 return;
             }
             AlarmManager.initAlarm(poolName, x);
+            // refresh notify platform
         });
+        // refresh notify platform
+        NotifyPlatformManager.init(poolName, platforms);
     }
 }

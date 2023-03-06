@@ -1,11 +1,13 @@
 package com.dtp.core;
 
 import com.dtp.common.entity.DtpMainProp;
+import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.ex.DtpException;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.properties.ThreadPoolProperties;
 import com.dtp.common.queue.MemorySafeLinkedBlockingQueue;
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
+import com.dtp.common.util.StreamUtil;
 import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.notify.manager.NoticeManager;
 import com.dtp.core.notify.manager.NotifyHelper;
@@ -28,6 +30,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.Ordered;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -88,7 +91,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      * Register a DtpExecutor.
      *
      * @param executor the newly created DtpExecutor instance
-     * @param source the source of the call to register method
+     * @param source   the source of the call to register method
      */
     public static void registerDtp(DtpExecutor executor, String source) {
         log.info("DynamicTp register dtpExecutor, source: {}, executor: {}",
@@ -100,7 +103,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      * Register a common ThreadPoolExecutor.
      *
      * @param wrapper the newly created ThreadPoolExecutor wrapper instance
-     * @param source the source of the call to register method
+     * @param source  the source of the call to register method
      */
     public static void registerCommon(ExecutorWrapper wrapper, String source) {
         log.info("DynamicTp register commonExecutor, source: {}, name: {}",
@@ -243,7 +246,8 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         // update notify related
         executorWrapper.setNotifyEnabled(properties.isNotifyEnabled());
         val allNotifyItems = mergeSimpleNotifyItems(properties.getNotifyItems());
-        NotifyHelper.refreshNotify(executorWrapper.getThreadPoolName(), dtpProperties.getPlatforms(),
+        List<NotifyPlatform> notifyPlatforms = mergeNotifyPlatforms(executorWrapper.getThreadPoolName(), dtpProperties);
+        NotifyHelper.refreshNotify(executorWrapper.getThreadPoolName(), notifyPlatforms,
                 executorWrapper.getNotifyItems(), allNotifyItems);
         executorWrapper.setNotifyItems(allNotifyItems);
     }
@@ -269,10 +273,44 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
         // update notify related
         val allNotifyItems = mergeAllNotifyItems(properties.getNotifyItems());
-        NotifyHelper.refreshNotify(executor.getThreadPoolName(), dtpProperties.getPlatforms(),
+        List<NotifyPlatform> notifyPlatforms = mergeNotifyPlatforms(executor.getThreadPoolName(), dtpProperties);
+        NotifyHelper.refreshNotify(executor.getThreadPoolName(), notifyPlatforms,
                 executor.getNotifyItems(), allNotifyItems);
         executor.setNotifyItems(allNotifyItems);
         executor.setNotifyEnabled(properties.isNotifyEnabled());
+    }
+
+    private static List<NotifyPlatform> mergeNotifyPlatforms(String threadPoolName, DtpProperties dtpProperties) {
+        // 如果配置了线程池的通知平台，则使用线程池的通知平台，否则使用全局的通知平台
+        List<NotifyPlatform> globalNotifyPlatform = dtpProperties.getPlatforms();
+        for (ThreadPoolProperties properties : dtpProperties.getExecutors()) {
+            if (Objects.equals(properties.getThreadPoolName(), threadPoolName)) {
+                return mergeNotifyPlatforms(globalNotifyPlatform, properties.getPlatforms());
+            }
+        }
+        return globalNotifyPlatform;
+    }
+
+    private static List<NotifyPlatform> mergeNotifyPlatforms(List<NotifyPlatform> globalPlatforms,
+                                                             List<NotifyPlatform> platforms) {
+        if (CollectionUtils.isEmpty(platforms) && CollectionUtils.isEmpty(globalPlatforms)) {
+            return Collections.emptyList();
+        }
+        if (CollectionUtils.isEmpty(platforms)) {
+            return globalPlatforms;
+        }
+        if (CollectionUtils.isEmpty(globalPlatforms)) {
+            return platforms;
+        }
+        List<NotifyPlatform> curPlatforms = new ArrayList<>(platforms);
+        // add global platforms if platforms isn't exists
+        Map<String, NotifyPlatform> platformMap = StreamUtil.toMap(platforms, NotifyPlatform::getPlatform);
+        for (NotifyPlatform globalPlatform : globalPlatforms) {
+            if (!platformMap.containsKey(globalPlatform.getPlatform())) {
+                curPlatforms.add(globalPlatform);
+            }
+        }
+        return curPlatforms;
     }
 
     private static void doRefreshPoolSize(ThreadPoolExecutor dtpExecutor, ThreadPoolProperties properties) {

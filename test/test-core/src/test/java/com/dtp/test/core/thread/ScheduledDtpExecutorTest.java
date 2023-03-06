@@ -56,4 +56,13 @@ public class ScheduledDtpExecutorTest {
         new CountDownLatch(1).await();
     }
 
+    @Test
+    public void testThreadPoolExecutorNotify() throws InterruptedException {
+        ScheduledDtpExecutor dtpExecutor14 = (ScheduledDtpExecutor) DtpRegistry.getDtpExecutor("dtpExecutor14");
+        dtpExecutor14.scheduleAtFixedRate(() -> {
+            System.out.println("进来了");
+        }, 10, 5, TimeUnit.SECONDS);
+        new CountDownLatch(1).await();
+    }
+
 }

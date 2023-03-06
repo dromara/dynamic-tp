@@ -9,15 +9,15 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: localhost:8848
+        server-addr: http://${nacos1}:8848,http://${nacos2}:8848,http://${nacos3}:8848
       config:
-        server-addr: ${spring.cloud.nacos.discovery.server-addr}
-        file-extension: yml
+        server-addr: http://${nacos1}:8848,http://${nacos2}:8848,http://${nacos3}:8848
+        file-extension: yaml
         extension-configs:
           - dataId: ${spring.application.name}-dtp-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
             group: DEFAULT_GROUP
             refresh: true  # 必须配置，负责自动刷新不生效
         refresh-enabled: true
   redis:
-    host: localhost
+    host: redis
     port: 6379

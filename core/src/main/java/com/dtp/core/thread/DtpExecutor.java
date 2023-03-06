@@ -5,6 +5,7 @@ import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.properties.ThreadPoolProperties;
+import com.dtp.common.util.StreamUtil;
 import com.dtp.common.util.TimeUtil;
 import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.notify.manager.NotifyHelper;
@@ -20,7 +21,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
@@ -105,7 +109,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
         this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
                 Executors.defaultThreadFactory(), new AbortPolicy());
     }
-    
+
     public DtpExecutor(int corePoolSize,
                        int maximumPoolSize,
                        long keepAliveTime,
@@ -115,7 +119,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
         this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
                 threadFactory, new AbortPolicy());
     }
-    
+
     public DtpExecutor(int corePoolSize,
                        int maximumPoolSize,
                        long keepAliveTime,
@@ -194,24 +198,44 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
 
     @Override
     protected void initialize(DtpProperties dtpProperties) {
-        List<NotifyPlatform> platforms = getNotifyPlatforms(dtpProperties);
+        List<NotifyPlatform> platforms = mergeNotifyPlatforms(dtpProperties);
         NotifyHelper.initNotify(this, platforms);
         if (preStartAllCoreThreads) {
             prestartAllCoreThreads();
         }
     }
 
-    private List<NotifyPlatform> getNotifyPlatforms(DtpProperties dtpProperties) {
+    private List<NotifyPlatform> mergeNotifyPlatforms(DtpProperties dtpProperties) {
         // 如果配置了线程池的通知平台，则使用线程池的通知平台，否则使用全局的通知平台
+        List<NotifyPlatform> globalNotifyPlatform = dtpProperties.getPlatforms();
         for (ThreadPoolProperties properties : dtpProperties.getExecutors()) {
             if (Objects.equals(properties.getThreadPoolName(), this.threadPoolName)) {
-                List<NotifyPlatform> platforms = properties.getPlatforms();
-                if (CollectionUtils.isNotEmpty(platforms)) {
-                    return platforms;
-                }
+                return mergeNotifyPlatforms(globalNotifyPlatform, properties.getPlatforms());
             }
         }
-        return dtpProperties.getPlatforms();
+        return globalNotifyPlatform;
+    }
+
+    private List<NotifyPlatform> mergeNotifyPlatforms(List<NotifyPlatform> globalPlatforms,
+                                                      List<NotifyPlatform> platforms) {
+        if (CollectionUtils.isEmpty(platforms) && CollectionUtils.isEmpty(globalPlatforms)) {
+            return Collections.emptyList();
+        }
+        if (CollectionUtils.isEmpty(platforms)) {
+            return new ArrayList<>(globalPlatforms);
+        }
+        if (CollectionUtils.isEmpty(globalPlatforms)) {
+            return new ArrayList<>(platforms);
+        }
+        List<NotifyPlatform> curPlatforms = new ArrayList<>(platforms);
+        // add global platforms if platforms isn't exists
+        Map<String, NotifyPlatform> platformMap = StreamUtil.toMap(platforms, NotifyPlatform::getPlatform);
+        for (NotifyPlatform globalPlatform : globalPlatforms) {
+            if (!platformMap.containsKey(globalPlatform.getPlatform())) {
+                curPlatforms.add(globalPlatform);
+            }
+        }
+        return curPlatforms;
     }
 
     protected Runnable wrapTasks(Runnable command) {
@@ -290,6 +314,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
 
     /**
      * In order for the field can be assigned by reflection.
+     *
      * @param allowCoreThreadTimeOut allowCoreThreadTimeOut
      */
     public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {

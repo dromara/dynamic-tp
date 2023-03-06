@@ -24,7 +24,7 @@ public class NotifyPlatformManager {
     public static void init(String threadPoolName, List<NotifyPlatform> notifyPlatforms) {
         notifyPlatforms.forEach(notifyPlatform -> {
             String key = buildKey(threadPoolName, notifyPlatform.getPlatform());
-            NOTIFY_PLATFORM.putIfAbsent(key, notifyPlatform);
+            NOTIFY_PLATFORM.put(key, notifyPlatform);
         });
     }
 

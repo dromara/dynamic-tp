@@ -92,6 +92,32 @@ spring:
           maximumPoolSize: 100
           queueCapacity: 200
           queueType: DelayQueue                       # 任务队列，查看源码QueueTypeEnum枚举类
+          notifyItems: # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警、拒绝报警、任务超时报警）
+            - type: capacity               # 报警项类型，查看源码 NotifyTypeEnum枚举类
+              enabled: true
+              threshold: 0                # 报警阈值
+              platforms: [ ding,wechat ]     # 可选配置，不配置默认拿上层platforms配置的所以平台
+              interval: 1                # 报警间隔（单位：s）
+            - type: change
+              enabled: true
+            - type: liveness
+              enabled: true
+              threshold: 80
+            - type: reject
+              enabled: true
+              threshold: 1
+            - type: run_timeout
+              enabled: true
+              threshold: 1
+            - type: queue_timeout
+              enabled: true
+              threshold: 1
+        - threadPoolName: dtpExecutor14               # 测试当核心数为0时，ScheduledThreadPoolExecutor占用CPU问题
+          executorType: scheduled                     # 线程池类型common、eager：适用于io密集型
+          corePoolSize: 0                             # 0时，ScheduledThreadPoolExecutor占用CPU问题
+          maximumPoolSize: 100
+          queueCapacity: 200
+          queueType: DelayQueue                       # 任务队列，查看源码QueueTypeEnum枚举类
           platforms: # 通知报警平台配置
             - platform: wechat
               urlKey: 3a7500-1287-4bd-a798-c5c3d8b69c  # 替换

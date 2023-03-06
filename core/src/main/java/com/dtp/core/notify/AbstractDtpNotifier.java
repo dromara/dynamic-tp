@@ -60,7 +60,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
     @Override
     public void sendChangeMsg(String threadPoolName, DtpMainProp oldProp, List<String> diffs) {
-        NotifyHelper.getPlatform(oldProp.getThreadPoolName(), platform()).ifPresent(platform -> {
+        NotifyHelper.getPlatform(threadPoolName, platform()).ifPresent(platform -> {
             String content = buildNoticeContent(platform, oldProp, diffs);
             if (StringUtils.isBlank(content)) {
                 return;

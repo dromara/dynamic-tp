@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -60,9 +61,11 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
         }
     }
 
-    protected void initialize() { }
+    protected void initialize() {
+    }
 
-    public void register(String poolName, ThreadPoolExecutor threadPoolExecutor) { }
+    public void register(String poolName, ThreadPoolExecutor threadPoolExecutor) {
+    }
 
     @Override
     public Map<String, ExecutorWrapper> getExecutorWrappers() {
@@ -99,6 +102,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
         val tmpMap = StreamUtil.toMap(properties, SimpleTpProperties::getThreadPoolName);
         executorWrappers.forEach((k, v) -> refresh(name, v, globalPlatforms, tmpMap.get(k)));
     }
+
 
     public void refresh(String name,
                         ExecutorWrapper executorWrapper,
@@ -144,17 +148,35 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
 
         // update notify items
         val allNotifyItems = mergeSimpleNotifyItems(properties.getNotifyItems());
-        // choose notify platforms
-        val allNotifyPlatforms = getAllNotifyPlatforms(globalPlatforms, properties);
+        // update notify platforms
+        val allNotifyPlatforms = mergeNotifyPlatforms(globalPlatforms, properties.getPlatforms());
         NotifyHelper.refreshNotify(executorWrapper.getThreadPoolName(), allNotifyPlatforms,
                 executorWrapper.getNotifyItems(), allNotifyItems);
         executorWrapper.setNotifyItems(allNotifyItems);
         executorWrapper.setNotifyEnabled(properties.isNotifyEnabled());
     }
 
-    private static List<NotifyPlatform> getAllNotifyPlatforms(List<NotifyPlatform> globalPlatforms,
-                                                              SimpleTpProperties properties) {
-        return properties.getPlatforms() == null ? globalPlatforms : properties.getPlatforms();
+    private static List<NotifyPlatform> mergeNotifyPlatforms(List<NotifyPlatform> globalPlatforms,
+                                                             List<NotifyPlatform> platforms) {
+        if (CollectionUtils.isEmpty(platforms) &&
+                CollectionUtils.isEmpty(globalPlatforms)) {
+            return Collections.emptyList();
+        }
+        if (CollectionUtils.isEmpty(platforms)) {
+            return globalPlatforms;
+        }
+        if (CollectionUtils.isEmpty(globalPlatforms)) {
+            return platforms;
+        }
+        List<NotifyPlatform> curPlatforms = new ArrayList<>(platforms);
+        // add global platforms if platforms isn't exists
+        Map<String, NotifyPlatform> platformMap = StreamUtil.toMap(platforms, NotifyPlatform::getPlatform);
+        for (NotifyPlatform globalPlatform : globalPlatforms) {
+            if (!platformMap.containsKey(globalPlatform.getPlatform())) {
+                curPlatforms.add(globalPlatform);
+            }
+        }
+        return curPlatforms;
     }
 
     private void doRefreshPoolSize(ThreadPoolExecutor executor, SimpleTpProperties properties) {

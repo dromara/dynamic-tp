@@ -196,7 +196,7 @@ public class DtpProperties {
 
         private String charset = "UTF-8";
 
-        private Boolean authEnable = false;
+        private boolean authEnable = false;
 
         private String authority = "ssl";
 

@@ -183,18 +183,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
             }
         }
 
-        if (Objects.nonNull(t)) {
-            log.error("thread {} throw exception {}", Thread.currentThread(), t);
-        }
-        if (r instanceof FutureTask) {
-            try {
-                Future<?> future = (Future<?>) r;
-                future.get();
-            } catch (Exception e) {
-                log.error("thread {} throw exception {}", Thread.currentThread(), e);
-            }
-        }
-
+        printError(r, t);
         clearContext();
         super.afterExecute(r, t);
     }
@@ -223,6 +212,20 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
 
     private void clearContext() {
         MDC.remove(TRACE_ID);
+    }
+
+    private void printError(Runnable r, Throwable t) {
+        if (Objects.nonNull(t)) {
+            log.error("thread {} throw exception {}", Thread.currentThread(), t);
+        }
+        if (r instanceof FutureTask) {
+            try {
+                Future<?> future = (Future<?>) r;
+                future.get();
+            } catch (Exception e) {
+                log.error("thread {} throw exception {}", Thread.currentThread(), e);
+            }
+        }
     }
 
     public List<NotifyItem> getNotifyItems() {

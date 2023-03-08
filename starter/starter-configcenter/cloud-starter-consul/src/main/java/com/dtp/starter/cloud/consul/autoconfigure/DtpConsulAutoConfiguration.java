@@ -1,9 +1,9 @@
 package com.dtp.starter.cloud.consul.autoconfigure;
 
-import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.starter.cloud.consul.refresh.CloudConsulRefresher;
 import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -16,9 +16,9 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnClass(ConsulConfigProperties.class)
-@ConditionalOnProperty(value = DynamicTpConst.DTP_ENABLED_PROP, matchIfMissing = true, havingValue = "true")
-@ImportAutoConfiguration({BaseBeanAutoConfiguration.class})
-public class DtpAutoConfiguration {
+@ConditionalOnBean({BaseBeanAutoConfiguration.class})
+@AutoConfigureAfter({BaseBeanAutoConfiguration.class})
+public class DtpConsulAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean()

@@ -1,4 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.dtp.starter.zookeeper.autoconfigure.DtpAutoConfiguration
+  com.dtp.starter.zookeeper.autoconfigure.DtpZkAutoConfiguration
 org.springframework.boot.env.EnvironmentPostProcessor=\
   com.dtp.starter.zookeeper.autoconfigure.ZkConfigEnvironmentProcessor

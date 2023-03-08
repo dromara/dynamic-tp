@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.dtp.starter.cloud.zookeeper.autoconfigure.DtpAutoConfiguration
+  com.dtp.starter.cloud.zookeeper.autoconfigure.DtpCloudZkAutoConfiguration

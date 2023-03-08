@@ -169,6 +169,8 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
+        tryPrintError(r, t);
+
         if (runTimeout <= 0) {
             clearContext();
             return;
@@ -183,8 +185,6 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
                         this.getThreadPoolName(), runnable.getTaskName(), runTime);
             }
         }
-
-        printError(r, t);
         clearContext();
     }
 
@@ -214,14 +214,17 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
         MDC.remove(TRACE_ID);
     }
 
-    private void printError(Runnable r, Throwable t) {
+    private void tryPrintError(Runnable r, Throwable t) {
         if (Objects.nonNull(t)) {
             log.error("thread {} throw exception {}", Thread.currentThread(), t);
+            return;
         }
         if (r instanceof FutureTask) {
             try {
                 Future<?> future = (Future<?>) r;
                 future.get();
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
             } catch (Exception e) {
                 log.error("thread {} throw exception {}", Thread.currentThread(), e);
             }

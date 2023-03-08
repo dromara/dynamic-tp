@@ -132,9 +132,9 @@ public class NotifyHelper {
     }
 
     public static void refreshNotify(String poolName,
-                                    List<NotifyPlatform> platforms,
-                                    List<NotifyItem> oldItems,
-                                    List<NotifyItem> newItems) {
+                                     List<NotifyPlatform> platforms,
+                                     List<NotifyItem> oldItems,
+                                     List<NotifyItem> newItems) {
         fillPlatforms(platforms, newItems);
         Map<String, NotifyItem> oldNotifyItemMap = StreamUtil.toMap(oldItems, NotifyItem::getType);
         newItems.forEach(x -> {

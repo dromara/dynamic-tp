@@ -18,11 +18,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
+import java.util.Objects;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.LongAdder;
 
 import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
@@ -186,6 +183,8 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
                         this.getThreadPoolName(), runnable.getTaskName(), runTime);
             }
         }
+
+        printError(r, t);
         clearContext();
     }
 
@@ -213,6 +212,20 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
 
     private void clearContext() {
         MDC.remove(TRACE_ID);
+    }
+
+    private void printError(Runnable r, Throwable t) {
+        if (Objects.nonNull(t)) {
+            log.error("thread {} throw exception {}", Thread.currentThread(), t);
+        }
+        if (r instanceof FutureTask) {
+            try {
+                Future<?> future = (Future<?>) r;
+                future.get();
+            } catch (Exception e) {
+                log.error("thread {} throw exception {}", Thread.currentThread(), e);
+            }
+        }
     }
 
     public List<NotifyItem> getNotifyItems() {

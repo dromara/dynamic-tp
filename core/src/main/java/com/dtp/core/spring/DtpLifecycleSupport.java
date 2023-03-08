@@ -5,14 +5,8 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.RunnableFuture;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.Objects;
+import java.util.concurrent.*;
 
 /**
  * DtpLifecycleSupport which mainly implements Spring bean's lifecycle methods,
@@ -140,5 +134,21 @@ public abstract class DtpLifecycleSupport extends ThreadPoolExecutor implements 
             }
             Thread.currentThread().interrupt();
         }
+    }
+
+    @Override
+    protected void afterExecute(Runnable r, Throwable t) {
+        if (Objects.nonNull(t)) {
+            log.error("thread {} throw exception {}", Thread.currentThread(), t);
+        }
+        if (r instanceof FutureTask) {
+            try {
+                Future<?> future = (Future<?>) r;
+                future.get();
+            } catch (Exception e) {
+                log.error("thread {} throw exception {}", Thread.currentThread(), e);
+            }
+        }
+        super.afterExecute(r, t);
     }
 }

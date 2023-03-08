@@ -60,9 +60,11 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
         }
     }
 
-    protected void initialize() { }
+    protected void initialize() {
+    }
 
-    public void register(String poolName, ThreadPoolExecutor threadPoolExecutor) { }
+    public void register(String poolName, ThreadPoolExecutor threadPoolExecutor) {
+    }
 
     @Override
     public Map<String, ExecutorWrapper> getExecutorWrappers() {
@@ -144,7 +146,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
 
         // update notify items
         val allNotifyItems = mergeSimpleNotifyItems(properties.getNotifyItems());
-        NotifyHelper.refreshNotify(executorWrapper.getThreadPoolName(), platforms,
+        NotifyHelper.refreshNotify(executorWrapper.getThreadPoolName(), properties.getPlatformIds(), platforms,
                 executorWrapper.getNotifyItems(), allNotifyItems);
         executorWrapper.setNotifyItems(allNotifyItems);
         executorWrapper.setNotifyEnabled(properties.isNotifyEnabled());

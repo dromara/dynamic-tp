@@ -60,6 +60,11 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     private List<NotifyItem> notifyItems;
 
     /**
+     * Notify platform id
+     */
+    private List<String> platformIds;
+
+    /**
      * Task wrappers, do sth enhanced.
      */
     private List<TaskWrapper> taskWrappers = Lists.newArrayList();
@@ -192,7 +197,6 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     @Override
     protected void initialize(DtpProperties dtpProperties) {
         NotifyHelper.initNotify(this, dtpProperties.getPlatforms());
-
         if (preStartAllCoreThreads) {
             prestartAllCoreThreads();
         }
@@ -221,6 +225,14 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
 
     public void setNotifyItems(List<NotifyItem> notifyItems) {
         this.notifyItems = notifyItems;
+    }
+
+    public List<String> getPlatformIds() {
+        return platformIds;
+    }
+
+    public void setPlatformIds(List<String> platformIds) {
+        this.platformIds = platformIds;
     }
 
     public String getQueueName() {

@@ -12,6 +12,11 @@ import lombok.Data;
 public class NotifyPlatform {
 
     /**
+     * Notify platform id.
+     */
+    private String platformId;
+
+    /**
      * Notify platform name.
      */
     private String platform;

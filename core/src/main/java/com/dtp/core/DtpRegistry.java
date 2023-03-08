@@ -88,7 +88,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      * Register a DtpExecutor.
      *
      * @param executor the newly created DtpExecutor instance
-     * @param source the source of the call to register method
+     * @param source   the source of the call to register method
      */
     public static void registerDtp(DtpExecutor executor, String source) {
         log.info("DynamicTp register dtpExecutor, source: {}, executor: {}",
@@ -100,7 +100,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      * Register a common ThreadPoolExecutor.
      *
      * @param wrapper the newly created ThreadPoolExecutor wrapper instance
-     * @param source the source of the call to register method
+     * @param source  the source of the call to register method
      */
     public static void registerCommon(ExecutorWrapper wrapper, String source) {
         log.info("DynamicTp register commonExecutor, source: {}, name: {}",
@@ -243,7 +243,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         // update notify related
         executorWrapper.setNotifyEnabled(properties.isNotifyEnabled());
         val allNotifyItems = mergeSimpleNotifyItems(properties.getNotifyItems());
-        NotifyHelper.refreshNotify(executorWrapper.getThreadPoolName(), dtpProperties.getPlatforms(),
+        NotifyHelper.refreshNotify(executorWrapper.getThreadPoolName(), properties.getPlatformIds(), dtpProperties.getPlatforms(),
                 executorWrapper.getNotifyItems(), allNotifyItems);
         executorWrapper.setNotifyItems(allNotifyItems);
     }
@@ -269,9 +269,10 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
         // update notify related
         val allNotifyItems = mergeAllNotifyItems(properties.getNotifyItems());
-        NotifyHelper.refreshNotify(executor.getThreadPoolName(), dtpProperties.getPlatforms(),
+        NotifyHelper.refreshNotify(executor.getThreadPoolName(), properties.getPlatformIds(), dtpProperties.getPlatforms(),
                 executor.getNotifyItems(), allNotifyItems);
         executor.setNotifyItems(allNotifyItems);
+        executor.setPlatformIds(properties.getPlatformIds());
         executor.setNotifyEnabled(properties.isNotifyEnabled());
     }
 

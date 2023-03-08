@@ -153,7 +153,13 @@ public class ThreadPoolBuilder {
      */
     private List<NotifyItem> notifyItems = NotifyItem.getAllNotifyItems();
 
-    private ThreadPoolBuilder() { }
+    /**
+     * Notify platform id
+     */
+    private List<String> platformIds = Lists.newArrayList();
+
+    private ThreadPoolBuilder() {
+    }
 
     public static ThreadPoolBuilder newBuilder() {
         return new ThreadPoolBuilder();
@@ -195,9 +201,9 @@ public class ThreadPoolBuilder {
     /**
      * Create work queue
      *
-     * @param queueName queue name
-     * @param capacity queue capacity
-     * @param fair for SynchronousQueue
+     * @param queueName     queue name
+     * @param capacity      queue capacity
+     * @param fair          for SynchronousQueue
      * @param maxFreeMemory for MemorySafeLBQ
      * @return the ThreadPoolBuilder instance
      */
@@ -213,8 +219,8 @@ public class ThreadPoolBuilder {
      * Create work queue
      *
      * @param queueName queue name
-     * @param capacity queue capacity
-     * @param fair for SynchronousQueue
+     * @param capacity  queue capacity
+     * @param fair      for SynchronousQueue
      * @return the ThreadPoolBuilder instance
      */
     public ThreadPoolBuilder workQueue(String queueName, Integer capacity, Boolean fair) {
@@ -316,6 +322,13 @@ public class ThreadPoolBuilder {
         return this;
     }
 
+    public ThreadPoolBuilder platformIds(List<String> platformIds) {
+        if (CollectionUtils.isNotEmpty(platformIds)) {
+            this.platformIds = platformIds;
+        }
+        return this;
+    }
+
     /**
      * Build according to dynamic field.
      *
@@ -350,8 +363,8 @@ public class ThreadPoolBuilder {
     /**
      * Build thread pool executor and wrapper with ttl
      *
-     * @see com.alibaba.ttl.TransmittableThreadLocal
      * @return the newly created ExecutorService instance
+     * @see com.alibaba.ttl.TransmittableThreadLocal
      */
     public ExecutorService buildWithTtl() {
         if (dynamic) {
@@ -380,6 +393,7 @@ public class ThreadPoolBuilder {
         dtpExecutor.setQueueTimeout(builder.queueTimeout);
         dtpExecutor.setTaskWrappers(builder.taskWrappers);
         dtpExecutor.setNotifyItems(builder.notifyItems);
+        dtpExecutor.setPlatformIds(builder.platformIds);
         return dtpExecutor;
     }
 

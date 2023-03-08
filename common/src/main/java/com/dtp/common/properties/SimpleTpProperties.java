@@ -54,6 +54,11 @@ public class SimpleTpProperties {
     private List<NotifyItem> notifyItems;
 
     /**
+     * Notify platform id
+     */
+    private List<String> platformIds;
+
+    /**
      * If enable notify.
      */
     private boolean notifyEnabled = true;

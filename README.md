@@ -132,9 +132,9 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ## 接入步骤
 
-> 1. 引入相应配置中心的依赖，具体见下述 maven 依赖
+> 1. 引入相应配置中心的依赖，具体见官网文档
 >
-> 2. 配置中心配置线程池实例，配置文件见下述
+> 2. 配置中心配置线程池实例，配置文件见官网文档
 >
 > 3. 启动类加 @EnableDynamicTp 注解
 >
@@ -142,7 +142,7 @@ protected void afterExecute(Runnable r, Throwable t);
 >
 > 5. 通过以上 4 步就可以使用了，是不是感觉超级简单呀
 
-**更详细使用请参考 `example` 工程及官网文档**
+**更详细使用示例请参考 `example` 工程及官网文档**
 
 ---
 

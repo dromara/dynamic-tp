@@ -33,15 +33,12 @@ public class NamedThreadFactory implements ThreadFactory {
      */
     private final AtomicInteger seq = new AtomicInteger(1);
 
-    private final Thread.UncaughtExceptionHandler uncaughtExceptionHandler;
-
     public NamedThreadFactory(String namePrefix, boolean daemon, int priority) {
         this.daemon = daemon;
         this.priority = priority;
         SecurityManager s = System.getSecurityManager();
         group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
         this.namePrefix = namePrefix;
-        this.uncaughtExceptionHandler = new DtpUncaughtExceptionHandler();
     }
 
     public NamedThreadFactory(String namePrefix) {
@@ -58,18 +55,10 @@ public class NamedThreadFactory implements ThreadFactory {
         Thread t = new Thread(group, r, name);
         t.setDaemon(daemon);
         t.setPriority(priority);
-        t.setUncaughtExceptionHandler(uncaughtExceptionHandler);
         return t;
     }
 
     public String getNamePrefix() {
         return namePrefix;
-    }
-
-    public static class DtpUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
-        @Override
-        public void uncaughtException(Thread t, Throwable e) {
-            log.error("thread {} throw exception {}", t, e);
-        }
     }
 }

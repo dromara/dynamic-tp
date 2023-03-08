@@ -24,7 +24,11 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.dtp.common.em.NotifyItemEnum.*;
+import static com.dtp.common.em.NotifyItemEnum.CAPACITY;
+import static com.dtp.common.em.NotifyItemEnum.LIVENESS;
+import static com.dtp.common.em.NotifyItemEnum.QUEUE_TIMEOUT;
+import static com.dtp.common.em.NotifyItemEnum.REJECT;
+import static com.dtp.common.em.NotifyItemEnum.RUN_TIMEOUT;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -111,7 +115,9 @@ public class NotifyHelper {
         return Optional.ofNullable(map.get(platform.toLowerCase()));
     }
 
-    public static void initNotify(DtpExecutor executor, List<NotifyPlatform> platforms) {
+    public static void initNotify(DtpExecutor executor) {
+
+        List<NotifyPlatform> platforms = ApplicationContextHolder.getBean(DtpProperties.class).getPlatforms();
         if (CollectionUtils.isEmpty(platforms)) {
             executor.setNotifyItems(Lists.newArrayList());
             log.warn("DynamicTp notify, no notify platforms configured, name {}", executor.getThreadPoolName());

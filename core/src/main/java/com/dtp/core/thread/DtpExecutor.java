@@ -2,7 +2,6 @@ package com.dtp.core.thread;
 
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.entity.NotifyItem;
-import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.TimeUtil;
 import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.notify.manager.NotifyHelper;
@@ -102,7 +101,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
         this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
                 Executors.defaultThreadFactory(), new AbortPolicy());
     }
-    
+
     public DtpExecutor(int corePoolSize,
                        int maximumPoolSize,
                        long keepAliveTime,
@@ -112,7 +111,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
         this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
                 threadFactory, new AbortPolicy());
     }
-    
+
     public DtpExecutor(int corePoolSize,
                        int maximumPoolSize,
                        long keepAliveTime,
@@ -122,7 +121,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
         this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
                 Executors.defaultThreadFactory(), handler);
     }
-    
+
     public DtpExecutor(int corePoolSize,
                        int maximumPoolSize,
                        long keepAliveTime,
@@ -147,8 +146,8 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
 
     @Override
     protected void beforeExecute(Thread t, Runnable r) {
+        super.beforeExecute(t, r);
         if (!(r instanceof DtpRunnable)) {
-            super.beforeExecute(t, r);
             return;
         }
         DtpRunnable runnable = (DtpRunnable) r;
@@ -156,42 +155,43 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
         if (runTimeout > 0) {
             runnable.setStartTime(currTime);
         }
-        if (queueTimeout > 0) {
-            long waitTime = currTime - runnable.getSubmitTime();
-            if (waitTime > queueTimeout) {
-                queueTimeoutCount.increment();
-                AlarmManager.doAlarmAsync(this, QUEUE_TIMEOUT, r);
-                if (StringUtils.isNotBlank(runnable.getTaskName())) {
-                    log.warn("DynamicTp execute, queue timeout, poolName: {}, taskName: {}, waitTime: {}ms",
-                            this.getThreadPoolName(), runnable.getTaskName(), waitTime);
-                }
+        if (queueTimeout <= 0) {
+            return;
+        }
+        long waitTime = currTime - runnable.getSubmitTime();
+        if (waitTime > queueTimeout) {
+            queueTimeoutCount.increment();
+            AlarmManager.doAlarmAsync(this, QUEUE_TIMEOUT, r);
+            if (StringUtils.isNotBlank(runnable.getTaskName())) {
+                log.warn("DynamicTp execute, queue timeout, poolName: {}, taskName: {}, waitTime: {}ms",
+                        this.getThreadPoolName(), runnable.getTaskName(), waitTime);
             }
         }
-        super.beforeExecute(t, r);
     }
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
-
-        if (runTimeout > 0) {
-            DtpRunnable runnable = (DtpRunnable) r;
-            long runTime = TimeUtil.currentTimeMillis() - runnable.getStartTime();
-            if (runTime > runTimeout) {
-                runTimeoutCount.increment();
-                AlarmManager.doAlarmAsync(this, RUN_TIMEOUT);
-                if (StringUtils.isNotBlank(runnable.getTaskName())) {
-                    log.warn("DynamicTp execute, run timeout, poolName: {}, taskName: {}, runTime: {}ms",
-                            this.getThreadPoolName(), runnable.getTaskName(), runTime);
-                }
+        super.afterExecute(r, t);
+        if (runTimeout <= 0) {
+            clearContext();
+            return;
+        }
+        DtpRunnable runnable = (DtpRunnable) r;
+        long runTime = TimeUtil.currentTimeMillis() - runnable.getStartTime();
+        if (runTime > runTimeout) {
+            runTimeoutCount.increment();
+            AlarmManager.doAlarmAsync(this, RUN_TIMEOUT);
+            if (StringUtils.isNotBlank(runnable.getTaskName())) {
+                log.warn("DynamicTp execute, run timeout, poolName: {}, taskName: {}, runTime: {}ms",
+                        this.getThreadPoolName(), runnable.getTaskName(), runTime);
             }
         }
         clearContext();
-        super.afterExecute(r, t);
     }
 
     @Override
-    protected void initialize(DtpProperties dtpProperties) {
-        NotifyHelper.initNotify(this, dtpProperties.getPlatforms());
+    protected void initialize() {
+        NotifyHelper.initNotify(this);
 
         if (preStartAllCoreThreads) {
             prestartAllCoreThreads();

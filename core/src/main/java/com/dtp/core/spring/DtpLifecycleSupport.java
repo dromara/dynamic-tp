@@ -1,7 +1,5 @@
 package com.dtp.core.spring;
 
-import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.properties.DtpProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -72,8 +70,7 @@ public abstract class DtpLifecycleSupport extends ThreadPoolExecutor implements 
 
     @Override
     public void afterPropertiesSet() {
-        DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-        initialize(dtpProperties);
+        initialize();
     }
 
     /**
@@ -89,9 +86,8 @@ public abstract class DtpLifecycleSupport extends ThreadPoolExecutor implements 
     /**
      * Initialize, do sth.
      *
-     * @param dtpProperties dtpProperties
      */
-    protected abstract void initialize(DtpProperties dtpProperties);
+    protected abstract void initialize();
 
     /**
      * Perform a shutdown on the underlying ExecutorService.

@@ -54,7 +54,6 @@ public final class BeanUtil {
         if (MapUtils.isNotEmpty(properties)) {
             properties.forEach(builder::addPropertyValue);
         }
-
         registry.registerBeanDefinition(beanName, builder.getBeanDefinition());
     }
 }

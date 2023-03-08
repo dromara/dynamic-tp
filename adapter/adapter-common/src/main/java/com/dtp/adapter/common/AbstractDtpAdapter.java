@@ -163,10 +163,10 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
             return Collections.emptyList();
         }
         if (CollectionUtils.isEmpty(platforms)) {
-            return globalPlatforms;
+            return new ArrayList<>(globalPlatforms);
         }
         if (CollectionUtils.isEmpty(globalPlatforms)) {
-            return platforms;
+            return new ArrayList<>(platforms);
         }
         List<NotifyPlatform> curPlatforms = new ArrayList<>(platforms);
         // add global platforms if platforms isn't exists

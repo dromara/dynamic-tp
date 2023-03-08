@@ -139,20 +139,4 @@ public abstract class DtpLifecycleSupport extends ThreadPoolExecutor implements 
             Thread.currentThread().interrupt();
         }
     }
-
-    @Override
-    protected void afterExecute(Runnable r, Throwable t) {
-        if (Objects.nonNull(t)) {
-            log.error("thread {} throw exception {}", Thread.currentThread(), t);
-        }
-        if (r instanceof FutureTask) {
-            try {
-                Future<?> future = (Future<?>) r;
-                future.get();
-            } catch (Exception e) {
-                log.error("thread {} throw exception {}", Thread.currentThread(), e);
-            }
-        }
-        super.afterExecute(r, t);
-    }
 }

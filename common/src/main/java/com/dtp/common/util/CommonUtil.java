@@ -7,7 +7,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
 
 /**
  * CommonUtil related
@@ -32,8 +35,8 @@ public final class CommonUtil {
 
         String address = null;
         try {
-            address = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
+            address = getLocalHostExactAddress().getHostAddress();
+        } catch (UnknownHostException | SocketException e) {
             log.error("get localhost address error.", e);
         }
 
@@ -47,5 +50,24 @@ public final class CommonUtil {
 
     public static Instance getInstance() {
         return INSTANCE;
+    }
+
+    private static InetAddress getLocalHostExactAddress() throws SocketException, UnknownHostException {
+        InetAddress candidateAddress = null;
+        Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+        while (networkInterfaces.hasMoreElements()) {
+            NetworkInterface networkInterface = networkInterfaces.nextElement();
+            for (Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses(); inetAddresses.hasMoreElements(); ) {
+                InetAddress inetAddress = inetAddresses.nextElement();
+                if (!inetAddress.isLoopbackAddress() && inetAddress.isSiteLocalAddress()) {
+                    if (!networkInterface.isPointToPoint()) {
+                        return inetAddress;
+                    } else {
+                        candidateAddress = inetAddress;
+                    }
+                }
+            }
+        }
+        return candidateAddress == null ? InetAddress.getLocalHost() : candidateAddress;
     }
 }

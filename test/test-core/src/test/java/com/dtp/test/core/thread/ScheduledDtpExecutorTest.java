@@ -58,7 +58,7 @@ public class ScheduledDtpExecutorTest {
     }
 
     @Test
-    public void testThreadPoolExecutorNotify() throws InterruptedException {
+    public void testSubNotify() throws InterruptedException {
         ScheduledDtpExecutor dtpExecutor14 = (ScheduledDtpExecutor) DtpRegistry.getDtpExecutor("dtpExecutor14");
         dtpExecutor14.scheduleAtFixedRate(() -> {
             System.out.println("进来了");

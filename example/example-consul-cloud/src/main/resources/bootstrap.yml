@@ -1,5 +1,18 @@
 server:
-  port: 8890
+  port: 9100
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: 'info,prometheus,health'
+    httptrace:
+      enabled: false
+    configprops:
+      enabled: false
+    shutdown:
+      enabled: false
 
 spring:
   application:

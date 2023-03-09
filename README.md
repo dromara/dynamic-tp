@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-    官网： <a href="https://dynamictp.top">https://dynamictp.cn</a> 🔥
+    官网： <a href="https://dynamictp.cn">https://dynamictp.cn</a> 🔥
 </p>
 
 ---
@@ -142,7 +142,7 @@ protected void afterExecute(Runnable r, Throwable t);
 >
 > 5. 通过以上 4 步就可以使用了，是不是感觉超级简单呀
 
-**更详细使用示例请参考 `example` 工程及官网文档**
+更详细使用示例请参考 `example` 工程及[官网文档](https://dynamictp.cn/guide/use/quick-start.html)
 
 ---
 
@@ -150,13 +150,13 @@ protected void afterExecute(Runnable r, Throwable t);
 
 - 触发报警阈值会推送相应报警消息（活性、容量、拒绝、任务等待超时、任务执行超时），且会高亮显示相应字段
 
-  更多见官网文档，[通知报警](https://dynamictp.cn/guide/notice/alarm.html)
-
 <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d65151e3e9ca460eac18f30ea6be05d3~tplv-k3u1fbpfcp-zoom-1.image" alt="告警" width="50%" />
 
 - 配置变更会推送通知消息，且会高亮变更的字段
 
 <img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/30093a6ede914887bb5566139352fb8b~tplv-k3u1fbpfcp-zoom-1.image" alt="变更通知" width="50%" />
+
+更多见官网文档，[通知报警](https://dynamictp.cn/guide/notice/alarm.html)
 
 ---
 
@@ -173,6 +173,8 @@ protected void afterExecute(Runnable r, Throwable t);
 > 3. Micrometer：采用监控门面，通过引入相关 Micrometer 依赖采集到相应的存储平台里（如 Prometheus，InfluxDb...）
 >
 > 4. Endpoint：暴露 Endpoint 端点，可以通过 http 方式实时获取指标数据
+
+更多见官网文档，[监控](https://dynamictp.cn/guide/monitor/collect_types.html)
 
 ---
 
@@ -203,6 +205,8 @@ protected void afterExecute(Runnable r, Throwable t);
 微信群已满 200 人，可以关注微信公众号，加我个人微信拉群（备注：dynamic-tp）。
 
 ![](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/530709dc29604630b6d1537d7c160ea5~tplv-k3u1fbpfcp-watermark.image)
+
+[使用登记](https://dynamictp.cn/guide/other/users.html)
 
 ---
 

@@ -1,5 +1,6 @@
 package com.dtp.common.entity;
 
+import cn.hutool.core.util.IdUtil;
 import lombok.Data;
 
 /**
@@ -14,7 +15,7 @@ public class NotifyPlatform {
     /**
      * Notify platform id.
      */
-    private String platformId;
+    private String platformId = IdUtil.fastSimpleUUID();
 
     /**
      * Notify platform name.

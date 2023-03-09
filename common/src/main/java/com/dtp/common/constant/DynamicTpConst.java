@@ -43,6 +43,8 @@ public final class DynamicTpConst {
 
     public static final String NOTIFY_ITEMS = "notifyItems";
 
+    public static final String PLATFORM_IDS = "platformIds";
+
     public static final String NOTIFY_ENABLED = "notifyEnabled";
 
     public static final String WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN = "waitForTasksToCompleteOnShutdown";

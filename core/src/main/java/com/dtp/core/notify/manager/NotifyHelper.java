@@ -6,7 +6,6 @@ import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.StreamUtil;
-import com.dtp.core.DtpRegistry;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.thread.DtpExecutor;
 import com.google.common.collect.Lists;
@@ -16,11 +15,17 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections.CollectionUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.dtp.common.em.NotifyItemEnum.*;
-import static java.util.stream.Collectors.toList;
 
 /**
  * NotifyHelper related
@@ -88,16 +93,35 @@ public class NotifyHelper {
             return;
         }
         List<String> globalPlatformIds = StreamUtil.fetchProperty(platforms, NotifyPlatform::getPlatformId);
+
+        Map<String, NotifyPlatform> platformNames = StreamUtil.toMap(platforms, NotifyPlatform::getPlatform);
+        // notifyItem > executor > global
         notifyItems.forEach(n -> {
-            // notifyItem > executor > properties
             if (CollectionUtils.isNotEmpty(n.getPlatformIds())) {
+                // intersection of notifyItem and global
                 n.setPlatformIds((List<String>) CollectionUtils.intersection(globalPlatformIds, n.getPlatformIds()));
             } else if (CollectionUtils.isNotEmpty(platformIds)) {
                 n.setPlatformIds(platformIds);
             } else {
-                n.setPlatformIds(globalPlatformIds);
+                // need to compatible with the previous situation that does not exist platformIds
+                if (CollectionUtils.isNotEmpty(n.getPlatforms())) {
+                    setPlatformIds(platformNames, n);
+                } else {
+                    n.setPlatformIds(globalPlatformIds);
+                }
             }
         });
+    }
+
+    private static void setPlatformIds(Map<String, NotifyPlatform> platformNames, NotifyItem notifyItem) {
+        List<String> platformIds = new ArrayList<>();
+        for (String platform : notifyItem.getPlatforms()) {
+            NotifyPlatform notifyPlatform = platformNames.get(platform);
+            if (notifyPlatform != null) {
+                platformIds.add(notifyPlatform.getPlatformId());
+            }
+        }
+        notifyItem.setPlatformIds(platformIds);
     }
 
     public static Optional<NotifyPlatform> getPlatform(String platformId) {

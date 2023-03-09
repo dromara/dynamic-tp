@@ -1,4 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.dtp.starter.etcd.autoconfigure.EtcdAutoConfiguration
+  com.dtp.starter.etcd.autoconfigure.DtpEtcdAutoConfiguration
 org.springframework.boot.env.EnvironmentPostProcessor=\
   com.dtp.starter.etcd.autoconfigure.EtcdConfigEnvironmentProcessor

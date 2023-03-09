@@ -1,20 +1,12 @@
 package com.dtp.core.spring;
 
-import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.properties.DtpProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.RunnableFuture;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.Objects;
+import java.util.concurrent.*;
 
 /**
  * DtpLifecycleSupport which mainly implements Spring bean's lifecycle methods,
@@ -72,8 +64,7 @@ public abstract class DtpLifecycleSupport extends ThreadPoolExecutor implements 
 
     @Override
     public void afterPropertiesSet() {
-        DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-        initialize(dtpProperties);
+        initialize();
     }
 
     /**
@@ -89,9 +80,8 @@ public abstract class DtpLifecycleSupport extends ThreadPoolExecutor implements 
     /**
      * Initialize, do sth.
      *
-     * @param dtpProperties dtpProperties
      */
-    protected abstract void initialize(DtpProperties dtpProperties);
+    protected abstract void initialize();
 
     /**
      * Perform a shutdown on the underlying ExecutorService.

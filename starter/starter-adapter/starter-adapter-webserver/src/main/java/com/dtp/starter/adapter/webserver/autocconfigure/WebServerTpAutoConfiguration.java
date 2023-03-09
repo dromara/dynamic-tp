@@ -8,6 +8,7 @@ import com.dtp.starter.adapter.webserver.autocconfigure.condition.ConditionalOnT
 import com.dtp.starter.adapter.webserver.autocconfigure.condition.ConditionalOnUndertowWebServer;
 import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnWebApplication
+@ConditionalOnBean({BaseBeanAutoConfiguration.class})
 @AutoConfigureAfter({BaseBeanAutoConfiguration.class})
 public class WebServerTpAutoConfiguration {
 

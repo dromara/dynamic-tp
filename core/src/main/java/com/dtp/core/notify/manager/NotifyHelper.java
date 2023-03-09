@@ -25,7 +25,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.dtp.common.em.NotifyItemEnum.*;
+import static com.dtp.common.em.NotifyItemEnum.CAPACITY;
+import static com.dtp.common.em.NotifyItemEnum.LIVENESS;
+import static com.dtp.common.em.NotifyItemEnum.QUEUE_TIMEOUT;
+import static com.dtp.common.em.NotifyItemEnum.REJECT;
+import static com.dtp.common.em.NotifyItemEnum.RUN_TIMEOUT;
 
 /**
  * NotifyHelper related
@@ -141,7 +145,9 @@ public class NotifyHelper {
         return StreamUtil.toMap(dtpProperties.getPlatforms(), NotifyPlatform::getPlatformId);
     }
 
-    public static void initNotify(DtpExecutor executor, List<NotifyPlatform> platforms) {
+    public static void initNotify(DtpExecutor executor) {
+
+        List<NotifyPlatform> platforms = ApplicationContextHolder.getBean(DtpProperties.class).getPlatforms();
         if (CollectionUtils.isEmpty(platforms)) {
             executor.setNotifyItems(Lists.newArrayList());
             executor.setPlatformIds(Lists.newArrayList());

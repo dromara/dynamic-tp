@@ -206,7 +206,7 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ![](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/530709dc29604630b6d1537d7c160ea5~tplv-k3u1fbpfcp-watermark.image)
 
-[使用登记](https://dynamictp.cn/guide/other/users.html)
+为了项目更好的发展，请在此进行登记，[使用登记](https://dynamictp.cn/guide/other/users.html)
 
 ---
 

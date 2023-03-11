@@ -2,6 +2,7 @@ package com.dtp.core.notify;
 
 import com.dtp.common.entity.DtpMainProp;
 import com.dtp.common.em.NotifyItemEnum;
+import com.dtp.common.entity.NotifyPlatform;
 
 import java.util.List;
 
@@ -23,15 +24,17 @@ public interface DtpNotifier {
     /**
      * Send change notify message.
      *
-     * @param oldProp old properties
-     * @param diffs the changed keys
+     * @param notifyPlatform notify platform
+     * @param oldProp        old properties
+     * @param diffs          the changed keys
      */
-    void sendChangeMsg(DtpMainProp oldProp, List<String> diffs);
+    void sendChangeMsg(NotifyPlatform notifyPlatform, DtpMainProp oldProp, List<String> diffs);
 
     /**
      * Send alarm message.
      *
+     * @param notifyPlatform notify platform
      * @param notifyItemEnum notify item enum
      */
-    void sendAlarmMsg(NotifyItemEnum notifyItemEnum);
+    void sendAlarmMsg(NotifyPlatform notifyPlatform, NotifyItemEnum notifyItemEnum);
 }

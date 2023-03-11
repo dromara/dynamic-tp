@@ -58,7 +58,7 @@ public class AlarmBaseFilter implements NotifyFilter {
     private boolean satisfyBaseCondition(NotifyItem notifyItem, ExecutorWrapper executor) {
         return executor.isNotifyEnabled()
                 && notifyItem.isEnabled()
-                && CollectionUtils.isNotEmpty(notifyItem.getPlatforms());
+                && CollectionUtils.isNotEmpty(notifyItem.getPlatformIds());
     }
 
     @Override

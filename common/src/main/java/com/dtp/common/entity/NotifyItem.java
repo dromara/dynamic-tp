@@ -25,7 +25,13 @@ public class NotifyItem {
     /**
      * Notify platform names, see {@link NotifyPlatformEnum}
      */
+    @Deprecated
     private List<String> platforms;
+
+    /**
+     * Notify platform id
+     */
+    private List<String> platformIds;
 
     /**
      * If enabled notify.

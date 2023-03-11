@@ -14,7 +14,6 @@ import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.context.DtpNotifyCtxHolder;
 import com.dtp.core.notify.alarm.AlarmCounter;
 import com.dtp.core.notify.base.Notifier;
-import com.dtp.core.notify.manager.NotifyHelper;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.thread.DtpExecutor;
 import com.google.common.base.Joiner;
@@ -52,32 +51,31 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
     protected Notifier notifier;
 
-    protected AbstractDtpNotifier() { }
+    protected AbstractDtpNotifier() {
+    }
 
     protected AbstractDtpNotifier(Notifier notifier) {
         this.notifier = notifier;
     }
 
     @Override
-    public void sendChangeMsg(DtpMainProp oldProp, List<String> diffs) {
-        NotifyHelper.getPlatform(platform()).ifPresent(platform -> {
-            String content = buildNoticeContent(platform, oldProp, diffs);
-            if (StringUtils.isBlank(content)) {
-                return;
-            }
-            notifier.send(platform, content);
-        });
+    public void sendChangeMsg(NotifyPlatform notifyPlatform, DtpMainProp oldProp, List<String> diffs) {
+        String content = buildNoticeContent(notifyPlatform, oldProp, diffs);
+        if (StringUtils.isBlank(content)) {
+            log.debug("Notice content is empty, ignore send notice message.");
+            return;
+        }
+        notifier.send(notifyPlatform, content);
     }
 
     @Override
-    public void sendAlarmMsg(NotifyItemEnum notifyItemEnum) {
-        NotifyHelper.getPlatform(platform()).ifPresent(platform -> {
-            String content = buildAlarmContent(platform, notifyItemEnum);
-            if (StringUtils.isBlank(content)) {
-                return;
-            }
-            notifier.send(platform, content);
-        });
+    public void sendAlarmMsg(NotifyPlatform notifyPlatform, NotifyItemEnum notifyItemEnum) {
+        String content = buildAlarmContent(notifyPlatform, notifyItemEnum);
+        if (StringUtils.isBlank(content)) {
+            log.debug("Alarm content is empty, ignore send alarm message.");
+            return;
+        }
+        notifier.send(notifyPlatform, content);
     }
 
     /**

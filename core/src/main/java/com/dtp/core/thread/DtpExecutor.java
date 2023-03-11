@@ -19,7 +19,13 @@ import org.slf4j.MDC;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
 import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
@@ -54,6 +60,11 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
      * Notify items, see {@link NotifyItemEnum}.
      */
     private List<NotifyItem> notifyItems;
+
+    /**
+     * Notify platform id
+     */
+    private List<String> platformIds;
 
     /**
      * Task wrappers, do sth enhanced.
@@ -191,7 +202,6 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     @Override
     protected void initialize() {
         NotifyHelper.initNotify(this);
-
         if (preStartAllCoreThreads) {
             prestartAllCoreThreads();
         }
@@ -237,6 +247,14 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
 
     public void setNotifyItems(List<NotifyItem> notifyItems) {
         this.notifyItems = notifyItems;
+    }
+
+    public List<String> getPlatformIds() {
+        return platformIds;
+    }
+
+    public void setPlatformIds(List<String> platformIds) {
+        this.platformIds = platformIds;
     }
 
     public String getQueueName() {

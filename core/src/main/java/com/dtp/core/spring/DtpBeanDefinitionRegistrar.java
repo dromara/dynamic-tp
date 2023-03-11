@@ -74,6 +74,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
 
         val notifyItems = mergeAllNotifyItems(tpp.getNotifyItems());
         properties.put(NOTIFY_ITEMS, notifyItems);
+        properties.put(PLATFORM_IDS, tpp.getPlatformIds());
         properties.put(NOTIFY_ENABLED, tpp.isNotifyEnabled());
 
         val taskWrappers = TaskWrappers.getInstance().getByNames(tpp.getTaskWrapperNames());

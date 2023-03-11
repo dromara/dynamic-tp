@@ -15,13 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.dtp.common.em.NotifyItemEnum.CAPACITY;
@@ -29,8 +30,6 @@ import static com.dtp.common.em.NotifyItemEnum.LIVENESS;
 import static com.dtp.common.em.NotifyItemEnum.QUEUE_TIMEOUT;
 import static com.dtp.common.em.NotifyItemEnum.REJECT;
 import static com.dtp.common.em.NotifyItemEnum.RUN_TIMEOUT;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 /**
  * NotifyHelper related
@@ -70,7 +69,8 @@ public class NotifyHelper {
         ALL_ALARM_KEYS.addAll(COMMON_ALARM_KEYS);
     }
 
-    private NotifyHelper() { }
+    private NotifyHelper() {
+    }
 
     public static Set<String> getAllAlarmKeys() {
         return ALL_ALARM_KEYS;
@@ -89,30 +89,60 @@ public class NotifyHelper {
     }
 
     @SuppressWarnings("unchecked")
-    public static void fillPlatforms(List<NotifyPlatform> platforms, List<NotifyItem> notifyItems) {
+    public static void fillPlatforms(List<String> platformIds,
+                                     List<NotifyPlatform> platforms,
+                                     List<NotifyItem> notifyItems) {
         if (CollectionUtils.isEmpty(platforms) || CollectionUtils.isEmpty(notifyItems)) {
             log.warn("DynamicTp notify, no notify platforms or items configured.");
             return;
         }
+        List<String> globalPlatformIds = StreamUtil.fetchProperty(platforms, NotifyPlatform::getPlatformId);
 
-        List<String> platformNames = platforms.stream().map(NotifyPlatform::getPlatform).collect(toList());
+        Map<String, NotifyPlatform> platformNames = StreamUtil.toMap(platforms, NotifyPlatform::getPlatform);
+        // notifyItem > executor > global
         notifyItems.forEach(n -> {
-            if (CollectionUtils.isEmpty(n.getPlatforms())) {
-                n.setPlatforms(platformNames);
+            if (CollectionUtils.isNotEmpty(n.getPlatformIds())) {
+                // intersection of notifyItem and global
+                n.setPlatformIds((List<String>) CollectionUtils.intersection(globalPlatformIds, n.getPlatformIds()));
+            } else if (CollectionUtils.isNotEmpty(platformIds)) {
+                n.setPlatformIds(platformIds);
             } else {
-                n.setPlatforms((List<String>) CollectionUtils.intersection(platformNames, n.getPlatforms()));
+                // need to compatible with the previous situation that does not exist platformIds
+                if (CollectionUtils.isNotEmpty(n.getPlatforms())) {
+                    setPlatformIds(platformNames, n);
+                } else {
+                    n.setPlatformIds(globalPlatformIds);
+                }
             }
         });
     }
 
-    public static Optional<NotifyPlatform> getPlatform(String platform) {
+    private static void setPlatformIds(Map<String, NotifyPlatform> platformNames, NotifyItem notifyItem) {
+        List<String> platformIds = new ArrayList<>();
+        for (String platform : notifyItem.getPlatforms()) {
+            NotifyPlatform notifyPlatform = platformNames.get(platform);
+            if (notifyPlatform != null) {
+                platformIds.add(notifyPlatform.getPlatformId());
+            }
+        }
+        notifyItem.setPlatformIds(platformIds);
+    }
+
+    public static Optional<NotifyPlatform> getPlatform(String platformId) {
         DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
         if (CollectionUtils.isEmpty(dtpProperties.getPlatforms())) {
             return Optional.empty();
         }
-        val map = dtpProperties.getPlatforms().stream()
-                .collect(toMap(x -> x.getPlatform().toLowerCase(), Function.identity(), (v1, v2) -> v2));
-        return Optional.ofNullable(map.get(platform.toLowerCase()));
+        val map = StreamUtil.toMap(dtpProperties.getPlatforms(), NotifyPlatform::getPlatformId);
+        return Optional.ofNullable(map.get(platformId));
+    }
+
+    public static Map<String, NotifyPlatform> getAllPlatforms() {
+        DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+        if (CollectionUtils.isEmpty(dtpProperties.getPlatforms())) {
+            return new HashMap<>();
+        }
+        return StreamUtil.toMap(dtpProperties.getPlatforms(), NotifyPlatform::getPlatformId);
     }
 
     public static void initNotify(DtpExecutor executor) {
@@ -120,6 +150,7 @@ public class NotifyHelper {
         List<NotifyPlatform> platforms = ApplicationContextHolder.getBean(DtpProperties.class).getPlatforms();
         if (CollectionUtils.isEmpty(platforms)) {
             executor.setNotifyItems(Lists.newArrayList());
+            executor.setPlatformIds(Lists.newArrayList());
             log.warn("DynamicTp notify, no notify platforms configured, name {}", executor.getThreadPoolName());
             return;
         }
@@ -127,15 +158,16 @@ public class NotifyHelper {
             log.warn("DynamicTp notify, no notify items configured, name {}", executor.getThreadPoolName());
             return;
         }
-        fillPlatforms(platforms, executor.getNotifyItems());
+        fillPlatforms(executor.getPlatformIds(), platforms, executor.getNotifyItems());
         AlarmManager.initAlarm(executor.getThreadPoolName(), executor.getNotifyItems());
     }
 
     public static void refreshNotify(String poolName,
+                                     List<String> platformIds,
                                      List<NotifyPlatform> platforms,
                                      List<NotifyItem> oldItems,
                                      List<NotifyItem> newItems) {
-        fillPlatforms(platforms, newItems);
+        fillPlatforms(platformIds, platforms, newItems);
         Map<String, NotifyItem> oldNotifyItemMap = StreamUtil.toMap(oldItems, NotifyItem::getType);
         newItems.forEach(x -> {
             NotifyItem oldNotifyItem = oldNotifyItemMap.get(x.getType());

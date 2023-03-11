@@ -136,6 +136,11 @@ public class ThreadPoolProperties {
     private Set<String> taskWrapperNames;
 
     /**
+     * Notify platform id
+     */
+    private List<String> platformIds;
+
+    /**
      * 检查核心参数
      *
      * @return boolean return true means params is inValid

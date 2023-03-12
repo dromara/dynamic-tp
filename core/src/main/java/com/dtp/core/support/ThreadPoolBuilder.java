@@ -56,7 +56,7 @@ public class ThreadPoolBuilder {
      * this is the maximum time that excess idle threads
      * will wait for new tasks before terminating
      */
-    private long keepAliveTime = 30;
+    private long keepAliveTime = 60;
 
     /**
      * Timeout unit.

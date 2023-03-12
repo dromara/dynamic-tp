@@ -179,7 +179,8 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         doRefresh(executorWrapper, props);
         TpMainFields newFields = ExecutorConverter.convert(executorWrapper);
         if (oldFields.equals(newFields)) {
-            log.warn("DynamicTp refresh, main properties of [{}] have not changed.", executorWrapper.getThreadPoolName());
+            log.debug("DynamicTp refresh, main properties of [{}] have not changed.",
+                    executorWrapper.getThreadPoolName());
             return;
         }
 
@@ -324,7 +325,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         val registeredExecutors = Sets.newHashSet(DTP_REGISTRY.keySet());
         registeredExecutors.addAll(COMMON_REGISTRY.keySet());
         val localExecutors = CollectionUtils.subtract(registeredExecutors, remoteExecutors);
-        log.info("DtpRegistry initialization is complete, remote executors: {}, local executors: {}",
+        log.info("DtpRegistry has been initialized, remote executors: {}, local executors: {}",
                 remoteExecutors, localExecutors);
     }
 }

@@ -37,7 +37,7 @@ public class TpMainFields {
 
     private boolean allowCoreThreadTimeOut;
 
-    public static List<Field> getMainProps() {
+    public static List<Field> getMainFields() {
         return FIELD_NAMES;
     }
 }

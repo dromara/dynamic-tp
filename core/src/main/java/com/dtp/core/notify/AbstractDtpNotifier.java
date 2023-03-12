@@ -101,8 +101,8 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
     protected String buildAlarmContent(NotifyPlatform platform, NotifyItemEnum notifyItemEnum) {
         AlarmCtx context = (AlarmCtx) DtpNotifyCtxHolder.get();
-        String threadPoolName = context.getExecutorWrapper().getThreadPoolName();
         ExecutorWrapper executorWrapper = context.getExecutorWrapper();
+        String threadPoolName = executorWrapper.getThreadPoolName();
         val executor = (ThreadPoolExecutor) context.getExecutorWrapper().getExecutor();
         NotifyItem notifyItem = context.getNotifyItem();
         AlarmInfo alarmInfo = context.getAlarmInfo();
@@ -134,7 +134,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 alarmCounter.getLeft(),
                 alarmCounter.getMiddle(),
                 alarmCounter.getRight(),
-                alarmInfo.getLastAlarmTime() == null ? UNKNOWN : alarmInfo.getLastAlarmTime(),
+                Optional.ofNullable(alarmInfo.getLastAlarmTime()).orElse(UNKNOWN),
                 DateUtil.now(),
                 receivesStr,
                 Optional.ofNullable(MDC.get(TRACE_ID)).orElse(UNKNOWN),
@@ -155,19 +155,13 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 CommonUtil.getInstance().getIp() + ":" + CommonUtil.getInstance().getPort(),
                 CommonUtil.getInstance().getEnv(),
                 populatePoolName(executorWrapper),
-                oldFields.getCorePoolSize(),
-                executor.getCorePoolSize(),
-                oldFields.getMaxPoolSize(),
-                executor.getMaximumPoolSize(),
-                oldFields.isAllowCoreThreadTimeOut(),
-                executor.allowsCoreThreadTimeOut(),
-                oldFields.getKeepAliveTime(),
-                executor.getKeepAliveTime(TimeUnit.SECONDS),
+                oldFields.getCorePoolSize(), executor.getCorePoolSize(),
+                oldFields.getMaxPoolSize(), executor.getMaximumPoolSize(),
+                oldFields.isAllowCoreThreadTimeOut(), executor.allowsCoreThreadTimeOut(),
+                oldFields.getKeepAliveTime(), executor.getKeepAliveTime(TimeUnit.SECONDS),
                 executor.getQueue().getClass().getSimpleName(),
-                oldFields.getQueueCapacity(),
-                getQueueCapacity(executor),
-                oldFields.getRejectType(),
-                getRejectHandlerName(executor),
+                oldFields.getQueueCapacity(), getQueueCapacity(executor),
+                oldFields.getRejectType(), getRejectHandlerName(executor),
                 receivesStr,
                 DateTime.now()
         );
@@ -226,7 +220,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         for (String field : diffs) {
             content = content.replace(field, pair.getLeft());
         }
-        for (Field field : TpMainFields.getMainProps()) {
+        for (Field field : TpMainFields.getMainFields()) {
             content = content.replace(field.getName(), pair.getRight());
         }
         return content;

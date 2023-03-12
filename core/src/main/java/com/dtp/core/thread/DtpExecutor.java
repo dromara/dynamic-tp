@@ -62,7 +62,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     private List<NotifyItem> notifyItems;
 
     /**
-     * Notify platform id
+     * Notify platform ids.
      */
     private List<String> platformIds;
 

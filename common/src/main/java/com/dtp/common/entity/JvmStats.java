@@ -9,8 +9,8 @@ import lombok.EqualsAndHashCode;
  * @author yanhom
  * @since 1.0.0
  **/
-@EqualsAndHashCode(callSuper = true)
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class JvmStats extends Metrics {
 
     /**

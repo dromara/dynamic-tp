@@ -1,7 +1,7 @@
 package com.dtp.core.support;
 
-import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;
+import com.dtp.common.entity.NotifyItem;
 import com.dtp.core.thread.DtpExecutor;
 import lombok.Data;
 
@@ -19,14 +19,19 @@ public class ExecutorWrapper {
 
     private String threadPoolName;
 
-    private Executor executor;
-
     private String threadPoolAliasName;
+
+    private Executor executor;
 
     /**
      * Notify items, see {@link NotifyItemEnum}.
      */
     private List<NotifyItem> notifyItems;
+
+    /**
+     * Notify platform ids.
+     */
+    private List<String> platformIds;
 
     private boolean notifyEnabled = true;
 

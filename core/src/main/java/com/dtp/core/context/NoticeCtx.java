@@ -1,6 +1,6 @@
 package com.dtp.core.context;
 
-import com.dtp.common.entity.DtpMainProp;
+import com.dtp.common.entity.TpMainFields;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.entity.NotifyItem;
 import lombok.Data;
@@ -18,13 +18,13 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class NoticeCtx extends BaseNotifyCtx {
 
-    private DtpMainProp prop;
+    private TpMainFields oldFields;
 
     private List<String> diffs;
 
-    public NoticeCtx(ExecutorWrapper wrapper, NotifyItem notifyItem, DtpMainProp prop, List<String> diffs) {
+    public NoticeCtx(ExecutorWrapper wrapper, NotifyItem notifyItem, TpMainFields oldFields, List<String> diffs) {
         super(wrapper, notifyItem);
-        this.prop = prop;
+        this.oldFields = oldFields;
         this.diffs = diffs;
     }
 }

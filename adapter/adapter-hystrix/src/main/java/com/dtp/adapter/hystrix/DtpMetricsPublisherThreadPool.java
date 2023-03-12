@@ -1,7 +1,7 @@
 package com.dtp.adapter.hystrix;
 
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.properties.SimpleTpProperties;
+import com.dtp.common.entity.TpExecutorProps;
 import com.dtp.common.util.ReflectionUtil;
 import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.HystrixThreadPoolMetrics;
@@ -58,27 +58,27 @@ public class DtpMetricsPublisherThreadPool implements HystrixMetricsPublisherThr
         hystrixTpHandler.register(threadPoolKey.name(), metrics.getThreadPool());
     }
 
-    public void refreshProperties(SimpleTpProperties properties) {
-        if (Objects.isNull(properties)) {
+    public void refreshProperties(TpExecutorProps props) {
+        if (Objects.isNull(props)) {
             return;
         }
 
         try {
-            if (!Objects.equals(threadPoolProperties.coreSize().get(), properties.getCorePoolSize())) {
+            if (!Objects.equals(threadPoolProperties.coreSize().get(), props.getCorePoolSize())) {
                 val corePoolSize = getProperty(threadPoolKey, "coreSize",
-                        properties.getCorePoolSize(), DEFAULT_CORE_SIZE);
+                        props.getCorePoolSize(), DEFAULT_CORE_SIZE);
                 ReflectionUtil.setFieldValue(HystrixThreadPoolProperties.class,
                         "corePoolSize", threadPoolProperties, corePoolSize);
             }
 
-            if (!Objects.equals(threadPoolProperties.maximumSize().get(), properties.getMaximumPoolSize())) {
+            if (!Objects.equals(threadPoolProperties.maximumSize().get(), props.getMaximumPoolSize())) {
                 val maxPoolSize = getProperty(threadPoolKey, "maximumSize",
-                        properties.getMaximumPoolSize(), DEFAULT_MAXIMUM_SIZE);
+                        props.getMaximumPoolSize(), DEFAULT_MAXIMUM_SIZE);
                 ReflectionUtil.setFieldValue(HystrixThreadPoolProperties.class,
                         "maximumPoolSize", threadPoolProperties, maxPoolSize);
             }
 
-            val keepAliveTimeMinutes = (int) TimeUnit.SECONDS.toMinutes(properties.getKeepAliveTime());
+            val keepAliveTimeMinutes = (int) TimeUnit.SECONDS.toMinutes(props.getKeepAliveTime());
             if (!Objects.equals(threadPoolProperties.keepAliveTimeMinutes().get(), keepAliveTimeMinutes)) {
                 val keepAliveTimeProperty = getProperty(threadPoolKey,
                         "keepAliveTimeMinutes", keepAliveTimeMinutes, DEFAULT_KEEP_ALIVE_TIME_MINUTES);

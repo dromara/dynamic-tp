@@ -1,6 +1,6 @@
-package com.dtp.common.properties;
+package com.dtp.common.entity;
 
-import com.dtp.common.entity.NotifyItem;
+import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.em.NotifyItemEnum;
 import lombok.Data;
 
@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * SimpleTpProperties main properties.
+ * ThreadPool base properties, mainly used for adapter module.
  *
  * @author yanhom
  * @since 1.0.6
  **/
 @Data
-public class SimpleTpProperties {
+public class TpExecutorProps {
 
     /**
      * Name of ThreadPool.
@@ -29,12 +29,12 @@ public class SimpleTpProperties {
     /**
      * CoreSize of ThreadPool.
      */
-    private int corePoolSize;
+    private int corePoolSize = 1;
 
     /**
      * MaxSize of ThreadPool.
      */
-    private int maximumPoolSize;
+    private int maximumPoolSize = DynamicTpConst.AVAILABLE_PROCESSORS;
 
     /**
      * When the number of threads is greater than the core,

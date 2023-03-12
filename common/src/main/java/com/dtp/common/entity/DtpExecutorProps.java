@@ -1,34 +1,23 @@
-package com.dtp.common.properties;
+package com.dtp.common.entity;
 
-import com.dtp.common.constant.DynamicTpConst;
-import com.dtp.common.entity.NotifyItem;
-import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
- * ThreadPool main properties.
+ * Dynamic ThreadPool main properties.
  *
  * @author yanhom
  * @since 1.0.0
  **/
 @Data
-public class ThreadPoolProperties {
-
-    /**
-     * Name of Dynamic ThreadPool.
-     */
-    private String threadPoolName = "DynamicTp";
-
-    /**
-     * Simple Alias Name of Dynamic ThreadPool. Use for notify.
-     */
-    private String threadPoolAliasName;
+@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
+public class DtpExecutorProps extends TpExecutorProps {
 
     /**
      * Executor type, used in create phase.
@@ -36,14 +25,9 @@ public class ThreadPoolProperties {
     private String executorType;
 
     /**
-     * CoreSize of ThreadPool.
+     * Blocking queue type, see {@link QueueTypeEnum}
      */
-    private int corePoolSize = 1;
-
-    /**
-     * MaxSize of ThreadPool.
-     */
-    private int maximumPoolSize = DynamicTpConst.AVAILABLE_PROCESSORS;
+    private String queueType = QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE.getName();
 
     /**
      * BlockingQueue capacity.
@@ -51,36 +35,19 @@ public class ThreadPoolProperties {
     private int queueCapacity = 1024;
 
     /**
-     * Max free memory for MemorySafeLBQ, unit M
-     */
-    private int maxFreeMemory = 256;
-
-    /**
-     * Blocking queue type, see {@link QueueTypeEnum}
-     */
-    private String queueType = QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE.getName();
-
-    /**
      * If fair strategy, for SynchronousQueue
      */
     private boolean fair = false;
 
     /**
+     * Max free memory for MemorySafeLBQ, unit M
+     */
+    private int maxFreeMemory = 256;
+
+    /**
      * RejectedExecutionHandler type, see {@link RejectedTypeEnum}
      */
     private String rejectedHandlerType = RejectedTypeEnum.ABORT_POLICY.getName();
-
-    /**
-     * When the number of threads is greater than the core,
-     * this is the maximum time that excess idle threads
-     * will wait for new tasks before terminating.
-     */
-    private long keepAliveTime = 30;
-
-    /**
-     * Timeout unit.
-     */
-    private TimeUnit unit = TimeUnit.SECONDS;
 
     /**
      * If allow core thread timeout.
@@ -90,17 +57,7 @@ public class ThreadPoolProperties {
     /**
      * Thread name prefix.
      */
-    private String threadNamePrefix = "dynamic-tp";
-
-    /**
-     * Notify items, see {@link NotifyItemEnum}
-     */
-    private List<NotifyItem> notifyItems;
-
-    /**
-     * If enable notify.
-     */
-    private boolean notifyEnabled = true;
+    private String threadNamePrefix = "dtp";
 
     /**
      * Whether to wait for scheduled tasks to complete on shutdown,
@@ -134,11 +91,6 @@ public class ThreadPoolProperties {
      * Task wrapper names.
      */
     private Set<String> taskWrapperNames;
-
-    /**
-     * Notify platform id
-     */
-    private List<String> platformIds;
 
     /**
      * 检查核心参数

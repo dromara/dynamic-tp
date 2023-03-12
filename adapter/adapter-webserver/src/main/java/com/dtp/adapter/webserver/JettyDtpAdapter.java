@@ -1,8 +1,8 @@
 package com.dtp.adapter.webserver;
 
 import com.dtp.common.properties.DtpProperties;
-import com.dtp.common.properties.SimpleTpProperties;
-import com.dtp.common.entity.DtpMainProp;
+import com.dtp.common.entity.TpExecutorProps;
+import com.dtp.common.entity.TpMainFields;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.entity.ThreadPoolStats;
 import com.dtp.core.convert.ExecutorConverter;
@@ -60,8 +60,8 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        SimpleTpProperties properties = dtpProperties.getJettyTp();
-        if (Objects.isNull(properties) || containsInvalidParams(properties, log)) {
+        TpExecutorProps props = dtpProperties.getJettyTp();
+        if (Objects.isNull(props) || containsInvalidParams(props, log)) {
             return;
         }
         Executor executor = getExecutor();
@@ -72,36 +72,36 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter {
         ThreadPool.SizedThreadPool threadPool = (ThreadPool.SizedThreadPool) executor;
         int oldCoreSize = threadPool.getMinThreads();
         int oldMaxSize = threadPool.getMaxThreads();
-        DtpMainProp oldProp = ExecutorConverter.ofSimple(POOL_NAME, oldCoreSize, oldMaxSize, 0L);
-        doRefresh(threadPool, properties);
-        DtpMainProp newProp = ExecutorConverter.ofSimple(properties.getThreadPoolName(), threadPool.getMinThreads(),
+        TpMainFields oldFields = ExecutorConverter.ofSimple(POOL_NAME, oldCoreSize, oldMaxSize, 0L);
+        doRefresh(threadPool, props);
+        TpMainFields newFields = ExecutorConverter.ofSimple(props.getThreadPoolName(), threadPool.getMinThreads(),
                 threadPool.getMaxThreads(), 0L);
-        if (oldProp.equals(newProp)) {
+        if (oldFields.equals(newFields)) {
             log.warn("DynamicTp adapter refresh, main properties of [{}] have not changed.", POOL_NAME);
             return;
         }
         log.info("DynamicTp adapter [{}] refreshed end, corePoolSize: [{}], maxPoolSize: [{}]",
                 POOL_NAME,
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldCoreSize, newProp.getCorePoolSize()),
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaxSize, newProp.getMaxPoolSize()));
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldCoreSize, newFields.getCorePoolSize()),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaxSize, newFields.getMaxPoolSize()));
     }
 
-    private void doRefresh(ThreadPool.SizedThreadPool threadPool, SimpleTpProperties properties) {
-        if (properties.getMaximumPoolSize() < threadPool.getMaxThreads()) {
-            if (!Objects.equals(threadPool.getMinThreads(), properties.getCorePoolSize())) {
-                threadPool.setMinThreads(properties.getCorePoolSize());
+    private void doRefresh(ThreadPool.SizedThreadPool threadPool, TpExecutorProps props) {
+        if (props.getMaximumPoolSize() < threadPool.getMaxThreads()) {
+            if (!Objects.equals(threadPool.getMinThreads(), props.getCorePoolSize())) {
+                threadPool.setMinThreads(props.getCorePoolSize());
             }
-            if (!Objects.equals(threadPool.getMaxThreads(), properties.getMaximumPoolSize())) {
-                threadPool.setMaxThreads(properties.getMaximumPoolSize());
+            if (!Objects.equals(threadPool.getMaxThreads(), props.getMaximumPoolSize())) {
+                threadPool.setMaxThreads(props.getMaximumPoolSize());
             }
             return;
         }
 
-        if (!Objects.equals(threadPool.getMaxThreads(), properties.getMaximumPoolSize())) {
-            threadPool.setMaxThreads(properties.getMaximumPoolSize());
+        if (!Objects.equals(threadPool.getMaxThreads(), props.getMaximumPoolSize())) {
+            threadPool.setMaxThreads(props.getMaximumPoolSize());
         }
-        if (!Objects.equals(threadPool.getMinThreads(), properties.getCorePoolSize())) {
-            threadPool.setMinThreads(properties.getCorePoolSize());
+        if (!Objects.equals(threadPool.getMinThreads(), props.getCorePoolSize())) {
+            threadPool.setMinThreads(props.getCorePoolSize());
         }
     }
 }

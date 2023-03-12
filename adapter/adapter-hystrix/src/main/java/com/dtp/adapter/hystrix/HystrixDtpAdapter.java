@@ -3,8 +3,8 @@ package com.dtp.adapter.hystrix;
 import com.dtp.adapter.common.AbstractDtpAdapter;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.entity.NotifyPlatform;
+import com.dtp.common.entity.TpExecutorProps;
 import com.dtp.common.properties.DtpProperties;
-import com.dtp.common.properties.SimpleTpProperties;
 import com.dtp.common.util.StreamUtil;
 import com.dtp.core.support.ExecutorWrapper;
 import com.google.common.collect.Maps;
@@ -44,13 +44,13 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
     public void refresh(String name,
                         ExecutorWrapper executorWrapper,
                         List<NotifyPlatform> platforms,
-                        SimpleTpProperties properties) {
-        super.refresh(name, executorWrapper, platforms, properties);
+                        TpExecutorProps props) {
+        super.refresh(name, executorWrapper, platforms, props);
         val metricsPublisher = METRICS_PUBLISHERS.get(executorWrapper.getThreadPoolName());
         if (Objects.isNull(metricsPublisher)) {
             return;
         }
-        metricsPublisher.refreshProperties(properties);
+        metricsPublisher.refreshProperties(props);
     }
 
     @Override
@@ -63,8 +63,7 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
         executors.put(poolName, executorWrapper);
 
         DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-        val properties = dtpProperties.getHystrixTp();
-        val tmpMap = StreamUtil.toMap(properties, SimpleTpProperties::getThreadPoolName);
+        val tmpMap = StreamUtil.toMap(dtpProperties.getHystrixTp(), TpExecutorProps::getThreadPoolName);
         log.info("DynamicTp adapter, hystrix init end, executor {}", executorWrapper);
         refresh(NAME, executorWrapper, dtpProperties.getPlatforms(), tmpMap.get(poolName));
     }

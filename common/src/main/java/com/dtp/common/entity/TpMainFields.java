@@ -7,18 +7,18 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * DtpMainProp related
+ * TpMainFields related
  *
  * @author yanhom
  * @since 1.0.0
  **/
 @Data
-public class DtpMainProp {
+public class TpMainFields {
 
     private static final List<Field> FIELD_NAMES;
 
     static {
-        FIELD_NAMES = Arrays.asList(DtpMainProp.class.getDeclaredFields());
+        FIELD_NAMES = Arrays.asList(TpMainFields.class.getDeclaredFields());
     }
 
     private String threadPoolName;

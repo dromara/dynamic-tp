@@ -1,7 +1,7 @@
 package com.dtp.adapter.common;
 
 import com.dtp.common.properties.DtpProperties;
-import com.dtp.common.properties.SimpleTpProperties;
+import com.dtp.common.entity.TpExecutorProps;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.MetricsAware;
 import org.slf4j.Logger;
@@ -45,16 +45,16 @@ public interface DtpAdapter extends MetricsAware {
     /**
      * Check update params.
      *
-     * @param properties the targeted properties
+     * @param props the targeted properties
      * @param log logger
      * @return true or false
      */
-    default boolean containsInvalidParams(SimpleTpProperties properties, Logger log) {
-        if (properties.getCorePoolSize() < 0
-                || properties.getMaximumPoolSize() <= 0
-                || properties.getMaximumPoolSize() < properties.getCorePoolSize()
-                || properties.getKeepAliveTime() < 0) {
-            log.error("DynamicTp adapter refresh, invalid parameters exist, properties: {}", properties);
+    default boolean containsInvalidParams(TpExecutorProps props, Logger log) {
+        if (props.getCorePoolSize() < 0
+                || props.getMaximumPoolSize() <= 0
+                || props.getMaximumPoolSize() < props.getCorePoolSize()
+                || props.getKeepAliveTime() < 0) {
+            log.error("DynamicTp adapter refresh, invalid parameters exist, properties: {}", props);
             return true;
         }
         return false;

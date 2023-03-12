@@ -12,7 +12,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 @PropertySource(value = "classpath:/dynamic-tp-nacos-demo-dtp-dev.yml", factory = YamlPropertySourceFactory.class)
@@ -28,42 +27,28 @@ public class ScheduledDtpExecutorTest {
     public void schedule() {
         ScheduledDtpExecutor dtpExecutor12 = (ScheduledDtpExecutor) DtpRegistry.getDtpExecutor("dtpExecutor12");
         System.out.println(dtpExecutor12.getClass());
-//        dtpExecutor12.schedule(() -> {
-//            System.out.println(Thread.currentThread().getName() + "进来了," +
-//                    "当前时间是 " + LocalDateTime.now());
-//        }, 5, TimeUnit.SECONDS);
-
         dtpExecutor12.scheduleAtFixedRate(() -> {
             System.out.println(Thread.currentThread().getName() + "进来了," +
                     "当前时间是 " + LocalDateTime.now());
         }, 10, 5, TimeUnit.SECONDS);
-
-//        dtpExecutor12.scheduleWithFixedDelay(() -> {
-//            System.out.println(Thread.currentThread().getName() + "进来了," +
-//                    "当前时间是 " + LocalDateTime.now());
-//        }, 10, 5, TimeUnit.SECONDS);
-
-//        dtpExecutor12.execute(() -> {
-//            System.out.println(Thread.currentThread().getName() + "进来了," +
-//                    "当前时间是 " + LocalDateTime.now());
-//        });
+        dtpExecutor12.shutdownNow();
     }
 
 
     @Test
-    public void testScheduleJre8Bug() throws InterruptedException {
+    public void testScheduleJre8Bug() {
         ScheduledDtpExecutor dtpExecutor13 = (ScheduledDtpExecutor) DtpRegistry.getDtpExecutor("dtpExecutor13");
         dtpExecutor13.scheduleAtFixedRate(() -> { }, 10, 5, TimeUnit.SECONDS);
-        new CountDownLatch(1).await();
+        dtpExecutor13.shutdownNow();
     }
 
     @Test
-    public void testSubNotify() throws InterruptedException {
+    public void testSubNotify() {
         ScheduledDtpExecutor dtpExecutor14 = (ScheduledDtpExecutor) DtpRegistry.getDtpExecutor("dtpExecutor14");
         dtpExecutor14.scheduleAtFixedRate(() -> {
             System.out.println("进来了");
         }, 10, 5, TimeUnit.SECONDS);
-        new CountDownLatch(1).await();
+        dtpExecutor14.shutdownNow();
     }
 
 }

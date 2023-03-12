@@ -1,9 +1,9 @@
 package com.dtp.adapter.webserver;
 
-import com.dtp.common.entity.DtpMainProp;
+import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.entity.ThreadPoolStats;
 import com.dtp.common.properties.DtpProperties;
-import com.dtp.common.properties.SimpleTpProperties;
+import com.dtp.common.entity.TpExecutorProps;
 import com.dtp.common.util.ReflectionUtil;
 import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.support.ExecutorWrapper;
@@ -71,8 +71,8 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        SimpleTpProperties properties = dtpProperties.getUndertowTp();
-        if (Objects.isNull(properties) || containsInvalidParams(properties, log)) {
+        TpExecutorProps props = dtpProperties.getUndertowTp();
+        if (Objects.isNull(props) || containsInvalidParams(props, log)) {
             return;
         }
         Executor executor = getExecutor();
@@ -85,16 +85,16 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
             int oldCorePoolSize = xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS);
             int oldMaxPoolSize = xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS);
             int oldKeepAliveTime = xnioWorker.getOption(Options.WORKER_TASK_KEEPALIVE);
-            DtpMainProp oldProp = ExecutorConverter.ofSimple(properties.getThreadPoolName(), oldCorePoolSize,
+            TpMainFields oldFields = ExecutorConverter.ofSimple(props.getThreadPoolName(), oldCorePoolSize,
                     oldMaxPoolSize, oldKeepAliveTime);
-            doRefresh(xnioWorker, properties);
+            doRefresh(xnioWorker, props);
 
             int newCorePoolSize = xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS);
             int newMaxPoolSize = xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS);
             int newKeepAliveTime = xnioWorker.getOption(Options.WORKER_TASK_KEEPALIVE);
-            DtpMainProp newProp = ExecutorConverter.ofSimple(properties.getThreadPoolName(), newCorePoolSize,
+            TpMainFields newFields = ExecutorConverter.ofSimple(props.getThreadPoolName(), newCorePoolSize,
                     newMaxPoolSize, newKeepAliveTime);
-            if (oldProp.equals(newProp)) {
+            if (oldFields.equals(newFields)) {
                 log.warn("DynamicTp adapter refresh, main properties of [{}] have not changed.", POOL_NAME);
                 return;
             }
@@ -109,29 +109,29 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
         }
     }
 
-    private void doRefresh(XnioWorker xnioWorker, SimpleTpProperties properties) {
+    private void doRefresh(XnioWorker xnioWorker, TpExecutorProps props) {
 
         try {
-            int keepAlive = (int) properties.getKeepAliveTime() * 1000;
+            int keepAlive = (int) props.getKeepAliveTime() * 1000;
             if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_KEEPALIVE), keepAlive)) {
                 xnioWorker.setOption(Options.WORKER_TASK_KEEPALIVE, keepAlive);
             }
 
-            if (properties.getMaximumPoolSize() < xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS)) {
-                if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS), properties.getCorePoolSize())) {
-                    xnioWorker.setOption(Options.WORKER_TASK_CORE_THREADS, properties.getCorePoolSize());
+            if (props.getMaximumPoolSize() < xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS)) {
+                if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS), props.getCorePoolSize())) {
+                    xnioWorker.setOption(Options.WORKER_TASK_CORE_THREADS, props.getCorePoolSize());
                 }
-                if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS), properties.getMaximumPoolSize())) {
-                    xnioWorker.setOption(Options.WORKER_TASK_MAX_THREADS, properties.getMaximumPoolSize());
+                if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS), props.getMaximumPoolSize())) {
+                    xnioWorker.setOption(Options.WORKER_TASK_MAX_THREADS, props.getMaximumPoolSize());
                 }
                 return;
             }
 
-            if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS), properties.getMaximumPoolSize())) {
-                xnioWorker.setOption(Options.WORKER_TASK_MAX_THREADS, properties.getMaximumPoolSize());
+            if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS), props.getMaximumPoolSize())) {
+                xnioWorker.setOption(Options.WORKER_TASK_MAX_THREADS, props.getMaximumPoolSize());
             }
-            if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS), properties.getCorePoolSize())) {
-                xnioWorker.setOption(Options.WORKER_TASK_CORE_THREADS, properties.getCorePoolSize());
+            if (!Objects.equals(xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS), props.getCorePoolSize())) {
+                xnioWorker.setOption(Options.WORKER_TASK_CORE_THREADS, props.getCorePoolSize());
             }
         } catch (IOException e) {
             log.error("Update undertow web server threadPool failed.", e);

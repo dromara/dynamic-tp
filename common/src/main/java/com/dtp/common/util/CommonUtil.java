@@ -1,7 +1,7 @@
 package com.dtp.common.util;
 
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.entity.Instance;
+import com.dtp.common.entity.ServiceInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
@@ -22,7 +22,7 @@ public final class CommonUtil {
 
     private CommonUtil() { }
 
-    private static final Instance INSTANCE;
+    private static final ServiceInstance SERVICE_INSTANCE;
 
     static {
         Environment environment = ApplicationContextHolder.getEnvironment();
@@ -44,12 +44,12 @@ public final class CommonUtil {
         if (profiles.length < 1) {
             profiles = environment.getDefaultProfiles();
         }
-        INSTANCE = new Instance(address, port, appName, profiles[0]);
+        SERVICE_INSTANCE = new ServiceInstance(address, port, appName, profiles[0]);
 
     }
 
-    public static Instance getInstance() {
-        return INSTANCE;
+    public static ServiceInstance getInstance() {
+        return SERVICE_INSTANCE;
     }
 
     private static InetAddress getLocalHostExactAddress() throws SocketException, UnknownHostException {

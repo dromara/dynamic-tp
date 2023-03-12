@@ -1,8 +1,8 @@
 package com.dtp.adapter.webserver;
 
 import com.dtp.common.properties.DtpProperties;
-import com.dtp.common.properties.SimpleTpProperties;
-import com.dtp.common.entity.DtpMainProp;
+import com.dtp.common.entity.TpExecutorProps;
+import com.dtp.common.entity.TpMainFields;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.entity.ThreadPoolStats;
 import com.dtp.core.convert.ExecutorConverter;
@@ -60,8 +60,8 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        SimpleTpProperties properties = dtpProperties.getTomcatTp();
-        if (Objects.isNull(properties) || containsInvalidParams(properties, log)) {
+        TpExecutorProps props = dtpProperties.getTomcatTp();
+        if (Objects.isNull(props) || containsInvalidParams(props, log)) {
             return;
         }
         Executor executor = getExecutor();
@@ -70,41 +70,41 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter {
         }
 
         ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) executor;
-        DtpMainProp oldProp = ExecutorConverter.ofSimple(POOL_NAME, threadPoolExecutor.getCorePoolSize(),
-                threadPoolExecutor.getMaximumPoolSize(), threadPoolExecutor.getKeepAliveTime(properties.getUnit()));
-        doRefresh(threadPoolExecutor, properties);
-        DtpMainProp newProp = ExecutorConverter.ofSimple(POOL_NAME, threadPoolExecutor.getCorePoolSize(),
-                threadPoolExecutor.getMaximumPoolSize(), threadPoolExecutor.getKeepAliveTime(properties.getUnit()));
-        if (oldProp.equals(newProp)) {
+        TpMainFields oldFields = ExecutorConverter.ofSimple(POOL_NAME, threadPoolExecutor.getCorePoolSize(),
+                threadPoolExecutor.getMaximumPoolSize(), threadPoolExecutor.getKeepAliveTime(props.getUnit()));
+        doRefresh(threadPoolExecutor, props);
+        TpMainFields newFields = ExecutorConverter.ofSimple(POOL_NAME, threadPoolExecutor.getCorePoolSize(),
+                threadPoolExecutor.getMaximumPoolSize(), threadPoolExecutor.getKeepAliveTime(props.getUnit()));
+        if (oldFields.equals(newFields)) {
             log.warn("DynamicTp adapter refresh, main properties of [{}] have not changed.", POOL_NAME);
             return;
         }
         log.info("DynamicTp adapter [{}] refreshed end, corePoolSize: [{}], maxPoolSize: [{}], keepAliveTime: [{}]",
                 POOL_NAME,
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getCorePoolSize(), newProp.getCorePoolSize()),
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getMaxPoolSize(), newProp.getMaxPoolSize()),
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getKeepAliveTime(), newProp.getKeepAliveTime()));
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldFields.getCorePoolSize(), newFields.getCorePoolSize()),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldFields.getMaxPoolSize(), newFields.getMaxPoolSize()),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldFields.getKeepAliveTime(), newFields.getKeepAliveTime()));
     }
 
-    private void doRefresh(ThreadPoolExecutor executor, SimpleTpProperties properties) {
+    private void doRefresh(ThreadPoolExecutor executor, TpExecutorProps props) {
 
-        if (executor.getKeepAliveTime(properties.getUnit()) != properties.getKeepAliveTime()) {
-            executor.setKeepAliveTime(properties.getKeepAliveTime(), properties.getUnit());
+        if (executor.getKeepAliveTime(props.getUnit()) != props.getKeepAliveTime()) {
+            executor.setKeepAliveTime(props.getKeepAliveTime(), props.getUnit());
         }
 
-        int newMaxPoolSize = properties.getMaximumPoolSize();
+        int newMaxPoolSize = props.getMaximumPoolSize();
         if (newMaxPoolSize >= executor.getMaximumPoolSize()) {
             if (!Objects.equals(executor.getMaximumPoolSize(), newMaxPoolSize)) {
                 executor.setMaximumPoolSize(newMaxPoolSize);
             }
-            if (!Objects.equals(executor.getCorePoolSize(), properties.getCorePoolSize())) {
-                executor.setCorePoolSize(properties.getCorePoolSize());
+            if (!Objects.equals(executor.getCorePoolSize(), props.getCorePoolSize())) {
+                executor.setCorePoolSize(props.getCorePoolSize());
             }
             return;
         }
 
-        if (!Objects.equals(executor.getCorePoolSize(), properties.getCorePoolSize())) {
-            executor.setCorePoolSize(properties.getCorePoolSize());
+        if (!Objects.equals(executor.getCorePoolSize(), props.getCorePoolSize())) {
+            executor.setCorePoolSize(props.getCorePoolSize());
         }
         if (!Objects.equals(executor.getMaximumPoolSize(), newMaxPoolSize)) {
             executor.setMaximumPoolSize(newMaxPoolSize);

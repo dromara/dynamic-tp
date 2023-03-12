@@ -4,14 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
- * Instance related
+ * ServiceInstance related
  *
  * @author yanhom
  * @since 1.0.0
  **/
 @Data
 @AllArgsConstructor
-public class Instance {
+public class ServiceInstance {
 
     private String ip;
 

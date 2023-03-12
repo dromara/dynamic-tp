@@ -21,7 +21,7 @@ public class TestController {
     @Resource
     private ThreadPoolExecutor dtpExecutor1;
 
-    @GetMapping("/dtp-zookeeper-example/test")
+    @GetMapping("/dtp-consul-example/test")
     public String test() throws InterruptedException {
         task();
         return "success";

@@ -2,8 +2,10 @@ package com.dtp.core.notify.manager;
 
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.em.NotifyItemEnum;
+import com.dtp.common.entity.DtpExecutorProps;
 import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.entity.NotifyPlatform;
+import com.dtp.common.entity.TpExecutorProps;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.StreamUtil;
 import com.dtp.core.support.ExecutorWrapper;
@@ -17,7 +19,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -30,6 +32,8 @@ import static com.dtp.common.em.NotifyItemEnum.LIVENESS;
 import static com.dtp.common.em.NotifyItemEnum.QUEUE_TIMEOUT;
 import static com.dtp.common.em.NotifyItemEnum.REJECT;
 import static com.dtp.common.em.NotifyItemEnum.RUN_TIMEOUT;
+import static com.dtp.common.entity.NotifyItem.mergeAllNotifyItems;
+import static com.dtp.common.entity.NotifyItem.mergeSimpleNotifyItems;
 
 /**
  * NotifyHelper related
@@ -97,19 +101,17 @@ public class NotifyHelper {
             return;
         }
         List<String> globalPlatformIds = StreamUtil.fetchProperty(platforms, NotifyPlatform::getPlatformId);
-
-        Map<String, NotifyPlatform> platformNames = StreamUtil.toMap(platforms, NotifyPlatform::getPlatform);
         // notifyItem > executor > global
         notifyItems.forEach(n -> {
             if (CollectionUtils.isNotEmpty(n.getPlatformIds())) {
                 // intersection of notifyItem and global
                 n.setPlatformIds((List<String>) CollectionUtils.intersection(globalPlatformIds, n.getPlatformIds()));
             } else if (CollectionUtils.isNotEmpty(platformIds)) {
-                n.setPlatformIds(platformIds);
+                n.setPlatformIds((List<String>) CollectionUtils.intersection(globalPlatformIds, platformIds));
             } else {
                 // need to compatible with the previous situation that does not exist platformIds
                 if (CollectionUtils.isNotEmpty(n.getPlatforms())) {
-                    setPlatformIds(platformNames, n);
+                    setPlatformIds(platforms, n);
                 } else {
                     n.setPlatformIds(globalPlatformIds);
                 }
@@ -117,10 +119,11 @@ public class NotifyHelper {
         });
     }
 
-    private static void setPlatformIds(Map<String, NotifyPlatform> platformNames, NotifyItem notifyItem) {
+    private static void setPlatformIds(List<NotifyPlatform> platforms, NotifyItem notifyItem) {
         List<String> platformIds = new ArrayList<>();
+        Map<String, NotifyPlatform> platformMap = StreamUtil.toMap(platforms, NotifyPlatform::getPlatform);
         for (String platform : notifyItem.getPlatforms()) {
-            NotifyPlatform notifyPlatform = platformNames.get(platform);
+            NotifyPlatform notifyPlatform = platformMap.get(platform);
             if (notifyPlatform != null) {
                 platformIds.add(notifyPlatform.getPlatformId());
             }
@@ -129,18 +132,14 @@ public class NotifyHelper {
     }
 
     public static Optional<NotifyPlatform> getPlatform(String platformId) {
-        DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-        if (CollectionUtils.isEmpty(dtpProperties.getPlatforms())) {
-            return Optional.empty();
-        }
-        val map = StreamUtil.toMap(dtpProperties.getPlatforms(), NotifyPlatform::getPlatformId);
-        return Optional.ofNullable(map.get(platformId));
+        Map<String, NotifyPlatform> platformMap = getAllPlatforms();
+        return Optional.ofNullable(platformMap.get(platformId));
     }
 
     public static Map<String, NotifyPlatform> getAllPlatforms() {
         DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
         if (CollectionUtils.isEmpty(dtpProperties.getPlatforms())) {
-            return new HashMap<>();
+            return Collections.emptyMap();
         }
         return StreamUtil.toMap(dtpProperties.getPlatforms(), NotifyPlatform::getPlatformId);
     }
@@ -162,14 +161,42 @@ public class NotifyHelper {
         AlarmManager.initAlarm(executor.getThreadPoolName(), executor.getNotifyItems());
     }
 
-    public static void refreshNotify(String poolName,
-                                     List<String> platformIds,
-                                     List<NotifyPlatform> platforms,
-                                     List<NotifyItem> oldItems,
-                                     List<NotifyItem> newItems) {
-        fillPlatforms(platformIds, platforms, newItems);
-        Map<String, NotifyItem> oldNotifyItemMap = StreamUtil.toMap(oldItems, NotifyItem::getType);
-        newItems.forEach(x -> {
+    public static void updateNotifyInfo(ExecutorWrapper executorWrapper,
+                                        TpExecutorProps props,
+                                        List<NotifyPlatform> platforms) {
+        // update notify items
+        val allNotifyItems = mergeSimpleNotifyItems(props.getNotifyItems());
+        refreshNotify(executorWrapper.getThreadPoolName(),
+                props.getPlatformIds(),
+                platforms,
+                executorWrapper.getNotifyItems(),
+                allNotifyItems);
+        executorWrapper.setNotifyItems(allNotifyItems);
+        executorWrapper.setPlatformIds(props.getPlatformIds());
+        executorWrapper.setNotifyEnabled(props.isNotifyEnabled());
+    }
+
+    public static void updateNotifyInfo(DtpExecutor executor, DtpExecutorProps props, List<NotifyPlatform> platforms) {
+        // update notify items
+        val allNotifyItems = mergeAllNotifyItems(props.getNotifyItems());
+        refreshNotify(executor.getThreadPoolName(),
+                props.getPlatformIds(),
+                platforms,
+                executor.getNotifyItems(),
+                allNotifyItems);
+        executor.setNotifyItems(allNotifyItems);
+        executor.setPlatformIds(props.getPlatformIds());
+        executor.setNotifyEnabled(props.isNotifyEnabled());
+    }
+
+    private static void refreshNotify(String poolName,
+                                      List<String> platformIds,
+                                      List<NotifyPlatform> platforms,
+                                      List<NotifyItem> oldNotifyItems,
+                                      List<NotifyItem> newNotifyItems) {
+        fillPlatforms(platformIds, platforms, newNotifyItems);
+        Map<String, NotifyItem> oldNotifyItemMap = StreamUtil.toMap(oldNotifyItems, NotifyItem::getType);
+        newNotifyItems.forEach(x -> {
             NotifyItem oldNotifyItem = oldNotifyItemMap.get(x.getType());
             if (Objects.nonNull(oldNotifyItem) && oldNotifyItem.getInterval() == x.getInterval()) {
                 return;

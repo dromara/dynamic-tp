@@ -1,7 +1,7 @@
 package com.dtp.core.spring;
 
+import com.dtp.common.entity.DtpExecutorProps;
 import com.dtp.common.properties.DtpProperties;
-import com.dtp.common.properties.ThreadPoolProperties;
 import com.dtp.common.util.BeanUtil;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.support.ExecutorType;
@@ -22,9 +22,20 @@ import org.springframework.core.type.AnnotationMetadata;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
-import static com.dtp.common.constant.DynamicTpConst.*;
-import static com.dtp.common.entity.NotifyItem.mergeAllNotifyItems;
+import static com.dtp.common.constant.DynamicTpConst.ALLOW_CORE_THREAD_TIMEOUT;
+import static com.dtp.common.constant.DynamicTpConst.AWAIT_TERMINATION_SECONDS;
+import static com.dtp.common.constant.DynamicTpConst.NOTIFY_ENABLED;
+import static com.dtp.common.constant.DynamicTpConst.NOTIFY_ITEMS;
+import static com.dtp.common.constant.DynamicTpConst.PLATFORM_IDS;
+import static com.dtp.common.constant.DynamicTpConst.PRE_START_ALL_CORE_THREADS;
+import static com.dtp.common.constant.DynamicTpConst.QUEUE_TIMEOUT;
+import static com.dtp.common.constant.DynamicTpConst.RUN_TIMEOUT;
+import static com.dtp.common.constant.DynamicTpConst.TASK_WRAPPERS;
+import static com.dtp.common.constant.DynamicTpConst.THREAD_POOL_ALIAS_NAME;
+import static com.dtp.common.constant.DynamicTpConst.THREAD_POOL_NAME;
+import static com.dtp.common.constant.DynamicTpConst.WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN;
 import static com.dtp.common.em.QueueTypeEnum.buildLbq;
+import static com.dtp.common.entity.NotifyItem.mergeAllNotifyItems;
 
 /**
  * DtpBeanDefinitionRegistrar related
@@ -53,53 +64,55 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
             return;
         }
 
-        executors.forEach(x -> {
-            Class<?> executorTypeClass = ExecutorType.getClass(x.getExecutorType());
-            Map<String, Object> properties = buildPropertyValues(x);
-            Object[] args = buildConstructorArgs(executorTypeClass, x);
-            BeanUtil.registerIfAbsent(registry, x.getThreadPoolName(), executorTypeClass, properties, args);
+        executors.forEach(e -> {
+            Class<?> executorTypeClass = ExecutorType.getClass(e.getExecutorType());
+            Map<String, Object> propertyValues = buildPropertyValues(e);
+            Object[] args = buildConstructorArgs(executorTypeClass, e);
+            BeanUtil.registerIfAbsent(registry, e.getThreadPoolName(), executorTypeClass, propertyValues, args);
         });
     }
 
-    private Map<String, Object> buildPropertyValues(ThreadPoolProperties tpp) {
-        Map<String, Object> properties = Maps.newHashMap();
-        properties.put(THREAD_POOL_NAME, tpp.getThreadPoolName());
-        properties.put(THREAD_POOL_ALIAS_NAME, tpp.getThreadPoolAliasName());
-        properties.put(ALLOW_CORE_THREAD_TIMEOUT, tpp.isAllowCoreThreadTimeOut());
-        properties.put(WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN, tpp.isWaitForTasksToCompleteOnShutdown());
-        properties.put(AWAIT_TERMINATION_SECONDS, tpp.getAwaitTerminationSeconds());
-        properties.put(PRE_START_ALL_CORE_THREADS, tpp.isPreStartAllCoreThreads());
-        properties.put(RUN_TIMEOUT, tpp.getRunTimeout());
-        properties.put(QUEUE_TIMEOUT, tpp.getQueueTimeout());
+    private Map<String, Object> buildPropertyValues(DtpExecutorProps props) {
+        Map<String, Object> propertyValues = Maps.newHashMap();
+        propertyValues.put(THREAD_POOL_NAME, props.getThreadPoolName());
+        propertyValues.put(THREAD_POOL_ALIAS_NAME, props.getThreadPoolAliasName());
+        propertyValues.put(ALLOW_CORE_THREAD_TIMEOUT, props.isAllowCoreThreadTimeOut());
+        propertyValues.put(WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN, props.isWaitForTasksToCompleteOnShutdown());
+        propertyValues.put(AWAIT_TERMINATION_SECONDS, props.getAwaitTerminationSeconds());
+        propertyValues.put(PRE_START_ALL_CORE_THREADS, props.isPreStartAllCoreThreads());
+        propertyValues.put(RUN_TIMEOUT, props.getRunTimeout());
+        propertyValues.put(QUEUE_TIMEOUT, props.getQueueTimeout());
 
-        val notifyItems = mergeAllNotifyItems(tpp.getNotifyItems());
-        properties.put(NOTIFY_ITEMS, notifyItems);
-        properties.put(PLATFORM_IDS, tpp.getPlatformIds());
-        properties.put(NOTIFY_ENABLED, tpp.isNotifyEnabled());
+        val notifyItems = mergeAllNotifyItems(props.getNotifyItems());
+        propertyValues.put(NOTIFY_ITEMS, notifyItems);
+        propertyValues.put(PLATFORM_IDS, props.getPlatformIds());
+        propertyValues.put(NOTIFY_ENABLED, props.isNotifyEnabled());
 
-        val taskWrappers = TaskWrappers.getInstance().getByNames(tpp.getTaskWrapperNames());
-        properties.put(TASK_WRAPPERS, taskWrappers);
+        val taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
+        propertyValues.put(TASK_WRAPPERS, taskWrappers);
 
-        return properties;
+        return propertyValues;
     }
 
-    private Object[] buildConstructorArgs(Class<?> clazz, ThreadPoolProperties tpp) {
-
+    private Object[] buildConstructorArgs(Class<?> clazz, DtpExecutorProps props) {
         BlockingQueue<Runnable> taskQueue;
         if (clazz.equals(EagerDtpExecutor.class)) {
-            taskQueue = new TaskQueue(tpp.getQueueCapacity());
+            taskQueue = new TaskQueue(props.getQueueCapacity());
         } else {
-            taskQueue = buildLbq(tpp.getQueueType(), tpp.getQueueCapacity(), tpp.isFair(), tpp.getMaxFreeMemory());
+            taskQueue = buildLbq(props.getQueueType(),
+                    props.getQueueCapacity(),
+                    props.isFair(),
+                    props.getMaxFreeMemory());
         }
 
         return new Object[] {
-                tpp.getCorePoolSize(),
-                tpp.getMaximumPoolSize(),
-                tpp.getKeepAliveTime(),
-                tpp.getUnit(),
+                props.getCorePoolSize(),
+                props.getMaximumPoolSize(),
+                props.getKeepAliveTime(),
+                props.getUnit(),
                 taskQueue,
-                new NamedThreadFactory(tpp.getThreadNamePrefix()),
-                RejectHandlerGetter.buildRejectedHandler(tpp.getRejectedHandlerType())
+                new NamedThreadFactory(props.getThreadNamePrefix()),
+                RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType())
         };
     }
 }

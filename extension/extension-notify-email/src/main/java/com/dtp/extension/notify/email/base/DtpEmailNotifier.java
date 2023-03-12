@@ -5,7 +5,7 @@ import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.entity.AlarmInfo;
-import com.dtp.common.entity.DtpMainProp;
+import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.util.CommonUtil;
@@ -103,24 +103,24 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
     }
 
     @Override
-    protected String buildNoticeContent(NotifyPlatform platform, DtpMainProp oldProp, List<String> diffs) {
+    protected String buildNoticeContent(NotifyPlatform platform, TpMainFields oldFields, List<String> diffs) {
         BaseNotifyCtx notifyCtx = DtpNotifyCtxHolder.get();
         ExecutorWrapper executorWrapper = notifyCtx.getExecutorWrapper();
         val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
 
         Context context = newContext(executorWrapper);
-        context.setVariable("oldCorePoolSize", oldProp.getCorePoolSize());
+        context.setVariable("oldCorePoolSize", oldFields.getCorePoolSize());
         context.setVariable("newCorePoolSize", executor.getCorePoolSize());
-        context.setVariable("oldMaxPoolSize", oldProp.getMaxPoolSize());
+        context.setVariable("oldMaxPoolSize", oldFields.getMaxPoolSize());
         context.setVariable("newMaxPoolSize", executor.getMaximumPoolSize());
-        context.setVariable("oldIsAllowCoreThreadTimeOut", oldProp.isAllowCoreThreadTimeOut());
+        context.setVariable("oldIsAllowCoreThreadTimeOut", oldFields.isAllowCoreThreadTimeOut());
         context.setVariable("newIsAllowCoreThreadTimeOut", executor.allowsCoreThreadTimeOut());
-        context.setVariable("oldKeepAliveTime", oldProp.getKeepAliveTime());
+        context.setVariable("oldKeepAliveTime", oldFields.getKeepAliveTime());
         context.setVariable("newKeepAliveTime", executor.getKeepAliveTime(TimeUnit.SECONDS));
         context.setVariable("queueType", executor.getQueue().getClass().getSimpleName());
-        context.setVariable("oldQueueCapacity", oldProp.getQueueCapacity());
+        context.setVariable("oldQueueCapacity", oldFields.getQueueCapacity());
         context.setVariable("newQueueCapacity", getQueueCapacity(executor));
-        context.setVariable("oldRejectType", oldProp.getRejectType());
+        context.setVariable("oldRejectType", oldFields.getRejectType());
         context.setVariable("newRejectType", getRejectHandlerName(executor));
         context.setVariable("notifyTime", DateTime.now());
         context.setVariable("diffs", diffs != null ? diffs : Collections.emptySet());

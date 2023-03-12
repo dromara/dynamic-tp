@@ -1,6 +1,6 @@
 package com.dtp.core.notify.manager;
 
-import com.dtp.common.entity.DtpMainProp;
+import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.pattern.filter.InvokerChain;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.context.NoticeCtx;
@@ -31,13 +31,13 @@ public class NoticeManager {
         NOTICE_INVOKER_CHAIN = NotifyFilterBuilder.getCommonInvokerChain();
     }
 
-    public static void doNoticeAsync(ExecutorWrapper executor, DtpMainProp oldProp, List<String> diffKeys) {
-        NOTICE_EXECUTOR.execute(() -> doNotice(executor, oldProp, diffKeys));
+    public static void doNoticeAsync(ExecutorWrapper executor, TpMainFields oldFields, List<String> diffKeys) {
+        NOTICE_EXECUTOR.execute(() -> doNotice(executor, oldFields, diffKeys));
     }
 
-    public static void doNotice(ExecutorWrapper executor, DtpMainProp oldProp, List<String> diffKeys) {
+    public static void doNotice(ExecutorWrapper executor, TpMainFields oldFields, List<String> diffKeys) {
         NotifyHelper.getNotifyItem(executor, CHANGE).ifPresent(notifyItem -> {
-            val noticeCtx = new NoticeCtx(executor, notifyItem, oldProp, diffKeys);
+            val noticeCtx = new NoticeCtx(executor, notifyItem, oldFields, diffKeys);
             NOTICE_INVOKER_CHAIN.proceed(noticeCtx);
         });
     }

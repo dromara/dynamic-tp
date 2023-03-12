@@ -23,14 +23,14 @@ public final class BeanUtil {
     public static void registerIfAbsent(BeanDefinitionRegistry registry,
                                         String beanName,
                                         Class<?> clazz,
-                                        Map<String, Object> properties,
+                                        Map<String, Object> propertyValues,
                                         Object... constructorArgs) {
         if (ifPresent(registry, beanName, clazz) || registry.containsBeanDefinition(beanName)) {
             log.warn("DynamicTp registrar, bean definition already exists, overrides with remote config, beanName: {}",
                     beanName);
             registry.removeBeanDefinition(beanName);
         }
-        doRegister(registry, beanName, clazz, properties, constructorArgs);
+        doRegister(registry, beanName, clazz, propertyValues, constructorArgs);
     }
 
     public static boolean ifPresent(BeanDefinitionRegistry registry, String beanName, Class<?> clazz) {
@@ -45,14 +45,14 @@ public final class BeanUtil {
     public static void doRegister(BeanDefinitionRegistry registry,
                                   String beanName,
                                   Class<?> clazz,
-                                  Map<String, Object> properties,
+                                  Map<String, Object> propertyValues,
                                   Object... constructorArgs) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(clazz);
         for (Object constructorArg : constructorArgs) {
             builder.addConstructorArgValue(constructorArg);
         }
-        if (MapUtils.isNotEmpty(properties)) {
-            properties.forEach(builder::addPropertyValue);
+        if (MapUtils.isNotEmpty(propertyValues)) {
+            propertyValues.forEach(builder::addPropertyValue);
         }
         registry.registerBeanDefinition(beanName, builder.getBeanDefinition());
     }

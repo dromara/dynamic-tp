@@ -1,9 +1,8 @@
 package com.dtp.core.handler;
 
-import com.dtp.common.entity.DtpMainProp;
-import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;
-import com.dtp.common.entity.NotifyPlatform;
+import com.dtp.common.entity.NotifyItem;
+import com.dtp.common.entity.TpMainFields;
 import com.dtp.core.context.DtpNotifyCtxHolder;
 import com.dtp.core.notify.DtpDingNotifier;
 import com.dtp.core.notify.DtpLarkNotifier;
@@ -45,31 +44,27 @@ public final class NotifierHandler {
         NOTIFIERS.put(larkNotifier.platform(), larkNotifier);
     }
 
-    public void sendNotice(DtpMainProp prop, List<String> diffs) {
+    public void sendNotice(TpMainFields oldFields, List<String> diffs) {
         NotifyItem notifyItem = DtpNotifyCtxHolder.get().getNotifyItem();
-        Map<String, NotifyPlatform> platforms = NotifyHelper.getAllPlatforms();
         for (String platformId : notifyItem.getPlatformIds()) {
-            NotifyPlatform platform = platforms.get(platformId);
-            if (platform != null) {
-                DtpNotifier notifier = NOTIFIERS.get(platform.getPlatform().toLowerCase());
+            NotifyHelper.getPlatform(platformId).ifPresent(p -> {
+                DtpNotifier notifier = NOTIFIERS.get(p.getPlatform().toLowerCase());
                 if (notifier != null) {
-                    notifier.sendChangeMsg(platform, prop, diffs);
+                    notifier.sendChangeMsg(p, oldFields, diffs);
                 }
-            }
+            });
         }
     }
 
     public void sendAlarm(NotifyItemEnum notifyItemEnum) {
         NotifyItem notifyItem = DtpNotifyCtxHolder.get().getNotifyItem();
-        Map<String, NotifyPlatform> platforms = NotifyHelper.getAllPlatforms();
         for (String platformId : notifyItem.getPlatformIds()) {
-            NotifyPlatform platform = platforms.get(platformId);
-            if (platform != null) {
-                DtpNotifier notifier = NOTIFIERS.get(platform.getPlatform().toLowerCase());
+            NotifyHelper.getPlatform(platformId).ifPresent(p -> {
+                DtpNotifier notifier = NOTIFIERS.get(p.getPlatform().toLowerCase());
                 if (notifier != null) {
-                    notifier.sendAlarmMsg(platform, notifyItemEnum);
+                    notifier.sendAlarmMsg(p, notifyItemEnum);
                 }
-            }
+            });
         }
     }
 

@@ -1,6 +1,6 @@
 package com.dtp.core.notify;
 
-import com.dtp.common.entity.DtpMainProp;
+import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.entity.NotifyPlatform;
 
@@ -25,10 +25,10 @@ public interface DtpNotifier {
      * Send change notify message.
      *
      * @param notifyPlatform notify platform
-     * @param oldProp        old properties
+     * @param oldFields      old properties
      * @param diffs          the changed keys
      */
-    void sendChangeMsg(NotifyPlatform notifyPlatform, DtpMainProp oldProp, List<String> diffs);
+    void sendChangeMsg(NotifyPlatform notifyPlatform, TpMainFields oldFields, List<String> diffs);
 
     /**
      * Send alarm message.

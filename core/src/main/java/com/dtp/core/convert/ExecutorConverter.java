@@ -1,6 +1,6 @@
 package com.dtp.core.convert;
 
-import com.dtp.common.entity.DtpMainProp;
+import com.dtp.common.entity.TpMainFields;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.thread.DtpExecutor;
 import lombok.val;
@@ -18,43 +18,43 @@ public class ExecutorConverter {
 
     private ExecutorConverter() { }
 
-    public static DtpMainProp convert(DtpExecutor dtpExecutor) {
-        DtpMainProp mainProp = new DtpMainProp();
-        mainProp.setThreadPoolName(dtpExecutor.getThreadPoolName());
-        mainProp.setCorePoolSize(dtpExecutor.getCorePoolSize());
-        mainProp.setMaxPoolSize(dtpExecutor.getMaximumPoolSize());
-        mainProp.setKeepAliveTime(dtpExecutor.getKeepAliveTime(TimeUnit.SECONDS));
-        mainProp.setQueueType(dtpExecutor.getQueueName());
-        mainProp.setQueueCapacity(dtpExecutor.getQueueCapacity());
-        mainProp.setRejectType(dtpExecutor.getRejectHandlerName());
-        mainProp.setAllowCoreThreadTimeOut(dtpExecutor.allowsCoreThreadTimeOut());
-        return mainProp;
+    public static TpMainFields convert(DtpExecutor dtpExecutor) {
+        TpMainFields mainFields = new TpMainFields();
+        mainFields.setThreadPoolName(dtpExecutor.getThreadPoolName());
+        mainFields.setCorePoolSize(dtpExecutor.getCorePoolSize());
+        mainFields.setMaxPoolSize(dtpExecutor.getMaximumPoolSize());
+        mainFields.setKeepAliveTime(dtpExecutor.getKeepAliveTime(TimeUnit.SECONDS));
+        mainFields.setQueueType(dtpExecutor.getQueueName());
+        mainFields.setQueueCapacity(dtpExecutor.getQueueCapacity());
+        mainFields.setRejectType(dtpExecutor.getRejectHandlerName());
+        mainFields.setAllowCoreThreadTimeOut(dtpExecutor.allowsCoreThreadTimeOut());
+        return mainFields;
     }
 
-    public static DtpMainProp convert(ExecutorWrapper executorWrapper) {
-        DtpMainProp mainProp = new DtpMainProp();
-        mainProp.setThreadPoolName(executorWrapper.getThreadPoolName());
+    public static TpMainFields convert(ExecutorWrapper executorWrapper) {
+        TpMainFields mainFields = new TpMainFields();
+        mainFields.setThreadPoolName(executorWrapper.getThreadPoolName());
         val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
-        mainProp.setCorePoolSize(executor.getCorePoolSize());
-        mainProp.setMaxPoolSize(executor.getMaximumPoolSize());
-        mainProp.setKeepAliveTime(executor.getKeepAliveTime(TimeUnit.SECONDS));
-        mainProp.setQueueType(executor.getQueue().getClass().getSimpleName());
-        mainProp.setQueueCapacity(executor.getQueue().size() + executor.getQueue().remainingCapacity());
-        mainProp.setAllowCoreThreadTimeOut(executor.allowsCoreThreadTimeOut());
+        mainFields.setCorePoolSize(executor.getCorePoolSize());
+        mainFields.setMaxPoolSize(executor.getMaximumPoolSize());
+        mainFields.setKeepAliveTime(executor.getKeepAliveTime(TimeUnit.SECONDS));
+        mainFields.setQueueType(executor.getQueue().getClass().getSimpleName());
+        mainFields.setQueueCapacity(executor.getQueue().size() + executor.getQueue().remainingCapacity());
+        mainFields.setAllowCoreThreadTimeOut(executor.allowsCoreThreadTimeOut());
         if (executor instanceof DtpExecutor) {
-            mainProp.setRejectType(((DtpExecutor) executor).getRejectHandlerName());
+            mainFields.setRejectType(((DtpExecutor) executor).getRejectHandlerName());
         } else {
-            mainProp.setRejectType(executor.getRejectedExecutionHandler().getClass().getSimpleName());
+            mainFields.setRejectType(executor.getRejectedExecutionHandler().getClass().getSimpleName());
         }
-        return mainProp;
+        return mainFields;
     }
 
-    public static DtpMainProp ofSimple(String name, int corePoolSize, int maxPoolSize, long keepAliveTime) {
-        DtpMainProp mainProp = new DtpMainProp();
-        mainProp.setThreadPoolName(name);
-        mainProp.setCorePoolSize(corePoolSize);
-        mainProp.setMaxPoolSize(maxPoolSize);
-        mainProp.setKeepAliveTime(keepAliveTime);
-        return mainProp;
+    public static TpMainFields ofSimple(String name, int corePoolSize, int maxPoolSize, long keepAliveTime) {
+        TpMainFields mainFields = new TpMainFields();
+        mainFields.setThreadPoolName(name);
+        mainFields.setCorePoolSize(corePoolSize);
+        mainFields.setMaxPoolSize(maxPoolSize);
+        mainFields.setKeepAliveTime(keepAliveTime);
+        return mainFields;
     }
 }

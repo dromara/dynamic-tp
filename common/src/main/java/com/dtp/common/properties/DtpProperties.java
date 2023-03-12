@@ -1,6 +1,8 @@
 package com.dtp.common.properties;
 
 import com.dtp.common.constant.DynamicTpConst;
+import com.dtp.common.entity.TpExecutorProps;
+import com.dtp.common.entity.DtpExecutorProps;
 import com.dtp.common.entity.NotifyPlatform;
 import com.google.common.collect.Lists;
 import lombok.Data;
@@ -80,77 +82,77 @@ public class DtpProperties {
     /**
      * ThreadPoolExecutor configs.
      */
-    private List<ThreadPoolProperties> executors;
-
-    /**
-     * Tomcat worker thread pool.
-     */
-    private SimpleTpProperties tomcatTp;
-
-    /**
-     * Jetty thread pool.
-     */
-    private SimpleTpProperties jettyTp;
-
-    /**
-     * Undertow thread pool.
-     */
-    private SimpleTpProperties undertowTp;
-
-    /**
-     * Dubbo thread pools.
-     */
-    private List<SimpleTpProperties> dubboTp;
-
-    /**
-     * Hystrix thread pools.
-     */
-    private List<SimpleTpProperties> hystrixTp;
-
-    /**
-     * RocketMq thread pools.
-     */
-    private List<SimpleTpProperties> rocketMqTp;
-
-    /**
-     * Grpc thread pools.
-     */
-    private List<SimpleTpProperties> grpcTp;
-
-    /**
-     * Motan server thread pools.
-     */
-    private List<SimpleTpProperties> motanTp;
-
-    /**
-     * Okhttp3 thread pools.
-     */
-    private List<SimpleTpProperties> okhttp3Tp;
-
-    /**
-     * Brpc thread pools.
-     */
-    private List<SimpleTpProperties> brpcTp;
-
-    /**
-     * Tars thread pools.
-     */
-    private List<SimpleTpProperties> tarsTp;
-
-    /**
-     * Sofa thread pools.
-     */
-    private List<SimpleTpProperties> sofaTp;
-
-    /**
-     * Rabbitmq thread pools.
-     */
-    private List<SimpleTpProperties> rabbitmqTp;
+    private List<DtpExecutorProps> executors;
 
     /**
      * Notify platform configs.
      */
     private List<NotifyPlatform> platforms;
+
+    /**
+     * Tomcat worker thread pool.
+     */
+    private TpExecutorProps tomcatTp;
+
+    /**
+     * Jetty thread pool.
+     */
+    private TpExecutorProps jettyTp;
+
+    /**
+     * Undertow thread pool.
+     */
+    private TpExecutorProps undertowTp;
+
+    /**
+     * Dubbo thread pools.
+     */
+    private List<TpExecutorProps> dubboTp;
+
+    /**
+     * Hystrix thread pools.
+     */
+    private List<TpExecutorProps> hystrixTp;
+
+    /**
+     * RocketMq thread pools.
+     */
+    private List<TpExecutorProps> rocketMqTp;
+
+    /**
+     * Grpc thread pools.
+     */
+    private List<TpExecutorProps> grpcTp;
+
+    /**
+     * Motan server thread pools.
+     */
+    private List<TpExecutorProps> motanTp;
+
+    /**
+     * Okhttp3 thread pools.
+     */
+    private List<TpExecutorProps> okhttp3Tp;
+
+    /**
+     * Brpc thread pools.
+     */
+    private List<TpExecutorProps> brpcTp;
+
+    /**
+     * Tars thread pools.
+     */
+    private List<TpExecutorProps> tarsTp;
+
+    /**
+     * Sofa thread pools.
+     */
+    private List<TpExecutorProps> sofaTp;
+
+    /**
+     * Rabbitmq thread pools.
+     */
+    private List<TpExecutorProps> rabbitmqTp;
 
     @Data
     public static class Nacos {

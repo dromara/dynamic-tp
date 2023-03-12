@@ -1,18 +1,17 @@
 package com.dtp.adapter.common;
 
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.entity.DtpMainProp;
-import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.entity.ThreadPoolStats;
+import com.dtp.common.entity.TpExecutorProps;
+import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.properties.DtpProperties;
-import com.dtp.common.properties.SimpleTpProperties;
 import com.dtp.common.util.StreamUtil;
 import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.convert.MetricsConverter;
 import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.notify.manager.NoticeManager;
-import com.dtp.core.notify.manager.NotifyHelper;
+import com.dtp.core.support.ExecutorWrapper;
 import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
@@ -33,7 +32,7 @@ import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
-import static com.dtp.common.entity.NotifyItem.mergeSimpleNotifyItems;
+import static com.dtp.core.notify.manager.NotifyHelper.updateNotifyInfo;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -92,82 +91,78 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
         AlarmManager.initAlarm(poolName, executorWrapper.getNotifyItems());
     }
 
-    public void refresh(String name, List<SimpleTpProperties> properties, List<NotifyPlatform> platforms) {
+    public void refresh(String name, List<TpExecutorProps> propsList, List<NotifyPlatform> platforms) {
         val executorWrappers = getExecutorWrappers();
-        if (CollectionUtils.isEmpty(properties) || MapUtils.isEmpty(executorWrappers)) {
+        if (CollectionUtils.isEmpty(propsList) || MapUtils.isEmpty(executorWrappers)) {
             return;
         }
 
-        val tmpMap = StreamUtil.toMap(properties, SimpleTpProperties::getThreadPoolName);
+        val tmpMap = StreamUtil.toMap(propsList, TpExecutorProps::getThreadPoolName);
         executorWrappers.forEach((k, v) -> refresh(name, v, platforms, tmpMap.get(k)));
     }
 
     public void refresh(String name,
                         ExecutorWrapper executorWrapper,
                         List<NotifyPlatform> platforms,
-                        SimpleTpProperties properties) {
+                        TpExecutorProps props) {
 
-        if (Objects.isNull(properties) || Objects.isNull(executorWrapper) || containsInvalidParams(properties, log)) {
+        if (Objects.isNull(props) || Objects.isNull(executorWrapper) || containsInvalidParams(props, log)) {
             return;
         }
 
-        DtpMainProp oldProp = ExecutorConverter.convert(executorWrapper);
-        doRefresh(executorWrapper, platforms, properties);
-        DtpMainProp newProp = ExecutorConverter.convert(executorWrapper);
-        if (oldProp.equals(newProp)) {
+        TpMainFields oldFields = ExecutorConverter.convert(executorWrapper);
+        doRefresh(executorWrapper, platforms, props);
+        TpMainFields newFields = ExecutorConverter.convert(executorWrapper);
+        if (oldFields.equals(newFields)) {
             log.warn("DynamicTp adapter refresh, main properties of [{}] have not changed.",
                     executorWrapper.getThreadPoolName());
             return;
         }
 
-        List<FieldInfo> diffFields = EQUATOR.getDiffFields(oldProp, newProp);
+        List<FieldInfo> diffFields = EQUATOR.getDiffFields(oldFields, newFields);
         List<String> diffKeys = diffFields.stream().map(FieldInfo::getFieldName).collect(toList());
-        NoticeManager.doNoticeAsync(executorWrapper, oldProp, diffKeys);
+        NoticeManager.doNoticeAsync(executorWrapper, oldFields, diffKeys);
         log.info("DynamicTp {} adapter, [{}] refreshed end, changed keys: {}, corePoolSize: [{}], "
                         + "maxPoolSize: [{}], keepAliveTime: [{}]",
                 name, executorWrapper.getThreadPoolName(), diffKeys,
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getCorePoolSize(), newProp.getCorePoolSize()),
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getMaxPoolSize(), newProp.getMaxPoolSize()),
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldProp.getKeepAliveTime(), newProp.getKeepAliveTime()));
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldFields.getCorePoolSize(), newFields.getCorePoolSize()),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldFields.getMaxPoolSize(), newFields.getMaxPoolSize()),
+                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldFields.getKeepAliveTime(), newFields.getKeepAliveTime()));
     }
 
     private void doRefresh(ExecutorWrapper executorWrapper,
                            List<NotifyPlatform> platforms,
-                           SimpleTpProperties properties) {
+                           TpExecutorProps props) {
 
         val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
-        doRefreshPoolSize(executor, properties);
-        if (!Objects.equals(executor.getKeepAliveTime(properties.getUnit()), properties.getKeepAliveTime())) {
-            executor.setKeepAliveTime(properties.getKeepAliveTime(), properties.getUnit());
+        doRefreshPoolSize(executor, props);
+        if (!Objects.equals(executor.getKeepAliveTime(props.getUnit()), props.getKeepAliveTime())) {
+            executor.setKeepAliveTime(props.getKeepAliveTime(), props.getUnit());
         }
-        if (StringUtils.isNotBlank(properties.getThreadPoolAliasName())) {
-            executorWrapper.setThreadPoolAliasName(properties.getThreadPoolAliasName());
+        if (StringUtils.isNotBlank(props.getThreadPoolAliasName())) {
+            executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());
         }
 
         // update notify items
-        val allNotifyItems = mergeSimpleNotifyItems(properties.getNotifyItems());
-        NotifyHelper.refreshNotify(executorWrapper.getThreadPoolName(), properties.getPlatformIds(), platforms,
-                executorWrapper.getNotifyItems(), allNotifyItems);
-        executorWrapper.setNotifyItems(allNotifyItems);
-        executorWrapper.setNotifyEnabled(properties.isNotifyEnabled());
+        updateNotifyInfo(executorWrapper, props, platforms);
     }
 
-    private void doRefreshPoolSize(ThreadPoolExecutor executor, SimpleTpProperties properties) {
-        if (properties.getMaximumPoolSize() >= executor.getMaximumPoolSize()) {
-            if (!Objects.equals(properties.getMaximumPoolSize(), executor.getMaximumPoolSize())) {
-                executor.setMaximumPoolSize(properties.getMaximumPoolSize());
+    private void doRefreshPoolSize(ThreadPoolExecutor executor, TpExecutorProps props) {
+        if (props.getMaximumPoolSize() >= executor.getMaximumPoolSize()) {
+            if (!Objects.equals(props.getMaximumPoolSize(), executor.getMaximumPoolSize())) {
+                executor.setMaximumPoolSize(props.getMaximumPoolSize());
             }
-            if (!Objects.equals(properties.getCorePoolSize(), executor.getCorePoolSize())) {
-                executor.setCorePoolSize(properties.getCorePoolSize());
+            if (!Objects.equals(props.getCorePoolSize(), executor.getCorePoolSize())) {
+                executor.setCorePoolSize(props.getCorePoolSize());
             }
             return;
         }
 
-        if (!Objects.equals(properties.getCorePoolSize(), executor.getCorePoolSize())) {
-            executor.setCorePoolSize(properties.getCorePoolSize());
+        if (!Objects.equals(props.getCorePoolSize(), executor.getCorePoolSize())) {
+            executor.setCorePoolSize(props.getCorePoolSize());
         }
-        if (!Objects.equals(properties.getMaximumPoolSize(), executor.getMaximumPoolSize())) {
-            executor.setMaximumPoolSize(properties.getMaximumPoolSize());
+        if (!Objects.equals(props.getMaximumPoolSize(), executor.getMaximumPoolSize())) {
+            executor.setMaximumPoolSize(props.getMaximumPoolSize());
         }
     }
 }

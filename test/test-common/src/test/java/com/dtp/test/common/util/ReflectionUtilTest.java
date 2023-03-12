@@ -1,6 +1,6 @@
 package com.dtp.test.common.util;
 
-import com.dtp.common.entity.Instance;
+import com.dtp.common.entity.ServiceInstance;
 import com.dtp.common.util.ReflectionUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -17,8 +17,8 @@ class ReflectionUtilTest {
     @Test
     void testGetFieldValue() {
         String ip = "172.12.13.1";
-        Instance instance = new Instance(ip, 9000, "order-service", "prod");
-        Object fieldVal = ReflectionUtil.getFieldValue(Instance.class, "ip", instance);
+        ServiceInstance serviceInstance = new ServiceInstance(ip, 9000, "order-service", "prod");
+        Object fieldVal = ReflectionUtil.getFieldValue(ServiceInstance.class, "ip", serviceInstance);
         Assertions.assertEquals(ip, fieldVal);
     }
 
@@ -26,15 +26,15 @@ class ReflectionUtilTest {
     void testSetFieldValue() throws IllegalAccessException {
         String ip = "172.12.13.1";
         String newIp = "172.12.13.2";
-        Instance instance = new Instance(ip, 9000, "order-service", "prod");
-        ReflectionUtil.setFieldValue(Instance.class, "ip", instance, newIp);
-        Assertions.assertEquals(newIp, instance.getIp());
+        ServiceInstance serviceInstance = new ServiceInstance(ip, 9000, "order-service", "prod");
+        ReflectionUtil.setFieldValue(ServiceInstance.class, "ip", serviceInstance, newIp);
+        Assertions.assertEquals(newIp, serviceInstance.getIp());
     }
 
     @Test
     void testGetField() {
-        Field ipField = ReflectionUtil.getField(Instance.class, "ip");
-        Field ippField = ReflectionUtil.getField(Instance.class, "ipp");
+        Field ipField = ReflectionUtil.getField(ServiceInstance.class, "ip");
+        Field ippField = ReflectionUtil.getField(ServiceInstance.class, "ipp");
         Assertions.assertNotNull(ipField);
         Assertions.assertNull(ippField);
         Assertions.assertEquals("ip", ipField.getName());

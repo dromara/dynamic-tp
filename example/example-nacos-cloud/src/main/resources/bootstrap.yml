@@ -16,7 +16,7 @@ spring:
         extension-configs:
           - dataId: ${spring.application.name}-dtp-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
             group: DEFAULT_GROUP
-            refresh: true  # 必须配置，负责自动刷新不生效
+            refresh: true  # 必须配置，否则自动刷新不生效
         refresh-enabled: true
   redis:
     host: localhost

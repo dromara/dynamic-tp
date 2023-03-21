@@ -13,6 +13,7 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -24,6 +25,7 @@ import java.util.concurrent.BlockingQueue;
 
 import static com.dtp.common.constant.DynamicTpConst.ALLOW_CORE_THREAD_TIMEOUT;
 import static com.dtp.common.constant.DynamicTpConst.AWAIT_TERMINATION_SECONDS;
+import static com.dtp.common.constant.DynamicTpConst.DTP_ENABLED_PROP;
 import static com.dtp.common.constant.DynamicTpConst.NOTIFY_ENABLED;
 import static com.dtp.common.constant.DynamicTpConst.NOTIFY_ITEMS;
 import static com.dtp.common.constant.DynamicTpConst.PLATFORM_IDS;
@@ -56,6 +58,9 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
 
+        if (!BooleanUtils.toBoolean(environment.getProperty(DTP_ENABLED_PROP, BooleanUtils.TRUE))) {
+            return;
+        }
         DtpProperties dtpProperties = new DtpProperties();
         PropertiesBinder.bindDtpProperties(environment, dtpProperties);
         val executors = dtpProperties.getExecutors();

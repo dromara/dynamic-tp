@@ -1,7 +1,7 @@
 package com.dtp.starter.cloud.polaris.autoconfigure;
 
 import com.dtp.starter.cloud.polaris.refresh.CloudPolarisRefresher;
-import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
+import com.dtp.core.spring.BaseBeanAutoConfiguration;
 import com.tencent.cloud.polaris.config.config.PolarisConfigProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

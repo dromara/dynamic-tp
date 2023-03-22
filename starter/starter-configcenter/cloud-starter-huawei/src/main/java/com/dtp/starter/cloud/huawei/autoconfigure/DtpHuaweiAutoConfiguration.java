@@ -1,7 +1,7 @@
 package com.dtp.starter.cloud.huawei.autoconfigure;
 
+import com.dtp.core.spring.BaseBeanAutoConfiguration;
 import com.dtp.starter.cloud.huawei.refresh.CloudHuaweiRefresher;
-import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
 import com.huaweicloud.common.configration.bootstrap.ConfigBootstrapProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

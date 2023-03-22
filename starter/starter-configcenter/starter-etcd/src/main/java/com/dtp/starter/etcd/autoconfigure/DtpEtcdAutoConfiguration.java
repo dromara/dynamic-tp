@@ -1,6 +1,6 @@
 package com.dtp.starter.etcd.autoconfigure;
 
-import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
+import com.dtp.core.spring.BaseBeanAutoConfiguration;
 import com.dtp.starter.etcd.refresh.EtcdRefresher;
 import io.etcd.jetcd.Client;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;

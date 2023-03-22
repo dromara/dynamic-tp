@@ -1,6 +1,6 @@
 package com.dtp.starter.nacos.autoconfigure;
 
-import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
+import com.dtp.core.spring.BaseBeanAutoConfiguration;
 import com.dtp.starter.nacos.refresh.NacosRefresher;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

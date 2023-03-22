@@ -1,6 +1,6 @@
 package com.dtp.starter.zookeeper.autoconfigure;
 
-import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
+import com.dtp.core.spring.BaseBeanAutoConfiguration;
 import com.dtp.starter.zookeeper.refresh.ZookeeperRefresher;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

@@ -1,7 +1,7 @@
 package com.dtp.starter.adapter.rocketmq.autoconfigure;
 
 import com.dtp.adapter.rocketmq.RocketMqDtpAdapter;
-import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
+import com.dtp.core.spring.BaseBeanAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

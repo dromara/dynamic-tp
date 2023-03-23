@@ -1,7 +1,7 @@
 package com.dtp.starter.adapter.sofa.autoconfigure;
 
 import com.dtp.adapter.sofa.SofaDtpAdapter;
-import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
+import com.dtp.core.spring.BaseBeanAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

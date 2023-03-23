@@ -1,7 +1,7 @@
 package com.dtp.starter.adapter.motan.autoconfigure;
 
 import com.dtp.adapter.motan.MotanDtpAdapter;
-import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
+import com.dtp.core.spring.BaseBeanAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

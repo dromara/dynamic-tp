@@ -18,10 +18,6 @@
     
     <dependencies>
         <dependency>
-            <groupId>cn.dynamictp</groupId>
-            <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.etcd</groupId>
             <artifactId>jetcd-core</artifactId>
             <version>0.5.5</version>

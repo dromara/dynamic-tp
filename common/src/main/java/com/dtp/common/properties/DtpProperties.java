@@ -27,6 +27,7 @@ public class DtpProperties {
     /**
      * If enabled DynamicTp.
      */
+    @Deprecated
     private boolean enabled = true;
 
     /**

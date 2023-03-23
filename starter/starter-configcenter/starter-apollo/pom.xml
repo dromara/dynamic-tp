@@ -10,12 +10,6 @@
     <artifactId>dynamic-tp-spring-boot-starter-apollo</artifactId>
 
     <dependencies>
-
-        <dependency>
-            <groupId>cn.dynamictp</groupId>
-            <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>com.ctrip.framework.apollo</groupId>
             <artifactId>apollo-client</artifactId>

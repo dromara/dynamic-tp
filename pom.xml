@@ -226,12 +226,6 @@
 
             <dependency>
                 <groupId>cn.dynamictp</groupId>
-                <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
-                <version>${dtp.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>cn.dynamictp</groupId>
                 <artifactId>dynamic-tp-spring-boot-starter-adapter-common</artifactId>
                 <version>${dtp.version}</version>
             </dependency>

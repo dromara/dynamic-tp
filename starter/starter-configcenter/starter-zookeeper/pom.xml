@@ -12,11 +12,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.dynamictp</groupId>
-            <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-framework</artifactId>
             <version>${zookeeper.version}</version>

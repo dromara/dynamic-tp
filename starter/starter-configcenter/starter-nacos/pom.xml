@@ -11,11 +11,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>cn.dynamictp</groupId>
-            <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.alibaba.nacos</groupId>
             <artifactId>nacos-api</artifactId>
             <version>${nacos.version}</version>

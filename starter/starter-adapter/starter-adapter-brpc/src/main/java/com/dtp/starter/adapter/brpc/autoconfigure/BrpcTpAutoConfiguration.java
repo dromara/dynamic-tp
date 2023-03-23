@@ -2,7 +2,7 @@ package com.dtp.starter.adapter.brpc.autoconfigure;
 
 import com.dtp.apapter.brpc.client.StarlightClientDtpAdapter;
 import com.dtp.apapter.brpc.server.StarlightServerDtpAdapter;
-import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
+import com.dtp.core.spring.BaseBeanAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

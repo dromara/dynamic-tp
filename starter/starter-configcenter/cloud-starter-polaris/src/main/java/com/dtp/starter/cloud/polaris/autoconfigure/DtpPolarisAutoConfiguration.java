@@ -1,7 +1,7 @@
 package com.dtp.starter.cloud.polaris.autoconfigure;
 
 import com.dtp.starter.cloud.polaris.refresh.CloudPolarisRefresher;
-import com.dtp.core.spring.BaseBeanAutoConfiguration;
+import com.dtp.core.spring.DtpBaseBeanConfiguration;
 import com.tencent.cloud.polaris.config.config.PolarisConfigProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -19,8 +19,8 @@ import org.springframework.context.annotation.Configuration;
  **/
 @Configuration
 @ConditionalOnClass(PolarisConfigProperties.class)
-@ConditionalOnBean({BaseBeanAutoConfiguration.class})
-@AutoConfigureAfter({BaseBeanAutoConfiguration.class})
+@ConditionalOnBean({DtpBaseBeanConfiguration.class})
+@AutoConfigureAfter({DtpBaseBeanConfiguration.class})
 public class DtpPolarisAutoConfiguration {
 
     @Bean

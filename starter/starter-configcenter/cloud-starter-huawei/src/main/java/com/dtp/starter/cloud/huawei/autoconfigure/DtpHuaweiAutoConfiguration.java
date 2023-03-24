@@ -1,6 +1,6 @@
 package com.dtp.starter.cloud.huawei.autoconfigure;
 
-import com.dtp.core.spring.BaseBeanAutoConfiguration;
+import com.dtp.core.spring.DtpBaseBeanConfiguration;
 import com.dtp.starter.cloud.huawei.refresh.CloudHuaweiRefresher;
 import com.huaweicloud.common.configration.bootstrap.ConfigBootstrapProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -16,8 +16,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnClass(ConfigBootstrapProperties.class)
-@ConditionalOnBean({BaseBeanAutoConfiguration.class})
-@AutoConfigureAfter({BaseBeanAutoConfiguration.class})
+@ConditionalOnBean({DtpBaseBeanConfiguration.class})
+@AutoConfigureAfter({DtpBaseBeanConfiguration.class})
 public class DtpHuaweiAutoConfiguration {
 
     @Bean

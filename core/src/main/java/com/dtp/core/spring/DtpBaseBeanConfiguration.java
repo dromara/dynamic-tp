@@ -13,14 +13,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
 /**
- * BaseBeanAutoConfiguration related
+ * DtpBaseBeanConfiguration related
  *
  * @author yanhom
  * @since 1.0.0
  **/
 @Configuration(proxyBeanMethods = false)
 @EnableConfigurationProperties(DtpProperties.class)
-public class BaseBeanAutoConfiguration {
+public class DtpBaseBeanConfiguration {
 
     @Bean
     public ApplicationContextHolder dtpApplicationContextHolder() {

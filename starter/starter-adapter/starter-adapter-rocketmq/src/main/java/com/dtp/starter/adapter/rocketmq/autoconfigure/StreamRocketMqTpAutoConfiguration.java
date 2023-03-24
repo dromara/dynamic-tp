@@ -1,7 +1,7 @@
 package com.dtp.starter.adapter.rocketmq.autoconfigure;
 
 import com.dtp.adapter.rocketmq.StreamRocketMqDtpAdapter;
-import com.dtp.core.spring.BaseBeanAutoConfiguration;
+import com.dtp.core.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -17,8 +17,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnProperty(prefix = "spring.cloud.stream.rocketmq.binder", value = {"name-server"})
-@ConditionalOnBean({BaseBeanAutoConfiguration.class})
-@AutoConfigureAfter({BaseBeanAutoConfiguration.class})
+@ConditionalOnBean({DtpBaseBeanConfiguration.class})
+@AutoConfigureAfter({DtpBaseBeanConfiguration.class})
 @SuppressWarnings("all")
 public class StreamRocketMqTpAutoConfiguration {
 

@@ -2,7 +2,7 @@ package com.dtp.starter.adapter.dubbo.autoconfigure;
 
 import com.dtp.adapter.dubbo.apache.ApacheDubboDtpAdapter;
 import com.dtp.starter.adapter.dubbo.autoconfigure.condition.ConditionOnApacheDubboApp;
-import com.dtp.core.spring.BaseBeanAutoConfiguration;
+import com.dtp.core.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -17,8 +17,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionOnApacheDubboApp
-@AutoConfigureAfter({BaseBeanAutoConfiguration.class})
-@ConditionalOnBean({BaseBeanAutoConfiguration.class})
+@AutoConfigureAfter({DtpBaseBeanConfiguration.class})
+@ConditionalOnBean({DtpBaseBeanConfiguration.class})
 @SuppressWarnings("all")
 public class ApacheDubboTpAutoConfiguration {
 

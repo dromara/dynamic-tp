@@ -11,9 +11,10 @@ import org.springframework.core.type.AnnotationMetadata;
 public class DtpConfigurationSelector implements DeferredImportSelector, Ordered {
 
     @Override
+    @SuppressWarnings("all")
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-        return new String[]{DtpBeanDefinitionRegistrar.class.getName(),
-                BaseBeanAutoConfiguration.class.getName()};
+        return new String[]{DtpBaseBeanConfiguration.class.getName(),
+                DtpBeanDefinitionRegistrar.class.getName()};
     }
 
     @Override

@@ -35,10 +35,6 @@ public class DtpBannerPrinter implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        if (!dtpProperties.isEnabledBanner()) {
-            return;
-        }
-
         log.info(AnsiOutput.toString(BANNER, "\n", AnsiColor.GREEN, NAME,
                 AnsiColor.DEFAULT, AnsiStyle.FAINT));
     }

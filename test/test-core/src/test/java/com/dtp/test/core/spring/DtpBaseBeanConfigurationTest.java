@@ -1,7 +1,11 @@
 package com.dtp.test.core.spring;
 
 import com.dtp.common.ApplicationContextHolder;
+import com.dtp.core.DtpRegistry;
+import com.dtp.core.monitor.DtpEndpoint;
+import com.dtp.core.monitor.DtpMonitor;
 import com.dtp.core.spring.DtpBaseBeanConfiguration;
+import com.dtp.core.spring.DtpPostProcessor;
 import com.dtp.core.spring.EnableDynamicTp;
 import com.dtp.core.spring.YamlPropertySourceFactory;
 import com.dtp.core.support.DtpBannerPrinter;
@@ -22,7 +26,7 @@ public class DtpBaseBeanConfigurationTest {
 
     @SpringBootTest(classes = DtpBaseBeanConfigurationTest.class)
     @EnableDynamicTp
-    public static class EnableDtpAonnaction {
+    public static class EnableDynamicTpAnnotation {
 
         @Autowired
         private ApplicationContext applicationContext;
@@ -32,12 +36,16 @@ public class DtpBaseBeanConfigurationTest {
             Assertions.assertNotNull(applicationContext.getBean(DtpBaseBeanConfiguration.class));
             Assertions.assertNotNull(applicationContext.getBean(ApplicationContextHolder.class));
             Assertions.assertNotNull(applicationContext.getBean(DtpBannerPrinter.class));
+            Assertions.assertNotNull(applicationContext.getBean(DtpPostProcessor.class));
+            Assertions.assertNotNull(applicationContext.getBean(DtpRegistry.class));
+            Assertions.assertNotNull(applicationContext.getBean(DtpMonitor.class));
+//            Assertions.assertNotNull(applicationContext.getBean(DtpEndpoint.class));
         }
 
     }
 
     @SpringBootTest(classes = DtpBaseBeanConfigurationTest.class)
-    public static class DisableDtpAonnaction {
+    public static class DisableDynamicTpAnnotation {
 
         @Autowired
         private ApplicationContext applicationContext;
@@ -47,6 +55,10 @@ public class DtpBaseBeanConfigurationTest {
             Assertions.assertThrows(NoSuchBeanDefinitionException.class, () -> applicationContext.getBean(DtpBaseBeanConfiguration.class));
             Assertions.assertThrows(NoSuchBeanDefinitionException.class, () -> applicationContext.getBean(ApplicationContextHolder.class));
             Assertions.assertThrows(NoSuchBeanDefinitionException.class, () -> applicationContext.getBean(DtpBannerPrinter.class));
+            Assertions.assertThrows(NoSuchBeanDefinitionException.class, () -> applicationContext.getBean(DtpPostProcessor.class));
+            Assertions.assertThrows(NoSuchBeanDefinitionException.class, () -> applicationContext.getBean(DtpRegistry.class));
+            Assertions.assertThrows(NoSuchBeanDefinitionException.class, () -> applicationContext.getBean(DtpMonitor.class));
+//            Assertions.assertThrows(NoSuchBeanDefinitionException.class, () -> applicationContext.getBean(DtpEndpoint.class));
         }
 
     }

@@ -77,7 +77,7 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter {
         TpMainFields newFields = ExecutorConverter.ofSimple(props.getThreadPoolName(), threadPool.getMinThreads(),
                 threadPool.getMaxThreads(), 0L);
         if (oldFields.equals(newFields)) {
-            log.warn("DynamicTp adapter refresh, main properties of [{}] have not changed.", POOL_NAME);
+            log.debug("DynamicTp adapter refresh, main properties of [{}] have not changed.", POOL_NAME);
             return;
         }
         log.info("DynamicTp adapter [{}] refreshed end, corePoolSize: [{}], maxPoolSize: [{}]",

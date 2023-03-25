@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.core.env.Environment;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * ApplicationContextHolder related
@@ -24,6 +25,9 @@ public class ApplicationContextHolder implements ApplicationContextAware {
     }
 
     public static <T> T getBean(Class<T> clazz) {
+        if (Objects.isNull(context)) {
+            return null;
+        }
         return context.getBean(clazz);
     }
 

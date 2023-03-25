@@ -1,9 +1,9 @@
 package com.dtp.adapter.webserver;
 
-import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.entity.ThreadPoolStats;
-import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.entity.TpExecutorProps;
+import com.dtp.common.entity.TpMainFields;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.ReflectionUtil;
 import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.support.ExecutorWrapper;
@@ -95,7 +95,7 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
             TpMainFields newFields = ExecutorConverter.ofSimple(props.getThreadPoolName(), newCorePoolSize,
                     newMaxPoolSize, newKeepAliveTime);
             if (oldFields.equals(newFields)) {
-                log.warn("DynamicTp adapter refresh, main properties of [{}] have not changed.", POOL_NAME);
+                log.debug("DynamicTp adapter refresh, main properties of [{}] have not changed.", POOL_NAME);
                 return;
             }
 

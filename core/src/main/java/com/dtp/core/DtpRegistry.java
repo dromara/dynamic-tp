@@ -101,8 +101,8 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      * @param source  the source of the call to register method
      */
     public static void registerCommon(ExecutorWrapper wrapper, String source) {
-        log.info("DynamicTp register commonExecutor, source: {}, name: {}",
-                source, wrapper.getThreadPoolName());
+        log.info("DynamicTp register commonExecutor, source: {}, executor: {}",
+                source, ExecutorConverter.convert(wrapper));
         COMMON_REGISTRY.putIfAbsent(wrapper.getThreadPoolName(), wrapper);
     }
 
@@ -216,6 +216,9 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         if (!Objects.equals(executor.allowsCoreThreadTimeOut(), props.isAllowCoreThreadTimeOut())) {
             executor.allowCoreThreadTimeOut(props.isAllowCoreThreadTimeOut());
         }
+        // update queue
+        updateQueueProps(executor, props);
+
         if (executor instanceof DtpExecutor) {
             doRefreshDtp((DtpExecutor) executor, props);
             return;
@@ -237,8 +240,6 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
             executor.setRejectedExecutionHandler(rejectHandler);
         }
 
-        // update queue
-        updateQueueProps(executor, props);
         // update notify related
         updateNotifyInfo(executorWrapper, props, dtpProperties.getPlatforms());
     }
@@ -261,8 +262,6 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         List<TaskWrapper> taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
         executor.setTaskWrappers(taskWrappers);
 
-        // update queue
-        updateQueueProps(executor, props);
         // update notify related
         updateNotifyInfo(executor, props, dtpProperties.getPlatforms());
     }

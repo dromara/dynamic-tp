@@ -114,7 +114,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
         doRefresh(executorWrapper, platforms, props);
         TpMainFields newFields = ExecutorConverter.convert(executorWrapper);
         if (oldFields.equals(newFields)) {
-            log.warn("DynamicTp adapter refresh, main properties of [{}] have not changed.",
+            log.debug("DynamicTp adapter refresh, main properties of [{}] have not changed.",
                     executorWrapper.getThreadPoolName());
             return;
         }

@@ -54,7 +54,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     /**
      * If enable notify.
      */
-    private boolean notifyEnabled;
+    private boolean notifyEnabled = true;
 
     /**
      * Notify items, see {@link NotifyItemEnum}.

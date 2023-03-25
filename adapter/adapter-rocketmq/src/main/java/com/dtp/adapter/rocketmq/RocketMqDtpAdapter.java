@@ -106,6 +106,5 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
                 executors.put(proKey, executorWrapper);
             }
         });
-
     }
 }

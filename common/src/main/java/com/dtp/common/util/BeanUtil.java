@@ -26,7 +26,7 @@ public final class BeanUtil {
                                         Map<String, Object> propertyValues,
                                         Object... constructorArgs) {
         if (ifPresent(registry, beanName, clazz) || registry.containsBeanDefinition(beanName)) {
-            log.warn("DynamicTp registrar, bean definition already exists, overrides with remote config, beanName: {}",
+            log.info("DynamicTp registrar, bean definition already exists, overrides with remote config, beanName: {}",
                     beanName);
             registry.removeBeanDefinition(beanName);
         }

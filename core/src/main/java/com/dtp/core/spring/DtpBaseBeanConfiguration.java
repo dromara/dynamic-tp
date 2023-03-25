@@ -31,8 +31,8 @@ public class DtpBaseBeanConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = DynamicTpConst.BANNER_ENABLED_PROP, matchIfMissing = true, havingValue = "true")
-    public DtpBannerPrinter dtpBannerPrinter(DtpProperties properties) {
-        return new DtpBannerPrinter(properties);
+    public DtpBannerPrinter dtpBannerPrinter() {
+        return new DtpBannerPrinter();
     }
 
     @Bean

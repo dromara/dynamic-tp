@@ -6,7 +6,7 @@
     <parent>
         <artifactId>dynamic-tp-example</artifactId>
         <groupId>cn.dynamictp</groupId>
-        <version>1.1.0</version>
+        <version>1.1.1</version>
     </parent>
     <artifactId>dynamic-tp-example-nacos</artifactId>
 
@@ -20,7 +20,7 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>2.2.5.RELEASE</version>
+                <version>2.3.12.RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

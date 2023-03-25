@@ -137,16 +137,21 @@ public class NotifyHelper {
     }
 
     public static Map<String, NotifyPlatform> getAllPlatforms() {
-        DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-        if (CollectionUtils.isEmpty(dtpProperties.getPlatforms())) {
+        val dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+        if (Objects.isNull(dtpProperties) || CollectionUtils.isEmpty(dtpProperties.getPlatforms())) {
             return Collections.emptyMap();
         }
         return StreamUtil.toMap(dtpProperties.getPlatforms(), NotifyPlatform::getPlatformId);
     }
 
     public static void initNotify(DtpExecutor executor) {
-
-        List<NotifyPlatform> platforms = ApplicationContextHolder.getBean(DtpProperties.class).getPlatforms();
+        val dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+        if (Objects.isNull(dtpProperties)) {
+            log.warn("DynamicTp notify, cannot find a DtpProperties instance for [{}].",
+                    executor.getThreadPoolName());
+            return;
+        }
+        val platforms = dtpProperties.getPlatforms();
         if (CollectionUtils.isEmpty(platforms)) {
             executor.setNotifyItems(Lists.newArrayList());
             executor.setPlatformIds(Lists.newArrayList());

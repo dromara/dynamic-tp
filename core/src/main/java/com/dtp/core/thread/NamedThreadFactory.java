@@ -51,7 +51,7 @@ public class NamedThreadFactory implements ThreadFactory {
 
     @Override
     public Thread newThread(Runnable r) {
-        String name = namePrefix + seq.getAndIncrement();
+        String name = namePrefix + "-" + seq.getAndIncrement();
         Thread t = new Thread(group, r, name);
         t.setDaemon(daemon);
         t.setPriority(priority);

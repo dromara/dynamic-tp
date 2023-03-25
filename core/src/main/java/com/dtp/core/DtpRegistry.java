@@ -101,8 +101,8 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      * @param source  the source of the call to register method
      */
     public static void registerCommon(ExecutorWrapper wrapper, String source) {
-        log.info("DynamicTp register commonExecutor, source: {}, name: {}",
-                source, wrapper.getThreadPoolName());
+        log.info("DynamicTp register commonExecutor, source: {}, executor: {}",
+                source, ExecutorConverter.convert(wrapper));
         COMMON_REGISTRY.putIfAbsent(wrapper.getThreadPoolName(), wrapper);
     }
 

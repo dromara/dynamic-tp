@@ -1,7 +1,7 @@
 package com.dtp.starter.apollo.autoconfigure;
 
 import com.dtp.starter.apollo.refresh.ApolloRefresher;
-import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
+import com.dtp.core.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -21,8 +21,8 @@ import static com.ctrip.framework.apollo.spring.config.PropertySourcesConstants.
 @Configuration
 @ConditionalOnClass(com.ctrip.framework.apollo.ConfigService.class)
 @ConditionalOnProperty(value = {APOLLO_BOOTSTRAP_ENABLED}, havingValue = "true", matchIfMissing = true)
-@ConditionalOnBean({BaseBeanAutoConfiguration.class})
-@AutoConfigureAfter({BaseBeanAutoConfiguration.class})
+@ConditionalOnBean({DtpBaseBeanConfiguration.class})
+@AutoConfigureAfter({DtpBaseBeanConfiguration.class})
 public class DtpApolloAutoConfiguration {
 
     @Bean

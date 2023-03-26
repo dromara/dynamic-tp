@@ -2,7 +2,7 @@ package com.dtp.starter.adapter.common.autoconfigure;
 
 import com.dtp.adapter.common.DtpAdapterListener;
 import com.dtp.common.properties.DtpProperties;
-import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
+import com.dtp.core.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -19,8 +19,8 @@ import org.springframework.context.annotation.DependsOn;
  **/
 @Configuration
 @EnableConfigurationProperties(DtpProperties.class)
-@AutoConfigureAfter({BaseBeanAutoConfiguration.class})
-@ConditionalOnBean({BaseBeanAutoConfiguration.class})
+@AutoConfigureAfter({DtpBaseBeanConfiguration.class})
+@ConditionalOnBean({DtpBaseBeanConfiguration.class})
 public class AdapterCommonAutoConfiguration {
 
     @Bean

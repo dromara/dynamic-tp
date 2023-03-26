@@ -4,20 +4,31 @@ server:
 spring:
   application:
     name: dynamic-tp-nacos-cloud-demo
-  profiles:
-    active: dev
+    profiles:
+      active: dev
   cloud:
     nacos:
       discovery:
-        server-addr: localhost:8848
+        server-addr: http://${nacos:localhost}:8848
       config:
-        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+        server-addr: http://${nacos:localhost}:8848
         file-extension: yml
         extension-configs:
           - dataId: ${spring.application.name}-dtp-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
             group: DEFAULT_GROUP
-            refresh: true  # 必须配置，否则自动刷新不生效
+            refresh: true  # 必须配置，负责自动刷新不生效
         refresh-enabled: true
   redis:
-    host: localhost
+    host: ${redis:localhost}
     port: 6379
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'   # 测试使用，线上不要用*，按需开启
+  server:
+    port: 9100

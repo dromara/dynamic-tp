@@ -1,6 +1,5 @@
 package com.dtp.core.support;
 
-import com.dtp.common.properties.DtpProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.ansi.AnsiColor;
@@ -16,12 +15,6 @@ import org.springframework.boot.ansi.AnsiStyle;
 @Slf4j
 public class DtpBannerPrinter implements InitializingBean {
 
-    private final DtpProperties dtpProperties;
-
-    public DtpBannerPrinter(DtpProperties properties) {
-        this.dtpProperties = properties;
-    }
-
     private static final String NAME = " :: Dynamic Thread Pool :: ";
 
     private static final String BANNER = "\n" +
@@ -35,10 +28,6 @@ public class DtpBannerPrinter implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        if (!dtpProperties.isEnabledBanner()) {
-            return;
-        }
-
         log.info(AnsiOutput.toString(BANNER, "\n", AnsiColor.GREEN, NAME,
                 AnsiColor.DEFAULT, AnsiStyle.FAINT));
     }

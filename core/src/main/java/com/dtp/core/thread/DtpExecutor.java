@@ -155,24 +155,18 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     @Override
     protected void beforeExecute(Thread t, Runnable r) {
         super.beforeExecute(t, r);
-        if (!(r instanceof DtpRunnable)) {
-            return;
-        }
         DtpRunnable runnable = (DtpRunnable) r;
-        long currTime = TimeUtil.currentTimeMillis();
-        if (runTimeout > 0) {
-            runnable.setStartTime(currTime);
-        }
+        runnable.setStartTime(TimeUtil.currentTimeMillis());
         if (queueTimeout <= 0) {
             return;
         }
-        long waitTime = currTime - runnable.getSubmitTime();
+        long waitTime = TimeUtil.currentTimeMillis() - runnable.getSubmitTime();
         if (waitTime > queueTimeout) {
             queueTimeoutCount.increment();
             AlarmManager.doAlarmAsync(this, QUEUE_TIMEOUT, r);
-            if (StringUtils.isNotBlank(runnable.getTaskName())) {
-                log.warn("DynamicTp execute, queue timeout, poolName: {}, taskName: {}, waitTime: {}ms",
-                        this.getThreadPoolName(), runnable.getTaskName(), waitTime);
+            if (StringUtils.isNotBlank(runnable.getTaskName()) || StringUtils.isNotBlank(runnable.getTraceId())) {
+                log.warn("DynamicTp execute, queue timeout, tpName: {}, taskName: {}, traceId: {}, waitTime: {}ms",
+                        this.getThreadPoolName(), runnable.getTaskName(), runnable.getTraceId(), waitTime);
             }
         }
     }
@@ -191,9 +185,9 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
         if (runTime > runTimeout) {
             runTimeoutCount.increment();
             AlarmManager.doAlarmAsync(this, RUN_TIMEOUT);
-            if (StringUtils.isNotBlank(runnable.getTaskName())) {
-                log.warn("DynamicTp execute, run timeout, poolName: {}, taskName: {}, runTime: {}ms",
-                        this.getThreadPoolName(), runnable.getTaskName(), runTime);
+            if (StringUtils.isNotBlank(runnable.getTaskName()) || StringUtils.isNotBlank(runnable.getTraceId())) {
+                log.warn("DynamicTp execute, run timeout, tpName: {}, taskName: {}, traceId: {}, runTime: {}ms",
+                        this.getThreadPoolName(), runnable.getTaskName(), runnable.getTraceId(), runTime);
             }
         }
         clearContext();
@@ -213,10 +207,8 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
                 command = t.wrap(command);
             }
         }
-        if (runTimeout > 0 || queueTimeout > 0) {
-            String taskName = (command instanceof NamedRunnable) ? ((NamedRunnable) command).getName() : null;
-            command = new DtpRunnable(command, taskName);
-        }
+        String taskName = (command instanceof NamedRunnable) ? ((NamedRunnable) command).getName() : null;
+        command = new DtpRunnable(command, taskName);
         return command;
     }
 

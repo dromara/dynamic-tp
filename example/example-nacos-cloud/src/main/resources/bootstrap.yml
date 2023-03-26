@@ -4,8 +4,8 @@ server:
 spring:
   application:
     name: dynamic-tp-nacos-cloud-demo
-    profiles:
-      active: dev
+  profiles:
+    active: dev
   cloud:
     nacos:
       discovery:

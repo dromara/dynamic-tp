@@ -155,11 +155,11 @@ public class NotifyHelper {
         if (CollectionUtils.isEmpty(platforms)) {
             executor.setNotifyItems(Lists.newArrayList());
             executor.setPlatformIds(Lists.newArrayList());
-            log.warn("DynamicTp notify, no notify platforms configured, name {}", executor.getThreadPoolName());
+            log.warn("DynamicTp notify, no notify platforms configured for [{}]", executor.getThreadPoolName());
             return;
         }
         if (CollectionUtils.isEmpty(executor.getNotifyItems())) {
-            log.warn("DynamicTp notify, no notify items configured, name {}", executor.getThreadPoolName());
+            log.warn("DynamicTp notify, no notify items configured for [{}]", executor.getThreadPoolName());
             return;
         }
         fillPlatforms(executor.getPlatformIds(), platforms, executor.getNotifyItems());

@@ -35,7 +35,7 @@ public interface RejectedAware {
             String taskName = (runnable instanceof NamedRunnable) ? ((NamedRunnable) runnable).getName() : null;
             log.warn("DynamicTp execute, thread pool is exhausted, tpName: {}, taskName: {}, traceId: {}, " +
                             "poolSize: {} (active: {}, core: {}, max: {}, largest: {}), " +
-                            "task: {} (completed: {}), queueCapacity: {}, (currSize: {}, remaining: {})" +
+                            "task: {} (completed: {}), queueCapacity: {}, (currSize: {}, remaining: {}), " +
                             "executorStatus: (isShutdown: {}, isTerminated: {}, isTerminating: {})",
                     dtpExecutor.getThreadPoolName(), taskName, MDC.get(TRACE_ID), executor.getPoolSize(),
                     executor.getActiveCount(), executor.getCorePoolSize(), executor.getMaximumPoolSize(),

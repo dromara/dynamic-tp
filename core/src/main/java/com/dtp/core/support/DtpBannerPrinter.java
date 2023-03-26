@@ -17,6 +17,10 @@ public class DtpBannerPrinter implements InitializingBean {
 
     private static final String NAME = " :: Dynamic Thread Pool :: ";
 
+    private static final String SITE = " :: https://dynamictp.cn ::";
+
+    private static final String VERSION = " :: v1.1.1 :: ";
+
     private static final String BANNER = "\n" +
             "|  __ \\                            (_) |__   __|   \n" +
             "| |  | |_   _ _ __   __ _ _ __ ___  _  ___| |_ __  \n" +
@@ -28,7 +32,7 @@ public class DtpBannerPrinter implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        log.info(AnsiOutput.toString(BANNER, "\n", AnsiColor.GREEN, NAME,
-                AnsiColor.DEFAULT, AnsiStyle.FAINT));
+        log.info(AnsiOutput.toString(BANNER, "\n", AnsiColor.GREEN, NAME, "\n", VERSION,
+                "\n", SITE, AnsiColor.DEFAULT, AnsiStyle.FAINT));
     }
 }

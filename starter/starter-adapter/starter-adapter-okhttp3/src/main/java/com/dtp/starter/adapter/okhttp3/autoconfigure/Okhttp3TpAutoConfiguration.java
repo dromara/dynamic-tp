@@ -1,7 +1,7 @@
 package com.dtp.starter.adapter.okhttp3.autoconfigure;
 
 import com.dtp.adapter.okhttp3.Okhttp3DtpAdapter;
-import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
+import com.dtp.core.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -17,8 +17,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnClass(name = "okhttp3.OkHttpClient")
-@ConditionalOnBean({BaseBeanAutoConfiguration.class})
-@AutoConfigureAfter({BaseBeanAutoConfiguration.class})
+@ConditionalOnBean({DtpBaseBeanConfiguration.class})
+@AutoConfigureAfter({DtpBaseBeanConfiguration.class})
 public class Okhttp3TpAutoConfiguration {
 
     @Bean

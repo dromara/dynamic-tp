@@ -1,6 +1,6 @@
 package com.dtp.starter.etcd.autoconfigure;
 
-import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
+import com.dtp.core.spring.DtpBaseBeanConfiguration;
 import com.dtp.starter.etcd.refresh.EtcdRefresher;
 import io.etcd.jetcd.Client;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -15,8 +15,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnClass(value = Client.class)
-@ConditionalOnBean({BaseBeanAutoConfiguration.class})
-@AutoConfigureAfter({BaseBeanAutoConfiguration.class})
+@ConditionalOnBean({DtpBaseBeanConfiguration.class})
+@AutoConfigureAfter({DtpBaseBeanConfiguration.class})
 public class DtpEtcdAutoConfiguration {
 
     @Bean

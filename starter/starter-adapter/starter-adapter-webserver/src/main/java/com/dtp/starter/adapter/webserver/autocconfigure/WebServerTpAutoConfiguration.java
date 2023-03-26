@@ -3,10 +3,10 @@ package com.dtp.starter.adapter.webserver.autocconfigure;
 import com.dtp.adapter.webserver.JettyDtpAdapter;
 import com.dtp.adapter.webserver.TomcatDtpAdapter;
 import com.dtp.adapter.webserver.UndertowDtpAdapter;
+import com.dtp.core.spring.DtpBaseBeanConfiguration;
 import com.dtp.starter.adapter.webserver.autocconfigure.condition.ConditionalOnJettyWebServer;
 import com.dtp.starter.adapter.webserver.autocconfigure.condition.ConditionalOnTomcatWebServer;
 import com.dtp.starter.adapter.webserver.autocconfigure.condition.ConditionalOnUndertowWebServer;
-import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -21,8 +21,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnWebApplication
-@ConditionalOnBean({BaseBeanAutoConfiguration.class})
-@AutoConfigureAfter({BaseBeanAutoConfiguration.class})
+@ConditionalOnBean({DtpBaseBeanConfiguration.class})
+@AutoConfigureAfter({DtpBaseBeanConfiguration.class})
 public class WebServerTpAutoConfiguration {
 
     @Bean

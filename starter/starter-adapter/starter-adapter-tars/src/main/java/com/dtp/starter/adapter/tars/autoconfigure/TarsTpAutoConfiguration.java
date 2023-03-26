@@ -1,7 +1,7 @@
 package com.dtp.starter.adapter.tars.autoconfigure;
 
 import com.dtp.adapter.tars.TarsDtpAdapter;
-import com.dtp.starter.common.autoconfigure.BaseBeanAutoConfiguration;
+import com.dtp.core.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -16,9 +16,9 @@ import org.springframework.context.annotation.Configuration;
  * @since 1.1.0
  */
 @Configuration
-@AutoConfigureAfter({BaseBeanAutoConfiguration.class})
+@AutoConfigureAfter({DtpBaseBeanConfiguration.class})
 @ConditionalOnClass(name = "com.qq.tars.client.Communicator")
-@ConditionalOnBean({BaseBeanAutoConfiguration.class})
+@ConditionalOnBean({DtpBaseBeanConfiguration.class})
 public class TarsTpAutoConfiguration {
 
     @Bean

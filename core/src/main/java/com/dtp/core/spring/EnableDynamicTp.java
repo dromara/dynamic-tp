@@ -17,6 +17,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(DtpBeanDefinitionRegistrar.class)
+@Import(DtpConfigurationSelector.class)
 public @interface EnableDynamicTp {
 }

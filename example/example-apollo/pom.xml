@@ -6,7 +6,7 @@
     <parent>
         <artifactId>dynamic-tp-example</artifactId>
         <groupId>cn.dynamictp</groupId>
-        <version>1.1.1</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>dynamic-tp-example-apollo</artifactId>
 
@@ -26,12 +26,12 @@
         <dependency>
             <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-apollo</artifactId>
-            <version>${dtp.version}</version>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-adapter-webserver</artifactId>
-            <version>${dtp.version}</version>
+            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.ctrip.framework.apollo</groupId>

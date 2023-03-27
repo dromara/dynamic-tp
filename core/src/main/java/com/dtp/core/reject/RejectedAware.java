@@ -30,7 +30,7 @@ public interface RejectedAware {
         if (executor instanceof DtpExecutor) {
             DtpExecutor dtpExecutor = (DtpExecutor) executor;
             dtpExecutor.incRejectCount(1);
-            AlarmManager.doAlarmAsync(dtpExecutor, REJECT);
+            AlarmManager.doAlarmAsync(dtpExecutor, REJECT, runnable);
 
             String taskName = (runnable instanceof NamedRunnable) ? ((NamedRunnable) runnable).getName() : null;
             log.warn("DynamicTp execute, thread pool is exhausted, tpName: {}, taskName: {}, traceId: {}, " +

@@ -1,9 +1,9 @@
 package com.dtp.common.properties;
 
 import com.dtp.common.constant.DynamicTpConst;
-import com.dtp.common.entity.TpExecutorProps;
 import com.dtp.common.entity.DtpExecutorProps;
 import com.dtp.common.entity.NotifyPlatform;
+import com.dtp.common.entity.TpExecutorProps;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +23,6 @@ import static com.dtp.common.em.CollectorTypeEnum.MICROMETER;
 @Data
 @ConfigurationProperties(prefix = DynamicTpConst.MAIN_PROPERTIES_PREFIX)
 public class DtpProperties {
-
-    /**
-     * If enabled DynamicTp.
-     */
-    @Deprecated
-    private boolean enabled = true;
 
     /**
      * If print banner.

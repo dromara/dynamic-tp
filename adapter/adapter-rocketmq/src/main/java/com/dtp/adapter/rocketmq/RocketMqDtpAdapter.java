@@ -42,13 +42,13 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
     protected void initialize() {
 
         super.initialize();
-        adaptCustomerExecutors();
+        adaptConsumerExecutors();
         adaptProducerExecutors();
 
         log.info("DynamicTp adapter, rocketMq consumer and producer executors init end, executors: {}", executors);
     }
 
-    public void adaptCustomerExecutors() {
+    public void adaptConsumerExecutors() {
 
         val beans = ApplicationContextHolder.getBeansOfType(DefaultRocketMQListenerContainer.class);
         if (MapUtils.isEmpty(beans)) {

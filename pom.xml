@@ -5,7 +5,7 @@
 
     <groupId>cn.dynamictp</groupId>
     <artifactId>dynamic-tp-all</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <packaging>pom</packaging>
 
     <name>DynamicTp Project</name>
@@ -14,7 +14,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <dtp.version>1.1.1</dtp.version>
+        <dtp.version>1.1.2</dtp.version>
         <commons-collections.version>3.2.2</commons-collections.version>
         <spring-boot.version>2.5.8</spring-boot.version>
         <spring-cloud.version>2020.0.5</spring-cloud.version>

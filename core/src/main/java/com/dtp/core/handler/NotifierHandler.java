@@ -31,7 +31,6 @@ public final class NotifierHandler {
     private static final Map<String, DtpNotifier> NOTIFIERS = new HashMap<>();
 
     private NotifierHandler() {
-        // 适配SPI
         ServiceLoader<DtpNotifier> loader = ServiceLoader.load(DtpNotifier.class);
         for (DtpNotifier notifier : loader) {
             NOTIFIERS.put(notifier.platform(), notifier);

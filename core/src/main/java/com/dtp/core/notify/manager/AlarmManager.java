@@ -65,11 +65,6 @@ public class AlarmManager {
         AlarmCounter.init(poolName, notifyItem.getType());
     }
 
-    public static void doAlarmAsync(DtpExecutor executor, NotifyItemEnum notifyType) {
-        AlarmCounter.incAlarmCounter(executor.getThreadPoolName(), notifyType.getValue());
-        ALARM_EXECUTOR.execute(() -> doAlarm(ExecutorWrapper.of(executor), notifyType));
-    }
-
     public static void doAlarmAsync(DtpExecutor executor, NotifyItemEnum notifyType, Runnable currRunnable) {
         MDC.put(TRACE_ID, ((DtpRunnable) currRunnable).getTraceId());
         AlarmCounter.incAlarmCounter(executor.getThreadPoolName(), notifyType.getValue());

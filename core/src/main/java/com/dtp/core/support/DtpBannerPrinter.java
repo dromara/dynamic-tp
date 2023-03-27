@@ -19,7 +19,7 @@ public class DtpBannerPrinter implements InitializingBean {
 
     private static final String SITE = " :: https://dynamictp.cn ::";
 
-    private static final String VERSION = " :: v1.1.1 :: ";
+    private static final String VERSION = " :: v1.1.2 :: ";
 
     private static final String BANNER = "\n" +
             "|  __ \\                            (_) |__   __|   \n" +

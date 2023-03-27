@@ -115,7 +115,7 @@ public class StreamRocketMqDtpAdapter extends AbstractDtpAdapter {
                     messageChannelBinderClass, "lifecycle", messageChannelBinder);
             val rocketMQTemplate = (RocketMQTemplate) ReflectionUtil.getFieldValue(
                     RocketMQMessageHandler.class, "rocketMQTemplate", lifecycle);
-            if (Objects.isNull(rocketMQTemplate)){
+            if (Objects.isNull(rocketMQTemplate)) {
                 return;
             }
             val defaultMQProducer = rocketMQTemplate.getProducer();

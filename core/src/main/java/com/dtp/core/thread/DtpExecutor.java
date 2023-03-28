@@ -184,7 +184,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
         long runTime = TimeUtil.currentTimeMillis() - runnable.getStartTime();
         if (runTime > runTimeout) {
             runTimeoutCount.increment();
-            AlarmManager.doAlarmAsync(this, RUN_TIMEOUT, runnable);
+            AlarmManager.doAlarmAsync(this, RUN_TIMEOUT);
             if (StringUtils.isNotBlank(runnable.getTaskName()) || StringUtils.isNotBlank(runnable.getTraceId())) {
                 log.warn("DynamicTp execute, run timeout, tpName: {}, taskName: {}, traceId: {}, runTime: {}ms",
                         this.getThreadPoolName(), runnable.getTaskName(), runnable.getTraceId(), runTime);

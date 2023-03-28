@@ -2,6 +2,7 @@ package com.dtp.core.thread;
 
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.entity.NotifyItem;
+import com.dtp.common.timer.Timeout;
 import com.dtp.common.util.TimeUtil;
 import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.notify.manager.NotifyHelper;
@@ -30,7 +31,6 @@ import java.util.concurrent.atomic.LongAdder;
 
 import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
 import static com.dtp.common.em.NotifyItemEnum.QUEUE_TIMEOUT;
-import static com.dtp.common.em.NotifyItemEnum.RUN_TIMEOUT;
 
 /**
  * Dynamic ThreadPoolExecutor inherits DtpLifecycleSupport, and extends some features.
@@ -156,7 +156,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     protected void beforeExecute(Thread t, Runnable r) {
         super.beforeExecute(t, r);
         DtpRunnable runnable = (DtpRunnable) r;
-        runnable.setStartTime(TimeUtil.currentTimeMillis());
+        DtpRunnable.timeoutCheck(this, runnable, runTimeout, runTimeoutCount);
         if (queueTimeout <= 0) {
             return;
         }
@@ -175,22 +175,14 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
         tryPrintError(r, t);
-
-        if (runTimeout <= 0) {
-            clearContext();
-            return;
-        }
-        DtpRunnable runnable = (DtpRunnable) r;
-        long runTime = TimeUtil.currentTimeMillis() - runnable.getStartTime();
-        if (runTime > runTimeout) {
-            runTimeoutCount.increment();
-            AlarmManager.doAlarmAsync(this, RUN_TIMEOUT, runnable);
-            if (StringUtils.isNotBlank(runnable.getTaskName()) || StringUtils.isNotBlank(runnable.getTraceId())) {
-                log.warn("DynamicTp execute, run timeout, tpName: {}, taskName: {}, traceId: {}, runTime: {}ms",
-                        this.getThreadPoolName(), runnable.getTaskName(), runnable.getTraceId(), runTime);
-            }
-        }
+        cancelTimeoutCheckTask(r);
         clearContext();
+    }
+
+    private void cancelTimeoutCheckTask(Runnable r) {
+        DtpRunnable runnable = (DtpRunnable) r;
+        Timeout timeoutCheckTask = runnable.getTimeoutCheckTask();
+        timeoutCheckTask.cancel();
     }
 
     @Override
@@ -300,6 +292,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
 
     /**
      * In order for the field can be assigned by reflection.
+     *
      * @param allowCoreThreadTimeOut allowCoreThreadTimeOut
      */
     public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
@@ -321,4 +314,5 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     public void setNotifyEnabled(boolean notifyEnabled) {
         this.notifyEnabled = notifyEnabled;
     }
+
 }

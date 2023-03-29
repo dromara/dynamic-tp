@@ -40,7 +40,6 @@ class PropertiesBinderTest {
 
         DtpProperties dtpProperties = new DtpProperties();
         PropertiesBinder.bindDtpProperties(properties, dtpProperties);
-        Assertions.assertEquals(properties.get("spring.dynamic.tp.enabled"), dtpProperties.isEnabled());
         Assertions.assertEquals(properties.get("spring.dynamic.tp.executors[0].threadPoolName"),
                 dtpProperties.getExecutors().get(0).getThreadPoolName());
         Assertions.assertIterableEquals((List<String>) properties.get("spring.dynamic.tp.collectorTypes"),

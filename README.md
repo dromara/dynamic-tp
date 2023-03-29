@@ -82,7 +82,7 @@ protected void afterExecute(Runnable r, Throwable t);
 >
 > 3. 定时采集线程池指标数据，配合像 Grafana 这种可视化监控平台做大盘监控
 
-**经过多个版本的迭代，目前最新版本 v1.1.0 具有以下特性** ✅
+**经过多个版本的迭代，目前最新版本 v1.1.2 具有以下特性** ✅
 
 - **代码零侵入**：我们改变了线程池以往的使用姿势，所有配置均放在配置中心，服务启动时会从配置中心拉取配置生成线程池对象放到 Spring 容器中，使用时直接从 Spring 容器中获取，对业务代码零侵入
 
@@ -92,7 +92,7 @@ protected void afterExecute(Runnable r, Throwable t);
 
 - **任务增强**：提供任务包装功能，实现 TaskWrapper 接口即可，如 MdcTaskWrapper、TtlTaskWrapper、SwTraceTaskWrapper，可以支持线程池上下文信息传递
 
-- **多配置中心支持**：基于主流配置中心实现线程池参数动态调整，实时生效，已支持 Nacos、Apollo、Zookeeper、Consul、Etcd、Polaris，同时也提供 SPI 接口可自定义扩展实现
+- **多配置中心支持**：基于主流配置中心实现线程池参数动态调整，实时生效，已支持 Nacos、Apollo、Zookeeper、Consul、Etcd、Polaris、ServiceComb，同时也提供 SPI 接口可自定义扩展实现
 
 - **中间件线程池管理**：集成管理常用第三方组件的线程池，已集成 Tomcat、Jetty、Undertow、Dubbo、RocketMq、Hystrix、Grpc、Motan、Okhttp3、Brpc、Tars、SofaRpc、RabbitMq 等组件的线程池管理（调参、监控报警）
 

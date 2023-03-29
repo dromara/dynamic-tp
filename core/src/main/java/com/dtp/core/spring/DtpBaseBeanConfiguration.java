@@ -18,6 +18,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Role;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * DtpBaseBeanConfiguration related
  *
@@ -65,7 +67,7 @@ public class DtpBaseBeanConfiguration {
 
     @Bean
     public HashedWheelTimer hashedWheelTimer() {
-        return new HashedWheelTimer(new NamedThreadFactory("dtpRunnable-timeout", true));
+        return new HashedWheelTimer(new NamedThreadFactory("dtpRunnable-timeout", true), 10, TimeUnit.MILLISECONDS);
     }
 
 }

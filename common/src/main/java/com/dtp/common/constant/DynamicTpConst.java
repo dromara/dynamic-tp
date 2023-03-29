@@ -74,4 +74,14 @@ public final class DynamicTpConst {
      * unit
      */
     public static final Integer M_1 = 1024 * 1024;
+
+    /**
+     * OS
+     */
+    public static final String OS_NAME_KEY = "os.name";
+
+    public static final String OS_LINUX_PREFIX = "linux";
+
+    public static final String OS_WIN_PREFIX = "win";
+
 }

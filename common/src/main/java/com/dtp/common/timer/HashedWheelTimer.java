@@ -1,6 +1,6 @@
 package com.dtp.common.timer;
 
-import com.dtp.common.constant.OsConst;
+import com.dtp.common.constant.DynamicTpConst;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;
 
@@ -791,7 +791,7 @@ public class HashedWheelTimer implements Timer {
         }
     }
 
-    private static final boolean IS_OS_WINDOWS = System.getProperty(OsConst.OS_NAME_KEY, "").toLowerCase(Locale.US).contains(OsConst.OS_WIN_PREFIX);
+    private static final boolean IS_OS_WINDOWS = System.getProperty(DynamicTpConst.OS_NAME_KEY, "").toLowerCase(Locale.US).contains(DynamicTpConst.OS_WIN_PREFIX);
 
     private boolean isWindows() {
         return IS_OS_WINDOWS;

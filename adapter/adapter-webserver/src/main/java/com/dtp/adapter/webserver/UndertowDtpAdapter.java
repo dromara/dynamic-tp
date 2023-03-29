@@ -7,6 +7,7 @@ import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.ReflectionUtil;
 import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.support.ExecutorWrapper;
+import com.dtp.core.thread.ExecutorAdapter;
 import io.undertow.Undertow;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,7 +19,7 @@ import org.xnio.management.XnioWorkerMXBean;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
 
@@ -29,7 +30,7 @@ import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYL
  * @since 1.0.0
  */
 @Slf4j
-public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
+public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> {
 
     private static final String POOL_NAME = "undertowTp";
 
@@ -47,18 +48,18 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
         if (Objects.isNull(undertow)) {
             return null;
         }
-        return new ExecutorWrapper(POOL_NAME, undertow.getWorker());
+        final UndertowExecutorAdapter adapter = new UndertowExecutorAdapter(undertow.getWorker());
+        return new ExecutorWrapper(POOL_NAME, adapter);
     }
 
     @Override
     public ThreadPoolStats getPoolStats() {
 
-        Executor executor = getExecutor();
-        if (Objects.isNull(executor)) {
+        ExecutorAdapter<XnioWorker> adapter = getExecutor();
+        if (Objects.isNull(adapter)) {
             return null;
         }
-        XnioWorker xnioWorker = (XnioWorker) executor;
-        XnioWorkerMXBean mxBean = xnioWorker.getMXBean();
+        XnioWorkerMXBean mxBean = adapter.getOriginal().getMXBean();
         return ThreadPoolStats.builder()
                 .corePoolSize(mxBean.getCoreWorkerPoolSize())
                 .maximumPoolSize(mxBean.getMaxWorkerPoolSize())
@@ -75,12 +76,12 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
         if (Objects.isNull(props) || containsInvalidParams(props, log)) {
             return;
         }
-        Executor executor = getExecutor();
+        ExecutorAdapter<XnioWorker> executor = getExecutor();
         if (Objects.isNull(executor)) {
             return;
         }
 
-        XnioWorker xnioWorker = (XnioWorker) executor;
+        XnioWorker xnioWorker = executor.getOriginal();
         try {
             int oldCorePoolSize = xnioWorker.getOption(Options.WORKER_TASK_CORE_THREADS);
             int oldMaxPoolSize = xnioWorker.getOption(Options.WORKER_TASK_MAX_THREADS);
@@ -135,6 +136,92 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter {
             }
         } catch (IOException e) {
             log.error("Update undertow web server threadPool failed.", e);
+        }
+    }
+    
+    /**
+     * UndertowExecutorAdapter implements ExecutorAdapter, the goal of this class
+     * is to be compatible with {@link org.xnio.XnioWorker}.
+     **/
+    private static class UndertowExecutorAdapter implements ExecutorAdapter<XnioWorker> {
+        
+        private final XnioWorker executor;
+        
+        public UndertowExecutorAdapter(XnioWorker executor) {
+            this.executor = executor;
+        }
+        
+        @Override
+        public XnioWorker getOriginal() {
+            return this.executor;
+        }
+        
+        @Override
+        public int getCorePoolSize() {
+            try {
+                return this.executor.getOption(Options.WORKER_TASK_CORE_THREADS);
+            } catch (IOException e) {
+                log.error("getCorePoolSize from undertow web server threadPool failed.", e);
+                return this.executor.getMXBean().getCoreWorkerPoolSize();
+            }
+        }
+        
+        @Override
+        public void setCorePoolSize(int corePoolSize) {
+            try {
+                this.executor.setOption(Options.WORKER_TASK_CORE_THREADS, corePoolSize);
+            } catch (IOException e) {
+                log.error("Update undertow web server threadPool CorePoolSize failed.", e);
+            }
+        }
+        
+        @Override
+        public int getMaximumPoolSize() {
+            try {
+                return this.executor.getOption(Options.WORKER_TASK_MAX_THREADS);
+            } catch (IOException e) {
+                log.error("getMaximumPoolSize from undertow web server threadPool failed.", e);
+                return this.executor.getMXBean().getMaxWorkerPoolSize();
+            }
+        }
+        
+        @Override
+        public void setMaximumPoolSize(int maximumPoolSize) {
+            try {
+                this.executor.setOption(Options.WORKER_TASK_MAX_THREADS, maximumPoolSize);
+            } catch (IOException e) {
+                log.error("Update undertow web server threadPool MaximumPoolSize failed.", e);
+            }
+        }
+        
+        @Override
+        public int getPoolSize() {
+            return this.executor.getMXBean().getWorkerPoolSize();
+        }
+        
+        @Override
+        public int getActiveCount() {
+            return this.executor.getMXBean().getBusyWorkerThreadCount();
+        }
+        
+        @Override
+        public long getKeepAliveTime(TimeUnit unit) {
+            try {
+                return unit.convert(this.executor.getOption(Options.WORKER_TASK_KEEPALIVE), TimeUnit.MILLISECONDS);
+            } catch (IOException e) {
+                log.error("getKeepAliveTime from undertow web server threadPool failed.", e);
+                return -1;
+            }
+        }
+        
+        @Override
+        public void setKeepAliveTime(long time, TimeUnit unit) {
+            try {
+                int keepAlive = (int) TimeUnit.MILLISECONDS.convert(time, unit);
+                this.executor.setOption(Options.WORKER_TASK_KEEPALIVE, keepAlive);
+            } catch (IOException e) {
+                log.error("Update undertow web server threadPool KeepAliveTime failed.", e);
+            }
         }
     }
 }

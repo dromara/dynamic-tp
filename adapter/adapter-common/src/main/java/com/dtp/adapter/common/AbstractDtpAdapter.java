@@ -12,6 +12,7 @@ import com.dtp.core.convert.MetricsConverter;
 import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.notify.manager.NoticeManager;
 import com.dtp.core.support.ExecutorWrapper;
+import com.dtp.core.thread.ExecutorAdapter;
 import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
@@ -134,7 +135,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
                            List<NotifyPlatform> platforms,
                            TpExecutorProps props) {
 
-        val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
+        val executor = executorWrapper.getExecutor();
         doRefreshPoolSize(executor, props);
         if (!Objects.equals(executor.getKeepAliveTime(props.getUnit()), props.getKeepAliveTime())) {
             executor.setKeepAliveTime(props.getKeepAliveTime(), props.getUnit());
@@ -147,7 +148,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
         updateNotifyInfo(executorWrapper, props, platforms);
     }
 
-    private void doRefreshPoolSize(ThreadPoolExecutor executor, TpExecutorProps props) {
+    private void doRefreshPoolSize(ExecutorAdapter<?> executor, TpExecutorProps props) {
         if (props.getMaximumPoolSize() >= executor.getMaximumPoolSize()) {
             if (!Objects.equals(props.getMaximumPoolSize(), executor.getMaximumPoolSize())) {
                 executor.setMaximumPoolSize(props.getMaximumPoolSize());

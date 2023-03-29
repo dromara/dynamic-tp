@@ -1,5 +1,6 @@
 package com.dtp.core.spring;
 
+import com.dtp.core.thread.ExecutorAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -22,7 +23,8 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0.3
  **/
 @Slf4j
-public abstract class DtpLifecycleSupport extends ThreadPoolExecutor implements InitializingBean, DisposableBean {
+public abstract class DtpLifecycleSupport extends ThreadPoolExecutor
+        implements InitializingBean, DisposableBean, ExecutorAdapter<ThreadPoolExecutor> {
 
     /**
      * Uniquely identifies.
@@ -140,5 +142,10 @@ public abstract class DtpLifecycleSupport extends ThreadPoolExecutor implements 
             }
             Thread.currentThread().interrupt();
         }
+    }
+    
+    @Override
+    public ThreadPoolExecutor getOriginal() {
+        return this;
     }
 }

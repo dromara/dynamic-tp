@@ -24,7 +24,6 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
 import static com.dtp.common.em.QueueTypeEnum.LINKED_BLOCKING_QUEUE;
@@ -109,7 +108,7 @@ public class AlarmManager {
     }
 
     private static boolean checkLiveness(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
-        val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
+        val executor = executorWrapper.getExecutor();
         int maximumPoolSize = executor.getMaximumPoolSize();
         double div = NumberUtil.div(executor.getActiveCount(), maximumPoolSize, 2) * 100;
         return div >= notifyItem.getThreshold();
@@ -117,7 +116,7 @@ public class AlarmManager {
 
     private static boolean checkCapacity(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
 
-        val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
+        val executor = executorWrapper.getExecutor();
         BlockingQueue<Runnable> workQueue = executor.getQueue();
         if (CollectionUtils.isEmpty(workQueue)) {
             return false;

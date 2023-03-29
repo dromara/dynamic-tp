@@ -258,6 +258,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
         return capacity < 0 ? Integer.MAX_VALUE : capacity;
     }
 
+    @Override
     public String getRejectHandlerName() {
         return rejectHandlerName;
     }

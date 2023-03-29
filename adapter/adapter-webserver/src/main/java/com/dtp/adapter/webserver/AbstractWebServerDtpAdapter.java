@@ -5,6 +5,7 @@ import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.entity.ThreadPoolStats;
+import com.dtp.core.thread.ExecutorAdapter;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.context.WebServerApplicationContext;
@@ -24,7 +25,7 @@ import java.util.concurrent.Executor;
  * @since 1.0.0
  */
 @Slf4j
-public abstract class AbstractWebServerDtpAdapter implements
+public abstract class AbstractWebServerDtpAdapter<A extends Executor> implements
         DtpAdapter, ApplicationListener<WebServerInitializedEvent> {
 
     protected ExecutorWrapper executorWrapper;
@@ -59,13 +60,14 @@ public abstract class AbstractWebServerDtpAdapter implements
         }
     }
 
-    protected Executor getExecutor() {
+    @SuppressWarnings("unchecked")
+    protected ExecutorAdapter<A> getExecutor() {
         ExecutorWrapper wrapper = getExecutorWrapper();
         if (Objects.isNull(wrapper) || Objects.isNull(wrapper.getExecutor())) {
             log.warn("Web server threadPool is null.");
             return null;
         }
-        return wrapper.getExecutor();
+        return (ExecutorAdapter<A>) wrapper.getExecutor();
     }
 
     /**

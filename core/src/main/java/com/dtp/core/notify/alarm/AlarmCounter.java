@@ -3,6 +3,7 @@ package com.dtp.core.notify.alarm;
 import com.dtp.common.entity.AlarmInfo;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.core.thread.DtpExecutor;
+import com.dtp.core.thread.ExecutorAdapter;
 import lombok.val;
 import lombok.var;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -66,7 +67,7 @@ public class AlarmCounter {
         }
     }
 
-    public static Triple<String, String, String> countStrRrq(String threadPoolName, ThreadPoolExecutor executor) {
+    public static Triple<String, String, String> countStrRrq(String threadPoolName, ExecutorAdapter<?> executor) {
 
         if (!(executor instanceof DtpExecutor)) {
             return new ImmutableTriple<>(DEFAULT_COUNT_STR, DEFAULT_COUNT_STR, DEFAULT_COUNT_STR);

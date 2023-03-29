@@ -24,7 +24,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.event.GenericApplicationListener;
+import org.springframework.core.ResolvableType;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,23 +42,35 @@ import static java.util.stream.Collectors.toList;
  * AbstractDtpAdapter related
  *
  * @author yanhom
+ * @author dragon-zhang
  * @since 1.0.6
  */
 @Slf4j
-public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListener<ApplicationReadyEvent> {
+public abstract class AbstractDtpAdapter implements DtpAdapter, GenericApplicationListener {
 
     private static final Equator EQUATOR = new GetterBaseEquator();
 
     protected final Map<String, ExecutorWrapper> executors = Maps.newHashMap();
 
     @Override
-    public void onApplicationEvent(ApplicationReadyEvent event) {
-        try {
-            DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-            initialize();
-            refresh(dtpProperties);
-        } catch (Exception e) {
-            log.error("Init third party thread pool failed.", e);
+    public boolean supportsEventType(ResolvableType resolvableType) {
+        Class<?> type = resolvableType.getRawClass();
+        if (type != null) {
+            return ApplicationReadyEvent.class.isAssignableFrom(type);
+        }
+        return false;
+    }
+
+    @Override
+    public void onApplicationEvent(ApplicationEvent event) {
+        if (event instanceof ApplicationReadyEvent) {
+            try {
+                DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+                initialize();
+                refresh(dtpProperties);
+            } catch (Exception e) {
+                log.error("Init third party thread pool failed.", e);
+            }
         }
     }
 
@@ -111,9 +125,9 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
             return;
         }
 
-        TpMainFields oldFields = ExecutorConverter.convert(executorWrapper);
+        TpMainFields oldFields = getTpMainFields(executorWrapper, props);
         doRefresh(executorWrapper, platforms, props);
-        TpMainFields newFields = ExecutorConverter.convert(executorWrapper);
+        TpMainFields newFields = getTpMainFields(executorWrapper, props);
         if (oldFields.equals(newFields)) {
             log.debug("DynamicTp adapter refresh, main properties of [{}] have not changed.",
                     executorWrapper.getThreadPoolName());
@@ -131,9 +145,13 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, ApplicationListe
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldFields.getKeepAliveTime(), newFields.getKeepAliveTime()));
     }
 
-    private void doRefresh(ExecutorWrapper executorWrapper,
-                           List<NotifyPlatform> platforms,
-                           TpExecutorProps props) {
+    protected TpMainFields getTpMainFields(ExecutorWrapper executorWrapper, TpExecutorProps props) {
+        return ExecutorConverter.convert(executorWrapper);
+    }
+
+    protected void doRefresh(ExecutorWrapper executorWrapper,
+                             List<NotifyPlatform> platforms,
+                             TpExecutorProps props) {
 
         val executor = executorWrapper.getExecutor();
         doRefreshPoolSize(executor, props);

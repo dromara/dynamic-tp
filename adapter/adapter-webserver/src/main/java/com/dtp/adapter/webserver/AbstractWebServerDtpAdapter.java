@@ -1,8 +1,11 @@
 package com.dtp.adapter.webserver;
 
-import com.dtp.adapter.common.DtpAdapter;
+import com.dtp.adapter.common.AbstractDtpAdapter;
 import com.dtp.common.ApplicationContextHolder;
+import com.dtp.common.entity.TpExecutorProps;
+import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.properties.DtpProperties;
+import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.entity.ThreadPoolStats;
 import com.dtp.core.thread.ExecutorAdapter;
@@ -12,7 +15,8 @@ import org.springframework.boot.web.context.WebServerApplicationContext;
 import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.boot.web.server.WebServer;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.core.ResolvableType;
 
 import java.util.List;
 import java.util.Objects;
@@ -22,22 +26,34 @@ import java.util.concurrent.Executor;
  * AbstractWebServerDtpAdapter related
  *
  * @author yanhom
+ * @author dragon-zhang
  * @since 1.0.0
  */
 @Slf4j
-public abstract class AbstractWebServerDtpAdapter<A extends Executor> implements
-        DtpAdapter, ApplicationListener<WebServerInitializedEvent> {
+public abstract class AbstractWebServerDtpAdapter<A extends Executor>
+        extends AbstractDtpAdapter {
 
     protected ExecutorWrapper executorWrapper;
 
     @Override
-    public void onApplicationEvent(WebServerInitializedEvent event) {
-        try {
-            DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-            initialize();
-            refresh(dtpProperties);
-        } catch (Exception e) {
-            log.error("Init web server thread pool failed.", e);
+    public boolean supportsEventType(ResolvableType resolvableType) {
+        Class<?> type = resolvableType.getRawClass();
+        if (type != null) {
+            return WebServerInitializedEvent.class.isAssignableFrom(type);
+        }
+        return false;
+    }
+
+    @Override
+    public void onApplicationEvent(ApplicationEvent event) {
+        if (event instanceof WebServerInitializedEvent) {
+            try {
+                DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+                initialize();
+                refresh(dtpProperties);
+            } catch (Exception e) {
+                log.error("Init web server thread pool failed.", e);
+            }
         }
     }
 
@@ -51,11 +67,13 @@ public abstract class AbstractWebServerDtpAdapter<A extends Executor> implements
         return Lists.newArrayList(getPoolStats());
     }
 
+    @Override
     protected void initialize() {
         if (executorWrapper == null) {
             ApplicationContext applicationContext = ApplicationContextHolder.getInstance();
             WebServer webServer = ((WebServerApplicationContext) applicationContext).getWebServer();
             executorWrapper = doGetExecutorWrapper(webServer);
+            initNotifyItems(executorWrapper.getThreadPoolName(), executorWrapper);
             log.info("DynamicTp adapter, web server executor init end, executor: {}", executorWrapper.getExecutor());
         }
     }
@@ -68,6 +86,13 @@ public abstract class AbstractWebServerDtpAdapter<A extends Executor> implements
             return null;
         }
         return (ExecutorAdapter<A>) wrapper.getExecutor();
+    }
+
+    @Override
+    protected TpMainFields getTpMainFields(ExecutorWrapper executorWrapper, TpExecutorProps props) {
+        final ExecutorAdapter<?> adapter = executorWrapper.getExecutor();
+        return ExecutorConverter.ofSimple(executorWrapper.getThreadPoolName(), adapter.getCorePoolSize(),
+                adapter.getMaximumPoolSize(), adapter.getKeepAliveTime(props.getUnit()));
     }
 
     /**

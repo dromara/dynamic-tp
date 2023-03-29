@@ -12,7 +12,6 @@ import org.apache.commons.lang3.tuple.Triple;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.dtp.common.constant.DynamicTpConst.UNKNOWN;
 import static com.dtp.common.em.NotifyItemEnum.*;

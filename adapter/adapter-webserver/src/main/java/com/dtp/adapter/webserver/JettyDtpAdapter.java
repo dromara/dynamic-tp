@@ -1,12 +1,9 @@
 package com.dtp.adapter.webserver;
 
 import com.dtp.common.properties.DtpProperties;
-import com.dtp.common.entity.TpExecutorProps;
-import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.util.ReflectionUtil;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.entity.ThreadPoolStats;
-import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.thread.ExecutorAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
@@ -17,13 +14,13 @@ import org.springframework.boot.web.server.WebServer;
 
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
-
-import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
+import java.util.concurrent.TimeUnit;
 
 /**
  * JettyDtpAdapter related
  *
  * @author yanhom
+ * @author dragon-zhang
  * @since 1.0.0
  */
 @Slf4j
@@ -65,51 +62,9 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        TpExecutorProps props = dtpProperties.getJettyTp();
-        if (Objects.isNull(props) || containsInvalidParams(props, log)) {
-            return;
-        }
-        ExecutorAdapter<ThreadPool.SizedThreadPool> adapter = getExecutor();
-        if (Objects.isNull(adapter)) {
-            return;
-        }
-
-        ThreadPool.SizedThreadPool threadPool = adapter.getOriginal();
-        int oldCoreSize = threadPool.getMinThreads();
-        int oldMaxSize = threadPool.getMaxThreads();
-        TpMainFields oldFields = ExecutorConverter.ofSimple(POOL_NAME, oldCoreSize, oldMaxSize, 0L);
-        doRefresh(threadPool, props);
-        TpMainFields newFields = ExecutorConverter.ofSimple(props.getThreadPoolName(), threadPool.getMinThreads(),
-                threadPool.getMaxThreads(), 0L);
-        if (oldFields.equals(newFields)) {
-            log.debug("DynamicTp adapter refresh, main properties of [{}] have not changed.", POOL_NAME);
-            return;
-        }
-        log.info("DynamicTp adapter [{}] refreshed end, corePoolSize: [{}], maxPoolSize: [{}]",
-                POOL_NAME,
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldCoreSize, newFields.getCorePoolSize()),
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaxSize, newFields.getMaxPoolSize()));
+        refresh(POOL_NAME, executorWrapper, dtpProperties.getPlatforms(), dtpProperties.getJettyTp());
     }
 
-    private void doRefresh(ThreadPool.SizedThreadPool threadPool, TpExecutorProps props) {
-        if (props.getMaximumPoolSize() < threadPool.getMaxThreads()) {
-            if (!Objects.equals(threadPool.getMinThreads(), props.getCorePoolSize())) {
-                threadPool.setMinThreads(props.getCorePoolSize());
-            }
-            if (!Objects.equals(threadPool.getMaxThreads(), props.getMaximumPoolSize())) {
-                threadPool.setMaxThreads(props.getMaximumPoolSize());
-            }
-            return;
-        }
-
-        if (!Objects.equals(threadPool.getMaxThreads(), props.getMaximumPoolSize())) {
-            threadPool.setMaxThreads(props.getMaximumPoolSize());
-        }
-        if (!Objects.equals(threadPool.getMinThreads(), props.getCorePoolSize())) {
-            threadPool.setMinThreads(props.getCorePoolSize());
-        }
-    }
-    
     /**
      * JettyExecutorAdapter implements ExecutorAdapter, the goal of this class
      * is to be compatible with {@link org.eclipse.jetty.util.thread.ThreadPool.SizedThreadPool}.
@@ -180,6 +135,11 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
         @Override
         public BlockingQueue<Runnable> getQueue() {
             return (BlockingQueue<Runnable>) ReflectionUtil.getFieldValue(QueuedThreadPool.class, "_jobs", this.executor);
+        }
+        
+        @Override
+        public long getKeepAliveTime(TimeUnit unit) {
+            return 0;
         }
     }
 }

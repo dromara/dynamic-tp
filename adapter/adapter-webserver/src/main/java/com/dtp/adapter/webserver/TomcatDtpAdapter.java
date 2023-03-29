@@ -1,11 +1,8 @@
 package com.dtp.adapter.webserver;
 
 import com.dtp.common.properties.DtpProperties;
-import com.dtp.common.entity.TpExecutorProps;
-import com.dtp.common.entity.TpMainFields;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.entity.ThreadPoolStats;
-import com.dtp.core.convert.ExecutorConverter;
 import com.dtp.core.thread.ExecutorAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
@@ -16,12 +13,11 @@ import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
-
 /**
  * TomcatDtpAdapter related
  *
  * @author yanhom
+ * @author dragon-zhang
  * @since 1.0.0
  */
 @Slf4j
@@ -63,55 +59,7 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPoolExec
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        TpExecutorProps props = dtpProperties.getTomcatTp();
-        if (Objects.isNull(props) || containsInvalidParams(props, log)) {
-            return;
-        }
-        ExecutorAdapter<ThreadPoolExecutor> adapter = getExecutor();
-        if (Objects.isNull(adapter)) {
-            return;
-        }
-
-        ThreadPoolExecutor threadPoolExecutor = adapter.getOriginal();
-        TpMainFields oldFields = ExecutorConverter.ofSimple(POOL_NAME, threadPoolExecutor.getCorePoolSize(),
-                threadPoolExecutor.getMaximumPoolSize(), threadPoolExecutor.getKeepAliveTime(props.getUnit()));
-        doRefresh(threadPoolExecutor, props);
-        TpMainFields newFields = ExecutorConverter.ofSimple(POOL_NAME, threadPoolExecutor.getCorePoolSize(),
-                threadPoolExecutor.getMaximumPoolSize(), threadPoolExecutor.getKeepAliveTime(props.getUnit()));
-        if (oldFields.equals(newFields)) {
-            log.debug("DynamicTp adapter refresh, main properties of [{}] have not changed.", POOL_NAME);
-            return;
-        }
-        log.info("DynamicTp adapter [{}] refreshed end, corePoolSize: [{}], maxPoolSize: [{}], keepAliveTime: [{}]",
-                POOL_NAME,
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldFields.getCorePoolSize(), newFields.getCorePoolSize()),
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldFields.getMaxPoolSize(), newFields.getMaxPoolSize()),
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldFields.getKeepAliveTime(), newFields.getKeepAliveTime()));
-    }
-
-    private void doRefresh(ThreadPoolExecutor executor, TpExecutorProps props) {
-
-        if (executor.getKeepAliveTime(props.getUnit()) != props.getKeepAliveTime()) {
-            executor.setKeepAliveTime(props.getKeepAliveTime(), props.getUnit());
-        }
-
-        int newMaxPoolSize = props.getMaximumPoolSize();
-        if (newMaxPoolSize >= executor.getMaximumPoolSize()) {
-            if (!Objects.equals(executor.getMaximumPoolSize(), newMaxPoolSize)) {
-                executor.setMaximumPoolSize(newMaxPoolSize);
-            }
-            if (!Objects.equals(executor.getCorePoolSize(), props.getCorePoolSize())) {
-                executor.setCorePoolSize(props.getCorePoolSize());
-            }
-            return;
-        }
-
-        if (!Objects.equals(executor.getCorePoolSize(), props.getCorePoolSize())) {
-            executor.setCorePoolSize(props.getCorePoolSize());
-        }
-        if (!Objects.equals(executor.getMaximumPoolSize(), newMaxPoolSize)) {
-            executor.setMaximumPoolSize(newMaxPoolSize);
-        }
+        refresh(POOL_NAME, executorWrapper, dtpProperties.getPlatforms(), dtpProperties.getTomcatTp());
     }
     
     /**

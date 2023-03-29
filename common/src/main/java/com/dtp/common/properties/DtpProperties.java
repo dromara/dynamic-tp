@@ -25,6 +25,11 @@ import static com.dtp.common.em.CollectorTypeEnum.MICROMETER;
 public class DtpProperties {
 
     /**
+     * If enabled DynamicTp.
+     */
+    private boolean enabled = true;
+
+    /**
      * If print banner.
      */
     private boolean enabledBanner = true;

@@ -147,7 +147,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     @Override
     public void execute(Runnable command) {
         DtpRunnable dtpRunnable = (DtpRunnable) wrapTasks(command);
-        DtpRunnable.timeoutCheck(this, dtpRunnable, QUEUE_TIMEOUT, queueTimeout, queueTimeoutCount);
+        dtpRunnable.startTimeoutTask(this, QUEUE_TIMEOUT, queueTimeout, queueTimeoutCount);
         super.execute(dtpRunnable);
     }
 
@@ -155,14 +155,15 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     protected void beforeExecute(Thread t, Runnable r) {
         super.beforeExecute(t, r);
         DtpRunnable runnable = (DtpRunnable) r;
-        DtpRunnable.cancelTimeoutCheckTask(runnable, QUEUE_TIMEOUT);
-        DtpRunnable.timeoutCheck(this, runnable, RUN_TIMEOUT, runTimeout, runTimeoutCount);
+        runnable.cancelTimeoutCheckTask(QUEUE_TIMEOUT);
+        runnable.startTimeoutTask(this, RUN_TIMEOUT, runTimeout, runTimeoutCount);
     }
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
-        DtpRunnable.cancelTimeoutCheckTask((DtpRunnable) r, QUEUE_TIMEOUT);
+
+        ((DtpRunnable) r).cancelTimeoutCheckTask(RUN_TIMEOUT);
         tryPrintError(r, t);
         clearContext();
     }

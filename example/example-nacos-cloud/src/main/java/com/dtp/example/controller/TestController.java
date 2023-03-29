@@ -34,9 +34,9 @@ public class TestController {
         DtpExecutor dtpExecutor2 = DtpRegistry.getDtpExecutor("dtpExecutor2");
         for (int i = 0; i < 100; i++) {
             Thread.sleep(100);
-//            dtpExecutor1.execute(() -> {
-//                log.info("i am dynamic-tp-test-1 task, mdc: {}", MDC.get("traceId"));
-//            });
+            dtpExecutor1.execute(() -> {
+                log.info("i am dynamic-tp-test-1 task, mdc: {}", MDC.get("traceId"));
+            });
             dtpExecutor2.execute(NamedRunnable.of(() -> {
                 try {
                     Thread.sleep(10);

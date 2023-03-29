@@ -202,7 +202,9 @@ public class HashedWheelTimer implements Timer {
      */
     public HashedWheelTimer(
             ThreadFactory threadFactory,
-            long tickDuration, TimeUnit unit, int ticksPerWheel,
+            long tickDuration,
+            TimeUnit unit,
+            int ticksPerWheel,
             long maxPendingTimeouts) {
 
         if (threadFactory == null) {

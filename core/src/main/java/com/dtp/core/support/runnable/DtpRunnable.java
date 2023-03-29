@@ -120,9 +120,9 @@ public class DtpRunnable implements Runnable {
         @Override
         public void run(Timeout timeout) {
             timeoutCount.increment();
-            AlarmManager.doAlarmAsync(dtpExecutor, notifyItemEnum, runnable);
+            AlarmManager.doAlarmAsync(dtpExecutor, notifyItemEnum);
             if (StringUtils.isNotBlank(runnable.getTaskName()) || StringUtils.isNotBlank(runnable.getTraceId())) {
-                log.warn("DynamicTp execute, run timeout, tpName: {}, taskName: {}, traceId: {}, runTime: {}ms",
+                log.warn("DynamicTp execute, " + notifyItemEnum.name().toLowerCase() + " timeout, tpName: {}, taskName: {}, traceId: {}, runTime: {}ms",
                         dtpExecutor.getThreadPoolName(), runnable.getTaskName(), runnable.getTraceId(), this.timeout);
             }
         }

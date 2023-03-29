@@ -18,7 +18,6 @@ import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections.CollectionUtils;
@@ -63,7 +62,6 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
     private static final Equator EQUATOR = new GetterBaseEquator();
 
-    @Setter(onMethod_ = @Autowired)
     private static DtpProperties dtpProperties;
 
     /**
@@ -302,6 +300,11 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         if (!Objects.equals(capacity, props.getQueueCapacity())) {
             ((VariableLinkedBlockingQueue<Runnable>) blockingQueue).setCapacity(props.getQueueCapacity());
         }
+    }
+
+    @Autowired
+    public void setDtpProperties(DtpProperties dtpProperties) {
+        DtpRegistry.dtpProperties = dtpProperties;
     }
 
     @Override

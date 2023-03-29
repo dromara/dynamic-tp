@@ -3,10 +3,12 @@ package com.dtp.core.spring;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.properties.DtpProperties;
+import com.dtp.common.timer.HashedWheelTimer;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.monitor.DtpEndpoint;
 import com.dtp.core.monitor.DtpMonitor;
 import com.dtp.core.support.DtpBannerPrinter;
+import com.dtp.core.thread.NamedThreadFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -59,6 +61,11 @@ public class DtpBaseBeanConfiguration {
     @ConditionalOnProperty(name = DynamicTpConst.BANNER_ENABLED_PROP, matchIfMissing = true, havingValue = "true")
     public DtpBannerPrinter dtpBannerPrinter() {
         return new DtpBannerPrinter();
+    }
+
+    @Bean
+    public HashedWheelTimer hashedWheelTimer() {
+        return new HashedWheelTimer(new NamedThreadFactory("dtpRunnable-timeout", true));
     }
 
 }

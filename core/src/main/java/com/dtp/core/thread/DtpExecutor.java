@@ -2,7 +2,6 @@ package com.dtp.core.thread;
 
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.entity.NotifyItem;
-import com.dtp.common.timer.Timeout;
 import com.dtp.core.notify.manager.NotifyHelper;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.spring.DtpLifecycleSupport;
@@ -156,28 +155,16 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     protected void beforeExecute(Thread t, Runnable r) {
         super.beforeExecute(t, r);
         DtpRunnable runnable = (DtpRunnable) r;
-        cancelQueueTimeoutCheckTask(runnable);
+        DtpRunnable.cancelTimeoutCheckTask(runnable, QUEUE_TIMEOUT);
         DtpRunnable.timeoutCheck(this, runnable, RUN_TIMEOUT, runTimeout, runTimeoutCount);
     }
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
+        DtpRunnable.cancelTimeoutCheckTask((DtpRunnable) r, QUEUE_TIMEOUT);
         tryPrintError(r, t);
-        cancelRunTimeoutCheckTask(r);
         clearContext();
-    }
-
-    private void cancelQueueTimeoutCheckTask(Runnable r) {
-        DtpRunnable runnable = (DtpRunnable) r;
-        Timeout timeoutCheckTask = runnable.getQueueTimeoutCheckTask();
-        timeoutCheckTask.cancel();
-    }
-
-    private void cancelRunTimeoutCheckTask(Runnable r) {
-        DtpRunnable runnable = (DtpRunnable) r;
-        Timeout timeoutCheckTask = runnable.getRunTimeoutCheckTask();
-        timeoutCheckTask.cancel();
     }
 
     @Override
@@ -205,7 +192,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
 
     private void tryPrintError(Runnable r, Throwable t) {
         if (Objects.nonNull(t)) {
-            log.error("thread {} throw exception {}", Thread.currentThread(), t);
+            log.error("thread {} throw exception {}", Thread.currentThread(), t.getMessage(), t);
             return;
         }
         if (r instanceof FutureTask) {
@@ -215,7 +202,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
             } catch (Exception e) {
-                log.error("thread {} throw exception {}", Thread.currentThread(), e);
+                log.error("thread {} throw exception {}", Thread.currentThread(), e.getMessage(), e);
             }
         }
     }

@@ -1,13 +1,12 @@
 package com.dtp.core.support.runnable;
 
+import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.timer.HashedWheelTimer;
 import com.dtp.common.timer.Timeout;
 import com.dtp.common.timer.TimerTask;
-import com.dtp.common.util.TimeUtil;
 import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.thread.DtpExecutor;
-import com.dtp.core.thread.NamedThreadFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
@@ -27,8 +26,6 @@ public class DtpRunnable implements Runnable {
 
     private final Runnable runnable;
 
-    private final Long submitTime;
-
     private final String taskName;
 
     private final String traceId;
@@ -37,11 +34,8 @@ public class DtpRunnable implements Runnable {
 
     private Timeout queueTimeoutCheckTask;
 
-    private static final HashedWheelTimer TIME_OUT_TIMER = new HashedWheelTimer(new NamedThreadFactory("dtpRunnable-timeout", true));
-
     public DtpRunnable(Runnable runnable, String taskName) {
         this.runnable = runnable;
-        submitTime = TimeUtil.currentTimeMillis();
         this.taskName = taskName;
         this.traceId = MDC.get(TRACE_ID);
     }
@@ -55,12 +49,30 @@ public class DtpRunnable implements Runnable {
             return;
         }
         TimeoutCheckTask task = new TimeoutCheckTask(executor, runnable, notifyItemEnum, timeout, timeoutCount);
+        HashedWheelTimer hashedWheelTimer = ApplicationContextHolder.getBean(HashedWheelTimer.class);
         switch (notifyItemEnum) {
             case RUN_TIMEOUT:
-                runnable.runTimeoutCheckTask = TIME_OUT_TIMER.newTimeout(task, timeout, TimeUnit.MILLISECONDS);
+                runnable.runTimeoutCheckTask = hashedWheelTimer.newTimeout(task, timeout, TimeUnit.MILLISECONDS);
                 break;
             case QUEUE_TIMEOUT:
-                runnable.queueTimeoutCheckTask = TIME_OUT_TIMER.newTimeout(task, timeout, TimeUnit.MILLISECONDS);
+                runnable.queueTimeoutCheckTask = hashedWheelTimer.newTimeout(task, timeout, TimeUnit.MILLISECONDS);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public static void cancelTimeoutCheckTask(DtpRunnable runnable, NotifyItemEnum notifyItemEnum) {
+        switch (notifyItemEnum) {
+            case RUN_TIMEOUT:
+                if (runnable.runTimeoutCheckTask != null) {
+                    runnable.runTimeoutCheckTask.cancel();
+                }
+                break;
+            case QUEUE_TIMEOUT:
+                if (runnable.queueTimeoutCheckTask != null) {
+                    runnable.queueTimeoutCheckTask.cancel();
+                }
                 break;
             default:
                 break;
@@ -72,24 +84,12 @@ public class DtpRunnable implements Runnable {
         runnable.run();
     }
 
-    public Long getSubmitTime() {
-        return submitTime;
-    }
-
     public String getTaskName() {
         return taskName;
     }
 
     public String getTraceId() {
         return traceId;
-    }
-
-    public Timeout getRunTimeoutCheckTask() {
-        return runTimeoutCheckTask;
-    }
-
-    public Timeout getQueueTimeoutCheckTask() {
-        return queueTimeoutCheckTask;
     }
 
     @Slf4j

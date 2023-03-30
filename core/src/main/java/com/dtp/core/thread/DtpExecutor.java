@@ -26,8 +26,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
 import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
-import static com.dtp.common.em.NotifyItemEnum.QUEUE_TIMEOUT;
-import static com.dtp.common.em.NotifyItemEnum.RUN_TIMEOUT;
 
 /**
  * Dynamic ThreadPoolExecutor inherits DtpLifecycleSupport, and extends some features.
@@ -147,7 +145,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     @Override
     public void execute(Runnable command) {
         DtpRunnable dtpRunnable = (DtpRunnable) wrapTasks(command);
-        dtpRunnable.startTimeoutTask(this, QUEUE_TIMEOUT);
+        dtpRunnable.startQueueTimeoutTask(this);
         super.execute(dtpRunnable);
     }
 
@@ -155,15 +153,14 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     protected void beforeExecute(Thread t, Runnable r) {
         super.beforeExecute(t, r);
         DtpRunnable runnable = (DtpRunnable) r;
-        runnable.cancelTimeoutCheckTask(QUEUE_TIMEOUT);
-        runnable.startTimeoutTask(this, RUN_TIMEOUT);
+        runnable.cancelQueueTimeoutTask();
+        runnable.startRunTimeoutTask(this, t);
     }
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
-
-        ((DtpRunnable) r).cancelTimeoutCheckTask(RUN_TIMEOUT);
+        ((DtpRunnable) r).cancelRunTimeoutTask();
         tryPrintError(r, t);
         clearContext();
     }
@@ -305,7 +302,6 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     public void setNotifyEnabled(boolean notifyEnabled) {
         this.notifyEnabled = notifyEnabled;
     }
-
 
 
 }

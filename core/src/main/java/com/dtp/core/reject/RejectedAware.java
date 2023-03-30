@@ -1,6 +1,7 @@
 package com.dtp.core.reject;
 
 import com.dtp.core.notify.manager.AlarmManager;
+import com.dtp.core.support.runnable.DtpRunnable;
 import com.dtp.core.support.runnable.NamedRunnable;
 import com.dtp.core.thread.DtpExecutor;
 import org.slf4j.Logger;
@@ -24,14 +25,17 @@ public interface RejectedAware {
      *
      * @param runnable Runnable instance
      * @param executor ThreadPoolExecutor instance
-     * @param log logger
+     * @param log      logger
      */
     default void beforeReject(Runnable runnable, ThreadPoolExecutor executor, Logger log) {
         if (executor instanceof DtpExecutor) {
+            if (runnable instanceof DtpRunnable) {
+                ((DtpRunnable) runnable).cancelQueueTimeoutTask();
+                log.warn("DynamicTp execute, thread pool is exhausted, cancel queue timeout task, traceId: {}", MDC.get(TRACE_ID));
+            }
             DtpExecutor dtpExecutor = (DtpExecutor) executor;
             dtpExecutor.incRejectCount(1);
             AlarmManager.doAlarmAsync(dtpExecutor, REJECT);
-
             String taskName = (runnable instanceof NamedRunnable) ? ((NamedRunnable) runnable).getName() : null;
             log.warn("DynamicTp execute, thread pool is exhausted, tpName: {}, taskName: {}, traceId: {}, " +
                             "poolSize: {} (active: {}, core: {}, max: {}, largest: {}), " +

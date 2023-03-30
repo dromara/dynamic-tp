@@ -7,7 +7,6 @@ import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.support.runnable.DtpRunnable;
 import com.dtp.core.thread.DtpExecutor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 
 @Slf4j
@@ -17,20 +16,32 @@ public class RunTimeoutTimerTask implements TimerTask {
 
     private final DtpRunnable runnable;
 
+    private final Thread thread;
+
     public RunTimeoutTimerTask(DtpExecutor dtpExecutor,
-                               DtpRunnable runnable) {
+                               DtpRunnable runnable,
+                               Thread thread) {
         this.dtpExecutor = dtpExecutor;
         this.runnable = runnable;
+        this.thread = thread;
     }
 
     @Override
     public void run(Timeout timeout) {
         dtpExecutor.getRunTimeoutCount().increment();
         AlarmManager.doAlarmAsync(dtpExecutor, NotifyItemEnum.RUN_TIMEOUT);
-        if (StringUtils.isNotBlank(runnable.getTaskName()) || StringUtils.isNotBlank(runnable.getTraceId())) {
-            log.warn("DynamicTp execute, run timeout, tpName: {}, taskName: {}, traceId: {}",
-                    dtpExecutor.getThreadPoolName(), runnable.getTaskName(), runnable.getTraceId());
+        log.warn("DynamicTp execute, run timeout, tpName: {}, taskName: {}, traceId: {}, stackTrace: {}",
+                dtpExecutor.getThreadPoolName(), runnable.getTaskName(), runnable.getTraceId(), traceToString(thread.getStackTrace()));
+    }
+
+
+    public String traceToString(StackTraceElement[] trace) {
+        StringBuilder builder = new StringBuilder(512);
+        builder.append("\n");
+        for (StackTraceElement traceElement : trace) {
+            builder.append("\tat ").append(traceElement).append("\n");
         }
+        return builder.toString();
     }
 
 }

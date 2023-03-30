@@ -1,7 +1,6 @@
 package com.dtp.core.support.runnable;
 
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.timer.HashedWheelTimer;
 import com.dtp.common.timer.Timeout;
 import com.dtp.core.thread.DtpExecutor;
@@ -37,44 +36,35 @@ public class DtpRunnable implements Runnable {
         this.traceId = MDC.get(TRACE_ID);
     }
 
-    public void startTimeoutTask(DtpExecutor executor, NotifyItemEnum notifyItemEnum) {
+    public void startQueueTimeoutTask(DtpExecutor executor) {
+        long queueTimeout = executor.getQueueTimeout();
+        if (queueTimeout <= 0) {
+            return;
+        }
         HashedWheelTimer hashedWheelTimer = ApplicationContextHolder.getBean(HashedWheelTimer.class);
-        switch (notifyItemEnum) {
-            case RUN_TIMEOUT:
-                long runTimeout = executor.getRunTimeout();
-                if (runTimeout <= 0) {
-                    return;
-                }
-                RunTimeoutTimerTask runTimeoutTimerTask = new RunTimeoutTimerTask(executor, this);
-                runTimeoutTimer = hashedWheelTimer.newTimeout(runTimeoutTimerTask, runTimeout, TimeUnit.MILLISECONDS);
-                break;
-            case QUEUE_TIMEOUT:
-                long queueTimeout = executor.getQueueTimeout();
-                if (queueTimeout <= 0) {
-                    return;
-                }
-                QueueTimeoutTimerTask queueTimeoutTimerTask = new QueueTimeoutTimerTask(executor, this);
-                queueTimeoutTimer = hashedWheelTimer.newTimeout(queueTimeoutTimerTask, queueTimeout, TimeUnit.MILLISECONDS);
-                break;
-            default:
-                break;
+        QueueTimeoutTimerTask queueTimeoutTimerTask = new QueueTimeoutTimerTask(executor, this);
+        queueTimeoutTimer = hashedWheelTimer.newTimeout(queueTimeoutTimerTask, queueTimeout, TimeUnit.MILLISECONDS);
+    }
+
+    public void cancelQueueTimeoutTask() {
+        if (queueTimeoutTimer != null) {
+            queueTimeoutTimer.cancel();
         }
     }
 
-    public void cancelTimeoutCheckTask(NotifyItemEnum notifyItemEnum) {
-        switch (notifyItemEnum) {
-            case RUN_TIMEOUT:
-                if (runTimeoutTimer != null) {
-                    runTimeoutTimer.cancel();
-                }
-                break;
-            case QUEUE_TIMEOUT:
-                if (queueTimeoutTimer != null) {
-                    queueTimeoutTimer.cancel();
-                }
-                break;
-            default:
-                break;
+    public void startRunTimeoutTask(DtpExecutor executor, Thread thread) {
+        long runTimeout = executor.getRunTimeout();
+        if (runTimeout <= 0) {
+            return;
+        }
+        HashedWheelTimer hashedWheelTimer = ApplicationContextHolder.getBean(HashedWheelTimer.class);
+        RunTimeoutTimerTask runTimeoutTimerTask = new RunTimeoutTimerTask(executor, this, thread);
+        runTimeoutTimer = hashedWheelTimer.newTimeout(runTimeoutTimerTask, runTimeout, TimeUnit.MILLISECONDS);
+    }
+
+    public void cancelRunTimeoutTask() {
+        if (runTimeoutTimer != null) {
+            runTimeoutTimer.cancel();
         }
     }
 

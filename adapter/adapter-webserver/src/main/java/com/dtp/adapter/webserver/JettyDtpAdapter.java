@@ -139,7 +139,18 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
         
         @Override
         public long getKeepAliveTime(TimeUnit unit) {
+            if (this.executor instanceof QueuedThreadPool) {
+                return ((QueuedThreadPool) this.executor).getIdleTimeout();
+            }
             return 0;
+        }
+    
+        @Override
+        public void setKeepAliveTime(long time, TimeUnit unit) {
+            if (this.executor instanceof QueuedThreadPool) {
+                final int keepAliveMs = (int) TimeUnit.MILLISECONDS.convert(time, unit);
+                ((QueuedThreadPool) this.executor).setIdleTimeout(keepAliveMs);
+            }
         }
     }
 }

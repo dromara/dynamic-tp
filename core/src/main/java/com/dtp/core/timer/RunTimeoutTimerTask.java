@@ -9,7 +9,6 @@ import com.dtp.core.thread.DtpExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.concurrent.atomic.LongAdder;
 
 @Slf4j
 public class RunTimeoutTimerTask implements TimerTask {
@@ -18,19 +17,15 @@ public class RunTimeoutTimerTask implements TimerTask {
 
     private final DtpRunnable runnable;
 
-    private final LongAdder timeoutCount;
-
     public RunTimeoutTimerTask(DtpExecutor dtpExecutor,
-                               DtpRunnable runnable,
-                               LongAdder timeoutCount) {
+                               DtpRunnable runnable) {
         this.dtpExecutor = dtpExecutor;
         this.runnable = runnable;
-        this.timeoutCount = timeoutCount;
     }
 
     @Override
     public void run(Timeout timeout) {
-        timeoutCount.increment();
+        dtpExecutor.getRunTimeoutCount().increment();
         AlarmManager.doAlarmAsync(dtpExecutor, NotifyItemEnum.RUN_TIMEOUT);
         if (StringUtils.isNotBlank(runnable.getTaskName()) || StringUtils.isNotBlank(runnable.getTraceId())) {
             log.warn("DynamicTp execute, run timeout, tpName: {}, taskName: {}, traceId: {}",

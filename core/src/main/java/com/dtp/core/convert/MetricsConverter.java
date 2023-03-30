@@ -24,8 +24,8 @@ public class MetricsConverter {
         poolStats.setPoolName(executor.getThreadPoolName());
         poolStats.setRejectHandlerName(executor.getRejectHandlerName());
         poolStats.setRejectCount(executor.getRejectCount());
-        poolStats.setRunTimeoutCount(executor.getRunTimeoutCount());
-        poolStats.setQueueTimeoutCount(executor.getQueueTimeoutCount());
+        poolStats.setRunTimeoutCount(executor.getRunTimeoutCount().sum());
+        poolStats.setQueueTimeoutCount(executor.getQueueTimeoutCount().sum());
         poolStats.setDynamic(true);
         return poolStats;
     }

@@ -4,7 +4,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * A task which is executed after the delay specified with
- * {@link Timer#newTimeout(TimerTask, long, TimeUnit)} (TimerTask, long, TimeUnit)}.
+ * {@link Timer#newTimeout(TimerTask, long, TimeUnit)} (TimerTask, long, TimeUnit)}. <br/>
+ * Copy from dubbo, see <a href="https://github.com/apache/dubbo/blob/3.2/dubbo-common/src/main/java/org/apache/dubbo/common/timer/TimeTask.java">here</a> for more details.
  */
 public interface TimerTask {
 

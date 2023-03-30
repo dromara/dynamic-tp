@@ -1,8 +1,8 @@
 package com.dtp.common.timer;
 
 /**
- * A handle associated with a {@link TimerTask} that is returned by a
- * {@link Timer}.
+ * A handle associated with a {@link TimerTask} that is returned by a{@link Timer}.<br/>
+ * Copy from dubbo, see <a href="https://github.com/apache/dubbo/blob/3.2/dubbo-common/src/main/java/org/apache/dubbo/common/timer/Timeout.java">here</a> for more details.
  */
 public interface Timeout {
 

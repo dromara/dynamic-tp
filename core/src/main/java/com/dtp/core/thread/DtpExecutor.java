@@ -147,7 +147,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     @Override
     public void execute(Runnable command) {
         DtpRunnable dtpRunnable = (DtpRunnable) wrapTasks(command);
-        dtpRunnable.startTimeoutTask(this, QUEUE_TIMEOUT, queueTimeout, queueTimeoutCount);
+        dtpRunnable.startTimeoutTask(this, QUEUE_TIMEOUT);
         super.execute(dtpRunnable);
     }
 
@@ -156,7 +156,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
         super.beforeExecute(t, r);
         DtpRunnable runnable = (DtpRunnable) r;
         runnable.cancelTimeoutCheckTask(QUEUE_TIMEOUT);
-        runnable.startTimeoutTask(this, RUN_TIMEOUT, runTimeout, runTimeoutCount);
+        runnable.startTimeoutTask(this, RUN_TIMEOUT);
     }
 
     @Override
@@ -261,16 +261,24 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
         this.runTimeout = runTimeout;
     }
 
-    public long getRunTimeoutCount() {
-        return runTimeoutCount.sum();
+    public long getRunTimeout() {
+        return runTimeout;
     }
 
-    public long getQueueTimeoutCount() {
-        return queueTimeoutCount.sum();
+    public LongAdder getRunTimeoutCount() {
+        return runTimeoutCount;
+    }
+
+    public LongAdder getQueueTimeoutCount() {
+        return queueTimeoutCount;
     }
 
     public void setQueueTimeout(long queueTimeout) {
         this.queueTimeout = queueTimeout;
+    }
+
+    public long getQueueTimeout() {
+        return queueTimeout;
     }
 
     /**
@@ -297,5 +305,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     public void setNotifyEnabled(boolean notifyEnabled) {
         this.notifyEnabled = notifyEnabled;
     }
+
+
 
 }

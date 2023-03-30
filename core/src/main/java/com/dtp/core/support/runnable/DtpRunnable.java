@@ -4,13 +4,12 @@ import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.timer.HashedWheelTimer;
 import com.dtp.common.timer.Timeout;
+import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.timer.QueueTimeoutTimerTask;
 import com.dtp.core.timer.RunTimeoutTimerTask;
-import com.dtp.core.thread.DtpExecutor;
 import org.slf4j.MDC;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.LongAdder;
 
 import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
 
@@ -38,22 +37,24 @@ public class DtpRunnable implements Runnable {
         this.traceId = MDC.get(TRACE_ID);
     }
 
-    public void startTimeoutTask(DtpExecutor executor,
-                                 NotifyItemEnum notifyItemEnum,
-                                 long timeout,
-                                 LongAdder timeoutCount) {
-        if (timeout <= 0) {
-            return;
-        }
+    public void startTimeoutTask(DtpExecutor executor, NotifyItemEnum notifyItemEnum) {
         HashedWheelTimer hashedWheelTimer = ApplicationContextHolder.getBean(HashedWheelTimer.class);
         switch (notifyItemEnum) {
             case RUN_TIMEOUT:
-                RunTimeoutTimerTask runTimeoutTimerTask = new RunTimeoutTimerTask(executor, this, timeoutCount);
-                runTimeoutTimer = hashedWheelTimer.newTimeout(runTimeoutTimerTask, timeout, TimeUnit.MILLISECONDS);
+                long runTimeout = executor.getRunTimeout();
+                if (runTimeout <= 0) {
+                    return;
+                }
+                RunTimeoutTimerTask runTimeoutTimerTask = new RunTimeoutTimerTask(executor, this);
+                runTimeoutTimer = hashedWheelTimer.newTimeout(runTimeoutTimerTask, runTimeout, TimeUnit.MILLISECONDS);
                 break;
             case QUEUE_TIMEOUT:
-                QueueTimeoutTimerTask queueTimeoutTimerTask = new QueueTimeoutTimerTask(executor, this, timeoutCount);
-                queueTimeoutTimer = hashedWheelTimer.newTimeout(queueTimeoutTimerTask, timeout, TimeUnit.MILLISECONDS);
+                long queueTimeout = executor.getQueueTimeout();
+                if (queueTimeout <= 0) {
+                    return;
+                }
+                QueueTimeoutTimerTask queueTimeoutTimerTask = new QueueTimeoutTimerTask(executor, this);
+                queueTimeoutTimer = hashedWheelTimer.newTimeout(queueTimeoutTimerTask, queueTimeout, TimeUnit.MILLISECONDS);
                 break;
             default:
                 break;

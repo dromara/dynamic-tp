@@ -13,6 +13,7 @@ import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.wrapper.TaskWrapper;
 import com.dtp.core.support.wrapper.TaskWrappers;
 import com.dtp.core.thread.DtpExecutor;
+import com.dtp.core.thread.ExecutorAdapter;
 import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
@@ -33,7 +34,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 import static com.dtp.common.constant.DynamicTpConst.M_1;
@@ -201,14 +201,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
     }
 
     private static void doRefresh(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
-
-        if (!(executorWrapper.getExecutor() instanceof ThreadPoolExecutor)) {
-            log.warn("DynamicTp refresh, cannot handle this executor, class: {}",
-                    executorWrapper.getExecutor().getClass().getSimpleName());
-            return;
-        }
-
-        ThreadPoolExecutor executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
+        ExecutorAdapter<?> executor = executorWrapper.getExecutor();
         doRefreshPoolSize(executor, props);
         if (!Objects.equals(executor.getKeepAliveTime(props.getUnit()), props.getKeepAliveTime())) {
             executor.setKeepAliveTime(props.getKeepAliveTime(), props.getUnit());
@@ -232,9 +225,9 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
             executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());
         }
 
-        ThreadPoolExecutor executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
+        ExecutorAdapter<?> executor = executorWrapper.getExecutor();
         // update reject handler
-        String currentRejectHandlerName = executor.getRejectedExecutionHandler().getClass().getSimpleName();
+        String currentRejectHandlerName = executor.getRejectHandlerName();
         if (!Objects.equals(currentRejectHandlerName, props.getRejectedHandlerType())) {
             val rejectHandler = RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType());
             executor.setRejectedExecutionHandler(rejectHandler);
@@ -266,7 +259,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         updateNotifyInfo(executor, props, dtpProperties.getPlatforms());
     }
 
-    private static void doRefreshPoolSize(ThreadPoolExecutor executor, DtpExecutorProps props) {
+    private static void doRefreshPoolSize(ExecutorAdapter<?> executor, DtpExecutorProps props) {
         if (props.getMaximumPoolSize() < executor.getMaximumPoolSize()) {
             if (!Objects.equals(executor.getCorePoolSize(), props.getCorePoolSize())) {
                 executor.setCorePoolSize(props.getCorePoolSize());
@@ -284,7 +277,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         }
     }
 
-    private static void updateQueueProps(ThreadPoolExecutor executor, DtpExecutorProps props) {
+    private static void updateQueueProps(ExecutorAdapter<?> executor, DtpExecutorProps props) {
 
         val blockingQueue = executor.getQueue();
         if (blockingQueue instanceof MemorySafeLinkedBlockingQueue) {

@@ -77,7 +77,7 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
         
         private final XnioWorker executor;
         
-        public UndertowExecutorAdapter(XnioWorker executor) {
+        UndertowExecutorAdapter(XnioWorker executor) {
             this.executor = executor;
         }
         

@@ -70,7 +70,7 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPoolExec
         
         private final ThreadPoolExecutor executor;
         
-        public TomcatExecutorAdapter(ThreadPoolExecutor executor) {
+        TomcatExecutorAdapter(ThreadPoolExecutor executor) {
             this.executor = executor;
         }
         

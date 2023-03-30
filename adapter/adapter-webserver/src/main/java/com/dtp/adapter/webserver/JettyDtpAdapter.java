@@ -73,7 +73,7 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
         
         private final ThreadPool.SizedThreadPool executor;
         
-        public JettyExecutorAdapter(ThreadPool.SizedThreadPool executor) {
+        JettyExecutorAdapter(ThreadPool.SizedThreadPool executor) {
             this.executor = executor;
         }
         

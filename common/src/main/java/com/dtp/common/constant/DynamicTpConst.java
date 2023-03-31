@@ -62,6 +62,11 @@ public final class DynamicTpConst {
     public static final String TASK_WRAPPERS = "taskWrappers";
 
     /**
+     * alarm
+     */
+    public static final String ALARM_NAME = "dtp-alarm";
+
+    /**
      * symbol
      */
     public static final String DOT = ".";

@@ -1,9 +1,9 @@
 package com.dtp.adapter.webserver;
 
+import com.dtp.common.entity.ThreadPoolStats;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.ReflectionUtil;
 import com.dtp.core.support.ExecutorWrapper;
-import com.dtp.common.entity.ThreadPoolStats;
 import com.dtp.core.thread.ExecutorAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
@@ -143,14 +143,6 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
                 return ((QueuedThreadPool) this.executor).getIdleTimeout();
             }
             return 0;
-        }
-    
-        @Override
-        public void setKeepAliveTime(long time, TimeUnit unit) {
-            if (this.executor instanceof QueuedThreadPool) {
-                final int keepAliveMs = (int) TimeUnit.MILLISECONDS.convert(time, unit);
-                ((QueuedThreadPool) this.executor).setIdleTimeout(keepAliveMs);
-            }
         }
     }
 }

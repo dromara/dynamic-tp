@@ -59,7 +59,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * <a href="http://cseweb.ucsd.edu/users/varghese/PAPERS/twheel.ps.Z">'Hashed
  * and Hierarchical Timing Wheels: data structures to efficiently implement a
  * timer facility'</a>.  More comprehensive slides are located
- * <a href="http://www.cse.wustl.edu/~cdgill/courses/cs6874/TimingWheels.ppt">here</a>.<br/>
+ * <a href="http://www.cse.wustl.edu/~cdgill/courses/cs6874/TimingWheels.ppt">here</a>.<br>
  * Copy from dubbo, see <a href="https://github.com/apache/dubbo/blob/3.2/dubbo-common/src/main/java/org/apache/dubbo/common/timer/HashedWheelTimer.java">here</a> for more details.
  */
 @Slf4j
@@ -394,7 +394,7 @@ public class HashedWheelTimer implements Timer {
     }
 
     /**
-     * Returns the number of pending timeouts of this {@link Timer}.
+     * @return the number of pending timeouts of this {@link Timer}.
      */
     public long pendingTimeouts() {
         return pendingTimeouts.get();

@@ -2,12 +2,9 @@ package com.dtp.adapter.webserver;
 
 import com.dtp.adapter.common.AbstractDtpAdapter;
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.entity.TpExecutorProps;
-import com.dtp.common.entity.TpMainFields;
-import com.dtp.common.properties.DtpProperties;
-import com.dtp.core.convert.ExecutorConverter;
-import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.entity.ThreadPoolStats;
+import com.dtp.common.properties.DtpProperties;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.thread.ExecutorAdapter;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -86,13 +83,6 @@ public abstract class AbstractWebServerDtpAdapter<A extends Executor>
             return null;
         }
         return (ExecutorAdapter<A>) wrapper.getExecutor();
-    }
-
-    @Override
-    protected TpMainFields getTpMainFields(ExecutorWrapper executorWrapper, TpExecutorProps props) {
-        final ExecutorAdapter<?> adapter = executorWrapper.getExecutor();
-        return ExecutorConverter.ofSimple(executorWrapper.getThreadPoolName(), adapter.getCorePoolSize(),
-                adapter.getMaximumPoolSize(), adapter.getKeepAliveTime(props.getUnit()));
     }
 
     /**

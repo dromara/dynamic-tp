@@ -23,6 +23,10 @@ public class NoticeManager {
 
     private static final ExecutorService NOTICE_EXECUTOR = ThreadPoolCreator.createCommonFast("dtp-notify");
 
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread(NOTICE_EXECUTOR::shutdown));
+    }
+
     private NoticeManager() { }
 
     private static final InvokerChain<BaseNotifyCtx> NOTICE_INVOKER_CHAIN;

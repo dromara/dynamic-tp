@@ -6,7 +6,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Schedules {@link TimerTask}s for one-time future execution in a background thread.
+ * <p>
  * Copy from dubbo, see <a href="https://github.com/apache/dubbo/blob/3.2/dubbo-common/src/main/java/org/apache/dubbo/common/timer/Timer.java">here</a> for more details.
+ * </p>
  */
 public interface Timer {
 

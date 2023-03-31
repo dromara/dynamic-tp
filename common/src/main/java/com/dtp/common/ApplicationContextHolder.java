@@ -26,7 +26,7 @@ public class ApplicationContextHolder implements ApplicationContextAware {
 
     public static <T> T getBean(Class<T> clazz) {
         if (Objects.isNull(context)) {
-            return null;
+            throw new NullPointerException("ApplicationContext is null, please check if the spring container is started.");
         }
         return context.getBean(clazz);
     }

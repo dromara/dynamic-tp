@@ -1,0 +1,60 @@
+# 动态线程池配置文件，建议单独开一个文件放到配置中心，字段详解看readme介绍
+spring:
+  dynamic:
+    tp:
+      enabled: true
+      enabledBanner: true           # 是否开启banner打印，默认true
+      enabledCollect: true          # 是否开启监控指标采集，默认false
+      collectorTypes: micrometer,logging     # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+      logPath: /home/logs           # 监控日志数据路径，默认 ${user.home}/logs
+      monitorInterval: 5            # 监控时间间隔（报警判断、指标采集），默认5s
+      configType: yml               # 配置文件类型
+      executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
+        - threadPoolName: testRunTimeoutDtpExecutor
+          executorType: common                     # 线程池类型common、eager：适用于io密集型
+          corePoolSize: 1
+          maximumPoolSize: 1
+          queueCapacity: 500
+          queueType: VariableLinkedBlockingQueue   # 任务队列，查看源码QueueTypeEnum枚举类
+          rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
+          keepAliveTime: 50
+          allowCoreThreadTimeOut: false                  # 是否允许核心线程池超时
+          threadNamePrefix: test                         # 线程名前缀
+          waitForTasksToCompleteOnShutdown: false        # 参考spring线程池设计，优雅关闭线程池
+          awaitTerminationSeconds: 5                     # 单位（s）
+          preStartAllCoreThreads: false                  # 是否预热所有核心线程，默认false
+          runTimeout: 200                                # 任务执行超时阈值，目前只做告警用，单位（ms）
+          queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
+          taskWrapperNames: ["ttl"]                          # 任务包装器名称，集成TaskWrapper接口
+        - threadPoolName: testQueueTimeoutDtpExecutor
+          executorType: common                     # 线程池类型common、eager：适用于io密集型
+          corePoolSize: 1
+          maximumPoolSize: 1
+          queueCapacity: 500
+          queueType: VariableLinkedBlockingQueue   # 任务队列，查看源码QueueTypeEnum枚举类
+          rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
+          keepAliveTime: 50
+          allowCoreThreadTimeOut: false                  # 是否允许核心线程池超时
+          threadNamePrefix: test                         # 线程名前缀
+          waitForTasksToCompleteOnShutdown: false        # 参考spring线程池设计，优雅关闭线程池
+          awaitTerminationSeconds: 5                     # 单位（s）
+          preStartAllCoreThreads: false                  # 是否预热所有核心线程，默认false
+          runTimeout: 200                                # 任务执行超时阈值，目前只做告警用，单位（ms）
+          queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
+          taskWrapperNames: ["ttl"]                          # 任务包装器名称，集成TaskWrapper接口
+        - threadPoolName: testRejectedQueueTimeoutCancelDtpExecutor
+          executorType: common                     # 线程池类型common、eager：适用于io密集型
+          corePoolSize: 1
+          maximumPoolSize: 1
+          queueCapacity: 50
+          queueType: VariableLinkedBlockingQueue   # 任务队列，查看源码QueueTypeEnum枚举类
+          rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
+          keepAliveTime: 50
+          allowCoreThreadTimeOut: false                  # 是否允许核心线程池超时
+          threadNamePrefix: test                         # 线程名前缀
+          waitForTasksToCompleteOnShutdown: false        # 参考spring线程池设计，优雅关闭线程池
+          awaitTerminationSeconds: 5                     # 单位（s）
+          preStartAllCoreThreads: false                  # 是否预热所有核心线程，默认false
+          runTimeout: 200                                # 任务执行超时阈值，目前只做告警用，单位（ms）
+          queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
+          taskWrapperNames: ["ttl"]                          # 任务包装器名称，集成TaskWrapper接口

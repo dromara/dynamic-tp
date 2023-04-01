@@ -16,7 +16,7 @@ public final class Version {
 
     static {
         try {
-            version = getVersion();
+            version = version();
         } catch (Throwable e) {
             log.warn("no version number found");
         }

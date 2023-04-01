@@ -29,6 +29,7 @@ public class NoticeManager {
 
     static {
         NOTICE_INVOKER_CHAIN = NotifyFilterBuilder.getCommonInvokerChain();
+        Runtime.getRuntime().addShutdownHook(new Thread(NOTICE_EXECUTOR::shutdown));
     }
 
     public static void doNoticeAsync(ExecutorWrapper executor, TpMainFields oldFields, List<String> diffKeys) {

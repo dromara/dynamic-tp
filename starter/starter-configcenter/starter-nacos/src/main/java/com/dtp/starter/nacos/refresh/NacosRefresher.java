@@ -10,6 +10,7 @@ import com.dtp.common.util.NacosUtil;
 import com.dtp.core.refresh.AbstractRefresher;
 import com.dtp.core.support.ThreadPoolCreator;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.env.Environment;
 
@@ -24,7 +25,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @since 1.0.0
  **/
 @Slf4j
-public class NacosRefresher extends AbstractRefresher implements InitializingBean, Listener {
+public class NacosRefresher extends AbstractRefresher implements InitializingBean, DisposableBean, Listener {
 
     private static final ThreadPoolExecutor EXECUTOR = ThreadPoolCreator.createCommonFast("nacos-listener");
 
@@ -60,6 +61,11 @@ public class NacosRefresher extends AbstractRefresher implements InitializingBea
     @Override
     public void receiveConfigInfo(String content) {
         refresh(content, configFileType);
+    }
+
+    @Override
+    public void destroy() {
+        EXECUTOR.shutdown();
     }
 
 }

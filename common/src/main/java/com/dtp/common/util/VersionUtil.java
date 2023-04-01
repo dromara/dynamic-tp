@@ -1,4 +1,4 @@
-package com.dtp.common;
+package com.dtp.common.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
  * @author kamtohung
  */
 @Slf4j
-public final class Version {
+public final class VersionUtil {
 
     private static String version;
 
@@ -22,12 +22,11 @@ public final class Version {
         }
     }
 
-    private Version() {
-    }
+    private VersionUtil() { }
 
     public static String version() {
         // find version info from MANIFEST.MF first
-        Package pkg = Version.class.getPackage();
+        Package pkg = VersionUtil.class.getPackage();
         String version;
         if (pkg != null) {
             version = pkg.getImplementationVersion();

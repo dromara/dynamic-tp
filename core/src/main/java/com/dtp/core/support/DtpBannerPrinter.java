@@ -1,6 +1,6 @@
 package com.dtp.core.support;
 
-import com.dtp.common.Version;
+import com.dtp.common.util.VersionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.ansi.AnsiColor;
@@ -31,7 +31,7 @@ public class DtpBannerPrinter implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        log.info(AnsiOutput.toString(BANNER, "\n", AnsiColor.GREEN, NAME, "\n", " :: ", Version.getVersion(), " :: ",
+        log.info(AnsiOutput.toString(BANNER, "\n", AnsiColor.GREEN, NAME, "\n", " :: ", VersionUtil.getVersion(), " :: ",
                 "\n", SITE, AnsiColor.DEFAULT, AnsiStyle.FAINT));
     }
 }

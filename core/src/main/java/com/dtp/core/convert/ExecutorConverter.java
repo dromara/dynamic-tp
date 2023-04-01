@@ -5,7 +5,6 @@ import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.thread.DtpExecutor;
 import lombok.val;
 
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -34,18 +33,14 @@ public class ExecutorConverter {
     public static TpMainFields convert(ExecutorWrapper executorWrapper) {
         TpMainFields mainFields = new TpMainFields();
         mainFields.setThreadPoolName(executorWrapper.getThreadPoolName());
-        val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
+        val executor = executorWrapper.getExecutor();
         mainFields.setCorePoolSize(executor.getCorePoolSize());
         mainFields.setMaxPoolSize(executor.getMaximumPoolSize());
         mainFields.setKeepAliveTime(executor.getKeepAliveTime(TimeUnit.SECONDS));
         mainFields.setQueueType(executor.getQueue().getClass().getSimpleName());
         mainFields.setQueueCapacity(executor.getQueue().size() + executor.getQueue().remainingCapacity());
         mainFields.setAllowCoreThreadTimeOut(executor.allowsCoreThreadTimeOut());
-        if (executor instanceof DtpExecutor) {
-            mainFields.setRejectType(((DtpExecutor) executor).getRejectHandlerName());
-        } else {
-            mainFields.setRejectType(executor.getRejectedExecutionHandler().getClass().getSimpleName());
-        }
+        mainFields.setRejectType(executor.getRejectHandlerName());
         return mainFields;
     }
 

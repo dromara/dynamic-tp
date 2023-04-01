@@ -8,6 +8,11 @@ import com.dtp.core.support.runnable.DtpRunnable;
 import com.dtp.core.thread.DtpExecutor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * A timer task used to handle queued timeout.
+ *
+ * @author kamtohung
+ **/
 @Slf4j
 public class QueueTimeoutTimerTask implements TimerTask {
 
@@ -15,8 +20,7 @@ public class QueueTimeoutTimerTask implements TimerTask {
 
     private final DtpRunnable runnable;
 
-    public QueueTimeoutTimerTask(DtpExecutor dtpExecutor,
-                                 DtpRunnable runnable) {
+    public QueueTimeoutTimerTask(DtpExecutor dtpExecutor, DtpRunnable runnable) {
         this.dtpExecutor = dtpExecutor;
         this.runnable = runnable;
     }
@@ -28,5 +32,4 @@ public class QueueTimeoutTimerTask implements TimerTask {
         log.warn("DynamicTp execute, queue timeout, tpName: {}, taskName: {}, traceId: {}",
                 dtpExecutor.getThreadPoolName(), runnable.getTaskName(), runnable.getTraceId());
     }
-
 }

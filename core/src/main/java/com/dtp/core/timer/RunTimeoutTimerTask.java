@@ -8,7 +8,11 @@ import com.dtp.core.support.runnable.DtpRunnable;
 import com.dtp.core.thread.DtpExecutor;
 import lombok.extern.slf4j.Slf4j;
 
-
+/**
+ * A timer task used to handle run timeout.
+ *
+ * @author kamtohung
+ **/
 @Slf4j
 public class RunTimeoutTimerTask implements TimerTask {
 
@@ -18,9 +22,7 @@ public class RunTimeoutTimerTask implements TimerTask {
 
     private final Thread thread;
 
-    public RunTimeoutTimerTask(DtpExecutor dtpExecutor,
-                               DtpRunnable runnable,
-                               Thread thread) {
+    public RunTimeoutTimerTask(DtpExecutor dtpExecutor, DtpRunnable runnable, Thread thread) {
         this.dtpExecutor = dtpExecutor;
         this.runnable = runnable;
         this.thread = thread;
@@ -31,7 +33,8 @@ public class RunTimeoutTimerTask implements TimerTask {
         dtpExecutor.getRunTimeoutCount().increment();
         AlarmManager.doAlarmAsync(dtpExecutor, NotifyItemEnum.RUN_TIMEOUT);
         log.warn("DynamicTp execute, run timeout, tpName: {}, taskName: {}, traceId: {}, stackTrace: {}",
-                dtpExecutor.getThreadPoolName(), runnable.getTaskName(), runnable.getTraceId(), traceToString(thread.getStackTrace()));
+                dtpExecutor.getThreadPoolName(), runnable.getTaskName(),
+                runnable.getTraceId(), traceToString(thread.getStackTrace()));
     }
 
 
@@ -43,5 +46,4 @@ public class RunTimeoutTimerTask implements TimerTask {
         }
         return builder.toString();
     }
-
 }

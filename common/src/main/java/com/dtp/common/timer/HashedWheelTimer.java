@@ -396,7 +396,7 @@ public class HashedWheelTimer implements Timer {
     }
 
     /**
-     * Returns the number of pending timeouts of this {@link Timer}.
+     * @return the number of pending timeouts of this {@link Timer}.
      */
     public long pendingTimeouts() {
         return pendingTimeouts.get();

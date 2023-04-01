@@ -16,6 +16,7 @@ import com.dtp.core.notify.alarm.AlarmCounter;
 import com.dtp.core.notify.base.Notifier;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.thread.DtpExecutor;
+import com.dtp.core.thread.ExecutorAdapter;
 import com.google.common.base.Joiner;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,7 +29,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -103,7 +103,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         AlarmCtx context = (AlarmCtx) DtpNotifyCtxHolder.get();
         ExecutorWrapper executorWrapper = context.getExecutorWrapper();
         String threadPoolName = executorWrapper.getThreadPoolName();
-        val executor = (ThreadPoolExecutor) context.getExecutorWrapper().getExecutor();
+        val executor = executorWrapper.getExecutor();
         NotifyItem notifyItem = context.getNotifyItem();
         AlarmInfo alarmInfo = context.getAlarmInfo();
 
@@ -146,7 +146,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     protected String buildNoticeContent(NotifyPlatform platform, TpMainFields oldFields, List<String> diffs) {
         BaseNotifyCtx context = DtpNotifyCtxHolder.get();
         ExecutorWrapper executorWrapper = context.getExecutorWrapper();
-        val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
+        val executor = executorWrapper.getExecutor();
         String receivesStr = getReceives(platform.getPlatform(), platform.getReceivers());
 
         String content = String.format(
@@ -197,14 +197,11 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         return executorWrapper.getThreadPoolName() + "(" + poolAlisaName + ")";
     }
 
-    protected String getRejectHandlerName(ThreadPoolExecutor executor) {
-        if (executor instanceof DtpExecutor) {
-            return ((DtpExecutor) executor).getRejectHandlerName();
-        }
-        return executor.getRejectedExecutionHandler().getClass().getSimpleName();
+    protected String getRejectHandlerName(ExecutorAdapter<?> executor) {
+        return executor.getRejectHandlerName();
     }
 
-    protected int getQueueCapacity(ThreadPoolExecutor executor) {
+    protected int getQueueCapacity(ExecutorAdapter<?> executor) {
         if (executor instanceof DtpExecutor) {
             return ((DtpExecutor) executor).getQueueCapacity();
         }

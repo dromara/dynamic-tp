@@ -15,6 +15,9 @@ public interface Timer {
     /**
      * Schedules the specified {@link TimerTask} for one-time execution after
      * the specified delay.
+     * @param task the task to execute
+     * @param delay the time from now to delay execution
+     * @param unit the time unit of the delay parameter
      *
      * @return a handle which is associated with the specified task
      * @throws IllegalStateException      if this timer has been {@linkplain #stop() stopped} already

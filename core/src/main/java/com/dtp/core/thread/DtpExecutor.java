@@ -22,6 +22,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -34,7 +35,8 @@ import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
+public class DtpExecutor extends DtpLifecycleSupport
+        implements SpringExecutor, ExecutorAdapter<ThreadPoolExecutor> {
 
     /**
      * Simple Business alias Name of Dynamic ThreadPool. Use for notify.
@@ -138,6 +140,11 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
     }
 
     @Override
+    public ThreadPoolExecutor getOriginal() {
+        return this;
+    }
+    
+    @Override
     public void execute(Runnable task, long startTimeout) {
         execute(task);
     }
@@ -230,6 +237,7 @@ public class DtpExecutor extends DtpLifecycleSupport implements SpringExecutor {
         return capacity < 0 ? Integer.MAX_VALUE : capacity;
     }
 
+    @Override
     public String getRejectHandlerName() {
         return rejectHandlerName;
     }

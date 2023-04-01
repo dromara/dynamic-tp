@@ -16,6 +16,7 @@ public interface TimerTask {
      * {@link Timer#newTimeout(TimerTask, long, TimeUnit)}.
      *
      * @param timeout a handle which is associated with this task
+     * @throws Exception if an error occurs
      */
     void run(Timeout timeout) throws Exception;
 }

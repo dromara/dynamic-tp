@@ -4,12 +4,12 @@ import com.dtp.core.DtpRegistry;
 import com.dtp.core.spring.EnableDynamicTp;
 import com.dtp.core.spring.YamlPropertySourceFactory;
 import com.dtp.core.thread.ScheduledDtpExecutor;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 //获取启动类，加载配置，寻找主配置启动类 （被 @SpringBootApplication 注解的）
 @SpringBootTest(classes = ScheduledDtpExecutorTest.class)
 //让JUnit运行Spring的测试环境,获得Spring环境的上下文的支持
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @EnableDynamicTp
 @EnableAutoConfiguration
 public class ScheduledDtpExecutorTest {

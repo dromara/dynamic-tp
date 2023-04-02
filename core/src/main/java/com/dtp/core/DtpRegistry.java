@@ -13,7 +13,7 @@ import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.wrapper.TaskWrapper;
 import com.dtp.core.support.wrapper.TaskWrappers;
 import com.dtp.core.thread.DtpExecutor;
-import com.dtp.core.thread.ExecutorAdapter;
+import com.dtp.core.support.ExecutorAdapter;
 import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;

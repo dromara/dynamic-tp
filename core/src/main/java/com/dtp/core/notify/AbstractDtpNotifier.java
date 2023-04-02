@@ -16,7 +16,7 @@ import com.dtp.core.notify.alarm.AlarmCounter;
 import com.dtp.core.notify.base.Notifier;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.thread.DtpExecutor;
-import com.dtp.core.thread.ExecutorAdapter;
+import com.dtp.core.support.ExecutorAdapter;
 import com.google.common.base.Joiner;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

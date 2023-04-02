@@ -3,7 +3,7 @@ package com.dtp.core.notify.alarm;
 import com.dtp.common.entity.AlarmInfo;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.core.thread.DtpExecutor;
-import com.dtp.core.thread.ExecutorAdapter;
+import com.dtp.core.support.ExecutorAdapter;
 import lombok.val;
 import lombok.var;
 import org.apache.commons.lang3.tuple.ImmutableTriple;

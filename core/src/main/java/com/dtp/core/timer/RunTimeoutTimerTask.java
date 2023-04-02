@@ -37,7 +37,6 @@ public class RunTimeoutTimerTask implements TimerTask {
                 runnable.getTraceId(), traceToString(thread.getStackTrace()));
     }
 
-
     public String traceToString(StackTraceElement[] trace) {
         StringBuilder builder = new StringBuilder(512);
         builder.append("\n");

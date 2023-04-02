@@ -5,7 +5,7 @@ import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.entity.ThreadPoolStats;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.support.ExecutorWrapper;
-import com.dtp.core.thread.ExecutorAdapter;
+import com.dtp.core.support.ExecutorAdapter;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.context.WebServerApplicationContext;

@@ -3,7 +3,6 @@ package com.dtp.core.support;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.entity.NotifyItem;
 import com.dtp.core.thread.DtpExecutor;
-import com.dtp.core.thread.ExecutorAdapter;
 import lombok.Data;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.dtp.core.thread;
+package com.dtp.core.support;
 
 import java.util.AbstractQueue;
 import java.util.Collection;

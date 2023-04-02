@@ -68,7 +68,6 @@ public class DtpRunnable implements Runnable {
         }
     }
 
-
     @Override
     public void run() {
         runnable.run();

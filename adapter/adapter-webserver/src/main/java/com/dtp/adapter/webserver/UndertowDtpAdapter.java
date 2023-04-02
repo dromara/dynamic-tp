@@ -4,7 +4,7 @@ import com.dtp.common.entity.ThreadPoolStats;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.ReflectionUtil;
 import com.dtp.core.support.ExecutorWrapper;
-import com.dtp.core.thread.ExecutorAdapter;
+import com.dtp.core.support.ExecutorAdapter;
 import io.undertow.Undertow;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

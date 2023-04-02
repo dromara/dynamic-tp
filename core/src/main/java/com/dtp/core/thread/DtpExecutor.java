@@ -6,6 +6,7 @@ import com.dtp.core.notify.manager.NotifyHelper;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.spring.DtpLifecycleSupport;
 import com.dtp.core.spring.SpringExecutor;
+import com.dtp.core.support.ExecutorAdapter;
 import com.dtp.core.support.runnable.DtpRunnable;
 import com.dtp.core.support.runnable.NamedRunnable;
 import com.dtp.core.support.wrapper.TaskWrapper;
@@ -310,6 +311,5 @@ public class DtpExecutor extends DtpLifecycleSupport
     public void setNotifyEnabled(boolean notifyEnabled) {
         this.notifyEnabled = notifyEnabled;
     }
-
 
 }

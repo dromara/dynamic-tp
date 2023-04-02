@@ -53,7 +53,7 @@ public class DtpExecutorBenchmarkTest {
     @Setup(Level.Trial)
     public void setup() {
         context = SpringApplication.run(DtpExecutorTest.class);
-        dtpExecutor1 = DtpRegistry.getDtpExecutor("dtpExecutor1");
+        dtpExecutor1 = DtpRegistry.getDtpExecutor("testRunTimeoutDtpExecutor");
         hashedWheelTimer = ApplicationContextHolder.getBean(HashedWheelTimer.class);
         // mock alarm
         try (MockedStatic<AlarmManager> utilities = mockStatic(AlarmManager.class)) {

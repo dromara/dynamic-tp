@@ -3,7 +3,7 @@ package com.dtp.core.convert;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.entity.ThreadPoolStats;
 import com.dtp.core.thread.DtpExecutor;
-import com.dtp.core.thread.ExecutorAdapter;
+import com.dtp.core.support.ExecutorAdapter;
 
 /**
  * MetricsConverter related

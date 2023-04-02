@@ -12,7 +12,7 @@ import com.dtp.core.convert.MetricsConverter;
 import com.dtp.core.notify.manager.AlarmManager;
 import com.dtp.core.notify.manager.NoticeManager;
 import com.dtp.core.support.ExecutorWrapper;
-import com.dtp.core.thread.ExecutorAdapter;
+import com.dtp.core.support.ExecutorAdapter;
 import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;

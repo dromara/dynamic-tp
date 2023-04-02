@@ -1,7 +1,5 @@
 package com.dtp.core.support;
 
-import com.dtp.core.thread.ExecutorAdapter;
-
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;

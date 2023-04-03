@@ -1,7 +1,6 @@
 package com.dtp.common.entity;
 
 import com.dtp.common.em.NotifyItemEnum;
-import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.util.StringUtil;
 import lombok.Data;
 import lombok.val;
@@ -21,13 +20,6 @@ import static java.util.stream.Collectors.toList;
  **/
 @Data
 public class NotifyItem {
-
-    /**
-     * @deprecated, use {@link #platformIds} instead, remove in 1.1.2
-     * Notify platform names, see {@link NotifyPlatformEnum}
-     */
-    @Deprecated
-    private List<String> platforms;
 
     /**
      * Notify platform id

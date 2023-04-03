@@ -49,7 +49,7 @@ public class DtpMonitor implements ApplicationRunner, Ordered {
     private void run() {
         List<String> dtpNames = DtpRegistry.listAllDtpNames();
         List<String> commonNames = DtpRegistry.listAllCommonNames();
-        checkAlarm(dtpNames);
+        checkAlarm(dtpNames, commonNames);
         collect(dtpNames, commonNames);
     }
 
@@ -60,21 +60,23 @@ public class DtpMonitor implements ApplicationRunner, Ordered {
 
         dtpNames.forEach(x -> {
             DtpExecutor executor = DtpRegistry.getDtpExecutor(x);
-            ThreadPoolStats poolStats = MetricsConverter.convert(executor);
-            doCollect(poolStats);
+            doCollect(MetricsConverter.convert(executor));
         });
         commonNames.forEach(x -> {
             ExecutorWrapper wrapper = DtpRegistry.getCommonExecutor(x);
-            ThreadPoolStats poolStats = MetricsConverter.convert(wrapper);
-            doCollect(poolStats);
+            doCollect(MetricsConverter.convert(wrapper));
         });
         publishCollectEvent();
     }
 
-    private void checkAlarm(List<String> dtpNames) {
+    private void checkAlarm(List<String> dtpNames, List<String> commonNames) {
         dtpNames.forEach(x -> {
             DtpExecutor executor = DtpRegistry.getDtpExecutor(x);
             AlarmManager.doAlarmAsync(executor, SCHEDULE_NOTIFY_ITEMS);
+        });
+        commonNames.forEach(x -> {
+            ExecutorWrapper wrapper = DtpRegistry.getCommonExecutor(x);
+            AlarmManager.doAlarmAsync(wrapper, SCHEDULE_NOTIFY_ITEMS);
         });
         publishAlarmCheckEvent();
     }

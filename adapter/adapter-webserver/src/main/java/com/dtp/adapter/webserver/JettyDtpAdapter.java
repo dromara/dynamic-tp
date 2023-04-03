@@ -29,7 +29,7 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
     private static final String POOL_NAME = "jettyTp";
 
     @Override
-    public ExecutorWrapper doGetExecutorWrapper(WebServer webServer) {
+    public ExecutorWrapper doInitExecutorWrapper(WebServer webServer) {
         JettyWebServer jettyWebServer = (JettyWebServer) webServer;
         final JettyExecutorAdapter adapter = new JettyExecutorAdapter(
                 (ThreadPool.SizedThreadPool) jettyWebServer.getServer().getThreadPool());

@@ -3,7 +3,6 @@ package com.dtp.common.util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-
 /**
  * Version related
  *
@@ -17,7 +16,7 @@ public final class VersionUtil {
     static {
         try {
             version = version();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             log.warn("no version number found");
         }
     }

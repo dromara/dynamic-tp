@@ -26,7 +26,7 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPoolExec
     private static final String POOL_NAME = "tomcatTp";
 
     @Override
-    public ExecutorWrapper doGetExecutorWrapper(WebServer webServer) {
+    public ExecutorWrapper doInitExecutorWrapper(WebServer webServer) {
         TomcatWebServer tomcatWebServer = (TomcatWebServer) webServer;
         final TomcatExecutorAdapter adapter = new TomcatExecutorAdapter((ThreadPoolExecutor)
                 tomcatWebServer.getTomcat().getConnector().getProtocolHandler().getExecutor());

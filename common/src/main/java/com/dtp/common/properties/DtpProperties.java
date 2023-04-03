@@ -35,26 +35,6 @@ public class DtpProperties {
     private boolean enabledBanner = true;
 
     /**
-     * Nacos config.
-     */
-    private Nacos nacos;
-
-    /**
-     * Apollo config.
-     */
-    private Apollo apollo;
-
-    /**
-     * Zookeeper config.
-     */
-    private Zookeeper zookeeper;
-
-    /**
-     * Etcd config.
-     */
-    private Etcd etcd;
-
-    /**
      * Config file type.
      */
     private String configType = "yml";
@@ -80,14 +60,34 @@ public class DtpProperties {
     private int monitorInterval = 5;
 
     /**
-     * ThreadPoolExecutor configs.
-     */
-    private List<DtpExecutorProps> executors;
-
-    /**
      * Notify platform configs.
      */
     private List<NotifyPlatform> platforms;
+
+    /**
+     * Nacos config.
+     */
+    private Nacos nacos;
+
+    /**
+     * Apollo config.
+     */
+    private Apollo apollo;
+
+    /**
+     * Zookeeper config.
+     */
+    private Zookeeper zookeeper;
+
+    /**
+     * Etcd config.
+     */
+    private Etcd etcd;
+
+    /**
+     * ThreadPoolExecutor configs.
+     */
+    private List<DtpExecutorProps> executors;
 
     /**
      * Tomcat worker thread pool.

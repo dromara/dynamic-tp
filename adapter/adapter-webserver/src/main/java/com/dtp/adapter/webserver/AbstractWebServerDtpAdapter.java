@@ -69,9 +69,7 @@ public abstract class AbstractWebServerDtpAdapter<A extends Executor>
         if (executorWrapper == null) {
             ApplicationContext applicationContext = ApplicationContextHolder.getInstance();
             WebServer webServer = ((WebServerApplicationContext) applicationContext).getWebServer();
-            executorWrapper = doGetExecutorWrapper(webServer);
-            initNotifyItems(executorWrapper.getThreadPoolName(), executorWrapper);
-            log.info("DynamicTp adapter, web server executor init end, executor: {}", executorWrapper.getExecutor());
+            initExecutorWrapper(webServer);
         }
     }
 
@@ -85,11 +83,17 @@ public abstract class AbstractWebServerDtpAdapter<A extends Executor>
         return (ExecutorAdapter<A>) wrapper.getExecutor();
     }
 
+    protected void initExecutorWrapper(WebServer webServer) {
+        executorWrapper = doInitExecutorWrapper(webServer);
+        initNotifyItems(executorWrapper.getThreadPoolName(), executorWrapper);
+        log.info("DynamicTp adapter, web server executor init end, executor: {}", executorWrapper.getExecutor());
+    }
+
     /**
-     * Get thread pool executor wrapper.
+     * Do init thread pool executor wrapper.
      *
      * @param webServer webServer
      * @return the Executor instance
      */
-    protected abstract ExecutorWrapper doGetExecutorWrapper(WebServer webServer);
+    protected abstract ExecutorWrapper doInitExecutorWrapper(WebServer webServer);
 }

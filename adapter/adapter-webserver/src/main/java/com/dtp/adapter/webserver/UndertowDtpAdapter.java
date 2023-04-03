@@ -36,7 +36,7 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
     }
 
     @Override
-    public ExecutorWrapper doGetExecutorWrapper(WebServer webServer) {
+    public ExecutorWrapper doInitExecutorWrapper(WebServer webServer) {
         UndertowServletWebServer undertowServletWebServer = (UndertowServletWebServer) webServer;
         val undertow = (Undertow) ReflectionUtil.getFieldValue(UndertowServletWebServer.class,
                 "undertow", undertowServletWebServer);

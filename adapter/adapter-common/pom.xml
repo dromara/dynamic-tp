@@ -9,10 +9,4 @@
     </parent>
     <artifactId>dynamic-tp-adapter-common</artifactId>
 
-    <dependencies>
-        <dependency>
-            <groupId>cn.dynamictp</groupId>
-            <artifactId>dynamic-tp-core</artifactId>
-        </dependency>
-    </dependencies>
 </project>

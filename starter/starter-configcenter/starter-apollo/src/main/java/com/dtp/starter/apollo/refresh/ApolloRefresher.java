@@ -14,7 +14,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 
 /**
- * NacosRefresher related
+ * ApolloRefresher related
  *
  * @author yanhom
  * @since 1.0.0

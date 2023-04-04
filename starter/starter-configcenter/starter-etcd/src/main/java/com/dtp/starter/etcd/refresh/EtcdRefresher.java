@@ -5,6 +5,7 @@ import com.dtp.core.refresh.AbstractRefresher;
 import com.dtp.core.spring.PropertiesBinder;
 import com.dtp.starter.etcd.util.EtcdUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.Ordered;
 
@@ -14,7 +15,7 @@ import java.util.Map;
  * @author Redick01
  */
 @Slf4j
-public class EtcdRefresher extends AbstractRefresher implements InitializingBean, Ordered {
+public class EtcdRefresher extends AbstractRefresher implements InitializingBean, Ordered, DisposableBean {
 
     @Override
     public void afterPropertiesSet() {
@@ -43,4 +44,10 @@ public class EtcdRefresher extends AbstractRefresher implements InitializingBean
     public int getOrder() {
         return LOWEST_PRECEDENCE;
     }
+
+    @Override
+    public void destroy() {
+        EtcdUtil.close();
+    }
+
 }

@@ -1,9 +1,9 @@
 package com.dtp.starter.etcd.util;
 
 import cn.hutool.core.util.StrUtil;
+import com.dtp.common.em.ConfigFileTypeEnum;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.properties.DtpProperties.Etcd;
-import com.dtp.common.em.ConfigFileTypeEnum;
 import com.dtp.core.handler.ConfigHandler;
 import com.dtp.starter.etcd.refresh.EtcdListener;
 import com.dtp.starter.etcd.refresh.EtcdRefresher;
@@ -14,14 +14,15 @@ import io.etcd.jetcd.KeyValue;
 import io.etcd.jetcd.kv.GetResponse;
 import io.etcd.jetcd.options.GetOption;
 import io.etcd.jetcd.watch.WatchEvent;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Redick01
@@ -31,20 +32,21 @@ public final class EtcdUtil {
 
     private static Map<Object, Object> resultMap = Maps.newHashMap();
 
-    private EtcdUtil() { }
+    private EtcdUtil() {
+    }
 
     private static Client client;
 
     /**
      * {@link Client}.
+     *
      * @param etcd {@link DtpProperties.Etcd}
      * @return Client
      */
     public static Client client(DtpProperties.Etcd etcd) {
         if (Objects.isNull(client)) {
             if (StringUtils.isBlank(etcd.getEndpoints())) {
-                log.debug("Etcd endpoints is null.");
-                return client;
+                throw new IllegalArgumentException("Etcd endpoints is null, please check your config.");
             }
             if (!etcd.isAuthEnable()) {
                 client = Client.builder()
@@ -64,7 +66,8 @@ public final class EtcdUtil {
 
     /**
      * get config content.
-     * @param etcd {@link DtpProperties.Etcd}
+     *
+     * @param etcd       {@link DtpProperties.Etcd}
      * @param configType config type
      * @return config content
      */
@@ -108,9 +111,10 @@ public final class EtcdUtil {
 
     /**
      * init config watcher.
+     *
      * @param etcdRefresher {@link EtcdRefresher}
      * @param dtpProperties {@link DtpProperties}
-     * @param map get watch key from the map
+     * @param map           get watch key from the map
      */
     public static void initWatcher(final EtcdRefresher etcdRefresher, final DtpProperties dtpProperties,
                                    final Map<Object, Object> map) {
@@ -133,8 +137,9 @@ public final class EtcdUtil {
 
     /**
      * etcd watcher get val.
-     * @param configType config type
-     * @param events {@link WatchEvent}
+     *
+     * @param configType    config type
+     * @param events        {@link WatchEvent}
      * @param dtpProperties {@link DtpProperties}
      */
     public static Map<Object, Object> watchValMap(final String configType, final List<WatchEvent> events, final DtpProperties dtpProperties)
@@ -165,4 +170,14 @@ public final class EtcdUtil {
         }
         return StrUtil.removePrefix(keyValue.getKey().toString(StandardCharsets.UTF_8), configKey);
     }
+
+    /**
+     * close etcd client.
+     */
+    public static void close() {
+        if (Objects.nonNull(client)) {
+            client.close();
+        }
+    }
+
 }

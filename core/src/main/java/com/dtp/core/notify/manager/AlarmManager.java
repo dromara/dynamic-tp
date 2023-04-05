@@ -11,6 +11,7 @@ import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.notify.alarm.AlarmCounter;
 import com.dtp.core.notify.alarm.AlarmLimiter;
+import com.dtp.core.notify.capture.CapturedExecutor;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.runnable.DtpRunnable;
 import com.dtp.core.thread.DtpExecutor;
@@ -80,8 +81,10 @@ public class AlarmManager {
         });
     }
 
-    public static boolean checkThreshold(ExecutorWrapper executor, NotifyItemEnum itemEnum, NotifyItem notifyItem) {
-
+    public static boolean checkThreshold(BaseNotifyCtx context) {
+        CapturedExecutor executor = context.getCapturedExecutor();
+        NotifyItemEnum itemEnum = context.getNotifyItemEnum();
+        NotifyItem notifyItem = context.getNotifyItem();
         switch (itemEnum) {
             case CAPACITY:
                 return checkCapacity(executor, notifyItem);
@@ -90,23 +93,20 @@ public class AlarmManager {
             case REJECT:
             case RUN_TIMEOUT:
             case QUEUE_TIMEOUT:
-                return checkWithAlarmInfo(executor, notifyItem);
+                return checkWithAlarmInfo(context.getExecutorWrapper(), notifyItem);
             default:
                 log.error("Unsupported alarm type, type: {}", itemEnum);
                 return false;
         }
     }
 
-    private static boolean checkLiveness(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
-        val executor = executorWrapper.getExecutor();
+    private static boolean checkLiveness(CapturedExecutor executor, NotifyItem notifyItem) {
         int maximumPoolSize = executor.getMaximumPoolSize();
         double div = NumberUtil.div(executor.getActiveCount(), maximumPoolSize, 2) * 100;
         return div >= notifyItem.getThreshold();
     }
 
-    private static boolean checkCapacity(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
-
-        val executor = executorWrapper.getExecutor();
+    private static boolean checkCapacity(CapturedExecutor executor, NotifyItem notifyItem) {
         BlockingQueue<Runnable> workQueue = executor.getQueue();
         if (CollectionUtils.isEmpty(workQueue)) {
             return false;

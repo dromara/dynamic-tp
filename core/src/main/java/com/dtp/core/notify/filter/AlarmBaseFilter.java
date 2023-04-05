@@ -39,7 +39,7 @@ public class AlarmBaseFilter implements NotifyFilter {
             return;
         }
 
-        if (!AlarmManager.checkThreshold(executorWrapper, context.getNotifyItemEnum(), notifyItem)) {
+        if (!AlarmManager.checkThreshold(context)) {
             return;
         }
         synchronized (SEND_LOCK) {

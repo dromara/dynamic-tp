@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Executor wrapper
@@ -21,7 +22,7 @@ public class ExecutorWrapper {
 
     private String threadPoolAliasName;
 
-    private Executor executor;
+    private ExecutorAdapter<?> executor;
 
     /**
      * Notify items, see {@link NotifyItemEnum}.
@@ -44,7 +45,13 @@ public class ExecutorWrapper {
 
     public ExecutorWrapper(String threadPoolName, Executor executor) {
         this.threadPoolName = threadPoolName;
-        this.executor = executor;
+        if (executor instanceof ThreadPoolExecutor) {
+            this.executor = new ThreadPoolExecutorAdapter((ThreadPoolExecutor) executor);
+        } else if (executor instanceof ExecutorAdapter<?>) {
+            this.executor = (ExecutorAdapter<?>) executor;
+        } else {
+            throw new IllegalArgumentException("unsupported Executor type !");
+        }
         this.notifyItems = NotifyItem.getSimpleNotifyItems();
     }
 

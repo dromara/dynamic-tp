@@ -39,7 +39,7 @@ public class TestController {
             });
             dtpExecutor2.execute(NamedRunnable.of(() -> {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -47,4 +47,21 @@ public class TestController {
             }, "task-" + i));
         }
     }
+
+    @GetMapping("/dtp-nacos-cloud-example/test-notify-run-timeout")
+    public String testNotifyRunTimeout() {
+        MDC.put("traceId", UUID.randomUUID().toString());
+        DtpExecutor dtpExecutor2 = DtpRegistry.getDtpExecutor("dtpExecutor2");
+        dtpExecutor2.execute(NamedRunnable.of(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                log.error("error", e);
+            }
+            log.info("i am dynamic-tp-test-2 task, mdc: {}", MDC.get("traceId"));
+        }, "task-" + 0));
+        return "success";
+    }
+
 }
+

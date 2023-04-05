@@ -24,7 +24,6 @@ import org.thymeleaf.context.Context;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
@@ -68,7 +67,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
     protected String buildAlarmContent(NotifyPlatform platform, NotifyItemEnum notifyItemEnum) {
         AlarmCtx alarmCtx = (AlarmCtx) DtpNotifyCtxHolder.get();
         ExecutorWrapper executorWrapper = alarmCtx.getExecutorWrapper();
-        val executor = (ThreadPoolExecutor) alarmCtx.getExecutorWrapper().getExecutor();
+        val executor = executorWrapper.getExecutor();
         NotifyItem notifyItem = alarmCtx.getNotifyItem();
         AlarmInfo alarmInfo = alarmCtx.getAlarmInfo();
 
@@ -106,7 +105,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
     protected String buildNoticeContent(NotifyPlatform platform, TpMainFields oldFields, List<String> diffs) {
         BaseNotifyCtx notifyCtx = DtpNotifyCtxHolder.get();
         ExecutorWrapper executorWrapper = notifyCtx.getExecutorWrapper();
-        val executor = (ThreadPoolExecutor) executorWrapper.getExecutor();
+        val executor = executorWrapper.getExecutor();
 
         Context context = newContext(executorWrapper);
         context.setVariable("oldCorePoolSize", oldFields.getCorePoolSize());

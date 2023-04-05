@@ -74,6 +74,8 @@ public class ThreadPoolConfiguration {
                 .workQueue(SYNCHRONOUS_QUEUE.getName(), null, false, null)
                 .waitForTasksToCompleteOnShutdown(true)
                 .awaitTerminationSeconds(5)
+                .runTimeout(200)
+                .queueTimeout(200)
                 .buildDynamic();
     }
 }

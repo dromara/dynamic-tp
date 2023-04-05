@@ -7,7 +7,7 @@
         <groupId>cn.dynamictp</groupId>
         <version>${revision}</version>
     </parent>
-    <artifactId>dynamic-tp-example-adapter-doubbo</artifactId>
+    <artifactId>dynamic-tp-example-adapter-dubbo</artifactId>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>

@@ -3,6 +3,7 @@ package com.dtp.core.notify.alarm;
 import com.dtp.common.entity.AlarmInfo;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.core.thread.DtpExecutor;
+import com.dtp.core.support.ExecutorAdapter;
 import lombok.val;
 import lombok.var;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -11,7 +12,6 @@ import org.apache.commons.lang3.tuple.Triple;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.dtp.common.constant.DynamicTpConst.UNKNOWN;
 import static com.dtp.common.em.NotifyItemEnum.*;
@@ -66,7 +66,7 @@ public class AlarmCounter {
         }
     }
 
-    public static Triple<String, String, String> countStrRrq(String threadPoolName, ThreadPoolExecutor executor) {
+    public static Triple<String, String, String> countStrRrq(String threadPoolName, ExecutorAdapter<?> executor) {
 
         if (!(executor instanceof DtpExecutor)) {
             return new ImmutableTriple<>(DEFAULT_COUNT_STR, DEFAULT_COUNT_STR, DEFAULT_COUNT_STR);
@@ -75,9 +75,9 @@ public class AlarmCounter {
         DtpExecutor dtpExecutor = (DtpExecutor) executor;
         String rejectCount = getCount(threadPoolName, REJECT.getValue()) + " / " + dtpExecutor.getRejectCount();
         String runTimeoutCount = getCount(threadPoolName, RUN_TIMEOUT.getValue()) + " / "
-                + dtpExecutor.getRunTimeoutCount();
+                + dtpExecutor.getRunTimeoutCount().sum();
         String queueTimeoutCount = getCount(threadPoolName, QUEUE_TIMEOUT.getValue()) + " / "
-                + dtpExecutor.getQueueTimeoutCount();
+                + dtpExecutor.getQueueTimeoutCount().sum();
         return new ImmutableTriple<>(rejectCount, runTimeoutCount, queueTimeoutCount);
     }
 

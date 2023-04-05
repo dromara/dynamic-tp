@@ -17,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -109,26 +108,9 @@ public class NotifyHelper {
             } else if (CollectionUtils.isNotEmpty(platformIds)) {
                 n.setPlatformIds((List<String>) CollectionUtils.intersection(globalPlatformIds, platformIds));
             } else {
-                // need to compatible with the previous situation that does not exist platformIds
-                if (CollectionUtils.isNotEmpty(n.getPlatforms())) {
-                    setPlatformIds(platforms, n);
-                } else {
-                    n.setPlatformIds(globalPlatformIds);
-                }
+                n.setPlatformIds(globalPlatformIds);
             }
         });
-    }
-
-    private static void setPlatformIds(List<NotifyPlatform> platforms, NotifyItem notifyItem) {
-        List<String> platformIds = new ArrayList<>();
-        Map<String, NotifyPlatform> platformMap = StreamUtil.toMap(platforms, NotifyPlatform::getPlatform);
-        for (String platform : notifyItem.getPlatforms()) {
-            NotifyPlatform notifyPlatform = platformMap.get(platform);
-            if (notifyPlatform != null) {
-                platformIds.add(notifyPlatform.getPlatformId());
-            }
-        }
-        notifyItem.setPlatformIds(platformIds);
     }
 
     public static Optional<NotifyPlatform> getPlatform(String platformId) {
@@ -138,7 +120,7 @@ public class NotifyHelper {
 
     public static Map<String, NotifyPlatform> getAllPlatforms() {
         val dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-        if (Objects.isNull(dtpProperties) || CollectionUtils.isEmpty(dtpProperties.getPlatforms())) {
+        if (CollectionUtils.isEmpty(dtpProperties.getPlatforms())) {
             return Collections.emptyMap();
         }
         return StreamUtil.toMap(dtpProperties.getPlatforms(), NotifyPlatform::getPlatformId);
@@ -146,11 +128,6 @@ public class NotifyHelper {
 
     public static void initNotify(DtpExecutor executor) {
         val dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-        if (Objects.isNull(dtpProperties)) {
-            log.warn("DynamicTp notify, cannot find a DtpProperties instance for [{}].",
-                    executor.getThreadPoolName());
-            return;
-        }
         val platforms = dtpProperties.getPlatforms();
         if (CollectionUtils.isEmpty(platforms)) {
             executor.setNotifyItems(Lists.newArrayList());

@@ -1,48 +1,50 @@
 package com.dtp.adapter.webserver;
 
-import com.dtp.common.properties.DtpProperties;
-import com.dtp.common.entity.TpExecutorProps;
-import com.dtp.common.entity.TpMainFields;
-import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.entity.ThreadPoolStats;
-import com.dtp.core.convert.ExecutorConverter;
+import com.dtp.common.properties.DtpProperties;
+import com.dtp.common.util.ReflectionUtil;
+import com.dtp.core.support.ExecutorWrapper;
+import com.dtp.core.support.ExecutorAdapter;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.springframework.boot.web.embedded.jetty.JettyWebServer;
 import org.springframework.boot.web.server.WebServer;
 
 import java.util.Objects;
-import java.util.concurrent.Executor;
-
-import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 /**
  * JettyDtpAdapter related
  *
  * @author yanhom
+ * @author dragon-zhang
  * @since 1.0.0
  */
 @Slf4j
-public class JettyDtpAdapter extends AbstractWebServerDtpAdapter {
+public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.SizedThreadPool> {
 
     private static final String POOL_NAME = "jettyTp";
 
     @Override
-    public ExecutorWrapper doGetExecutorWrapper(WebServer webServer) {
+    public ExecutorWrapper doInitExecutorWrapper(WebServer webServer) {
         JettyWebServer jettyWebServer = (JettyWebServer) webServer;
-        return new ExecutorWrapper(POOL_NAME, jettyWebServer.getServer().getThreadPool());
+        final JettyExecutorAdapter adapter = new JettyExecutorAdapter(
+                (ThreadPool.SizedThreadPool) jettyWebServer.getServer().getThreadPool());
+        return new ExecutorWrapper(POOL_NAME, adapter);
     }
 
     @Override
     public ThreadPoolStats getPoolStats() {
 
-        Executor executor = getExecutor();
-        if (Objects.isNull(executor)) {
+        ExecutorAdapter<ThreadPool.SizedThreadPool> adapter = getExecutor();
+        if (Objects.isNull(adapter)) {
             return null;
         }
 
-        ThreadPool.SizedThreadPool threadPool = (ThreadPool.SizedThreadPool) executor;
+        ThreadPool.SizedThreadPool threadPool = adapter.getOriginal();
         ThreadPoolStats poolStats = ThreadPoolStats.builder()
                 .corePoolSize(threadPool.getMinThreads())
                 .maximumPoolSize(threadPool.getMaxThreads())
@@ -60,48 +62,87 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        TpExecutorProps props = dtpProperties.getJettyTp();
-        if (Objects.isNull(props) || containsInvalidParams(props, log)) {
-            return;
-        }
-        Executor executor = getExecutor();
-        if (Objects.isNull(executor)) {
-            return;
-        }
-
-        ThreadPool.SizedThreadPool threadPool = (ThreadPool.SizedThreadPool) executor;
-        int oldCoreSize = threadPool.getMinThreads();
-        int oldMaxSize = threadPool.getMaxThreads();
-        TpMainFields oldFields = ExecutorConverter.ofSimple(POOL_NAME, oldCoreSize, oldMaxSize, 0L);
-        doRefresh(threadPool, props);
-        TpMainFields newFields = ExecutorConverter.ofSimple(props.getThreadPoolName(), threadPool.getMinThreads(),
-                threadPool.getMaxThreads(), 0L);
-        if (oldFields.equals(newFields)) {
-            log.debug("DynamicTp adapter refresh, main properties of [{}] have not changed.", POOL_NAME);
-            return;
-        }
-        log.info("DynamicTp adapter [{}] refreshed end, corePoolSize: [{}], maxPoolSize: [{}]",
-                POOL_NAME,
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldCoreSize, newFields.getCorePoolSize()),
-                String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldMaxSize, newFields.getMaxPoolSize()));
+        refresh(POOL_NAME, executorWrapper, dtpProperties.getPlatforms(), dtpProperties.getJettyTp());
     }
 
-    private void doRefresh(ThreadPool.SizedThreadPool threadPool, TpExecutorProps props) {
-        if (props.getMaximumPoolSize() < threadPool.getMaxThreads()) {
-            if (!Objects.equals(threadPool.getMinThreads(), props.getCorePoolSize())) {
-                threadPool.setMinThreads(props.getCorePoolSize());
-            }
-            if (!Objects.equals(threadPool.getMaxThreads(), props.getMaximumPoolSize())) {
-                threadPool.setMaxThreads(props.getMaximumPoolSize());
-            }
-            return;
+    /**
+     * JettyExecutorAdapter implements ExecutorAdapter, the goal of this class
+     * is to be compatible with {@link org.eclipse.jetty.util.thread.ThreadPool.SizedThreadPool}.
+     **/
+    private static class JettyExecutorAdapter implements ExecutorAdapter<ThreadPool.SizedThreadPool> {
+        
+        private final ThreadPool.SizedThreadPool executor;
+        
+        JettyExecutorAdapter(ThreadPool.SizedThreadPool executor) {
+            this.executor = executor;
         }
-
-        if (!Objects.equals(threadPool.getMaxThreads(), props.getMaximumPoolSize())) {
-            threadPool.setMaxThreads(props.getMaximumPoolSize());
+        
+        @Override
+        public ThreadPool.SizedThreadPool getOriginal() {
+            return this.executor;
         }
-        if (!Objects.equals(threadPool.getMinThreads(), props.getCorePoolSize())) {
-            threadPool.setMinThreads(props.getCorePoolSize());
+        
+        @Override
+        public int getCorePoolSize() {
+            return this.executor.getMinThreads();
+        }
+        
+        @Override
+        public void setCorePoolSize(int corePoolSize) {
+            this.executor.setMinThreads(corePoolSize);
+        }
+        
+        @Override
+        public int getMaximumPoolSize() {
+            return this.executor.getMaxThreads();
+        }
+        
+        @Override
+        public void setMaximumPoolSize(int maximumPoolSize) {
+            this.executor.setMaxThreads(maximumPoolSize);
+        }
+        
+        @Override
+        public int getPoolSize() {
+            return this.executor.getThreads();
+        }
+        
+        @Override
+        public int getActiveCount() {
+            if (this.executor instanceof QueuedThreadPool) {
+                return ((QueuedThreadPool) this.executor).getBusyThreads();
+            }
+            return -1;
+        }
+        
+        @Override
+        public int getLargestPoolSize() {
+            if (this.executor instanceof MonitoredQueuedThreadPool) {
+                return ((MonitoredQueuedThreadPool) this.executor).getMaxBusyThreads();
+            }
+            return -1;
+        }
+        
+        @Override
+        public long getCompletedTaskCount() {
+            if (this.executor instanceof MonitoredQueuedThreadPool) {
+                return ((MonitoredQueuedThreadPool) this.executor).getTasks();
+            }
+            return -1;
+        }
+        
+        @SuppressWarnings("unchecked")
+        @Override
+        public BlockingQueue<Runnable> getQueue() {
+            return (BlockingQueue<Runnable>) ReflectionUtil.getFieldValue(QueuedThreadPool.class, "_jobs", this.executor);
+        }
+        
+        @Override
+        public long getKeepAliveTime(TimeUnit unit) {
+            if (this.executor instanceof QueuedThreadPool) {
+                return ((QueuedThreadPool) this.executor).getIdleTimeout();
+            }
+            return 0;
         }
     }
 }

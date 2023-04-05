@@ -62,6 +62,11 @@ public final class DynamicTpConst {
     public static final String TASK_WRAPPERS = "taskWrappers";
 
     /**
+     * alarm
+     */
+    public static final String ALARM_NAME = "dtp-alarm";
+
+    /**
      * symbol
      */
     public static final String DOT = ".";
@@ -76,4 +81,14 @@ public final class DynamicTpConst {
      * unit
      */
     public static final Integer M_1 = 1024 * 1024;
+
+    /**
+     * OS
+     */
+    public static final String OS_NAME_KEY = "os.name";
+
+    public static final String OS_LINUX_PREFIX = "linux";
+
+    public static final String OS_WIN_PREFIX = "win";
+
 }

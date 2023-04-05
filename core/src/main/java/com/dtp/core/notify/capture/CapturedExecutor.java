@@ -54,20 +54,20 @@ public final class CapturedExecutor implements ExecutorAdapter<ExecutorAdapter<?
      */
     private final BlockingQueue<Runnable> blockingQueue;
 
-    public CapturedExecutor(ExecutorAdapter<?> dtpExecutor) {
-        this.originExecutor = dtpExecutor;
-        this.corePoolSize = dtpExecutor.getCorePoolSize();
-        this.maximumPoolSize = dtpExecutor.getMaximumPoolSize();
-        this.activeCount = dtpExecutor.getActiveCount();
-        this.poolSize = dtpExecutor.getPoolSize();
-        this.largestPoolSize = dtpExecutor.getLargestPoolSize();
-        this.taskCount = dtpExecutor.getTaskCount();
-        this.completedTaskCount = dtpExecutor.getCompletedTaskCount();
-        this.keepAliveTime = dtpExecutor.getKeepAliveTime(TimeUnit.SECONDS);
-        this.allowCoreThreadTimeOut = dtpExecutor.allowsCoreThreadTimeOut();
-        this.rejectedExecutionHandler = dtpExecutor.getRejectedExecutionHandler();
-        this.rejectHandlerName = dtpExecutor.getRejectHandlerName();
-        this.blockingQueue = new CapturedBlockingQueue(dtpExecutor.getQueue());
+    public CapturedExecutor(ExecutorAdapter<?> executorAdapter) {
+        this.originExecutor = executorAdapter;
+        this.corePoolSize = executorAdapter.getCorePoolSize();
+        this.maximumPoolSize = executorAdapter.getMaximumPoolSize();
+        this.activeCount = executorAdapter.getActiveCount();
+        this.poolSize = executorAdapter.getPoolSize();
+        this.largestPoolSize = executorAdapter.getLargestPoolSize();
+        this.taskCount = executorAdapter.getTaskCount();
+        this.completedTaskCount = executorAdapter.getCompletedTaskCount();
+        this.keepAliveTime = executorAdapter.getKeepAliveTime(TimeUnit.SECONDS);
+        this.allowCoreThreadTimeOut = executorAdapter.allowsCoreThreadTimeOut();
+        this.rejectedExecutionHandler = executorAdapter.getRejectedExecutionHandler();
+        this.rejectHandlerName = executorAdapter.getRejectHandlerName();
+        this.blockingQueue = new CapturedBlockingQueue(executorAdapter.getQueue());
     }
 
     @Override

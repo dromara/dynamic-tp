@@ -80,5 +80,4 @@ public class CapturedBlockingQueue extends AbstractQueue<Runnable> implements Bl
     public Runnable peek() {
         throw new UnsupportedOperationException();
     }
-
 }

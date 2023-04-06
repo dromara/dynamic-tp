@@ -68,11 +68,11 @@ public class AlarmCounter {
 
     public static Triple<String, String, String> countStrRrq(String threadPoolName, ExecutorAdapter<?> executor) {
 
-        if (!(executor instanceof DtpExecutor)) {
+        if (!(executor.getOriginal() instanceof DtpExecutor)) {
             return new ImmutableTriple<>(DEFAULT_COUNT_STR, DEFAULT_COUNT_STR, DEFAULT_COUNT_STR);
         }
 
-        DtpExecutor dtpExecutor = (DtpExecutor) executor;
+        DtpExecutor dtpExecutor = (DtpExecutor) executor.getOriginal();
         String rejectCount = getCount(threadPoolName, REJECT.getValue()) + " / " + dtpExecutor.getRejectCount();
         String runTimeoutCount = getCount(threadPoolName, RUN_TIMEOUT.getValue()) + " / "
                 + dtpExecutor.getRunTimeoutCount().sum();

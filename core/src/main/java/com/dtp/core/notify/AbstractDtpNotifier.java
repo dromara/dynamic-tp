@@ -5,18 +5,18 @@ import cn.hutool.core.date.DateUtil;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.entity.AlarmInfo;
+import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.entity.NotifyPlatform;
-import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.util.CommonUtil;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.context.DtpNotifyCtxHolder;
 import com.dtp.core.notify.alarm.AlarmCounter;
 import com.dtp.core.notify.base.Notifier;
-import com.dtp.core.support.ExecutorAdapter;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.thread.DtpExecutor;
+import com.dtp.core.support.ExecutorAdapter;
 import com.google.common.base.Joiner;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -34,7 +34,9 @@ import java.util.stream.Collectors;
 
 import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
 import static com.dtp.common.constant.DynamicTpConst.UNKNOWN;
-import static com.dtp.common.constant.LarkNotifyConst.*;
+import static com.dtp.common.constant.LarkNotifyConst.LARK_AT_FORMAT_OPENID;
+import static com.dtp.common.constant.LarkNotifyConst.LARK_AT_FORMAT_USERNAME;
+import static com.dtp.common.constant.LarkNotifyConst.LARK_OPENID_PREFIX;
 import static com.dtp.core.notify.manager.NotifyHelper.getAlarmKeys;
 import static com.dtp.core.notify.manager.NotifyHelper.getAllAlarmKeys;
 
@@ -102,7 +104,6 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         ExecutorWrapper executorWrapper = context.getExecutorWrapper();
         String threadPoolName = executorWrapper.getThreadPoolName();
         val executor = executorWrapper.getExecutor();
-        val capturedExecutor = context.getCapturedExecutor();
         NotifyItem notifyItem = context.getNotifyItem();
         AlarmInfo alarmInfo = context.getAlarmInfo();
 
@@ -117,19 +118,19 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 populatePoolName(executorWrapper),
                 notifyItemEnum.getValue(),
                 notifyItem.getThreshold(),
-                capturedExecutor.getCorePoolSize(),
-                capturedExecutor.getMaximumPoolSize(),
-                capturedExecutor.getPoolSize(),
-                capturedExecutor.getActiveCount(),
-                capturedExecutor.getLargestPoolSize(),
-                capturedExecutor.getTaskCount(),
-                capturedExecutor.getCompletedTaskCount(),
-                capturedExecutor.getQueue().size(),
+                executor.getCorePoolSize(),
+                executor.getMaximumPoolSize(),
+                executor.getPoolSize(),
+                executor.getActiveCount(),
+                executor.getLargestPoolSize(),
+                executor.getTaskCount(),
+                executor.getCompletedTaskCount(),
+                executor.getQueue().size(),
                 executor.getQueue().getClass().getSimpleName(),
-                getQueueCapacity(capturedExecutor),
-                capturedExecutor.getQueue().size(),
-                capturedExecutor.getQueue().remainingCapacity(),
-                getRejectHandlerName(capturedExecutor),
+                getQueueCapacity(executor),
+                executor.getQueue().size(),
+                executor.getQueue().remainingCapacity(),
+                getRejectHandlerName(executor),
                 alarmCounter.getLeft(),
                 alarmCounter.getMiddle(),
                 alarmCounter.getRight(),
@@ -185,8 +186,8 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     protected String populatePoolName(ExecutorWrapper executorWrapper) {
 
         String poolAlisaName;
-        if (executorWrapper.getExecutor() instanceof DtpExecutor) {
-            poolAlisaName = ((DtpExecutor) executorWrapper.getExecutor()).getThreadPoolAliasName();
+        if (executorWrapper.getExecutor().getOriginal() instanceof DtpExecutor) {
+            poolAlisaName = ((DtpExecutor) executorWrapper.getExecutor().getOriginal()).getThreadPoolAliasName();
         } else {
             poolAlisaName = executorWrapper.getThreadPoolAliasName();
         }
@@ -201,9 +202,6 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     }
 
     protected int getQueueCapacity(ExecutorAdapter<?> executor) {
-        if (executor instanceof DtpExecutor) {
-            return ((DtpExecutor) executor).getQueueCapacity();
-        }
         return executor.getQueue().size() + executor.getQueue().remainingCapacity();
     }
 

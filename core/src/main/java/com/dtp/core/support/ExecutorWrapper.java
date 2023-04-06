@@ -2,8 +2,10 @@ package com.dtp.core.support;
 
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.entity.NotifyItem;
+import com.dtp.core.notify.capture.CapturedExecutor;
 import com.dtp.core.thread.DtpExecutor;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -16,7 +18,8 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @since 1.0.3
  **/
 @Data
-public class ExecutorWrapper {
+@Slf4j
+public class ExecutorWrapper implements Cloneable {
 
     private String threadPoolName;
 
@@ -35,6 +38,9 @@ public class ExecutorWrapper {
     private List<String> platformIds;
 
     private boolean notifyEnabled = true;
+
+    public ExecutorWrapper() {
+    }
 
     public ExecutorWrapper(DtpExecutor executor) {
         this.threadPoolName = executor.getThreadPoolName();
@@ -57,5 +63,17 @@ public class ExecutorWrapper {
 
     public static ExecutorWrapper of(DtpExecutor executor) {
         return new ExecutorWrapper(executor);
+    }
+
+    @Override
+    public ExecutorWrapper clone() {
+        ExecutorWrapper executorWrapper = null;
+        try {
+            executorWrapper = (ExecutorWrapper) super.clone();
+            executorWrapper.executor = new CapturedExecutor(this.getExecutor());
+        } catch (Exception e) {
+            log.warn("clone ExecutorWrapper failed.", e);
+        }
+        return executorWrapper;
     }
 }

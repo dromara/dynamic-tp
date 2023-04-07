@@ -186,8 +186,8 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     protected String populatePoolName(ExecutorWrapper executorWrapper) {
 
         String poolAlisaName;
-        if (executorWrapper.getExecutor() instanceof DtpExecutor) {
-            poolAlisaName = ((DtpExecutor) executorWrapper.getExecutor()).getThreadPoolAliasName();
+        if (executorWrapper.getExecutor().getOriginal() instanceof DtpExecutor) {
+            poolAlisaName = ((DtpExecutor) executorWrapper.getExecutor().getOriginal()).getThreadPoolAliasName();
         } else {
             poolAlisaName = executorWrapper.getThreadPoolAliasName();
         }
@@ -202,9 +202,6 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     }
 
     protected int getQueueCapacity(ExecutorAdapter<?> executor) {
-        if (executor instanceof DtpExecutor) {
-            return ((DtpExecutor) executor).getQueueCapacity();
-        }
         return executor.getQueue().size() + executor.getQueue().remainingCapacity();
     }
 

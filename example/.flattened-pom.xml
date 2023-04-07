@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>cn.dynamictp</groupId>
+    <artifactId>dynamic-tp-all</artifactId>
+    <version>1.1.1-SNAPSHOT</version>
+  </parent>
+  <groupId>cn.dynamictp</groupId>
+  <artifactId>dynamic-tp-example</artifactId>
+  <version>1.1.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <modules>
+    <module>example-nacos</module>
+    <module>example-nacos-cloud</module>
+    <module>example-apollo</module>
+    <module>example-zookeeper</module>
+    <module>example-zookeeper-cloud</module>
+    <module>example-consul-cloud</module>
+    <module>example-etcd</module>
+    <module>example-adapter</module>
+    <module>example-polaris-cloud</module>
+    <module>example-huawei-cloud</module>
+  </modules>
+  <properties>
+    <maven.deploy.skip>true</maven.deploy.skip>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.8.2</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -86,6 +86,9 @@ public class NotifyHelper {
     }
 
     public static Optional<NotifyItem> getNotifyItem(ExecutorWrapper executor, NotifyItemEnum notifyType) {
+        if (CollectionUtils.isEmpty(executor.getNotifyItems())) {
+            return Optional.empty();
+        }
         return executor.getNotifyItems().stream()
                 .filter(x -> notifyType.getValue().equalsIgnoreCase(x.getType()))
                 .findFirst();

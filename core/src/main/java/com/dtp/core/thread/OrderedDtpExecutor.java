@@ -78,7 +78,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
                     RejectHandlerGetter.getProxy(handler)));
         }
     }
-    
+
     @Override
     public void execute(Runnable command) {
         execute(null, command);
@@ -115,7 +115,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
         return choose(arg).submit(task);
     }
     
-    protected DtpExecutor choose(Object arg) {
+    public DtpExecutor choose(Object arg) {
         int size = this.executors.size();
         if (size == 1) {
             return this.executors.get(0);

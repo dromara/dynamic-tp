@@ -1,6 +1,6 @@
 package com.dtp.test.core.notify.capture;
 
-import com.dtp.core.notify.capture.CapturedExecutor;
+import com.dtp.core.notifier.capture.CapturedExecutor;
 import com.dtp.core.support.ExecutorAdapter;
 import com.dtp.core.support.ThreadPoolBuilder;
 import com.dtp.core.support.ThreadPoolCreator;

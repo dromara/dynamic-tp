@@ -2,7 +2,7 @@ package com.dtp.core.support;
 
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.entity.NotifyItem;
-import com.dtp.core.notify.capture.CapturedExecutor;
+import com.dtp.core.notifier.capture.CapturedExecutor;
 import com.dtp.core.thread.DtpExecutor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

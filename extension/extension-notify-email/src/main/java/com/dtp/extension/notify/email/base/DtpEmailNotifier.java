@@ -12,8 +12,8 @@ import com.dtp.common.util.CommonUtil;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.context.DtpNotifyCtxHolder;
-import com.dtp.core.notify.AbstractDtpNotifier;
-import com.dtp.core.notify.alarm.AlarmCounter;
+import com.dtp.core.notifier.AbstractDtpNotifier;
+import com.dtp.core.notifier.alarm.AlarmCounter;
 import com.dtp.core.support.ExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
 import static com.dtp.common.constant.DynamicTpConst.UNKNOWN;
-import static com.dtp.core.notify.manager.NotifyHelper.getAlarmKeys;
+import static com.dtp.core.notifier.manager.NotifyHelper.getAlarmKeys;
 
 /**
  * DtpEmailNotifier related

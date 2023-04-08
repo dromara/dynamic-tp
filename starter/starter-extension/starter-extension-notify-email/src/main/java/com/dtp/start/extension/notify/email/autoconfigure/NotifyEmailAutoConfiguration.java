@@ -1,7 +1,7 @@
 package com.dtp.start.extension.notify.email.autoconfigure;
 
 
-import com.dtp.core.notify.DtpNotifier;
+import com.dtp.core.notifier.DtpNotifier;
 import com.dtp.extension.notify.email.base.DtpEmailNotifier;
 import com.dtp.extension.notify.email.base.EmailNotifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

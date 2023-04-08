@@ -4,7 +4,7 @@ import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.timer.HashedWheelTimer;
 import com.dtp.core.DtpRegistry;
-import com.dtp.core.notify.manager.AlarmManager;
+import com.dtp.core.notifier.manager.AlarmManager;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.thread.DtpExecutor;
 import org.mockito.MockedStatic;

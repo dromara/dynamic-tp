@@ -6,8 +6,8 @@ import com.dtp.common.ex.DtpException;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.queue.MemorySafeLinkedBlockingQueue;
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
-import com.dtp.core.convert.ExecutorConverter;
-import com.dtp.core.notify.manager.NoticeManager;
+import com.dtp.core.converter.ExecutorConverter;
+import com.dtp.core.notifier.manager.NoticeManager;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.wrapper.TaskWrapper;
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 
 import static com.dtp.common.constant.DynamicTpConst.M_1;
 import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
-import static com.dtp.core.notify.manager.NotifyHelper.updateNotifyInfo;
+import static com.dtp.core.notifier.manager.NotifyHelper.updateNotifyInfo;
 import static java.util.stream.Collectors.toList;
 
 /**

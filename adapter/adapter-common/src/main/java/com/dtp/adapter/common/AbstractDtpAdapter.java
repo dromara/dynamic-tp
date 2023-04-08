@@ -7,10 +7,10 @@ import com.dtp.common.entity.TpExecutorProps;
 import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.StreamUtil;
-import com.dtp.core.convert.ExecutorConverter;
-import com.dtp.core.convert.MetricsConverter;
-import com.dtp.core.notify.manager.AlarmManager;
-import com.dtp.core.notify.manager.NoticeManager;
+import com.dtp.core.converter.ExecutorConverter;
+import com.dtp.core.converter.MetricsConverter;
+import com.dtp.core.notifier.manager.AlarmManager;
+import com.dtp.core.notifier.manager.NoticeManager;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.ExecutorAdapter;
 import com.github.dadiyang.equator.Equator;
@@ -35,7 +35,7 @@ import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
-import static com.dtp.core.notify.manager.NotifyHelper.updateNotifyInfo;
+import static com.dtp.core.notifier.manager.NotifyHelper.updateNotifyInfo;
 import static java.util.stream.Collectors.toList;
 
 /**

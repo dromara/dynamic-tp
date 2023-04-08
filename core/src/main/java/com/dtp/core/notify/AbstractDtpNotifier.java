@@ -201,7 +201,10 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     }
 
     protected String getQueueName(ExecutorAdapter<?> executor) {
-        return ((CapturedBlockingQueue) executor.getQueue()).getOriginQueue().getClass().getSimpleName();
+        if (executor.getQueue() instanceof CapturedBlockingQueue) {
+            return ((CapturedBlockingQueue) executor.getQueue()).getOriginQueue().getClass().getSimpleName();
+        }
+        return executor.getQueue().getClass().getSimpleName();
     }
 
     private String highlightNotifyContent(String content, List<String> diffs) {

@@ -8,6 +8,7 @@ import com.dtp.core.support.ThreadPoolExecutorAdapter;
 import com.dtp.core.thread.DtpExecutor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ThreadPoolExecutor;
@@ -96,7 +97,7 @@ public class CapturedExecutorTest {
         threadPoolExecutor.shutdownNow();
     }
 
-    @Test
+    @RepeatedTest(50)
     public void testGetTaskCount() throws InterruptedException {
         ThreadPoolExecutor threadPoolExecutor = ThreadPoolCreator.createCommonFast("test");
 

@@ -7,7 +7,7 @@ import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.entity.JvmStats;
 import com.dtp.common.entity.Metrics;
 import com.dtp.core.DtpRegistry;
-import com.dtp.core.convert.MetricsConverter;
+import com.dtp.core.converter.MetricsConverter;
 import com.dtp.core.support.MetricsAware;
 import com.dtp.core.thread.DtpExecutor;
 import com.google.common.collect.Lists;

@@ -1,7 +1,7 @@
 package com.dtp.test.core.notify.capture;
 
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
-import com.dtp.core.notify.capture.CapturedBlockingQueue;
+import com.dtp.core.notifier.capture.CapturedBlockingQueue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

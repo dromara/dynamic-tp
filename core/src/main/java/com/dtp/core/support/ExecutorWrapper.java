@@ -6,6 +6,7 @@ import com.dtp.core.notify.capture.CapturedExecutor;
 import com.dtp.core.thread.DtpExecutor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -19,7 +20,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  **/
 @Data
 @Slf4j
-public class ExecutorWrapper implements Cloneable {
+public class ExecutorWrapper {
 
     private String threadPoolName;
 
@@ -65,15 +66,10 @@ public class ExecutorWrapper implements Cloneable {
         return new ExecutorWrapper(executor);
     }
 
-    @Override
-    public ExecutorWrapper clone() {
-        ExecutorWrapper executorWrapper = null;
-        try {
-            executorWrapper = (ExecutorWrapper) super.clone();
-            executorWrapper.executor = new CapturedExecutor(this.getExecutor());
-        } catch (Exception e) {
-            log.warn("clone ExecutorWrapper failed.", e);
-        }
+    public ExecutorWrapper capture() {
+        ExecutorWrapper executorWrapper = new ExecutorWrapper();
+        BeanUtils.copyProperties(this, executorWrapper);
+        executorWrapper.executor = new CapturedExecutor(this.getExecutor());
         return executorWrapper;
     }
 }

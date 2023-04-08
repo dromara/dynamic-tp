@@ -1,9 +1,9 @@
 package com.dtp.core.notify.alarm;
 
-import com.dtp.common.entity.AlarmInfo;
 import com.dtp.common.em.NotifyItemEnum;
-import com.dtp.core.thread.DtpExecutor;
+import com.dtp.common.entity.AlarmInfo;
 import com.dtp.core.support.ExecutorAdapter;
+import com.dtp.core.thread.DtpExecutor;
 import lombok.val;
 import lombok.var;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -14,7 +14,9 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.dtp.common.constant.DynamicTpConst.UNKNOWN;
-import static com.dtp.common.em.NotifyItemEnum.*;
+import static com.dtp.common.em.NotifyItemEnum.QUEUE_TIMEOUT;
+import static com.dtp.common.em.NotifyItemEnum.REJECT;
+import static com.dtp.common.em.NotifyItemEnum.RUN_TIMEOUT;
 
 /**
  * AlarmCounter related
@@ -24,7 +26,7 @@ import static com.dtp.common.em.NotifyItemEnum.*;
  **/
 public class AlarmCounter {
 
-    private static final String DEFAULT_COUNT_STR = UNKNOWN + " / " + UNKNOWN;
+    private static final String UNKNOWN_COUNT_STR = UNKNOWN + " / " + UNKNOWN;
 
     private AlarmCounter() { }
 
@@ -69,7 +71,7 @@ public class AlarmCounter {
     public static Triple<String, String, String> countStrRrq(String threadPoolName, ExecutorAdapter<?> executor) {
 
         if (!(executor.getOriginal() instanceof DtpExecutor)) {
-            return new ImmutableTriple<>(DEFAULT_COUNT_STR, DEFAULT_COUNT_STR, DEFAULT_COUNT_STR);
+            return new ImmutableTriple<>(UNKNOWN_COUNT_STR, UNKNOWN_COUNT_STR, UNKNOWN_COUNT_STR);
         }
 
         DtpExecutor dtpExecutor = (DtpExecutor) executor.getOriginal();

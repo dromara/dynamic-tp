@@ -4,19 +4,19 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.NotifyPlatformEnum;
-import com.dtp.common.entity.AlarmInfo;
-import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.entity.NotifyPlatform;
+import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.util.CommonUtil;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.context.DtpNotifyCtxHolder;
 import com.dtp.core.notify.alarm.AlarmCounter;
 import com.dtp.core.notify.base.Notifier;
+import com.dtp.core.notify.capture.CapturedBlockingQueue;
+import com.dtp.core.support.ExecutorAdapter;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.thread.DtpExecutor;
-import com.dtp.core.support.ExecutorAdapter;
 import com.google.common.base.Joiner;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -102,13 +102,9 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     protected String buildAlarmContent(NotifyPlatform platform, NotifyItemEnum notifyItemEnum) {
         AlarmCtx context = (AlarmCtx) DtpNotifyCtxHolder.get();
         ExecutorWrapper executorWrapper = context.getExecutorWrapper();
-        String threadPoolName = executorWrapper.getThreadPoolName();
         val executor = executorWrapper.getExecutor();
         NotifyItem notifyItem = context.getNotifyItem();
-        AlarmInfo alarmInfo = context.getAlarmInfo();
-
-        val alarmCounter = AlarmCounter.countStrRrq(threadPoolName, executor);
-        String receivesStr = getReceives(platform.getPlatform(), platform.getReceivers());
+        val alarmCounter = AlarmCounter.countStrRrq(executorWrapper.getThreadPoolName(), executor);
 
         String content = String.format(
                 getAlarmTemplate(),
@@ -126,7 +122,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 executor.getTaskCount(),
                 executor.getCompletedTaskCount(),
                 executor.getQueue().size(),
-                executor.getQueue().getClass().getSimpleName(),
+                getQueueName(executor),
                 getQueueCapacity(executor),
                 executor.getQueue().size(),
                 executor.getQueue().remainingCapacity(),
@@ -134,9 +130,9 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 alarmCounter.getLeft(),
                 alarmCounter.getMiddle(),
                 alarmCounter.getRight(),
-                Optional.ofNullable(alarmInfo.getLastAlarmTime()).orElse(UNKNOWN),
+                Optional.ofNullable(context.getAlarmInfo().getLastAlarmTime()).orElse(UNKNOWN),
                 DateUtil.now(),
-                receivesStr,
+                getReceives(platform.getPlatform(), platform.getReceivers()),
                 Optional.ofNullable(MDC.get(TRACE_ID)).orElse(UNKNOWN),
                 notifyItem.getInterval()
         );
@@ -147,7 +143,6 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         BaseNotifyCtx context = DtpNotifyCtxHolder.get();
         ExecutorWrapper executorWrapper = context.getExecutorWrapper();
         val executor = executorWrapper.getExecutor();
-        String receivesStr = getReceives(platform.getPlatform(), platform.getReceivers());
 
         String content = String.format(
                 getNoticeTemplate(),
@@ -159,10 +154,10 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 oldFields.getMaxPoolSize(), executor.getMaximumPoolSize(),
                 oldFields.isAllowCoreThreadTimeOut(), executor.allowsCoreThreadTimeOut(),
                 oldFields.getKeepAliveTime(), executor.getKeepAliveTime(TimeUnit.SECONDS),
-                executor.getQueue().getClass().getSimpleName(),
+                getQueueName(executor),
                 oldFields.getQueueCapacity(), getQueueCapacity(executor),
                 oldFields.getRejectType(), getRejectHandlerName(executor),
-                receivesStr,
+                getReceives(platform.getPlatform(), platform.getReceivers()),
                 DateTime.now()
         );
         return highlightNotifyContent(content, diffs);
@@ -203,6 +198,10 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
     protected int getQueueCapacity(ExecutorAdapter<?> executor) {
         return executor.getQueue().size() + executor.getQueue().remainingCapacity();
+    }
+
+    protected String getQueueName(ExecutorAdapter<?> executor) {
+        return ((CapturedBlockingQueue) executor.getQueue()).getOriginQueue().getClass().getSimpleName();
     }
 
     private String highlightNotifyContent(String content, List<String> diffs) {

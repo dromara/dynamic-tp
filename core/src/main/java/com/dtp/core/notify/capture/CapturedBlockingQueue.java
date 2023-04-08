@@ -16,9 +16,16 @@ public class CapturedBlockingQueue extends AbstractQueue<Runnable> implements Bl
 
     private final int remainingCapacity;
 
+    private final BlockingQueue<Runnable> originQueue;
+
     public CapturedBlockingQueue(BlockingQueue<Runnable> blockingQueue) {
         this.size = blockingQueue.size();
         this.remainingCapacity = blockingQueue.remainingCapacity();
+        this.originQueue = blockingQueue;
+    }
+
+    public BlockingQueue<Runnable> getOriginQueue() {
+        return originQueue;
     }
 
     @Override

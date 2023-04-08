@@ -52,7 +52,7 @@ public final class CapturedExecutor implements ExecutorAdapter<ExecutorAdapter<?
     /**
      * @see CapturedBlockingQueue
      */
-    private final BlockingQueue<Runnable> blockingQueue;
+    private final CapturedBlockingQueue blockingQueue;
 
     public CapturedExecutor(ExecutorAdapter<?> executorAdapter) {
         this.originExecutor = executorAdapter;

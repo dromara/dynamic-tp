@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.NotifyPlatformEnum;
+import com.dtp.common.entity.AlarmInfo;
 import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.entity.TpMainFields;
@@ -129,7 +130,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 alarmCounter.getLeft(),
                 alarmCounter.getMiddle(),
                 alarmCounter.getRight(),
-                Optional.ofNullable(context.getAlarmInfo().getLastAlarmTime()).orElse(UNKNOWN),
+                Optional.ofNullable(context.getAlarmInfo()).map(AlarmInfo::getLastAlarmTime).orElse(UNKNOWN),
                 DateUtil.now(),
                 getReceives(platform.getPlatform(), platform.getReceivers()),
                 Optional.ofNullable(MDC.get(TRACE_ID)).orElse(UNKNOWN),

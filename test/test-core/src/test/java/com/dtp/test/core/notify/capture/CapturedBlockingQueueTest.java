@@ -3,6 +3,7 @@ package com.dtp.test.core.notify.capture;
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.core.notifier.capture.CapturedBlockingQueue;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.BlockingQueue;
@@ -46,7 +47,7 @@ public class CapturedBlockingQueueTest {
         Assertions.assertThrows(UnsupportedOperationException.class, capturedBlockingQueue::take);
     }
 
-    @Test
+    @RepeatedTest(100)
     public void testBlockingQueuePut() throws InterruptedException {
         final int capacity = 100;
         final int firstPutSize = 30;

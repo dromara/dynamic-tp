@@ -16,7 +16,6 @@ import com.dtp.core.notifier.base.Notifier;
 import com.dtp.core.notifier.capture.CapturedBlockingQueue;
 import com.dtp.core.support.ExecutorAdapter;
 import com.dtp.core.support.ExecutorWrapper;
-import com.dtp.core.thread.DtpExecutor;
 import com.google.common.base.Joiner;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -179,13 +178,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     }
 
     protected String populatePoolName(ExecutorWrapper executorWrapper) {
-
-        String poolAlisaName;
-        if (executorWrapper.getExecutor().getOriginal() instanceof DtpExecutor) {
-            poolAlisaName = ((DtpExecutor) executorWrapper.getExecutor().getOriginal()).getThreadPoolAliasName();
-        } else {
-            poolAlisaName = executorWrapper.getThreadPoolAliasName();
-        }
+        String poolAlisaName = executorWrapper.getThreadPoolAliasName();
         if (StringUtils.isBlank(poolAlisaName)) {
             return executorWrapper.getThreadPoolName();
         }

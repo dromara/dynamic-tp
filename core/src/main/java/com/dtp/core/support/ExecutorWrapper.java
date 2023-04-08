@@ -45,9 +45,11 @@ public class ExecutorWrapper {
 
     public ExecutorWrapper(DtpExecutor executor) {
         this.threadPoolName = executor.getThreadPoolName();
+        this.threadPoolAliasName = executor.getThreadPoolAliasName();
         this.executor = executor;
         this.notifyItems = executor.getNotifyItems();
         this.notifyEnabled = executor.isNotifyEnabled();
+        this.platformIds = executor.getPlatformIds();
     }
 
     public ExecutorWrapper(String threadPoolName, Executor executor) {

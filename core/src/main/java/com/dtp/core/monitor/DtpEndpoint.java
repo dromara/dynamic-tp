@@ -3,13 +3,12 @@ package com.dtp.core.monitor;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.system.RuntimeInfo;
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.entity.JvmStats;
 import com.dtp.common.entity.Metrics;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.converter.MetricsConverter;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.MetricsAware;
-import com.dtp.core.thread.DtpExecutor;
 import com.google.common.collect.Lists;
 import lombok.val;
 import org.apache.commons.collections.MapUtils;
@@ -31,12 +30,12 @@ public class DtpEndpoint {
     public List<Metrics> invoke() {
 
         List<Metrics> metricsList = Lists.newArrayList();
+//        DtpRegistry.listAllDtpNames().forEach(x -> {
+//            DtpExecutor executor = DtpRegistry.getDtpExecutor(x);
+//            metricsList.add(MetricsConverter.convert(executor));
+//        });
         DtpRegistry.listAllDtpNames().forEach(x -> {
-            DtpExecutor executor = DtpRegistry.getDtpExecutor(x);
-            metricsList.add(MetricsConverter.convert(executor));
-        });
-        DtpRegistry.listAllCommonNames().forEach(x -> {
-            ExecutorWrapper wrapper = DtpRegistry.getCommonExecutor(x);
+            ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(x);
             metricsList.add(MetricsConverter.convert(wrapper));
         });
 

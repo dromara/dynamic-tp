@@ -53,12 +53,12 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
     /**
      * Maintain all automatically registered and manually registered DtpExecutors.
      */
-    private static final Map<String, DtpExecutor> DTP_REGISTRY = new ConcurrentHashMap<>();
+    private static final Map<String, ExecutorWrapper> DTP_REGISTRY = new ConcurrentHashMap<>();
 
     /**
      * Maintain all automatically registered and manually registered JUC ThreadPoolExecutors.
      */
-    private static final Map<String, ExecutorWrapper> COMMON_REGISTRY = new ConcurrentHashMap<>();
+//    private static final Map<String, ExecutorWrapper> COMMON_REGISTRY = new ConcurrentHashMap<>();
 
     private static final Equator EQUATOR = new GetterBaseEquator();
 
@@ -78,9 +78,9 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      *
      * @return executor name
      */
-    public static List<String> listAllCommonNames() {
-        return Lists.newArrayList(COMMON_REGISTRY.keySet());
-    }
+//    public static List<String> listAllDtpNames() {
+//        return Lists.newArrayList(COMMON_REGISTRY.keySet());
+//    }
 
     /**
      * Register a DtpExecutor.
@@ -91,7 +91,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
     public static void registerDtp(DtpExecutor executor, String source) {
         log.info("DynamicTp register dtpExecutor, source: {}, executor: {}",
                 source, ExecutorConverter.convert(executor));
-        DTP_REGISTRY.putIfAbsent(executor.getThreadPoolName(), executor);
+        DTP_REGISTRY.putIfAbsent(executor.getThreadPoolName(), ExecutorWrapper.of(executor));
     }
 
     /**
@@ -100,10 +100,10 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      * @param wrapper the newly created ThreadPoolExecutor wrapper instance
      * @param source  the source of the call to register method
      */
-    public static void registerCommon(ExecutorWrapper wrapper, String source) {
+    public static void registerDtp(ExecutorWrapper wrapper, String source) {
         log.info("DynamicTp register commonExecutor, source: {}, executor: {}",
                 source, ExecutorConverter.convert(wrapper));
-        COMMON_REGISTRY.putIfAbsent(wrapper.getThreadPoolName(), wrapper);
+        DTP_REGISTRY.putIfAbsent(wrapper.getThreadPoolName(), wrapper);
     }
 
     /**
@@ -113,12 +113,17 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      * @return the managed DtpExecutor instance
      */
     public static DtpExecutor getDtpExecutor(final String name) {
-        val executor = DTP_REGISTRY.get(name);
-        if (Objects.isNull(executor)) {
+        val executorWrapper = DTP_REGISTRY.get(name);
+        if (Objects.isNull(executorWrapper)) {
             log.error("Cannot find a specified dtpExecutor, name: {}", name);
             throw new DtpException("Cannot find a specified dtpExecutor, name: " + name);
         }
-        return executor;
+        ExecutorAdapter<?> executor = executorWrapper.getExecutor();
+        if (executor instanceof DtpExecutor) {
+            return (DtpExecutor) executor;
+        }
+        log.error("The specified executor is not a DtpExecutor, name: {}", name);
+        throw new DtpException("The specified executor is not a DtpExecutor, name: " + name);
     }
 
     /**
@@ -127,8 +132,8 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      * @param name the name of thread pool
      * @return the managed ExecutorWrapper instance
      */
-    public static ExecutorWrapper getCommonExecutor(final String name) {
-        val executor = COMMON_REGISTRY.get(name);
+    public static ExecutorWrapper getExecutorWrapper(final String name) {
+        ExecutorWrapper executor = DTP_REGISTRY.get(name);
         if (Objects.isNull(executor)) {
             log.error("Cannot find a specified commonExecutor, name: {}", name);
             throw new DtpException("Cannot find a specified commonExecutor, name: " + name);
@@ -153,14 +158,14 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
             }
 
             // First look it up in the DTP_REGISTRY
-            val dtpExecutor = DTP_REGISTRY.get(x.getThreadPoolName());
-            if (Objects.nonNull(dtpExecutor)) {
-                refresh(ExecutorWrapper.of(dtpExecutor), x);
-                return;
-            }
+//            ExecutorWrapper dtpExecutor = DTP_REGISTRY.get(x.getThreadPoolName());
+//            if (Objects.nonNull(dtpExecutor)) {
+//                refresh(dtpExecutor, x);
+//                return;
+//            }
 
             // And then look it up in the COMMON_REGISTRY
-            val executorWrapper = COMMON_REGISTRY.get(x.getThreadPoolName());
+            ExecutorWrapper executorWrapper = DTP_REGISTRY.get(x.getThreadPoolName());
             if (Objects.nonNull(executorWrapper)) {
                 refresh(executorWrapper, x);
                 return;
@@ -324,7 +329,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         }
 
         val registeredExecutors = Sets.newHashSet(DTP_REGISTRY.keySet());
-        registeredExecutors.addAll(COMMON_REGISTRY.keySet());
+//        registeredExecutors.addAll(COMMON_REGISTRY.keySet());
         val localExecutors = CollectionUtils.subtract(registeredExecutors, remoteExecutors);
         log.info("DtpRegistry has been initialized, remote executors: {}, local executors: {}",
                 remoteExecutors, localExecutors);

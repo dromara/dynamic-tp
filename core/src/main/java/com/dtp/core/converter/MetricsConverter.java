@@ -30,12 +30,20 @@ public class MetricsConverter {
     }
 
     public static ThreadPoolStats convert(ExecutorWrapper wrapper) {
-        if (wrapper.getExecutor() == null) {
+        ExecutorAdapter<?> executor = wrapper.getExecutor();
+        if (executor == null) {
             return null;
         }
-        ThreadPoolStats poolStats = convertCommon(wrapper.getExecutor());
+        ThreadPoolStats poolStats = convertCommon(executor);
         poolStats.setPoolName(wrapper.getThreadPoolName());
-        poolStats.setDynamic(false);
+        if (executor instanceof DtpExecutor) {
+            DtpExecutor dtpExecutor = (DtpExecutor) executor;
+            poolStats.setRejectHandlerName(dtpExecutor.getRejectHandlerName());
+            poolStats.setRejectCount(dtpExecutor.getRejectCount());
+            poolStats.setRunTimeoutCount(dtpExecutor.getRunTimeoutCount().sum());
+            poolStats.setQueueTimeoutCount(dtpExecutor.getQueueTimeoutCount().sum());
+        }
+//        poolStats.setDynamic(false);
         return poolStats;
     }
 

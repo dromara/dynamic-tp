@@ -48,7 +48,7 @@ public class DtpMonitor implements ApplicationRunner, Ordered {
 
     private void run() {
         List<String> dtpNames = DtpRegistry.listAllDtpNames();
-        List<String> commonNames = DtpRegistry.listAllCommonNames();
+        List<String> commonNames = DtpRegistry.listAllDtpNames();
         checkAlarm(dtpNames, commonNames);
         collect(dtpNames, commonNames);
     }
@@ -63,7 +63,7 @@ public class DtpMonitor implements ApplicationRunner, Ordered {
             doCollect(MetricsConverter.convert(executor));
         });
         commonNames.forEach(x -> {
-            ExecutorWrapper wrapper = DtpRegistry.getCommonExecutor(x);
+            ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(x);
             doCollect(MetricsConverter.convert(wrapper));
         });
         publishCollectEvent();
@@ -75,7 +75,7 @@ public class DtpMonitor implements ApplicationRunner, Ordered {
             AlarmManager.doAlarmAsync(executor, SCHEDULE_NOTIFY_ITEMS);
         });
         commonNames.forEach(x -> {
-            ExecutorWrapper wrapper = DtpRegistry.getCommonExecutor(x);
+            ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(x);
             AlarmManager.doAlarmAsync(wrapper, SCHEDULE_NOTIFY_ITEMS);
         });
         publishAlarmCheckEvent();

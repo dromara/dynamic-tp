@@ -6,7 +6,7 @@
     <parent>
         <artifactId>dynamic-tp-example</artifactId>
         <groupId>cn.dynamictp</groupId>
-        <version>1.1.2</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>dynamic-tp-example-nacos</artifactId>
 
@@ -53,7 +53,7 @@
         <dependency>
             <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-nacos</artifactId>
-            <version>${dtp.version}</version>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 

@@ -49,6 +49,7 @@ public class MotanDtpAdapter extends AbstractDtpAdapter {
             return;
         }
         beans.forEach((k, v) -> {
+            @SuppressWarnings("unchecked")
             List<Exporter<?>> exporters = v.getExporters();
             if (CollectionUtils.isEmpty(exporters)) {
                 return;

@@ -6,7 +6,7 @@ import com.dtp.common.event.CollectEvent;
 import com.dtp.common.event.RefreshEvent;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.handler.CollectorHandler;
-import com.dtp.core.notify.manager.AlarmManager;
+import com.dtp.core.notifier.manager.AlarmManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationEvent;

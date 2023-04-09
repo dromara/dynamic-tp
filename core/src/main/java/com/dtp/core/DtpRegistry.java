@@ -6,14 +6,14 @@ import com.dtp.common.ex.DtpException;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.queue.MemorySafeLinkedBlockingQueue;
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
-import com.dtp.core.convert.ExecutorConverter;
-import com.dtp.core.notify.manager.NoticeManager;
+import com.dtp.core.converter.ExecutorConverter;
+import com.dtp.core.notifier.manager.NoticeManager;
 import com.dtp.core.reject.RejectHandlerGetter;
+import com.dtp.core.support.ExecutorAdapter;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.wrapper.TaskWrapper;
 import com.dtp.core.support.wrapper.TaskWrappers;
 import com.dtp.core.thread.DtpExecutor;
-import com.dtp.core.support.ExecutorAdapter;
 import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 
 import static com.dtp.common.constant.DynamicTpConst.M_1;
 import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
-import static com.dtp.core.notify.manager.NotifyHelper.updateNotifyInfo;
+import static com.dtp.core.notifier.manager.NotifyHelper.updateNotifyInfo;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -213,7 +213,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         updateQueueProps(executor, props);
 
         if (executor instanceof DtpExecutor) {
-            doRefreshDtp((DtpExecutor) executor, props);
+            doRefreshDtp(executorWrapper, props);
             return;
         }
         doRefreshCommon(executorWrapper, props);
@@ -237,8 +237,9 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         updateNotifyInfo(executorWrapper, props, dtpProperties.getPlatforms());
     }
 
-    private static void doRefreshDtp(DtpExecutor executor, DtpExecutorProps props) {
+    private static void doRefreshDtp(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
 
+        val executor = (DtpExecutor) executorWrapper.getExecutor();
         if (StringUtils.isNotBlank(props.getThreadPoolAliasName())) {
             executor.setThreadPoolAliasName(props.getThreadPoolAliasName());
         }
@@ -257,6 +258,14 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
         // update notify related
         updateNotifyInfo(executor, props, dtpProperties.getPlatforms());
+        updateWrapper(executorWrapper, executor);
+    }
+
+    private static void updateWrapper(ExecutorWrapper executorWrapper, DtpExecutor executor) {
+        executorWrapper.setThreadPoolAliasName(executor.getThreadPoolAliasName());
+        executorWrapper.setNotifyItems(executor.getNotifyItems());
+        executorWrapper.setPlatformIds(executor.getPlatformIds());
+        executorWrapper.setNotifyEnabled(executor.isNotifyEnabled());
     }
 
     private static void doRefreshPoolSize(ExecutorAdapter<?> executor, DtpExecutorProps props) {

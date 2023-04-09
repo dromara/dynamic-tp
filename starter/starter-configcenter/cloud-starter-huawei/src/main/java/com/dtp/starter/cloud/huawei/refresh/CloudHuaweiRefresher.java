@@ -1,6 +1,6 @@
 package com.dtp.starter.cloud.huawei.refresh;
 
-import com.dtp.core.refresh.AbstractRefresher;
+import com.dtp.core.refresher.AbstractRefresher;
 import com.huaweicloud.common.event.ConfigRefreshEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEvent;

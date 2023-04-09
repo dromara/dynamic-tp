@@ -1,6 +1,6 @@
 package com.dtp.starter.zookeeper.refresh;
 
-import com.dtp.core.refresh.AbstractRefresher;
+import com.dtp.core.refresher.AbstractRefresher;
 import com.dtp.starter.zookeeper.util.CuratorUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;

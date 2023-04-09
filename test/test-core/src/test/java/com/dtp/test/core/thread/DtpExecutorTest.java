@@ -2,7 +2,7 @@ package com.dtp.test.core.thread;
 
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.core.DtpRegistry;
-import com.dtp.core.notify.manager.AlarmManager;
+import com.dtp.core.notifier.manager.AlarmManager;
 import com.dtp.core.spring.EnableDynamicTp;
 import com.dtp.core.spring.YamlPropertySourceFactory;
 import com.dtp.core.support.ExecutorWrapper;

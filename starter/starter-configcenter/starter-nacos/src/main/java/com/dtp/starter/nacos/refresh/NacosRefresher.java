@@ -7,7 +7,7 @@ import com.alibaba.nacos.api.exception.NacosException;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.em.ConfigFileTypeEnum;
 import com.dtp.common.util.NacosUtil;
-import com.dtp.core.refresh.AbstractRefresher;
+import com.dtp.core.refresher.AbstractRefresher;
 import com.dtp.core.support.ThreadPoolCreator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;

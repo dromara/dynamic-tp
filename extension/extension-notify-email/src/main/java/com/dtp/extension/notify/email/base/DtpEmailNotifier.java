@@ -1,14 +1,14 @@
 package com.dtp.extension.notify.email.base;
 
-import cn.hutool.core.date.DateTime;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.entity.AlarmInfo;
-import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.entity.NotifyPlatform;
+import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.util.CommonUtil;
+import com.dtp.common.util.DateUtil;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.context.DtpNotifyCtxHolder;
@@ -94,7 +94,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("runTimeoutCount", alarmCounter.getMiddle());
         context.setVariable("queueTimeoutCount", alarmCounter.getRight());
         context.setVariable("lastAlarmTime", alarmInfo.getLastAlarmTime() == null ? UNKNOWN : alarmInfo.getLastAlarmTime());
-        context.setVariable("alarmTime", DateTime.now());
+        context.setVariable("alarmTime", DateUtil.now());
         context.setVariable("tid", Optional.ofNullable(MDC.get(TRACE_ID)).orElse(UNKNOWN));
         context.setVariable("alarmInterval", notifyItem.getInterval());
         context.setVariable("highlightVariables", getAlarmKeys(notifyItemEnum));
@@ -121,7 +121,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("newQueueCapacity", getQueueCapacity(executor));
         context.setVariable("oldRejectType", oldFields.getRejectType());
         context.setVariable("newRejectType", getRejectHandlerName(executor));
-        context.setVariable("notifyTime", DateTime.now());
+        context.setVariable("notifyTime", DateUtil.now());
         context.setVariable("diffs", diffs != null ? diffs : Collections.emptySet());
         return ((EmailNotifier) notifier).processTemplateContent("notice", context);
     }

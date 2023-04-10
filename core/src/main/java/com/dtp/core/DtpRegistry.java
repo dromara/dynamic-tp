@@ -186,13 +186,6 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         List<FieldInfo> diffFields = EQUATOR.getDiffFields(oldFields, newFields);
         List<String> diffKeys = StreamUtil.fetchProperty(diffFields, FieldInfo::getFieldName);
         NoticeManager.doNoticeAsync(executorWrapper, oldFields, diffKeys);
-        printChangeLog(executorWrapper, oldFields, newFields, diffKeys);
-    }
-
-    private static void printChangeLog(ExecutorWrapper executorWrapper,
-                                       TpMainFields oldFields,
-                                       TpMainFields newFields,
-                                       List<String> diffKeys) {
         log.info("DynamicTp refresh, name: [{}], changed keys: {}, corePoolSize: [{}], maxPoolSize: [{}]," +
                         " queueType: [{}], queueCapacity: [{}], keepAliveTime: [{}], rejectedType: [{}]," +
                         " allowsCoreThreadTimeOut: [{}]", executorWrapper.getThreadPoolName(), diffKeys,
@@ -245,7 +238,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
     private static void doRefreshDtp(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
 
-        val executor = (DtpExecutor) executorWrapper.getExecutor();
+        DtpExecutor executor = (DtpExecutor) executorWrapper.getExecutor();
         if (StringUtils.isNotBlank(props.getThreadPoolAliasName())) {
             executor.setThreadPoolAliasName(props.getThreadPoolAliasName());
         }

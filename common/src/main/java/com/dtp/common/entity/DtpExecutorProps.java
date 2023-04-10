@@ -99,8 +99,9 @@ public class DtpExecutorProps extends TpExecutorProps {
      */
     public boolean coreParamIsInValid() {
         return this.getCorePoolSize() < 0
-                || this.getKeepAliveTime() < 0
                 || this.getMaximumPoolSize() <= 0
-                || this.getMaximumPoolSize() < this.getCorePoolSize();
+                || this.getMaximumPoolSize() < this.getCorePoolSize()
+                || this.getKeepAliveTime() < 0;
     }
+
 }

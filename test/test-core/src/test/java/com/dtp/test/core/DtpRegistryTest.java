@@ -1,6 +1,7 @@
 package com.dtp.test.core;
 
 import com.dtp.core.DtpRegistry;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.ThreadPoolBuilder;
 import com.dtp.core.thread.DtpExecutor;
 import org.junit.jupiter.api.Assertions;
@@ -19,7 +20,8 @@ class DtpRegistryTest {
         DtpExecutor dtpExecutor = ThreadPoolBuilder.newBuilder()
                 .threadPoolName("test_dtp")
                 .buildDynamic();
-        DtpRegistry.registerDtp(dtpExecutor, "test");
+        DtpRegistry.registerExecutor(ExecutorWrapper.of(dtpExecutor), "test");
         Assertions.assertEquals("test_dtp", DtpRegistry.getDtpExecutor("test_dtp").getThreadPoolName());
     }
+
 }

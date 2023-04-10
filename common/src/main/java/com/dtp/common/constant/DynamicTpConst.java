@@ -1,7 +1,7 @@
 package com.dtp.common.constant;
 
 import com.dtp.common.em.NotifyItemEnum;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
@@ -16,7 +16,8 @@ import static com.dtp.common.em.NotifyItemEnum.LIVENESS;
  **/
 public final class DynamicTpConst {
 
-    private DynamicTpConst() { }
+    private DynamicTpConst() {
+    }
 
     public static final String MAIN_PROPERTIES_PREFIX = "spring.dynamic.tp";
 
@@ -75,7 +76,7 @@ public final class DynamicTpConst {
 
     public static final String ARR_RIGHT_BRACKET = "]";
 
-    public static final List<NotifyItemEnum> SCHEDULE_NOTIFY_ITEMS = Lists.newArrayList(LIVENESS, CAPACITY);
+    public static final List<NotifyItemEnum> SCHEDULE_NOTIFY_ITEMS = ImmutableList.of(LIVENESS, CAPACITY);
 
     /**
      * unit

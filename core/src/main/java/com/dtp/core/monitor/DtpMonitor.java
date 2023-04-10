@@ -1,7 +1,6 @@
 package com.dtp.core.monitor;
 
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.entity.ThreadPoolStats;
 import com.dtp.common.event.AlarmCheckEvent;
 import com.dtp.common.event.CollectEvent;
@@ -10,15 +9,15 @@ import com.dtp.core.DtpRegistry;
 import com.dtp.core.converter.MetricsConverter;
 import com.dtp.core.handler.CollectorHandler;
 import com.dtp.core.notifier.manager.AlarmManager;
-import com.dtp.core.thread.DtpExecutor;
+import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.thread.NamedThreadFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.Ordered;
 
-import javax.annotation.Resource;
-import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -32,13 +31,16 @@ import static com.dtp.common.constant.DynamicTpConst.SCHEDULE_NOTIFY_ITEMS;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpMonitor implements ApplicationRunner, Ordered {
+public class DtpMonitor implements ApplicationRunner, Ordered, DisposableBean {
 
     private static final ScheduledExecutorService MONITOR_EXECUTOR = new ScheduledThreadPoolExecutor(
             1, new NamedThreadFactory("dtp-monitor", true));
 
-    @Resource
-    private DtpProperties dtpProperties;
+    private final DtpProperties dtpProperties;
+
+    public DtpMonitor(DtpProperties dtpProperties) {
+        this.dtpProperties = dtpProperties;
+    }
 
     @Override
     public void run(ApplicationArguments args) {
@@ -47,35 +49,25 @@ public class DtpMonitor implements ApplicationRunner, Ordered {
     }
 
     private void run() {
-        List<String> dtpNames = DtpRegistry.listAllDtpNames();
-        List<String> commonNames = DtpRegistry.listAllCommonNames();
-        checkAlarm(dtpNames, commonNames);
-        collect(dtpNames, commonNames);
+        Set<String> executorNames = DtpRegistry.listAllExecutorNames();
+        checkAlarm(executorNames);
+        collect(executorNames);
     }
 
-    private void collect(List<String> dtpNames, List<String> commonNames) {
+    private void collect(Set<String> executorNames) {
         if (!dtpProperties.isEnabledCollect()) {
             return;
         }
-
-        dtpNames.forEach(x -> {
-            DtpExecutor executor = DtpRegistry.getDtpExecutor(x);
-            doCollect(MetricsConverter.convert(executor));
-        });
-        commonNames.forEach(x -> {
-            ExecutorWrapper wrapper = DtpRegistry.getCommonExecutor(x);
+        executorNames.forEach(x -> {
+            ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(x);
             doCollect(MetricsConverter.convert(wrapper));
         });
         publishCollectEvent();
     }
 
-    private void checkAlarm(List<String> dtpNames, List<String> commonNames) {
-        dtpNames.forEach(x -> {
-            DtpExecutor executor = DtpRegistry.getDtpExecutor(x);
-            AlarmManager.doAlarmAsync(executor, SCHEDULE_NOTIFY_ITEMS);
-        });
-        commonNames.forEach(x -> {
-            ExecutorWrapper wrapper = DtpRegistry.getCommonExecutor(x);
+    private void checkAlarm(Set<String> executorNames) {
+        executorNames.forEach(x -> {
+            ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(x);
             AlarmManager.doAlarmAsync(wrapper, SCHEDULE_NOTIFY_ITEMS);
         });
         publishAlarmCheckEvent();
@@ -103,4 +95,10 @@ public class DtpMonitor implements ApplicationRunner, Ordered {
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE + 2;
     }
+
+    @Override
+    public void destroy() {
+        MONITOR_EXECUTOR.shutdown();
+    }
+
 }

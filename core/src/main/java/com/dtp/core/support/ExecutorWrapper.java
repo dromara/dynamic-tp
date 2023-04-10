@@ -64,7 +64,6 @@ public class ExecutorWrapper {
         this.platformIds = executor.getPlatformIds();
     }
 
-    // TODO 支持告警?
     public ExecutorWrapper(String threadPoolName, Executor executor) {
         this.threadPoolName = threadPoolName;
         if (executor instanceof ThreadPoolExecutor) {

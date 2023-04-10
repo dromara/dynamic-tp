@@ -69,7 +69,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
     }
 
     /**
-     * Get all DtpExecutor names.
+     * Get all Executor names.
      *
      * @return executor names
      */
@@ -78,7 +78,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
     }
 
     /**
-     * Register a common ThreadPoolExecutor.
+     * Register a ThreadPoolExecutor.
      *
      * @param wrapper the newly created ThreadPoolExecutor wrapper instance
      * @param source  the source of the call to register method
@@ -113,7 +113,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
 
     /**
-     * Get executor by name.
+     * Get ThreadPoolExecutor by thread pool name.
      *
      * @param name the name of thread pool
      * @return the managed ExecutorWrapper instance
@@ -128,7 +128,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
     }
 
     /**
-     * Get ExecutorWrapper by name.
+     * Get ExecutorWrapper by thread pool name.
      *
      * @param name the name of thread pool
      * @return the managed ExecutorWrapper instance
@@ -173,7 +173,6 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
             return;
         }
         TpMainFields oldFields = ExecutorConverter.convert(executorWrapper);
-        // TODO
         doRefresh(executorWrapper, props);
         TpMainFields newFields = ExecutorConverter.convert(executorWrapper);
         if (oldFields.equals(newFields)) {

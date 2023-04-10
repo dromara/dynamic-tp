@@ -136,8 +136,8 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
     public static ExecutorWrapper getExecutorWrapper(final String name) {
         ExecutorWrapper executor = EXECUTOR_REGISTRY.get(name);
         if (Objects.isNull(executor)) {
-            log.error("Cannot find a specified commonExecutor, name: {}", name);
-            throw new DtpException("Cannot find a specified commonExecutor, name: " + name);
+            log.error("Cannot find a specified executorWrapper, name: {}", name);
+            throw new DtpException("Cannot find a specified executorWrapper, name: " + name);
         }
         return executor;
     }
@@ -157,7 +157,6 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
                 log.warn("DynamicTp refresh, threadPoolName must not be empty.");
                 return;
             }
-            // And then look it up in the EXECUTOR_REGISTRY
             ExecutorWrapper executorWrapper = EXECUTOR_REGISTRY.get(x.getThreadPoolName());
             if (Objects.nonNull(executorWrapper)) {
                 refresh(executorWrapper, x);
@@ -316,9 +315,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         }
         val registeredExecutors = Sets.newHashSet(EXECUTOR_REGISTRY.keySet());
         val localExecutors = CollectionUtils.subtract(registeredExecutors, remoteExecutors);
-        log.info("DtpRegistry has been initialized, \n" +
-                        "remote executors: {}, \n" +
-                        "local executors: {}",
+        log.info("DtpRegistry has been initialized, remote executors: {}, local executors: {}",
                 remoteExecutors, localExecutors);
     }
 

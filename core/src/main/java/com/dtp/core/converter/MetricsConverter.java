@@ -16,20 +16,6 @@ public class MetricsConverter {
     private MetricsConverter() {
     }
 
-//    public static ThreadPoolStats convert(DtpExecutor executor) {
-//        if (executor == null) {
-//            return null;
-//        }
-//        ThreadPoolStats poolStats = convertCommon(executor);
-//        poolStats.setPoolName(executor.getThreadPoolName());
-//        poolStats.setRejectHandlerName(executor.getRejectHandlerName());
-//        poolStats.setRejectCount(executor.getRejectCount());
-//        poolStats.setRunTimeoutCount(executor.getRunTimeoutCount().sum());
-//        poolStats.setQueueTimeoutCount(executor.getQueueTimeoutCount().sum());
-//        poolStats.setDynamic(true);
-//        return poolStats;
-//    }
-
     public static ThreadPoolStats convert(ExecutorWrapper wrapper) {
         ExecutorAdapter<?> executor = wrapper.getExecutor();
         if (executor == null) {
@@ -37,7 +23,6 @@ public class MetricsConverter {
         }
         ThreadPoolStats poolStats = convertCommon(executor);
         poolStats.setPoolName(wrapper.getThreadPoolName());
-        // If it is a DtpExecutor, it will be converted to a DtpExecutor
         if (executor instanceof DtpExecutor) {
             DtpExecutor dtpExecutor = (DtpExecutor) executor;
             poolStats.setRejectHandlerName(dtpExecutor.getRejectHandlerName());

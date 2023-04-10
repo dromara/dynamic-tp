@@ -18,7 +18,6 @@ import com.dtp.core.thread.DtpExecutor;
 import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -74,8 +73,8 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      *
      * @return executor names
      */
-    public static List<String> listAllExecutorNames() {
-        return Lists.newArrayList(EXECUTOR_REGISTRY.keySet());
+    public static Set<String> listAllExecutorNames() {
+        return Collections.unmodifiableSet(EXECUTOR_REGISTRY.keySet());
     }
 
     /**

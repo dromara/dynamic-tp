@@ -22,10 +22,19 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class ExecutorWrapper {
 
+    /**
+     * Thread pool name.
+     */
     private String threadPoolName;
 
+    /**
+     * Thread pool alias name.
+     */
     private String threadPoolAliasName;
 
+    /**
+     * Executor.
+     */
     private ExecutorAdapter<?> executor;
 
     /**
@@ -38,6 +47,9 @@ public class ExecutorWrapper {
      */
     private List<String> platformIds;
 
+    /**
+     * Whether to enable notification.
+     */
     private boolean notifyEnabled = true;
 
     public ExecutorWrapper() {
@@ -52,6 +64,7 @@ public class ExecutorWrapper {
         this.platformIds = executor.getPlatformIds();
     }
 
+    // TODO 支持告警?
     public ExecutorWrapper(String threadPoolName, Executor executor) {
         this.threadPoolName = threadPoolName;
         if (executor instanceof ThreadPoolExecutor) {

@@ -51,8 +51,8 @@ public class DtpBaseBeanConfiguration {
     }
 
     @Bean
-    public DtpRegistry dtpRegistry() {
-        return new DtpRegistry();
+    public DtpRegistry dtpRegistry(DtpProperties dtpProperties) {
+        return new DtpRegistry(dtpProperties);
     }
 
     @Bean

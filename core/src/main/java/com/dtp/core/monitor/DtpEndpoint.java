@@ -34,7 +34,7 @@ public class DtpEndpoint {
 //            DtpExecutor executor = DtpRegistry.getDtpExecutor(x);
 //            metricsList.add(MetricsConverter.convert(executor));
 //        });
-        DtpRegistry.listAllDtpNames().forEach(x -> {
+        DtpRegistry.listAllExecutorNames().forEach(x -> {
             ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(x);
             metricsList.add(MetricsConverter.convert(wrapper));
         });

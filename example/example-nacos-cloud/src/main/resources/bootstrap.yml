@@ -12,7 +12,7 @@ spring:
         server-addr: http://${nacos:localhost}:8848
       config:
         server-addr: http://${nacos:localhost}:8848
-        file-extension: yaml
+        file-extension: yml
         extension-configs:
           - dataId: ${spring.application.name}-dtp-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
             group: DEFAULT_GROUP

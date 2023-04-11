@@ -240,9 +240,9 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
             executor.setThreadPoolAliasName(props.getThreadPoolAliasName());
         }
         // update reject handler
+        executor.setRejectEnhanced(props.isRejectEnhanced());
         if (!Objects.equals(executor.getRejectHandlerName(), props.getRejectedHandlerType())) {
-            executor.setRejectedExecutionHandler(RejectHandlerGetter.getProxy(props.getRejectedHandlerType()));
-            executor.setRejectHandlerName(props.getRejectedHandlerType());
+            executor.setRejectHandler(RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType()));
         }
         executor.setWaitForTasksToCompleteOnShutdown(props.isWaitForTasksToCompleteOnShutdown());
         executor.setAwaitTerminationSeconds(props.getAwaitTerminationSeconds());

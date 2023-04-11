@@ -22,7 +22,6 @@ import org.slf4j.MDC;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 
 import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
@@ -38,12 +37,12 @@ import static com.dtp.common.em.QueueTypeEnum.LINKED_BLOCKING_QUEUE;
 public class AlarmManager {
 
     private static final ExecutorService ALARM_EXECUTOR = ThreadPoolBuilder.newBuilder()
-            .threadPoolName("dtp-alarm")
             .threadFactory("dtp-alarm")
             .corePoolSize(1)
             .maximumPoolSize(2)
-            .workQueue(LINKED_BLOCKING_QUEUE.getName(), 2000, false, null)
+            .workQueue(LINKED_BLOCKING_QUEUE.getName(), 2000)
             .rejectedExecutionHandler(RejectedTypeEnum.DISCARD_OLDEST_POLICY.getName())
+            .rejectEnhanced(false)
             .taskWrappers(TaskWrappers.getInstance().getByNames(Sets.newHashSet("mdc")))
             .buildDynamic();
 
@@ -118,13 +117,10 @@ public class AlarmManager {
     private static boolean checkCapacity(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
 
         val executor = executorWrapper.getExecutor();
-        BlockingQueue<Runnable> workQueue = executor.getQueue();
-        if (CollectionUtils.isEmpty(workQueue)) {
+        if (CollectionUtils.isEmpty(executor.getQueue())) {
             return false;
         }
-
-        int queueCapacity = executor.getQueue().size() + executor.getQueue().remainingCapacity();
-        double div = NumberUtil.div(workQueue.size(), queueCapacity, 2) * 100;
+        double div = NumberUtil.div(executor.getQueueSize(), executor.getQueueCapacity(), 2) * 100;
         return div >= notifyItem.getThreshold();
     }
 

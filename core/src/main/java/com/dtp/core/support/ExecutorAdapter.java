@@ -118,6 +118,33 @@ public interface ExecutorAdapter<E extends Executor> extends Executor {
     }
 
     /**
+     * Get the queue size
+     *
+     * @return the queue size
+     */
+    default int getQueueSize() {
+        return getQueue().size();
+    }
+
+    /**
+     * Get the queue remaining capacity
+     *
+     * @return the queue remaining capacity
+     */
+    default int getQueueRemainingCapacity() {
+        return getQueue().remainingCapacity();
+    }
+
+    /**
+     * Get the queue capacity
+     *
+     * @return the queue capacity
+     */
+    default int getQueueCapacity() {
+        return getQueueSize() + getQueueRemainingCapacity();
+    }
+
+    /**
      * Get the rejected execution handler
      *
      * @return the rejected execution handler

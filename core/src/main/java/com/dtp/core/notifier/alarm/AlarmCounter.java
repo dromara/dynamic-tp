@@ -77,9 +77,9 @@ public class AlarmCounter {
         DtpExecutor dtpExecutor = (DtpExecutor) executor.getOriginal();
         String rejectCount = getCount(threadPoolName, REJECT.getValue()) + " / " + dtpExecutor.getRejectCount();
         String runTimeoutCount = getCount(threadPoolName, RUN_TIMEOUT.getValue()) + " / "
-                + dtpExecutor.getRunTimeoutCount().sum();
+                + dtpExecutor.getRunTimeoutCount();
         String queueTimeoutCount = getCount(threadPoolName, QUEUE_TIMEOUT.getValue()) + " / "
-                + dtpExecutor.getQueueTimeoutCount().sum();
+                + dtpExecutor.getQueueTimeoutCount();
         return new ImmutableTriple<>(rejectCount, runTimeoutCount, queueTimeoutCount);
     }
 

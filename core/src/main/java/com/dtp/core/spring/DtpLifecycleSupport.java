@@ -8,7 +8,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -47,13 +46,19 @@ public abstract class DtpLifecycleSupport extends ThreadPoolExecutor implements 
                                long keepAliveTime,
                                TimeUnit unit,
                                BlockingQueue<Runnable> workQueue,
-                               ThreadFactory threadFactory,
-                               RejectedExecutionHandler handler) {
-        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
+                               ThreadFactory threadFactory) {
+        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);
+    }
+    public boolean isWaitForTasksToCompleteOnShutdown() {
+        return waitForTasksToCompleteOnShutdown;
     }
 
     public void setWaitForTasksToCompleteOnShutdown(boolean waitForTasksToCompleteOnShutdown) {
         this.waitForTasksToCompleteOnShutdown = waitForTasksToCompleteOnShutdown;
+    }
+
+    public int getAwaitTerminationSeconds() {
+        return awaitTerminationSeconds;
     }
 
     public void setAwaitTerminationSeconds(int awaitTerminationSeconds) {

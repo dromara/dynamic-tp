@@ -27,7 +27,7 @@ public class QueueTimeoutTimerTask implements TimerTask {
 
     @Override
     public void run(Timeout timeout) {
-        dtpExecutor.getQueueTimeoutCount().increment();
+        dtpExecutor.incQueueTimeoutCount(1);
         AlarmManager.doAlarmAsync(dtpExecutor, NotifyItemEnum.QUEUE_TIMEOUT, runnable);
         log.warn("DynamicTp execute, queue timeout, tpName: {}, taskName: {}, traceId: {}",
                 dtpExecutor.getThreadPoolName(), runnable.getTaskName(), runnable.getTraceId());

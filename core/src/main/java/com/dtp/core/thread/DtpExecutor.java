@@ -75,6 +75,11 @@ public class DtpExecutor extends DtpLifecycleSupport
     private boolean preStartAllCoreThreads;
 
     /**
+     * If enhance reject.
+     */
+    private boolean rejectEnhanced = true;
+
+    /**
      * Task execute timeout, unit (ms), just for statistics.
      */
     private long runTimeout;
@@ -135,9 +140,8 @@ public class DtpExecutor extends DtpLifecycleSupport
                        BlockingQueue<Runnable> workQueue,
                        ThreadFactory threadFactory,
                        RejectedExecutionHandler handler) {
-        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
-                threadFactory, RejectHandlerGetter.getProxy(handler));
-        this.rejectHandlerName = handler.getClass().getSimpleName();
+        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);
+        setRejectHandler(handler);
     }
 
     @Override
@@ -179,6 +183,8 @@ public class DtpExecutor extends DtpLifecycleSupport
         if (preStartAllCoreThreads) {
             prestartAllCoreThreads();
         }
+        // reset reject handler in initialize phase according to rejectEnhanced
+        setRejectHandler(RejectHandlerGetter.buildRejectedHandler(getRejectHandlerName()));
     }
 
     protected Runnable wrapTasks(Runnable command) {
@@ -213,6 +219,14 @@ public class DtpExecutor extends DtpLifecycleSupport
         }
     }
 
+    public void setRejectHandler(RejectedExecutionHandler handler) {
+        this.rejectHandlerName = handler.getClass().getSimpleName();
+        if (!isRejectEnhanced()) {
+            setRejectedExecutionHandler(handler);
+        }
+        setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
+    }
+
     public List<NotifyItem> getNotifyItems() {
         return notifyItems;
     }
@@ -234,7 +248,7 @@ public class DtpExecutor extends DtpLifecycleSupport
     }
 
     public int getQueueCapacity() {
-        int capacity = getQueue().size() + getQueue().remainingCapacity();
+        int capacity = getQueueSize() + getQueueRemainingCapacity();
         return capacity < 0 ? Integer.MAX_VALUE : capacity;
     }
 
@@ -243,24 +257,20 @@ public class DtpExecutor extends DtpLifecycleSupport
         return rejectHandlerName;
     }
 
-    public void setRejectHandlerName(String rejectHandlerName) {
-        this.rejectHandlerName = rejectHandlerName;
+    public List<TaskWrapper> getTaskWrappers() {
+        return taskWrappers;
     }
 
     public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
         this.taskWrappers = taskWrappers;
     }
 
+    public boolean isPreStartAllCoreThreads() {
+        return preStartAllCoreThreads;
+    }
+
     public void setPreStartAllCoreThreads(boolean preStartAllCoreThreads) {
         this.preStartAllCoreThreads = preStartAllCoreThreads;
-    }
-
-    public void incRejectCount(int count) {
-        rejectCount.add(count);
-    }
-
-    public long getRejectCount() {
-        return rejectCount.sum();
     }
 
     public void setRunTimeout(long runTimeout) {
@@ -271,20 +281,36 @@ public class DtpExecutor extends DtpLifecycleSupport
         return runTimeout;
     }
 
-    public LongAdder getRunTimeoutCount() {
-        return runTimeoutCount;
-    }
-
-    public LongAdder getQueueTimeoutCount() {
-        return queueTimeoutCount;
-    }
-
     public void setQueueTimeout(long queueTimeout) {
         this.queueTimeout = queueTimeout;
     }
 
     public long getQueueTimeout() {
         return queueTimeout;
+    }
+
+    public void incRejectCount(int count) {
+        rejectCount.add(count);
+    }
+
+    public long getRejectCount() {
+        return rejectCount.sum();
+    }
+
+    public void incRunTimeoutCount(int count) {
+        runTimeoutCount.add(count);
+    }
+
+    public long getRunTimeoutCount() {
+        return runTimeoutCount.sum();
+    }
+
+    public void incQueueTimeoutCount(int count) {
+        queueTimeoutCount.add(count);
+    }
+
+    public long getQueueTimeoutCount() {
+        return queueTimeoutCount.sum();
     }
 
     /**
@@ -312,4 +338,11 @@ public class DtpExecutor extends DtpLifecycleSupport
         this.notifyEnabled = notifyEnabled;
     }
 
+    public boolean isRejectEnhanced() {
+        return rejectEnhanced;
+    }
+
+    public void setRejectEnhanced(boolean rejectEnhanced) {
+        this.rejectEnhanced = rejectEnhanced;
+    }
 }

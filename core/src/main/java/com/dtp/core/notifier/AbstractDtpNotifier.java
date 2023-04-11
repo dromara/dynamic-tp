@@ -121,11 +121,11 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 executor.getLargestPoolSize(),
                 executor.getTaskCount(),
                 executor.getCompletedTaskCount(),
-                executor.getQueue().size(),
+                executor.getQueueSize(),
                 getQueueName(executor),
-                getQueueCapacity(executor),
-                executor.getQueue().size(),
-                executor.getQueue().remainingCapacity(),
+                executor.getQueueCapacity(),
+                executor.getQueueSize(),
+                executor.getQueueRemainingCapacity(),
                 getRejectHandlerName(executor),
                 alarmCounter.getLeft(),
                 alarmCounter.getMiddle(),
@@ -155,7 +155,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 oldFields.isAllowCoreThreadTimeOut(), executor.allowsCoreThreadTimeOut(),
                 oldFields.getKeepAliveTime(), executor.getKeepAliveTime(TimeUnit.SECONDS),
                 getQueueName(executor),
-                oldFields.getQueueCapacity(), getQueueCapacity(executor),
+                oldFields.getQueueCapacity(), executor.getQueueCapacity(),
                 oldFields.getRejectType(), getRejectHandlerName(executor),
                 getReceives(platform.getPlatform(), platform.getReceivers()),
                 DateTime.now()
@@ -188,10 +188,6 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
     protected String getRejectHandlerName(ExecutorAdapter<?> executor) {
         return executor.getRejectHandlerName();
-    }
-
-    protected int getQueueCapacity(ExecutorAdapter<?> executor) {
-        return executor.getQueue().size() + executor.getQueue().remainingCapacity();
     }
 
     protected String getQueueName(ExecutorAdapter<?> executor) {

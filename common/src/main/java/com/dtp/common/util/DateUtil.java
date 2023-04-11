@@ -20,7 +20,7 @@ public class DateUtil {
     }
 
     /**
-     * Date -> LocalDate
+     * Date to LocalDate
      *
      * @param date 时间
      * @return LocalDate
@@ -30,7 +30,7 @@ public class DateUtil {
     }
 
     /**
-     * Date -> LocalDate
+     * Date to LocalDate
      *
      * @param date 时间
      * @return Date
@@ -40,7 +40,7 @@ public class DateUtil {
     }
 
     /**
-     * Date -> LocalDate
+     * Date to LocalDate
      *
      * @param date 时间
      * @return LocalDateTime
@@ -50,7 +50,7 @@ public class DateUtil {
     }
 
     /**
-     * LocalDate -> Date
+     * LocalDate to Date
      *
      * @param date 时间
      * @return Date

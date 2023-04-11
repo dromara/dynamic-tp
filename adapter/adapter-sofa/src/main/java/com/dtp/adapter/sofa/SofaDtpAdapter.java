@@ -13,8 +13,8 @@ import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.ReflectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 
 import java.lang.reflect.Field;
 import java.util.List;

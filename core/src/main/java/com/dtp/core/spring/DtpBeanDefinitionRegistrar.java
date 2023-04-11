@@ -12,7 +12,7 @@ import com.dtp.core.thread.NamedThreadFactory;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;

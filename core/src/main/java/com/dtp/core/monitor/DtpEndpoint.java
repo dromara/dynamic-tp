@@ -11,7 +11,7 @@ import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.MetricsAware;
 import com.google.common.collect.Lists;
 import lombok.val;
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 

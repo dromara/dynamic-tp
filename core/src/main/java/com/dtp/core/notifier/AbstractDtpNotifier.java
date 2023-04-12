@@ -1,7 +1,5 @@
 package com.dtp.core.notifier;
 
-import cn.hutool.core.date.DateTime;
-import cn.hutool.core.date.DateUtil;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.entity.AlarmInfo;
@@ -9,6 +7,7 @@ import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.util.CommonUtil;
+import com.dtp.common.util.DateUtil;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.context.DtpNotifyCtxHolder;
@@ -158,7 +157,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 oldFields.getQueueCapacity(), executor.getQueueCapacity(),
                 oldFields.getRejectType(), executor.getRejectHandlerType(),
                 getReceives(platform.getPlatform(), platform.getReceivers()),
-                DateTime.now()
+                DateUtil.now()
         );
         return highlightNotifyContent(content, diffs);
     }

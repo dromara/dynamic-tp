@@ -33,4 +33,5 @@ public interface JsonParser {
      * @return json string
      */
     String toJson(Object obj);
+
 }

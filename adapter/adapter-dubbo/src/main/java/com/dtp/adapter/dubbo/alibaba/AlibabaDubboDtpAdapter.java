@@ -7,7 +7,7 @@ import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.support.ExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.MapUtils;
 
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;

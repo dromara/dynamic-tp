@@ -21,7 +21,7 @@ import com.github.dadiyang.equator.GetterBaseEquator;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -264,6 +264,15 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         executorWrapper.setNotifyEnabled(executor.isNotifyEnabled());
     }
 
+    /**
+     * Why does it seem so complicated to handle this?
+     * Although JDK9 solves this bug, we need to ensure that corePoolSize is less than or equal to maximumPoolSize,
+     * otherwise an IllegalArgumentException will be thrown
+     *
+     * @param executor the executor
+     * @param props    properties
+     * @see <a href="https://bugs.openjdk.org/browse/JDK-7153400">JDK-7153400</a>
+     */
     private static void doRefreshPoolSize(ExecutorAdapter<?> executor, DtpExecutorProps props) {
         if (props.getMaximumPoolSize() < executor.getMaximumPoolSize()) {
             if (!Objects.equals(executor.getCorePoolSize(), props.getCorePoolSize())) {

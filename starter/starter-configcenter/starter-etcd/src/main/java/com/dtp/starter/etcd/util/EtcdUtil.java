@@ -1,6 +1,5 @@
 package com.dtp.starter.etcd.util;
 
-import cn.hutool.core.util.StrUtil;
 import com.dtp.common.em.ConfigFileTypeEnum;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.properties.DtpProperties.Etcd;
@@ -168,7 +167,7 @@ public final class EtcdUtil {
         if (!configKey.endsWith("/")) {
             configKey += "/";
         }
-        return StrUtil.removePrefix(keyValue.getKey().toString(StandardCharsets.UTF_8), configKey);
+        return StringUtils.removeStart(keyValue.getKey().toString(StandardCharsets.UTF_8), configKey);
     }
 
     /**

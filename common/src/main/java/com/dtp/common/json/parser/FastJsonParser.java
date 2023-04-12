@@ -1,6 +1,7 @@
 package com.dtp.common.json.parser;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 
 import java.lang.reflect.Type;
 
@@ -9,10 +10,6 @@ import java.lang.reflect.Type;
  * @see com.dtp.common.json.parser dynamic-tp
  */
 public class FastJsonParser extends AbstractJsonParser {
-
-    public FastJsonParser() {
-        super();
-    }
 
     private static final String PACKAGE_NAME = "com.alibaba.fastjson.JSON";
 
@@ -23,11 +20,12 @@ public class FastJsonParser extends AbstractJsonParser {
 
     @Override
     public String toJson(Object obj) {
-        return JSON.toJSONString(obj);
+        return JSON.toJSONString(obj, SerializerFeature.WriteDateUseDateFormat, SerializerFeature.DisableCircularReferenceDetect);
     }
 
     @Override
     protected String getMapperClassName() {
         return PACKAGE_NAME;
     }
+
 }

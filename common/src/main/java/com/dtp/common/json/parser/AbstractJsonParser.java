@@ -4,7 +4,7 @@ package com.dtp.common.json.parser;
  * @version v1.0.0
  * @see com.dtp.common.json.parser dynamic-tp
  */
-public abstract class AbstractJsonParser<T> implements JsonParser {
+public abstract class AbstractJsonParser implements JsonParser {
 
     public boolean isSupport() {
         try {

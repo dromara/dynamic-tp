@@ -59,7 +59,6 @@ public class JacksonParser extends AbstractJsonParser<ObjectMapper> {
         return mapper;
     }
 
-    @Override
     protected ObjectMapper createMapper() {
         final ObjectMapper objectMapper = new ObjectMapper();
         //configure方法 配置一些需要的参数

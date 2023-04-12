@@ -38,8 +38,6 @@ public class GsonParser extends AbstractJsonParser<Gson> {
         return mapper;
     }
 
-
-    @Override
     protected Gson createMapper() {
         return new GsonBuilder()
                 .setDateFormat(DATE_FORMAT)

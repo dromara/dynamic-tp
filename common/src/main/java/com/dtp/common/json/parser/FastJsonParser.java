@@ -5,16 +5,18 @@ import com.alibaba.fastjson.JSON;
 import java.lang.reflect.Type;
 
 /**
- * @author topsuder
  * @see com.dtp.common.json.parser dynamic-tp
+ *
+ * @author topsuder
+ * @since 1.1.3
  */
 public class FastJsonParser extends AbstractJsonParser {
+
+    private static final String PACKAGE_NAME = "com.alibaba.fastjson.JSON";
 
     public FastJsonParser() {
         super();
     }
-
-    private static final String PACKAGE_NAME = "com.alibaba.fastjson.JSON";
 
     @Override
     public <T> T fromJson(String json, Type typeOfT) {

@@ -141,7 +141,8 @@ public interface ExecutorAdapter<E extends Executor> extends Executor {
      * @return the queue capacity
      */
     default int getQueueCapacity() {
-        return getQueueSize() + getQueueRemainingCapacity();
+        int capacity = getQueueSize() + getQueueRemainingCapacity();
+        return capacity < 0 ? Integer.MAX_VALUE : capacity;
     }
 
     /**
@@ -164,11 +165,11 @@ public interface ExecutorAdapter<E extends Executor> extends Executor {
     }
 
     /**
-     * Get the reject handler name
+     * Get the reject handler type
      *
-     * @return the reject handler name
+     * @return the reject handler type
      */
-    default String getRejectHandlerName() {
+    default String getRejectHandlerType() {
         return Optional.ofNullable(getRejectedExecutionHandler())
                 .map(h -> h.getClass().getSimpleName())
                 .orElse("unsupported");

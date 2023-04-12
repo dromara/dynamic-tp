@@ -21,10 +21,10 @@ import java.util.ServiceLoader;
  */
 @Slf4j
 public final class JsonUtil {
-    private static final JsonParser jsonParser;
+    private static final JsonParser JSON_PARSER;
 
     static {
-        jsonParser = createJsonParser();
+        JSON_PARSER = createJsonParser();
     }
 
     private static JsonParser createJsonParser() {
@@ -36,7 +36,7 @@ public final class JsonUtil {
                 if (jsonParser.isSupport()) {
                     return jsonParser;
                 }
-            } catch (Throwable ignored) {}
+            } catch (Throwable ignored) { }
         }
         throw new IllegalStateException("No JSON parser found");
     }
@@ -49,7 +49,7 @@ public final class JsonUtil {
      * @author topsuder 🌼🐇
      */
     public static String toJson(Object obj) {
-        return jsonParser.toJson(obj);
+        return JSON_PARSER.toJson(obj);
     }
     /**
      * 方法注释: <br>
@@ -61,7 +61,7 @@ public final class JsonUtil {
      */
 
     public static <T> T fromJson(String json, Type typeOfT) {
-        return jsonParser.fromJson(json, typeOfT);
+        return JSON_PARSER.fromJson(json, typeOfT);
     }
 
 

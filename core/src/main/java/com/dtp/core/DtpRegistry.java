@@ -223,8 +223,8 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
         ExecutorAdapter<?> executor = executorWrapper.getExecutor();
         // update reject handler
-        String currentRejectHandlerName = executor.getRejectHandlerName();
-        if (!Objects.equals(currentRejectHandlerName, props.getRejectedHandlerType())) {
+        String currentRejectHandlerType = executor.getRejectHandlerType();
+        if (!Objects.equals(currentRejectHandlerType, props.getRejectedHandlerType())) {
             val rejectHandler = RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType());
             executor.setRejectedExecutionHandler(rejectHandler);
         }
@@ -241,7 +241,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         }
         // update reject handler
         executor.setRejectEnhanced(props.isRejectEnhanced());
-        if (!Objects.equals(executor.getRejectHandlerName(), props.getRejectedHandlerType())) {
+        if (!Objects.equals(executor.getRejectHandlerType(), props.getRejectedHandlerType())) {
             executor.setRejectHandler(RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType()));
         }
         executor.setWaitForTasksToCompleteOnShutdown(props.isWaitForTasksToCompleteOnShutdown());

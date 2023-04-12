@@ -25,7 +25,7 @@ public class MetricsConverter {
         poolStats.setPoolName(wrapper.getThreadPoolName());
         if (executor instanceof DtpExecutor) {
             DtpExecutor dtpExecutor = (DtpExecutor) executor;
-            poolStats.setRejectHandlerName(dtpExecutor.getRejectHandlerName());
+            poolStats.setRejectHandlerName(dtpExecutor.getRejectHandlerType());
             poolStats.setRejectCount(dtpExecutor.getRejectCount());
             poolStats.setRunTimeoutCount(dtpExecutor.getRunTimeoutCount());
             poolStats.setQueueTimeoutCount(dtpExecutor.getQueueTimeoutCount());

@@ -6,10 +6,12 @@ import com.google.gson.GsonBuilder;
 import java.lang.reflect.Type;
 
 /**
- * @author topsuder
  * @see com.dtp.common.json.parser dynamic-tp
+ *
+ * @author topsuder
+ * @since 1.1.3
  */
-public class GsonParser extends AbstractJsonParser<Gson> {
+public class GsonParser extends AbstractJsonParser {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final String PACKAGE_NAME = "com.google.gson.Gson";

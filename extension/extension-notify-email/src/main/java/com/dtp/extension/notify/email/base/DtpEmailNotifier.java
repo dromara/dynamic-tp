@@ -89,7 +89,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("queueCapacity", executor.getQueueCapacity());
         context.setVariable("queueSize", executor.getQueueSize());
         context.setVariable("queueRemaining", executor.getQueueRemainingCapacity());
-        context.setVariable("rejectType", getRejectHandlerName(executor));
+        context.setVariable("rejectType", executor.getRejectHandlerType());
         context.setVariable("rejectCount", alarmCounter.getLeft());
         context.setVariable("runTimeoutCount", alarmCounter.getMiddle());
         context.setVariable("queueTimeoutCount", alarmCounter.getRight());
@@ -120,7 +120,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("oldQueueCapacity", oldFields.getQueueCapacity());
         context.setVariable("newQueueCapacity", executor.getQueueCapacity());
         context.setVariable("oldRejectType", oldFields.getRejectType());
-        context.setVariable("newRejectType", getRejectHandlerName(executor));
+        context.setVariable("newRejectType", executor.getRejectHandlerType());
         context.setVariable("notifyTime", DateTime.now());
         context.setVariable("diffs", diffs != null ? diffs : Collections.emptySet());
         return ((EmailNotifier) notifier).processTemplateContent("notice", context);

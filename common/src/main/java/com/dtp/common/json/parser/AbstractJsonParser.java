@@ -1,10 +1,12 @@
 package com.dtp.common.json.parser;
+
 /**
- * @author topsuder
- * @version v1.0.0
  * @see com.dtp.common.json.parser dynamic-tp
+ *
+ * @author topsuder
+ * @since 1.1.3
  */
-public abstract class AbstractJsonParser<T> implements JsonParser {
+public abstract class AbstractJsonParser implements JsonParser {
 
     public boolean isSupport() {
         try {
@@ -15,5 +17,10 @@ public abstract class AbstractJsonParser<T> implements JsonParser {
         }
     }
 
+    /**
+     * get mapper class name
+     *
+     * @return mapper class name
+     */
     protected abstract String getMapperClassName();
 }

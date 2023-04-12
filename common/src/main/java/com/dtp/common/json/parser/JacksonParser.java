@@ -12,11 +12,13 @@ import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 
 /**
- * @author topsuder
  * @see com.dtp.common.json.parser dynamic-tp
+ *
+ * @author topsuder
+ * @since 1.1.3
  */
 @Slf4j
-public class JacksonParser extends AbstractJsonParser<ObjectMapper> {
+public class JacksonParser extends AbstractJsonParser {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final String PACKAGE_NAME = "com.fasterxml.jackson.databind.ObjectMapper";
@@ -70,7 +72,6 @@ public class JacksonParser extends AbstractJsonParser<ObjectMapper> {
         //JsonInclude.Include.NON_NULL    属性为NULL 不序列化
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
-
         //反序列化时,遇到未知属性会不会报错
         //true - 遇到没有的属性就报错 false - 没有的属性不会管，不会报错
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -78,13 +79,11 @@ public class JacksonParser extends AbstractJsonParser<ObjectMapper> {
         //如果是空对象的时候,不抛异常
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
-
         //修改序列化后日期格式
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         objectMapper.setDateFormat(new SimpleDateFormat(DATE_FORMAT));
         return objectMapper;
     }
-
 
     @Override
     protected String getMapperClassName() {

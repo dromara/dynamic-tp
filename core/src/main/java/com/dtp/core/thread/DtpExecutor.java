@@ -45,11 +45,6 @@ public class DtpExecutor extends DtpLifecycleSupport
     private String threadPoolAliasName;
 
     /**
-     * RejectHandler name.
-     */
-    private String rejectHandlerName;
-
-    /**
      * If enable notify.
      */
     private boolean notifyEnabled = true;
@@ -73,6 +68,11 @@ public class DtpExecutor extends DtpLifecycleSupport
      * If pre start all core threads.
      */
     private boolean preStartAllCoreThreads;
+
+    /**
+     * RejectHandler type.
+     */
+    private String rejectHandlerType;
 
     /**
      * If enhance reject.
@@ -140,8 +140,7 @@ public class DtpExecutor extends DtpLifecycleSupport
                        BlockingQueue<Runnable> workQueue,
                        ThreadFactory threadFactory,
                        RejectedExecutionHandler handler) {
-        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);
-        setRejectHandler(handler);
+        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
     }
 
     @Override
@@ -184,7 +183,7 @@ public class DtpExecutor extends DtpLifecycleSupport
             prestartAllCoreThreads();
         }
         // reset reject handler in initialize phase according to rejectEnhanced
-        setRejectHandler(RejectHandlerGetter.buildRejectedHandler(getRejectHandlerName()));
+        setRejectHandler(RejectHandlerGetter.buildRejectedHandler(getRejectHandlerType()));
     }
 
     protected Runnable wrapTasks(Runnable command) {
@@ -220,9 +219,10 @@ public class DtpExecutor extends DtpLifecycleSupport
     }
 
     public void setRejectHandler(RejectedExecutionHandler handler) {
-        this.rejectHandlerName = handler.getClass().getSimpleName();
+        this.rejectHandlerType = handler.getClass().getSimpleName();
         if (!isRejectEnhanced()) {
             setRejectedExecutionHandler(handler);
+            return;
         }
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
     }
@@ -247,18 +247,13 @@ public class DtpExecutor extends DtpLifecycleSupport
         return getQueue().getClass().getSimpleName();
     }
 
-    public int getQueueCapacity() {
-        int capacity = getQueueSize() + getQueueRemainingCapacity();
-        return capacity < 0 ? Integer.MAX_VALUE : capacity;
-    }
-
     @Override
-    public String getRejectHandlerName() {
-        return rejectHandlerName;
+    public String getRejectHandlerType() {
+        return rejectHandlerType;
     }
 
-    public List<TaskWrapper> getTaskWrappers() {
-        return taskWrappers;
+    public void setRejectHandlerType(String rejectHandlerType) {
+        this.rejectHandlerType = rejectHandlerType;
     }
 
     public void setTaskWrappers(List<TaskWrapper> taskWrappers) {

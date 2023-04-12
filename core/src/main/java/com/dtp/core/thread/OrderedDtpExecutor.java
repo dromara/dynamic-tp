@@ -1,41 +1,36 @@
 package com.dtp.core.thread;
 
-import com.dtp.core.notifier.manager.NotifyHelper;
-import com.dtp.core.reject.RejectHandlerGetter;
-import com.dtp.core.support.ThreadPoolBuilder;
+import com.dtp.core.support.runnable.OrderedRunnable;
+import com.dtp.core.support.selector.ExecutorSelector;
+import com.dtp.core.support.selector.HashedExecutorSelector;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
- * {@link OrderedDtpExecutor} can ensure that the delivered tasks are executed
+ * {@link OrderedDtpExecutor1} can ensure that the delivered tasks are executed
  * according to the key and task submission order. It is applicable to scenarios
  * where the throughput is improved through parallel processing and the tasks
  * are run in a certain order.
  *
- * @author dragon-zhang
+ * @author yanhom
+ * @since 1.1.3
  */
 @Slf4j
 public class OrderedDtpExecutor extends DtpExecutor {
-    
-    protected final AtomicInteger count = new AtomicInteger(0);
-    
-    protected final Map<Integer, DtpExecutor> executors = new ConcurrentHashMap<>();
-    
+
+    private final ExecutorSelector selector = new HashedExecutorSelector();
+
+    private final List<Executor> childExecutors = Lists.newArrayList();
+
     public OrderedDtpExecutor(int corePoolSize,
                               int maximumPoolSize,
                               long keepAliveTime,
@@ -44,7 +39,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
         this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
                 Executors.defaultThreadFactory(), new AbortPolicy());
     }
-    
+
     public OrderedDtpExecutor(int corePoolSize,
                               int maximumPoolSize,
                               long keepAliveTime,
@@ -54,7 +49,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
         this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
                 threadFactory, new AbortPolicy());
     }
-    
+
     public OrderedDtpExecutor(int corePoolSize,
                               int maximumPoolSize,
                               long keepAliveTime,
@@ -64,7 +59,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
         this(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,
                 Executors.defaultThreadFactory(), handler);
     }
-    
+
     public OrderedDtpExecutor(int corePoolSize,
                               int maximumPoolSize,
                               long keepAliveTime,
@@ -74,262 +69,83 @@ public class OrderedDtpExecutor extends DtpExecutor {
                               RejectedExecutionHandler handler) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
         for (int i = 0; i < corePoolSize; i++) {
-            DtpExecutor executor = ThreadPoolBuilder.newBuilder()
-                    .corePoolSize(1)
-                    .maximumPoolSize(1)
-                    .keepAliveTime(keepAliveTime)
-                    .timeUnit(unit)
-                    .workQueue(getQueueName(), getQueueCapacity())
-                    .threadFactory(((NamedThreadFactory) getThreadFactory()).getNamePrefix() + "#" + i)
-                    .rejectedExecutionHandler(handler)
-                    .buildDynamic();
-            executors.put(i, executor);
+            ChildExecutor childExecutor = new ChildExecutor();
+            childExecutors.add(childExecutor);
         }
     }
 
     @Override
     public void execute(Runnable command) {
-        execute(null, command);
-    }
-    
-    public void execute(Object arg, Runnable command) {
-        choose(arg).execute(command);
-    }
-    
-    @Override
-    public Future<?> submit(Runnable task) {
-        return submit((Object) null, task);
-    }
-    
-    public Future<?> submit(Object arg, Runnable task) {
-        return choose(arg).submit(task);
-    }
-    
-    @Override
-    public <T> Future<T> submit(Runnable task, T result) {
-        return submit(null, task, result);
-    }
-    
-    public <T> Future<T> submit(Object arg, Runnable task, T result) {
-        return choose(arg).submit(task, result);
-    }
-    
-    @Override
-    public <T> Future<T> submit(Callable<T> task) {
-        return submit((Object) null, task);
-    }
-    
-    public <T> Future<T> submit(Object arg, Callable<T> task) {
-        return choose(arg).submit(task);
-    }
-    
-    public DtpExecutor choose(Object arg) {
-        int size = this.executors.size();
-        if (size == 1) {
-            return this.executors.get(0);
+        if (command == null) {
+            throw new NullPointerException();
         }
-        int index;
-        if (Objects.isNull(arg)) {
-            int i = count.getAndIncrement();
-            if (i < 0) {
-                i = 0;
-                count.set(0);
-            }
-            index = i;
+        if (command instanceof OrderedRunnable) {
+            doOrderedExecute((OrderedRunnable) command);
         } else {
-            index = arg.hashCode();
+            doUnorderedExecute(command);
         }
-        return this.executors.get(index % size);
     }
 
-    @Override
-    protected void initialize() {
-        executors.forEach((k, v) -> {
-            NotifyHelper.initNotify(v);
-            if (isPreStartAllCoreThreads()) {
-                v.prestartAllCoreThreads();
+    private void doOrderedExecute(OrderedRunnable orderedRunnable) {
+        Executor executor = selector.select(childExecutors, orderedRunnable.hashKey());
+        executor.execute(orderedRunnable);
+    }
+
+    private void doUnorderedExecute(Runnable command) {
+        super.execute(command);
+    }
+
+    void onAfterExecute(Runnable r, Throwable t) {
+        afterExecute(r, t);
+    }
+
+    private final class ChildExecutor implements Executor, Runnable {
+        private final LinkedList<Runnable> tasks = new LinkedList<>();
+
+        ChildExecutor() {
+            super();
+        }
+
+        public void execute(Runnable command) {
+            boolean needExecution;
+            synchronized (tasks) {
+                needExecution = tasks.isEmpty();
+                tasks.add(wrapTasks(command));
             }
-            populateExecutor(v, k);
-            // reset reject handler in initialize phase according to rejectEnhanced
-            v.setRejectHandler(RejectHandlerGetter.buildRejectedHandler(getRejectHandlerName()));
-        });
-    }
+            if (needExecution) {
+                doUnorderedExecute(this);
+            }
+        }
 
-    @Override
-    public void setCorePoolSize(int corePoolSize) {
-        if (corePoolSize < this.executors.size()) {
-            log.error("Except corePoolSize must >= {}, newCorePoolSize: {}, threadPoolName: {}",
-                    this.executors.size(), corePoolSize, threadPoolName);
-            return;
-        }
-        for (int i = this.executors.size(); i < corePoolSize; i++) {
-            DtpExecutor executor = ThreadPoolBuilder.newBuilder()
-                    .corePoolSize(1)
-                    .maximumPoolSize(1)
-                    .keepAliveTime(getKeepAliveTime(TimeUnit.SECONDS))
-                    .timeUnit(TimeUnit.SECONDS)
-                    .workQueue(getQueueName(), getQueueCapacity())
-                    .threadFactory(((NamedThreadFactory) getThreadFactory()).getNamePrefix() + "#" + i)
-                    .rejectedExecutionHandler(getRejectHandlerName())
-                    .buildDynamic();
-            this.executors.put(i, executor);
-        }
-    }
-    
-    @Override
-    public int getCorePoolSize() {
-        return this.executors.size();
-    }
-    
-    @Override
-    public final int getMaximumPoolSize() {
-        return getCorePoolSize();
-    }
+        public void run() {
+            Thread thread = Thread.currentThread();
+            for (;;) {
+                final Runnable task;
+                synchronized (tasks) {
+                    task = tasks.getFirst();
+                }
 
-    @Override
-    public final int getPoolSize() {
-        int poolSize = 0;
-        for (DtpExecutor executor : this.executors.values()) {
-            poolSize += executor.getPoolSize();
+                boolean ran = false;
+                beforeExecute(thread, task);
+                try {
+                    task.run();
+                    ran = true;
+                    onAfterExecute(task, null);
+                } catch (RuntimeException e) {
+                    if (!ran) {
+                        onAfterExecute(task, e);
+                    }
+                    throw e;
+                } finally {
+                    synchronized (tasks) {
+                        tasks.removeFirst();
+                        if (tasks.isEmpty()) {
+                            break;
+                        }
+                    }
+                }
+            }
         }
-        return poolSize;
-    }
-
-    @Override
-    public int getActiveCount() {
-        int activeCount = 0;
-        for (DtpExecutor executor : this.executors.values()) {
-            activeCount += executor.getActiveCount();
-        }
-        return activeCount;
-    }
-
-    @Override
-    public int getLargestPoolSize() {
-        int largestPoolSize = 0;
-        for (DtpExecutor executor : this.executors.values()) {
-            largestPoolSize += executor.getLargestPoolSize();
-        }
-        return largestPoolSize;
-    }
-
-    @Override
-    public long getTaskCount() {
-        long taskCount = 0;
-        for (DtpExecutor executor : this.executors.values()) {
-            taskCount += executor.getTaskCount();
-        }
-        return taskCount;
-    }
-
-    @Override
-    public long getCompletedTaskCount() {
-        long completedTaskCount = 0;
-        for (DtpExecutor executor : this.executors.values()) {
-            completedTaskCount += executor.getCompletedTaskCount();
-        }
-        return completedTaskCount;
-    }
-
-    @Override
-    public long getRejectCount() {
-        long rejectCount = 0;
-        for (DtpExecutor executor : this.executors.values()) {
-            rejectCount += executor.getRejectCount();
-        }
-        return rejectCount;
-    }
-
-    @Override
-    public long getRunTimeoutCount() {
-        long runTimeoutCount = 0;
-        for (DtpExecutor executor : this.executors.values()) {
-            runTimeoutCount += executor.getRunTimeoutCount();
-        }
-        return runTimeoutCount;
-    }
-
-    @Override
-    public long getQueueTimeoutCount() {
-        long queueTimeoutCount = 0;
-        for (DtpExecutor executor : this.executors.values()) {
-            queueTimeoutCount += executor.getQueueTimeoutCount();
-        }
-        return queueTimeoutCount;
-    }
-
-    @Override
-    public int getQueueSize() {
-        int queueSize = 0;
-        for (DtpExecutor executor : this.executors.values()) {
-            queueSize += executor.getQueueSize();
-        }
-        return queueSize;
-    }
-
-    @Override
-    public int getQueueRemainingCapacity() {
-        int queueRemainingCapacity = 0;
-        for (DtpExecutor executor : this.executors.values()) {
-            queueRemainingCapacity += executor.getQueueRemainingCapacity();
-        }
-        return queueRemainingCapacity;
-    }
-
-    @Override
-    public void shutdown() {
-        for (DtpExecutor executor : this.executors.values()) {
-            executor.shutdown();
-        }
-    }
-    
-    @Override
-    public List<Runnable> shutdownNow() {
-        return this.executors.values().stream()
-                .map(ExecutorService::shutdownNow)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-    }
-    
-    @Override
-    public boolean isShutdown() {
-        boolean result = true;
-        for (DtpExecutor executor : this.executors.values()) {
-            result = result && executor.isShutdown();
-        }
-        return result;
-    }
-    
-    @Override
-    public boolean isTerminated() {
-        boolean result = true;
-        for (DtpExecutor executor : this.executors.values()) {
-            result = result && executor.isTerminated();
-        }
-        return result;
-    }
-    
-    @Override
-    public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
-        boolean result = true;
-        for (DtpExecutor executor : this.executors.values()) {
-            result = result && executor.awaitTermination(timeout, unit);
-        }
-        return result;
-    }
-
-    private void populateExecutor(DtpExecutor executor, int idx) {
-        executor.setTaskWrappers(getTaskWrappers());
-        executor.setNotifyItems(getNotifyItems());
-        executor.setPlatformIds(getPlatformIds());
-        executor.setNotifyEnabled(isNotifyEnabled());
-        executor.setRejectEnhanced(isRejectEnhanced());
-        executor.setQueueTimeout(getQueueTimeout());
-        executor.setRunTimeout(getRunTimeout());
-        executor.setAwaitTerminationSeconds(getAwaitTerminationSeconds());
-        executor.setWaitForTasksToCompleteOnShutdown(isWaitForTasksToCompleteOnShutdown());
-        executor.setThreadPoolName(getThreadPoolName() + "-" + idx);
-        executor.setAllowCoreThreadTimeOut(allowsCoreThreadTimeOut());
-        executor.setThreadPoolAliasName(getThreadPoolAliasName());
     }
 }
+

@@ -1,6 +1,5 @@
 package com.dtp.common.util;
 
-import com.dtp.common.ex.DtpException;
 import com.dtp.common.json.parser.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 

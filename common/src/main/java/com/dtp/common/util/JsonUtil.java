@@ -40,7 +40,7 @@ public final class JsonUtil {
                 }
             } catch (Throwable ignored) {}
         }
-        throw new DtpException("No JSON parser found");
+        throw new IllegalStateException("No JSON parser found");
     }
 
     /**

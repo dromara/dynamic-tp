@@ -56,12 +56,12 @@
 
         <dependency>
             <groupId>cn.hutool</groupId>
-            <artifactId>hutool-http</artifactId>
+            <artifactId>hutool-core</artifactId>
         </dependency>
 
         <dependency>
             <groupId>cn.hutool</groupId>
-            <artifactId>hutool-json</artifactId>
+            <artifactId>hutool-http</artifactId>
         </dependency>
 
     </dependencies>

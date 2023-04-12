@@ -38,7 +38,7 @@ import static com.dtp.common.em.QueueTypeEnum.LINKED_BLOCKING_QUEUE;
 public class AlarmManager {
 
     private static final ExecutorService ALARM_EXECUTOR = ThreadPoolBuilder.newBuilder()
-            .threadPoolName("dtp-alarm")
+            .threadPoolName("dtp-alaram")
             .threadFactory("dtp-alarm")
             .corePoolSize(1)
             .maximumPoolSize(2)

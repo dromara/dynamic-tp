@@ -16,7 +16,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
- * {@link OrderedDtpExecutor1} can ensure that the delivered tasks are executed
+ * {@link OrderedDtpExecutor} can ensure that the delivered tasks are executed
  * according to the key and task submission order. It is applicable to scenarios
  * where the throughput is improved through parallel processing and the tasks
  * are run in a certain order.

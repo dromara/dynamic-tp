@@ -5,7 +5,7 @@ import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.notifier.filter.NotifyFilter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.List;

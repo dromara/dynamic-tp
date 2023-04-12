@@ -2,7 +2,7 @@ package com.dtp.core.support.wrapper;
 
 import com.dtp.common.util.StringUtil;
 import com.google.common.collect.Lists;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;

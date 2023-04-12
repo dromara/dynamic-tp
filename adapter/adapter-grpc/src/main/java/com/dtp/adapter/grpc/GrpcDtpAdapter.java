@@ -9,7 +9,7 @@ import io.grpc.internal.ServerImpl;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.devh.boot.grpc.server.serverfactory.GrpcServerLifecycle;
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.MapUtils;
 
 import java.util.Objects;
 import java.util.concurrent.Executor;

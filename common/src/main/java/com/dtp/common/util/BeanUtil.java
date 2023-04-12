@@ -1,7 +1,7 @@
 package com.dtp.common.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;

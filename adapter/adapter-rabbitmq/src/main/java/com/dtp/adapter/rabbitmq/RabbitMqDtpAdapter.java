@@ -7,7 +7,7 @@ import com.dtp.common.util.ReflectionUtil;
 import com.dtp.core.support.ExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.amqp.rabbit.connection.AbstractConnectionFactory;
 
 import java.util.Objects;

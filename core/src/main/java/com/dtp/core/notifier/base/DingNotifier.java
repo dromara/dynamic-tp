@@ -11,7 +11,7 @@ import com.dtp.common.util.JsonUtil;
 import com.dtp.common.util.TimeUtil;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;

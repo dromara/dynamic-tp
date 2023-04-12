@@ -4,7 +4,7 @@ import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.util.StringUtil;
 import lombok.Data;
 import lombok.val;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;

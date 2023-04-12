@@ -1,6 +1,7 @@
 package com.dtp.test.common.util;
 
-import com.dtp.common.util.JsonUtils;
+import com.dtp.common.util.JsonUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -13,12 +14,13 @@ import org.junit.jupiter.api.Test;
  * @Description
  * @see com.dtp.test.common.util dynamic-tp
  */
+@Slf4j
 class JsonUtilTest {
 
     /**
      * 测试 toJson 构造一个测试用例内部类
      */
-    class TestObject {
+    static class TestObject {
         private String name;
         private int age;
 
@@ -42,6 +44,14 @@ class JsonUtilTest {
         public void setAge(int age) {
             this.age = age;
         }
+
+        @Override
+        public String toString() {
+            return "TestObject{" +
+                    "name='" + name + '\'' +
+                    ", age=" + age +
+                    '}';
+        }
     }
 
 
@@ -49,13 +59,13 @@ class JsonUtilTest {
     void testToJson() {
         //构造测试用例
         TestObject testObject = new TestObject("test", 1);
-        JsonUtils.toJson(testObject);
+        JsonUtil.toJson(testObject);
     }
 
     @Test
     void testFromJson() {
         //构造测试用例
-        final TestObject testObject = JsonUtils.fromJson("{\"name\":\"test\",\"age\":1}", TestObject.class);
-        System.out.println(testObject.getName());
+        final TestObject testObject = JsonUtil.fromJson("{\"name\":\"test\",\"age\":1}", TestObject.class);
+        log.info(testObject.toString());
     }
 }

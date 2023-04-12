@@ -2,6 +2,8 @@ package com.dtp.common.json.parser;
 
 import com.alibaba.fastjson.JSON;
 
+import java.lang.reflect.Type;
+
 /**
  * @author topsuder
  * @DATE 2023/4/11-14:39
@@ -9,9 +11,15 @@ import com.alibaba.fastjson.JSON;
  */
 public class FastJsonParser extends AbstractJsonParser {
 
+    public FastJsonParser() {
+        super();
+    }
+
+    private static final String PACKAGE_NAME = "com.alibaba.fastjson.JSON";
+
     @Override
-    public <T> T fromJson(String json, Class<T> clazz) {
-        return JSON.parseObject(json, clazz);
+    public <T> T fromJson(String json, Type typeOfT) {
+        return JSON.parseObject(json, typeOfT);
     }
 
     @Override
@@ -20,12 +28,7 @@ public class FastJsonParser extends AbstractJsonParser {
     }
 
     @Override
-    protected boolean skipMapper() {
-        return true;
-    }
-
-    @Override
     protected String getMapperClassName() {
-        return "com.alibaba.fastjson.JSON";
+        return PACKAGE_NAME;
     }
 }

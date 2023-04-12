@@ -1,11 +1,16 @@
 package com.dtp.common.json.parser;
 
-import com.dtp.common.ex.DtpException;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+
 /**
  * @author topsuder
  * @DATE 2023/4/11-14:39
@@ -15,16 +20,21 @@ import java.io.IOException;
 @Slf4j
 public class JacksonParser extends AbstractJsonParser<ObjectMapper> {
 
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String PACKAGE_NAME = "com.fasterxml.jackson.databind.ObjectMapper";
+    private volatile ObjectMapper mapper;
+
     public JacksonParser() {
         super();
     }
 
     @Override
-    public <T> T fromJson(String json, Class<T> clazz) {
+    public <T> T fromJson(String json, Type typeOfT) {
         try {
-            return getMapper().readValue(json, clazz);
+            final ObjectMapper objectMapper = getMapper();
+            return objectMapper.readValue(json, objectMapper.constructType(typeOfT));
         } catch (IOException e) {
-            throw new DtpException(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
@@ -33,18 +43,54 @@ public class JacksonParser extends AbstractJsonParser<ObjectMapper> {
         try {
             return getMapper().writeValueAsString(obj);
         } catch (JsonProcessingException e) {
-            throw new DtpException(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
+    }
+
+    private ObjectMapper getMapper() {
+        // double check lock
+        if (mapper == null) {
+            synchronized (this) {
+                if (mapper == null) {
+                    mapper = createMapper();
+                }
+            }
+        }
+        return mapper;
     }
 
     @Override
     protected ObjectMapper createMapper() {
-        return new ObjectMapper();
+        final ObjectMapper objectMapper = new ObjectMapper();
+        //configure方法 配置一些需要的参数
+        // 转换为格式化的json 显示出来的格式美化
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+        //序列化的时候序列对象的那些属性
+        //JsonInclude.Include.NON_DEFAULT 属性为默认值不序列化
+        //JsonInclude.Include.ALWAYS      所有属性
+        //JsonInclude.Include.NON_EMPTY   属性为 空（“”） 或者为 NULL 都不序列化
+        //JsonInclude.Include.NON_NULL    属性为NULL 不序列化
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+
+
+        //反序列化时,遇到未知属性会不会报错
+        //true - 遇到没有的属性就报错 false - 没有的属性不会管，不会报错
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        //如果是空对象的时候,不抛异常
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+
+
+        //修改序列化后日期格式
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.setDateFormat(new SimpleDateFormat(DATE_FORMAT));
+        return objectMapper;
     }
 
 
     @Override
     protected String getMapperClassName() {
-        return "com.fasterxml.jackson.databind.ObjectMapper";
+        return PACKAGE_NAME;
     }
 }

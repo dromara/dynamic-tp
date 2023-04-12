@@ -63,27 +63,27 @@ public class JacksonParser extends AbstractJsonParser<ObjectMapper> {
         final ObjectMapper objectMapper = new ObjectMapper();
         //configure方法 配置一些需要的参数
         // 转换为格式化的json 显示出来的格式美化
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
         //序列化的时候序列对象的那些属性
         //JsonInclude.Include.NON_DEFAULT 属性为默认值不序列化
         //JsonInclude.Include.ALWAYS      所有属性
         //JsonInclude.Include.NON_EMPTY   属性为 空（“”） 或者为 NULL 都不序列化
         //JsonInclude.Include.NON_NULL    属性为NULL 不序列化
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
 
         //反序列化时,遇到未知属性会不会报错
         //true - 遇到没有的属性就报错 false - 没有的属性不会管，不会报错
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         //如果是空对象的时候,不抛异常
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
 
         //修改序列化后日期格式
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        mapper.setDateFormat(new SimpleDateFormat(DATE_FORMAT));
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        objectMapper.setDateFormat(new SimpleDateFormat(DATE_FORMAT));
         return objectMapper;
     }
 

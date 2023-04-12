@@ -4,6 +4,8 @@ import com.dtp.common.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
+import java.util.Date;
+
 /**
  * <span>Form File</span>
  * <p>Description</p>
@@ -24,11 +26,28 @@ class JsonUtilTest {
         private String name;
         private int age;
 
+        private Date date;
+
         public TestObject(String name, int age) {
             this.name = name;
             this.age = age;
         }
 
+        public TestObject() {
+        }
+
+        public TestObject(String name, int age, Date date) {
+            this.name = name;
+            this.age = age;
+            this.date = date;
+        }
+        public Date getDate() {
+            return date;
+        }
+
+        public void setDate(Date date) {
+            this.date = date;
+        }
         public String getName() {
             return name;
         }
@@ -50,6 +69,7 @@ class JsonUtilTest {
             return "TestObject{" +
                     "name='" + name + '\'' +
                     ", age=" + age +
+                    ", date=" + date +
                     '}';
         }
     }
@@ -57,15 +77,16 @@ class JsonUtilTest {
 
     @Test
     void testToJson() {
-        //构造测试用例
         TestObject testObject = new TestObject("test", 1);
-        JsonUtil.toJson(testObject);
+        log.info(JsonUtil.toJson(testObject));
     }
 
     @Test
     void testFromJson() {
-        //构造测试用例
-        final TestObject testObject = JsonUtil.fromJson("{\"name\":\"test\",\"age\":1}", TestObject.class);
-        log.info(testObject.toString());
+        String json = "{\"name\":\"test\",\"age\":1,\"date\":\"2021-04-12 11:56:00\"}";
+        TestObject testObject = JsonUtil.fromJson(json, TestObject.class);
+        log.info("testObject:{}", testObject);
     }
+
+
 }

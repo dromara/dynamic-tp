@@ -41,7 +41,6 @@ public class GsonParser extends AbstractJsonParser<Gson> {
     protected Gson createMapper() {
         return new GsonBuilder()
                 .setDateFormat(DATE_FORMAT)
-                .serializeNulls()
                 .create();
     }
 

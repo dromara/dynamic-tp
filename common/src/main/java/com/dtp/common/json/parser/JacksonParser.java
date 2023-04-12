@@ -3,28 +3,31 @@ package com.dtp.common.json.parser;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author topsuder
  * @see com.dtp.common.json.parser dynamic-tp
  */
 @Slf4j
-public class JacksonParser extends AbstractJsonParser<ObjectMapper> {
+public class JacksonParser extends AbstractJsonParser {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private static final String PACKAGE_NAME = "com.fasterxml.jackson.databind.ObjectMapper";
     private volatile ObjectMapper mapper;
-
-    public JacksonParser() {
-        super();
-    }
 
     @Override
     public <T> T fromJson(String json, Type typeOfT) {
@@ -58,31 +61,23 @@ public class JacksonParser extends AbstractJsonParser<ObjectMapper> {
     }
 
     protected ObjectMapper createMapper() {
-        final ObjectMapper objectMapper = new ObjectMapper();
-        //configure方法 配置一些需要的参数
-        // 转换为格式化的json 显示出来的格式美化
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-
-        //序列化的时候序列对象的那些属性
-        //JsonInclude.Include.NON_DEFAULT 属性为默认值不序列化
-        //JsonInclude.Include.ALWAYS      所有属性
-        //JsonInclude.Include.NON_EMPTY   属性为 空（“”） 或者为 NULL 都不序列化
-        //JsonInclude.Include.NON_NULL    属性为NULL 不序列化
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-
-        //反序列化时,遇到未知属性会不会报错
-        //true - 遇到没有的属性就报错 false - 没有的属性不会管，不会报错
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        //如果是空对象的时候,不抛异常
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-
-
-        //修改序列化后日期格式
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        objectMapper.setDateFormat(new SimpleDateFormat(DATE_FORMAT));
-        return objectMapper;
+        // 只提供最简单的方案
+        JavaTimeModule javaTimeModule = new JavaTimeModule();
+        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        return JsonMapper.builder()
+                .configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true)
+                // 反序列化时,遇到未知属性会不会报错 true - 遇到没有的属性就报错 false - 没有的属性不会管，不会报错
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                // 如果是空对象的时候,不抛异常
+                .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+                // 序列化的时候序列对象的那些属性
+                .serializationInclusion(JsonInclude.Include.NON_EMPTY)
+                .addModules(javaTimeModule)
+                .addModules(new JavaTimeModule())
+                // 修改序列化后日期格式
+                .defaultDateFormat(new SimpleDateFormat(DATE_FORMAT))
+                .build();
     }
 
 

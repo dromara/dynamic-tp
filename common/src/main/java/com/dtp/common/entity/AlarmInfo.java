@@ -1,7 +1,7 @@
 package com.dtp.common.entity;
 
-import cn.hutool.core.date.DateUtil;
 import com.dtp.common.em.NotifyItemEnum;
+import com.dtp.common.util.DateUtil;
 import lombok.Builder;
 import lombok.Data;
 

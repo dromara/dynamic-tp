@@ -78,6 +78,11 @@ public class DtpExecutorProps extends TpExecutorProps {
     private boolean preStartAllCoreThreads = false;
 
     /**
+     * If enhance reject.
+     */
+    private boolean rejectEnhanced = true;
+
+    /**
      * Task execute timeout, unit (ms), just for statistics.
      */
     private long runTimeout = 0;

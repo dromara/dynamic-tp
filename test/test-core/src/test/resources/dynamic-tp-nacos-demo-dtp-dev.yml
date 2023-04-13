@@ -109,6 +109,7 @@ spring:
           keepAliveTime: 50
           allowCoreThreadTimeOut: false
           threadNamePrefix: test
+          taskWrapperNames: ["ttl", "mdc"]                          # 任务包装器名称，集成TaskWrapper接口
         - threadPoolName: dtpExecutor12
           executorType: scheduled                     # 线程池类型common、eager：适用于io密集型
           corePoolSize: 6

@@ -25,7 +25,7 @@ public class ExecutorConverter {
         mainFields.setKeepAliveTime(dtpExecutor.getKeepAliveTime(TimeUnit.SECONDS));
         mainFields.setQueueType(dtpExecutor.getQueueName());
         mainFields.setQueueCapacity(dtpExecutor.getQueueCapacity());
-        mainFields.setRejectType(dtpExecutor.getRejectHandlerName());
+        mainFields.setRejectType(dtpExecutor.getRejectHandlerType());
         mainFields.setAllowCoreThreadTimeOut(dtpExecutor.allowsCoreThreadTimeOut());
         return mainFields;
     }
@@ -38,9 +38,9 @@ public class ExecutorConverter {
         mainFields.setMaxPoolSize(executor.getMaximumPoolSize());
         mainFields.setKeepAliveTime(executor.getKeepAliveTime(TimeUnit.SECONDS));
         mainFields.setQueueType(executor.getQueue().getClass().getSimpleName());
-        mainFields.setQueueCapacity(executor.getQueue().size() + executor.getQueue().remainingCapacity());
+        mainFields.setQueueCapacity(executor.getQueueCapacity());
         mainFields.setAllowCoreThreadTimeOut(executor.allowsCoreThreadTimeOut());
-        mainFields.setRejectType(executor.getRejectHandlerName());
+        mainFields.setRejectType(executor.getRejectHandlerType());
         return mainFields;
     }
 

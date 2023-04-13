@@ -79,7 +79,7 @@ public class ThreadPoolExecutorAdapter implements ExecutorAdapter<ThreadPoolExec
     public BlockingQueue<Runnable> getQueue() {
         return this.executor.getQueue();
     }
-    
+
     @Override
     public RejectedExecutionHandler getRejectedExecutionHandler() {
         return this.executor.getRejectedExecutionHandler();

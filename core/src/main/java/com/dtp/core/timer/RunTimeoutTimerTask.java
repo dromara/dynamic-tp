@@ -30,7 +30,7 @@ public class RunTimeoutTimerTask implements TimerTask {
 
     @Override
     public void run(Timeout timeout) {
-        dtpExecutor.getRunTimeoutCount().increment();
+        dtpExecutor.incRunTimeoutCount(1);
         AlarmManager.doAlarmAsync(dtpExecutor, NotifyItemEnum.RUN_TIMEOUT);
         log.warn("DynamicTp execute, run timeout, tpName: {}, taskName: {}, traceId: {}, stackTrace: {}",
                 dtpExecutor.getThreadPoolName(), runnable.getTaskName(),

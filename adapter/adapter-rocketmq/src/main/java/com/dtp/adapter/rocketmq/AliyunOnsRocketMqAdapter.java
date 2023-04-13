@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.MapUtils;
 
 /**
  * Aliyun business version rocketmq adapter.

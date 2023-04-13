@@ -12,7 +12,7 @@ import com.dtp.core.thread.NamedThreadFactory;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -29,6 +29,8 @@ import static com.dtp.common.constant.DynamicTpConst.NOTIFY_ITEMS;
 import static com.dtp.common.constant.DynamicTpConst.PLATFORM_IDS;
 import static com.dtp.common.constant.DynamicTpConst.PRE_START_ALL_CORE_THREADS;
 import static com.dtp.common.constant.DynamicTpConst.QUEUE_TIMEOUT;
+import static com.dtp.common.constant.DynamicTpConst.REJECT_ENHANCED;
+import static com.dtp.common.constant.DynamicTpConst.REJECT_HANDLER_TYPE;
 import static com.dtp.common.constant.DynamicTpConst.RUN_TIMEOUT;
 import static com.dtp.common.constant.DynamicTpConst.TASK_WRAPPERS;
 import static com.dtp.common.constant.DynamicTpConst.THREAD_POOL_ALIAS_NAME;
@@ -79,6 +81,8 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         propertyValues.put(WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN, props.isWaitForTasksToCompleteOnShutdown());
         propertyValues.put(AWAIT_TERMINATION_SECONDS, props.getAwaitTerminationSeconds());
         propertyValues.put(PRE_START_ALL_CORE_THREADS, props.isPreStartAllCoreThreads());
+        propertyValues.put(REJECT_HANDLER_TYPE, props.getRejectedHandlerType());
+        propertyValues.put(REJECT_ENHANCED, props.isRejectEnhanced());
         propertyValues.put(RUN_TIMEOUT, props.getRunTimeout());
         propertyValues.put(QUEUE_TIMEOUT, props.getQueueTimeout());
 

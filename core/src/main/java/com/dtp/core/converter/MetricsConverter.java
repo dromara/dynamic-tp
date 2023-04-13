@@ -1,9 +1,9 @@
 package com.dtp.core.converter;
 
-import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.entity.ThreadPoolStats;
-import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.support.ExecutorAdapter;
+import com.dtp.core.support.ExecutorWrapper;
+import com.dtp.core.thread.DtpExecutor;
 
 /**
  * MetricsConverter related
@@ -25,10 +25,10 @@ public class MetricsConverter {
         poolStats.setPoolName(wrapper.getThreadPoolName());
         if (executor instanceof DtpExecutor) {
             DtpExecutor dtpExecutor = (DtpExecutor) executor;
-            poolStats.setRejectHandlerName(dtpExecutor.getRejectHandlerName());
+            poolStats.setRejectHandlerName(dtpExecutor.getRejectHandlerType());
             poolStats.setRejectCount(dtpExecutor.getRejectCount());
-            poolStats.setRunTimeoutCount(dtpExecutor.getRunTimeoutCount().sum());
-            poolStats.setQueueTimeoutCount(dtpExecutor.getQueueTimeoutCount().sum());
+            poolStats.setRunTimeoutCount(dtpExecutor.getRunTimeoutCount());
+            poolStats.setQueueTimeoutCount(dtpExecutor.getQueueTimeoutCount());
             poolStats.setDynamic(true);
         } else {
             poolStats.setDynamic(false);
@@ -42,14 +42,14 @@ public class MetricsConverter {
                 .maximumPoolSize(executor.getMaximumPoolSize())
                 .poolSize(executor.getPoolSize())
                 .activeCount(executor.getActiveCount())
-                .taskCount(executor.getTaskCount())
-                .queueType(executor.getQueue().getClass().getSimpleName())
-                .queueCapacity(executor.getQueue().size() + executor.getQueue().remainingCapacity())
-                .queueSize(executor.getQueue().size())
-                .queueRemainingCapacity(executor.getQueue().remainingCapacity())
-                .completedTaskCount(executor.getCompletedTaskCount())
                 .largestPoolSize(executor.getLargestPoolSize())
-                .waitTaskCount(executor.getQueue().size())
+                .queueType(executor.getQueue().getClass().getSimpleName())
+                .queueCapacity(executor.getQueueCapacity())
+                .queueSize(executor.getQueueSize())
+                .queueRemainingCapacity(executor.getQueueRemainingCapacity())
+                .taskCount(executor.getTaskCount())
+                .completedTaskCount(executor.getCompletedTaskCount())
+                .waitTaskCount(executor.getQueueSize())
                 .build();
     }
 

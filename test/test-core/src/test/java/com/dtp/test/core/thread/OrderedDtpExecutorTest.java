@@ -7,6 +7,8 @@ import com.dtp.core.support.Ordered;
 import com.dtp.core.support.callable.OrderedCallable;
 import com.dtp.core.thread.OrderedDtpExecutor;
 import com.google.common.collect.Lists;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -36,6 +39,8 @@ class OrderedDtpExecutorTest {
 
     private final TransmittableThreadLocal<String> threadLocal = new TransmittableThreadLocal<>();
 
+    private final List<String> TABLES = Lists.newArrayList("table1", "table2", "table3");
+
     @Test
     void orderedExecute() {
         for (int i = 0; i < 10; i++) {
@@ -49,10 +54,12 @@ class OrderedDtpExecutorTest {
     void orderedSubmit() {
         List<Future<?>> futures = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
-            threadLocal.set("test ordered submit " + i);
-            MDC.put("traceId", UUID.randomUUID().toString());
-            futures.add(orderedDtpExecutor.submit(new TestOrderedCallable(String.valueOf(i))));
+            threadLocal.set("ttl" + i);
+            int tableIdx = ThreadLocalRandom.current().nextInt(3);
+            Table table = new Table(TABLES.get(tableIdx), i);
+            futures.add(orderedDtpExecutor.submit(new TestOrderedCallable(table)));
         }
+
         List<String> result = Lists.newArrayList();
         for (Future<?> future : futures) {
             try {
@@ -61,8 +68,14 @@ class OrderedDtpExecutorTest {
                 log.error("get future result error", e);
             }
         }
-
         log.info("result = {}", result);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Table {
+        private String name;
+        private Object value;
     }
 
     class TestOrderedRunnable implements Ordered, Runnable {
@@ -87,22 +100,22 @@ class OrderedDtpExecutorTest {
 
     class TestOrderedCallable implements OrderedCallable<String> {
 
-        private final String hashKey;
+        private final Table table;
 
-        public TestOrderedCallable(String hashKey) {
-            this.hashKey = hashKey;
+        public TestOrderedCallable(Table table) {
+            this.table = table;
         }
 
         @Override
         public Object hashKey() {
-            return hashKey;
+            return table.getName();
         }
 
         @Override
         public String call() {
-            log.info("{} execute task, hashKey = {}, traceId = {}, threadLocalVal = {}",
-                    Thread.currentThread().getName(), hashKey, MDC.get("traceId"), threadLocal.get());
-            return UUID.randomUUID().toString();
+            log.info("{} execute task, threadLocalVal = {}, hashKey = {}, value = {}",
+                    Thread.currentThread().getName(), threadLocal.get(), table.getName(), table.getValue());
+            return table.getName() + table.getValue();
         }
     }
 }

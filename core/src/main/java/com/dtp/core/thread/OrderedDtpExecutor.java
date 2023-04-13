@@ -19,6 +19,7 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
  * {@link OrderedDtpExecutor} can ensure that the delivered tasks are executed
@@ -167,40 +168,45 @@ public class OrderedDtpExecutor extends DtpExecutor {
     public void onRefreshQueueCapacity(int capacity) {
         for (Executor executor : childExecutors) {
             ChildExecutor childExecutor = (ChildExecutor) executor;
-            ((VariableLinkedBlockingQueue<Runnable>) childExecutor.getWorkQueue()).setCapacity(capacity);
+            ((VariableLinkedBlockingQueue<Runnable>) childExecutor.getTaskQueue()).setCapacity(capacity);
         }
     }
 
     private final class ChildExecutor implements Executor, Runnable {
 
-        private final BlockingQueue<Runnable> workQueue;
+        private final BlockingQueue<Runnable> taskQueue;
 
-        private long completedTaskCount;
+        private final LongAdder completedTaskCount = new LongAdder();
 
-        private long rejectedTaskCount;
+        private final LongAdder rejectedTaskCount = new LongAdder();
+
+        private Thread thread;
 
         ChildExecutor(int queueSize) {
             if (queueSize <= 0) {
                 queueSize = Integer.MAX_VALUE;
             }
-            workQueue = new VariableLinkedBlockingQueue<>(queueSize);
+            taskQueue = new VariableLinkedBlockingQueue<>(queueSize);
         }
 
         @Override
         public void execute(Runnable command) {
-            boolean needExecute = workQueue.isEmpty();
-            if (!workQueue.offer(wrapTasks(command))) {
-                rejectedTaskCount++;
-                throw new RejectedExecutionException("Task " + command.toString() + " rejected from " + this);
+            boolean needExecute;
+            synchronized (taskQueue) {
+                needExecute = taskQueue.isEmpty();
+                if (!taskQueue.offer(wrapTasks(command))) {
+                    rejectedTaskCount.increment();
+                    throw new RejectedExecutionException("Task " + command.toString() + " rejected from " + this);
+                }
             }
-            if (needExecute) {
+            if (needExecute && Objects.isNull(thread)) {
                 doUnorderedExecute(this);
             }
         }
 
         @Override
         public void run() {
-            Thread thread = Thread.currentThread();
+            this.thread = Thread.currentThread();
             Runnable task;
             while ((task = getTask()) != null) {
                 onBeforeExecute(thread, task);
@@ -212,42 +218,44 @@ public class OrderedDtpExecutor extends DtpExecutor {
                     throw x;
                 } finally {
                     onAfterExecute(task, thrown);
-                    completedTaskCount++;
+                    completedTaskCount.increment();
                 }
             }
-        }
-
-        public BlockingQueue<Runnable> getWorkQueue() {
-            return workQueue;
-        }
-
-        public long getTaskCount() {
-            return completedTaskCount + workQueue.size();
-        }
-
-        public long getCompletedTaskCount() {
-            return completedTaskCount;
-        }
-
-        public long getRejectedTaskCount() {
-            return rejectedTaskCount;
+            this.thread = null;
         }
 
         private Runnable getTask() {
             try {
-                return workQueue.poll(getKeepAliveTime(TimeUnit.NANOSECONDS), TimeUnit.NANOSECONDS);
+                return taskQueue.poll(getKeepAliveTime(TimeUnit.NANOSECONDS), TimeUnit.NANOSECONDS);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
             return null;
         }
 
+        public BlockingQueue<Runnable> getTaskQueue() {
+            return taskQueue;
+        }
+
+        public long getTaskCount() {
+            return completedTaskCount.sum() + taskQueue.size();
+        }
+
+        public long getCompletedTaskCount() {
+            return completedTaskCount.sum();
+        }
+
+        public long getRejectedTaskCount() {
+            return rejectedTaskCount.sum();
+        }
+
         @Override
         public String toString() {
             return super.toString() +
-                    "[queue size = " + workQueue.size() +
+                    "[queue size = " + taskQueue.size() +
                     ", completed tasks = " + completedTaskCount +
                     ", rejected tasks = " + rejectedTaskCount +
+                    ", thread = " + thread.getName() +
                     "]";
         }
     }

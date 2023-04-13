@@ -19,8 +19,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * @author topsuder
  * @see com.dtp.common.json.parser dynamic-tp
+ *
+ * @author topsuder
+ * @since 1.1.3
  */
 @Slf4j
 public class JacksonParser extends AbstractJsonParser {
@@ -79,7 +81,6 @@ public class JacksonParser extends AbstractJsonParser {
                 .defaultDateFormat(new SimpleDateFormat(DATE_FORMAT))
                 .build();
     }
-
 
     @Override
     protected String getMapperClassName() {

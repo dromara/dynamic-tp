@@ -3,24 +3,25 @@ package com.dtp.core.support;
 import com.alibaba.ttl.TtlRunnable;
 import com.alibaba.ttl.threadpool.TtlExecutors;
 import com.dtp.common.constant.DynamicTpConst;
-import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.QueueTypeEnum;
 import com.dtp.common.em.RejectedTypeEnum;
+import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.support.wrapper.TaskWrapper;
 import com.dtp.core.thread.DtpExecutor;
-import com.dtp.core.thread.ScheduledDtpExecutor;
 import com.dtp.core.thread.EagerDtpExecutor;
 import com.dtp.core.thread.NamedThreadFactory;
 import com.dtp.core.thread.OrderedDtpExecutor;
+import com.dtp.core.thread.ScheduledDtpExecutor;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -134,6 +135,11 @@ public class ThreadPoolBuilder {
     private boolean preStartAllCoreThreads = false;
 
     /**
+     * If enhance reject.
+     */
+    private boolean rejectEnhanced = true;
+
+    /**
      * Task execute timeout, unit (ms), just for statistics.
      */
     private long runTimeout = 0;
@@ -157,6 +163,11 @@ public class ThreadPoolBuilder {
      * Notify platform id
      */
     private List<String> platformIds = Lists.newArrayList();
+
+    /**
+     * If enable notify.
+     */
+    private boolean notifyEnabled = true;
 
     private ThreadPoolBuilder() {
     }
@@ -231,6 +242,14 @@ public class ThreadPoolBuilder {
         return this;
     }
 
+    public ThreadPoolBuilder workQueue(String queueName, Integer capacity) {
+        if (StringUtils.isNotBlank(queueName)) {
+            workQueue = QueueTypeEnum.buildLbq(queueName, capacity != null ? capacity : this.queueCapacity,
+                    false, maxFreeMemory);
+        }
+        return this;
+    }
+
     public ThreadPoolBuilder queueCapacity(int queueCapacity) {
         this.queueCapacity = queueCapacity;
         return this;
@@ -244,6 +263,13 @@ public class ThreadPoolBuilder {
     public ThreadPoolBuilder rejectedExecutionHandler(String rejectedName) {
         if (StringUtils.isNotBlank(rejectedName)) {
             rejectedExecutionHandler = RejectHandlerGetter.buildRejectedHandler(rejectedName);
+        }
+        return this;
+    }
+
+    public ThreadPoolBuilder rejectedExecutionHandler(RejectedExecutionHandler handler) {
+        if (Objects.nonNull(rejectedExecutionHandler)) {
+            rejectedExecutionHandler = handler;
         }
         return this;
     }
@@ -295,6 +321,11 @@ public class ThreadPoolBuilder {
         return this;
     }
 
+    public ThreadPoolBuilder rejectEnhanced(boolean rejectEnhanced) {
+        this.rejectEnhanced = rejectEnhanced;
+        return this;
+    }
+
     public ThreadPoolBuilder runTimeout(long runTimeout) {
         this.runTimeout = runTimeout;
         return this;
@@ -326,6 +357,11 @@ public class ThreadPoolBuilder {
         if (CollectionUtils.isNotEmpty(platformIds)) {
             this.platformIds = platformIds;
         }
+        return this;
+    }
+
+    public ThreadPoolBuilder notifyEnabled(boolean notifyEnabled) {
+        this.notifyEnabled = notifyEnabled;
         return this;
     }
 
@@ -389,11 +425,14 @@ public class ThreadPoolBuilder {
         dtpExecutor.setWaitForTasksToCompleteOnShutdown(builder.waitForTasksToCompleteOnShutdown);
         dtpExecutor.setAwaitTerminationSeconds(builder.awaitTerminationSeconds);
         dtpExecutor.setPreStartAllCoreThreads(builder.preStartAllCoreThreads);
+        dtpExecutor.setRejectEnhanced(builder.rejectEnhanced);
         dtpExecutor.setRunTimeout(builder.runTimeout);
         dtpExecutor.setQueueTimeout(builder.queueTimeout);
         dtpExecutor.setTaskWrappers(builder.taskWrappers);
         dtpExecutor.setNotifyItems(builder.notifyItems);
         dtpExecutor.setPlatformIds(builder.platformIds);
+        dtpExecutor.setNotifyEnabled(builder.notifyEnabled);
+        dtpExecutor.setRejectHandler(builder.rejectedExecutionHandler);
         return dtpExecutor;
     }
 

@@ -223,8 +223,8 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
 
         ExecutorAdapter<?> executor = executorWrapper.getExecutor();
         // update reject handler
-        String currentRejectHandlerName = executor.getRejectHandlerName();
-        if (!Objects.equals(currentRejectHandlerName, props.getRejectedHandlerType())) {
+        String currentRejectHandlerType = executor.getRejectHandlerType();
+        if (!Objects.equals(currentRejectHandlerType, props.getRejectedHandlerType())) {
             val rejectHandler = RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType());
             executor.setRejectedExecutionHandler(rejectHandler);
         }
@@ -240,9 +240,9 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
             executor.setThreadPoolAliasName(props.getThreadPoolAliasName());
         }
         // update reject handler
-        if (!Objects.equals(executor.getRejectHandlerName(), props.getRejectedHandlerType())) {
-            executor.setRejectedExecutionHandler(RejectHandlerGetter.getProxy(props.getRejectedHandlerType()));
-            executor.setRejectHandlerName(props.getRejectedHandlerType());
+        executor.setRejectEnhanced(props.isRejectEnhanced());
+        if (!Objects.equals(executor.getRejectHandlerType(), props.getRejectedHandlerType())) {
+            executor.setRejectHandler(RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType()));
         }
         executor.setWaitForTasksToCompleteOnShutdown(props.isWaitForTasksToCompleteOnShutdown());
         executor.setAwaitTerminationSeconds(props.getAwaitTerminationSeconds());
@@ -297,16 +297,16 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         if (blockingQueue instanceof MemorySafeLinkedBlockingQueue) {
             ((MemorySafeLinkedBlockingQueue<Runnable>) blockingQueue).setMaxFreeMemory(props.getMaxFreeMemory() * M_1);
         }
-        if (!(blockingQueue instanceof VariableLinkedBlockingQueue)) {
-            log.warn("DynamicTp refresh, the blockingqueue capacity cannot be reset, poolName: {}, queueType {}",
-                    props.getThreadPoolName(), blockingQueue.getClass().getSimpleName());
+        if (blockingQueue instanceof VariableLinkedBlockingQueue) {
+            int capacity = blockingQueue.size() + blockingQueue.remainingCapacity();
+            if (!Objects.equals(capacity, props.getQueueCapacity())) {
+                ((VariableLinkedBlockingQueue<Runnable>) blockingQueue).setCapacity(props.getQueueCapacity());
+                executor.onRefreshQueueCapacity(props.getQueueCapacity());
+            }
             return;
         }
-
-        int capacity = blockingQueue.size() + blockingQueue.remainingCapacity();
-        if (!Objects.equals(capacity, props.getQueueCapacity())) {
-            ((VariableLinkedBlockingQueue<Runnable>) blockingQueue).setCapacity(props.getQueueCapacity());
-        }
+        log.warn("DynamicTp refresh, the blockingqueue capacity cannot be reset, poolName: {}, queueType {}",
+                props.getThreadPoolName(), blockingQueue.getClass().getSimpleName());
     }
 
     @Override
@@ -327,5 +327,4 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         log.info("DtpRegistry has been initialized, remote executors: {}, local executors: {}",
                 remoteExecutors, localExecutors);
     }
-
 }

@@ -30,7 +30,7 @@ public class MemorySafeLinkedBlockingQueue<E> extends VariableLinkedBlockingQueu
 
     private static final long serialVersionUID = 8032578371739960142L;
 
-    public static final int THE_256_MB = 256 * 1024 * 1024;
+    public static final int THE_256_MB = 16 * 1024 * 1024;
 
     private int maxFreeMemory;
 

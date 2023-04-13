@@ -14,8 +14,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 /**
- * @author topsuder
  * @see com.dtp.common.json.parser dynamic-tp
+ *
+ * @author topsuder
+ * @since 1.1.3
  */
 public class GsonParser extends AbstractJsonParser {
 

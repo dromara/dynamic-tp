@@ -6,8 +6,10 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import java.lang.reflect.Type;
 
 /**
- * @author topsuder
  * @see com.dtp.common.json.parser dynamic-tp
+ *
+ * @author topsuder
+ * @since 1.1.3
  */
 public class FastJsonParser extends AbstractJsonParser {
 
@@ -27,5 +29,4 @@ public class FastJsonParser extends AbstractJsonParser {
     protected String getMapperClassName() {
         return PACKAGE_NAME;
     }
-
 }

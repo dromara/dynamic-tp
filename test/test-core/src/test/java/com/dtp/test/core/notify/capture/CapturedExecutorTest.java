@@ -52,7 +52,7 @@ public class CapturedExecutorTest {
         Assertions.assertEquals(capturedExecutor.getActiveCount(), 0);
         Assertions.assertEquals(capturedExecutor.getTaskCount(), 0);
         Assertions.assertEquals(capturedExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS), 15000);
-        Assertions.assertEquals(capturedExecutor.getQueue().remainingCapacity(), 100);
+        Assertions.assertEquals(capturedExecutor.getQueueRemainingCapacity(), 100);
     }
 
     @Test

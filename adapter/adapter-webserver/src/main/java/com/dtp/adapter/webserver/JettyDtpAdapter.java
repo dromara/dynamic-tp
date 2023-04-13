@@ -3,8 +3,8 @@ package com.dtp.adapter.webserver;
 import com.dtp.common.entity.ThreadPoolStats;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.ReflectionUtil;
-import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.ExecutorAdapter;
+import com.dtp.core.support.ExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -136,7 +136,7 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
         public BlockingQueue<Runnable> getQueue() {
             return (BlockingQueue<Runnable>) ReflectionUtil.getFieldValue(QueuedThreadPool.class, "_jobs", this.executor);
         }
-        
+
         @Override
         public long getKeepAliveTime(TimeUnit unit) {
             if (this.executor instanceof QueuedThreadPool) {

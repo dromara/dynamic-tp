@@ -56,6 +56,10 @@ public final class DynamicTpConst {
 
     public static final String PRE_START_ALL_CORE_THREADS = "preStartAllCoreThreads";
 
+    public static final String REJECT_ENHANCED = "rejectEnhanced";
+
+    public static final String REJECT_HANDLER_TYPE = "rejectHandlerType";
+
     public static final String RUN_TIMEOUT = "runTimeout";
 
     public static final String QUEUE_TIMEOUT = "queueTimeout";

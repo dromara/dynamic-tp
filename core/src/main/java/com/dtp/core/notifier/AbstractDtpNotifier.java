@@ -120,12 +120,12 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 executor.getLargestPoolSize(),
                 executor.getTaskCount(),
                 executor.getCompletedTaskCount(),
-                executor.getQueue().size(),
+                executor.getQueueSize(),
                 getQueueName(executor),
-                getQueueCapacity(executor),
-                executor.getQueue().size(),
-                executor.getQueue().remainingCapacity(),
-                getRejectHandlerName(executor),
+                executor.getQueueCapacity(),
+                executor.getQueueSize(),
+                executor.getQueueRemainingCapacity(),
+                executor.getRejectHandlerType(),
                 alarmCounter.getLeft(),
                 alarmCounter.getMiddle(),
                 alarmCounter.getRight(),
@@ -154,8 +154,8 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 oldFields.isAllowCoreThreadTimeOut(), executor.allowsCoreThreadTimeOut(),
                 oldFields.getKeepAliveTime(), executor.getKeepAliveTime(TimeUnit.SECONDS),
                 getQueueName(executor),
-                oldFields.getQueueCapacity(), getQueueCapacity(executor),
-                oldFields.getRejectType(), getRejectHandlerName(executor),
+                oldFields.getQueueCapacity(), executor.getQueueCapacity(),
+                oldFields.getRejectType(), executor.getRejectHandlerType(),
                 getReceives(platform.getPlatform(), platform.getReceivers()),
                 DateUtil.now()
         );
@@ -183,14 +183,6 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
             return executorWrapper.getThreadPoolName();
         }
         return executorWrapper.getThreadPoolName() + "(" + poolAlisaName + ")";
-    }
-
-    protected String getRejectHandlerName(ExecutorAdapter<?> executor) {
-        return executor.getRejectHandlerName();
-    }
-
-    protected int getQueueCapacity(ExecutorAdapter<?> executor) {
-        return executor.getQueue().size() + executor.getQueue().remainingCapacity();
     }
 
     protected String getQueueName(ExecutorAdapter<?> executor) {

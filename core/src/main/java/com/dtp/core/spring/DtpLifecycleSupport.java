@@ -51,9 +51,16 @@ public abstract class DtpLifecycleSupport extends ThreadPoolExecutor implements 
                                RejectedExecutionHandler handler) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
     }
+    public boolean isWaitForTasksToCompleteOnShutdown() {
+        return waitForTasksToCompleteOnShutdown;
+    }
 
     public void setWaitForTasksToCompleteOnShutdown(boolean waitForTasksToCompleteOnShutdown) {
         this.waitForTasksToCompleteOnShutdown = waitForTasksToCompleteOnShutdown;
+    }
+
+    public int getAwaitTerminationSeconds() {
+        return awaitTerminationSeconds;
     }
 
     public void setAwaitTerminationSeconds(int awaitTerminationSeconds) {

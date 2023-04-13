@@ -1,9 +1,9 @@
 package com.dtp.adapter.webserver;
 
-import com.dtp.common.properties.DtpProperties;
-import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.common.entity.ThreadPoolStats;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.support.ExecutorAdapter;
+import com.dtp.core.support.ExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
@@ -130,7 +130,7 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPoolExec
         }
     
         @Override
-        public String getRejectHandlerName() {
+        public String getRejectHandlerType() {
             return this.executor.getRejectedExecutionHandler().getClass().getSimpleName();
         }
         

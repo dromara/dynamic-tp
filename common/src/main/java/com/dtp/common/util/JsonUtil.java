@@ -20,6 +20,7 @@ import java.util.ServiceLoader;
  */
 @Slf4j
 public final class JsonUtil {
+
     private static final JsonParser JSON_PARSER = createJsonParser();
 
     private static JsonParser createJsonParser() {
@@ -62,6 +63,4 @@ public final class JsonUtil {
     public static <T> T fromJson(String json, Type typeOfT) {
         return JSON_PARSER.fromJson(json, typeOfT);
     }
-
-
 }

@@ -1,12 +1,12 @@
 package com.dtp.core.thread;
 
+import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.core.support.Ordered;
 import com.dtp.core.support.selector.ExecutorSelector;
 import com.dtp.core.support.selector.HashedExecutorSelector;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
@@ -14,6 +14,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.ThreadFactory;
@@ -73,7 +74,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
                               RejectedExecutionHandler handler) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
         for (int i = 0; i < corePoolSize; i++) {
-            ChildExecutor childExecutor = new ChildExecutor();
+            ChildExecutor childExecutor = new ChildExecutor(workQueue.size() + workQueue.remainingCapacity());
             childExecutors.add(childExecutor);
         }
     }
@@ -135,18 +136,64 @@ public class OrderedDtpExecutor extends DtpExecutor {
         afterExecute(r, t);
     }
 
+    @Override
+    public long getCompletedTaskCount() {
+        long count = 0;
+        for (Executor executor : childExecutors) {
+            count += ((ChildExecutor) executor).getCompletedTaskCount();
+        }
+        return super.getCompletedTaskCount() + count;
+    }
+
+    @Override
+    public long getTaskCount() {
+        long count = 0;
+        for (Executor executor : childExecutors) {
+            count += ((ChildExecutor) executor).getTaskCount();
+        }
+        return super.getTaskCount() + count;
+    }
+
+    @Override
+    public long getRejectCount() {
+        long count = 0;
+        for (Executor executor : childExecutors) {
+            count += ((ChildExecutor) executor).getRejectedTaskCount();
+        }
+        return super.getRejectCount() + count;
+    }
+
+    @Override
+    public void onRefreshQueueCapacity(int capacity) {
+        for (Executor executor : childExecutors) {
+            ChildExecutor childExecutor = (ChildExecutor) executor;
+            ((VariableLinkedBlockingQueue<Runnable>) childExecutor.getWorkQueue()).setCapacity(capacity);
+        }
+    }
+
     private final class ChildExecutor implements Executor, Runnable {
 
-        private final LinkedList<Runnable> tasks = new LinkedList<>();
+        private final BlockingQueue<Runnable> workQueue;
+
+        private long completedTaskCount;
+
+        private long rejectedTaskCount;
+
+        ChildExecutor(int queueSize) {
+            if (queueSize <= 0) {
+                queueSize = Integer.MAX_VALUE;
+            }
+            workQueue = new VariableLinkedBlockingQueue<>(queueSize);
+        }
 
         @Override
         public void execute(Runnable command) {
-            boolean needExecution;
-            synchronized (tasks) {
-                needExecution = tasks.isEmpty();
-                tasks.add(wrapTasks(command));
+            boolean needExecute = workQueue.isEmpty();
+            if (!workQueue.offer(wrapTasks(command))) {
+                rejectedTaskCount++;
+                throw new RejectedExecutionException("Task " + command.toString() + " rejected from " + this);
             }
-            if (needExecution) {
+            if (needExecute) {
                 doUnorderedExecute(this);
             }
         }
@@ -154,32 +201,54 @@ public class OrderedDtpExecutor extends DtpExecutor {
         @Override
         public void run() {
             Thread thread = Thread.currentThread();
-            for (;;) {
-                final Runnable task;
-                synchronized (tasks) {
-                    task = tasks.getFirst();
-                }
-
-                boolean ran = false;
+            Runnable task;
+            while ((task = getTask()) != null) {
                 onBeforeExecute(thread, task);
+                Throwable thrown = null;
                 try {
                     task.run();
-                    ran = true;
-                    onAfterExecute(task, null);
-                } catch (RuntimeException e) {
-                    if (!ran) {
-                        onAfterExecute(task, e);
-                    }
-                    throw e;
+                } catch (RuntimeException x) {
+                    thrown = x;
+                    throw x;
                 } finally {
-                    synchronized (tasks) {
-                        tasks.removeFirst();
-                        if (tasks.isEmpty()) {
-                            break;
-                        }
-                    }
+                    onAfterExecute(task, thrown);
+                    completedTaskCount++;
                 }
             }
+        }
+
+        public BlockingQueue<Runnable> getWorkQueue() {
+            return workQueue;
+        }
+
+        public long getTaskCount() {
+            return completedTaskCount + workQueue.size();
+        }
+
+        public long getCompletedTaskCount() {
+            return completedTaskCount;
+        }
+
+        public long getRejectedTaskCount() {
+            return rejectedTaskCount;
+        }
+
+        private Runnable getTask() {
+            try {
+                return workQueue.poll(getKeepAliveTime(TimeUnit.NANOSECONDS), TimeUnit.NANOSECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            return null;
+        }
+
+        @Override
+        public String toString() {
+            return super.toString() +
+                    "[queue size = " + workQueue.size() +
+                    ", completed tasks = " + completedTaskCount +
+                    ", rejected tasks = " + rejectedTaskCount +
+                    "]";
         }
     }
 }

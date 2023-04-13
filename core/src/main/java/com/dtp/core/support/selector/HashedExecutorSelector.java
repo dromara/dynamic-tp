@@ -13,10 +13,10 @@ public class HashedExecutorSelector implements ExecutorSelector {
 
     @Override
     public Executor select(List<Executor> executors, Object arg) {
-        int value = arg.hashCode() % executors.size();
-        if (value < 0) {
-            value = Math.abs(value);
+        int idx = arg.hashCode() % executors.size();
+        if (idx < 0) {
+            idx = Math.abs(idx);
         }
-        return executors.get(value);
+        return executors.get(idx);
     }
 }

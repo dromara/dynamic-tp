@@ -146,6 +146,15 @@ public interface ExecutorAdapter<E extends Executor> extends Executor {
     }
 
     /**
+     * On refresh queue capacity.
+     *
+     * @param capacity the queue capacity
+     */
+    default void onRefreshQueueCapacity(int capacity) {
+        //default do nothing
+    }
+
+    /**
      * Get the rejected execution handler
      *
      * @return the rejected execution handler

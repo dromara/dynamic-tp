@@ -1,8 +1,8 @@
 package com.dtp.core.support.selector;
 
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * RandomExecutorSelector related
@@ -12,11 +12,8 @@ import java.util.concurrent.Executor;
  **/
 public class RandomExecutorSelector implements ExecutorSelector {
 
-    private final Random random = new Random(System.currentTimeMillis());
-
     @Override
     public Executor select(List<Executor> executors, Object arg) {
-        int value = random.nextInt(executors.size());
-        return executors.get(value);
+        return executors.get(ThreadLocalRandom.current().nextInt(executors.size()));
     }
 }

@@ -297,16 +297,16 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         if (blockingQueue instanceof MemorySafeLinkedBlockingQueue) {
             ((MemorySafeLinkedBlockingQueue<Runnable>) blockingQueue).setMaxFreeMemory(props.getMaxFreeMemory() * M_1);
         }
-        if (!(blockingQueue instanceof VariableLinkedBlockingQueue)) {
-            log.warn("DynamicTp refresh, the blockingqueue capacity cannot be reset, poolName: {}, queueType {}",
-                    props.getThreadPoolName(), blockingQueue.getClass().getSimpleName());
+        if (blockingQueue instanceof VariableLinkedBlockingQueue) {
+            int capacity = blockingQueue.size() + blockingQueue.remainingCapacity();
+            if (!Objects.equals(capacity, props.getQueueCapacity())) {
+                ((VariableLinkedBlockingQueue<Runnable>) blockingQueue).setCapacity(props.getQueueCapacity());
+                executor.onRefreshQueueCapacity(props.getQueueCapacity());
+            }
             return;
         }
-
-        int capacity = blockingQueue.size() + blockingQueue.remainingCapacity();
-        if (!Objects.equals(capacity, props.getQueueCapacity())) {
-            ((VariableLinkedBlockingQueue<Runnable>) blockingQueue).setCapacity(props.getQueueCapacity());
-        }
+        log.warn("DynamicTp refresh, the blockingqueue capacity cannot be reset, poolName: {}, queueType {}",
+                props.getThreadPoolName(), blockingQueue.getClass().getSimpleName());
     }
 
     @Override
@@ -327,5 +327,4 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
         log.info("DtpRegistry has been initialized, remote executors: {}, local executors: {}",
                 remoteExecutors, localExecutors);
     }
-
 }

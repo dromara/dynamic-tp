@@ -190,7 +190,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
 
         private final LongAdder rejectedTaskCount = new LongAdder();
 
-        private boolean running = false;
+        private boolean running;
 
         ChildExecutor(int queueSize) {
             if (queueSize <= 0) {

@@ -45,9 +45,9 @@ public final class CapturedExecutor implements ExecutorAdapter<ExecutorAdapter<?
     private final RejectedExecutionHandler rejectedExecutionHandler;
 
     /**
-     * @see DtpExecutor#getRejectHandlerName
+     * @see DtpExecutor#getRejectHandlerType
      */
-    private final String rejectHandlerName;
+    private final String rejectHandlerType;
 
     /**
      * @see CapturedBlockingQueue
@@ -66,7 +66,7 @@ public final class CapturedExecutor implements ExecutorAdapter<ExecutorAdapter<?
         this.keepAliveTime = executorAdapter.getKeepAliveTime(TimeUnit.SECONDS);
         this.allowCoreThreadTimeOut = executorAdapter.allowsCoreThreadTimeOut();
         this.rejectedExecutionHandler = executorAdapter.getRejectedExecutionHandler();
-        this.rejectHandlerName = executorAdapter.getRejectHandlerName();
+        this.rejectHandlerType = executorAdapter.getRejectHandlerType();
         this.blockingQueue = new CapturedBlockingQueue(executorAdapter.getQueue());
     }
 
@@ -141,8 +141,8 @@ public final class CapturedExecutor implements ExecutorAdapter<ExecutorAdapter<?
     }
 
     @Override
-    public String getRejectHandlerName() {
-        return rejectHandlerName;
+    public String getRejectHandlerType() {
+        return rejectHandlerType;
     }
 
     @Override

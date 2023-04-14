@@ -2,11 +2,11 @@ package com.dtp.core.notifier.base;
 
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
-import cn.hutool.json.JSONUtil;
 import com.dtp.common.constant.WechatNotifyConst;
 import com.dtp.common.entity.MarkdownReq;
 import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.em.NotifyPlatformEnum;
+import com.dtp.common.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -41,10 +41,10 @@ public class WechatNotifier implements Notifier {
         markdownReq.setMarkdown(markdown);
 
         try {
-            HttpResponse response = HttpRequest.post(serverUrl).body(JSONUtil.toJsonStr(markdownReq)).execute();
+            HttpResponse response = HttpRequest.post(serverUrl).body(JsonUtil.toJson(markdownReq)).execute();
             if (Objects.nonNull(response)) {
                 log.info("DynamicTp notify, wechat send success, response: {}, request:{}",
-                        response.body(), JSONUtil.toJsonStr(markdownReq));
+                        response.body(), JsonUtil.toJson(markdownReq));
             }
         } catch (Exception e) {
             log.error("DynamicTp notify, wechat send failed...", e);

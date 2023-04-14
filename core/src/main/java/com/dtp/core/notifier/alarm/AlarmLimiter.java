@@ -1,12 +1,14 @@
 package com.dtp.core.notifier.alarm;
 
-import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.em.NotifyItemEnum;
+import com.dtp.common.entity.NotifyItem;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -40,7 +42,11 @@ public class AlarmLimiter {
     }
 
     public static String getAlarmLimitInfo(String key, String type) {
-        return ALARM_LIMITER.get(key).getIfPresent(type);
+        val cache = ALARM_LIMITER.get(key);
+        if (Objects.isNull(cache)) {
+            return null;
+        }
+        return cache.getIfPresent(type);
     }
 
     public static boolean ifAlarm(String threadPoolName, String type) {

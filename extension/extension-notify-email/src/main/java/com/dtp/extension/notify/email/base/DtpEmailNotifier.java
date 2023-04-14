@@ -1,14 +1,14 @@
 package com.dtp.extension.notify.email.base;
 
-import cn.hutool.core.date.DateTime;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.entity.AlarmInfo;
-import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.entity.NotifyPlatform;
+import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.util.CommonUtil;
+import com.dtp.common.util.DateUtil;
 import com.dtp.core.context.AlarmCtx;
 import com.dtp.core.context.BaseNotifyCtx;
 import com.dtp.core.context.DtpNotifyCtxHolder;
@@ -84,17 +84,17 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("largestPoolSize", executor.getLargestPoolSize());
         context.setVariable("taskCount", executor.getTaskCount());
         context.setVariable("completedTaskCount", executor.getCompletedTaskCount());
-        context.setVariable("waitingTaskCount", executor.getQueue().size());
+        context.setVariable("waitingTaskCount", executor.getQueueSize());
         context.setVariable("queueType", getQueueName(executor));
-        context.setVariable("queueCapacity", getQueueCapacity(executor));
-        context.setVariable("queueSize", executor.getQueue().size());
-        context.setVariable("queueRemaining", executor.getQueue().remainingCapacity());
-        context.setVariable("rejectType", getRejectHandlerName(executor));
+        context.setVariable("queueCapacity", executor.getQueueCapacity());
+        context.setVariable("queueSize", executor.getQueueSize());
+        context.setVariable("queueRemaining", executor.getQueueRemainingCapacity());
+        context.setVariable("rejectType", executor.getRejectHandlerType());
         context.setVariable("rejectCount", alarmCounter.getLeft());
         context.setVariable("runTimeoutCount", alarmCounter.getMiddle());
         context.setVariable("queueTimeoutCount", alarmCounter.getRight());
         context.setVariable("lastAlarmTime", alarmInfo.getLastAlarmTime() == null ? UNKNOWN : alarmInfo.getLastAlarmTime());
-        context.setVariable("alarmTime", DateTime.now());
+        context.setVariable("alarmTime", DateUtil.now());
         context.setVariable("tid", Optional.ofNullable(MDC.get(TRACE_ID)).orElse(UNKNOWN));
         context.setVariable("alarmInterval", notifyItem.getInterval());
         context.setVariable("highlightVariables", getAlarmKeys(notifyItemEnum));
@@ -118,10 +118,10 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("newKeepAliveTime", executor.getKeepAliveTime(TimeUnit.SECONDS));
         context.setVariable("queueType", getQueueName(executor));
         context.setVariable("oldQueueCapacity", oldFields.getQueueCapacity());
-        context.setVariable("newQueueCapacity", getQueueCapacity(executor));
+        context.setVariable("newQueueCapacity", executor.getQueueCapacity());
         context.setVariable("oldRejectType", oldFields.getRejectType());
-        context.setVariable("newRejectType", getRejectHandlerName(executor));
-        context.setVariable("notifyTime", DateTime.now());
+        context.setVariable("newRejectType", executor.getRejectHandlerType());
+        context.setVariable("notifyTime", DateUtil.now());
         context.setVariable("diffs", diffs != null ? diffs : Collections.emptySet());
         return ((EmailNotifier) notifier).processTemplateContent("notice", context);
     }

@@ -2,16 +2,16 @@ package com.dtp.core.notifier.base;
 
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
-import cn.hutool.json.JSONUtil;
 import com.dtp.common.constant.DingNotifyConst;
 import com.dtp.common.entity.MarkdownReq;
 import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.util.DingSignUtil;
+import com.dtp.common.util.JsonUtil;
 import com.dtp.common.util.TimeUtil;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
@@ -61,10 +61,10 @@ public class DingNotifier implements Notifier {
 
         String hookUrl = getTargetUrl(platform.getSecret(), platform.getUrlKey());
         try {
-            HttpResponse response = HttpRequest.post(hookUrl).body(JSONUtil.toJsonStr(markdownReq)).execute();
+            HttpResponse response = HttpRequest.post(hookUrl).body(JsonUtil.toJson(markdownReq)).execute();
             if (Objects.nonNull(response)) {
                 log.info("DynamicTp notify, ding send success, response: {}, request: {}",
-                        response.body(), JSONUtil.toJsonStr(markdownReq));
+                        response.body(), JsonUtil.toJson(markdownReq));
             }
         } catch (Exception e) {
             log.error("DynamicTp notify, ding send failed...", e);

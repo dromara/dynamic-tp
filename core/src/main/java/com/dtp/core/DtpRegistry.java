@@ -6,6 +6,7 @@ import com.dtp.common.ex.DtpException;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.queue.MemorySafeLinkedBlockingQueue;
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
+import com.dtp.common.util.StreamUtil;
 import com.dtp.core.converter.ExecutorConverter;
 import com.dtp.core.notifier.manager.NoticeManager;
 import com.dtp.core.reject.RejectHandlerGetter;
@@ -17,13 +18,11 @@ import com.dtp.core.thread.DtpExecutor;
 import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
@@ -34,12 +33,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 import static com.dtp.common.constant.DynamicTpConst.M_1;
 import static com.dtp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
 import static com.dtp.core.notifier.manager.NotifyHelper.updateNotifyInfo;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Core Registry, which keeps all registered Dynamic ThreadPoolExecutors.
@@ -51,59 +50,43 @@ import static java.util.stream.Collectors.toList;
 public class DtpRegistry implements ApplicationListener<ContextRefreshedEvent>, Ordered {
 
     /**
-     * Maintain all automatically registered and manually registered DtpExecutors.
+     * Maintain all automatically registered and manually registered Executors(DtpExecutors and JUC ThreadPoolExecutors).
      */
-    private static final Map<String, DtpExecutor> DTP_REGISTRY = new ConcurrentHashMap<>();
+    private static final Map<String, ExecutorWrapper> EXECUTOR_REGISTRY = new ConcurrentHashMap<>();
 
     /**
-     * Maintain all automatically registered and manually registered JUC ThreadPoolExecutors.
+     * equator for comparing two TpMainFields
      */
-    private static final Map<String, ExecutorWrapper> COMMON_REGISTRY = new ConcurrentHashMap<>();
-
     private static final Equator EQUATOR = new GetterBaseEquator();
 
+    /**
+     * dtp properties
+     */
     private static DtpProperties dtpProperties;
 
+    public DtpRegistry(DtpProperties dtpProperties) {
+        DtpRegistry.dtpProperties = dtpProperties;
+    }
+
     /**
-     * Get all DtpExecutor names.
+     * Get all Executor names.
      *
      * @return executor names
      */
-    public static List<String> listAllDtpNames() {
-        return Lists.newArrayList(DTP_REGISTRY.keySet());
+    public static Set<String> listAllExecutorNames() {
+        return Collections.unmodifiableSet(EXECUTOR_REGISTRY.keySet());
     }
 
     /**
-     * Get all JUC ThreadPoolExecutor names.
-     *
-     * @return executor name
-     */
-    public static List<String> listAllCommonNames() {
-        return Lists.newArrayList(COMMON_REGISTRY.keySet());
-    }
-
-    /**
-     * Register a DtpExecutor.
-     *
-     * @param executor the newly created DtpExecutor instance
-     * @param source   the source of the call to register method
-     */
-    public static void registerDtp(DtpExecutor executor, String source) {
-        log.info("DynamicTp register dtpExecutor, source: {}, executor: {}",
-                source, ExecutorConverter.convert(executor));
-        DTP_REGISTRY.putIfAbsent(executor.getThreadPoolName(), executor);
-    }
-
-    /**
-     * Register a common ThreadPoolExecutor.
+     * Register a ThreadPoolExecutor.
      *
      * @param wrapper the newly created ThreadPoolExecutor wrapper instance
      * @param source  the source of the call to register method
      */
-    public static void registerCommon(ExecutorWrapper wrapper, String source) {
-        log.info("DynamicTp register commonExecutor, source: {}, executor: {}",
+    public static void registerExecutor(ExecutorWrapper wrapper, String source) {
+        log.info("DynamicTp register dtpExecutor, source: {}, executor: {}",
                 source, ExecutorConverter.convert(wrapper));
-        COMMON_REGISTRY.putIfAbsent(wrapper.getThreadPoolName(), wrapper);
+        EXECUTOR_REGISTRY.putIfAbsent(wrapper.getThreadPoolName(), wrapper);
     }
 
     /**
@@ -111,27 +94,50 @@ public class DtpRegistry implements ApplicationListener<ContextRefreshedEvent>, 
      *
      * @param name the name of dynamic thread pool
      * @return the managed DtpExecutor instance
+     * @deprecated use {@link #getExecutor(String)} instead
      */
+    @Deprecated
     public static DtpExecutor getDtpExecutor(final String name) {
-        val executor = DTP_REGISTRY.get(name);
-        if (Objects.isNull(executor)) {
+        val executorWrapper = EXECUTOR_REGISTRY.get(name);
+        if (Objects.isNull(executorWrapper)) {
             log.error("Cannot find a specified dtpExecutor, name: {}", name);
             throw new DtpException("Cannot find a specified dtpExecutor, name: " + name);
         }
-        return executor;
+        ExecutorAdapter<?> executor = executorWrapper.getExecutor();
+        if (!(executor instanceof DtpExecutor)) {
+            log.error("The specified executor is not a DtpExecutor, name: {}", name);
+            throw new DtpException("The specified executor is not a DtpExecutor, name: " + name);
+        }
+        return (DtpExecutor) executor;
     }
 
+
     /**
-     * Get common ThreadPoolExecutor by name.
+     * Get ThreadPoolExecutor by thread pool name.
      *
      * @param name the name of thread pool
      * @return the managed ExecutorWrapper instance
      */
-    public static ExecutorWrapper getCommonExecutor(final String name) {
-        val executor = COMMON_REGISTRY.get(name);
+    public static Executor getExecutor(final String name) {
+        val executorWrapper = EXECUTOR_REGISTRY.get(name);
+        if (Objects.isNull(executorWrapper)) {
+            log.error("Cannot find a specified executor, name: {}", name);
+            throw new DtpException("Cannot find a specified executor, name: " + name);
+        }
+        return executorWrapper.getExecutor();
+    }
+
+    /**
+     * Get ExecutorWrapper by thread pool name.
+     *
+     * @param name the name of thread pool
+     * @return the managed ExecutorWrapper instance
+     */
+    public static ExecutorWrapper getExecutorWrapper(final String name) {
+        ExecutorWrapper executor = EXECUTOR_REGISTRY.get(name);
         if (Objects.isNull(executor)) {
-            log.error("Cannot find a specified commonExecutor, name: {}", name);
-            throw new DtpException("Cannot find a specified commonExecutor, name: " + name);
+            log.error("Cannot find a specified executorWrapper, name: {}", name);
+            throw new DtpException("Cannot find a specified executorWrapper, name: " + name);
         }
         return executor;
     }
@@ -151,16 +157,7 @@ public class DtpRegistry implements ApplicationListener<ContextRefreshedEvent>, 
                 log.warn("DynamicTp refresh, threadPoolName must not be empty.");
                 return;
             }
-
-            // First look it up in the DTP_REGISTRY
-            val dtpExecutor = DTP_REGISTRY.get(x.getThreadPoolName());
-            if (Objects.nonNull(dtpExecutor)) {
-                refresh(ExecutorWrapper.of(dtpExecutor), x);
-                return;
-            }
-
-            // And then look it up in the COMMON_REGISTRY
-            val executorWrapper = COMMON_REGISTRY.get(x.getThreadPoolName());
+            ExecutorWrapper executorWrapper = EXECUTOR_REGISTRY.get(x.getThreadPoolName());
             if (Objects.nonNull(executorWrapper)) {
                 refresh(executorWrapper, x);
                 return;
@@ -170,7 +167,6 @@ public class DtpRegistry implements ApplicationListener<ContextRefreshedEvent>, 
     }
 
     private static void refresh(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
-
         if (props.coreParamIsInValid()) {
             log.error("DynamicTp refresh, invalid parameters exist, properties: {}", props);
             return;
@@ -183,9 +179,9 @@ public class DtpRegistry implements ApplicationListener<ContextRefreshedEvent>, 
                     executorWrapper.getThreadPoolName());
             return;
         }
-
-        List<String> diffKeys = EQUATOR.getDiffFields(oldFields, newFields)
-                .stream().map(FieldInfo::getFieldName).collect(toList());
+        // Get the changed keys
+        List<FieldInfo> diffFields = EQUATOR.getDiffFields(oldFields, newFields);
+        List<String> diffKeys = StreamUtil.fetchProperty(diffFields, FieldInfo::getFieldName);
         NoticeManager.doNoticeAsync(executorWrapper, oldFields, diffKeys);
         log.info("DynamicTp refresh, name: [{}], changed keys: {}, corePoolSize: [{}], maxPoolSize: [{}]," +
                         " queueType: [{}], queueCapacity: [{}], keepAliveTime: [{}], rejectedType: [{}]," +
@@ -227,8 +223,8 @@ public class DtpRegistry implements ApplicationListener<ContextRefreshedEvent>, 
 
         ExecutorAdapter<?> executor = executorWrapper.getExecutor();
         // update reject handler
-        String currentRejectHandlerName = executor.getRejectHandlerName();
-        if (!Objects.equals(currentRejectHandlerName, props.getRejectedHandlerType())) {
+        String currentRejectHandlerType = executor.getRejectHandlerType();
+        if (!Objects.equals(currentRejectHandlerType, props.getRejectedHandlerType())) {
             val rejectHandler = RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType());
             executor.setRejectedExecutionHandler(rejectHandler);
         }
@@ -239,14 +235,14 @@ public class DtpRegistry implements ApplicationListener<ContextRefreshedEvent>, 
 
     private static void doRefreshDtp(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
 
-        val executor = (DtpExecutor) executorWrapper.getExecutor();
+        DtpExecutor executor = (DtpExecutor) executorWrapper.getExecutor();
         if (StringUtils.isNotBlank(props.getThreadPoolAliasName())) {
             executor.setThreadPoolAliasName(props.getThreadPoolAliasName());
         }
         // update reject handler
-        if (!Objects.equals(executor.getRejectHandlerName(), props.getRejectedHandlerType())) {
-            executor.setRejectedExecutionHandler(RejectHandlerGetter.getProxy(props.getRejectedHandlerType()));
-            executor.setRejectHandlerName(props.getRejectedHandlerType());
+        executor.setRejectEnhanced(props.isRejectEnhanced());
+        if (!Objects.equals(executor.getRejectHandlerType(), props.getRejectedHandlerType())) {
+            executor.setRejectHandler(RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType()));
         }
         executor.setWaitForTasksToCompleteOnShutdown(props.isWaitForTasksToCompleteOnShutdown());
         executor.setAwaitTerminationSeconds(props.getAwaitTerminationSeconds());
@@ -268,6 +264,15 @@ public class DtpRegistry implements ApplicationListener<ContextRefreshedEvent>, 
         executorWrapper.setNotifyEnabled(executor.isNotifyEnabled());
     }
 
+    /**
+     * Why does it seem so complicated to handle this?
+     * Although JDK9 solves this bug, we need to ensure that corePoolSize is less than or equal to maximumPoolSize,
+     * otherwise an IllegalArgumentException will be thrown
+     *
+     * @param executor the executor
+     * @param props    properties
+     * @see <a href="https://bugs.openjdk.org/browse/JDK-7153400">JDK-7153400</a>
+     */
     private static void doRefreshPoolSize(ExecutorAdapter<?> executor, DtpExecutorProps props) {
         if (props.getMaximumPoolSize() < executor.getMaximumPoolSize()) {
             if (!Objects.equals(executor.getCorePoolSize(), props.getCorePoolSize())) {
@@ -292,21 +297,16 @@ public class DtpRegistry implements ApplicationListener<ContextRefreshedEvent>, 
         if (blockingQueue instanceof MemorySafeLinkedBlockingQueue) {
             ((MemorySafeLinkedBlockingQueue<Runnable>) blockingQueue).setMaxFreeMemory(props.getMaxFreeMemory() * M_1);
         }
-        if (!(blockingQueue instanceof VariableLinkedBlockingQueue)) {
-            log.warn("DynamicTp refresh, the blockingqueue capacity cannot be reset, poolName: {}, queueType {}",
-                    props.getThreadPoolName(), blockingQueue.getClass().getSimpleName());
+        if (blockingQueue instanceof VariableLinkedBlockingQueue) {
+            int capacity = blockingQueue.size() + blockingQueue.remainingCapacity();
+            if (!Objects.equals(capacity, props.getQueueCapacity())) {
+                ((VariableLinkedBlockingQueue<Runnable>) blockingQueue).setCapacity(props.getQueueCapacity());
+                executor.onRefreshQueueCapacity(props.getQueueCapacity());
+            }
             return;
         }
-
-        int capacity = blockingQueue.size() + blockingQueue.remainingCapacity();
-        if (!Objects.equals(capacity, props.getQueueCapacity())) {
-            ((VariableLinkedBlockingQueue<Runnable>) blockingQueue).setCapacity(props.getQueueCapacity());
-        }
-    }
-
-    @Autowired
-    public void setDtpProperties(DtpProperties dtpProperties) {
-        DtpRegistry.dtpProperties = dtpProperties;
+        log.warn("DynamicTp refresh, the blockingqueue capacity cannot be reset, poolName: {}, queueType {}",
+                props.getThreadPoolName(), blockingQueue.getClass().getSimpleName());
     }
 
     @Override
@@ -322,9 +322,7 @@ public class DtpRegistry implements ApplicationListener<ContextRefreshedEvent>, 
                     .map(DtpExecutorProps::getThreadPoolName)
                     .collect(Collectors.toSet());
         }
-
-        val registeredExecutors = Sets.newHashSet(DTP_REGISTRY.keySet());
-        registeredExecutors.addAll(COMMON_REGISTRY.keySet());
+        val registeredExecutors = Sets.newHashSet(EXECUTOR_REGISTRY.keySet());
         val localExecutors = CollectionUtils.subtract(registeredExecutors, remoteExecutors);
         log.info("DtpRegistry has been initialized, remote executors: {}, local executors: {}",
                 remoteExecutors, localExecutors);

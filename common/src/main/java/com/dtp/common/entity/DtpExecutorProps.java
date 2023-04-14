@@ -78,6 +78,11 @@ public class DtpExecutorProps extends TpExecutorProps {
     private boolean preStartAllCoreThreads = false;
 
     /**
+     * If enhance reject.
+     */
+    private boolean rejectEnhanced = true;
+
+    /**
      * Task execute timeout, unit (ms), just for statistics.
      */
     private long runTimeout = 0;
@@ -99,8 +104,9 @@ public class DtpExecutorProps extends TpExecutorProps {
      */
     public boolean coreParamIsInValid() {
         return this.getCorePoolSize() < 0
-                || this.getKeepAliveTime() < 0
                 || this.getMaximumPoolSize() <= 0
-                || this.getMaximumPoolSize() < this.getCorePoolSize();
+                || this.getMaximumPoolSize() < this.getCorePoolSize()
+                || this.getKeepAliveTime() < 0;
     }
+
 }

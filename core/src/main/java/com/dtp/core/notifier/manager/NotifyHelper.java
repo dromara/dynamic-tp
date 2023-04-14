@@ -94,12 +94,10 @@ public class NotifyHelper {
                 .findFirst();
     }
 
-    @SuppressWarnings("unchecked")
     public static void fillPlatforms(List<String> platformIds,
                                      List<NotifyPlatform> platforms,
                                      List<NotifyItem> notifyItems) {
         if (CollectionUtils.isEmpty(platforms) || CollectionUtils.isEmpty(notifyItems)) {
-            log.warn("DynamicTp notify, no notify platforms or items configured.");
             return;
         }
         List<String> globalPlatformIds = StreamUtil.fetchProperty(platforms, NotifyPlatform::getPlatformId);

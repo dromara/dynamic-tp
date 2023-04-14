@@ -2,6 +2,7 @@ package com.dtp.core.thread;
 
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.core.support.Ordered;
+import com.dtp.core.support.runnable.DtpRunnable;
 import com.dtp.core.support.selector.ExecutorSelector;
 import com.dtp.core.support.selector.HashedExecutorSelector;
 import com.google.common.collect.Lists;
@@ -169,10 +170,16 @@ public class OrderedDtpExecutor extends DtpExecutor {
     public void onRefreshQueueCapacity(int capacity) {
         for (Executor executor : childExecutors) {
             ChildExecutor childExecutor = (ChildExecutor) executor;
-            if (childExecutor.taskQueue instanceof VariableLinkedBlockingQueue) {
-                ((VariableLinkedBlockingQueue<Runnable>) childExecutor.taskQueue).setCapacity(capacity);
+            if (childExecutor.getTaskQueue() instanceof VariableLinkedBlockingQueue) {
+                ((VariableLinkedBlockingQueue<Runnable>) childExecutor.getTaskQueue()).setCapacity(capacity);
             }
         }
+    }
+
+    protected DtpRunnable getEnhancedTasks(Runnable command) {
+        DtpRunnable dtpRunnable = (DtpRunnable) wrapTasks(command);
+        dtpRunnable.startQueueTimeoutTask(this);
+        return dtpRunnable;
     }
 
     private final class ChildExecutor implements Executor, Runnable {
@@ -197,10 +204,16 @@ public class OrderedDtpExecutor extends DtpExecutor {
         public void execute(Runnable command) {
             boolean start = false;
             synchronized (this) {
-                if (!taskQueue.add(wrapTasks(command))) {
+                try {
+                    if (!taskQueue.add(getEnhancedTasks(command))) {
+                        rejectedTaskCount.increment();
+                        throw new RejectedExecutionException("Task " + command.toString() + " rejected from " + this);
+                    }
+                } catch (IllegalStateException ex) {
                     rejectedTaskCount.increment();
-                    throw new RejectedExecutionException("Task " + command.toString() + " rejected from " + this);
+                    throw ex;
                 }
+
                 if (!running) {
                     running = true;
                     start = true;

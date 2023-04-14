@@ -23,8 +23,8 @@ import lombok.val;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.GenericApplicationListener;
 import org.springframework.core.ResolvableType;
 
@@ -56,14 +56,14 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, GenericApplicati
     public boolean supportsEventType(ResolvableType resolvableType) {
         Class<?> type = resolvableType.getRawClass();
         if (type != null) {
-            return ApplicationReadyEvent.class.isAssignableFrom(type);
+            return ContextRefreshedEvent.class.isAssignableFrom(type);
         }
         return false;
     }
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
-        if (event instanceof ApplicationReadyEvent) {
+        if (event instanceof ContextRefreshedEvent) {
             try {
                 DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
                 initialize();

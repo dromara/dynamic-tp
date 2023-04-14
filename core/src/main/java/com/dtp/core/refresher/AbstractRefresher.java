@@ -28,6 +28,9 @@ public abstract class AbstractRefresher implements Refresher {
 
     @Resource
     protected DtpProperties dtpProperties;
+    
+    @Resource
+    private PropertiesBinder propertiesBinder;
 
     @Override
     public void refresh(String content, ConfigFileTypeEnum fileType) {
@@ -51,7 +54,7 @@ public abstract class AbstractRefresher implements Refresher {
             log.warn("DynamicTp refresh, empty properties.");
             return;
         }
-        PropertiesBinder.bindDtpProperties(properties, dtpProperties);
+        dtpProperties = propertiesBinder.bindDtpProperties(properties, dtpProperties);
         doRefresh(dtpProperties);
     }
 

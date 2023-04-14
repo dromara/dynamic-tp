@@ -13,8 +13,7 @@ import com.dtp.core.notifier.manager.AlarmManager;
 import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.thread.NamedThreadFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.Ordered;
 
 import javax.annotation.Resource;
@@ -32,7 +31,7 @@ import static com.dtp.common.constant.DynamicTpConst.SCHEDULE_NOTIFY_ITEMS;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpMonitor implements ApplicationRunner, Ordered {
+public class DtpMonitor implements InitializingBean, Ordered {
 
     private static final ScheduledExecutorService MONITOR_EXECUTOR = new ScheduledThreadPoolExecutor(
             1, new NamedThreadFactory("dtp-monitor", true));
@@ -41,7 +40,7 @@ public class DtpMonitor implements ApplicationRunner, Ordered {
     private DtpProperties dtpProperties;
 
     @Override
-    public void run(ApplicationArguments args) {
+    public void afterPropertiesSet() throws Exception {
         MONITOR_EXECUTOR.scheduleWithFixedDelay(this::run,
                 0, dtpProperties.getMonitorInterval(), TimeUnit.SECONDS);
     }

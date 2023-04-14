@@ -1,5 +1,6 @@
 package com.dtp.starter.etcd.refresh;
 
+import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.spring.PropertiesBinder;
 import com.dtp.starter.etcd.util.EtcdUtil;
@@ -16,7 +17,7 @@ import lombok.val;
 @Slf4j
 public class EtcdListener implements Watch.Listener {
 
-    private final DtpProperties dtpProperties;
+    private DtpProperties dtpProperties;
 
     private final String key;
 
@@ -37,7 +38,8 @@ public class EtcdListener implements Watch.Listener {
             log.info("the etcd config content should be updated, key is " + key);
             String configType = dtpProperties.getConfigType();
             val properties = EtcdUtil.watchValMap(configType, response.getEvents(), dtpProperties);
-            PropertiesBinder.bindDtpProperties(properties, dtpProperties);
+            final PropertiesBinder propertiesBinder = ApplicationContextHolder.getBean(PropertiesBinder.class);
+            dtpProperties = propertiesBinder.bindDtpProperties(properties, dtpProperties);
             etcdRefresher.refresh(dtpProperties);
         } else {
             log.info("the etcd config content should not be updated, key is " + key);

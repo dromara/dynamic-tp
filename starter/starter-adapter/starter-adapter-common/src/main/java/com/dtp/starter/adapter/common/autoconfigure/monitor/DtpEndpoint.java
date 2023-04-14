@@ -1,4 +1,4 @@
-package com.dtp.core.monitor;
+package com.dtp.starter.adapter.common.autoconfigure.monitor;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.system.RuntimeInfo;

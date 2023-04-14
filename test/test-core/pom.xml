@@ -12,7 +12,7 @@
     <dependencies>
         <dependency>
             <groupId>cn.dynamictp</groupId>
-            <artifactId>dynamic-tp-adapter-common</artifactId>
+            <artifactId>dynamic-tp-spring-boot-starter-adapter-common</artifactId>
         </dependency>
     </dependencies>
 </project>

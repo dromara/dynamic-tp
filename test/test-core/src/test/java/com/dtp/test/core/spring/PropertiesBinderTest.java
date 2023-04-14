@@ -30,6 +30,9 @@ class PropertiesBinderTest {
 
     @Autowired
     private AbstractEnvironment environment;
+    
+    @Autowired
+    private PropertiesBinder propertiesBinder;
 
     @Test
     void testBindDtpPropertiesWithMap() {
@@ -39,7 +42,7 @@ class PropertiesBinderTest {
         properties.put("spring.dynamic.tp.executors[0].threadPoolName", "test_dtp");
 
         DtpProperties dtpProperties = new DtpProperties();
-        PropertiesBinder.bindDtpProperties(properties, dtpProperties);
+        propertiesBinder.bindDtpProperties(properties, dtpProperties);
         Assertions.assertEquals(properties.get("spring.dynamic.tp.executors[0].threadPoolName"),
                 dtpProperties.getExecutors().get(0).getThreadPoolName());
         Assertions.assertIterableEquals((List<String>) properties.get("spring.dynamic.tp.collectorTypes"),
@@ -48,8 +51,7 @@ class PropertiesBinderTest {
 
     @Test
     void testBindDtpPropertiesWithEnvironment() {
-        DtpProperties dtpProperties = new DtpProperties();
-        PropertiesBinder.bindDtpProperties(environment, dtpProperties);
+        DtpProperties dtpProperties = propertiesBinder.bindDtpProperties(environment, new DtpProperties());
         String threadPoolName = environment.getProperty("spring.dynamic.tp.executors[0].threadPoolName");
         Assertions.assertEquals(threadPoolName, dtpProperties.getExecutors().get(0).getThreadPoolName());
     }

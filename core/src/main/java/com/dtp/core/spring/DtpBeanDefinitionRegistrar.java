@@ -1,5 +1,6 @@
 package com.dtp.core.spring;
 
+import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.entity.DtpExecutorProps;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.BeanUtil;
@@ -55,8 +56,8 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        DtpProperties dtpProperties = new DtpProperties();
-        PropertiesBinder.bindDtpProperties(environment, dtpProperties);
+        final PropertiesBinder propertiesBinder = ApplicationContextHolder.getBean(PropertiesBinder.class);
+        DtpProperties dtpProperties = propertiesBinder.bindDtpProperties(environment, new DtpProperties());
         val executors = dtpProperties.getExecutors();
         if (CollectionUtils.isEmpty(executors)) {
             log.warn("DynamicTp registrar, no executors are configured.");

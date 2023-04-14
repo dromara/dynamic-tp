@@ -7,7 +7,6 @@ import com.dtp.common.entity.TpExecutorProps;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
 
@@ -21,7 +20,6 @@ import static com.dtp.common.em.CollectorTypeEnum.MICROMETER;
  **/
 @Slf4j
 @Data
-@ConfigurationProperties(prefix = DynamicTpConst.MAIN_PROPERTIES_PREFIX)
 public class DtpProperties {
 
     /**

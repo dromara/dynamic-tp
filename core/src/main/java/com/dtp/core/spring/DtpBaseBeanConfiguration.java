@@ -3,10 +3,8 @@ package com.dtp.core.spring;
 import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.em.RejectedTypeEnum;
-import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.timer.HashedWheelTimer;
 import com.dtp.core.DtpRegistry;
-import com.dtp.core.monitor.DtpEndpoint;
 import com.dtp.core.monitor.DtpMonitor;
 import com.dtp.core.support.DtpBannerPrinter;
 import com.dtp.core.support.ThreadPoolBuilder;
@@ -14,9 +12,6 @@ import com.dtp.core.support.wrapper.TaskWrappers;
 import com.dtp.core.thread.NamedThreadFactory;
 import com.google.common.collect.Sets;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -34,7 +29,7 @@ import static com.dtp.common.em.QueueTypeEnum.LINKED_BLOCKING_QUEUE;
  * @since 1.0.0
  **/
 @Configuration(proxyBeanMethods = false)
-@EnableConfigurationProperties(DtpProperties.class)
+@DependsOn("dtpProperties")
 @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 public class DtpBaseBeanConfiguration {
 
@@ -61,13 +56,6 @@ public class DtpBaseBeanConfiguration {
     }
 
     @Bean
-    @ConditionalOnAvailableEndpoint
-    public DtpEndpoint dtpEndpoint() {
-        return new DtpEndpoint();
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = DynamicTpConst.BANNER_ENABLED_PROP, matchIfMissing = true, havingValue = "true")
     public DtpBannerPrinter dtpBannerPrinter() {
         return new DtpBannerPrinter();
     }

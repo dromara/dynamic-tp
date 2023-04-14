@@ -24,8 +24,8 @@ import lombok.val;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
 
 import java.util.Collections;
@@ -48,7 +48,7 @@ import static java.util.stream.Collectors.toList;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpRegistry implements ApplicationRunner, Ordered {
+public class DtpRegistry implements ApplicationListener<ContextRefreshedEvent>, Ordered {
 
     /**
      * Maintain all automatically registered and manually registered DtpExecutors.
@@ -315,7 +315,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
     }
 
     @Override
-    public void run(ApplicationArguments args) {
+    public void onApplicationEvent(ContextRefreshedEvent event) {
         Set<String> remoteExecutors = Collections.emptySet();
         if (CollectionUtils.isNotEmpty(dtpProperties.getExecutors())) {
             remoteExecutors = dtpProperties.getExecutors().stream()

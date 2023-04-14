@@ -1,11 +1,12 @@
 package com.dtp.core.support;
 
+import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.util.VersionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.boot.ansi.AnsiColor;
-import org.springframework.boot.ansi.AnsiOutput;
-import org.springframework.boot.ansi.AnsiStyle;
+import org.springframework.core.env.Environment;
+
+import javax.annotation.Resource;
 
 /**
  * DtpBannerPrinter related
@@ -29,9 +30,14 @@ public class DtpBannerPrinter implements InitializingBean {
             "         __/ |                              | |    \n" +
             "        |___/                               |_|    ";
 
+    @Resource
+    private Environment env;
+    
     @Override
     public void afterPropertiesSet() {
-        log.info(AnsiOutput.toString(BANNER, "\n", AnsiColor.GREEN, NAME, "\n", " :: ", VersionUtil.getVersion(), " :: ",
-                "\n", SITE, AnsiColor.DEFAULT, AnsiStyle.FAINT));
+        final Boolean enable = env.getProperty(DynamicTpConst.BANNER_ENABLED_PROP, boolean.class, true);
+        if (enable) {
+            log.info(BANNER + "\n" + NAME + "\n :: " + VersionUtil.getVersion() + " :: \n" + SITE + "\n");
+        }
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.Ordered;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -17,6 +18,9 @@ import java.util.Map;
 @Slf4j
 public class EtcdRefresher extends AbstractRefresher implements InitializingBean, Ordered, DisposableBean {
 
+    @Resource
+    private PropertiesBinder propertiesBinder;
+    
     @Override
     public void afterPropertiesSet() {
         DtpProperties.Etcd etcd = dtpProperties.getEtcd();
@@ -36,7 +40,7 @@ public class EtcdRefresher extends AbstractRefresher implements InitializingBean
      */
     private Map<Object, Object> loadConfig(final DtpProperties.Etcd etcd) {
         Map<Object, Object> properties = EtcdUtil.getConfigMap(etcd, dtpProperties.getConfigType());
-        PropertiesBinder.bindDtpProperties(properties, dtpProperties);
+        dtpProperties = propertiesBinder.bindDtpProperties(properties, dtpProperties);
         return properties;
     }
 

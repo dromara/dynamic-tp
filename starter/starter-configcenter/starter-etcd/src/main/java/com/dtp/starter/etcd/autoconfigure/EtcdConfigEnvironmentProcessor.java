@@ -1,5 +1,6 @@
 package com.dtp.starter.etcd.autoconfigure;
 
+import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.spring.PropertiesBinder;
 import com.dtp.starter.etcd.util.EtcdUtil;
@@ -24,8 +25,8 @@ public class EtcdConfigEnvironmentProcessor implements EnvironmentPostProcessor,
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment,
             SpringApplication application) {
-        DtpProperties dtpProperties = new DtpProperties();
-        PropertiesBinder.bindDtpProperties(environment, dtpProperties);
+        final PropertiesBinder propertiesBinder = ApplicationContextHolder.getBean(PropertiesBinder.class);
+        DtpProperties dtpProperties = propertiesBinder.bindDtpProperties(environment, new DtpProperties());
         DtpProperties.Etcd etcd = dtpProperties.getEtcd();
         val properties = EtcdUtil.getConfigMap(etcd, dtpProperties.getConfigType());
         if (!checkPropertyExist(environment)) {

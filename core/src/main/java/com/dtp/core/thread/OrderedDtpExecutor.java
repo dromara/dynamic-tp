@@ -242,6 +242,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
             for (; ; ) {
                 if (timeout || taskQueue.isEmpty()) {
                     if (running.compareAndSet(true, false)) {
+                        // TODO 这时候再判空，如果不为空直接take，然后返回
                         return null;
                     }
                     continue;

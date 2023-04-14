@@ -8,6 +8,7 @@ package com.dtp.common.json.parser;
  */
 public abstract class AbstractJsonParser implements JsonParser {
 
+    @Override
     public boolean isSupport() {
         try {
             Class.forName(getMapperClassName());

@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.GenericApplicationListener;
+import org.springframework.core.Ordered;
 import org.springframework.core.ResolvableType;
 
 import java.util.Collections;
@@ -52,6 +53,18 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, GenericApplicati
 
     protected final Map<String, ExecutorWrapper> executors = Maps.newHashMap();
 
+    @Override
+    public int getOrder() {
+        //Compatible with Spring4.x
+        return Ordered.LOWEST_PRECEDENCE;
+    }
+    
+    @Override
+    public boolean supportsSourceType(Class<?> sourceType) {
+        //Compatible with Spring4.x
+        return true;
+    }
+    
     @Override
     public boolean supportsEventType(ResolvableType resolvableType) {
         Class<?> type = resolvableType.getRawClass();

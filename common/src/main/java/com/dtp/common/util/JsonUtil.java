@@ -59,7 +59,6 @@ public final class JsonUtil {
      * @return T
      * @author topsuder 🌼🐇
      */
-
     public static <T> T fromJson(String json, Type typeOfT) {
         return JSON_PARSER.fromJson(json, typeOfT);
     }

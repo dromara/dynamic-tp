@@ -1,6 +1,7 @@
 package com.dtp.core.spring;
 
 import com.dtp.common.ApplicationContextHolder;
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.timer.HashedWheelTimer;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.monitor.DtpMonitor;

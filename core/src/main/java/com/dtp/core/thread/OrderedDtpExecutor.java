@@ -21,6 +21,7 @@ import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
@@ -190,7 +191,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
 
         private final LongAdder rejectedTaskCount = new LongAdder();
 
-        private boolean running;
+        private AtomicBoolean running = new AtomicBoolean(false);
 
         ChildExecutor(int queueSize) {
             if (queueSize <= 0) {
@@ -202,40 +203,26 @@ public class OrderedDtpExecutor extends DtpExecutor {
 
         @Override
         public void execute(Runnable command) {
-            boolean start = false;
-            synchronized (this) {
-                try {
-                    if (!taskQueue.add(getEnhancedTasks(command))) {
-                        rejectedTaskCount.increment();
-                        throw new RejectedExecutionException("Task " + command.toString() + " rejected from " + this);
-                    }
-                } catch (IllegalStateException ex) {
+            try {
+                if (!taskQueue.offer(getEnhancedTasks(command))) {
                     rejectedTaskCount.increment();
-                    throw ex;
+                    throw new RejectedExecutionException("Task " + command.toString() + " rejected from " + this);
                 }
-
-                if (!running) {
-                    running = true;
-                    start = true;
-                }
+            } catch (IllegalStateException ex) {
+                rejectedTaskCount.increment();
+                throw ex;
             }
-            if (start) {
+            if (!running.get() && running.compareAndSet(false, true)) {
                 doUnorderedExecute(this);
             }
+
         }
 
         @Override
         public void run() {
             Thread thread = Thread.currentThread();
-            for (;;) {
-                final Runnable task;
-                synchronized (this) {
-                    task = taskQueue.poll();
-                    if (task == null) {
-                        running = false;
-                        break;
-                    }
-                }
+            Runnable task;
+            while ((task = getTask()) != null) {
                 onBeforeExecute(thread, task);
                 Throwable thrown = null;
                 try {
@@ -246,6 +233,28 @@ public class OrderedDtpExecutor extends DtpExecutor {
                 } finally {
                     onAfterExecute(task, thrown);
                     completedTaskCount.increment();
+                }
+            }
+        }
+
+        private Runnable getTask() {
+            boolean timeout = false;
+            for (; ; ) {
+                if (timeout || taskQueue.isEmpty()) {
+                    if (running.compareAndSet(true, false)) {
+                        return null;
+                    }
+                    continue;
+                }
+                try {
+                    // 当超时获取的时候，这时候有新的任务过来，那么设置为false不太合理?
+                    Runnable r = taskQueue.poll(10000, TimeUnit.MILLISECONDS);
+                    if (r != null) {
+                        return r;
+                    }
+                    timeout = true;
+                } catch (InterruptedException ignored) {
+                    timeout = false;
                 }
             }
         }

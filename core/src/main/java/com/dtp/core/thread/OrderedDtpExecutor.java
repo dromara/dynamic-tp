@@ -21,6 +21,7 @@ import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
@@ -190,7 +191,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
 
         private final LongAdder rejectedTaskCount = new LongAdder();
 
-        private boolean running;
+        private final AtomicBoolean running = new AtomicBoolean(false);
 
         ChildExecutor(int queueSize) {
             if (queueSize <= 0) {
@@ -202,24 +203,20 @@ public class OrderedDtpExecutor extends DtpExecutor {
 
         @Override
         public void execute(Runnable command) {
-            boolean start = false;
-            synchronized (this) {
-                try {
-                    if (!taskQueue.add(getEnhancedTasks(command))) {
-                        rejectedTaskCount.increment();
-                        throw new RejectedExecutionException("Task " + command.toString() + " rejected from " + this);
-                    }
-                } catch (IllegalStateException ex) {
+            boolean isSuccess;
+            try {
+                synchronized (this) {
+                    isSuccess = taskQueue.offer(getEnhancedTasks(command));
+                }
+                if (!isSuccess) {
                     rejectedTaskCount.increment();
-                    throw ex;
+                    throw new RejectedExecutionException("Task " + command.toString() + " rejected from " + this);
                 }
-
-                if (!running) {
-                    running = true;
-                    start = true;
-                }
+            } catch (IllegalStateException ex) {
+                rejectedTaskCount.increment();
+                throw ex;
             }
-            if (start) {
+            if (!running.get() && running.compareAndSet(false, true)) {
                 doUnorderedExecute(this);
             }
         }
@@ -227,15 +224,8 @@ public class OrderedDtpExecutor extends DtpExecutor {
         @Override
         public void run() {
             Thread thread = Thread.currentThread();
-            for (;;) {
-                final Runnable task;
-                synchronized (this) {
-                    task = taskQueue.poll();
-                    if (task == null) {
-                        running = false;
-                        break;
-                    }
-                }
+            Runnable task;
+            while ((task = getTask()) != null) {
                 onBeforeExecute(thread, task);
                 Throwable thrown = null;
                 try {
@@ -248,6 +238,18 @@ public class OrderedDtpExecutor extends DtpExecutor {
                     completedTaskCount.increment();
                 }
             }
+        }
+
+        private Runnable getTask() {
+            Runnable task;
+            synchronized (this) {
+                task = taskQueue.poll();
+                if (task == null) {
+                    running.compareAndSet(true, false);
+                    return null;
+                }
+            }
+            return task;
         }
 
         public BlockingQueue<Runnable> getTaskQueue() {

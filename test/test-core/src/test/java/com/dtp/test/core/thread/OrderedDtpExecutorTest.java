@@ -21,7 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -42,12 +42,16 @@ class OrderedDtpExecutorTest {
     private final List<String> TABLES = Lists.newArrayList("table1", "table2", "table3");
 
     @Test
-    void orderedExecute() {
-        for (int i = 0; i < 10; i++) {
+    void orderedExecute() throws InterruptedException {
+        for (int i = 0; i < 1000; i++) {
+            if (i == 500) {
+                TimeUnit.MILLISECONDS.sleep(20000L);
+            }
             threadLocal.set("test ordered execute " + i);
-            MDC.put("traceId", UUID.randomUUID().toString());
-            orderedDtpExecutor.execute(new TestOrderedRunnable(String.valueOf(i)));
+            MDC.put("traceId", String.valueOf(i));
+            orderedDtpExecutor.execute(new TestOrderedRunnable("TEST"));
         }
+        new CountDownLatch(1).await();
     }
 
     @Test

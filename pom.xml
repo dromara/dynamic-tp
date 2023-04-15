@@ -22,8 +22,6 @@
         <hutool.version>5.8.12</hutool.version>
         <lombok.version>1.18.24</lombok.version>
         <apollo.version>1.5.0</apollo.version>
-        <logback.version>1.4.6</logback.version>
-        <log4j.version>2.20.0</log4j.version>
         <guava.version>31.1-jre</guava.version>
         <jackson-core.version>2.13.4</jackson-core.version>
         <jackson-databind.version>2.13.4</jackson-databind.version>
@@ -253,36 +251,6 @@
                 <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-core</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-slf4j-impl</artifactId>
-                <version>${log4j.version}</version>
             </dependency>
 
             <dependency>

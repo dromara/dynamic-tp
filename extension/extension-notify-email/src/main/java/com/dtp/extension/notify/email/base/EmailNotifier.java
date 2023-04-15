@@ -1,8 +1,9 @@
 package com.dtp.extension.notify.email.base;
 
-import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.em.NotifyPlatformEnum;
+import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.core.notifier.base.Notifier;
+import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -10,7 +11,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import javax.mail.internet.MimeMessage;
 import java.util.Date;
 
 /**

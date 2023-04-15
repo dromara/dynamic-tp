@@ -1,4 +1,4 @@
-package com.dtp.common.json.parser;
+package com.dtp.common.parser.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,7 +14,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 /**
- * @see com.dtp.common.json.parser dynamic-tp
  *
  * @author topsuder
  * @since 1.1.3

@@ -176,7 +176,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
         }
     }
 
-    protected DtpRunnable getEnhancedTasks(Runnable command) {
+    protected DtpRunnable getEnhancedTask(Runnable command) {
         DtpRunnable dtpRunnable = (DtpRunnable) wrapTasks(command);
         dtpRunnable.startQueueTimeoutTask(this);
         return dtpRunnable;
@@ -205,7 +205,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
             boolean start = false;
             synchronized (this) {
                 try {
-                    if (!taskQueue.add(getEnhancedTasks(command))) {
+                    if (!taskQueue.add(getEnhancedTask(command))) {
                         rejectedTaskCount.increment();
                         throw new RejectedExecutionException("Task " + command.toString() + " rejected from " + this);
                     }

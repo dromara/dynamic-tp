@@ -1,7 +1,7 @@
 package com.dtp.test.core.parse;
 
 import cn.hutool.core.io.FileUtil;
-import com.dtp.core.parser.YamlConfigParser;
+import com.dtp.common.parser.config.YamlConfigParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.ResourceUtils;

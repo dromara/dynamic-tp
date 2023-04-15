@@ -36,5 +36,5 @@ public class NotifyPlatform {
     /**
      * Receivers, split by ,
      */
-    private String receivers = "所有人";
+    private String receivers = "all";
 }

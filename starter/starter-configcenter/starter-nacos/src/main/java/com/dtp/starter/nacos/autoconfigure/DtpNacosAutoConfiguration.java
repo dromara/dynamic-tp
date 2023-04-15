@@ -1,5 +1,6 @@
 package com.dtp.starter.nacos.autoconfigure;
 
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.spring.DtpBaseBeanConfiguration;
 import com.dtp.starter.nacos.refresh.NacosRefresher;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -25,8 +26,8 @@ public class DtpNacosAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean()
-    public NacosRefresher nacosRefresher() {
-        return new NacosRefresher();
+    public NacosRefresher nacosRefresher(DtpProperties dtpProperties) {
+        return new NacosRefresher(dtpProperties);
     }
 
 }

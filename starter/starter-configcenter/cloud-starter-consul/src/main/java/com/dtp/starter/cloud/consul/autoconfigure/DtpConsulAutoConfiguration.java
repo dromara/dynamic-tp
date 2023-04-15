@@ -1,5 +1,6 @@
 package com.dtp.starter.cloud.consul.autoconfigure;
 
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.starter.cloud.consul.refresh.CloudConsulRefresher;
 import com.dtp.core.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -23,7 +24,7 @@ public class DtpConsulAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean()
     @ConditionalOnProperty(value = "spring.cloud.consul.config.enabled", matchIfMissing = true)
-    public CloudConsulRefresher cloudConsulRefresher() {
-        return new CloudConsulRefresher();
+    public CloudConsulRefresher cloudConsulRefresher(DtpProperties dtpProperties) {
+        return new CloudConsulRefresher(dtpProperties);
     }
 }

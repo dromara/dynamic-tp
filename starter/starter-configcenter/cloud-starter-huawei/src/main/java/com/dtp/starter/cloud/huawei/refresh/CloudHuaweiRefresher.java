@@ -1,5 +1,6 @@
 package com.dtp.starter.cloud.huawei.refresh;
 
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.refresher.AbstractRefresher;
 import com.huaweicloud.common.event.ConfigRefreshEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,10 @@ import org.springframework.lang.NonNull;
  */
 @Slf4j
 public class CloudHuaweiRefresher extends AbstractRefresher implements SmartApplicationListener {
+
+    public CloudHuaweiRefresher(DtpProperties dtpProperties) {
+        super(dtpProperties);
+    }
 
     @Override
     public boolean supportsEventType(@NonNull Class<? extends ApplicationEvent> eventType) {

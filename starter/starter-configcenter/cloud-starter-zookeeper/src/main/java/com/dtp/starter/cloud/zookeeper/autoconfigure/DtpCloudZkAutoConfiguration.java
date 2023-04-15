@@ -1,5 +1,6 @@
 package com.dtp.starter.cloud.zookeeper.autoconfigure;
 
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.starter.cloud.zookeeper.refresh.CloudZookeeperRefresher;
 import com.dtp.core.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -23,7 +24,7 @@ public class DtpCloudZkAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean()
     @ConditionalOnProperty(value = "spring.cloud.zookeeper.config.enabled", matchIfMissing = true)
-    public CloudZookeeperRefresher cloudZookeeperRefresher() {
-        return new CloudZookeeperRefresher();
+    public CloudZookeeperRefresher cloudZookeeperRefresher(DtpProperties dtpProperties) {
+        return new CloudZookeeperRefresher(dtpProperties);
     }
 }

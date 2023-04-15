@@ -10,7 +10,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import javax.annotation.Resource;
 import javax.mail.internet.MimeMessage;
 import java.util.Date;
 
@@ -29,11 +28,14 @@ public class EmailNotifier implements Notifier {
     @Value("${spring.mail.title:ThreadPool Notify}")
     private String title;
 
-    @Resource
-    private JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender;
 
-    @Resource
-    private TemplateEngine templateEngine;
+    private final TemplateEngine templateEngine;
+
+    public EmailNotifier(JavaMailSender javaMailSender, TemplateEngine templateEngine) {
+        this.javaMailSender = javaMailSender;
+        this.templateEngine = templateEngine;
+    }
 
     @Override
     public String platform() {

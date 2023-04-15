@@ -1,5 +1,6 @@
 package com.dtp.starter.cloud.polaris.refresh;
 
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.refresher.AbstractRefresher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
@@ -15,6 +16,10 @@ import org.springframework.lang.NonNull;
  **/
 @Slf4j
 public class CloudPolarisRefresher extends AbstractRefresher implements SmartApplicationListener {
+
+    public CloudPolarisRefresher(DtpProperties dtpProperties) {
+        super(dtpProperties);
+    }
 
     @Override
     public boolean supportsEventType(@NonNull Class<? extends ApplicationEvent> eventType) {

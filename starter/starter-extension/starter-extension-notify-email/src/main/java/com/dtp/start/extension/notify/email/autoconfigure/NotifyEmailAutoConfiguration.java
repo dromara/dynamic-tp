@@ -9,6 +9,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.thymeleaf.TemplateEngine;
 
 /**
  * NotifyEmailAutoConfiguration related
@@ -22,8 +24,8 @@ public class NotifyEmailAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public EmailNotifier emailNotifier() {
-        return new EmailNotifier();
+    public EmailNotifier emailNotifier(JavaMailSender javaMailSender, TemplateEngine templateEngine) {
+        return new EmailNotifier(javaMailSender, templateEngine);
     }
 
     @Bean

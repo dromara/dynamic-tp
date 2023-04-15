@@ -1,5 +1,6 @@
 package com.dtp.starter.cloud.huawei.autoconfigure;
 
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.spring.DtpBaseBeanConfiguration;
 import com.dtp.starter.cloud.huawei.refresh.CloudHuaweiRefresher;
 import com.huaweicloud.common.configration.bootstrap.ConfigBootstrapProperties;
@@ -23,7 +24,7 @@ public class DtpHuaweiAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean()
     @ConditionalOnProperty(value = "spring.cloud.servicecomb.config.enabled", matchIfMissing = true)
-    public CloudHuaweiRefresher cloudHuaweiRefresher() {
-        return new CloudHuaweiRefresher();
+    public CloudHuaweiRefresher cloudHuaweiRefresher(DtpProperties dtpProperties) {
+        return new CloudHuaweiRefresher(dtpProperties);
     }
 }

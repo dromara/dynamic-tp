@@ -1,5 +1,6 @@
 package com.dtp.starter.zookeeper.autoconfigure;
 
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.spring.DtpBaseBeanConfiguration;
 import com.dtp.starter.zookeeper.refresh.ZookeeperRefresher;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -18,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
 public class DtpZkAutoConfiguration {
 
     @Bean
-    public ZookeeperRefresher zookeeperRefresher() {
-        return new ZookeeperRefresher();
+    public ZookeeperRefresher zookeeperRefresher(DtpProperties dtpProperties) {
+        return new ZookeeperRefresher(dtpProperties);
     }
 }

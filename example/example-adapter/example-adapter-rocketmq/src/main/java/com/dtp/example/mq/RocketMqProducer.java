@@ -1,9 +1,8 @@
 package com.dtp.example.mq;
 
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 
 /**
  * @author fabian
@@ -11,7 +10,7 @@ import javax.annotation.Resource;
 @Component
 public class RocketMqProducer {
 
-    @Resource
+    @Autowired
     private RocketMQTemplate rocketMQTemplate;
 
     // 发送消息的实例

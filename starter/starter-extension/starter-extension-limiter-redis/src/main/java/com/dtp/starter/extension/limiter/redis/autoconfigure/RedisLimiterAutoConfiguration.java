@@ -23,13 +23,13 @@ public class RedisLimiterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public RedisRateLimiter<List<Long>> redisScriptRateLimiter() {
-        return new SlidingWindowRateLimiter();
+    public RedisRateLimiter<List<Long>> redisScriptRateLimiter(StringRedisTemplate stringRedisTemplate) {
+        return new SlidingWindowRateLimiter(stringRedisTemplate);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public NotifyRedisRateLimiterFilter notifyRedisRateLimiterFilter() {
-        return new NotifyRedisRateLimiterFilter();
+    public NotifyRedisRateLimiterFilter notifyRedisRateLimiterFilter(RedisRateLimiter<List<Long>> redisScriptRateLimiter) {
+        return new NotifyRedisRateLimiterFilter(redisScriptRateLimiter);
     }
 }

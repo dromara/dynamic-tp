@@ -6,9 +6,9 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 
 /**
@@ -21,7 +21,7 @@ import java.io.IOException;
 @Service
 public class Okhttp3Service {
 
-    @Resource
+    @Autowired
     private OkHttpClient okHttpClient;
 
     public void call(String url) {

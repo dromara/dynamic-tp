@@ -1,6 +1,8 @@
 package com.dtp.core.converter;
 
+import com.dtp.common.entity.ThreadPoolStats;
 import com.dtp.common.entity.TpMainFields;
+import com.dtp.core.support.ExecutorAdapter;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.thread.DtpExecutor;
 import lombok.val;
@@ -17,20 +19,7 @@ public class ExecutorConverter {
 
     private ExecutorConverter() { }
 
-    public static TpMainFields convert(DtpExecutor dtpExecutor) {
-        TpMainFields mainFields = new TpMainFields();
-        mainFields.setThreadPoolName(dtpExecutor.getThreadPoolName());
-        mainFields.setCorePoolSize(dtpExecutor.getCorePoolSize());
-        mainFields.setMaxPoolSize(dtpExecutor.getMaximumPoolSize());
-        mainFields.setKeepAliveTime(dtpExecutor.getKeepAliveTime(TimeUnit.SECONDS));
-        mainFields.setQueueType(dtpExecutor.getQueueName());
-        mainFields.setQueueCapacity(dtpExecutor.getQueueCapacity());
-        mainFields.setRejectType(dtpExecutor.getRejectHandlerType());
-        mainFields.setAllowCoreThreadTimeOut(dtpExecutor.allowsCoreThreadTimeOut());
-        return mainFields;
-    }
-
-    public static TpMainFields convert(ExecutorWrapper executorWrapper) {
+    public static TpMainFields toMainFields(ExecutorWrapper executorWrapper) {
         TpMainFields mainFields = new TpMainFields();
         mainFields.setThreadPoolName(executorWrapper.getThreadPoolName());
         val executor = executorWrapper.getExecutor();
@@ -44,12 +33,40 @@ public class ExecutorConverter {
         return mainFields;
     }
 
-    public static TpMainFields ofSimple(String name, int corePoolSize, int maxPoolSize, long keepAliveTime) {
-        TpMainFields mainFields = new TpMainFields();
-        mainFields.setThreadPoolName(name);
-        mainFields.setCorePoolSize(corePoolSize);
-        mainFields.setMaxPoolSize(maxPoolSize);
-        mainFields.setKeepAliveTime(keepAliveTime);
-        return mainFields;
+    public static ThreadPoolStats toMetrics(ExecutorWrapper wrapper) {
+        ExecutorAdapter<?> executor = wrapper.getExecutor();
+        if (executor == null) {
+            return null;
+        }
+        ThreadPoolStats poolStats = convertCommon(executor);
+        poolStats.setPoolName(wrapper.getThreadPoolName());
+        if (executor instanceof DtpExecutor) {
+            DtpExecutor dtpExecutor = (DtpExecutor) executor;
+            poolStats.setRejectHandlerName(dtpExecutor.getRejectHandlerType());
+            poolStats.setRejectCount(dtpExecutor.getRejectCount());
+            poolStats.setRunTimeoutCount(dtpExecutor.getRunTimeoutCount());
+            poolStats.setQueueTimeoutCount(dtpExecutor.getQueueTimeoutCount());
+            poolStats.setDynamic(true);
+        } else {
+            poolStats.setDynamic(false);
+        }
+        return poolStats;
+    }
+
+    private static ThreadPoolStats convertCommon(ExecutorAdapter<?> executor) {
+        return ThreadPoolStats.builder()
+                .corePoolSize(executor.getCorePoolSize())
+                .maximumPoolSize(executor.getMaximumPoolSize())
+                .poolSize(executor.getPoolSize())
+                .activeCount(executor.getActiveCount())
+                .largestPoolSize(executor.getLargestPoolSize())
+                .queueType(executor.getQueue().getClass().getSimpleName())
+                .queueCapacity(executor.getQueueCapacity())
+                .queueSize(executor.getQueueSize())
+                .queueRemainingCapacity(executor.getQueueRemainingCapacity())
+                .taskCount(executor.getTaskCount())
+                .completedTaskCount(executor.getCompletedTaskCount())
+                .waitTaskCount(executor.getQueueSize())
+                .build();
     }
 }

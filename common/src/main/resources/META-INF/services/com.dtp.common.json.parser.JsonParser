@@ -1,3 +1,0 @@
-com.dtp.common.json.parser.JacksonParser
-com.dtp.common.json.parser.GsonParser
-com.dtp.common.json.parser.FastJsonParser

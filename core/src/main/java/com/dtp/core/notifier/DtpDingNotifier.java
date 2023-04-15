@@ -7,9 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import static com.dtp.common.constant.DingNotifyConst.DING_ALARM_TEMPLATE;
-import static com.dtp.common.constant.DingNotifyConst.DING_CHANGE_NOTICE_TEMPLATE;
-
 /**
  * DtpDingNotifier related
  *
@@ -30,12 +27,12 @@ public class DtpDingNotifier extends AbstractDtpNotifier {
 
     @Override
     protected String getNoticeTemplate() {
-        return DING_CHANGE_NOTICE_TEMPLATE;
+        return DingNotifyConst.DING_CHANGE_NOTICE_TEMPLATE;
     }
 
     @Override
     protected String getAlarmTemplate() {
-        return DING_ALARM_TEMPLATE;
+        return DingNotifyConst.DING_ALARM_TEMPLATE;
     }
 
     @Override

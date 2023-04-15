@@ -31,7 +31,9 @@ public class DtpBannerPrinter implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() {
-        log.info(AnsiOutput.toString(BANNER, "\n", AnsiColor.GREEN, NAME, "\n", " :: ", VersionUtil.getVersion(), " :: ",
-                "\n", SITE, AnsiColor.DEFAULT, AnsiStyle.FAINT));
+        log.info(AnsiOutput.toString(BANNER, "\n",
+                AnsiColor.GREEN, NAME, "\n",
+                " :: ", VersionUtil.getVersion(), " :: ", "\n",
+                SITE, AnsiColor.DEFAULT, AnsiStyle.FAINT));
     }
 }

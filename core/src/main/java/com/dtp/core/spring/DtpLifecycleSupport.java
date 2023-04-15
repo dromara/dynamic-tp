@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class DtpLifecycleSupport extends ThreadPoolExecutor implements InitializingBean, DisposableBean {
 
     /**
-     * Uniquely identifies.
+     * The name of the thread pool.
      */
     protected String threadPoolName;
 
@@ -51,6 +51,15 @@ public abstract class DtpLifecycleSupport extends ThreadPoolExecutor implements 
                                RejectedExecutionHandler handler) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
     }
+
+    public void setThreadPoolName(String threadPoolName) {
+        this.threadPoolName = threadPoolName;
+    }
+
+    public String getThreadPoolName() {
+        return threadPoolName;
+    }
+
     public boolean isWaitForTasksToCompleteOnShutdown() {
         return waitForTasksToCompleteOnShutdown;
     }
@@ -65,14 +74,6 @@ public abstract class DtpLifecycleSupport extends ThreadPoolExecutor implements 
 
     public void setAwaitTerminationSeconds(int awaitTerminationSeconds) {
         this.awaitTerminationSeconds = awaitTerminationSeconds;
-    }
-
-    public void setThreadPoolName(String threadPoolName) {
-        this.threadPoolName = threadPoolName;
-    }
-
-    public String getThreadPoolName() {
-        return threadPoolName;
     }
 
     @Override

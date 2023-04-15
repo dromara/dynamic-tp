@@ -1,0 +1,2 @@
+com.dtp.starter.etcd.autoconfigure.DtpEtcdAutoConfiguration
+com.dtp.starter.etcd.autoconfigure.EtcdConfigEnvironmentProcessor

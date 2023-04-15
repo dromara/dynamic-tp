@@ -1,0 +1,2 @@
+com.dtp.starter.adapter.dubbo.autoconfigure.ApacheDubboTpAutoConfiguration
+com.dtp.starter.adapter.dubbo.autoconfigure.AlibabaDubboTpAutoConfiguration

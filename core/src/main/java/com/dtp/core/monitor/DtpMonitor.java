@@ -12,8 +12,9 @@ import com.dtp.core.handler.CollectorHandler;
 import com.dtp.core.notifier.manager.AlarmManager;
 import com.dtp.core.thread.NamedThreadFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
 
 import java.util.Set;
@@ -30,7 +31,7 @@ import static com.dtp.common.constant.DynamicTpConst.SCHEDULE_NOTIFY_ITEMS;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpMonitor implements InitializingBean, Ordered, DisposableBean {
+public class DtpMonitor implements ApplicationListener<ContextRefreshedEvent>, Ordered, DisposableBean {
 
     private static final ScheduledExecutorService MONITOR_EXECUTOR = new ScheduledThreadPoolExecutor(
             1, new NamedThreadFactory("dtp-monitor", true));
@@ -42,7 +43,7 @@ public class DtpMonitor implements InitializingBean, Ordered, DisposableBean {
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void onApplicationEvent(ContextRefreshedEvent event) {
         MONITOR_EXECUTOR.scheduleWithFixedDelay(this::run,
                 0, dtpProperties.getMonitorInterval(), TimeUnit.SECONDS);
     }

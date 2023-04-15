@@ -1,4 +1,4 @@
-package com.dtp.starter.adapter.common.autoconfigure.monitor;
+package com.dtp.starter.common.autoconfigure.monitor;
 
 import cn.hutool.core.io.FileUtil;
 import com.dtp.common.ApplicationContextHolder;

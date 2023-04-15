@@ -11,6 +11,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 /**
@@ -23,11 +24,14 @@ public class ZkConfigEnvironmentProcessor implements EnvironmentPostProcessor, O
 
     public static final String ZK_PROPERTY_SOURCE_NAME = "dtpZkPropertySource";
 
+    @Resource
+    private DtpProperties dtpProperties;
+    
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
         
         final PropertiesBinder propertiesBinder = ApplicationContextHolder.getBean(PropertiesBinder.class);
-        DtpProperties dtpProperties = propertiesBinder.bindDtpProperties(environment, new DtpProperties());
+        dtpProperties = propertiesBinder.bindDtpProperties(environment, dtpProperties);
         Map<Object, Object> properties = CuratorUtil.genPropertiesMap(dtpProperties);
         if (!checkPropertyExist(environment)) {
             createZkPropertySource(environment, properties);

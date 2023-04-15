@@ -1,6 +1,5 @@
 package com.dtp.core.spring;
 
-import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.entity.DtpExecutorProps;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.BeanUtil;
@@ -21,6 +20,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.Map;
+import java.util.Objects;
+import java.util.ServiceLoader;
 import java.util.concurrent.BlockingQueue;
 
 import static com.dtp.common.constant.DynamicTpConst.ALLOW_CORE_THREAD_TIMEOUT;
@@ -58,7 +59,12 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        final PropertiesBinder propertiesBinder = ApplicationContextHolder.getBean(PropertiesBinder.class);
+        ServiceLoader<PropertiesBinder> loader = ServiceLoader.load(PropertiesBinder.class);
+        final PropertiesBinder propertiesBinder = loader.iterator().next();
+        if (Objects.isNull(propertiesBinder)) {
+            log.warn("No com.dtp.core.spring.PropertiesBinder SPI found !");
+            return;
+        }
         DtpProperties dtpProperties = propertiesBinder.bindDtpProperties(environment, new DtpProperties());
         val executors = dtpProperties.getExecutors();
         if (CollectionUtils.isEmpty(executors)) {

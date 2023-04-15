@@ -11,6 +11,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>starter-common</module>
         <module>starter-configcenter</module>
         <module>starter-adapter</module>
         <module>starter-extension</module>

@@ -22,10 +22,14 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0.0
  **/
 @Configuration(proxyBeanMethods = false)
-@DependsOn("dtpProperties")
 @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 public class DtpBaseBeanConfiguration {
 
+    @Bean
+    public DtpProperties dtpProperties() {
+        return new DtpProperties();
+    }
+    
     @Bean
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public ApplicationContextHolder dtpApplicationContextHolder() {

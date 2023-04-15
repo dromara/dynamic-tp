@@ -1,4 +1,4 @@
-package com.dtp.starter.adapter.common.autoconfigure.spring;
+package com.dtp.starter.common.autoconfigure.spring;
 
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.spring.PropertiesBinder;

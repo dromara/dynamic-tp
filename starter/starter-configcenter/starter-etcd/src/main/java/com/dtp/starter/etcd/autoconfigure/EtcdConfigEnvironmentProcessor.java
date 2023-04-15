@@ -14,6 +14,8 @@ import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 
+import javax.annotation.Resource;
+
 /**
  * @author Redick01
  */
@@ -21,12 +23,15 @@ public class EtcdConfigEnvironmentProcessor implements EnvironmentPostProcessor,
 
     public static final String ETCD_PROPERTY_SOURCE_NAME = "etcdPropertySource";
 
+    @Resource
+    private DtpProperties dtpProperties;
+    
     @SneakyThrows
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment,
             SpringApplication application) {
         final PropertiesBinder propertiesBinder = ApplicationContextHolder.getBean(PropertiesBinder.class);
-        DtpProperties dtpProperties = propertiesBinder.bindDtpProperties(environment, new DtpProperties());
+        dtpProperties = propertiesBinder.bindDtpProperties(environment, dtpProperties);
         DtpProperties.Etcd etcd = dtpProperties.getEtcd();
         val properties = EtcdUtil.getConfigMap(etcd, dtpProperties.getConfigType());
         if (!checkPropertyExist(environment)) {

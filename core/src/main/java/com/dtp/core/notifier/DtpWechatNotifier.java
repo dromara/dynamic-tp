@@ -7,9 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import static com.dtp.common.constant.WechatNotifyConst.WECHAT_ALARM_TEMPLATE;
-import static com.dtp.common.constant.WechatNotifyConst.WECHAT_CHANGE_NOTICE_TEMPLATE;
-
 /**
  * DtpWechatNotifier related
  *
@@ -30,12 +27,12 @@ public class DtpWechatNotifier extends AbstractDtpNotifier {
 
     @Override
     protected String getNoticeTemplate() {
-        return WECHAT_CHANGE_NOTICE_TEMPLATE;
+        return WechatNotifyConst.WECHAT_CHANGE_NOTICE_TEMPLATE;
     }
 
     @Override
     protected String getAlarmTemplate() {
-        return WECHAT_ALARM_TEMPLATE;
+        return WechatNotifyConst.WECHAT_ALARM_TEMPLATE;
     }
 
     @Override

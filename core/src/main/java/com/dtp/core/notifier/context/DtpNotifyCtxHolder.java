@@ -1,4 +1,4 @@
-package com.dtp.core.context;
+package com.dtp.core.notifier.context;
 
 /**
  * DtpNotifyCtxHolder related.

@@ -1,5 +1,7 @@
 package com.dtp.core.notifier;
 
+import com.dtp.common.constant.DynamicTpConst;
+import com.dtp.common.constant.LarkNotifyConst;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.entity.AlarmInfo;
@@ -8,9 +10,9 @@ import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.util.CommonUtil;
 import com.dtp.common.util.DateUtil;
-import com.dtp.core.context.AlarmCtx;
-import com.dtp.core.context.BaseNotifyCtx;
-import com.dtp.core.context.DtpNotifyCtxHolder;
+import com.dtp.core.notifier.context.AlarmCtx;
+import com.dtp.core.notifier.context.BaseNotifyCtx;
+import com.dtp.core.notifier.context.DtpNotifyCtxHolder;
 import com.dtp.core.notifier.alarm.AlarmCounter;
 import com.dtp.core.notifier.base.Notifier;
 import com.dtp.core.notifier.capture.CapturedBlockingQueue;
@@ -31,11 +33,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
-import static com.dtp.common.constant.DynamicTpConst.UNKNOWN;
-import static com.dtp.common.constant.LarkNotifyConst.LARK_AT_FORMAT_OPENID;
-import static com.dtp.common.constant.LarkNotifyConst.LARK_AT_FORMAT_USERNAME;
-import static com.dtp.common.constant.LarkNotifyConst.LARK_OPENID_PREFIX;
 import static com.dtp.core.notifier.manager.NotifyHelper.getAlarmKeys;
 import static com.dtp.core.notifier.manager.NotifyHelper.getAllAlarmKeys;
 
@@ -129,10 +126,10 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 alarmCounter.getLeft(),
                 alarmCounter.getMiddle(),
                 alarmCounter.getRight(),
-                Optional.ofNullable(context.getAlarmInfo()).map(AlarmInfo::getLastAlarmTime).orElse(UNKNOWN),
+                Optional.ofNullable(context.getAlarmInfo()).map(AlarmInfo::getLastAlarmTime).orElse(DynamicTpConst.UNKNOWN),
                 DateUtil.now(),
                 getReceives(platform.getPlatform(), platform.getReceivers()),
-                Optional.ofNullable(MDC.get(TRACE_ID)).orElse(UNKNOWN),
+                Optional.ofNullable(MDC.get(DynamicTpConst.TRACE_ID)).orElse(DynamicTpConst.UNKNOWN),
                 notifyItem.getInterval()
         );
         return highlightAlarmContent(content, notifyItemEnum);
@@ -168,8 +165,8 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         }
         if (NotifyPlatformEnum.LARK.name().toLowerCase().equals(platform)) {
             return Arrays.stream(receives.split(","))
-                    .map(receive -> StringUtils.startsWith(receive, LARK_OPENID_PREFIX)
-                            ? String.format(LARK_AT_FORMAT_OPENID, receive) : String.format(LARK_AT_FORMAT_USERNAME, receive))
+                    .map(receive -> StringUtils.startsWith(receive, LarkNotifyConst.LARK_OPENID_PREFIX)
+                            ? String.format(LarkNotifyConst.LARK_AT_FORMAT_OPENID, receive) : String.format(LarkNotifyConst.LARK_AT_FORMAT_USERNAME, receive))
                     .collect(Collectors.joining(" "));
         } else {
             String[] receivers = StringUtils.split(receives, ',');

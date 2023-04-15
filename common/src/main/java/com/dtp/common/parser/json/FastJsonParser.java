@@ -1,4 +1,4 @@
-package com.dtp.common.json.parser;
+package com.dtp.common.parser.json;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -6,7 +6,6 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import java.lang.reflect.Type;
 
 /**
- * @see com.dtp.common.json.parser dynamic-tp
  *
  * @author topsuder
  * @since 1.1.3

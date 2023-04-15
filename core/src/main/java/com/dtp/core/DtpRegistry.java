@@ -85,7 +85,7 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      */
     public static void registerExecutor(ExecutorWrapper wrapper, String source) {
         log.info("DynamicTp register dtpExecutor, source: {}, executor: {}",
-                source, ExecutorConverter.convert(wrapper));
+                source, ExecutorConverter.toMainFields(wrapper));
         EXECUTOR_REGISTRY.putIfAbsent(wrapper.getThreadPoolName(), wrapper);
     }
 
@@ -171,9 +171,9 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
             log.error("DynamicTp refresh, invalid parameters exist, properties: {}", props);
             return;
         }
-        TpMainFields oldFields = ExecutorConverter.convert(executorWrapper);
+        TpMainFields oldFields = ExecutorConverter.toMainFields(executorWrapper);
         doRefresh(executorWrapper, props);
-        TpMainFields newFields = ExecutorConverter.convert(executorWrapper);
+        TpMainFields newFields = ExecutorConverter.toMainFields(executorWrapper);
         if (oldFields.equals(newFields)) {
             log.debug("DynamicTp refresh, main properties of [{}] have not changed.",
                     executorWrapper.getThreadPoolName());

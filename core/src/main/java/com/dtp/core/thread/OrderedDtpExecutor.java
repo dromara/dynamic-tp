@@ -176,7 +176,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
         }
     }
 
-    protected DtpRunnable getEnhancedTasks(Runnable command) {
+    protected DtpRunnable getEnhancedTask(Runnable command) {
         DtpRunnable dtpRunnable = (DtpRunnable) wrapTasks(command);
         dtpRunnable.startQueueTimeoutTask(this);
         return dtpRunnable;
@@ -205,7 +205,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
             boolean start = false;
             synchronized (this) {
                 try {
-                    if (!taskQueue.add(getEnhancedTasks(command))) {
+                    if (!taskQueue.add(getEnhancedTask(command))) {
                         rejectedTaskCount.increment();
                         throw new RejectedExecutionException("Task " + command.toString() + " rejected from " + this);
                     }
@@ -227,15 +227,8 @@ public class OrderedDtpExecutor extends DtpExecutor {
         @Override
         public void run() {
             Thread thread = Thread.currentThread();
-            for (;;) {
-                final Runnable task;
-                synchronized (this) {
-                    task = taskQueue.poll();
-                    if (task == null) {
-                        running = false;
-                        break;
-                    }
-                }
+            Runnable task;
+            while ((task = getTask()) != null) {
                 onBeforeExecute(thread, task);
                 Throwable thrown = null;
                 try {
@@ -248,6 +241,14 @@ public class OrderedDtpExecutor extends DtpExecutor {
                     completedTaskCount.increment();
                 }
             }
+        }
+
+        private synchronized Runnable getTask() {
+            Runnable task = taskQueue.poll();
+            if (task == null) {
+                running = false;
+            }
+            return task;
         }
 
         public BlockingQueue<Runnable> getTaskQueue() {

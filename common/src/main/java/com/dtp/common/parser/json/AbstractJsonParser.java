@@ -1,14 +1,14 @@
-package com.dtp.common.json.parser;
+package com.dtp.common.parser.json;
 
 /**
- * @see com.dtp.common.json.parser dynamic-tp
  *
  * @author topsuder
  * @since 1.1.3
  */
 public abstract class AbstractJsonParser implements JsonParser {
 
-    public boolean isSupport() {
+    @Override
+    public boolean supports() {
         try {
             Class.forName(getMapperClassName());
             return true;

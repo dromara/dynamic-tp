@@ -7,9 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import static com.dtp.common.constant.LarkNotifyConst.LARK_ALARM_JSON_STR;
-import static com.dtp.common.constant.LarkNotifyConst.LARK_CHANGE_NOTICE_JSON_STR;
-
 /**
  * DtpLarkNotifier
  *
@@ -31,12 +28,12 @@ public class DtpLarkNotifier extends AbstractDtpNotifier {
 
     @Override
     protected String getNoticeTemplate() {
-        return LARK_CHANGE_NOTICE_JSON_STR;
+        return LarkNotifyConst.LARK_CHANGE_NOTICE_JSON_STR;
     }
 
     @Override
     protected String getAlarmTemplate() {
-        return LARK_ALARM_JSON_STR;
+        return LarkNotifyConst.LARK_ALARM_JSON_STR;
     }
 
     @Override

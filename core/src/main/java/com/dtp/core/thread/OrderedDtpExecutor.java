@@ -227,15 +227,8 @@ public class OrderedDtpExecutor extends DtpExecutor {
         @Override
         public void run() {
             Thread thread = Thread.currentThread();
-            for (;;) {
-                final Runnable task;
-                synchronized (this) {
-                    task = taskQueue.poll();
-                    if (task == null) {
-                        running = false;
-                        break;
-                    }
-                }
+            Runnable task;
+            while ((task = getTask()) != null) {
                 onBeforeExecute(thread, task);
                 Throwable thrown = null;
                 try {
@@ -248,6 +241,14 @@ public class OrderedDtpExecutor extends DtpExecutor {
                     completedTaskCount.increment();
                 }
             }
+        }
+
+        private synchronized Runnable getTask() {
+            Runnable task = taskQueue.poll();
+            if (task == null) {
+                running = false;
+            }
+            return task;
         }
 
         public BlockingQueue<Runnable> getTaskQueue() {

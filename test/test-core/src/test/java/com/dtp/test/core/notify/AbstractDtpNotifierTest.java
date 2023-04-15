@@ -14,23 +14,22 @@ import com.dtp.core.notifier.context.AlarmCtx;
 import com.dtp.core.notifier.context.DtpNotifyCtxHolder;
 import com.dtp.core.notifier.context.NoticeCtx;
 import com.dtp.core.spring.EnableDynamicTp;
-import com.dtp.core.spring.YamlPropertySourceFactory;
 import com.dtp.core.support.ExecutorAdapter;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.ThreadPoolCreator;
 import com.dtp.core.thread.DtpExecutor;
+import com.dtp.test.core.thread.DtpExecutorTest;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -47,33 +46,35 @@ import static org.mockito.ArgumentMatchers.anyString;
  */
 @Slf4j
 @EnableDynamicTp
-@EnableAutoConfiguration
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = AbstractDtpNotifierTest.class)
-@PropertySource(value = "classpath:/dynamic-tp-demo.yml", factory = YamlPropertySourceFactory.class)
 public class AbstractDtpNotifierTest {
 
     private final Notifier notifier = Mockito.mock(Notifier.class);
 
     private final DtpExecutor dtpExecutor = ThreadPoolCreator.createDynamicFast("test");
 
-//    @Before
-//    public void setUp() {
-//        MockedStatic<CommonUtil> mockedStatic = Mockito.mockStatic(CommonUtil.class);
-//        mockedStatic.when(CommonUtil::getInstance).thenAnswer((Answer<ServiceInstance>) invocation ->
-//                new ServiceInstance("localhost", 8080, "test", "dev"));
-//        Assert.assertEquals("localhost", CommonUtil.getInstance().getIp());
-//        Assert.assertEquals(8080, CommonUtil.getInstance().getPort());
-//        Assert.assertEquals("test", CommonUtil.getInstance().getServiceName());
-//        Assert.assertEquals("dev", CommonUtil.getInstance().getEnv());
-//    }
+    private ConfigurableApplicationContext context;
+
+    private MockedStatic<CommonUtil> mockedStatic;
+
+    @Before
+    public void setUp() {
+        context = SpringApplication.run(DtpExecutorTest.class);
+        mockedStatic = Mockito.mockStatic(CommonUtil.class);
+        mockedStatic.when(CommonUtil::getInstance).thenAnswer((Answer<ServiceInstance>) invocation ->
+                new ServiceInstance("localhost", 8080, "test", "dev"));
+        Assert.assertEquals("localhost", CommonUtil.getInstance().getIp());
+        Assert.assertEquals(8080, CommonUtil.getInstance().getPort());
+        Assert.assertEquals("test", CommonUtil.getInstance().getServiceName());
+        Assert.assertEquals("dev", CommonUtil.getInstance().getEnv());
+    }
+
+    @After
+    public void after() {
+        mockedStatic.close();
+    }
 
     @Test
     public void testSendChangeMsg() {
-
-        MockedStatic<CommonUtil> mockedStatic = Mockito.mockStatic(CommonUtil.class);
-        mockedStatic.when(CommonUtil::getInstance).thenAnswer((Answer<ServiceInstance>) invocation ->
-                new ServiceInstance("localhost", 8080, "test", "dev"));
         AbstractDtpNotifier notifier = new DtpDingNotifier(this.notifier);
         NotifyPlatform notifyPlatform = new NotifyPlatform();
         TpMainFields oldFields = new TpMainFields();

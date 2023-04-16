@@ -1,5 +1,6 @@
 package com.dtp.starter.cloud.polaris.autoconfigure;
 
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.starter.cloud.polaris.refresh.CloudPolarisRefresher;
 import com.dtp.core.spring.DtpBaseBeanConfiguration;
 import com.tencent.cloud.polaris.config.config.PolarisConfigProperties;
@@ -26,7 +27,7 @@ public class DtpPolarisAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean()
     @ConditionalOnProperty(value = "spring.cloud.polaris.config.enabled", matchIfMissing = true)
-    public CloudPolarisRefresher cloudPolarisRefresher() {
-        return new CloudPolarisRefresher();
+    public CloudPolarisRefresher cloudPolarisRefresher(DtpProperties dtpProperties) {
+        return new CloudPolarisRefresher(dtpProperties);
     }
 }

@@ -1,5 +1,6 @@
 package com.dtp.starter.apollo.autoconfigure;
 
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.starter.apollo.refresh.ApolloRefresher;
 import com.dtp.core.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -27,7 +28,7 @@ public class DtpApolloAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public ApolloRefresher apolloRefresher() {
-        return new ApolloRefresher();
+    public ApolloRefresher apolloRefresher(DtpProperties dtpProperties) {
+        return new ApolloRefresher(dtpProperties);
     }
 }

@@ -4,10 +4,11 @@ import com.dtp.core.DtpRegistry;
 import com.dtp.core.support.runnable.NamedRunnable;
 import com.dtp.core.thread.DtpExecutor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -18,7 +19,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 @SuppressWarnings("all")
 public class TestController {
 
-    @Resource
+    @Autowired
+    @Qualifier("dtpExecutor1")
     private ThreadPoolExecutor dtpExecutor1;
 
     @GetMapping("/dtp-nacos-example/test")

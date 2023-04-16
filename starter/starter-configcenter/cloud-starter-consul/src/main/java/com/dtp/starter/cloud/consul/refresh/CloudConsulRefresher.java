@@ -1,5 +1,6 @@
 package com.dtp.starter.cloud.consul.refresh;
 
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.refresher.AbstractRefresher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
@@ -12,6 +13,10 @@ import org.springframework.lang.NonNull;
  */
 @Slf4j
 public class CloudConsulRefresher extends AbstractRefresher implements SmartApplicationListener {
+
+    public CloudConsulRefresher(DtpProperties dtpProperties) {
+        super(dtpProperties);
+    }
 
     @Override
     public boolean supportsEventType(@NonNull Class<? extends ApplicationEvent> eventType) {

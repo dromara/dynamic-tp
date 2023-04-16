@@ -6,7 +6,6 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 
-import javax.annotation.Resource;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -28,16 +27,16 @@ public abstract class AbstractRedistRateLimiter implements RedisRateLimiter<List
 
     private final RedisScript<List<Long>> script;
 
-    @Resource
-    protected StringRedisTemplate stringRedisTemplate;
+    protected final StringRedisTemplate stringRedisTemplate;
 
     protected static final AtomicInteger COUNTER = new AtomicInteger(0);
 
-    public AbstractRedistRateLimiter(String scriptName) {
+    public AbstractRedistRateLimiter(String scriptName, StringRedisTemplate stringRedisTemplate) {
         DefaultRedisScript redisScript = new DefaultRedisScript<>();
         redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource(SCRIPT_PATH + scriptName)));
         redisScript.setResultType(List.class);
         this.script = redisScript;
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     @Override

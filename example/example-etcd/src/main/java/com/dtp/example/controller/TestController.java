@@ -1,10 +1,12 @@
 package com.dtp.example.controller;
 
-import java.util.concurrent.ThreadPoolExecutor;
-import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author Redick01
@@ -14,10 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @SuppressWarnings("all")
 public class TestController {
 
-    @Resource
+    @Autowired
+    @Qualifier("dtpExecutor1")
     private ThreadPoolExecutor dtpExecutor1;
 
-    @Resource
+    @Autowired
+    @Qualifier("commonExecutor")
     private ThreadPoolExecutor commonExecutor;
 
     @GetMapping("/dtp-zookeeper-example/test")

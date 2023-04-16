@@ -2,6 +2,7 @@ package com.dtp.extension.limiter.redis.ratelimiter;
 
 import com.dtp.common.util.CommonUtil;
 import com.dtp.extension.limiter.redis.em.RateLimitEnum;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,8 +15,8 @@ import java.util.List;
  **/
 public class SlidingWindowRateLimiter extends AbstractRedistRateLimiter {
 
-    public SlidingWindowRateLimiter() {
-        super(RateLimitEnum.SLIDING_WINDOW.getScriptName());
+    public SlidingWindowRateLimiter(StringRedisTemplate stringRedisTemplate) {
+        super(RateLimitEnum.SLIDING_WINDOW.getScriptName(), stringRedisTemplate);
     }
 
     @Override

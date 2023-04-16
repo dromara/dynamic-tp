@@ -1,5 +1,6 @@
 package com.dtp.starter.etcd.autoconfigure;
 
+import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.spring.DtpBaseBeanConfiguration;
 import com.dtp.starter.etcd.refresh.EtcdRefresher;
 import io.etcd.jetcd.Client;
@@ -21,7 +22,7 @@ public class DtpEtcdAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public EtcdRefresher etcdRefresher() {
-        return new EtcdRefresher();
+    public EtcdRefresher etcdRefresher(DtpProperties dtpProperties) {
+        return new EtcdRefresher(dtpProperties);
     }
 }

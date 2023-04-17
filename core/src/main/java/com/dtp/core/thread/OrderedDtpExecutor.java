@@ -168,16 +168,6 @@ public class OrderedDtpExecutor extends DtpExecutor {
         return super.getRejectCount() + count;
     }
 
-//    @Override
-//    public void onRefreshQueueCapacity(int capacity) {
-//        for (Executor executor : childExecutors) {
-//            ChildExecutor childExecutor = (ChildExecutor) executor;
-//            if (childExecutor.getTaskQueue() instanceof VariableLinkedBlockingQueue) {
-//                ((VariableLinkedBlockingQueue<Runnable>) childExecutor.getTaskQueue()).setCapacity(capacity);
-//            }
-//        }
-//    }
-
     protected DtpRunnable getEnhancedTask(Runnable command) {
         DtpRunnable dtpRunnable = (DtpRunnable) wrapTasks(command);
         dtpRunnable.startQueueTimeoutTask(this);
@@ -186,20 +176,44 @@ public class OrderedDtpExecutor extends DtpExecutor {
 
     private final class ChildExecutor implements Executor, Runnable {
 
+        /**
+         * The parent executor.
+         */
         private final Executor parentExecutor;
 
+        /**
+         * The task queue.
+         */
         private final ConcurrentLinkedQueue<Runnable> taskQueue = new ConcurrentLinkedQueue<>();
 
+        /**
+         * if running
+         */
         private final AtomicBoolean running = new AtomicBoolean(false);
 
+        /**
+         * The runnable list.
+         */
         private final List<Runnable> runnableList = new ArrayList<>();
 
-        private int loopNoWorkCount = 0;
+        /**
+         * The loop no work count.
+         */
+        private int noWorkCount = 0;
 
-        private int loopRunnableCount = 0;
+        /**
+         *  The loop runnable count.
+         */
+        private int runCount = 0;
 
+        /**
+         * The completed task count.
+         */
         private final LongAdder completedTaskCount = new LongAdder();
 
+        /**
+         * The rejected task count.
+         */
         private final LongAdder rejectedTaskCount = new LongAdder();
 
         private ChildExecutor(Executor parentExecutor) {
@@ -217,11 +231,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
                 rejectedTaskCount.increment();
                 throw ex;
             }
-            start();
-        }
-
-
-        public void start() {
+            // start the thread if it is not running
             if (!running.get() && running.compareAndSet(false, true)) {
                 parentExecutor.execute(this);
             }
@@ -235,18 +245,18 @@ public class OrderedDtpExecutor extends DtpExecutor {
                 runnableList.add(runnable);
                 doneWork = true;
             }
-            loopRunnableCount++;
-            if (!doneWork || loopRunnableCount > 2 || runnableList.size() > 10) {
+            runCount++;
+            if (!doneWork || runCount > 2 || runnableList.size() > 10) {
                 for (Runnable task : runnableList) {
                     runTask(task);
                 }
                 runnableList.clear();
-                loopRunnableCount = 0;
+                runCount = 0;
             }
             if (doneWork) {
-                loopNoWorkCount = 0;
+                noWorkCount = 0;
             } else {
-                if (++loopNoWorkCount > 5) {
+                if (++noWorkCount > 5) {
                     running.set(false);
                     if (taskQueue.isEmpty() || !running.compareAndSet(false, true)) {
                         return;
@@ -254,6 +264,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
                 }
             }
             // if taskQueue is not empty, continue to execute
+            // should sleep?
             parentExecutor.execute(this);
         }
 
@@ -270,10 +281,6 @@ public class OrderedDtpExecutor extends DtpExecutor {
                 onAfterExecute(child, thrown);
                 completedTaskCount.increment();
             }
-        }
-
-        public ConcurrentLinkedQueue<Runnable> getTaskQueue() {
-            return taskQueue;
         }
 
         public long getTaskCount() {

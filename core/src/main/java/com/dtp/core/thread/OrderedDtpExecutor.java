@@ -1,6 +1,5 @@
 package com.dtp.core.thread;
 
-import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.core.support.Ordered;
 import com.dtp.core.support.runnable.DtpRunnable;
 import com.dtp.core.support.selector.ExecutorSelector;
@@ -8,19 +7,21 @@ import com.dtp.core.support.selector.HashedExecutorSelector;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.RunnableFuture;
-import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
@@ -77,7 +78,8 @@ public class OrderedDtpExecutor extends DtpExecutor {
                               RejectedExecutionHandler handler) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
         for (int i = 0; i < corePoolSize; i++) {
-            ChildExecutor childExecutor = new ChildExecutor(workQueue.size() + workQueue.remainingCapacity());
+//            ChildExecutor childExecutor = new ChildExecutor(workQueue.size() + workQueue.remainingCapacity());
+            ChildExecutor childExecutor = new ChildExecutor(this);
             childExecutors.add(childExecutor);
         }
     }
@@ -166,15 +168,15 @@ public class OrderedDtpExecutor extends DtpExecutor {
         return super.getRejectCount() + count;
     }
 
-    @Override
-    public void onRefreshQueueCapacity(int capacity) {
-        for (Executor executor : childExecutors) {
-            ChildExecutor childExecutor = (ChildExecutor) executor;
-            if (childExecutor.getTaskQueue() instanceof VariableLinkedBlockingQueue) {
-                ((VariableLinkedBlockingQueue<Runnable>) childExecutor.getTaskQueue()).setCapacity(capacity);
-            }
-        }
-    }
+//    @Override
+//    public void onRefreshQueueCapacity(int capacity) {
+//        for (Executor executor : childExecutors) {
+//            ChildExecutor childExecutor = (ChildExecutor) executor;
+//            if (childExecutor.getTaskQueue() instanceof VariableLinkedBlockingQueue) {
+//                ((VariableLinkedBlockingQueue<Runnable>) childExecutor.getTaskQueue()).setCapacity(capacity);
+//            }
+//        }
+//    }
 
     protected DtpRunnable getEnhancedTask(Runnable command) {
         DtpRunnable dtpRunnable = (DtpRunnable) wrapTasks(command);
@@ -184,74 +186,93 @@ public class OrderedDtpExecutor extends DtpExecutor {
 
     private final class ChildExecutor implements Executor, Runnable {
 
-        private final BlockingQueue<Runnable> taskQueue;
+        private final Executor parentExecutor;
+
+        private final ConcurrentLinkedQueue<Runnable> taskQueue = new ConcurrentLinkedQueue<>();
+
+        private final AtomicBoolean running = new AtomicBoolean(false);
+
+        private final List<Runnable> runnableList = new ArrayList<>();
+
+        private int loopNoWorkCount = 0;
+
+        private int loopRunnableCount = 0;
 
         private final LongAdder completedTaskCount = new LongAdder();
 
         private final LongAdder rejectedTaskCount = new LongAdder();
 
-        private boolean running;
-
-        ChildExecutor(int queueSize) {
-            if (queueSize <= 0) {
-                taskQueue = new SynchronousQueue<>();
-                return;
-            }
-            taskQueue = new VariableLinkedBlockingQueue<>(queueSize);
+        private ChildExecutor(Executor parentExecutor) {
+            this.parentExecutor = parentExecutor;
         }
 
         @Override
         public void execute(Runnable command) {
-            boolean start = false;
-            synchronized (this) {
-                try {
-                    if (!taskQueue.add(getEnhancedTask(command))) {
-                        rejectedTaskCount.increment();
-                        throw new RejectedExecutionException("Task " + command.toString() + " rejected from " + this);
-                    }
-                } catch (IllegalStateException ex) {
+            try {
+                if (!taskQueue.add(getEnhancedTask(command))) {
                     rejectedTaskCount.increment();
-                    throw ex;
+                    throw new RejectedExecutionException("Task " + command.toString() + " rejected from " + this);
                 }
-
-                if (!running) {
-                    running = true;
-                    start = true;
-                }
+            } catch (IllegalStateException ex) {
+                rejectedTaskCount.increment();
+                throw ex;
             }
-            if (start) {
-                doUnorderedExecute(this);
+            start();
+        }
+
+
+        public void start() {
+            if (!running.get() && running.compareAndSet(false, true)) {
+                parentExecutor.execute(this);
             }
         }
 
         @Override
         public void run() {
-            Thread thread = Thread.currentThread();
-            Runnable task;
-            while ((task = getTask()) != null) {
-                onBeforeExecute(thread, task);
-                Throwable thrown = null;
-                try {
-                    task.run();
-                } catch (RuntimeException x) {
-                    thrown = x;
-                    throw x;
-                } finally {
-                    onAfterExecute(task, thrown);
-                    completedTaskCount.increment();
+            boolean doneWork = false;
+            Runnable runnable;
+            while ((runnable = taskQueue.poll()) != null) {
+                runnableList.add(runnable);
+                doneWork = true;
+            }
+            loopRunnableCount++;
+            if (!doneWork || loopRunnableCount > 2 || runnableList.size() > 10) {
+                for (Runnable task : runnableList) {
+                    runTask(task);
+                }
+                runnableList.clear();
+                loopRunnableCount = 0;
+            }
+            if (doneWork) {
+                loopNoWorkCount = 0;
+            } else {
+                if (++loopNoWorkCount > 5) {
+                    running.set(false);
+                    if (taskQueue.isEmpty() || !running.compareAndSet(false, true)) {
+                        return;
+                    }
                 }
             }
+            // if taskQueue is not empty, continue to execute
+            parentExecutor.execute(this);
         }
 
-        private synchronized Runnable getTask() {
-            Runnable task = taskQueue.poll();
-            if (task == null) {
-                running = false;
+        private void runTask(Runnable child) {
+            Thread thread = Thread.currentThread();
+            onBeforeExecute(thread, child);
+            Throwable thrown = null;
+            try {
+                child.run();
+            } catch (RuntimeException x) {
+                thrown = x;
+                throw x;
+            } finally {
+                onAfterExecute(child, thrown);
+                completedTaskCount.increment();
             }
-            return task;
         }
 
-        public BlockingQueue<Runnable> getTaskQueue() {
+        public ConcurrentLinkedQueue<Runnable> getTaskQueue() {
             return taskQueue;
         }
 
@@ -276,6 +297,8 @@ public class OrderedDtpExecutor extends DtpExecutor {
                     ", running = " + running +
                     "]";
         }
+
     }
+
 }
 

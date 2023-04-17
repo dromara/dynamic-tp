@@ -21,6 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -50,7 +51,7 @@ class OrderedDtpExecutorTest {
             MDC.put("traceId", String.valueOf(i));
             orderedDtpExecutor.execute(new TestOrderedRunnable("TEST"));
         }
-//        new CountDownLatch(1).await();
+        new CountDownLatch(1).await();
     }
 
     @Test

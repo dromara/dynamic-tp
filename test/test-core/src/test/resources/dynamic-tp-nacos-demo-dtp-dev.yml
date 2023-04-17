@@ -103,7 +103,7 @@ spring:
           executorType: ordered
           corePoolSize: 4
           maximumPoolSize: 6
-          queueCapacity: 2000
+          queueCapacity: 1000000000
           queueType: VariableLinkedBlockingQueue
           rejectedHandlerType: CallerRunsPolicy
           keepAliveTime: 3

@@ -21,6 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
@@ -42,15 +43,17 @@ class OrderedDtpExecutorTest {
 
     @Test
     void orderedExecute() throws InterruptedException {
-        for (int i = 0; i < 1000; i++) {
-            if (i == 500) {
-                TimeUnit.MILLISECONDS.sleep(2000L);
-            }
-            threadLocal.set("test ordered execute " + i);
+        new Thread(() -> run("first")).start();
+        new Thread(() -> run("second")).start();
+//        new CountDownLatch(1).await();
+    }
+
+    private void run(String name) {
+        for (int i = 0; i < 100000; i++) {
+            threadLocal.set(name + ":test ordered execute " + i);
             MDC.put("traceId", String.valueOf(i));
             orderedDtpExecutor.execute(new TestOrderedRunnable("TEST"));
         }
-//        new CountDownLatch(1).await();
     }
 
     @Test

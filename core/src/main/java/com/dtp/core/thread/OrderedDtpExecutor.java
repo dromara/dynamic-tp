@@ -239,18 +239,10 @@ public class OrderedDtpExecutor extends DtpExecutor {
 
         @Override
         public void run() {
-            boolean doneWork = false;
-            Runnable runnable;
-            while ((runnable = taskQueue.poll()) != null) {
-                runnableList.add(runnable);
-                doneWork = true;
-            }
+            boolean doneWork = getTasks();
             runCount++;
             if (!doneWork || runCount > 2 || runnableList.size() > 10) {
-                for (Runnable task : runnableList) {
-                    runTask(task);
-                }
-                runnableList.clear();
+                runTask();
                 runCount = 0;
             }
             if (doneWork) {
@@ -268,19 +260,32 @@ public class OrderedDtpExecutor extends DtpExecutor {
             parentExecutor.execute(this);
         }
 
-        private void runTask(Runnable child) {
-            Thread thread = Thread.currentThread();
-            onBeforeExecute(thread, child);
-            Throwable thrown = null;
-            try {
-                child.run();
-            } catch (RuntimeException x) {
-                thrown = x;
-                throw x;
-            } finally {
-                onAfterExecute(child, thrown);
-                completedTaskCount.increment();
+        private void runTask() {
+            for (Runnable task : runnableList) {
+                Thread thread = Thread.currentThread();
+                onBeforeExecute(thread, task);
+                Throwable thrown = null;
+                try {
+                    task.run();
+                } catch (RuntimeException x) {
+                    thrown = x;
+                    throw x;
+                } finally {
+                    onAfterExecute(task, thrown);
+                    completedTaskCount.increment();
+                }
             }
+            runnableList.clear();
+        }
+
+        private boolean getTasks() {
+            boolean doneWork = false;
+            Runnable runnable;
+            while ((runnable = taskQueue.poll()) != null) {
+                runnableList.add(runnable);
+                doneWork = true;
+            }
+            return doneWork;
         }
 
         public long getTaskCount() {

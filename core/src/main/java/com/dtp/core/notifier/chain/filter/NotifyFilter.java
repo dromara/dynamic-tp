@@ -1,8 +1,8 @@
-package com.dtp.core.notifier.filter;
+package com.dtp.core.notifier.chain.filter;
 
 import com.dtp.common.em.NotifyTypeEnum;
 import com.dtp.common.pattern.filter.Filter;
-import com.dtp.core.context.BaseNotifyCtx;
+import com.dtp.core.notifier.context.BaseNotifyCtx;
 
 /**
  * NotifyFilter related

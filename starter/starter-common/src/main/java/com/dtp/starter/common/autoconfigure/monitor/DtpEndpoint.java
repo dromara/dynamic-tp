@@ -5,7 +5,7 @@ import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.entity.JvmStats;
 import com.dtp.common.entity.Metrics;
 import com.dtp.core.DtpRegistry;
-import com.dtp.core.converter.MetricsConverter;
+import com.dtp.core.converter.ExecutorConverter;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.MetricsAware;
 import com.google.common.collect.Lists;
@@ -31,7 +31,7 @@ public class DtpEndpoint {
         List<Metrics> metricsList = Lists.newArrayList();
         DtpRegistry.listAllExecutorNames().forEach(x -> {
             ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(x);
-            metricsList.add(MetricsConverter.convert(wrapper));
+            metricsList.add(ExecutorConverter.toMetrics(wrapper));
         });
 
         val handlerMap = ApplicationContextHolder.getBeansOfType(MetricsAware.class);

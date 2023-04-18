@@ -1,9 +1,8 @@
-package com.dtp.common.json.parser;
+package com.dtp.common.parser.json;
 
 import java.lang.reflect.Type;
 
 /**
- * @see com.dtp.common.json.parser dynamic-tp
  *
  * @author topsuder
  * @since 1.1.3
@@ -15,7 +14,7 @@ public interface JsonParser {
      *
      * @return true if support
      */
-    boolean isSupport();
+    boolean supports();
 
     /**
      * Json string to object.
@@ -33,5 +32,4 @@ public interface JsonParser {
      * @return json string
      */
     String toJson(Object obj);
-
 }

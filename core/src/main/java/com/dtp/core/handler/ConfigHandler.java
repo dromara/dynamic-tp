@@ -1,10 +1,10 @@
 package com.dtp.core.handler;
 
 import com.dtp.common.em.ConfigFileTypeEnum;
-import com.dtp.core.parser.ConfigParser;
-import com.dtp.core.parser.JsonConfigParser;
-import com.dtp.core.parser.PropertiesConfigParser;
-import com.dtp.core.parser.YamlConfigParser;
+import com.dtp.common.parser.config.ConfigParser;
+import com.dtp.common.parser.config.JsonConfigParser;
+import com.dtp.common.parser.config.PropertiesConfigParser;
+import com.dtp.common.parser.config.YamlConfigParser;
 import com.google.common.collect.Lists;
 
 import java.io.IOException;

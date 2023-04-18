@@ -2,8 +2,8 @@ package com.dtp.core.notifier.manager;
 
 import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.pattern.filter.InvokerChain;
-import com.dtp.core.context.BaseNotifyCtx;
-import com.dtp.core.context.NoticeCtx;
+import com.dtp.core.notifier.context.BaseNotifyCtx;
+import com.dtp.core.notifier.context.NoticeCtx;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.ThreadPoolCreator;
 import lombok.val;

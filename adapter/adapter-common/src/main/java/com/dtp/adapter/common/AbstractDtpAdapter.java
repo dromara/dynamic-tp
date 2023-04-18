@@ -8,7 +8,6 @@ import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.StreamUtil;
 import com.dtp.core.converter.ExecutorConverter;
-import com.dtp.core.converter.MetricsConverter;
 import com.dtp.core.notifier.manager.AlarmManager;
 import com.dtp.core.notifier.manager.NoticeManager;
 import com.dtp.core.support.ExecutorWrapper;
@@ -111,7 +110,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, GenericApplicati
         }
 
         List<ThreadPoolStats> threadPoolStats = Lists.newArrayList();
-        executorWrappers.forEach((k, v) -> threadPoolStats.add(MetricsConverter.convert(v)));
+        executorWrappers.forEach((k, v) -> threadPoolStats.add(ExecutorConverter.toMetrics(v)));
         return threadPoolStats;
     }
 
@@ -159,7 +158,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter, GenericApplicati
     }
 
     protected TpMainFields getTpMainFields(ExecutorWrapper executorWrapper, TpExecutorProps props) {
-        return ExecutorConverter.convert(executorWrapper);
+        return ExecutorConverter.toMainFields(executorWrapper);
     }
 
     protected void doRefresh(ExecutorWrapper executorWrapper,

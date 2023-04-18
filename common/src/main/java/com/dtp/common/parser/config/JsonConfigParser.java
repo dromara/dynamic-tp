@@ -1,4 +1,4 @@
-package com.dtp.core.parser;
+package com.dtp.common.parser.config;
 
 import com.dtp.common.em.ConfigFileTypeEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;

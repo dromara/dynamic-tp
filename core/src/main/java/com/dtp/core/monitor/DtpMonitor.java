@@ -7,7 +7,7 @@ import com.dtp.common.event.AlarmCheckEvent;
 import com.dtp.common.event.CollectEvent;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.DtpRegistry;
-import com.dtp.core.converter.MetricsConverter;
+import com.dtp.core.converter.ExecutorConverter;
 import com.dtp.core.handler.CollectorHandler;
 import com.dtp.core.notifier.manager.AlarmManager;
 import com.dtp.core.thread.NamedThreadFactory;
@@ -60,7 +60,7 @@ public class DtpMonitor implements ApplicationListener<ContextRefreshedEvent>, O
         }
         executorNames.forEach(x -> {
             ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(x);
-            doCollect(MetricsConverter.convert(wrapper));
+            doCollect(ExecutorConverter.toMetrics(wrapper));
         });
         publishCollectEvent();
     }

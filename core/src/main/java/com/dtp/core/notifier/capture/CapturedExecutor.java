@@ -1,6 +1,6 @@
 package com.dtp.core.notifier.capture;
 
-import com.dtp.core.context.BaseNotifyCtx;
+import com.dtp.core.notifier.context.BaseNotifyCtx;
 import com.dtp.core.notifier.AbstractDtpNotifier;
 import com.dtp.core.notifier.manager.AlarmManager;
 import com.dtp.core.support.ExecutorAdapter;

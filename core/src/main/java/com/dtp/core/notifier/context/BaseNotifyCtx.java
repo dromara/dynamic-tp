@@ -1,4 +1,4 @@
-package com.dtp.core.context;
+package com.dtp.core.notifier.context;
 
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.entity.NotifyItem;

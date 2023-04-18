@@ -1,6 +1,6 @@
 package com.dtp.common.util;
 
-import com.dtp.common.json.parser.JsonParser;
+import com.dtp.common.parser.json.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Type;
@@ -15,8 +15,7 @@ import java.util.ServiceLoader;
  * <p>注意：如果您的应用程序使用了多个 JSON 序列化或反序列化器，您需要在使用 JsonUtil 之前设置默认序列化器或传递正确的序列化器。</p>
  *
  * @author topsuder
- * @see com.dtp.common.json.parser.JsonParser
- * @see com.dtp.common.util dynamic-tp
+ * @since 1.1.3
  */
 @Slf4j
 public final class JsonUtil {
@@ -29,7 +28,7 @@ public final class JsonUtil {
         while (iterator.hasNext()) {
             try {
                 JsonParser jsonParser = iterator.next();
-                if (jsonParser.isSupport()) {
+                if (jsonParser.supports()) {
                     return jsonParser;
                 }
             } catch (Throwable ignored) {

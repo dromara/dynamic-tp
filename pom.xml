@@ -375,7 +375,7 @@
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <version>3.1.0</version>
                     <configuration>
-                        <configLocation>checkstyle/checkstyle.xml</configLocation>
+                        <configLocation>.github/checkstyle/checkstyle.xml</configLocation>
                         <includeTestSourceDirectory>false</includeTestSourceDirectory>
                         <consoleOutput>true</consoleOutput>
                         <encoding>UTF-8</encoding>

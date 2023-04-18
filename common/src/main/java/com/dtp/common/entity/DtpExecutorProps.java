@@ -42,7 +42,7 @@ public class DtpExecutorProps extends TpExecutorProps {
     /**
      * Max free memory for MemorySafeLBQ, unit M
      */
-    private int maxFreeMemory = 256;
+    private int maxFreeMemory = 16;
 
     /**
      * RejectedExecutionHandler type, see {@link RejectedTypeEnum}

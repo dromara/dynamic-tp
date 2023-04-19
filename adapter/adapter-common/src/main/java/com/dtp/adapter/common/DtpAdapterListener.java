@@ -13,6 +13,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.GenericApplicationListener;
 import org.springframework.core.ResolvableType;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
 
 import static com.dtp.common.constant.DynamicTpConst.SCHEDULE_NOTIFY_ITEMS;
@@ -50,6 +51,16 @@ public class DtpAdapterListener implements GenericApplicationListener {
         } catch (Exception e) {
             log.error("DynamicTp adapter, event handle failed.", e);
         }
+    }
+
+    /**
+     * backward compatible spring boot
+     * @param sourceType
+     * @return
+     */
+    @Override
+    public boolean supportsSourceType(@Nullable Class<?> sourceType) {
+        return true;
     }
 
     /**

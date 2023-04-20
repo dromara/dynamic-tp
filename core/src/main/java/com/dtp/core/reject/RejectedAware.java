@@ -1,7 +1,7 @@
 package com.dtp.core.reject;
 
 import com.dtp.core.notifier.manager.AlarmManager;
-import com.dtp.core.support.runnable.DtpRunnable;
+import com.dtp.core.support.task.runnable.DtpRunnable;
 import com.dtp.core.thread.DtpExecutor;
 import lombok.val;
 import org.slf4j.Logger;

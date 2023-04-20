@@ -9,7 +9,7 @@ import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
 import com.dtp.core.reject.RejectHandlerGetter;
-import com.dtp.core.support.wrapper.TaskWrapper;
+import com.dtp.core.support.task.wrapper.TaskWrapper;
 import com.dtp.core.thread.DtpExecutor;
 import com.dtp.core.thread.EagerDtpExecutor;
 import com.dtp.core.thread.NamedThreadFactory;

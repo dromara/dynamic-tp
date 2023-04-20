@@ -1,4 +1,4 @@
-package com.dtp.core.support.wrapper;
+package com.dtp.core.support.task.wrapper;
 
 import com.dtp.common.util.StringUtil;
 import com.google.common.collect.Lists;

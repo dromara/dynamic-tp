@@ -4,12 +4,11 @@ import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.entity.NotifyItem;
 import com.dtp.core.notifier.manager.NotifyHelper;
 import com.dtp.core.reject.RejectHandlerGetter;
-import com.dtp.core.spring.DtpLifecycleSupport;
 import com.dtp.core.spring.SpringExecutor;
 import com.dtp.core.support.ExecutorAdapter;
-import com.dtp.core.support.runnable.DtpRunnable;
-import com.dtp.core.support.runnable.NamedRunnable;
-import com.dtp.core.support.wrapper.TaskWrapper;
+import com.dtp.core.support.task.runnable.DtpRunnable;
+import com.dtp.core.support.task.runnable.NamedRunnable;
+import com.dtp.core.support.task.wrapper.TaskWrapper;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -36,8 +35,13 @@ import static com.dtp.common.constant.DynamicTpConst.TRACE_ID;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpExecutor extends DtpLifecycleSupport
+public class DtpExecutor extends ThreadPoolExecutor
         implements SpringExecutor, ExecutorAdapter<ThreadPoolExecutor> {
+
+    /**
+     * The name of the thread pool.
+     */
+    protected String threadPoolName;
 
     /**
      * Simple Business alias Name of Dynamic ThreadPool. Use for notify.
@@ -103,6 +107,19 @@ public class DtpExecutor extends DtpLifecycleSupport
      * Count queue wait timeout tasks.
      */
     private final LongAdder queueTimeoutCount = new LongAdder();
+
+    /**
+     * Whether to wait for scheduled tasks to complete on shutdown,
+     * not interrupting running tasks and executing all tasks in the queue.
+     */
+    protected boolean waitForTasksToCompleteOnShutdown = false;
+
+    /**
+     * The maximum number of seconds that this executor is supposed to block
+     * on shutdown in order to wait for remaining tasks to complete their execution
+     * before the rest of the container continues to shut down.
+     */
+    protected int awaitTerminationSeconds = 0;
 
     public DtpExecutor(int corePoolSize,
                        int maximumPoolSize,
@@ -176,8 +193,7 @@ public class DtpExecutor extends DtpLifecycleSupport
         clearContext();
     }
 
-    @Override
-    protected void initialize() {
+    public void initialize() {
         NotifyHelper.initNotify(this);
         if (preStartAllCoreThreads) {
             prestartAllCoreThreads();
@@ -227,94 +243,12 @@ public class DtpExecutor extends DtpLifecycleSupport
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
     }
 
-    public List<NotifyItem> getNotifyItems() {
-        return notifyItems;
+    public String getThreadPoolName() {
+        return threadPoolName;
     }
 
-    public void setNotifyItems(List<NotifyItem> notifyItems) {
-        this.notifyItems = notifyItems;
-    }
-
-    public List<String> getPlatformIds() {
-        return platformIds;
-    }
-
-    public void setPlatformIds(List<String> platformIds) {
-        this.platformIds = platformIds;
-    }
-
-    public String getQueueName() {
-        return getQueue().getClass().getSimpleName();
-    }
-
-    @Override
-    public String getRejectHandlerType() {
-        return rejectHandlerType;
-    }
-
-    public void setRejectHandlerType(String rejectHandlerType) {
-        this.rejectHandlerType = rejectHandlerType;
-    }
-
-    public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
-        this.taskWrappers = taskWrappers;
-    }
-
-    public boolean isPreStartAllCoreThreads() {
-        return preStartAllCoreThreads;
-    }
-
-    public void setPreStartAllCoreThreads(boolean preStartAllCoreThreads) {
-        this.preStartAllCoreThreads = preStartAllCoreThreads;
-    }
-
-    public void setRunTimeout(long runTimeout) {
-        this.runTimeout = runTimeout;
-    }
-
-    public long getRunTimeout() {
-        return runTimeout;
-    }
-
-    public void setQueueTimeout(long queueTimeout) {
-        this.queueTimeout = queueTimeout;
-    }
-
-    public long getQueueTimeout() {
-        return queueTimeout;
-    }
-
-    public void incRejectCount(int count) {
-        rejectCount.add(count);
-    }
-
-    public long getRejectCount() {
-        return rejectCount.sum();
-    }
-
-    public void incRunTimeoutCount(int count) {
-        runTimeoutCount.add(count);
-    }
-
-    public long getRunTimeoutCount() {
-        return runTimeoutCount.sum();
-    }
-
-    public void incQueueTimeoutCount(int count) {
-        queueTimeoutCount.add(count);
-    }
-
-    public long getQueueTimeoutCount() {
-        return queueTimeoutCount.sum();
-    }
-
-    /**
-     * In order for the field can be assigned by reflection.
-     *
-     * @param allowCoreThreadTimeOut allowCoreThreadTimeOut
-     */
-    public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
-        allowCoreThreadTimeOut(allowCoreThreadTimeOut);
+    public void setThreadPoolName(String threadPoolName) {
+        this.threadPoolName = threadPoolName;
     }
 
     public String getThreadPoolAliasName() {
@@ -333,11 +267,121 @@ public class DtpExecutor extends DtpLifecycleSupport
         this.notifyEnabled = notifyEnabled;
     }
 
+    public List<NotifyItem> getNotifyItems() {
+        return notifyItems;
+    }
+
+    public void setNotifyItems(List<NotifyItem> notifyItems) {
+        this.notifyItems = notifyItems;
+    }
+
+    public List<String> getPlatformIds() {
+        return platformIds;
+    }
+
+    public void setPlatformIds(List<String> platformIds) {
+        this.platformIds = platformIds;
+    }
+
+    public List<TaskWrapper> getTaskWrappers() {
+        return taskWrappers;
+    }
+
+    public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
+        this.taskWrappers = taskWrappers;
+    }
+
+    public boolean isPreStartAllCoreThreads() {
+        return preStartAllCoreThreads;
+    }
+
+    public void setPreStartAllCoreThreads(boolean preStartAllCoreThreads) {
+        this.preStartAllCoreThreads = preStartAllCoreThreads;
+    }
+
     public boolean isRejectEnhanced() {
         return rejectEnhanced;
     }
 
     public void setRejectEnhanced(boolean rejectEnhanced) {
         this.rejectEnhanced = rejectEnhanced;
+    }
+
+    @Override
+    public String getRejectHandlerType() {
+        return rejectHandlerType;
+    }
+
+    public void setRejectHandlerType(String rejectHandlerType) {
+        this.rejectHandlerType = rejectHandlerType;
+    }
+
+    public long getRunTimeout() {
+        return runTimeout;
+    }
+
+    public void setRunTimeout(long runTimeout) {
+        this.runTimeout = runTimeout;
+    }
+
+    public long getQueueTimeout() {
+        return queueTimeout;
+    }
+
+    public void setQueueTimeout(long queueTimeout) {
+        this.queueTimeout = queueTimeout;
+    }
+
+    public long getRejectCount() {
+        return rejectCount.sum();
+    }
+
+    public void incRejectCount(int count) {
+        rejectCount.add(count);
+    }
+
+    public long getRunTimeoutCount() {
+        return runTimeoutCount.sum();
+    }
+
+    public void incRunTimeoutCount(int count) {
+        runTimeoutCount.add(count);
+    }
+
+    public long getQueueTimeoutCount() {
+        return queueTimeoutCount.sum();
+    }
+
+    public void incQueueTimeoutCount(int count) {
+        queueTimeoutCount.add(count);
+    }
+
+    public boolean isWaitForTasksToCompleteOnShutdown() {
+        return waitForTasksToCompleteOnShutdown;
+    }
+
+    public void setWaitForTasksToCompleteOnShutdown(boolean waitForTasksToCompleteOnShutdown) {
+        this.waitForTasksToCompleteOnShutdown = waitForTasksToCompleteOnShutdown;
+    }
+
+    public int getAwaitTerminationSeconds() {
+        return awaitTerminationSeconds;
+    }
+
+    public void setAwaitTerminationSeconds(int awaitTerminationSeconds) {
+        this.awaitTerminationSeconds = awaitTerminationSeconds;
+    }
+
+    /**
+     * In order for the field can be assigned by reflection.
+     *
+     * @param allowCoreThreadTimeOut allowCoreThreadTimeOut
+     */
+    public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
+        allowCoreThreadTimeOut(allowCoreThreadTimeOut);
+    }
+
+    public String getQueueName() {
+        return getQueue().getClass().getSimpleName();
     }
 }

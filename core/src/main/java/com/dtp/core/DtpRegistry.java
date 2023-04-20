@@ -12,8 +12,8 @@ import com.dtp.core.notifier.manager.NoticeManager;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.support.ExecutorAdapter;
 import com.dtp.core.support.ExecutorWrapper;
-import com.dtp.core.support.wrapper.TaskWrapper;
-import com.dtp.core.support.wrapper.TaskWrappers;
+import com.dtp.core.support.task.wrapper.TaskWrapper;
+import com.dtp.core.support.task.wrapper.TaskWrappers;
 import com.dtp.core.thread.DtpExecutor;
 import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
@@ -75,6 +75,15 @@ public class DtpRegistry implements ApplicationRunner, Ordered {
      */
     public static Set<String> listAllExecutorNames() {
         return Collections.unmodifiableSet(EXECUTOR_REGISTRY.keySet());
+    }
+
+    /**
+     * Get all Executors.
+     *
+     * @return all Executors
+     */
+    public static Map<String, ExecutorWrapper> listAllExecutors() {
+        return EXECUTOR_REGISTRY;
     }
 
     /**

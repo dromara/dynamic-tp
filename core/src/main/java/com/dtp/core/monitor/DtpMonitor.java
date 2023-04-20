@@ -12,7 +12,6 @@ import com.dtp.core.notifier.manager.AlarmManager;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.thread.NamedThreadFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.Ordered;
@@ -31,7 +30,7 @@ import static com.dtp.common.constant.DynamicTpConst.SCHEDULE_NOTIFY_ITEMS;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpMonitor implements ApplicationRunner, Ordered, DisposableBean {
+public class DtpMonitor implements ApplicationRunner, Ordered {
 
     private static final ScheduledExecutorService MONITOR_EXECUTOR = new ScheduledThreadPoolExecutor(
             1, new NamedThreadFactory("dtp-monitor", true));
@@ -96,9 +95,7 @@ public class DtpMonitor implements ApplicationRunner, Ordered, DisposableBean {
         return Ordered.HIGHEST_PRECEDENCE + 2;
     }
 
-    @Override
-    public void destroy() {
-        MONITOR_EXECUTOR.shutdown();
+    public static void destroy() {
+        MONITOR_EXECUTOR.shutdownNow();
     }
-
 }

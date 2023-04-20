@@ -1,7 +1,6 @@
 package com.dtp.core.spring;
 
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.constant.DynamicTpConst;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.timer.HashedWheelTimer;
 import com.dtp.core.DtpRegistry;
@@ -11,7 +10,6 @@ import com.dtp.core.support.DtpBannerPrinter;
 import com.dtp.core.thread.NamedThreadFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,6 +42,11 @@ public class DtpBaseBeanConfiguration {
     }
 
     @Bean
+    public DtpLifecycle dtpLifecycle() {
+        return new DtpLifecycle();
+    }
+
+    @Bean
     public DtpRegistry dtpRegistry(DtpProperties dtpProperties) {
         return new DtpRegistry(dtpProperties);
     }
@@ -60,7 +63,6 @@ public class DtpBaseBeanConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(name = DynamicTpConst.BANNER_ENABLED_PROP, matchIfMissing = true, havingValue = "true")
     public DtpBannerPrinter dtpBannerPrinter() {
         return new DtpBannerPrinter();
     }

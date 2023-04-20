@@ -1,6 +1,6 @@
-package com.dtp.core.support.runnable;
+package com.dtp.core.support.task.runnable;
 
-import com.dtp.core.support.Ordered;
+import com.dtp.core.support.task.Ordered;
 
 /**
  * OrderedRunnable related

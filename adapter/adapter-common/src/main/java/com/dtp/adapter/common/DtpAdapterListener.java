@@ -55,8 +55,8 @@ public class DtpAdapterListener implements GenericApplicationListener {
 
     /**
      * backward compatible spring boot
-     * @param sourceType
-     * @return
+     * @param sourceType sourceType
+     * @return true if support
      */
     @Override
     public boolean supportsSourceType(@Nullable Class<?> sourceType) {

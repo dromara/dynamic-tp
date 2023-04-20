@@ -1,7 +1,7 @@
 package com.dtp.extension.skywalking.wrapper;
 
-import com.dtp.core.support.runnable.MdcRunnable;
-import com.dtp.core.support.wrapper.TaskWrapper;
+import com.dtp.core.support.task.runnable.MdcRunnable;
+import com.dtp.core.support.task.wrapper.TaskWrapper;
 import org.apache.skywalking.apm.toolkit.trace.RunnableWrapper;
 import org.apache.skywalking.apm.toolkit.trace.TraceContext;
 import org.slf4j.MDC;

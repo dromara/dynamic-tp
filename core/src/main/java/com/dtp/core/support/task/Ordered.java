@@ -1,4 +1,4 @@
-package com.dtp.core.support;
+package com.dtp.core.support.task;
 
 /**
  * Used in {@link com.dtp.core.thread.OrderedDtpExecutor} to ensure that the tasks are executed in order.

@@ -29,7 +29,6 @@ public class NoticeManager {
 
     static {
         NOTICE_INVOKER_CHAIN = NotifyFilterBuilder.getCommonInvokerChain();
-        Runtime.getRuntime().addShutdownHook(new Thread(NOTICE_EXECUTOR::shutdown));
     }
 
     public static void doNoticeAsync(ExecutorWrapper executor, TpMainFields oldFields, List<String> diffKeys) {
@@ -41,5 +40,9 @@ public class NoticeManager {
             val noticeCtx = new NoticeCtx(executor, notifyItem, oldFields, diffKeys);
             NOTICE_INVOKER_CHAIN.proceed(noticeCtx);
         });
+    }
+
+    public static void destroy() {
+        NOTICE_EXECUTOR.shutdownNow();
     }
 }

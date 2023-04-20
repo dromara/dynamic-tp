@@ -1,7 +1,6 @@
 package com.dtp.core.notifier;
 
 import com.dtp.common.constant.DynamicTpConst;
-import com.dtp.common.constant.LarkNotifyConst;
 import com.dtp.common.em.NotifyItemEnum;
 import com.dtp.common.em.NotifyPlatformEnum;
 import com.dtp.common.entity.AlarmInfo;
@@ -10,12 +9,12 @@ import com.dtp.common.entity.NotifyPlatform;
 import com.dtp.common.entity.TpMainFields;
 import com.dtp.common.util.CommonUtil;
 import com.dtp.common.util.DateUtil;
-import com.dtp.core.notifier.context.AlarmCtx;
-import com.dtp.core.notifier.context.BaseNotifyCtx;
-import com.dtp.core.notifier.context.DtpNotifyCtxHolder;
 import com.dtp.core.notifier.alarm.AlarmCounter;
 import com.dtp.core.notifier.base.Notifier;
 import com.dtp.core.notifier.capture.CapturedBlockingQueue;
+import com.dtp.core.notifier.context.AlarmCtx;
+import com.dtp.core.notifier.context.BaseNotifyCtx;
+import com.dtp.core.notifier.context.DtpNotifyCtxHolder;
 import com.dtp.core.support.ExecutorAdapter;
 import com.dtp.core.support.ExecutorWrapper;
 import com.google.common.base.Joiner;
@@ -33,6 +32,9 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static com.dtp.common.constant.LarkNotifyConst.LARK_AT_FORMAT_OPENID;
+import static com.dtp.common.constant.LarkNotifyConst.LARK_AT_FORMAT_USERNAME;
+import static com.dtp.common.constant.LarkNotifyConst.LARK_OPENID_PREFIX;
 import static com.dtp.core.notifier.manager.NotifyHelper.getAlarmKeys;
 import static com.dtp.core.notifier.manager.NotifyHelper.getAllAlarmKeys;
 
@@ -163,15 +165,15 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         if (StringUtils.isBlank(receives)) {
             return "";
         }
-        if (NotifyPlatformEnum.LARK.name().toLowerCase().equals(platform)) {
-            return Arrays.stream(receives.split(","))
-                    .map(receive -> StringUtils.startsWith(receive, LarkNotifyConst.LARK_OPENID_PREFIX)
-                            ? String.format(LarkNotifyConst.LARK_AT_FORMAT_OPENID, receive) : String.format(LarkNotifyConst.LARK_AT_FORMAT_USERNAME, receive))
-                    .collect(Collectors.joining(" "));
-        } else {
+        if (!NotifyPlatformEnum.LARK.name().toLowerCase().equals(platform)) {
             String[] receivers = StringUtils.split(receives, ',');
             return Joiner.on(", @").join(receivers);
         }
+        return Arrays.stream(receives.split(","))
+                .map(receive -> StringUtils.startsWith(receive, LARK_OPENID_PREFIX)
+                        ? String.format(LARK_AT_FORMAT_OPENID, receive) :
+                        String.format(LARK_AT_FORMAT_USERNAME, receive))
+                .collect(Collectors.joining(" "));
     }
 
     protected String populatePoolName(ExecutorWrapper executorWrapper) {

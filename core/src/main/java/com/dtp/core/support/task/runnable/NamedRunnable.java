@@ -1,4 +1,4 @@
-package com.dtp.core.support.runnable;
+package com.dtp.core.support.task.runnable;
 
 import org.apache.commons.lang3.StringUtils;
 

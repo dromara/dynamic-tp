@@ -1,6 +1,6 @@
-package com.dtp.core.support.callable;
+package com.dtp.core.support.task.callable;
 
-import com.dtp.core.support.Ordered;
+import com.dtp.core.support.task.Ordered;
 
 import java.util.concurrent.Callable;
 

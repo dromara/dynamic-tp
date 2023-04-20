@@ -44,6 +44,11 @@ public class DtpBaseBeanConfiguration {
     }
 
     @Bean
+    public DtpLifecycle dtpLifecycle() {
+        return new DtpLifecycle();
+    }
+
+    @Bean
     public DtpRegistry dtpRegistry(DtpProperties dtpProperties) {
         return new DtpRegistry(dtpProperties);
     }

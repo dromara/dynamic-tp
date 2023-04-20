@@ -6,7 +6,7 @@ import com.dtp.common.util.BeanUtil;
 import com.dtp.core.reject.RejectHandlerGetter;
 import com.dtp.core.support.ExecutorType;
 import com.dtp.core.support.TaskQueue;
-import com.dtp.core.support.wrapper.TaskWrappers;
+import com.dtp.core.support.task.wrapper.TaskWrappers;
 import com.dtp.core.thread.EagerDtpExecutor;
 import com.dtp.core.thread.NamedThreadFactory;
 import com.google.common.collect.Maps;

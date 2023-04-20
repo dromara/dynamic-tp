@@ -6,14 +6,14 @@ import com.dtp.common.em.RejectedTypeEnum;
 import com.dtp.common.entity.AlarmInfo;
 import com.dtp.common.entity.NotifyItem;
 import com.dtp.common.pattern.filter.InvokerChain;
-import com.dtp.core.notifier.context.AlarmCtx;
-import com.dtp.core.notifier.context.BaseNotifyCtx;
 import com.dtp.core.notifier.alarm.AlarmCounter;
 import com.dtp.core.notifier.alarm.AlarmLimiter;
+import com.dtp.core.notifier.context.AlarmCtx;
+import com.dtp.core.notifier.context.BaseNotifyCtx;
 import com.dtp.core.support.ExecutorWrapper;
 import com.dtp.core.support.ThreadPoolBuilder;
-import com.dtp.core.support.runnable.DtpRunnable;
-import com.dtp.core.support.wrapper.TaskWrappers;
+import com.dtp.core.support.task.runnable.DtpRunnable;
+import com.dtp.core.support.task.wrapper.TaskWrappers;
 import com.dtp.core.thread.DtpExecutor;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +50,6 @@ public class AlarmManager {
 
     static {
         ALARM_INVOKER_CHAIN = NotifyFilterBuilder.getAlarmInvokerChain();
-        Runtime.getRuntime().addShutdownHook(new Thread(ALARM_EXECUTOR::shutdown));
     }
 
     private AlarmManager() { }
@@ -127,5 +126,9 @@ public class AlarmManager {
     private static boolean checkWithAlarmInfo(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
         AlarmInfo alarmInfo = AlarmCounter.getAlarmInfo(executorWrapper.getThreadPoolName(), notifyItem.getType());
         return alarmInfo.getCount() >= notifyItem.getThreshold();
+    }
+
+    public static void destroy() {
+        ALARM_EXECUTOR.shutdownNow();
     }
 }

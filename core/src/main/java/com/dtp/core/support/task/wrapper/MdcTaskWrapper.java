@@ -1,6 +1,6 @@
-package com.dtp.core.support.wrapper;
+package com.dtp.core.support.task.wrapper;
 
-import com.dtp.core.support.runnable.MdcRunnable;
+import com.dtp.core.support.task.runnable.MdcRunnable;
 
 /**
  * MdcTaskWrapper related

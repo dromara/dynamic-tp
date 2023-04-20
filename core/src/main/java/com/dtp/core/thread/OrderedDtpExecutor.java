@@ -1,8 +1,8 @@
 package com.dtp.core.thread;
 
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
-import com.dtp.core.support.Ordered;
-import com.dtp.core.support.runnable.DtpRunnable;
+import com.dtp.core.support.task.Ordered;
+import com.dtp.core.support.task.runnable.DtpRunnable;
 import com.dtp.core.support.selector.ExecutorSelector;
 import com.dtp.core.support.selector.HashedExecutorSelector;
 import com.google.common.collect.Lists;

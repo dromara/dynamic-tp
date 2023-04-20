@@ -1,7 +1,7 @@
 package com.dtp.example.controller;
 
 import com.dtp.core.DtpRegistry;
-import com.dtp.core.support.runnable.NamedRunnable;
+import com.dtp.core.support.task.runnable.NamedRunnable;
 import com.dtp.core.thread.DtpExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;

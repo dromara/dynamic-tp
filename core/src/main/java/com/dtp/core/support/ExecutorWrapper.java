@@ -86,4 +86,12 @@ public class ExecutorWrapper {
         executorWrapper.executor = new CapturedExecutor(this.getExecutor());
         return executorWrapper;
     }
+
+    public boolean isDtpExecutor() {
+        return this.executor instanceof DtpExecutor;
+    }
+
+    public boolean isThreadPoolExecutor() {
+        return this.executor instanceof ThreadPoolExecutorAdapter;
+    }
 }

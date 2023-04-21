@@ -21,7 +21,7 @@ class DtpRegistryTest {
                 .threadPoolName("test_dtp")
                 .buildDynamic();
         DtpRegistry.registerExecutor(ExecutorWrapper.of(dtpExecutor), "test");
-        Assertions.assertEquals("test_dtp", DtpRegistry.getDtpExecutor("test_dtp").getThreadPoolName());
+        Assertions.assertEquals("test_dtp", ((DtpExecutor)DtpRegistry.getExecutor("test_dtp")).getThreadPoolName());
     }
 
 }

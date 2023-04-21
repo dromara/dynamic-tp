@@ -3,12 +3,12 @@ package com.dtp.example.controller;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.support.task.runnable.NamedRunnable;
-import com.dtp.core.thread.DtpExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.concurrent.Executor;
 
 /**
  * @author windsearcher
@@ -29,7 +29,7 @@ public class TestController {
     }
 
     public void task() throws InterruptedException {
-        DtpExecutor dtpExecutor3 = DtpRegistry.getDtpExecutor("dtpExecutor3");
+        Executor dtpExecutor3 = DtpRegistry.getExecutor("dtpExecutor3");
         for (int i = 0; i < 100; i++) {
             Thread.sleep(100);
 

@@ -25,7 +25,7 @@ public class ScheduledDtpExecutorTest {
 
     @Test
     public void schedule() {
-        ScheduledDtpExecutor dtpExecutor12 = (ScheduledDtpExecutor) DtpRegistry.getDtpExecutor("dtpExecutor12");
+        ScheduledDtpExecutor dtpExecutor12 = (ScheduledDtpExecutor) DtpRegistry.getExecutor("dtpExecutor12");
         System.out.println(dtpExecutor12.getClass());
         dtpExecutor12.scheduleAtFixedRate(() -> {
             System.out.println(Thread.currentThread().getName() + "进来了," +
@@ -37,14 +37,14 @@ public class ScheduledDtpExecutorTest {
 
     @Test
     public void testScheduleJre8Bug() {
-        ScheduledDtpExecutor dtpExecutor13 = (ScheduledDtpExecutor) DtpRegistry.getDtpExecutor("dtpExecutor13");
+        ScheduledDtpExecutor dtpExecutor13 = (ScheduledDtpExecutor) DtpRegistry.getExecutor("dtpExecutor13");
         dtpExecutor13.scheduleAtFixedRate(() -> { }, 10, 5, TimeUnit.SECONDS);
         dtpExecutor13.shutdownNow();
     }
 
     @Test
     public void testSubNotify() {
-        ScheduledDtpExecutor dtpExecutor14 = (ScheduledDtpExecutor) DtpRegistry.getDtpExecutor("dtpExecutor14");
+        ScheduledDtpExecutor dtpExecutor14 = (ScheduledDtpExecutor) DtpRegistry.getExecutor("dtpExecutor14");
         dtpExecutor14.scheduleAtFixedRate(() -> {
             System.out.println("进来了");
         }, 10, 5, TimeUnit.SECONDS);

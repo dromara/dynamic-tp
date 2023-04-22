@@ -1,6 +1,5 @@
 package com.dtp.core.spring;
 
-import com.dtp.common.ApplicationContextHolder;
 import com.dtp.core.DtpRegistry;
 import com.dtp.core.support.DynamicTp;
 import com.dtp.core.support.ExecutorWrapper;
@@ -13,9 +12,11 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.context.ApplicationContext;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.core.Ordered;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.lang.NonNull;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -33,7 +34,9 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpPostProcessor implements BeanPostProcessor {
+public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryPostProcessor, Ordered {
+
+    private DefaultListableBeanFactory beanFactory;
 
     @Override
     public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
@@ -59,15 +62,13 @@ public class DtpPostProcessor implements BeanPostProcessor {
     }
 
     private void registerCommon(Object bean, String beanName) {
-        ApplicationContext context = ApplicationContextHolder.getInstance();
         String dtpAnnotationVal;
         try {
-            DynamicTp dynamicTp = context.findAnnotationOnBean(beanName, DynamicTp.class);
+            DynamicTp dynamicTp = beanFactory.findAnnotationOnBean(beanName, DynamicTp.class);
             if (Objects.nonNull(dynamicTp)) {
                 dtpAnnotationVal = dynamicTp.value();
             } else {
-                BeanDefinitionRegistry registry = (BeanDefinitionRegistry) context;
-                BeanDefinition beanDefinition = registry.getBeanDefinition(beanName);
+                BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanName);
                 if (!(beanDefinition instanceof AnnotatedBeanDefinition)) {
                     return;
                 }
@@ -93,6 +94,16 @@ public class DtpPostProcessor implements BeanPostProcessor {
             executor = (Executor) bean;
         }
         DtpRegistry.registerExecutor(new ExecutorWrapper(poolName, executor), "beanPostProcessor");
+    }
+
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        this.beanFactory = (DefaultListableBeanFactory) beanFactory;
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
     }
 
 }

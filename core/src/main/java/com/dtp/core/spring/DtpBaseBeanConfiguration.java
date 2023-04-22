@@ -13,7 +13,6 @@ import org.springframework.boot.actuate.autoconfigure.endpoint.condition.Conditi
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Role;
 
 import java.util.concurrent.TimeUnit;
@@ -33,12 +32,6 @@ public class DtpBaseBeanConfiguration {
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     public ApplicationContextHolder dtpApplicationContextHolder() {
         return new ApplicationContextHolder();
-    }
-
-    @Bean
-    @DependsOn({"dtpApplicationContextHolder"})
-    public DtpPostProcessor dtpPostProcessor() {
-        return new DtpPostProcessor();
     }
 
     @Bean

@@ -8,7 +8,6 @@
         <artifactId>dynamic-tp-extension</artifactId>
         <version>${revision}</version>
     </parent>
-
     <artifactId>dynamic-tp-extension-opentelemetry</artifactId>
 
     <dependencies>

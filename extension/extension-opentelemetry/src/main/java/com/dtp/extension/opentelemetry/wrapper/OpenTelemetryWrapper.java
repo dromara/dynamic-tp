@@ -1,11 +1,8 @@
 package com.dtp.extension.opentelemetry.wrapper;
 
-import com.dtp.common.util.JsonUtil;
 import com.dtp.core.support.task.runnable.MdcRunnable;
 import com.dtp.core.support.task.wrapper.TaskWrapper;
-import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.context.Context;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * OpenTelemetryWrapper related

@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -47,7 +48,7 @@ public class DtpExecutorTest {
 
     @RepeatedTest(100)
     public void testRunTimeout() {
-        DtpExecutor dtpExecutor = DtpRegistry.getDtpExecutor("testRunTimeoutDtpExecutor");
+        Executor dtpExecutor = DtpRegistry.getExecutor("testRunTimeoutDtpExecutor");
         dtpExecutor.execute(() -> {
             try (MockedStatic<AlarmManager> mockAlarmManager = mockStatic(AlarmManager.class)) {
                 mock(mockAlarmManager);
@@ -60,7 +61,7 @@ public class DtpExecutorTest {
 
     @RepeatedTest(100)
     public void testQueueTimeout() {
-        DtpExecutor dtpExecutor = DtpRegistry.getDtpExecutor("testQueueTimeoutDtpExecutor");
+        Executor dtpExecutor = DtpRegistry.getExecutor("testQueueTimeoutDtpExecutor");
         dtpExecutor.execute(() -> {
             try (MockedStatic<AlarmManager> mockAlarmManager = mockStatic(AlarmManager.class)) {
                 mock(mockAlarmManager);
@@ -73,7 +74,7 @@ public class DtpExecutorTest {
 
     @RepeatedTest(100)
     public void testRejectedQueueTimeoutCancel() {
-        DtpExecutor dtpExecutor = DtpRegistry.getDtpExecutor("testRejectedQueueTimeoutCancelDtpExecutor");
+        Executor dtpExecutor = DtpRegistry.getExecutor("testRejectedQueueTimeoutCancelDtpExecutor");
         dtpExecutor.execute(() -> {
             try (MockedStatic<AlarmManager> mockAlarmManager = mockStatic(AlarmManager.class)) {
                 mock(mockAlarmManager);

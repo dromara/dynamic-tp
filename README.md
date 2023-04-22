@@ -138,7 +138,7 @@ protected void afterExecute(Runnable r, Throwable t);
 >
 > 3. 启动类加 @EnableDynamicTp 注解
 >
-> 4. 使用 @Resource 或 @Autowired 进行依赖注入，或通过 DtpRegistry.getDtpExecutor("name") 获取
+> 4. 使用 @Resource 或 @Autowired 进行依赖注入，或通过 DtpRegistry.getExecutor("name") 获取
 >
 > 5. 通过以上 4 步就可以使用了，是不是感觉超级简单呀
 

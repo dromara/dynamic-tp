@@ -14,6 +14,7 @@
         <module>extension-skywalking</module>
         <module>extension-limiter-redis</module>
         <module>extension-notify-email</module>
+        <module>extension-opentelemetry</module>
     </modules>
 
     <dependencies>

@@ -8,7 +8,7 @@ import io.opentelemetry.context.Context;
  * OpenTelemetryWrapper related
  *
  * @author weishaopeng
- * @since 1.0.8
+ * @since 1.1.3
  **/
 public class OpenTelemetryWrapper implements TaskWrapper {
 

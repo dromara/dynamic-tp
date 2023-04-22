@@ -70,9 +70,7 @@ public class DtpLifecycleSupport {
         if (Objects.isNull(executor)) {
             return;
         }
-        if (log.isDebugEnabled()) {
-            log.debug("Shutting down ExecutorService, threadPoolName: {}", threadPoolName);
-        }
+        log.info("Shutting down ExecutorService, threadPoolName: {}", threadPoolName);
         if (waitForTasksToCompleteOnShutdown) {
             executor.shutdown();
         } else {
@@ -106,13 +104,11 @@ public class DtpLifecycleSupport {
             return;
         }
         try {
-            if (!executor.awaitTermination(awaitTerminationSeconds, TimeUnit.SECONDS) && log.isWarnEnabled()) {
+            if (!executor.awaitTermination(awaitTerminationSeconds, TimeUnit.SECONDS)) {
                 log.warn("Timed out while waiting for executor {} to terminate", threadPoolName);
             }
         } catch (InterruptedException ex) {
-            if (log.isWarnEnabled()) {
-                log.warn("Interrupted while waiting for executor {} to terminate", threadPoolName);
-            }
+            log.warn("Interrupted while waiting for executor {} to terminate", threadPoolName);
             Thread.currentThread().interrupt();
         }
     }

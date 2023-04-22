@@ -1,6 +1,5 @@
 package com.dtp.adapter.webserver;
 
-import com.dtp.common.entity.ThreadPoolStats;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.util.ReflectionUtil;
 import com.dtp.core.support.ExecutorAdapter;
@@ -12,7 +11,6 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import org.springframework.boot.web.embedded.jetty.JettyWebServer;
 import org.springframework.boot.web.server.WebServer;
 
-import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -37,32 +35,13 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
     }
 
     @Override
-    public ThreadPoolStats getPoolStats() {
-
-        ExecutorAdapter<ThreadPool.SizedThreadPool> adapter = getExecutor();
-        if (Objects.isNull(adapter)) {
-            return null;
-        }
-
-        ThreadPool.SizedThreadPool threadPool = adapter.getOriginal();
-        ThreadPoolStats poolStats = ThreadPoolStats.builder()
-                .corePoolSize(threadPool.getMinThreads())
-                .maximumPoolSize(threadPool.getMaxThreads())
-                .poolName(POOL_NAME)
-                .build();
-
-        if (threadPool instanceof QueuedThreadPool) {
-            QueuedThreadPool queuedThreadPool = (QueuedThreadPool) threadPool;
-            poolStats.setActiveCount(queuedThreadPool.getBusyThreads());
-            poolStats.setQueueSize(queuedThreadPool.getQueueSize());
-            poolStats.setPoolSize(queuedThreadPool.getThreads());
-        }
-        return poolStats;
+    public void refresh(DtpProperties dtpProperties) {
+        refresh(POOL_NAME, executors.get(getTpName()), dtpProperties.getPlatforms(), dtpProperties.getJettyTp());
     }
 
     @Override
-    public void refresh(DtpProperties dtpProperties) {
-        refresh(POOL_NAME, executorWrapper, dtpProperties.getPlatforms(), dtpProperties.getJettyTp());
+    protected String getTpName() {
+        return POOL_NAME;
     }
 
     /**

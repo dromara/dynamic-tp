@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * DtpLifecycle related
  *
  * @author yanhom
- * @since 1.0.0
+ * @since 1.1.3
  **/
 @Slf4j
 public class DtpLifecycle implements SmartLifecycle {

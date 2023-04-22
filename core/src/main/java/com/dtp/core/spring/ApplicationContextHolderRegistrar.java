@@ -9,6 +9,7 @@ import org.springframework.core.type.AnnotationMetadata;
 
 /**
  * ApplicationContextHolderRegistrar related
+ *
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
 public class ApplicationContextHolderRegistrar implements ImportBeanDefinitionRegistrar {

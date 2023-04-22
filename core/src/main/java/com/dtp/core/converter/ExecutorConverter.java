@@ -42,8 +42,6 @@ public class ExecutorConverter {
         poolStats.setPoolName(wrapper.getThreadPoolName());
         if (executor instanceof DtpExecutor) {
             DtpExecutor dtpExecutor = (DtpExecutor) executor;
-            poolStats.setRejectHandlerName(dtpExecutor.getRejectHandlerType());
-            poolStats.setRejectCount(dtpExecutor.getRejectCount());
             poolStats.setRunTimeoutCount(dtpExecutor.getRunTimeoutCount());
             poolStats.setQueueTimeoutCount(dtpExecutor.getQueueTimeoutCount());
             poolStats.setDynamic(true);
@@ -67,6 +65,8 @@ public class ExecutorConverter {
                 .taskCount(executor.getTaskCount())
                 .completedTaskCount(executor.getCompletedTaskCount())
                 .waitTaskCount(executor.getQueueSize())
+                .rejectCount(executor.getRejectedTaskCount())
+                .rejectHandlerName(executor.getRejectHandlerType())
                 .build();
     }
 }

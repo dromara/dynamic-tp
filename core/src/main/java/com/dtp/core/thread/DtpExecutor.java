@@ -316,6 +316,11 @@ public class DtpExecutor extends ThreadPoolExecutor
         this.rejectHandlerType = rejectHandlerType;
     }
 
+    @Override
+    public long getRejectedTaskCount() {
+        return rejectCount.sum();
+    }
+
     public long getRunTimeout() {
         return runTimeout;
     }
@@ -330,10 +335,6 @@ public class DtpExecutor extends ThreadPoolExecutor
 
     public void setQueueTimeout(long queueTimeout) {
         this.queueTimeout = queueTimeout;
-    }
-
-    public long getRejectCount() {
-        return rejectCount.sum();
     }
 
     public void incRejectCount(int count) {
@@ -379,9 +380,5 @@ public class DtpExecutor extends ThreadPoolExecutor
      */
     public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
         allowCoreThreadTimeOut(allowCoreThreadTimeOut);
-    }
-
-    public String getQueueName() {
-        return getQueue().getClass().getSimpleName();
     }
 }

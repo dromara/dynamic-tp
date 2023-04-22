@@ -2,7 +2,7 @@ package com.dtp.starter.adapter.webserver.autocconfigure;
 
 import com.dtp.adapter.webserver.JettyDtpAdapter;
 import com.dtp.adapter.webserver.TomcatDtpAdapter;
-import com.dtp.adapter.webserver.UndertowDtpAdapter;
+import com.dtp.adapter.webserver.undertow.UndertowDtpAdapter;
 import com.dtp.core.spring.DtpBaseBeanConfiguration;
 import com.dtp.starter.adapter.webserver.autocconfigure.condition.ConditionalOnJettyWebServer;
 import com.dtp.starter.adapter.webserver.autocconfigure.condition.ConditionalOnTomcatWebServer;

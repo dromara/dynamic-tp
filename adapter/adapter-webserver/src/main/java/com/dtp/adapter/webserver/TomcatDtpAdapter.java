@@ -1,6 +1,5 @@
 package com.dtp.adapter.webserver;
 
-import com.dtp.common.entity.ThreadPoolStats;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.support.ExecutorAdapter;
 import com.dtp.core.support.ExecutorWrapper;
@@ -9,7 +8,6 @@ import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 import org.springframework.boot.web.server.WebServer;
 
-import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -34,34 +32,15 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPoolExec
     }
 
     @Override
-    public ThreadPoolStats getPoolStats() {
-        ExecutorAdapter<ThreadPoolExecutor> adapter = getExecutor();
-        if (Objects.isNull(adapter)) {
-            return null;
-        }
-        ThreadPoolExecutor threadPoolExecutor = adapter.getOriginal();
-        return ThreadPoolStats.builder()
-                .corePoolSize(threadPoolExecutor.getCorePoolSize())
-                .maximumPoolSize(threadPoolExecutor.getMaximumPoolSize())
-                .queueType(threadPoolExecutor.getQueue().getClass().getSimpleName())
-                .queueCapacity(threadPoolExecutor.getQueue().size() + threadPoolExecutor.getQueue().remainingCapacity())
-                .queueSize(threadPoolExecutor.getQueue().size())
-                .queueRemainingCapacity(threadPoolExecutor.getQueue().remainingCapacity())
-                .activeCount(threadPoolExecutor.getActiveCount())
-                .taskCount(threadPoolExecutor.getTaskCount())
-                .completedTaskCount(threadPoolExecutor.getCompletedTaskCount())
-                .largestPoolSize(threadPoolExecutor.getLargestPoolSize())
-                .poolSize(threadPoolExecutor.getPoolSize())
-                .waitTaskCount(threadPoolExecutor.getQueue().size())
-                .poolName(POOL_NAME)
-                .build();
+    public void refresh(DtpProperties dtpProperties) {
+        refresh(POOL_NAME, executors.get(getTpName()), dtpProperties.getPlatforms(), dtpProperties.getTomcatTp());
     }
 
     @Override
-    public void refresh(DtpProperties dtpProperties) {
-        refresh(POOL_NAME, executorWrapper, dtpProperties.getPlatforms(), dtpProperties.getTomcatTp());
+    protected String getTpName() {
+        return POOL_NAME;
     }
-    
+
     /**
      * TomcatExecutorAdapter implements ExecutorAdapter, the goal of this class
      * is to be compatible with {@link org.apache.tomcat.util.threads.ThreadPoolExecutor}.

@@ -75,7 +75,7 @@ public class AlarmCounter {
         }
 
         DtpExecutor dtpExecutor = (DtpExecutor) executor.getOriginal();
-        String rejectCount = getCount(threadPoolName, REJECT.getValue()) + " / " + dtpExecutor.getRejectCount();
+        String rejectCount = getCount(threadPoolName, REJECT.getValue()) + " / " + dtpExecutor.getRejectedTaskCount();
         String runTimeoutCount = getCount(threadPoolName, RUN_TIMEOUT.getValue()) + " / "
                 + dtpExecutor.getRunTimeoutCount();
         String queueTimeoutCount = getCount(threadPoolName, QUEUE_TIMEOUT.getValue()) + " / "

@@ -162,11 +162,6 @@ public class ScheduledDtpExecutor extends DtpExecutor implements ScheduledExecut
     }
 
     @Override
-    public String getQueueName() {
-        return delegate.getQueue().getClass().getSimpleName();
-    }
-
-    @Override
     public int getQueueCapacity() {
         int capacity = delegate.getQueue().size() + delegate.getQueue().remainingCapacity();
         return capacity < 0 ? Integer.MAX_VALUE : capacity;

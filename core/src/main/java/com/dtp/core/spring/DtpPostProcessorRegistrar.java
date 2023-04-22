@@ -23,7 +23,6 @@ public class DtpPostProcessorRegistrar implements ImportBeanDefinitionRegistrar 
                             DtpPostProcessor::new)
                     .getBeanDefinition();
             beanDefinition.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
-//            beanDefinition.getPropertyValues().add("order", Ordered.HIGHEST_PRECEDENCE);
             beanDefinition.setSynthetic(true);
             registry.registerBeanDefinition(BEAN_NAME, beanDefinition);
         }

@@ -4,6 +4,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 
 import java.util.Map;
@@ -15,7 +16,7 @@ import java.util.Objects;
  * @author yanhom
  * @since 1.0.0
  **/
-public class ApplicationContextHolder implements ApplicationContextAware {
+public class ApplicationContextHolder implements ApplicationContextAware, Ordered {
 
     private static ApplicationContext context;
 
@@ -50,4 +51,10 @@ public class ApplicationContextHolder implements ApplicationContextAware {
     public static void publishEvent(ApplicationEvent event) {
         context.publishEvent(event);
     }
+
+    @Override
+    public int getOrder() {
+        return HIGHEST_PRECEDENCE;
+    }
+
 }

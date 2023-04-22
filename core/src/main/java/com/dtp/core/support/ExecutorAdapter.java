@@ -185,6 +185,16 @@ public interface ExecutorAdapter<E extends Executor> extends Executor {
     }
 
     /**
+     * Get the rejected task count
+     *
+     * @return the rejected task count
+     */
+    default long getRejectedTaskCount() {
+        //default unsupported
+        return -1;
+    }
+
+    /**
      * If allow core thread time out
      *
      * @return if allow core thread time out

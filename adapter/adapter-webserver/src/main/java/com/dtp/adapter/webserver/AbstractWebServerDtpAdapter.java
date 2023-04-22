@@ -2,11 +2,8 @@ package com.dtp.adapter.webserver;
 
 import com.dtp.adapter.common.AbstractDtpAdapter;
 import com.dtp.common.ApplicationContextHolder;
-import com.dtp.common.entity.ThreadPoolStats;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.core.support.ExecutorWrapper;
-import com.dtp.core.support.ExecutorAdapter;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.context.WebServerApplicationContext;
 import org.springframework.boot.web.context.WebServerInitializedEvent;
@@ -15,8 +12,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.core.ResolvableType;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.Executor;
 
 /**
@@ -29,8 +24,6 @@ import java.util.concurrent.Executor;
 @Slf4j
 public abstract class AbstractWebServerDtpAdapter<A extends Executor>
         extends AbstractDtpAdapter {
-
-    protected ExecutorWrapper executorWrapper;
 
     @Override
     public boolean supportsEventType(ResolvableType resolvableType) {
@@ -55,38 +48,15 @@ public abstract class AbstractWebServerDtpAdapter<A extends Executor>
     }
 
     @Override
-    public ExecutorWrapper getExecutorWrapper() {
-        return executorWrapper;
-    }
-
-    @Override
-    public List<ThreadPoolStats> getMultiPoolStats() {
-        return Lists.newArrayList(getPoolStats());
-    }
-
-    @Override
     protected void initialize() {
-        if (executorWrapper == null) {
+        if (executors.get(getTpName()) == null) {
             ApplicationContext applicationContext = ApplicationContextHolder.getInstance();
             WebServer webServer = ((WebServerApplicationContext) applicationContext).getWebServer();
-            initExecutorWrapper(webServer);
+            ExecutorWrapper wrapper = doInitExecutorWrapper(webServer);
+            initNotifyItems(wrapper.getThreadPoolName(), wrapper);
+            executors.put(getTpName(), wrapper);
+            log.info("DynamicTp adapter, web server executor init end, executor: {}", wrapper.getExecutor());
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    protected ExecutorAdapter<A> getExecutor() {
-        ExecutorWrapper wrapper = getExecutorWrapper();
-        if (Objects.isNull(wrapper) || Objects.isNull(wrapper.getExecutor())) {
-            log.warn("Web server threadPool is null.");
-            return null;
-        }
-        return (ExecutorAdapter<A>) wrapper.getExecutor();
-    }
-
-    protected void initExecutorWrapper(WebServer webServer) {
-        executorWrapper = doInitExecutorWrapper(webServer);
-        initNotifyItems(executorWrapper.getThreadPoolName(), executorWrapper);
-        log.info("DynamicTp adapter, web server executor init end, executor: {}", executorWrapper.getExecutor());
     }
 
     /**
@@ -96,4 +66,10 @@ public abstract class AbstractWebServerDtpAdapter<A extends Executor>
      * @return the Executor instance
      */
     protected abstract ExecutorWrapper doInitExecutorWrapper(WebServer webServer);
+
+    /**
+     * Refresh thread pool executor wrapper.
+     * @return the thread pool name
+     */
+    protected abstract String getTpName();
 }

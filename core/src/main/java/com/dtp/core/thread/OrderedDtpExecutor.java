@@ -1,10 +1,10 @@
 package com.dtp.core.thread;
 
 import com.dtp.common.queue.VariableLinkedBlockingQueue;
-import com.dtp.core.support.task.Ordered;
-import com.dtp.core.support.task.runnable.DtpRunnable;
 import com.dtp.core.support.selector.ExecutorSelector;
 import com.dtp.core.support.selector.HashedExecutorSelector;
+import com.dtp.core.support.task.Ordered;
+import com.dtp.core.support.task.runnable.DtpRunnable;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 
@@ -158,12 +158,12 @@ public class OrderedDtpExecutor extends DtpExecutor {
     }
 
     @Override
-    public long getRejectCount() {
+    public long getRejectedTaskCount() {
         long count = 0;
         for (Executor executor : childExecutors) {
             count += ((ChildExecutor) executor).getRejectedTaskCount();
         }
-        return super.getRejectCount() + count;
+        return super.getRejectedTaskCount() + count;
     }
 
     @Override

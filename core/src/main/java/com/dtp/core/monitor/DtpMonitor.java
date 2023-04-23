@@ -14,7 +14,6 @@ import com.dtp.core.thread.NamedThreadFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.Ordered;
 
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
@@ -30,10 +29,9 @@ import static com.dtp.common.constant.DynamicTpConst.SCHEDULE_NOTIFY_ITEMS;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpMonitor implements ApplicationRunner, Ordered {
+public class DtpMonitor implements ApplicationRunner {
 
-    private static final ScheduledExecutorService MONITOR_EXECUTOR = new ScheduledThreadPoolExecutor(
-            1, new NamedThreadFactory("dtp-monitor", true));
+    private static ScheduledExecutorService monitorExecutor;
 
     private final DtpProperties dtpProperties;
 
@@ -43,7 +41,7 @@ public class DtpMonitor implements ApplicationRunner, Ordered {
 
     @Override
     public void run(ApplicationArguments args) {
-        MONITOR_EXECUTOR.scheduleWithFixedDelay(this::run,
+        monitorExecutor.scheduleWithFixedDelay(this::run,
                 0, dtpProperties.getMonitorInterval(), TimeUnit.SECONDS);
     }
 
@@ -90,12 +88,12 @@ public class DtpMonitor implements ApplicationRunner, Ordered {
         ApplicationContextHolder.publishEvent(event);
     }
 
-    @Override
-    public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE + 2;
+    public static void initialize() {
+        monitorExecutor = new ScheduledThreadPoolExecutor(
+                1, new NamedThreadFactory("dtp-monitor", true));
     }
 
     public static void destroy() {
-        MONITOR_EXECUTOR.shutdownNow();
+        monitorExecutor.shutdownNow();
     }
 }

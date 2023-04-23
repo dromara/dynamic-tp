@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.dtp.starter.apollo.autoconfigure.DtpApolloAutoConfiguration
+  org.dromara.dynamictp.starter.apollo.autoconfigure.DtpApolloAutoConfiguration

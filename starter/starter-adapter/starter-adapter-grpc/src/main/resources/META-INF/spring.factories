@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.dtp.starter.adapter.grpc.autoconfigure.GrpcTpAutoConfiguration
+  org.dromara.dynamictp.starter.adapter.grpc.autoconfigure.GrpcTpAutoConfiguration

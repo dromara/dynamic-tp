@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.dtp.starter.adapter.okhttp3.autoconfigure.Okhttp3TpAutoConfiguration
+  org.dromara.dynamictp.starter.adapter.okhttp3.autoconfigure.Okhttp3TpAutoConfiguration

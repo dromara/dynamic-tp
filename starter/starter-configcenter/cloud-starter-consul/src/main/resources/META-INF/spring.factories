@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.dtp.starter.cloud.consul.autoconfigure.DtpConsulAutoConfiguration
+  org.dromara.dynamictp.starter.cloud.consul.autoconfigure.DtpConsulAutoConfiguration

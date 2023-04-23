@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>dynamic-tp-example-adapter</artifactId>
-        <groupId>cn.dynamictp</groupId>
+        <groupId>org.dromara.dynamictp</groupId>
         <version>${revision}</version>
     </parent>
     <artifactId>dynamic-tp-example-adapter-okhttp3</artifactId>
@@ -26,7 +26,7 @@
         </dependency>
 
         <dependency>
-            <groupId>cn.dynamictp</groupId>
+            <groupId>org.dromara.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-adapter-okhttp3</artifactId>
             <version>${revision}</version>
         </dependency>

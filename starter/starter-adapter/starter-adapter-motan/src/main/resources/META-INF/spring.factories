@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.dtp.starter.adapter.motan.autoconfigure.MotanTpAutoConfiguration
+  org.dromara.dynamictp.starter.adapter.motan.autoconfigure.MotanTpAutoConfiguration

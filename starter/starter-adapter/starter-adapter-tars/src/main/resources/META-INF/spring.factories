@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.dtp.starter.adapter.tars.autoconfigure.TarsTpAutoConfiguration
+  org.dromara.dynamictp.starter.adapter.tars.autoconfigure.TarsTpAutoConfiguration

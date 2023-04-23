@@ -1,5 +1,6 @@
 package com.dtp.core.spring;
 
+import com.dtp.common.ApplicationContextHolder;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.DeferredImportSelector;
@@ -29,9 +30,11 @@ public class DtpConfigurationSelector implements DeferredImportSelector, Ordered
         if (!BooleanUtils.toBoolean(environment.getProperty(DTP_ENABLED_PROP, BooleanUtils.TRUE))) {
             return new String[]{};
         }
-        return new String[] {
-                DtpBaseBeanConfiguration.class.getName(),
-                DtpBeanDefinitionRegistrar.class.getName()
+        return new String[]{
+                DtpBeanDefinitionRegistrar.class.getName(),
+                DtpPostProcessorRegistrar.class.getName(),
+                ApplicationContextHolder.class.getName(),
+                DtpBaseBeanConfiguration.class.getName()
         };
     }
 

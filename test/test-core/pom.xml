@@ -14,5 +14,9 @@
             <groupId>cn.dynamictp</groupId>
             <artifactId>dynamic-tp-adapter-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+        </dependency>
     </dependencies>
 </project>

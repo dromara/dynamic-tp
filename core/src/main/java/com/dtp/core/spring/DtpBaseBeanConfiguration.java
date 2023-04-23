@@ -1,6 +1,5 @@
 package com.dtp.core.spring;
 
-import com.dtp.common.ApplicationContextHolder;
 import com.dtp.common.properties.DtpProperties;
 import com.dtp.common.timer.HashedWheelTimer;
 import com.dtp.core.DtpRegistry;
@@ -13,7 +12,6 @@ import org.springframework.boot.actuate.autoconfigure.endpoint.condition.Conditi
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Role;
 
 import java.util.concurrent.TimeUnit;
@@ -28,18 +26,6 @@ import java.util.concurrent.TimeUnit;
 @EnableConfigurationProperties(DtpProperties.class)
 @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 public class DtpBaseBeanConfiguration {
-
-    @Bean
-    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-    public ApplicationContextHolder dtpApplicationContextHolder() {
-        return new ApplicationContextHolder();
-    }
-
-    @Bean
-    @DependsOn({"dtpApplicationContextHolder"})
-    public DtpPostProcessor dtpPostProcessor() {
-        return new DtpPostProcessor();
-    }
 
     @Bean
     public DtpLifecycle dtpLifecycle() {

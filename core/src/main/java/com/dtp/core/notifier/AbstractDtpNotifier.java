@@ -11,11 +11,9 @@ import com.dtp.common.util.CommonUtil;
 import com.dtp.common.util.DateUtil;
 import com.dtp.core.notifier.alarm.AlarmCounter;
 import com.dtp.core.notifier.base.Notifier;
-import com.dtp.core.notifier.capture.CapturedBlockingQueue;
 import com.dtp.core.notifier.context.AlarmCtx;
 import com.dtp.core.notifier.context.BaseNotifyCtx;
 import com.dtp.core.notifier.context.DtpNotifyCtxHolder;
-import com.dtp.core.support.ExecutorAdapter;
 import com.dtp.core.support.ExecutorWrapper;
 import com.google.common.base.Joiner;
 import lombok.extern.slf4j.Slf4j;
@@ -120,7 +118,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 executor.getTaskCount(),
                 executor.getCompletedTaskCount(),
                 executor.getQueueSize(),
-                getQueueName(executor),
+                executor.getQueueType(),
                 executor.getQueueCapacity(),
                 executor.getQueueSize(),
                 executor.getQueueRemainingCapacity(),
@@ -152,7 +150,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 oldFields.getMaxPoolSize(), executor.getMaximumPoolSize(),
                 oldFields.isAllowCoreThreadTimeOut(), executor.allowsCoreThreadTimeOut(),
                 oldFields.getKeepAliveTime(), executor.getKeepAliveTime(TimeUnit.SECONDS),
-                getQueueName(executor),
+                executor.getQueueType(),
                 oldFields.getQueueCapacity(), executor.getQueueCapacity(),
                 oldFields.getRejectType(), executor.getRejectHandlerType(),
                 getReceives(platform.getPlatform(), platform.getReceivers()),
@@ -182,13 +180,6 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
             return executorWrapper.getThreadPoolName();
         }
         return executorWrapper.getThreadPoolName() + "(" + poolAlisaName + ")";
-    }
-
-    protected String getQueueName(ExecutorAdapter<?> executor) {
-        if (executor.getQueue() instanceof CapturedBlockingQueue) {
-            return ((CapturedBlockingQueue) executor.getQueue()).getOriginQueue().getClass().getSimpleName();
-        }
-        return executor.getQueue().getClass().getSimpleName();
     }
 
     private String highlightNotifyContent(String content, List<String> diffs) {

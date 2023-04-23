@@ -1,7 +1,7 @@
 package com.dtp.core.notifier.capture;
 
-import com.dtp.core.notifier.context.BaseNotifyCtx;
 import com.dtp.core.notifier.AbstractDtpNotifier;
+import com.dtp.core.notifier.context.BaseNotifyCtx;
 import com.dtp.core.notifier.manager.AlarmManager;
 import com.dtp.core.support.ExecutorAdapter;
 import com.dtp.core.thread.DtpExecutor;
@@ -52,7 +52,7 @@ public final class CapturedExecutor implements ExecutorAdapter<ExecutorAdapter<?
     /**
      * @see CapturedBlockingQueue
      */
-    private final BlockingQueue<Runnable> blockingQueue;
+    private final CapturedBlockingQueue blockingQueue;
 
     public CapturedExecutor(ExecutorAdapter<?> executorAdapter) {
         this.originExecutor = executorAdapter;
@@ -67,7 +67,7 @@ public final class CapturedExecutor implements ExecutorAdapter<ExecutorAdapter<?
         this.allowCoreThreadTimeOut = executorAdapter.allowsCoreThreadTimeOut();
         this.rejectedExecutionHandler = executorAdapter.getRejectedExecutionHandler();
         this.rejectHandlerType = executorAdapter.getRejectHandlerType();
-        this.blockingQueue = new CapturedBlockingQueue(executorAdapter.getQueue());
+        this.blockingQueue = new CapturedBlockingQueue(executorAdapter);
     }
 
     @Override
@@ -128,6 +128,26 @@ public final class CapturedExecutor implements ExecutorAdapter<ExecutorAdapter<?
     @Override
     public BlockingQueue<Runnable> getQueue() {
         return blockingQueue;
+    }
+
+    @Override
+    public String getQueueType() {
+        return blockingQueue.getQueueType();
+    }
+
+    @Override
+    public int getQueueSize() {
+        return blockingQueue.size();
+    }
+
+    @Override
+    public int getQueueRemainingCapacity() {
+        return blockingQueue.remainingCapacity();
+    }
+
+    @Override
+    public int getQueueCapacity() {
+        return blockingQueue.getQueueCapacity();
     }
 
     @Override

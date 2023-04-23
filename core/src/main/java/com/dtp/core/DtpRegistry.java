@@ -102,23 +102,15 @@ public class DtpRegistry implements ApplicationRunner {
      *
      * @param name the name of dynamic thread pool
      * @return the managed DtpExecutor instance
-     * @deprecated use {@link #getExecutor(String)} instead
      */
-    @Deprecated
     public static DtpExecutor getDtpExecutor(final String name) {
-        val executorWrapper = EXECUTOR_REGISTRY.get(name);
-        if (Objects.isNull(executorWrapper)) {
-            log.error("Cannot find a specified dtpExecutor, name: {}", name);
-            throw new DtpException("Cannot find a specified dtpExecutor, name: " + name);
-        }
-        ExecutorAdapter<?> executor = executorWrapper.getExecutor();
-        if (!(executor instanceof DtpExecutor)) {
+        val executorWrapper = getExecutorWrapper(name);
+        if (!executorWrapper.isDtpExecutor()) {
             log.error("The specified executor is not a DtpExecutor, name: {}", name);
             throw new DtpException("The specified executor is not a DtpExecutor, name: " + name);
         }
-        return (DtpExecutor) executor;
+        return (DtpExecutor) executorWrapper.getExecutor();
     }
-
 
     /**
      * Get ThreadPoolExecutor by thread pool name.

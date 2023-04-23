@@ -1,5 +1,7 @@
 package com.dtp.core.notifier.capture;
 
+import com.dtp.core.support.ExecutorAdapter;
+
 import java.util.AbstractQueue;
 import java.util.Collection;
 import java.util.Iterator;
@@ -16,16 +18,30 @@ public class CapturedBlockingQueue extends AbstractQueue<Runnable> implements Bl
 
     private final int remainingCapacity;
 
+    private final int queueCapacity;
+
+    private final String queueType;
+
     private final BlockingQueue<Runnable> originQueue;
 
-    public CapturedBlockingQueue(BlockingQueue<Runnable> blockingQueue) {
-        this.size = blockingQueue.size();
-        this.remainingCapacity = blockingQueue.remainingCapacity();
-        this.originQueue = blockingQueue;
+    public CapturedBlockingQueue(ExecutorAdapter<?> executorAdapter) {
+        this.size = executorAdapter.getQueueSize();
+        this.remainingCapacity = executorAdapter.getQueueRemainingCapacity();
+        this.queueCapacity = executorAdapter.getQueueCapacity();
+        this.queueType = executorAdapter.getQueueType();
+        this.originQueue = executorAdapter.getQueue();
     }
 
     public BlockingQueue<Runnable> getOriginQueue() {
         return originQueue;
+    }
+
+    public int getQueueCapacity() {
+        return queueCapacity;
+    }
+
+    public String getQueueType() {
+        return queueType;
     }
 
     @Override

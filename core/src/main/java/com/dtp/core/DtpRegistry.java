@@ -25,6 +25,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.Ordered;
 
 import java.util.Collections;
 import java.util.List;
@@ -46,7 +47,7 @@ import static com.dtp.core.notifier.manager.NotifyHelper.updateNotifyInfo;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpRegistry implements ApplicationRunner {
+public class DtpRegistry implements ApplicationRunner, Ordered {
 
     /**
      * Maintain all automatically registered and manually registered Executors(DtpExecutors and JUC ThreadPoolExecutors).
@@ -315,6 +316,11 @@ public class DtpRegistry implements ApplicationRunner {
         }
         log.warn("DynamicTp refresh, the blockingqueue capacity cannot be reset, poolName: {}, queueType {}",
                 props.getThreadPoolName(), blockingQueue.getClass().getSimpleName());
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE + 1;
     }
 
     @Override

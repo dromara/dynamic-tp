@@ -17,6 +17,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.Ordered;
+import org.springframework.core.PriorityOrdered;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.lang.NonNull;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -34,7 +35,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Ordered {
+public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, PriorityOrdered {
 
     private DefaultListableBeanFactory beanFactory;
 

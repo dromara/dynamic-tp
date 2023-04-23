@@ -19,7 +19,6 @@ import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.slf4j.MDC;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -116,7 +115,7 @@ public class AlarmManager {
     private static boolean checkCapacity(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
 
         val executor = executorWrapper.getExecutor();
-        if (CollectionUtils.isEmpty(executor.getQueue())) {
+        if (executor.getQueueSize() <= 0) {
             return false;
         }
         double div = NumberUtil.div(executor.getQueueSize(), executor.getQueueCapacity(), 2) * 100;

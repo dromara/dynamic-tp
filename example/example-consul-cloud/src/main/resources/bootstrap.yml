@@ -6,7 +6,7 @@ management:
     web:
       base-path: /actuator
       exposure:
-        include: 'info,prometheus,health'
+        include: '*'
     httptrace:
       enabled: false
     configprops:

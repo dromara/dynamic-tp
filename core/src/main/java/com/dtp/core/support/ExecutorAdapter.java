@@ -118,6 +118,15 @@ public interface ExecutorAdapter<E extends Executor> extends Executor {
     }
 
     /**
+     * Get the queue type
+     *
+     * @return the queue type
+     */
+    default String getQueueType() {
+        return getQueue().getClass().getSimpleName();
+    }
+
+    /**
      * Get the queue size
      *
      * @return the queue size
@@ -181,7 +190,7 @@ public interface ExecutorAdapter<E extends Executor> extends Executor {
     default String getRejectHandlerType() {
         return Optional.ofNullable(getRejectedExecutionHandler())
                 .map(h -> h.getClass().getSimpleName())
-                .orElse("unsupported");
+                .orElse("unknown");
     }
 
     /**

@@ -22,8 +22,7 @@ import java.util.concurrent.Executor;
  * @since 1.0.0
  */
 @Slf4j
-public abstract class AbstractWebServerDtpAdapter<A extends Executor>
-        extends AbstractDtpAdapter {
+public abstract class AbstractWebServerDtpAdapter<A extends Executor> extends AbstractDtpAdapter {
 
     @Override
     public boolean supportsEventType(ResolvableType resolvableType) {

@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 
 /**
  * AdapterCommonAutoConfiguration related
@@ -24,7 +23,6 @@ import org.springframework.context.annotation.DependsOn;
 public class AdapterCommonAutoConfiguration {
 
     @Bean
-    @DependsOn({"dtpApplicationContextHolder"})
     @ConditionalOnMissingBean
     public DtpAdapterListener dtpAdapterListener() {
         return new DtpAdapterListener();

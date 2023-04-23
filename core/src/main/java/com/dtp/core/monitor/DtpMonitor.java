@@ -31,7 +31,8 @@ import static com.dtp.common.constant.DynamicTpConst.SCHEDULE_NOTIFY_ITEMS;
 @Slf4j
 public class DtpMonitor implements ApplicationRunner {
 
-    private static ScheduledExecutorService monitorExecutor;
+    private static final ScheduledExecutorService MONITOR_EXECUTOR = new ScheduledThreadPoolExecutor(
+            1, new NamedThreadFactory("dtp-monitor", true));
 
     private final DtpProperties dtpProperties;
 
@@ -41,7 +42,7 @@ public class DtpMonitor implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        monitorExecutor.scheduleWithFixedDelay(this::run,
+        MONITOR_EXECUTOR.scheduleWithFixedDelay(this::run,
                 0, dtpProperties.getMonitorInterval(), TimeUnit.SECONDS);
     }
 
@@ -88,12 +89,7 @@ public class DtpMonitor implements ApplicationRunner {
         ApplicationContextHolder.publishEvent(event);
     }
 
-    public static void initialize() {
-        monitorExecutor = new ScheduledThreadPoolExecutor(
-                1, new NamedThreadFactory("dtp-monitor", true));
-    }
-
     public static void destroy() {
-        monitorExecutor.shutdownNow();
+        MONITOR_EXECUTOR.shutdownNow();
     }
 }

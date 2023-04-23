@@ -1,5 +1,13 @@
 package org.dromara.dynamictp.core;
 
+import com.github.dadiyang.equator.Equator;
+import com.github.dadiyang.equator.FieldInfo;
+import com.github.dadiyang.equator.GetterBaseEquator;
+import com.google.common.collect.Sets;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.entity.TpMainFields;
 import org.dromara.dynamictp.common.ex.DtpException;
@@ -9,21 +17,13 @@ import org.dromara.dynamictp.common.queue.VariableLinkedBlockingQueue;
 import org.dromara.dynamictp.common.util.StreamUtil;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.core.notifier.manager.NoticeManager;
+import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
-import com.github.dadiyang.equator.Equator;
-import com.github.dadiyang.equator.FieldInfo;
-import com.github.dadiyang.equator.GetterBaseEquator;
-import com.google.common.collect.Sets;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
@@ -38,7 +38,6 @@ import java.util.stream.Collectors;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.M_1;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
-import static org.dromara.dynamictp.core.notifier.manager.NotifyHelper.updateNotifyInfo;
 
 /**
  * Core Registry, which keeps all registered Dynamic ThreadPoolExecutors.

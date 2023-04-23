@@ -24,8 +24,8 @@ public class DtpLifecycle implements SmartLifecycle {
     @Override
     public void start() {
         if (this.running.compareAndSet(false, true)) {
-            DtpRegistry.listAllExecutors().forEach((k, v) -> DtpLifecycleSupport.initialize(v));
             initializeInternal();
+            DtpRegistry.listAllExecutors().forEach((k, v) -> DtpLifecycleSupport.initialize(v));
         }
     }
 

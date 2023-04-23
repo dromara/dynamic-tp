@@ -9,12 +9,12 @@ import com.dtp.core.thread.EagerDtpExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.type.MethodMetadata;
@@ -34,7 +34,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryPostProcessor, Ordered {
+public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Ordered {
 
     private DefaultListableBeanFactory beanFactory;
 
@@ -97,7 +97,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryPostProce
     }
 
     @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         this.beanFactory = (DefaultListableBeanFactory) beanFactory;
     }
 

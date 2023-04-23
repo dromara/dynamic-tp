@@ -24,6 +24,7 @@ public class DtpLifecycle implements SmartLifecycle {
     @Override
     public void start() {
         if (this.running.compareAndSet(false, true)) {
+            initializeInternal();
             DtpRegistry.listAllExecutors().forEach((k, v) -> DtpLifecycleSupport.initialize(v));
         }
     }
@@ -40,6 +41,12 @@ public class DtpLifecycle implements SmartLifecycle {
     public boolean isRunning() {
         return this.running.get();
     }
+
+     public void initializeInternal() {
+        DtpMonitor.initialize();
+        AlarmManager.initialize();
+        NoticeManager.initialize();
+     }
 
     public void shutdownInternal() {
         DtpMonitor.destroy();

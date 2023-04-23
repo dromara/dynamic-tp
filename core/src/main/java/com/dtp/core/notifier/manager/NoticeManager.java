@@ -21,28 +21,30 @@ import static com.dtp.common.em.NotifyItemEnum.CHANGE;
  */
 public class NoticeManager {
 
-    private static final ExecutorService NOTICE_EXECUTOR = ThreadPoolCreator.createCommonFast("dtp-notify");
+    private static ExecutorService noticeExecutor;
 
     private NoticeManager() { }
 
-    private static final InvokerChain<BaseNotifyCtx> NOTICE_INVOKER_CHAIN;
-
-    static {
-        NOTICE_INVOKER_CHAIN = NotifyFilterBuilder.getCommonInvokerChain();
-    }
+    private static InvokerChain<BaseNotifyCtx> noticeInvokerChain;
 
     public static void doNoticeAsync(ExecutorWrapper executor, TpMainFields oldFields, List<String> diffKeys) {
-        NOTICE_EXECUTOR.execute(() -> doNotice(executor, oldFields, diffKeys));
+        noticeExecutor.execute(() -> doNotice(executor, oldFields, diffKeys));
     }
 
     public static void doNotice(ExecutorWrapper executor, TpMainFields oldFields, List<String> diffKeys) {
         NotifyHelper.getNotifyItem(executor, CHANGE).ifPresent(notifyItem -> {
             val noticeCtx = new NoticeCtx(executor, notifyItem, oldFields, diffKeys);
-            NOTICE_INVOKER_CHAIN.proceed(noticeCtx);
+            noticeInvokerChain.proceed(noticeCtx);
         });
     }
 
-    public static void destroy() {
-        NOTICE_EXECUTOR.shutdownNow();
+    public static void initialize() {
+        noticeInvokerChain = NotifyFilterBuilder.getCommonInvokerChain();
+        noticeExecutor = ThreadPoolCreator.createCommonFast("dtp-notify");
     }
+
+    public static void destroy() {
+        noticeExecutor.shutdownNow();
+    }
+
 }

@@ -36,21 +36,9 @@ import static com.dtp.common.em.QueueTypeEnum.LINKED_BLOCKING_QUEUE;
 @Slf4j
 public class AlarmManager {
 
-    private static final ExecutorService ALARM_EXECUTOR = ThreadPoolBuilder.newBuilder()
-            .threadFactory("dtp-alarm")
-            .corePoolSize(1)
-            .maximumPoolSize(2)
-            .workQueue(LINKED_BLOCKING_QUEUE.getName(), 2000)
-            .rejectedExecutionHandler(RejectedTypeEnum.DISCARD_OLDEST_POLICY.getName())
-            .rejectEnhanced(false)
-            .taskWrappers(TaskWrappers.getInstance().getByNames(Sets.newHashSet("mdc")))
-            .buildDynamic();
+    private static ExecutorService alarmExecutor;
 
-    private static final InvokerChain<BaseNotifyCtx> ALARM_INVOKER_CHAIN;
-
-    static {
-        ALARM_INVOKER_CHAIN = NotifyFilterBuilder.getAlarmInvokerChain();
-    }
+    private static InvokerChain<BaseNotifyCtx> alarmInvokerChain;
 
     private AlarmManager() { }
 
@@ -65,13 +53,13 @@ public class AlarmManager {
 
     public static void doAlarmAsync(DtpExecutor executor, NotifyItemEnum notifyType) {
         AlarmCounter.incAlarmCounter(executor.getThreadPoolName(), notifyType.getValue());
-        ALARM_EXECUTOR.execute(() -> doAlarm(ExecutorWrapper.of(executor), notifyType));
+        alarmExecutor.execute(() -> doAlarm(ExecutorWrapper.of(executor), notifyType));
     }
 
     public static void doAlarmAsync(DtpExecutor executor, NotifyItemEnum notifyType, Runnable currRunnable) {
         MDC.put(TRACE_ID, ((DtpRunnable) currRunnable).getTraceId());
         AlarmCounter.incAlarmCounter(executor.getThreadPoolName(), notifyType.getValue());
-        ALARM_EXECUTOR.execute(() -> doAlarm(ExecutorWrapper.of(executor), notifyType));
+        alarmExecutor.execute(() -> doAlarm(ExecutorWrapper.of(executor), notifyType));
     }
 
     public static void doAlarmAsync(DtpExecutor executor, List<NotifyItemEnum> notifyItemEnums) {
@@ -79,13 +67,13 @@ public class AlarmManager {
     }
 
     public static void doAlarmAsync(ExecutorWrapper executorWrapper, List<NotifyItemEnum> notifyItemEnums) {
-        ALARM_EXECUTOR.execute(() -> notifyItemEnums.forEach(x -> doAlarm(executorWrapper, x)));
+        alarmExecutor.execute(() -> notifyItemEnums.forEach(x -> doAlarm(executorWrapper, x)));
     }
 
     public static void doAlarm(ExecutorWrapper executorWrapper, NotifyItemEnum notifyItemEnum) {
         NotifyHelper.getNotifyItem(executorWrapper, notifyItemEnum).ifPresent(notifyItem -> {
             val alarmCtx = new AlarmCtx(executorWrapper, notifyItem);
-            ALARM_INVOKER_CHAIN.proceed(alarmCtx);
+            alarmInvokerChain.proceed(alarmCtx);
         });
     }
 
@@ -128,7 +116,21 @@ public class AlarmManager {
         return alarmInfo.getCount() >= notifyItem.getThreshold();
     }
 
-    public static void destroy() {
-        ALARM_EXECUTOR.shutdownNow();
+    public static void initialize() {
+        alarmInvokerChain = NotifyFilterBuilder.getAlarmInvokerChain();
+        alarmExecutor = ThreadPoolBuilder.newBuilder()
+                .threadFactory("dtp-alarm")
+                .corePoolSize(1)
+                .maximumPoolSize(2)
+                .workQueue(LINKED_BLOCKING_QUEUE.getName(), 2000)
+                .rejectedExecutionHandler(RejectedTypeEnum.DISCARD_OLDEST_POLICY.getName())
+                .rejectEnhanced(false)
+                .taskWrappers(TaskWrappers.getInstance().getByNames(Sets.newHashSet("mdc")))
+                .buildDynamic();
     }
+
+    public static void destroy() {
+        alarmExecutor.shutdownNow();
+    }
+
 }

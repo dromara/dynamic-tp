@@ -4,8 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.dromara.dynamictp</groupId>
-        <artifactId>dynamic-tp-all</artifactId>
+        <artifactId>dynamic-tp-dependencies</artifactId>
         <version>${revision}</version>
+        <relativePath>../dependencies/pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-common</artifactId>
 

@@ -41,8 +41,7 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
         }
         XnioWorker xnioWorker = undertow.getWorker();
 
-        Object taskPool = ReflectionUtil.getFieldValue(XnioWorker.class,
-                "taskPool", xnioWorker);
+        Object taskPool = ReflectionUtil.getFieldValue(XnioWorker.class, "taskPool", xnioWorker);
         if (Objects.isNull(taskPool)) {
             return null;
         }

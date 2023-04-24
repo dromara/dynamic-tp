@@ -1,5 +1,7 @@
 package org.dromara.dynamictp.test.core.notify;
 
+import com.google.common.collect.Lists;
+import org.dromara.dynamictp.common.ApplicationContextHolder;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
@@ -15,7 +17,6 @@ import org.dromara.dynamictp.core.notifier.context.NoticeCtx;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolCreator;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
-import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,12 +27,16 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 
 import java.util.List;
 
 import static org.dromara.dynamictp.common.em.QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * AbstractDtpNotifierTest related
@@ -40,7 +45,7 @@ import static org.mockito.ArgumentMatchers.anyString;
  * @since 1.1.3
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(CommonUtil.class)
+@PrepareForTest({ApplicationContextHolder.class, CommonUtil.class})
 @SuppressStaticInitializationFor("com.dtp.common.util.CommonUtil")
 public class AbstractDtpNotifierTest {
 
@@ -50,8 +55,18 @@ public class AbstractDtpNotifierTest {
 
     @Before
     public void setUp() {
+        ApplicationContext contextMock = mock(ApplicationContext.class);
+        PowerMockito.mockStatic(ApplicationContextHolder.class);
+        when(ApplicationContextHolder.getInstance()).thenAnswer((Answer<ApplicationContext>) c -> contextMock);
+
+        Environment envMock = mock(Environment.class);
+        when(ApplicationContextHolder.getEnvironment()).thenAnswer((Answer<Environment>) c -> envMock);
+        when(envMock.getProperty("spring.application.name")).thenReturn("test");
+        when(envMock.getProperty("server.port")).thenReturn("8080");
+        when(envMock.getActiveProfiles()).thenReturn(new String[]{"dev"});
+
         PowerMockito.mockStatic(CommonUtil.class);
-        PowerMockito.when(CommonUtil.getInstance()).thenAnswer((Answer<ServiceInstance>) invocation ->
+        when(CommonUtil.getInstance()).thenAnswer((Answer<ServiceInstance>) invocation ->
                 new ServiceInstance("localhost", 8080, "test", "dev"));
         Assert.assertEquals("localhost", CommonUtil.getInstance().getIp());
         Assert.assertEquals(8080, CommonUtil.getInstance().getPort());

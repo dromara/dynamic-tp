@@ -59,6 +59,7 @@
         <module>example</module>
         <module>extension</module>
         <module>test</module>
+        <module>dependencies</module>
     </modules>
 
     <dependencies>

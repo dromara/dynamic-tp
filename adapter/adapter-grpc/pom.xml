@@ -18,7 +18,6 @@
         <dependency>
             <groupId>net.devh</groupId>
             <artifactId>grpc-server-spring-boot-starter</artifactId>
-            <version>${grpc.version}</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>

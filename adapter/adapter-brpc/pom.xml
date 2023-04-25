@@ -18,7 +18,6 @@
         <dependency>
             <groupId>com.baidu.cloud</groupId>
             <artifactId>spring-cloud-starter-baidu-starlight</artifactId>
-            <version>${brpc.version}</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>

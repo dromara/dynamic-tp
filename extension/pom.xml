@@ -5,6 +5,7 @@
     <parent>
         <groupId>org.dromara.dynamictp</groupId>
         <artifactId>dynamic-tp-all</artifactId>
+        <relativePath>../pom.xml</relativePath>
         <version>${revision}</version>
     </parent>
     <artifactId>dynamic-tp-extension</artifactId>

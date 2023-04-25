@@ -13,7 +13,6 @@
         <dependency>
             <groupId>com.alibaba.nacos</groupId>
             <artifactId>nacos-api</artifactId>
-            <version>${nacos.version}</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>
@@ -21,7 +20,6 @@
         <dependency>
             <groupId>com.alibaba.nacos</groupId>
             <artifactId>nacos-client</artifactId>
-            <version>${nacos.version}</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>

@@ -34,7 +34,6 @@
         <dependency>
             <groupId>com.baidu.cloud</groupId>
             <artifactId>spring-cloud-starter-baidu-starlight</artifactId>
-            <version>${brpc.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>ch.qos.logback</groupId>

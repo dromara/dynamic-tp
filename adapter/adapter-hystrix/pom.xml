@@ -18,7 +18,6 @@
         <dependency>
             <groupId>com.netflix.hystrix</groupId>
             <artifactId>hystrix-core</artifactId>
-            <version>${hystrix.version}</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>

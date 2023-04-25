@@ -24,7 +24,6 @@
         <dependency>
             <groupId>com.aliyun.openservices</groupId>
             <artifactId>ons-client</artifactId>
-            <version>${aliyun-rocketmq.version}</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>

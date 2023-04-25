@@ -9,23 +9,23 @@
     </parent>
     <artifactId>dynamic-tp-spring-cloud-starter-polaris</artifactId>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.tencent.cloud</groupId>
-                <artifactId>spring-cloud-tencent-dependencies</artifactId>
-                <version>1.9.1-2021.0.5</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+<!--    <dependencyManagement>-->
+<!--        <dependencies>-->
+<!--            <dependency>-->
+<!--                <groupId>com.tencent.cloud</groupId>-->
+<!--                <artifactId>spring-cloud-tencent-dependencies</artifactId>-->
+<!--                <version>1.9.1-2021.0.5</version>-->
+<!--                <type>pom</type>-->
+<!--                <scope>import</scope>-->
+<!--            </dependency>-->
+<!--        </dependencies>-->
+<!--    </dependencyManagement>-->
 
-    <dependencies>
-        <dependency>
-            <groupId>com.tencent.cloud</groupId>
-            <artifactId>spring-cloud-starter-tencent-polaris-config</artifactId>
-        </dependency>
-    </dependencies>
+<!--    <dependencies>-->
+<!--        <dependency>-->
+<!--            <groupId>com.tencent.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-starter-tencent-polaris-config</artifactId>-->
+<!--        </dependency>-->
+<!--    </dependencies>-->
 
 </project>

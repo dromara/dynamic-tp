@@ -14,7 +14,6 @@
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-framework</artifactId>
-            <version>${zookeeper.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>

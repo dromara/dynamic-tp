@@ -7,6 +7,7 @@
         <groupId>org.dromara.dynamictp</groupId>
         <artifactId>dynamic-tp-starter-configcenter</artifactId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>dynamic-tp-spring-cloud-starter-huawei</artifactId>

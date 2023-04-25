@@ -2,13 +2,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-
     <groupId>org.dromara.dynamictp</groupId>
     <artifactId>dynamic-tp-dependencies</artifactId>
     <version>${revision}</version>
     <name>dependencies</name>
     <packaging>pom</packaging>
-
 
     <properties>
         <java.version>1.8</java.version>
@@ -50,7 +48,6 @@
 
     <dependencyManagement>
         <dependencies>
-
             <dependency>
                 <groupId>com.alibaba.nacos</groupId>
                 <artifactId>nacos-api</artifactId>
@@ -103,8 +100,6 @@
                 <version>${hutool.version}</version>
             </dependency>
 
-
-
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
@@ -135,8 +130,6 @@
                 <version>${log4j.version}</version>
             </dependency>
 
-
-
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
@@ -161,7 +154,6 @@
                 <version>${aliyun-rocketmq.version}</version>
             </dependency>
 
-
             <dependency>
                 <groupId>org.apache.skywalking</groupId>
                 <artifactId>apm-toolkit-trace</artifactId>
@@ -172,7 +164,6 @@
                 <artifactId>opentelemetry-api</artifactId>
                 <version>${opentelemetry.version}</version>
             </dependency>
-
 
             <dependency>
                 <groupId>com.weibo</groupId>
@@ -245,7 +236,6 @@
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
             </dependency>
-
 
             <dependency>
                 <groupId>org.dromara.dynamictp</groupId>

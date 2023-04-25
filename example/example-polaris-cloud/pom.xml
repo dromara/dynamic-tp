@@ -7,6 +7,7 @@
         <artifactId>dynamic-tp-example</artifactId>
         <groupId>org.dromara.dynamictp</groupId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-example-polaris-cloud</artifactId>
 
@@ -19,7 +20,7 @@
             <dependency>
                 <groupId>com.tencent.cloud</groupId>
                 <artifactId>spring-cloud-tencent-dependencies</artifactId>
-                <version>1.9.1-2021.0.5</version>
+                <version>1.11.1-2021.0.6</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -50,13 +51,13 @@
         <dependency>
             <groupId>org.dromara.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-cloud-starter-polaris</artifactId>
-            <version>${revision}</version>
+
         </dependency>
 
         <dependency>
             <groupId>org.dromara.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-adapter-webserver</artifactId>
-            <version>${revision}</version>
+
         </dependency>
     </dependencies>
 </project>

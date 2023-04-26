@@ -6,6 +6,7 @@
         <groupId>org.dromara.dynamictp</groupId>
         <artifactId>dynamic-tp-adapter</artifactId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-adapter-hystrix</artifactId>
 
@@ -18,7 +19,6 @@
         <dependency>
             <groupId>com.netflix.hystrix</groupId>
             <artifactId>hystrix-core</artifactId>
-            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
     </dependencies>

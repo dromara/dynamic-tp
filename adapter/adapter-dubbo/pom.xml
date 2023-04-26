@@ -6,6 +6,7 @@
         <groupId>org.dromara.dynamictp</groupId>
         <artifactId>dynamic-tp-adapter</artifactId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-adapter-dubbo</artifactId>
 
@@ -18,14 +19,12 @@
         <dependency>
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-spring-boot-starter</artifactId>
-            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>com.alibaba.spring.boot</groupId>
             <artifactId>dubbo-spring-boot-starter</artifactId>
-            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
     </dependencies>

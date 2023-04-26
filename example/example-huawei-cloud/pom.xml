@@ -7,12 +7,12 @@
         <groupId>org.dromara.dynamictp</groupId>
         <artifactId>dynamic-tp-example</artifactId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>dynamic-tp-example-huawei-cloud</artifactId>
 
     <properties>
-        <spring-boot.version>2.5.8</spring-boot.version>
         <spring-cloud.version>2020.0.6</spring-cloud.version>
         <spring-cloud-huawei.version>1.10.8-2020.0.x</spring-cloud-huawei.version>
         <maven.deploy.skip>true</maven.deploy.skip>

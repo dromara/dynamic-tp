@@ -7,6 +7,7 @@
         <artifactId>dynamic-tp-example</artifactId>
         <groupId>org.dromara.dynamictp</groupId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-example-consul-cloud</artifactId>
 

@@ -6,6 +6,7 @@
         <groupId>org.dromara.dynamictp</groupId>
         <artifactId>dynamic-tp-adapter</artifactId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-adapter-sofa</artifactId>
 
@@ -18,7 +19,6 @@
         <dependency>
             <groupId>com.alipay.sofa</groupId>
             <artifactId>sofa-rpc-all</artifactId>
-            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
 

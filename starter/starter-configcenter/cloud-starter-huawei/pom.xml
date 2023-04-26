@@ -7,33 +7,16 @@
         <groupId>org.dromara.dynamictp</groupId>
         <artifactId>dynamic-tp-starter-configcenter</artifactId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>dynamic-tp-spring-cloud-starter-huawei</artifactId>
-
-    <dependencyManagement>
-        <dependencies>
-            <!-- configure spring cloud huawei version -->
-            <dependency>
-                <groupId>com.huaweicloud</groupId>
-                <artifactId>spring-cloud-huawei-bom</artifactId>
-                <version>1.10.8-2020.0.x</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
             <groupId>com.huaweicloud</groupId>
             <artifactId>spring-cloud-starter-huawei-config</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-            <version>${spring-boot.version}</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

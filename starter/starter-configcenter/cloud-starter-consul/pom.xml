@@ -7,6 +7,7 @@
         <groupId>org.dromara.dynamictp</groupId>
         <artifactId>dynamic-tp-starter-configcenter</artifactId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-spring-cloud-starter-consul</artifactId>
 
@@ -14,7 +15,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-consul-config</artifactId>
-            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
     </dependencies>

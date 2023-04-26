@@ -6,6 +6,7 @@
         <artifactId>dynamic-tp-example</artifactId>
         <groupId>org.dromara.dynamictp</groupId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     
@@ -15,12 +16,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>2.5.8</version>
         </dependency>
         <dependency>
             <groupId>org.dromara.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-etcd</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>io.etcd</groupId>

@@ -6,6 +6,7 @@
         <groupId>org.dromara.dynamictp</groupId>
         <artifactId>dynamic-tp-adapter</artifactId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-adapter-tars</artifactId>
 
@@ -18,8 +19,6 @@
         <dependency>
             <groupId>com.tencent.tars</groupId>
             <artifactId>tars-core</artifactId>
-            <version>${tars.version}</version>
-            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
     </dependencies>

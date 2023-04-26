@@ -6,6 +6,7 @@
         <artifactId>dynamic-tp-example-adapter</artifactId>
         <groupId>org.dromara.dynamictp</groupId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-example-adapter-motan</artifactId>
 
@@ -33,18 +34,15 @@
         <dependency>
             <groupId>com.weibo</groupId>
             <artifactId>motan-core</artifactId>
-            <version>${motan.version}</version>
         </dependency>
         <dependency>
             <groupId>com.weibo</groupId>
             <artifactId>motan-transport-netty</artifactId>
-            <version>${motan.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.weibo</groupId>
             <artifactId>motan-springsupport</artifactId>
-            <version>${motan.version}</version>
         </dependency>
 
         <dependency>

@@ -7,6 +7,7 @@
         <groupId>org.dromara.dynamictp</groupId>
         <artifactId>dynamic-tp-starter-adapter</artifactId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-spring-boot-starter-adapter-rocketmq</artifactId>
 
@@ -24,7 +25,6 @@
         <dependency>
             <groupId>com.aliyun.openservices</groupId>
             <artifactId>ons-client</artifactId>
-            <version>${aliyun-rocketmq.version}</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>

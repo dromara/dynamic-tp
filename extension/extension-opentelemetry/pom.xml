@@ -7,6 +7,7 @@
         <groupId>org.dromara.dynamictp</groupId>
         <artifactId>dynamic-tp-extension</artifactId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-extension-opentelemetry</artifactId>
 
@@ -14,7 +15,6 @@
         <dependency>
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-api</artifactId>
-            <version>${opentelemetry.version}</version>
         </dependency>
     </dependencies>
 

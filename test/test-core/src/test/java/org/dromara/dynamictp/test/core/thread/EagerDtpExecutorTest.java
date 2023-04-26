@@ -15,9 +15,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * DtpExecutorTest related
+ * EagerDtpExecutorTest related
  *
- * @author yanhom
  * @author kamtohung
  * @since 1.1.0
  */
@@ -27,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = EagerDtpExecutorTest.class)
 @PropertySource(value = "classpath:/dynamic-tp-demo.yml", factory = YamlPropertySourceFactory.class)
-public class EagerDtpExecutorTest {
+class EagerDtpExecutorTest {
 
     @Test
     void test() throws InterruptedException {
@@ -41,8 +40,5 @@ public class EagerDtpExecutorTest {
                 }
             });
         }
-//        new CountDownLatch(1).await();
     }
-
-
 }

@@ -7,6 +7,7 @@
         <artifactId>dynamic-tp-example</artifactId>
         <groupId>org.dromara.dynamictp</groupId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-example-apollo</artifactId>
 
@@ -36,7 +37,6 @@
         <dependency>
             <groupId>com.ctrip.framework.apollo</groupId>
             <artifactId>apollo-client</artifactId>
-            <version>1.9.1</version>
         </dependency>
     </dependencies>
 </project>

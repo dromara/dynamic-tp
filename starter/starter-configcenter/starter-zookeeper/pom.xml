@@ -7,6 +7,7 @@
         <groupId>org.dromara.dynamictp</groupId>
         <artifactId>dynamic-tp-starter-configcenter</artifactId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-spring-boot-starter-zookeeper</artifactId>
 
@@ -14,8 +15,7 @@
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-framework</artifactId>
-            <version>${zookeeper.version}</version>
-            <scope>compile</scope>
+            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-log4j12</artifactId>

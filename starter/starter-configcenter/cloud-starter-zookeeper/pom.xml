@@ -15,14 +15,12 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-zookeeper-config</artifactId>
-            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
     </dependencies>

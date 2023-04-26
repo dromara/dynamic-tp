@@ -14,7 +14,6 @@
         <dependency>
             <groupId>com.ctrip.framework.apollo</groupId>
             <artifactId>apollo-client</artifactId>
-            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
     </dependencies>

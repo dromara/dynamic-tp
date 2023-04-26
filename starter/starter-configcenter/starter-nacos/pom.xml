@@ -14,14 +14,6 @@
         <dependency>
             <groupId>com.alibaba.nacos</groupId>
             <artifactId>nacos-api</artifactId>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>com.alibaba.nacos</groupId>
-            <artifactId>nacos-client</artifactId>
-            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
     </dependencies>

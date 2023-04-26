@@ -9,12 +9,8 @@
     <packaging>pom</packaging>
 
     <properties>
-        <java.version>1.8</java.version>
-        <revision>1.1.2</revision>
+        <revision>1.1.2.1-SNAPSHOT</revision>
         <commons-collections4.version>4.4</commons-collections4.version>
-        <spring-boot.version>2.5.8</spring-boot.version>
-        <spring-cloud.version>2020.0.5</spring-cloud.version>
-        <spring-cloud-alibaba.version>2021.1</spring-cloud-alibaba.version>
         <hutool.version>5.8.12</hutool.version>
         <lombok.version>1.18.24</lombok.version>
         <apollo.version>1.5.0</apollo.version>
@@ -37,13 +33,20 @@
         <aliyun-rocketmq.version>1.8.8.8.Final</aliyun-rocketmq.version>
         <tars.version>1.7.2</tars.version>
         <skywalking.version>8.11.0</skywalking.version>
-        <nacos.version>2.0.4</nacos.version>
+        <nacos-api.version>2.0.4</nacos-api.version>
+        <spring-cloud-alibaba.version>2021.1</spring-cloud-alibaba.version>
+        <spring-cloud-tencent.version>1.11.1-2021.0.6</spring-cloud-tencent.version>
+        <spring-cloud-huawei.version>1.10.8-2020.0.x</spring-cloud-huawei.version>
         <zookeeper.version>5.2.1</zookeeper.version>
         <maven-flatten.version>1.3.0</maven-flatten.version>
         <jmh.version>1.35</jmh.version>
         <gson.version>2.8.9</gson.version>
         <fastjson.version>1.2.83</fastjson.version>
         <opentelemetry.version>1.25.0</opentelemetry.version>
+        <maven-source-plugin.version>2.4</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
+        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <maven-flatten.version>1.3.0</maven-flatten.version>
     </properties>
 
     <dependencyManagement>
@@ -51,13 +54,7 @@
             <dependency>
                 <groupId>com.alibaba.nacos</groupId>
                 <artifactId>nacos-api</artifactId>
-                <version>${nacos.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.alibaba.nacos</groupId>
-                <artifactId>nacos-client</artifactId>
-                <version>${nacos.version}</version>
+                <version>${nacos-api.version}</version>
             </dependency>
 
             <dependency>
@@ -238,6 +235,30 @@
             </dependency>
 
             <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-starter-stream-rocketmq</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.tencent.cloud</groupId>
+                <artifactId>spring-cloud-starter-tencent-polaris-config</artifactId>
+                <version>${spring-cloud-tencent.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.huaweicloud</groupId>
+                <artifactId>spring-cloud-starter-huawei-config</artifactId>
+                <version>${spring-cloud-huawei.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.dromara.dynamictp</groupId>
                 <artifactId>dynamic-tp-adapter</artifactId>
                 <version>${revision}</version>
@@ -362,7 +383,6 @@
                 <artifactId>dynamic-tp-spring-boot-starter-adapter-webserver</artifactId>
                 <version>${revision}</version>
             </dependency>
-
 
             <dependency>
                 <groupId>org.dromara.dynamictp</groupId>

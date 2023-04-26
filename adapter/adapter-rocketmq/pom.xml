@@ -19,21 +19,18 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-stream-rocketmq</artifactId>
-            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
 
         <dependency>
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-spring-boot-starter</artifactId>
-            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
         
         <dependency>
             <groupId>com.aliyun.openservices</groupId>
             <artifactId>ons-client</artifactId>
-            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
     </dependencies>

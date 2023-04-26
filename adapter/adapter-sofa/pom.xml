@@ -19,7 +19,6 @@
         <dependency>
             <groupId>com.alipay.sofa</groupId>
             <artifactId>sofa-rpc-all</artifactId>
-            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
 

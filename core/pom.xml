@@ -24,7 +24,6 @@
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-core</artifactId>
-            <scope>compile</scope>
             <optional>true</optional>
         </dependency>
 
@@ -64,7 +63,6 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-http</artifactId>
         </dependency>
-
     </dependencies>
 
 </project>

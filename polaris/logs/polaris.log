@@ -1,0 +1,541 @@
+2023-04-26 15:10:57.649 INFO [main :c.t.p.c.a.SDKContext] SDKContext config{}:
+!!com.tencent.polaris.factory.config.ConfigurationImpl
+configFile:
+  propertiesValueCacheSize: 100
+  propertiesValueExpireTime: 60000
+  serverConnector:
+    addresses: ['183.47.111.80:8093']
+    certFile: null
+    connectorType: polaris
+    fallbackToLocalCache: true
+    id: polaris
+    keyFile: null
+    openapiAddresses: null
+    persistDir: ./polaris/backup/config
+    persistEnable: true
+    persistMaxReadRetry: 0
+    persistMaxWriteRetry: 1
+    persistRetryInterval: 1000
+    protocol: grpc
+    token: null
+    trustedCAFile: null
+consumer: {}
+global:
+  serverConnector:
+    addresses: ['183.47.111.80:8091']
+    certFile: null
+    id: polaris
+    keyFile: null
+    openapiAddresses: null
+    protocol: grpc
+    token: null
+    trustedCAFile: null
+  serverConnectors: null
+provider:
+  service: {name: null, namespace: null}
+
+2023-04-26 15:10:57.704 INFO [main :c.t.p.p.c.g.ConnectionManager] [ServerConnector]cluster BUILTIN_CLUSTER, service null has been made ready
+2023-04-26 15:10:57.705 INFO [main :c.t.p.p.c.g.ConnectionManager] [ServerConnector]cluster SERVICE_DISCOVER_CLUSTER, service null has been made ready
+2023-04-26 15:10:57.705 INFO [main :c.t.p.p.c.g.ConnectionManager] [ServerConnector]cluster SERVICE_CONFIG_CLUSTER, service null has been made ready
+2023-04-26 15:10:57.705 INFO [main :c.t.p.p.c.g.ConnectionManager] [ServerConnector]cluster HEALTH_CHECK_CLUSTER, service null has been made ready
+2023-04-26 15:10:57.730 INFO [main :c.t.p.p.r.m.InMemoryRegistry] start to load local cache files from ./polaris/backup
+2023-04-26 15:10:57.750 INFO [main :c.t.p.p.r.m.InMemoryRegistry] loaded 0 services from local cache
+2023-04-26 15:10:57.771 INFO [main :c.t.p.p.c.c.l.LocalFileConfigFileConnector] init local file config connector,watch dir:[./polaris/backup/config].
+2023-04-26 15:10:57.772 INFO [main :c.t.p.p.c.g.ConnectionManager] [ServerConnector]cluster BUILTIN_CLUSTER, service null has been made ready
+2023-04-26 15:10:57.772 INFO [main :c.t.p.p.c.g.ConnectionManager] [ServerConnector]cluster SERVICE_DISCOVER_CLUSTER, service null has been made ready
+2023-04-26 15:10:57.772 INFO [main :c.t.p.p.c.g.ConnectionManager] [ServerConnector]cluster SERVICE_CONFIG_CLUSTER, service null has been made ready
+2023-04-26 15:10:57.772 INFO [main :c.t.p.p.c.g.ConnectionManager] [ServerConnector]cluster HEALTH_CHECK_CLUSTER, service null has been made ready
+2023-04-26 15:10:57.923 WARN [main :c.t.p.a.p.c.Extensions] router metadataRouter not found
+2023-04-26 15:10:57.923 WARN [main :c.t.p.a.p.c.Extensions] router ruleBasedRouter not found
+2023-04-26 15:10:57.923 WARN [main :c.t.p.a.p.c.Extensions] router nearbyBasedRouter not found
+2023-04-26 15:10:57.929 INFO [main :c.t.p.a.p.c.Extensions] locationProvider plugin local not found location
+2023-04-26 15:10:57.961 INFO [main :c.t.p.p.s.p.p.PrometheusReporter] start schedule metric aggregation task, task interval 30000
+2023-04-26 15:10:58.541 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] start pull config file. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application-default.properties'}, version = 0
+2023-04-26 15:10:58.647 INFO [polaris-prometheus-1:c.t.p.p.c.g.ConnectionManager] connection ConnID{id='1e694c1b-0bc3-4591-93c1-8e530c273a2b', clusterType=SERVICE_DISCOVER_CLUSTER, host='183.47.111.80', port=8091} created
+2023-04-26 15:10:58.647 INFO [main :c.t.p.p.c.g.ConnectionManager] connection ConnID{id='166da40d-9a7d-4885-8164-65091215af4d', clusterType=SERVICE_CONFIG_CLUSTER, host='183.47.111.80', port=8093} created
+2023-04-26 15:10:59.424 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] pull config file finished. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application-default.properties'}, code = 400202, version = 0, duration = 884 ms
+2023-04-26 15:10:59.424 WARN [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] config file not found, please check whether config file released. ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application-default.properties'}
+2023-04-26 15:10:59.424 INFO [main :c.t.p.c.c.i.DefaultConfigFileLongPollingService] [Config] add long polling config file. file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application-default.properties'}, version = 0
+2023-04-26 15:10:59.427 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] start pull config file. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application-default.yml'}, version = 0
+2023-04-26 15:10:59.471 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] pull config file finished. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application-default.yml'}, code = 400202, version = 0, duration = 44 ms
+2023-04-26 15:10:59.471 WARN [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] config file not found, please check whether config file released. ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application-default.yml'}
+2023-04-26 15:10:59.471 INFO [main :c.t.p.c.c.i.DefaultConfigFileLongPollingService] [Config] add long polling config file. file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application-default.yml'}, version = 0
+2023-04-26 15:10:59.473 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] start pull config file. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application.properties'}, version = 0
+2023-04-26 15:10:59.636 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] pull config file finished. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application.properties'}, code = 400202, version = 0, duration = 163 ms
+2023-04-26 15:10:59.636 WARN [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] config file not found, please check whether config file released. ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application.properties'}
+2023-04-26 15:10:59.636 INFO [main :c.t.p.c.c.i.DefaultConfigFileLongPollingService] [Config] add long polling config file. file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application.properties'}, version = 0
+2023-04-26 15:10:59.637 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] start pull config file. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application.yml'}, version = 0
+2023-04-26 15:10:59.679 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] pull config file finished. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application.yml'}, code = 400202, version = 0, duration = 42 ms
+2023-04-26 15:10:59.679 WARN [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] config file not found, please check whether config file released. ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application.yml'}
+2023-04-26 15:10:59.679 INFO [main :c.t.p.c.c.i.DefaultConfigFileLongPollingService] [Config] add long polling config file. file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application.yml'}, version = 0
+2023-04-26 15:10:59.680 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] start pull config file. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap-default.properties'}, version = 0
+2023-04-26 15:10:59.724 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] pull config file finished. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap-default.properties'}, code = 400202, version = 0, duration = 44 ms
+2023-04-26 15:10:59.724 WARN [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] config file not found, please check whether config file released. ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap-default.properties'}
+2023-04-26 15:10:59.725 INFO [main :c.t.p.c.c.i.DefaultConfigFileLongPollingService] [Config] add long polling config file. file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap-default.properties'}, version = 0
+2023-04-26 15:10:59.726 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] start pull config file. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap-default.yml'}, version = 0
+2023-04-26 15:10:59.768 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] pull config file finished. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap-default.yml'}, code = 400202, version = 0, duration = 42 ms
+2023-04-26 15:10:59.768 WARN [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] config file not found, please check whether config file released. ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap-default.yml'}
+2023-04-26 15:10:59.768 INFO [main :c.t.p.c.c.i.DefaultConfigFileLongPollingService] [Config] add long polling config file. file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap-default.yml'}, version = 0
+2023-04-26 15:10:59.769 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] start pull config file. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap.properties'}, version = 0
+2023-04-26 15:10:59.813 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] pull config file finished. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap.properties'}, code = 400202, version = 0, duration = 44 ms
+2023-04-26 15:10:59.813 WARN [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] config file not found, please check whether config file released. ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap.properties'}
+2023-04-26 15:10:59.813 INFO [main :c.t.p.c.c.i.DefaultConfigFileLongPollingService] [Config] add long polling config file. file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap.properties'}, version = 0
+2023-04-26 15:10:59.814 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] start pull config file. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap.yml'}, version = 0
+2023-04-26 15:10:59.859 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] pull config file finished. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap.yml'}, code = 400202, version = 0, duration = 45 ms
+2023-04-26 15:10:59.859 WARN [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] config file not found, please check whether config file released. ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap.yml'}
+2023-04-26 15:10:59.859 INFO [main :c.t.p.c.c.i.DefaultConfigFileLongPollingService] [Config] add long polling config file. file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap.yml'}, version = 0
+2023-04-26 15:10:59.860 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] start pull config file. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='config/dynamic-tp.yml'}, version = 0
+2023-04-26 15:10:59.905 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] pull config file finished. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='config/dynamic-tp.yml'}, code = 200000, version = 2, duration = 45 ms
+2023-04-26 15:10:59.905 INFO [main :c.t.p.c.c.i.DefaultConfigFileLongPollingService] [Config] add long polling config file. file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='config/dynamic-tp.yml'}, version = 2
+2023-04-26 15:10:59.905 INFO [polaris-configFile-persistent-handler-1:c.t.p.c.c.i.ConfigFilePersistentHandler] start to save config file ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='config/dynamic-tp.yml', content='# 动态线程池配置文件，建议单独开一个文件放到配置中心，字段详解看readme介绍
+spring:
+  dynamic:
+    tp:
+      enabled: true
+      enabledBanner: true           # 是否开启banner打印，默认true
+      enabledCollect: true          # 是否开启监控指标采集，默认false
+      collectorTypes: micrometer,logging     # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+      logPath: /home/logs           # 监控日志数据路径，默认 ${user.home}/logs
+      monitorInterval: 5            # 监控时间间隔（报警判断、指标采集），默认5s
+      platforms:                    # 通知报警平台配置
+        - platform: wechat
+          urlKey: 3a7500-1287-4bd-a798-c5c3d8b69c  # 替换
+          receivers: test1,test2                   # 接受人企微名称
+        - platform: ding
+          urlKey: f80dad441fcd655438f4a08dcd6a     # 替换
+          secret: SECb5441fa6f375d5b9d21           # 替换，非sign模式可以没有此值
+          receivers: 15810119805                   # 钉钉账号手机号
+        - platform: lark
+          urlKey: 0d944ae7-b24a-40                 # 替换
+          receivers: test1,test2                   # 接受人飞书名称/openid
+      tomcatTp:                                    # tomcat web server线程池配置
+        corePoolSize: 100
+        maximumPoolSize: 400
+        keepAliveTime: 60
+      jettyTp:                                     # jetty web server线程池配置
+        corePoolSize: 100
+        maximumPoolSize: 400
+      undertowTp:                                  # undertow web server线程池配置
+        corePoolSize: 100
+        maximumPoolSize: 400
+        keepAliveTime: 60
+      hystrixTp:                                   # hystrix 线程池配置
+        - threadPoolName: hystrix1
+          corePoolSize: 100
+          maximumPoolSize: 400
+          keepAliveTime: 60
+      dubboTp:                                     # dubbo 线程池配置
+        - threadPoolName: dubboTp#20880
+          corePoolSize: 100
+          maximumPoolSize: 400
+          keepAliveTime: 60
+      rocketMqTp:                                  # rocketmq 线程池配置
+        - threadPoolName: group1#topic1
+          corePoolSize: 200
+          maximumPoolSize: 400
+          keepAliveTime: 60
+      executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
+        - threadPoolName: dtpExecutor1
+          executorType: common                     # 线程池类型common、eager：适用于io密集型
+          corePoolSize: 2
+          maximumPoolSize: 8
+          queueCapacity: 200
+          queueType: VariableLinkedBlockingQueue   # 任务队列，查看源码QueueTypeEnum枚举类
+          rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
+          keepAliveTime: 50
+          allowCoreThreadTimeOut: false                  # 是否允许核心线程池超时
+          threadNamePrefix: test                         # 线程名前缀
+          waitForTasksToCompleteOnShutdown: false        # 参考spring线程池设计，优雅关闭线程池
+          awaitTerminationSeconds: 5                     # 单位（s）
+          preStartAllCoreThreads: false                  # 是否预热所有核心线程，默认false
+          runTimeout: 200                                # 任务执行超时阈值，目前只做告警用，单位（ms）
+          queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
+          taskWrapperNames: ["ttl"]                          # 任务包装器名称，集成TaskWrapper接口
+          notifyItems:                     # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警、拒绝报警、任务超时报警）
+            - type: capacity               # 报警项类型，查看源码 NotifyTypeEnum枚举类
+              enabled: true
+              threshold: 80                # 报警阈值
+              platforms: [ding,wechat]     # 可选配置，不配置默认拿上层platforms配置的所以平台
+              interval: 120                # 报警间隔（单位：s）
+            - type: change
+              enabled: true
+            - type: liveness
+              enabled: true
+              threshold: 80
+            - type: reject
+              enabled: true
+              threshold: 1
+            - type: run_timeout
+              enabled: true
+              threshold: 1
+            - type: queue_timeout
+              enabled: true
+              threshold: 1
+', version=2, md5='1e7471232027d72a007a4c5dc623bbf5'}
+2023-04-26 15:10:59.906 INFO [pool-2-thread-1:c.t.p.p.c.c.l.LocalFileConfigFileConnector] watched file event:ENTRY_CREATE:D:\open-source-code\dynamic-tp\.\polaris\backup\config/default#dynamic-tp-polaris-cloud-demo#config%2Fdynamic-tp.yml.yaml.lock.
+2023-04-26 15:10:59.907 INFO [pool-2-thread-1:c.t.p.p.c.c.l.LocalFileConfigFileConnector] watched file event:ENTRY_CREATE:D:\open-source-code\dynamic-tp\.\polaris\backup\config/default#dynamic-tp-polaris-cloud-demo#config%2Fdynamic-tp.yml.yaml.tmp.
+2023-04-26 15:10:59.907 INFO [pool-2-thread-1:c.t.p.p.c.c.l.LocalFileConfigFileConnector] watched file event:ENTRY_MODIFY:D:\open-source-code\dynamic-tp\.\polaris\backup\config/default#dynamic-tp-polaris-cloud-demo#config%2Fdynamic-tp.yml.yaml.tmp.
+2023-04-26 15:10:59.913 INFO [pool-2-thread-1:c.t.p.p.c.c.l.LocalFileConfigFileConnector] watched file event:ENTRY_MODIFY:D:\open-source-code\dynamic-tp\.\polaris\backup\config/default#dynamic-tp-polaris-cloud-demo#config%2Fdynamic-tp.yml.yaml.tmp.
+2023-04-26 15:10:59.913 INFO [pool-2-thread-1:c.t.p.p.c.c.l.LocalFileConfigFileConnector] watched file event:ENTRY_DELETE:D:\open-source-code\dynamic-tp\.\polaris\backup\config/default#dynamic-tp-polaris-cloud-demo#config%2Fdynamic-tp.yml.yaml.tmp.
+2023-04-26 15:10:59.913 INFO [polaris-configFile-persistent-handler-1:c.t.p.c.c.i.ConfigFilePersistentHandler] end to save config file ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='config/dynamic-tp.yml', content='# 动态线程池配置文件，建议单独开一个文件放到配置中心，字段详解看readme介绍
+spring:
+  dynamic:
+    tp:
+      enabled: true
+      enabledBanner: true           # 是否开启banner打印，默认true
+      enabledCollect: true          # 是否开启监控指标采集，默认false
+      collectorTypes: micrometer,logging     # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+      logPath: /home/logs           # 监控日志数据路径，默认 ${user.home}/logs
+      monitorInterval: 5            # 监控时间间隔（报警判断、指标采集），默认5s
+      platforms:                    # 通知报警平台配置
+        - platform: wechat
+          urlKey: 3a7500-1287-4bd-a798-c5c3d8b69c  # 替换
+          receivers: test1,test2                   # 接受人企微名称
+        - platform: ding
+          urlKey: f80dad441fcd655438f4a08dcd6a     # 替换
+          secret: SECb5441fa6f375d5b9d21           # 替换，非sign模式可以没有此值
+          receivers: 15810119805                   # 钉钉账号手机号
+        - platform: lark
+          urlKey: 0d944ae7-b24a-40                 # 替换
+          receivers: test1,test2                   # 接受人飞书名称/openid
+      tomcatTp:                                    # tomcat web server线程池配置
+        corePoolSize: 100
+        maximumPoolSize: 400
+        keepAliveTime: 60
+      jettyTp:                                     # jetty web server线程池配置
+        corePoolSize: 100
+        maximumPoolSize: 400
+      undertowTp:                                  # undertow web server线程池配置
+        corePoolSize: 100
+        maximumPoolSize: 400
+        keepAliveTime: 60
+      hystrixTp:                                   # hystrix 线程池配置
+        - threadPoolName: hystrix1
+          corePoolSize: 100
+          maximumPoolSize: 400
+          keepAliveTime: 60
+      dubboTp:                                     # dubbo 线程池配置
+        - threadPoolName: dubboTp#20880
+          corePoolSize: 100
+          maximumPoolSize: 400
+          keepAliveTime: 60
+      rocketMqTp:                                  # rocketmq 线程池配置
+        - threadPoolName: group1#topic1
+          corePoolSize: 200
+          maximumPoolSize: 400
+          keepAliveTime: 60
+      executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
+        - threadPoolName: dtpExecutor1
+          executorType: common                     # 线程池类型common、eager：适用于io密集型
+          corePoolSize: 2
+          maximumPoolSize: 8
+          queueCapacity: 200
+          queueType: VariableLinkedBlockingQueue   # 任务队列，查看源码QueueTypeEnum枚举类
+          rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
+          keepAliveTime: 50
+          allowCoreThreadTimeOut: false                  # 是否允许核心线程池超时
+          threadNamePrefix: test                         # 线程名前缀
+          waitForTasksToCompleteOnShutdown: false        # 参考spring线程池设计，优雅关闭线程池
+          awaitTerminationSeconds: 5                     # 单位（s）
+          preStartAllCoreThreads: false                  # 是否预热所有核心线程，默认false
+          runTimeout: 200                                # 任务执行超时阈值，目前只做告警用，单位（ms）
+          queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
+          taskWrapperNames: ["ttl"]                          # 任务包装器名称，集成TaskWrapper接口
+          notifyItems:                     # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警、拒绝报警、任务超时报警）
+            - type: capacity               # 报警项类型，查看源码 NotifyTypeEnum枚举类
+              enabled: true
+              threshold: 80                # 报警阈值
+              platforms: [ding,wechat]     # 可选配置，不配置默认拿上层platforms配置的所以平台
+              interval: 120                # 报警间隔（单位：s）
+            - type: change
+              enabled: true
+            - type: liveness
+              enabled: true
+              threshold: 80
+            - type: reject
+              enabled: true
+              threshold: 1
+            - type: run_timeout
+              enabled: true
+              threshold: 1
+            - type: queue_timeout
+              enabled: true
+              threshold: 1
+', version=2, md5='1e7471232027d72a007a4c5dc623bbf5'} to D:\open-source-code\dynamic-tp\.\polaris\backup\config\default#dynamic-tp-polaris-cloud-demo#config%2Fdynamic-tp.yml.yaml
+2023-04-26 15:10:59.913 INFO [pool-2-thread-1:c.t.p.p.c.c.l.LocalFileConfigFileConnector] watched file event:ENTRY_CREATE:D:\open-source-code\dynamic-tp\.\polaris\backup\config/default#dynamic-tp-polaris-cloud-demo#config%2Fdynamic-tp.yml.yaml.
+2023-04-26 15:11:04.444 INFO [main :c.t.p.d.c.a.DefaultProviderAPI] register default/dynamic-tp-polaris-cloud-demo instance 07b9ceec537600f6464dfc6f861669a19f27540f succ
+2023-04-26 15:11:09.458 INFO [polaris-async-register-1:c.t.p.d.c.f.RegisterFlow] [AsyncHeartbeat]Instance heartbeat task started, namespace:default, service:dynamic-tp-polaris-cloud-demo, host:10.2.109.132, port:9018
+2023-04-26 15:11:09.459 INFO [polaris-async-register-1:c.t.p.p.c.g.ConnectionManager] connection ConnID{id='f75ea5bd-9f92-4127-ab75-2f3452ec82e0', clusterType=HEALTH_CHECK_CLUSTER, host='183.47.111.80', port=8091} created
+2023-04-26 15:11:09.630 INFO [polaris-async-register-1:c.t.p.d.c.f.RegisterFlow] [AsyncHeartbeat]Instance heartbeat success, namespace:default, service:dynamic-tp-polaris-cloud-demo, host:10.2.109.132, port:9018
+2023-04-26 15:11:14.647 INFO [polaris-async-register-1:c.t.p.d.c.f.RegisterFlow] [AsyncHeartbeat]Instance heartbeat task started, namespace:default, service:dynamic-tp-polaris-cloud-demo, host:10.2.109.132, port:9018
+2023-04-26 15:11:14.731 INFO [polaris-async-register-1:c.t.p.d.c.f.RegisterFlow] [AsyncHeartbeat]Instance heartbeat success, namespace:default, service:dynamic-tp-polaris-cloud-demo, host:10.2.109.132, port:9018
+2023-04-26 15:11:16.665 INFO [SpringApplicationShutdownHook:c.t.p.d.c.a.DefaultProviderAPI] deregister instance InstanceDeregisterRequest{request=CommonProviderRequest{instanceID='null', namespace='default', service='dynamic-tp-polaris-cloud-demo', token='null', host='10.2.109.132', port=9018, version='null', protocol='null', weight=null, priority=null, metadata=null, ttl=null, zone=null, region=null, campus=null}} succ
+2023-04-26 15:17:01.468 INFO [main :c.t.p.c.a.SDKContext] SDKContext config{}:
+!!com.tencent.polaris.factory.config.ConfigurationImpl
+configFile:
+  propertiesValueCacheSize: 100
+  propertiesValueExpireTime: 60000
+  serverConnector:
+    addresses: ['183.47.111.80:8093']
+    certFile: null
+    connectorType: polaris
+    fallbackToLocalCache: true
+    id: polaris
+    keyFile: null
+    openapiAddresses: null
+    persistDir: ./polaris/backup/config
+    persistEnable: true
+    persistMaxReadRetry: 0
+    persistMaxWriteRetry: 1
+    persistRetryInterval: 1000
+    protocol: grpc
+    token: null
+    trustedCAFile: null
+consumer: {}
+global:
+  serverConnector:
+    addresses: ['183.47.111.80:8091']
+    certFile: null
+    id: polaris
+    keyFile: null
+    openapiAddresses: null
+    protocol: grpc
+    token: null
+    trustedCAFile: null
+  serverConnectors: null
+provider:
+  service: {name: null, namespace: null}
+
+2023-04-26 15:17:01.504 INFO [main :c.t.p.p.c.g.ConnectionManager] [ServerConnector]cluster BUILTIN_CLUSTER, service null has been made ready
+2023-04-26 15:17:01.505 INFO [main :c.t.p.p.c.g.ConnectionManager] [ServerConnector]cluster SERVICE_DISCOVER_CLUSTER, service null has been made ready
+2023-04-26 15:17:01.505 INFO [main :c.t.p.p.c.g.ConnectionManager] [ServerConnector]cluster SERVICE_CONFIG_CLUSTER, service null has been made ready
+2023-04-26 15:17:01.506 INFO [main :c.t.p.p.c.g.ConnectionManager] [ServerConnector]cluster HEALTH_CHECK_CLUSTER, service null has been made ready
+2023-04-26 15:17:01.519 INFO [main :c.t.p.p.r.m.InMemoryRegistry] start to load local cache files from ./polaris/backup
+2023-04-26 15:17:01.532 INFO [main :c.t.p.p.r.m.InMemoryRegistry] loaded 0 services from local cache
+2023-04-26 15:17:01.546 INFO [main :c.t.p.p.c.c.l.LocalFileConfigFileConnector] init local file config connector,watch dir:[./polaris/backup/config].
+2023-04-26 15:17:01.546 INFO [main :c.t.p.p.c.g.ConnectionManager] [ServerConnector]cluster BUILTIN_CLUSTER, service null has been made ready
+2023-04-26 15:17:01.546 INFO [main :c.t.p.p.c.g.ConnectionManager] [ServerConnector]cluster SERVICE_DISCOVER_CLUSTER, service null has been made ready
+2023-04-26 15:17:01.546 INFO [main :c.t.p.p.c.g.ConnectionManager] [ServerConnector]cluster SERVICE_CONFIG_CLUSTER, service null has been made ready
+2023-04-26 15:17:01.546 INFO [main :c.t.p.p.c.g.ConnectionManager] [ServerConnector]cluster HEALTH_CHECK_CLUSTER, service null has been made ready
+2023-04-26 15:17:01.659 WARN [main :c.t.p.a.p.c.Extensions] router metadataRouter not found
+2023-04-26 15:17:01.659 WARN [main :c.t.p.a.p.c.Extensions] router ruleBasedRouter not found
+2023-04-26 15:17:01.659 WARN [main :c.t.p.a.p.c.Extensions] router nearbyBasedRouter not found
+2023-04-26 15:17:01.669 INFO [main :c.t.p.a.p.c.Extensions] locationProvider plugin local not found location
+2023-04-26 15:17:01.692 INFO [main :c.t.p.p.s.p.p.PrometheusReporter] start schedule metric aggregation task, task interval 30000
+2023-04-26 15:17:02.069 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] start pull config file. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application-default.properties'}, version = 0
+2023-04-26 15:17:02.070 INFO [main :c.t.p.p.c.g.ConnectionManager] connection ConnID{id='df5ac4b3-7753-4956-92a3-11e132b5a6a2', clusterType=SERVICE_CONFIG_CLUSTER, host='183.47.111.80', port=8093} created
+2023-04-26 15:17:02.560 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] pull config file finished. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application-default.properties'}, code = 400202, version = 0, duration = 492 ms
+2023-04-26 15:17:02.560 WARN [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] config file not found, please check whether config file released. ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application-default.properties'}
+2023-04-26 15:17:02.561 INFO [main :c.t.p.c.c.i.DefaultConfigFileLongPollingService] [Config] add long polling config file. file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application-default.properties'}, version = 0
+2023-04-26 15:17:02.565 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] start pull config file. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application-default.yml'}, version = 0
+2023-04-26 15:17:02.608 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] pull config file finished. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application-default.yml'}, code = 400202, version = 0, duration = 43 ms
+2023-04-26 15:17:02.609 WARN [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] config file not found, please check whether config file released. ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application-default.yml'}
+2023-04-26 15:17:02.609 INFO [main :c.t.p.c.c.i.DefaultConfigFileLongPollingService] [Config] add long polling config file. file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application-default.yml'}, version = 0
+2023-04-26 15:17:02.611 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] start pull config file. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application.properties'}, version = 0
+2023-04-26 15:17:02.659 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] pull config file finished. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application.properties'}, code = 400202, version = 0, duration = 48 ms
+2023-04-26 15:17:02.660 WARN [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] config file not found, please check whether config file released. ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application.properties'}
+2023-04-26 15:17:02.660 INFO [main :c.t.p.c.c.i.DefaultConfigFileLongPollingService] [Config] add long polling config file. file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application.properties'}, version = 0
+2023-04-26 15:17:02.661 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] start pull config file. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application.yml'}, version = 0
+2023-04-26 15:17:02.707 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] pull config file finished. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application.yml'}, code = 400202, version = 0, duration = 46 ms
+2023-04-26 15:17:02.707 WARN [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] config file not found, please check whether config file released. ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application.yml'}
+2023-04-26 15:17:02.707 INFO [main :c.t.p.c.c.i.DefaultConfigFileLongPollingService] [Config] add long polling config file. file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='application.yml'}, version = 0
+2023-04-26 15:17:02.708 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] start pull config file. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap-default.properties'}, version = 0
+2023-04-26 15:17:02.756 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] pull config file finished. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap-default.properties'}, code = 400202, version = 0, duration = 48 ms
+2023-04-26 15:17:02.756 WARN [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] config file not found, please check whether config file released. ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap-default.properties'}
+2023-04-26 15:17:02.756 INFO [main :c.t.p.c.c.i.DefaultConfigFileLongPollingService] [Config] add long polling config file. file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap-default.properties'}, version = 0
+2023-04-26 15:17:02.757 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] start pull config file. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap-default.yml'}, version = 0
+2023-04-26 15:17:02.797 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] pull config file finished. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap-default.yml'}, code = 400202, version = 0, duration = 40 ms
+2023-04-26 15:17:02.798 WARN [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] config file not found, please check whether config file released. ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap-default.yml'}
+2023-04-26 15:17:02.798 INFO [main :c.t.p.c.c.i.DefaultConfigFileLongPollingService] [Config] add long polling config file. file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap-default.yml'}, version = 0
+2023-04-26 15:17:02.799 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] start pull config file. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap.properties'}, version = 0
+2023-04-26 15:17:02.839 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] pull config file finished. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap.properties'}, code = 400202, version = 0, duration = 40 ms
+2023-04-26 15:17:02.839 WARN [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] config file not found, please check whether config file released. ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap.properties'}
+2023-04-26 15:17:02.839 INFO [main :c.t.p.c.c.i.DefaultConfigFileLongPollingService] [Config] add long polling config file. file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap.properties'}, version = 0
+2023-04-26 15:17:02.840 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] start pull config file. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap.yml'}, version = 0
+2023-04-26 15:17:02.880 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] pull config file finished. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap.yml'}, code = 400202, version = 0, duration = 40 ms
+2023-04-26 15:17:02.880 WARN [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] config file not found, please check whether config file released. ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap.yml'}
+2023-04-26 15:17:02.880 INFO [main :c.t.p.c.c.i.DefaultConfigFileLongPollingService] [Config] add long polling config file. file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='bootstrap.yml'}, version = 0
+2023-04-26 15:17:02.881 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] start pull config file. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='config/dynamic-tp.yml'}, version = 0
+2023-04-26 15:17:02.922 INFO [main :c.t.p.c.c.i.AbstractConfigFileRepo] [Config] pull config file finished. config file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='config/dynamic-tp.yml'}, code = 200000, version = 2, duration = 41 ms
+2023-04-26 15:17:02.923 INFO [main :c.t.p.c.c.i.DefaultConfigFileLongPollingService] [Config] add long polling config file. file = ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='config/dynamic-tp.yml'}, version = 2
+2023-04-26 15:17:02.923 INFO [polaris-configFile-persistent-handler-1:c.t.p.c.c.i.ConfigFilePersistentHandler] start to save config file ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='config/dynamic-tp.yml', content='# 动态线程池配置文件，建议单独开一个文件放到配置中心，字段详解看readme介绍
+spring:
+  dynamic:
+    tp:
+      enabled: true
+      enabledBanner: true           # 是否开启banner打印，默认true
+      enabledCollect: true          # 是否开启监控指标采集，默认false
+      collectorTypes: micrometer,logging     # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+      logPath: /home/logs           # 监控日志数据路径，默认 ${user.home}/logs
+      monitorInterval: 5            # 监控时间间隔（报警判断、指标采集），默认5s
+      platforms:                    # 通知报警平台配置
+        - platform: wechat
+          urlKey: 3a7500-1287-4bd-a798-c5c3d8b69c  # 替换
+          receivers: test1,test2                   # 接受人企微名称
+        - platform: ding
+          urlKey: f80dad441fcd655438f4a08dcd6a     # 替换
+          secret: SECb5441fa6f375d5b9d21           # 替换，非sign模式可以没有此值
+          receivers: 15810119805                   # 钉钉账号手机号
+        - platform: lark
+          urlKey: 0d944ae7-b24a-40                 # 替换
+          receivers: test1,test2                   # 接受人飞书名称/openid
+      tomcatTp:                                    # tomcat web server线程池配置
+        corePoolSize: 100
+        maximumPoolSize: 400
+        keepAliveTime: 60
+      jettyTp:                                     # jetty web server线程池配置
+        corePoolSize: 100
+        maximumPoolSize: 400
+      undertowTp:                                  # undertow web server线程池配置
+        corePoolSize: 100
+        maximumPoolSize: 400
+        keepAliveTime: 60
+      hystrixTp:                                   # hystrix 线程池配置
+        - threadPoolName: hystrix1
+          corePoolSize: 100
+          maximumPoolSize: 400
+          keepAliveTime: 60
+      dubboTp:                                     # dubbo 线程池配置
+        - threadPoolName: dubboTp#20880
+          corePoolSize: 100
+          maximumPoolSize: 400
+          keepAliveTime: 60
+      rocketMqTp:                                  # rocketmq 线程池配置
+        - threadPoolName: group1#topic1
+          corePoolSize: 200
+          maximumPoolSize: 400
+          keepAliveTime: 60
+      executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
+        - threadPoolName: dtpExecutor1
+          executorType: common                     # 线程池类型common、eager：适用于io密集型
+          corePoolSize: 2
+          maximumPoolSize: 8
+          queueCapacity: 200
+          queueType: VariableLinkedBlockingQueue   # 任务队列，查看源码QueueTypeEnum枚举类
+          rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
+          keepAliveTime: 50
+          allowCoreThreadTimeOut: false                  # 是否允许核心线程池超时
+          threadNamePrefix: test                         # 线程名前缀
+          waitForTasksToCompleteOnShutdown: false        # 参考spring线程池设计，优雅关闭线程池
+          awaitTerminationSeconds: 5                     # 单位（s）
+          preStartAllCoreThreads: false                  # 是否预热所有核心线程，默认false
+          runTimeout: 200                                # 任务执行超时阈值，目前只做告警用，单位（ms）
+          queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
+          taskWrapperNames: ["ttl"]                          # 任务包装器名称，集成TaskWrapper接口
+          notifyItems:                     # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警、拒绝报警、任务超时报警）
+            - type: capacity               # 报警项类型，查看源码 NotifyTypeEnum枚举类
+              enabled: true
+              threshold: 80                # 报警阈值
+              platforms: [ding,wechat]     # 可选配置，不配置默认拿上层platforms配置的所以平台
+              interval: 120                # 报警间隔（单位：s）
+            - type: change
+              enabled: true
+            - type: liveness
+              enabled: true
+              threshold: 80
+            - type: reject
+              enabled: true
+              threshold: 1
+            - type: run_timeout
+              enabled: true
+              threshold: 1
+            - type: queue_timeout
+              enabled: true
+              threshold: 1
+', version=2, md5='1e7471232027d72a007a4c5dc623bbf5'}
+2023-04-26 15:17:02.936 INFO [pool-2-thread-1:c.t.p.p.c.c.l.LocalFileConfigFileConnector] watched file event:ENTRY_CREATE:D:\open-source-code\dynamic-tp\.\polaris\backup\config/default#dynamic-tp-polaris-cloud-demo#config%2Fdynamic-tp.yml.yaml.tmp.
+2023-04-26 15:17:02.937 INFO [pool-2-thread-1:c.t.p.p.c.c.l.LocalFileConfigFileConnector] watched file event:ENTRY_MODIFY:D:\open-source-code\dynamic-tp\.\polaris\backup\config/default#dynamic-tp-polaris-cloud-demo#config%2Fdynamic-tp.yml.yaml.tmp.
+2023-04-26 15:17:02.944 INFO [pool-2-thread-1:c.t.p.p.c.c.l.LocalFileConfigFileConnector] watched file event:ENTRY_MODIFY:D:\open-source-code\dynamic-tp\.\polaris\backup\config/default#dynamic-tp-polaris-cloud-demo#config%2Fdynamic-tp.yml.yaml.tmp.
+2023-04-26 15:17:02.945 INFO [pool-2-thread-1:c.t.p.p.c.c.l.LocalFileConfigFileConnector] watched file event:ENTRY_DELETE:D:\open-source-code\dynamic-tp\.\polaris\backup\config/default#dynamic-tp-polaris-cloud-demo#config%2Fdynamic-tp.yml.yaml.
+2023-04-26 15:17:02.945 INFO [polaris-configFile-persistent-handler-1:c.t.p.c.c.i.ConfigFilePersistentHandler] end to save config file ConfigFile{namespace='default', fileGroup='dynamic-tp-polaris-cloud-demo', fileName='config/dynamic-tp.yml', content='# 动态线程池配置文件，建议单独开一个文件放到配置中心，字段详解看readme介绍
+spring:
+  dynamic:
+    tp:
+      enabled: true
+      enabledBanner: true           # 是否开启banner打印，默认true
+      enabledCollect: true          # 是否开启监控指标采集，默认false
+      collectorTypes: micrometer,logging     # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+      logPath: /home/logs           # 监控日志数据路径，默认 ${user.home}/logs
+      monitorInterval: 5            # 监控时间间隔（报警判断、指标采集），默认5s
+      platforms:                    # 通知报警平台配置
+        - platform: wechat
+          urlKey: 3a7500-1287-4bd-a798-c5c3d8b69c  # 替换
+          receivers: test1,test2                   # 接受人企微名称
+        - platform: ding
+          urlKey: f80dad441fcd655438f4a08dcd6a     # 替换
+          secret: SECb5441fa6f375d5b9d21           # 替换，非sign模式可以没有此值
+          receivers: 15810119805                   # 钉钉账号手机号
+        - platform: lark
+          urlKey: 0d944ae7-b24a-40                 # 替换
+          receivers: test1,test2                   # 接受人飞书名称/openid
+      tomcatTp:                                    # tomcat web server线程池配置
+        corePoolSize: 100
+        maximumPoolSize: 400
+        keepAliveTime: 60
+      jettyTp:                                     # jetty web server线程池配置
+        corePoolSize: 100
+        maximumPoolSize: 400
+      undertowTp:                                  # undertow web server线程池配置
+        corePoolSize: 100
+        maximumPoolSize: 400
+        keepAliveTime: 60
+      hystrixTp:                                   # hystrix 线程池配置
+        - threadPoolName: hystrix1
+          corePoolSize: 100
+          maximumPoolSize: 400
+          keepAliveTime: 60
+      dubboTp:                                     # dubbo 线程池配置
+        - threadPoolName: dubboTp#20880
+          corePoolSize: 100
+          maximumPoolSize: 400
+          keepAliveTime: 60
+      rocketMqTp:                                  # rocketmq 线程池配置
+        - threadPoolName: group1#topic1
+          corePoolSize: 200
+          maximumPoolSize: 400
+          keepAliveTime: 60
+      executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
+        - threadPoolName: dtpExecutor1
+          executorType: common                     # 线程池类型common、eager：适用于io密集型
+          corePoolSize: 2
+          maximumPoolSize: 8
+          queueCapacity: 200
+          queueType: VariableLinkedBlockingQueue   # 任务队列，查看源码QueueTypeEnum枚举类
+          rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
+          keepAliveTime: 50
+          allowCoreThreadTimeOut: false                  # 是否允许核心线程池超时
+          threadNamePrefix: test                         # 线程名前缀
+          waitForTasksToCompleteOnShutdown: false        # 参考spring线程池设计，优雅关闭线程池
+          awaitTerminationSeconds: 5                     # 单位（s）
+          preStartAllCoreThreads: false                  # 是否预热所有核心线程，默认false
+          runTimeout: 200                                # 任务执行超时阈值，目前只做告警用，单位（ms）
+          queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
+          taskWrapperNames: ["ttl"]                          # 任务包装器名称，集成TaskWrapper接口
+          notifyItems:                     # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警、拒绝报警、任务超时报警）
+            - type: capacity               # 报警项类型，查看源码 NotifyTypeEnum枚举类
+              enabled: true
+              threshold: 80                # 报警阈值
+              platforms: [ding,wechat]     # 可选配置，不配置默认拿上层platforms配置的所以平台
+              interval: 120                # 报警间隔（单位：s）
+            - type: change
+              enabled: true
+            - type: liveness
+              enabled: true
+              threshold: 80
+            - type: reject
+              enabled: true
+              threshold: 1
+            - type: run_timeout
+              enabled: true
+              threshold: 1
+            - type: queue_timeout
+              enabled: true
+              threshold: 1
+', version=2, md5='1e7471232027d72a007a4c5dc623bbf5'} to D:\open-source-code\dynamic-tp\.\polaris\backup\config\default#dynamic-tp-polaris-cloud-demo#config%2Fdynamic-tp.yml.yaml
+2023-04-26 15:17:02.945 INFO [pool-2-thread-1:c.t.p.p.c.c.l.LocalFileConfigFileConnector] watched file event:ENTRY_DELETE:D:\open-source-code\dynamic-tp\.\polaris\backup\config/default#dynamic-tp-polaris-cloud-demo#config%2Fdynamic-tp.yml.yaml.tmp.
+2023-04-26 15:17:02.946 INFO [pool-2-thread-1:c.t.p.p.c.c.l.LocalFileConfigFileConnector] watched file event:ENTRY_CREATE:D:\open-source-code\dynamic-tp\.\polaris\backup\config/default#dynamic-tp-polaris-cloud-demo#config%2Fdynamic-tp.yml.yaml.
+2023-04-26 15:17:06.562 INFO [main :c.t.p.d.c.a.DefaultProviderAPI] register default/dynamic-tp-polaris-cloud-demo instance 07b9ceec537600f6464dfc6f861669a19f27540f succ
+2023-04-26 15:17:11.571 INFO [polaris-async-register-1:c.t.p.d.c.f.RegisterFlow] [AsyncHeartbeat]Instance heartbeat task started, namespace:default, service:dynamic-tp-polaris-cloud-demo, host:10.2.109.132, port:9018
+2023-04-26 15:17:11.573 INFO [polaris-async-register-1:c.t.p.p.c.g.ConnectionManager] connection ConnID{id='e2d8a781-8a88-4d3f-b40b-bf630c585c73', clusterType=HEALTH_CHECK_CLUSTER, host='183.47.111.80', port=8091} created
+2023-04-26 15:17:11.734 INFO [polaris-async-register-1:c.t.p.d.c.f.RegisterFlow] [AsyncHeartbeat]Instance heartbeat success, namespace:default, service:dynamic-tp-polaris-cloud-demo, host:10.2.109.132, port:9018
+2023-04-26 15:17:14.577 INFO [SpringApplicationShutdownHook:c.t.p.d.c.a.DefaultProviderAPI] deregister instance InstanceDeregisterRequest{request=CommonProviderRequest{instanceID='null', namespace='default', service='dynamic-tp-polaris-cloud-demo', token='null', host='10.2.109.132', port=9018, version='null', protocol='null', weight=null, priority=null, metadata=null, ttl=null, zone=null, region=null, campus=null}} succ

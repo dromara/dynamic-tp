@@ -7,6 +7,10 @@
     <version>${revision}</version>
     <packaging>pom</packaging>
 
+    <name>dynamic-tp-dependencies</name>
+    <description>🔥🔥🔥轻量级动态线程池，内置监控告警功能，基于主流配置中心（已支持Nacos、Apollo、Zookeeper、Consul、Etcd、Polaris，可通过SPI自定义实现）</description>
+    <url>https://github.com/yanhom1314/dynamic-tp</url>
+
     <properties>
         <revision>1.1.3</revision>
         <hutool.version>5.8.12</hutool.version>
@@ -487,6 +491,46 @@
         </dependencies>
     </dependencyManagement>
 
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/yanhom1314/dynamic-tp/tree/master</url>
+        <connection>scm:git:git://github.com/yanhom1314/dynamic-tp.git</connection>
+        <developerConnection>scm:git:ssh://github.com:yanhom1314/dynamic-tp.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>yanhom</id>
+            <name>yanhom</name>
+            <email>yanhom1314@gmail.com</email>
+            <url>https://github.com/yanhom1314</url>
+        </developer>
+    </developers>
+
+    <issueManagement>
+        <system>Github Issue</system>
+        <url>https://github.com/yanhom1314/dynamic-tp/issues</url>
+    </issueManagement>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
     <build>
         <plugins>
             <plugin>
@@ -520,6 +564,33 @@
                 </executions>
             </plugin>
 
+            <!-- Gpg Signature -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+
             <!-- flatten -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -548,15 +619,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
 </project>

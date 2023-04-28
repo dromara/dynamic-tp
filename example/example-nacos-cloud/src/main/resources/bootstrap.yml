@@ -21,14 +21,22 @@ spring:
   redis:
     host: ${redis:localhost}
     port: 6379
+  data:
+    redis:
+      host: ${redis:localhost}
+      port: 6379
 management:
-  metrics:
-    export:
-      prometheus:
-        enabled: true
   endpoints:
     web:
       exposure:
         include: '*'   # 测试使用，线上不要用*，按需开启
   server:
     port: 9100
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true

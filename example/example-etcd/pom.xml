@@ -4,8 +4,9 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>dynamic-tp-example</artifactId>
-        <groupId>cn.dynamictp</groupId>
+        <groupId>org.dromara.dynamictp</groupId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     
@@ -15,12 +16,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>${spring-boot.version}</version>
         </dependency>
         <dependency>
-            <groupId>cn.dynamictp</groupId>
+            <groupId>org.dromara.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-etcd</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>io.etcd</groupId>

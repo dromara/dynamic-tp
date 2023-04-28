@@ -1,0 +1,3 @@
+org.dromara.dynamictp.common.parser.json.JacksonParser
+org.dromara.dynamictp.common.parser.json.GsonParser
+org.dromara.dynamictp.common.parser.json.FastJsonParser

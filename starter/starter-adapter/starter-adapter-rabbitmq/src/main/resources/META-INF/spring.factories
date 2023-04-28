@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.dtp.starter.adapter.rabbitmq.autoconfigure.RabbitMqTpAutoConfiguration
+  org.dromara.dynamictp.starter.adapter.rabbitmq.autoconfigure.RabbitMqTpAutoConfiguration

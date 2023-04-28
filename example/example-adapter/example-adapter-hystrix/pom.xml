@@ -4,8 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>dynamic-tp-example-adapter</artifactId>
-        <groupId>cn.dynamictp</groupId>
+        <groupId>org.dromara.dynamictp</groupId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-example-adapter-hystrix</artifactId>
 
@@ -25,7 +26,7 @@
         </dependency>
 
         <dependency>
-            <groupId>cn.dynamictp</groupId>
+            <groupId>org.dromara.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-adapter-hystrix</artifactId>
             <version>${revision}</version>
         </dependency>

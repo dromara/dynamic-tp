@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.dtp.starter.cloud.huawei.autoconfigure.DtpHuaweiAutoConfiguration
+  org.dromara.dynamictp.starter.cloud.huawei.autoconfigure.DtpHuaweiAutoConfiguration

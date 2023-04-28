@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.dtp.starter.nacos.autoconfigure.DtpNacosAutoConfiguration
+  org.dromara.dynamictp.starter.nacos.autoconfigure.DtpNacosAutoConfiguration

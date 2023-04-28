@@ -3,28 +3,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>cn.dynamictp</groupId>
+        <groupId>org.dromara.dynamictp</groupId>
         <artifactId>dynamic-tp-starter-configcenter</artifactId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-spring-cloud-starter-polaris</artifactId>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.tencent.cloud</groupId>
-                <artifactId>spring-cloud-tencent-dependencies</artifactId>
-                <version>1.9.1-2021.0.5</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
             <groupId>com.tencent.cloud</groupId>
             <artifactId>spring-cloud-starter-tencent-polaris-config</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.dtp.start.extension.notify.email.autoconfigure.NotifyEmailAutoConfiguration
+  org.dromara.dynamictp.start.extension.notify.email.autoconfigure.NotifyEmailAutoConfiguration

@@ -1,3 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.dtp.starter.adapter.dubbo.autoconfigure.ApacheDubboTpAutoConfiguration,\
-  com.dtp.starter.adapter.dubbo.autoconfigure.AlibabaDubboTpAutoConfiguration
+  org.dromara.dynamictp.starter.adapter.dubbo.autoconfigure.ApacheDubboTpAutoConfiguration,\
+  org.dromara.dynamictp.starter.adapter.dubbo.autoconfigure.AlibabaDubboTpAutoConfiguration

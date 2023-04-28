@@ -1,1 +1,1 @@
-com.dtp.starter.adapter.webserver.autocconfigure.WebServerTpAutoConfiguration
+org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.WebServerTpAutoConfiguration

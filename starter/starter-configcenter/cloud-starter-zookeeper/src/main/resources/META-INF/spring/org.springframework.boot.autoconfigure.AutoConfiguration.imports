@@ -1,1 +1,1 @@
-com.dtp.starter.cloud.zookeeper.autoconfigure.DtpCloudZkAutoConfiguration
+org.dromara.dynamictp.starter.cloud.zookeeper.autoconfigure.DtpCloudZkAutoConfiguration

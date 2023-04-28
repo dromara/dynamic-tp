@@ -3,22 +3,25 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>cn.dynamictp</groupId>
+        <groupId>org.dromara.dynamictp</groupId>
         <artifactId>dynamic-tp-all</artifactId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-extension</artifactId>
     <packaging>pom</packaging>
 
     <modules>
+        <module>extension-3.x</module>
         <module>extension-skywalking</module>
         <module>extension-limiter-redis</module>
         <module>extension-notify-email</module>
+        <module>extension-opentelemetry</module>
     </modules>
 
     <dependencies>
         <dependency>
-            <groupId>cn.dynamictp</groupId>
+            <groupId>org.dromara.dynamictp</groupId>
             <artifactId>dynamic-tp-core</artifactId>
         </dependency>
     </dependencies>

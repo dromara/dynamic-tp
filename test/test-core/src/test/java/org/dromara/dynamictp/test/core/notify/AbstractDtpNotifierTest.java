@@ -1,7 +1,5 @@
 package org.dromara.dynamictp.test.core.notify;
 
-import com.google.common.collect.Lists;
-import org.dromara.dynamictp.common.ApplicationContextHolder;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
@@ -11,12 +9,17 @@ import org.dromara.dynamictp.common.util.CommonUtil;
 import org.dromara.dynamictp.core.notifier.AbstractDtpNotifier;
 import org.dromara.dynamictp.core.notifier.DtpDingNotifier;
 import org.dromara.dynamictp.core.notifier.base.Notifier;
+import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
 import org.dromara.dynamictp.core.notifier.context.AlarmCtx;
 import org.dromara.dynamictp.core.notifier.context.DtpNotifyCtxHolder;
 import org.dromara.dynamictp.core.notifier.context.NoticeCtx;
+import org.dromara.dynamictp.core.spring.EnableDynamicTp;
+import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolCreator;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
+import org.dromara.dynamictp.test.core.thread.DtpExecutorTest;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Assert;
@@ -27,16 +30,13 @@ import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.env.Environment;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 import static org.dromara.dynamictp.common.em.QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * AbstractDtpNotifierTest related
@@ -97,7 +97,27 @@ public class AbstractDtpNotifierTest {
     }
 
     @Test
-    public void testGetQueueName2() {
-        Assert.assertEquals(dtpExecutor.getQueueType(), VARIABLE_LINKED_BLOCKING_QUEUE.getName());
+    public void testGetQueueName1() throws Exception {
+        Method getQueueName = AbstractDtpNotifier.class.getDeclaredMethod("getQueueName", ExecutorAdapter.class);
+        getQueueName.setAccessible(true);
+
+        AbstractDtpNotifier abstractDtpNotifier = Mockito.spy(AbstractDtpNotifier.class);
+        CapturedExecutor capturedExecutor = new CapturedExecutor(dtpExecutor);
+        String res = (String) getQueueName.invoke(abstractDtpNotifier, capturedExecutor);
+
+        Assert.assertEquals(res, VARIABLE_LINKED_BLOCKING_QUEUE.getName());
+        String simpleName = capturedExecutor.getQueue().getClass().getSimpleName();
+        Assert.assertEquals(simpleName, "CapturedBlockingQueue");
+    }
+
+    @Test
+    public void testGetQueueName2() throws Exception {
+        Method getQueueName = AbstractDtpNotifier.class.getDeclaredMethod("getQueueName", ExecutorAdapter.class);
+        getQueueName.setAccessible(true);
+
+        AbstractDtpNotifier abstractDtpNotifier = Mockito.spy(AbstractDtpNotifier.class);
+        String res = (String) getQueueName.invoke(abstractDtpNotifier, dtpExecutor);
+
+        Assert.assertEquals(res, VARIABLE_LINKED_BLOCKING_QUEUE.getName());
     }
 }

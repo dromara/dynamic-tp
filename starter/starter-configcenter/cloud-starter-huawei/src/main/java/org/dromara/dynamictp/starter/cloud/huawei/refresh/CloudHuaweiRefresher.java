@@ -1,6 +1,6 @@
 package org.dromara.dynamictp.starter.cloud.huawei.refresh;
 
-import com.dtp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import com.huaweicloud.common.event.ConfigRefreshEvent;
 import lombok.extern.slf4j.Slf4j;

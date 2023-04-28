@@ -29,7 +29,7 @@ public class AopConfig {
     public Advisor advisor(DemoService demoService) {
         //just demo.Just discard.
         AspectJExpressionPointcut aspectJExpressionPointcut = new AspectJExpressionPointcut();
-        aspectJExpressionPointcut.setExpression("execution(public * com.dtp.test.core.spring.Nothing.test(..))");
+        aspectJExpressionPointcut.setExpression("execution(public * org.dromara.dynamictp.test.core.spring.Nothing.test(..))");
         return new DefaultPointcutAdvisor(aspectJExpressionPointcut,
                 new CustomizableTraceInterceptor());
     }

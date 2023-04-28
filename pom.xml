@@ -40,7 +40,6 @@
         <module>extension</module>
         <module>test</module>
         <module>dependencies</module>
-        <module>extension/extension-3.x</module>
     </modules>
 
     <dependencies>

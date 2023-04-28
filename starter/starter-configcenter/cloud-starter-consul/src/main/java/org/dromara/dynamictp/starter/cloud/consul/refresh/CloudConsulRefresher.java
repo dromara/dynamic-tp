@@ -1,6 +1,6 @@
 package org.dromara.dynamictp.starter.cloud.consul.refresh;
 
-import com.dtp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;

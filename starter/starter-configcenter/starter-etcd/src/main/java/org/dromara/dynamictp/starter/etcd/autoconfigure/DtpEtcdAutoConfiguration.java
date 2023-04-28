@@ -1,6 +1,6 @@
 package org.dromara.dynamictp.starter.etcd.autoconfigure;
 
-import com.dtp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
 import org.dromara.dynamictp.starter.etcd.refresh.EtcdRefresher;
 import io.etcd.jetcd.Client;

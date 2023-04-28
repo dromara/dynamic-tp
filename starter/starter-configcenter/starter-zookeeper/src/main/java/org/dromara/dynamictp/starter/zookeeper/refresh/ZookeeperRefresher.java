@@ -1,6 +1,6 @@
 package org.dromara.dynamictp.starter.zookeeper.refresh;
 
-import com.dtp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.dromara.dynamictp.starter.zookeeper.util.CuratorUtil;
 import lombok.extern.slf4j.Slf4j;

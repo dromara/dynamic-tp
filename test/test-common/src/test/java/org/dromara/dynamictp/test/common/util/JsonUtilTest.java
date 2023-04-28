@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  *
  * @author topsuder
  * @author KamToHung
- * @see com.dtp.test.common.util dynamic-tp
+ * @see org.dromara.dynamictp.test.common.util dynamic-tp
  */
 class JsonUtilTest {
 

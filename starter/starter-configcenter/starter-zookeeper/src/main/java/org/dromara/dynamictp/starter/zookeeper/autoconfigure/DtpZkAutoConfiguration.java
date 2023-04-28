@@ -1,6 +1,6 @@
 package org.dromara.dynamictp.starter.zookeeper.autoconfigure;
 
-import com.dtp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
 import org.dromara.dynamictp.starter.zookeeper.refresh.ZookeeperRefresher;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;

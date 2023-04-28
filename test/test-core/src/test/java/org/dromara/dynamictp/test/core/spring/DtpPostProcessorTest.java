@@ -20,7 +20,7 @@ import java.util.concurrent.Executor;
 @EnableDynamicTp
 @EnableAutoConfiguration
 @PropertySource(value = "classpath:/postprocessor-dtp-dev.yml", factory = YamlPropertySourceFactory.class)
-@ComponentScan(basePackages = "com.dtp.test.core.spring")
+@ComponentScan(basePackages = "org.dromara.dynamictp.test.core.spring")
 public class DtpPostProcessorTest {
 
     private static ConfigurableApplicationContext context;

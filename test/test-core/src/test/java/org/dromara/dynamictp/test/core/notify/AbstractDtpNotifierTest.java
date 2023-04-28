@@ -97,27 +97,7 @@ public class AbstractDtpNotifierTest {
     }
 
     @Test
-    public void testGetQueueName1() throws Exception {
-        Method getQueueName = AbstractDtpNotifier.class.getDeclaredMethod("getQueueName", ExecutorAdapter.class);
-        getQueueName.setAccessible(true);
-
-        AbstractDtpNotifier abstractDtpNotifier = Mockito.spy(AbstractDtpNotifier.class);
-        CapturedExecutor capturedExecutor = new CapturedExecutor(dtpExecutor);
-        String res = (String) getQueueName.invoke(abstractDtpNotifier, capturedExecutor);
-
-        Assert.assertEquals(res, VARIABLE_LINKED_BLOCKING_QUEUE.getName());
-        String simpleName = capturedExecutor.getQueue().getClass().getSimpleName();
-        Assert.assertEquals(simpleName, "CapturedBlockingQueue");
-    }
-
-    @Test
-    public void testGetQueueName2() throws Exception {
-        Method getQueueName = AbstractDtpNotifier.class.getDeclaredMethod("getQueueName", ExecutorAdapter.class);
-        getQueueName.setAccessible(true);
-
-        AbstractDtpNotifier abstractDtpNotifier = Mockito.spy(AbstractDtpNotifier.class);
-        String res = (String) getQueueName.invoke(abstractDtpNotifier, dtpExecutor);
-
-        Assert.assertEquals(res, VARIABLE_LINKED_BLOCKING_QUEUE.getName());
+    public void testGetQueueName2() {
+        Assert.assertEquals(dtpExecutor.getQueueType(), VARIABLE_LINKED_BLOCKING_QUEUE.getName());
     }
 }

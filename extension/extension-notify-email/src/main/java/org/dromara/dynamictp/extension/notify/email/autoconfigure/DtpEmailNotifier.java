@@ -1,8 +1,5 @@
-package org.dromara.dynamictp.extension.notify.email;
+package org.dromara.dynamictp.extension.notify.email.autoconfigure;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
 import org.dromara.dynamictp.common.ApplicationContextHolder;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
@@ -18,6 +15,9 @@ import org.dromara.dynamictp.core.notifier.context.AlarmCtx;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
 import org.dromara.dynamictp.core.notifier.context.DtpNotifyCtxHolder;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.MDC;
 import org.thymeleaf.context.Context;
 

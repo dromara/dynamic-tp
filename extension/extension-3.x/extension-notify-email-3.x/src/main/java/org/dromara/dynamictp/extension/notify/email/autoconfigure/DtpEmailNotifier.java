@@ -1,4 +1,4 @@
-package org.dromara.dynamictp.extension.notify.email;
+package org.dromara.dynamictp.extension.notify.email.autoconfigure;
 
 import org.dromara.dynamictp.common.ApplicationContextHolder;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;

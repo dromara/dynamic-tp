@@ -17,8 +17,8 @@ public enum NotifyItemEnum {
     CHANGE("change"),
 
     /**
-     * ThreadPool livenes notify.
-     * livenes = activeCount / maximumPoolSize
+     * ThreadPool liveness notify.
+     * liveness = activeCount / maximumPoolSize
      */
     LIVENESS("liveness"),
 

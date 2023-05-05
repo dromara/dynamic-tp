@@ -82,7 +82,7 @@ protected void afterExecute(Runnable r, Throwable t);
 >
 > 3. 定时采集线程池指标数据，配合像 Grafana 这种可视化监控平台做大盘监控
 
-**经过多个版本的迭代，目前最新版本 v1.1.2 具有以下特性** ✅
+**经过多个版本的迭代，目前最新版本 v1.1.3 具有以下特性** ✅
 
 - **代码零侵入**：我们改变了线程池以往的使用姿势，所有配置均放在配置中心，服务启动时会从配置中心拉取配置生成线程池对象放到 Spring 容器中，使用时直接从 Spring 容器中获取，对业务代码零侵入
 
@@ -98,9 +98,9 @@ protected void afterExecute(Runnable r, Throwable t);
 
 - **轻量简单**：基于 SpringBoot 实现，引入 starter，接入只需简单 4 步就可完成，顺利 3 分钟搞定
 
-- **多模式**：参考 Tomcat 线程池提供了 IO 密集型场景使用的 EagerDtpExecutor 线程池
+- **多模式**：提供了增强线程池 DtpExecutor，IO 密集型场景使用的线程池 EagerDtpExecutor，调度线程池 ScheduledDtpExecutor，有序线程池 OrderedDtpExecutor，可以根据业务场景选择合适的线程池
 
-- **兼容性**：JUC 普通线程池和 Spring 中的 ThreadPoolTaskExecutor 也可以被框架监控，@Bean 定义时加 @DynamicTp 注解即可
+- **兼容性**：JUC 普通线程池和 Spring 中的 ThreadPoolTaskExecutor 也可以被框架管理，@Bean 定义时加 @DynamicTp 注解即可
 
 - **可靠性**：框架提供的线程池实现 Spring 生命周期方法，可以在 Spring 容器关闭前尽可能多的处理队列中的任务
 
@@ -200,7 +200,7 @@ protected void afterExecute(Runnable r, Throwable t);
 
 看到这儿，**请给项目一个 star**，你的支持是我们前进的动力！
 
-使用过程中有任何问题，或者对项目有什么想法或者建议，可以加入社群，跟 700+ 群友一起交流讨论。
+使用过程中有任何问题，或者对项目有什么想法或者建议，可以加入社群，跟 1000+ 群友一起交流讨论。
 
 微信群已满 200 人，可以关注微信公众号，加我个人微信拉群（备注：dynamic-tp）。
 

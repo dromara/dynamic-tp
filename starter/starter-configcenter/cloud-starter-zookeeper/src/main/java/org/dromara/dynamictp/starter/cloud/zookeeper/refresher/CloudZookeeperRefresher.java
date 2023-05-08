@@ -1,4 +1,4 @@
-package org.dromara.dynamictp.starter.cloud.consul.refresh;
+package org.dromara.dynamictp.starter.cloud.zookeeper.refresher;
 
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,7 @@ import org.springframework.lang.NonNull;
  * @author Redick01
  */
 @Slf4j
-public class CloudConsulRefresher extends AbstractRefresher implements SmartApplicationListener {
+public class CloudZookeeperRefresher extends AbstractRefresher implements SmartApplicationListener {
 
     @Override
     public boolean supportsEventType(@NonNull Class<? extends ApplicationEvent> eventType) {

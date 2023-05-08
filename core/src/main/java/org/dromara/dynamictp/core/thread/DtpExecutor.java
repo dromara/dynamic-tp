@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.LongAdder;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
 
 /**
- * Dynamic ThreadPoolExecutor inherits DtpLifecycleSupport, and extends some features.
+ * Dynamic ThreadPoolExecutor, extending ThreadPoolExecutor, implements some new features
  *
  * @author yanhom
  * @since 1.0.0

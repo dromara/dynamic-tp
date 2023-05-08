@@ -1,26 +1,27 @@
-package org.dromara.dynamictp.starter.cloud.zookeeper.refresh;
+package org.dromara.dynamictp.starter.cloud.huawei.refresher;
 
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;
+import com.huaweicloud.common.event.ConfigRefreshEvent;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.SmartApplicationListener;
 import org.springframework.lang.NonNull;
 
 /**
- * @author Redick01
+ * @author windsearcher
  */
 @Slf4j
-public class CloudZookeeperRefresher extends AbstractRefresher implements SmartApplicationListener {
+public class CloudHuaweiRefresher extends AbstractRefresher implements SmartApplicationListener {
 
     @Override
     public boolean supportsEventType(@NonNull Class<? extends ApplicationEvent> eventType) {
-        return RefreshScopeRefreshedEvent.class.isAssignableFrom(eventType);
+        return ConfigRefreshEvent.class.isAssignableFrom(eventType);
     }
 
     @Override
     public void onApplicationEvent(@NonNull ApplicationEvent event) {
-        if (event instanceof RefreshScopeRefreshedEvent) {
+        // huawei config define RefreshEvent
+        if (event instanceof ConfigRefreshEvent) {
             doRefresh(dtpProperties);
         }
     }

@@ -1,7 +1,7 @@
 package org.dromara.dynamictp.starter.cloud.huawei.autoconfigure;
 
 import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
-import org.dromara.dynamictp.starter.cloud.huawei.refresh.CloudHuaweiRefresher;
+import org.dromara.dynamictp.starter.cloud.huawei.refresher.CloudHuaweiRefresher;
 import com.huaweicloud.common.configration.bootstrap.ConfigBootstrapProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

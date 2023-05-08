@@ -1,4 +1,4 @@
-package org.dromara.dynamictp.starter.zookeeper.refresh;
+package org.dromara.dynamictp.starter.zookeeper.refresher;
 
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.dromara.dynamictp.starter.zookeeper.util.CuratorUtil;

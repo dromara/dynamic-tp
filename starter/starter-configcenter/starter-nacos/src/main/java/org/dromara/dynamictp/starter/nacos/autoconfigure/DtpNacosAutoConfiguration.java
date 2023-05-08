@@ -1,7 +1,7 @@
 package org.dromara.dynamictp.starter.nacos.autoconfigure;
 
 import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
-import org.dromara.dynamictp.starter.nacos.refresh.NacosRefresher;
+import org.dromara.dynamictp.starter.nacos.refresher.NacosRefresher;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

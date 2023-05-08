@@ -1,4 +1,4 @@
-package org.dromara.dynamictp.starter.apollo.refresh;
+package org.dromara.dynamictp.starter.apollo.refresher;
 
 import com.ctrip.framework.apollo.ConfigFile;
 import com.ctrip.framework.apollo.ConfigFileChangeListener;

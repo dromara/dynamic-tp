@@ -2,7 +2,7 @@ package org.dromara.dynamictp.starter.cloud.nacos.autoconfigure;
 
 import com.alibaba.cloud.nacos.NacosConfigManager;
 import com.alibaba.cloud.nacos.NacosConfigProperties;
-import org.dromara.dynamictp.starter.cloud.nacos.refresh.CloudNacosRefresher;
+import org.dromara.dynamictp.starter.cloud.nacos.refresher.CloudNacosRefresher;
 import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

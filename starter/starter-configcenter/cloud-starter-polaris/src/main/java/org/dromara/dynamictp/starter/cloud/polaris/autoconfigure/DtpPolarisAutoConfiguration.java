@@ -1,6 +1,6 @@
 package org.dromara.dynamictp.starter.cloud.polaris.autoconfigure;
 
-import org.dromara.dynamictp.starter.cloud.polaris.refresh.CloudPolarisRefresher;
+import org.dromara.dynamictp.starter.cloud.polaris.refresher.CloudPolarisRefresher;
 import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
 import com.tencent.cloud.polaris.config.config.PolarisConfigProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;

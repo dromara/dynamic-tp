@@ -1,4 +1,4 @@
-package org.dromara.dynamictp.starter.nacos.refresh;
+package org.dromara.dynamictp.starter.nacos.refresher;
 
 import com.alibaba.nacos.api.annotation.NacosInjected;
 import com.alibaba.nacos.api.config.ConfigService;

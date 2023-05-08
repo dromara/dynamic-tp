@@ -1,4 +1,4 @@
-package org.dromara.dynamictp.starter.cloud.nacos.refresh;
+package org.dromara.dynamictp.starter.cloud.polaris.refresher;
 
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import lombok.extern.slf4j.Slf4j;
@@ -8,13 +8,13 @@ import org.springframework.context.event.SmartApplicationListener;
 import org.springframework.lang.NonNull;
 
 /**
- * CloudNacosRefresher related
+ * CloudPolarisRefresher related
  *
- * @author yanhom
+ * @author fabian4
  * @since 1.0.0
  **/
 @Slf4j
-public class CloudNacosRefresher extends AbstractRefresher implements SmartApplicationListener {
+public class CloudPolarisRefresher extends AbstractRefresher implements SmartApplicationListener {
 
     @Override
     public boolean supportsEventType(@NonNull Class<? extends ApplicationEvent> eventType) {

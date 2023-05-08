@@ -1,6 +1,6 @@
 package org.dromara.dynamictp.starter.apollo.autoconfigure;
 
-import org.dromara.dynamictp.starter.apollo.refresh.ApolloRefresher;
+import org.dromara.dynamictp.starter.apollo.refresher.ApolloRefresher;
 import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

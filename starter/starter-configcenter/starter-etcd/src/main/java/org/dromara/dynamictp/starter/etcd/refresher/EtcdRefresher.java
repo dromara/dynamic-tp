@@ -1,4 +1,4 @@
-package org.dromara.dynamictp.starter.etcd.refresh;
+package org.dromara.dynamictp.starter.etcd.refresher;
 
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;

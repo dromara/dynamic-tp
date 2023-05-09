@@ -8,6 +8,11 @@
   <!-- 检查文件是否以一个空行结束 -->
   <module name="NewlineAtEndOfFile"/>
 
+  <module name="Header">
+    <property name="headerFile" value=".github/checkstyle/license-header.txt"/>
+    <property name="fileExtensions" value="java"/>
+  </module>
+
   <!-- 文件长度不超过1500行 -->
   <module name="FileLength">
     <property name="max" value="1500"/>

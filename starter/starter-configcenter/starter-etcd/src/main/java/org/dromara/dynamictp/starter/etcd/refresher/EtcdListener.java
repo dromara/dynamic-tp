@@ -17,15 +17,18 @@
 
 package org.dromara.dynamictp.starter.etcd.refresher;
 
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.spring.PropertiesBinder;
-import org.dromara.dynamictp.starter.etcd.util.EtcdUtil;
 import io.etcd.jetcd.Watch;
 import io.etcd.jetcd.watch.WatchEvent;
 import io.etcd.jetcd.watch.WatchResponse;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.core.spring.BinderHelper;
+import org.dromara.dynamictp.core.spring.PropertiesBinder;
+import org.dromara.dynamictp.starter.etcd.util.EtcdUtil;
+
+import java.util.Objects;
 
 /**
  * @author Redick01
@@ -54,7 +57,11 @@ public class EtcdListener implements Watch.Listener {
             log.info("the etcd config content should be updated, key is " + key);
             String configType = dtpProperties.getConfigType();
             val properties = EtcdUtil.watchValMap(configType, response.getEvents(), dtpProperties);
-            PropertiesBinder.bindDtpProperties(properties, dtpProperties);
+            final PropertiesBinder binder = BinderHelper.getBinder();
+            if (Objects.isNull(binder)) {
+                return;
+            }
+            binder.bindDtpProperties(properties, dtpProperties);
             etcdRefresher.refresh(dtpProperties);
         } else {
             log.info("the etcd config content should not be updated, key is " + key);

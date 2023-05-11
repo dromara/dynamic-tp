@@ -17,17 +17,18 @@
 
 package org.dromara.dynamictp.core.refresher;
 
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.ApplicationContextHolder;
 import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
 import org.dromara.dynamictp.common.event.RefreshEvent;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.handler.ConfigHandler;
+import org.dromara.dynamictp.core.spring.BinderHelper;
 import org.dromara.dynamictp.core.spring.PropertiesBinder;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -68,7 +69,11 @@ public abstract class AbstractRefresher implements Refresher {
             log.warn("DynamicTp refresh, empty properties.");
             return;
         }
-        PropertiesBinder.bindDtpProperties(properties, dtpProperties);
+        final PropertiesBinder binder = BinderHelper.getBinder();
+        if (Objects.isNull(binder)) {
+            return;
+        }
+        binder.bindDtpProperties(properties, dtpProperties);
         doRefresh(dtpProperties);
     }
 

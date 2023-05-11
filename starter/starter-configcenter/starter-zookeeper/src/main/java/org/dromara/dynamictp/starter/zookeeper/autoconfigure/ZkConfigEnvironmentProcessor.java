@@ -17,7 +17,10 @@
 
 package org.dromara.dynamictp.starter.zookeeper.autoconfigure;
 
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.common.ApplicationContextHolder;
 import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.core.spring.BinderHelper;
 import org.dromara.dynamictp.core.spring.PropertiesBinder;
 import org.dromara.dynamictp.starter.zookeeper.util.CuratorUtil;
 import org.springframework.boot.SpringApplication;
@@ -28,6 +31,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * ZkConfigEnvironmentProcessor related
@@ -35,15 +39,19 @@ import java.util.Map;
  * @author yanhom
  * @since 1.0.4
  **/
+@Slf4j
 public class ZkConfigEnvironmentProcessor implements EnvironmentPostProcessor, Ordered {
 
     public static final String ZK_PROPERTY_SOURCE_NAME = "dtpZkPropertySource";
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-
-        DtpProperties dtpProperties = new DtpProperties();
-        PropertiesBinder.bindDtpProperties(environment, dtpProperties);
+        DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+        final PropertiesBinder binder = BinderHelper.getBinder();
+        if (Objects.isNull(binder)) {
+            return;
+        }
+        binder.bindDtpProperties(environment, dtpProperties);
         Map<Object, Object> properties = CuratorUtil.genPropertiesMap(dtpProperties);
         if (!checkPropertyExist(environment)) {
             createZkPropertySource(environment, properties);

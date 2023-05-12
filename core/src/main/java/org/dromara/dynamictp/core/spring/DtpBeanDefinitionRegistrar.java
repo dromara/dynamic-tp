@@ -25,6 +25,7 @@ import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.BeanUtil;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
+import org.dromara.dynamictp.core.support.BinderHelper;
 import org.dromara.dynamictp.core.support.ExecutorType;
 import org.dromara.dynamictp.core.support.TaskQueue;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
@@ -37,7 +38,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.ALLOW_CORE_THREAD_TIMEOUT;
@@ -76,11 +76,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         DtpProperties dtpProperties = DtpProperties.getInstance();
-        final PropertiesBinder binder = BinderHelper.getBinder();
-        if (Objects.isNull(binder)) {
-            return;
-        }
-        binder.bindDtpProperties(environment, dtpProperties);
+        BinderHelper.bindDtpProperties(environment, dtpProperties);
         val executors = dtpProperties.getExecutors();
         if (CollectionUtils.isEmpty(executors)) {
             log.warn("DynamicTp registrar, no executors are configured.");

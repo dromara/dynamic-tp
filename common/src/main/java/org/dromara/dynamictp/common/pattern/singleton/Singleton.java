@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.common.util;
+package org.dromara.dynamictp.common.pattern.singleton;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -27,8 +27,7 @@ import org.dromara.dynamictp.common.event.RefreshEvent;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.handler.ConfigHandler;
-import org.dromara.dynamictp.core.spring.BinderHelper;
-import org.dromara.dynamictp.core.spring.PropertiesBinder;
+import org.dromara.dynamictp.core.support.BinderHelper;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -69,11 +68,7 @@ public abstract class AbstractRefresher implements Refresher {
             log.warn("DynamicTp refresh, empty properties.");
             return;
         }
-        final PropertiesBinder binder = BinderHelper.getBinder();
-        if (Objects.isNull(binder)) {
-            return;
-        }
-        binder.bindDtpProperties(properties, dtpProperties);
+        BinderHelper.bindDtpProperties(properties, dtpProperties);
         doRefresh(dtpProperties);
     }
 

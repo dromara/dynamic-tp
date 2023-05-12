@@ -17,12 +17,11 @@
 
 package org.dromara.dynamictp.test.core.spring;
 
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.spring.BinderHelper;
-import org.dromara.dynamictp.core.spring.PropertiesBinder;
-import org.dromara.dynamictp.core.spring.YamlPropertySourceFactory;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.core.spring.YamlPropertySourceFactory;
+import org.dromara.dynamictp.core.support.BinderHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,6 @@ import org.springframework.core.env.AbstractEnvironment;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * PropertiesBinderTest related
@@ -58,9 +56,7 @@ class PropertiesBinderTest {
         properties.put("spring.dynamic.tp.executors[0].threadPoolName", "test_dtp");
 
         DtpProperties dtpProperties = DtpProperties.getInstance();
-        final PropertiesBinder binder = BinderHelper.getBinder();
-        Objects.requireNonNull(binder);
-        binder.bindDtpProperties(properties, dtpProperties);
+        BinderHelper.bindDtpProperties(properties, dtpProperties);
         Assertions.assertEquals(properties.get("spring.dynamic.tp.executors[0].threadPoolName"),
                 dtpProperties.getExecutors().get(0).getThreadPoolName());
         Assertions.assertIterableEquals((List<String>) properties.get("spring.dynamic.tp.collectorTypes"),
@@ -70,9 +66,7 @@ class PropertiesBinderTest {
     @Test
     void testBindDtpPropertiesWithEnvironment() {
         DtpProperties dtpProperties = DtpProperties.getInstance();
-        final PropertiesBinder binder = BinderHelper.getBinder();
-        Objects.requireNonNull(binder);
-        binder.bindDtpProperties(environment, dtpProperties);
+        BinderHelper.bindDtpProperties(environment, dtpProperties);
         String threadPoolName = environment.getProperty("spring.dynamic.tp.executors[0].threadPoolName");
         Assertions.assertEquals(threadPoolName, dtpProperties.getExecutors().get(0).getThreadPoolName());
     }

@@ -20,8 +20,7 @@ package org.dromara.dynamictp.starter.etcd.autoconfigure;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.spring.BinderHelper;
-import org.dromara.dynamictp.core.spring.PropertiesBinder;
+import org.dromara.dynamictp.core.support.BinderHelper;
 import org.dromara.dynamictp.starter.etcd.util.EtcdUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
@@ -31,7 +30,6 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author Redick01
@@ -45,11 +43,7 @@ public class EtcdConfigEnvironmentProcessor implements EnvironmentPostProcessor,
     public void postProcessEnvironment(ConfigurableEnvironment environment,
             SpringApplication application) {
         DtpProperties dtpProperties = DtpProperties.getInstance();
-        final PropertiesBinder binder = BinderHelper.getBinder();
-        if (Objects.isNull(binder)) {
-            return;
-        }
-        binder.bindDtpProperties(environment, dtpProperties);
+        BinderHelper.bindDtpProperties(environment, dtpProperties);
         DtpProperties.Etcd etcd = dtpProperties.getEtcd();
         val properties = EtcdUtil.getConfigMap(etcd, dtpProperties.getConfigType());
         if (!checkPropertyExist(environment)) {

@@ -41,8 +41,8 @@ import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.Collections;
 import java.util.List;
@@ -63,7 +63,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.PROPERTIES_CH
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpRegistry implements ApplicationRunner {
+public class DtpRegistry implements ApplicationListener<ContextRefreshedEvent> {
 
     /**
      * Maintain all automatically registered and manually registered Executors(DtpExecutors and JUC ThreadPoolExecutors).
@@ -327,7 +327,7 @@ public class DtpRegistry implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) {
+    public void onApplicationEvent(ContextRefreshedEvent event) {
         Set<String> remoteExecutors = Collections.emptySet();
         if (CollectionUtils.isNotEmpty(dtpProperties.getExecutors())) {
             remoteExecutors = dtpProperties.getExecutors().stream()

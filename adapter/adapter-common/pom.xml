@@ -10,4 +10,10 @@
     </parent>
     <artifactId>dynamic-tp-adapter-common</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.dromara.dynamictp</groupId>
+            <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
+        </dependency>
+    </dependencies>
 </project>

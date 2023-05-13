@@ -29,5 +29,9 @@
             <artifactId>dynamic-tp-spring-boot-starter-zookeeper</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-framework</artifactId>
+        </dependency>
     </dependencies>
 </project>

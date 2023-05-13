@@ -18,7 +18,6 @@
 package org.dromara.dynamictp.starter.zookeeper.autoconfigure;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.common.ApplicationContextHolder;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.support.BinderHelper;
 import org.dromara.dynamictp.starter.zookeeper.util.CuratorUtil;
@@ -44,7 +43,7 @@ public class ZkConfigEnvironmentProcessor implements EnvironmentPostProcessor, O
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+        DtpProperties dtpProperties = DtpProperties.getInstance();
         BinderHelper.bindDtpProperties(environment, dtpProperties);
         Map<Object, Object> properties = CuratorUtil.genPropertiesMap(dtpProperties);
         if (!checkPropertyExist(environment)) {

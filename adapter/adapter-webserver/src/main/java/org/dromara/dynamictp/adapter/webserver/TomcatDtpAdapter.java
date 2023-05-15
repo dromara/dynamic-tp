@@ -18,7 +18,6 @@
 package org.dromara.dynamictp.adapter.webserver;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
@@ -26,6 +25,8 @@ import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 import org.springframework.boot.web.server.WebServer;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -36,14 +37,14 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0.0
  */
 @Slf4j
-public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPoolExecutor> {
+public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<Executor> {
 
     private static final String POOL_NAME = "tomcatTp";
 
     @Override
     public ExecutorWrapper doInitExecutorWrapper(WebServer webServer) {
         TomcatWebServer tomcatWebServer = (TomcatWebServer) webServer;
-        final TomcatExecutorAdapter adapter = new TomcatExecutorAdapter((ThreadPoolExecutor)
+        final TomcatExecutorAdapter adapter = new TomcatExecutorAdapter(
                 tomcatWebServer.getTomcat().getConnector().getProtocolHandler().getExecutor());
         return new ExecutorWrapper(POOL_NAME, adapter);
     }
@@ -62,92 +63,99 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPoolExec
      * TomcatExecutorAdapter implements ExecutorAdapter, the goal of this class
      * is to be compatible with {@link org.apache.tomcat.util.threads.ThreadPoolExecutor}.
      **/
-    private static class TomcatExecutorAdapter implements ExecutorAdapter<ThreadPoolExecutor> {
+    private static class TomcatExecutorAdapter implements ExecutorAdapter<Executor> {
         
-        private final ThreadPoolExecutor executor;
+        private final Executor executor;
         
-        TomcatExecutorAdapter(ThreadPoolExecutor executor) {
+        TomcatExecutorAdapter(Executor executor) {
             this.executor = executor;
         }
         
         @Override
-        public ThreadPoolExecutor getOriginal() {
+        public Executor getOriginal() {
             return this.executor;
+        }
+
+        public org.apache.tomcat.util.threads.ThreadPoolExecutor getTomcatExecutor() {
+            return (org.apache.tomcat.util.threads.ThreadPoolExecutor) this.executor;
         }
         
         @Override
         public int getCorePoolSize() {
-            return this.executor.getCorePoolSize();
+            return getTomcatExecutor().getCorePoolSize();
         }
         
         @Override
         public void setCorePoolSize(int corePoolSize) {
-            this.executor.setCorePoolSize(corePoolSize);
+            getTomcatExecutor().setCorePoolSize(corePoolSize);
         }
         
         @Override
         public int getMaximumPoolSize() {
-            return this.executor.getMaximumPoolSize();
+            return getTomcatExecutor().getMaximumPoolSize();
         }
         
         @Override
         public void setMaximumPoolSize(int maximumPoolSize) {
-            this.executor.setMaximumPoolSize(maximumPoolSize);
+            getTomcatExecutor().setMaximumPoolSize(maximumPoolSize);
         }
         
         @Override
         public int getPoolSize() {
-            return this.executor.getPoolSize();
+            return getTomcatExecutor().getPoolSize();
         }
         
         @Override
         public int getActiveCount() {
-            return this.executor.getActiveCount();
+            return getTomcatExecutor().getActiveCount();
         }
         
         @Override
         public int getLargestPoolSize() {
-            return this.executor.getLargestPoolSize();
+            return getTomcatExecutor().getLargestPoolSize();
         }
         
         @Override
         public long getTaskCount() {
-            return this.executor.getTaskCount();
+            return getTomcatExecutor().getTaskCount();
         }
         
         @Override
         public long getCompletedTaskCount() {
-            return this.executor.getCompletedTaskCount();
+            return getTomcatExecutor().getCompletedTaskCount();
         }
         
         @Override
         public BlockingQueue<Runnable> getQueue() {
-            return this.executor.getQueue();
+            return getTomcatExecutor().getQueue();
         }
     
         @Override
         public String getRejectHandlerType() {
-            return this.executor.getRejectedExecutionHandler().getClass().getSimpleName();
+            if (executor instanceof ThreadPoolExecutor) {
+                return ((ThreadPoolExecutor) executor).getRejectedExecutionHandler().getClass().getSimpleName();
+            }
+            return getTomcatExecutor().getRejectedExecutionHandler().getClass().getSimpleName();
         }
         
         @Override
         public boolean allowsCoreThreadTimeOut() {
-            return this.executor.allowsCoreThreadTimeOut();
+            return getTomcatExecutor().allowsCoreThreadTimeOut();
         }
         
         @Override
         public void allowCoreThreadTimeOut(boolean value) {
-            this.executor.allowCoreThreadTimeOut(value);
+            getTomcatExecutor().allowCoreThreadTimeOut(value);
         }
         
         @Override
         public long getKeepAliveTime(TimeUnit unit) {
-            return this.executor.getKeepAliveTime(unit);
+            return getTomcatExecutor().getKeepAliveTime(unit);
         }
         
         @Override
         public void setKeepAliveTime(long time, TimeUnit unit) {
-            this.executor.setKeepAliveTime(time, unit);
+            getTomcatExecutor().setKeepAliveTime(time, unit);
         }
     }
 }

@@ -13,7 +13,7 @@ nacos:
   config:
     server-addr: 127.0.0.1:8848
     type: yaml
-    data-ids: dynamic-tp-nacos-demo-dev.yml,dynamic-tp-nacos-demo-dtp-dev.yml
+    data-ids: dynamic-tp-nacos-demo-dev.yml,dynamic-tp-nacos-demo-dtp-dev.yml   # 线程池配置文件必须要在此处配置
     auto-refresh: true
     group: DEFAULT_GROUP
     bootstrap:

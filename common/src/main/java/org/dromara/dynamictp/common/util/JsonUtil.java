@@ -70,6 +70,7 @@ public final class JsonUtil {
      * 方法注释: <br>
      * 〈此方法将指定的 Json 反序列化为指定类的对象。〉
      *
+     * @param <T> the target type
      * @param json    要反序列化的json字符串
      * @param typeOfT 要反序列化的对象类型
      * @return T

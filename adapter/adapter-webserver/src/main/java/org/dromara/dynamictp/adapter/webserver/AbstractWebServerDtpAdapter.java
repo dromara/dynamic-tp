@@ -17,11 +17,12 @@
 
 package org.dromara.dynamictp.adapter.webserver;
 
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.ApplicationContextHolder;
 import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.context.WebServerApplicationContext;
 import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.boot.web.server.WebServer;
@@ -71,7 +72,8 @@ public abstract class AbstractWebServerDtpAdapter<A extends Executor> extends Ab
             ExecutorWrapper wrapper = doInitExecutorWrapper(webServer);
             initNotifyItems(wrapper.getThreadPoolName(), wrapper);
             executors.put(getTpName(), wrapper);
-            log.info("DynamicTp adapter, web server executor init end, executor: {}", wrapper.getExecutor());
+            log.info("DynamicTp adapter, web server executor init end, executor: {}",
+                    ExecutorConverter.toMainFields(wrapper));
         }
     }
 

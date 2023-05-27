@@ -19,7 +19,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: lib
-          path: hutool-jvmti/target/classes/lib*
+          path: jvmti/target/classes/lib*
           if-no-files-found: error
 
   mac:
@@ -38,7 +38,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: lib
-          path: hutool-jvmti/target/classes/lib*
+          path: jvmti/target/classes/lib*
           if-no-files-found: error
 
   windows:
@@ -57,5 +57,5 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: lib
-          path: hutool-jvmti/target/classes/*.dll
+          path: jvmti/target/classes/*.dll
           if-no-files-found: error

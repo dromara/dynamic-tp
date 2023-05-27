@@ -18,12 +18,14 @@
 package org.dromara.dynamictp.jvmti;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * test class for {@link org.dromara.dynamictp.jvmti.JVMTI}.
  */
 public class JVMTITest {
 
+    @Test
     public void testGetInstances() {
         TestClass[] instances = JVMTI.getInstances(TestClass.class);
         Assert.assertNotNull(instances);

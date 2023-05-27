@@ -21,6 +21,9 @@ import java.util.Locale;
 
 /**
  * The type JVMTI utils.
+ *
+ * @author dragon-zhang
+ * @since 1.1.4
  */
 public class JVMTIUtils {
     

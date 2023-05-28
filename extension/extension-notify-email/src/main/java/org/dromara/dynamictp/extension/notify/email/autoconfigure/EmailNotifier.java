@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.extension.notify.email;
+package org.dromara.dynamictp.extension.notify.email.autoconfigure;
 
-import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
+import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.core.notifier.base.Notifier;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +27,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import javax.annotation.Resource;
 import javax.mail.internet.MimeMessage;
 import java.util.Date;
 
@@ -46,11 +45,14 @@ public class EmailNotifier implements Notifier {
     @Value("${spring.mail.title:ThreadPool Notify}")
     private String title;
 
-    @Resource
-    private JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender;
 
-    @Resource
-    private TemplateEngine templateEngine;
+    private final TemplateEngine templateEngine;
+
+    public EmailNotifier(JavaMailSender javaMailSender, TemplateEngine templateEngine) {
+        this.javaMailSender = javaMailSender;
+        this.templateEngine = templateEngine;
+    }
 
     @Override
     public String platform() {

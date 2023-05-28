@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.starter.cloud.polaris.autoconfigure;
 
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.starter.cloud.polaris.refresher.CloudPolarisRefresher;
 import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
 import com.tencent.cloud.polaris.config.config.PolarisConfigProperties;
@@ -43,7 +44,7 @@ public class DtpPolarisAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean()
     @ConditionalOnProperty(value = "spring.cloud.polaris.config.enabled", matchIfMissing = true)
-    public CloudPolarisRefresher cloudPolarisRefresher() {
-        return new CloudPolarisRefresher();
+    public CloudPolarisRefresher cloudPolarisRefresher(DtpProperties dtpProperties) {
+        return new CloudPolarisRefresher(dtpProperties);
     }
 }

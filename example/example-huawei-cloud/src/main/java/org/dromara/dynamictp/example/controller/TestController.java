@@ -21,10 +21,11 @@ import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
+
 import java.util.concurrent.Executor;
 
 /**
@@ -36,7 +37,7 @@ import java.util.concurrent.Executor;
 public class TestController {
 
 
-    @Resource
+    @Autowired
     private DtpProperties dtpProperties;
 
     @GetMapping("/dtp-huawei-cloud-example/test")

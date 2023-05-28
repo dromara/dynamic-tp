@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.starter.zookeeper.refresher;
 
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.dromara.dynamictp.starter.zookeeper.util.CuratorUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,10 @@ import org.springframework.core.env.Environment;
  */
 @Slf4j
 public class ZookeeperRefresher extends AbstractRefresher implements EnvironmentAware, InitializingBean {
+
+    public ZookeeperRefresher(DtpProperties dtpProperties) {
+        super(dtpProperties);
+    }
 
     @Override
     public void afterPropertiesSet() {

@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.starter.cloud.zookeeper.autoconfigure;
 
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.starter.cloud.zookeeper.refresher.CloudZookeeperRefresher;
 import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -40,7 +41,7 @@ public class DtpCloudZkAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean()
     @ConditionalOnProperty(value = "spring.cloud.zookeeper.config.enabled", matchIfMissing = true)
-    public CloudZookeeperRefresher cloudZookeeperRefresher() {
-        return new CloudZookeeperRefresher();
+    public CloudZookeeperRefresher cloudZookeeperRefresher(DtpProperties dtpProperties) {
+        return new CloudZookeeperRefresher(dtpProperties);
     }
 }

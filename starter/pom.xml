@@ -15,6 +15,7 @@
         <module>starter-configcenter</module>
         <module>starter-adapter</module>
         <module>starter-extension</module>
+        <module>starter-spring-boot-adapter-3.x</module>
     </modules>
 
     <dependencies>

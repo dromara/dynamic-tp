@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.starter.cloud.consul.autoconfigure;
 
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.starter.cloud.consul.refresher.CloudConsulRefresher;
 import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -40,7 +41,7 @@ public class DtpConsulAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean()
     @ConditionalOnProperty(value = "spring.cloud.consul.config.enabled", matchIfMissing = true)
-    public CloudConsulRefresher cloudConsulRefresher() {
-        return new CloudConsulRefresher();
+    public CloudConsulRefresher cloudConsulRefresher(DtpProperties dtpProperties) {
+        return new CloudConsulRefresher(dtpProperties);
     }
 }

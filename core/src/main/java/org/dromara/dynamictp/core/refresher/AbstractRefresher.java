@@ -29,7 +29,6 @@ import lombok.val;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
@@ -43,8 +42,11 @@ import java.util.Objects;
 @Slf4j
 public abstract class AbstractRefresher implements Refresher {
 
-    @Resource
     protected DtpProperties dtpProperties;
+
+    public AbstractRefresher(DtpProperties dtpProperties) {
+        this.dtpProperties = dtpProperties;
+    }
 
     @Override
     public void refresh(String content, ConfigFileTypeEnum fileType) {

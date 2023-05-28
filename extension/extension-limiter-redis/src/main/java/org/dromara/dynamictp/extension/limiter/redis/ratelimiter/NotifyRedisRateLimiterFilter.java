@@ -24,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -38,8 +37,11 @@ public class NotifyRedisRateLimiterFilter implements NotifyFilter {
 
     public static final int LUA_RES_REMAIN_INDEX = 2;
 
-    @Resource
-    private RedisRateLimiter<List<Long>> redisScriptRateLimiter;
+    private final RedisRateLimiter<List<Long>> redisScriptRateLimiter;
+
+    public NotifyRedisRateLimiterFilter(RedisRateLimiter<List<Long>> redisScriptRateLimiter) {
+        this.redisScriptRateLimiter = redisScriptRateLimiter;
+    }
 
     @Override
     public int getOrder() {

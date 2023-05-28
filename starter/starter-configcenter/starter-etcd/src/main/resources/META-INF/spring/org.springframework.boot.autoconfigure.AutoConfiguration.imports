@@ -1,0 +1,2 @@
+org.dromara.dynamictp.starter.etcd.autoconfigure.DtpEtcdAutoConfiguration
+org.dromara.dynamictp.starter.etcd.autoconfigure.EtcdConfigEnvironmentProcessor

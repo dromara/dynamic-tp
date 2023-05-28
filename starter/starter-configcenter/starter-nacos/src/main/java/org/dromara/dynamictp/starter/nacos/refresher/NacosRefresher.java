@@ -21,17 +21,17 @@ import com.alibaba.nacos.api.annotation.NacosInjected;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
-import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.NacosUtil;
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.dromara.dynamictp.core.support.ThreadPoolCreator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 
-import javax.annotation.Resource;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -42,7 +42,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @since 1.0.0
  **/
 @Slf4j
-public class NacosRefresher extends AbstractRefresher implements InitializingBean, DisposableBean, Listener {
+public class NacosRefresher extends AbstractRefresher implements EnvironmentAware, InitializingBean, DisposableBean, Listener {
 
     private static final ThreadPoolExecutor EXECUTOR = ThreadPoolCreator.createCommonFast("nacos-listener");
 
@@ -51,8 +51,11 @@ public class NacosRefresher extends AbstractRefresher implements InitializingBea
     @NacosInjected
     private ConfigService configService;
 
-    @Resource
     private Environment environment;
+
+    public NacosRefresher(DtpProperties dtpProperties) {
+        super(dtpProperties);
+    }
 
     @Override
     public void afterPropertiesSet() {
@@ -85,4 +88,8 @@ public class NacosRefresher extends AbstractRefresher implements InitializingBea
         EXECUTOR.shutdown();
     }
 
+    @Override
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
 }

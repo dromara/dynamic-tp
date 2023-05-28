@@ -34,6 +34,10 @@ import java.util.Map;
 @Slf4j
 public class EtcdRefresher extends AbstractRefresher implements InitializingBean, Ordered, DisposableBean {
 
+    public EtcdRefresher(DtpProperties dtpProperties) {
+        super(dtpProperties);
+    }
+
     @Override
     public void afterPropertiesSet() {
         DtpProperties.Etcd etcd = dtpProperties.getEtcd();

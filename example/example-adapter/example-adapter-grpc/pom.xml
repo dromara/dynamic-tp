@@ -46,7 +46,7 @@
         <dependency>
             <groupId>net.devh</groupId>
             <artifactId>grpc-spring-boot-starter</artifactId>
-            <version>2.13.1.RELEASE</version>
+            <version>2.14.0.RELEASE</version>
         </dependency>
 
         <dependency>

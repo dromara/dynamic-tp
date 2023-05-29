@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.extension.notify.email.autoconfigure;
 
+import jakarta.mail.internet.MimeMessage;
 import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.core.notifier.base.Notifier;
@@ -27,7 +28,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import javax.mail.internet.MimeMessage;
 import java.util.Date;
 
 /**

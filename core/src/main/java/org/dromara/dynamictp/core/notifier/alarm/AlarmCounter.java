@@ -22,7 +22,6 @@ import org.dromara.dynamictp.common.entity.AlarmInfo;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
 import lombok.val;
-import lombok.var;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 
@@ -73,13 +72,13 @@ public class AlarmCounter {
 
     public static void reset(String threadPoolName, String notifyItemType) {
         String key = buildKey(threadPoolName, notifyItemType);
-        var alarmInfo = ALARM_INFO_CACHE.get(key);
+        val alarmInfo = ALARM_INFO_CACHE.get(key);
         alarmInfo.reset();
     }
 
     public static void incAlarmCounter(String threadPoolName, String notifyItemType) {
         String key = buildKey(threadPoolName, notifyItemType);
-        var alarmInfo = ALARM_INFO_CACHE.get(key);
+        val alarmInfo = ALARM_INFO_CACHE.get(key);
         if (Objects.nonNull(alarmInfo)) {
             alarmInfo.incCounter();
         }

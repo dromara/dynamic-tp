@@ -15,39 +15,28 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.common.parser.json;
+package org.dromara.dynamictp.jvmti;
 
-import java.lang.reflect.Type;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- *
- * @author topsuder
- * @since 1.1.3
+ * test class for {@link org.dromara.dynamictp.jvmti.JVMTI}.
  */
-public interface JsonParser {
+public class JVMTITest {
 
-    /**
-     * Is support this json parser.
-     *
-     * @return true if support
-     */
-    boolean supports();
+    @Test
+    public void testGetInstances() {
+        TestClass[] instances = JVMTI.getInstances(TestClass.class);
+        Assert.assertNotNull(instances);
+        Assert.assertEquals(0, instances.length);
+        final TestClass instance = new TestClass();
+        instances = JVMTI.getInstances(TestClass.class);
+        Assert.assertNotNull(instances);
+        Assert.assertEquals(1, instances.length);
+        Assert.assertEquals(instance, instances[0]);
+    }
 
-    /**
-     * Json string to object.
-     *
-     * @param <T> the target type
-     * @param json json string
-     * @param typeOfT type of target object
-     * @return target object
-     */
-    <T> T fromJson(String json, Type typeOfT);
-
-    /**
-     * Object to json string.
-     *
-     * @param obj object
-     * @return json string
-     */
-    String toJson(Object obj);
+    private static class TestClass {
+    }
 }

@@ -20,8 +20,8 @@ package org.dromara.dynamictp.example.dubbo;
 /**
  * DubboUserService related
  *
- * @author yanhom
- * @since 1.0.9
+ * @author dragon-zhang
+ * @since 1.1.4
  **/
 public interface DubboUserService {
 

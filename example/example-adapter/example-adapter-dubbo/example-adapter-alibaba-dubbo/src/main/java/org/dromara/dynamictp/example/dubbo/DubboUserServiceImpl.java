@@ -15,21 +15,21 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.example;
+package org.dromara.dynamictp.example.dubbo;
 
-import org.dromara.dynamictp.core.spring.EnableDynamicTp;
-import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.alibaba.dubbo.config.annotation.Service;
 
 /**
+ * DubboUserServiceImpl related
+ *
  * @author dragon-zhang
- */
-@EnableDubbo
-@EnableDynamicTp
-@SpringBootApplication
-public class DubboExampleApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(DubboExampleApplication.class, args);
+ * @since 1.1.4
+ **/
+@Service
+public class DubboUserServiceImpl implements DubboUserService {
+
+    @Override
+    public String getUserName(long id) {
+        return "yanhom";
     }
 }

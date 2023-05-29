@@ -203,6 +203,12 @@
 
             <dependency>
                 <groupId>com.baidu.cloud</groupId>
+                <artifactId>starlight-all</artifactId>
+                <version>${brpc.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baidu.cloud</groupId>
                 <artifactId>spring-cloud-starter-baidu-starlight</artifactId>
                 <version>${brpc.version}</version>
             </dependency>
@@ -254,6 +260,12 @@
                 <groupId>com.huaweicloud</groupId>
                 <artifactId>spring-cloud-starter-huawei-config</artifactId>
                 <version>${spring-cloud-huawei.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara.dynamictp</groupId>
+                <artifactId>dynamic-tp-jvmti</artifactId>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>

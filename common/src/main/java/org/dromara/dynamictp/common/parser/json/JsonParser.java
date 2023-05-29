@@ -36,6 +36,7 @@ public interface JsonParser {
     /**
      * Json string to object.
      *
+     * @param <T> the target type
      * @param json json string
      * @param typeOfT type of target object
      * @return target object

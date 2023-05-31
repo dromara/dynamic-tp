@@ -17,10 +17,10 @@
 
 package org.dromara.dynamictp.core.reject;
 
+import lombok.val;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
-import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 
@@ -45,21 +45,26 @@ public interface RejectedAware {
      * @param log      logger
      */
     default void beforeReject(Runnable runnable, ThreadPoolExecutor executor, Logger log) {
-        if (executor instanceof DtpExecutor) {
+        if (!(executor instanceof DtpExecutor)) {
+            return;
+        }
+        String taskName = null;
+        if (runnable instanceof DtpRunnable) {
             val dtpRunnable = (DtpRunnable) runnable;
             dtpRunnable.cancelQueueTimeoutTask();
-            DtpExecutor dtpExecutor = (DtpExecutor) executor;
-            dtpExecutor.incRejectCount(1);
-            AlarmManager.doAlarmAsync(dtpExecutor, REJECT);
-            log.warn("DynamicTp execute, thread pool is exhausted, tpName: {}, taskName: {}, traceId: {}, " +
-                            "poolSize: {} (active: {}, core: {}, max: {}, largest: {}), " +
-                            "task: {} (completed: {}), queueCapacity: {}, (currSize: {}, remaining: {}), " +
-                            "executorStatus: (isShutdown: {}, isTerminated: {}, isTerminating: {})",
-                    dtpExecutor.getThreadPoolName(), dtpRunnable.getTaskName(), MDC.get(TRACE_ID), executor.getPoolSize(),
-                    executor.getActiveCount(), executor.getCorePoolSize(), executor.getMaximumPoolSize(),
-                    executor.getLargestPoolSize(), executor.getTaskCount(), executor.getCompletedTaskCount(),
-                    dtpExecutor.getQueueCapacity(), dtpExecutor.getQueue().size(), executor.getQueue().remainingCapacity(),
-                    executor.isShutdown(), executor.isTerminated(), executor.isTerminating());
+            taskName = dtpRunnable.getTaskName();
         }
+        DtpExecutor dtpExecutor = (DtpExecutor) executor;
+        dtpExecutor.incRejectCount(1);
+        AlarmManager.doAlarmAsync(dtpExecutor, REJECT);
+        log.warn("DynamicTp execute, thread pool is exhausted, tpName: {}, taskName: {}, traceId: {}, " +
+                        "poolSize: {} (active: {}, core: {}, max: {}, largest: {}), " +
+                        "task: {} (completed: {}), queueCapacity: {}, (currSize: {}, remaining: {}), " +
+                        "executorStatus: (isShutdown: {}, isTerminated: {}, isTerminating: {})",
+                dtpExecutor.getThreadPoolName(), taskName, MDC.get(TRACE_ID), executor.getPoolSize(),
+                executor.getActiveCount(), executor.getCorePoolSize(), executor.getMaximumPoolSize(),
+                executor.getLargestPoolSize(), executor.getTaskCount(), executor.getCompletedTaskCount(),
+                dtpExecutor.getQueueCapacity(), dtpExecutor.getQueue().size(), executor.getQueue().remainingCapacity(),
+                executor.isShutdown(), executor.isTerminated(), executor.isTerminating());
     }
 }

@@ -17,6 +17,9 @@
 
 package org.dromara.dynamictp.core.thread;
 
+import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
@@ -26,21 +29,11 @@ import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
 import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
-import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.MDC;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.LongAdder;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
@@ -197,15 +190,19 @@ public class DtpExecutor extends ThreadPoolExecutor
     @Override
     protected void beforeExecute(Thread t, Runnable r) {
         super.beforeExecute(t, r);
-        DtpRunnable runnable = (DtpRunnable) r;
-        runnable.cancelQueueTimeoutTask();
-        runnable.startRunTimeoutTask(this, t);
+        if (r instanceof DtpRunnable) {
+            DtpRunnable runnable = (DtpRunnable) r;
+            runnable.cancelQueueTimeoutTask();
+            runnable.startRunTimeoutTask(this, t);
+        }
     }
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
-        ((DtpRunnable) r).cancelRunTimeoutTask();
+        if (r instanceof DtpRunnable) {
+            ((DtpRunnable) r).cancelRunTimeoutTask();
+        }
         tryPrintError(r, t);
         clearContext();
     }

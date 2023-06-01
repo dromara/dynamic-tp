@@ -29,8 +29,8 @@ import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.thread.NamedThreadFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
@@ -46,7 +46,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTI
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpMonitor implements ApplicationRunner {
+public class DtpMonitor implements ApplicationListener<ContextRefreshedEvent> {
 
     private static final ScheduledExecutorService MONITOR_EXECUTOR = new ScheduledThreadPoolExecutor(
             1, new NamedThreadFactory("dtp-monitor", true));
@@ -58,7 +58,7 @@ public class DtpMonitor implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) {
+    public void onApplicationEvent(ContextRefreshedEvent event) {
         MONITOR_EXECUTOR.scheduleWithFixedDelay(this::run,
                 0, dtpProperties.getMonitorInterval(), TimeUnit.SECONDS);
     }

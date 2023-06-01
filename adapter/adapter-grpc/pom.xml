@@ -17,8 +17,13 @@
         </dependency>
 
         <dependency>
-            <groupId>net.devh</groupId>
-            <artifactId>grpc-server-spring-boot-starter</artifactId>
+            <groupId>org.dromara.dynamictp</groupId>
+            <artifactId>dynamic-tp-jvmti</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-core</artifactId>
             <optional>true</optional>
         </dependency>
     </dependencies>

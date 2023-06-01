@@ -28,7 +28,8 @@
         <apache-dubbo.version>3.0.7</apache-dubbo.version>
         <alibaba-dubbo.version>2.6.0</alibaba-dubbo.version>
         <alibaba-dubbo-starter.version>2.0.0</alibaba-dubbo-starter.version>
-        <grpc.version>2.13.1.RELEASE</grpc.version>
+        <grpc.version>1.42.2</grpc.version>
+        <grpc-starter.version>2.13.1.RELEASE</grpc-starter.version>
         <hystrix.version>1.5.18</hystrix.version>
         <motan.version>1.2.0</motan.version>
         <okhttp.version>3.14.9</okhttp.version>
@@ -92,9 +93,15 @@
             </dependency>
 
             <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-core</artifactId>
+                <version>${grpc.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>net.devh</groupId>
                 <artifactId>grpc-server-spring-boot-starter</artifactId>
-                <version>${grpc.version}</version>
+                <version>${grpc-starter.version}</version>
             </dependency>
 
             <dependency>

@@ -41,7 +41,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * HystrixDtpAdapter related
- * fixme not work well after change base event.
  *
  * @author yanhom
  * @since 1.0.6

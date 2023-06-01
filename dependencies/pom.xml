@@ -33,7 +33,8 @@
         <hystrix.version>1.5.18</hystrix.version>
         <motan.version>1.2.0</motan.version>
         <okhttp.version>3.14.9</okhttp.version>
-        <rocketmq.version>2.2.2</rocketmq.version>
+        <rocketmq-starter.version>2.2.2</rocketmq-starter.version>
+        <rocketmq.version>4.9.3</rocketmq.version>
         <!--until 2023-04-06 latest state version-->
         <aliyun-rocketmq.version>1.8.8.8.Final</aliyun-rocketmq.version>
         <tars.version>1.7.2</tars.version>
@@ -167,6 +168,12 @@
             <dependency>
                 <groupId>org.apache.rocketmq</groupId>
                 <artifactId>rocketmq-spring-boot-starter</artifactId>
+                <version>${rocketmq-starter.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-client</artifactId>
                 <version>${rocketmq.version}</version>
             </dependency>
 

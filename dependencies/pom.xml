@@ -28,7 +28,7 @@
         <apache-dubbo.version>3.0.7</apache-dubbo.version>
         <alibaba-dubbo.version>2.6.0</alibaba-dubbo.version>
         <alibaba-dubbo-starter.version>2.0.0</alibaba-dubbo-starter.version>
-        <grpc.version>1.42.2</grpc.version>
+        <grpc.version>1.33.1</grpc.version>
         <grpc-starter.version>2.13.1.RELEASE</grpc-starter.version>
         <hystrix.version>1.5.18</hystrix.version>
         <motan.version>1.2.0</motan.version>

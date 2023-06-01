@@ -9,10 +9,16 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-example-adapter-dubbo</artifactId>
+    <packaging>pom</packaging>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
+
+    <modules>
+        <module>example-adapter-apache-dubbo</module>
+        <module>example-adapter-alibaba-dubbo</module>
+    </modules>
 
     <dependencies>
         <dependency>
@@ -29,12 +35,6 @@
             <groupId>org.dromara.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-adapter-dubbo</artifactId>
             <version>${revision}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.dubbo</groupId>
-            <artifactId>dubbo-spring-boot-starter</artifactId>
-            <version>3.0.7</version>
         </dependency>
     </dependencies>
 </project>

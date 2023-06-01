@@ -17,7 +17,9 @@
 
 package org.dromara.dynamictp.adapter.dubbo.apache;
 
+import org.apache.dubbo.config.spring.context.event.ServiceBeanExportedEvent;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.ApplicationContextHolder;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
@@ -30,6 +32,8 @@ import org.apache.dubbo.common.store.DataStore;
 import org.apache.dubbo.common.threadpool.manager.DefaultExecutorRepository;
 import org.apache.dubbo.common.threadpool.manager.ExecutorRepository;
 import org.apache.dubbo.rpc.model.ApplicationModel;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.core.ResolvableType;
 
 import java.util.Map;
 import java.util.Objects;
@@ -50,7 +54,29 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
     private static final String NAME = "dubboTp";
 
     private static final String EXECUTOR_SERVICE_COMPONENT_KEY = ExecutorService.class.getName();
-
+    
+    @Override
+    public boolean supportsEventType(ResolvableType resolvableType) {
+        Class<?> type = resolvableType.getRawClass();
+        if (type != null) {
+            return ServiceBeanExportedEvent.class.isAssignableFrom(type);
+        }
+        return false;
+    }
+    
+    @Override
+    public void onApplicationEvent(ApplicationEvent event) {
+        if (event instanceof ServiceBeanExportedEvent) {
+            try {
+                DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+                initialize();
+                refresh(dtpProperties);
+            } catch (Exception e) {
+                log.error("Init third party thread pool failed.", e);
+            }
+        }
+    }
+    
     @Override
     public void refresh(DtpProperties dtpProperties) {
         refresh(NAME, dtpProperties.getDubboTp(), dtpProperties.getPlatforms());
@@ -61,6 +87,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
         super.initialize();
         String currVersion = Version.getVersion();
         if (DubboVersion.compare(DubboVersion.VERSION_2_7_5, currVersion) > 0) {
+            // 当前dubbo版本 < 2.7.5
             DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
             if (Objects.isNull(dataStore)) {
                 return;
@@ -75,8 +102,10 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
 
         ExecutorRepository executorRepository;
         if (DubboVersion.compare(currVersion, DubboVersion.VERSION_3_0_3) >= 0) {
+            // 当前dubbo版本 >= 3.0.3
             executorRepository = ApplicationModel.defaultModel().getExtensionLoader(ExecutorRepository.class).getDefaultExtension();
         } else {
+            // 2.7.5 <= 当前dubbo版本 < 3.0.3
             executorRepository = ExtensionLoader.getExtensionLoader(ExecutorRepository.class).getDefaultExtension();
         }
 

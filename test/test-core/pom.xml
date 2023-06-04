@@ -13,7 +13,7 @@
     <dependencies>
         <dependency>
             <groupId>org.dromara.dynamictp</groupId>
-            <artifactId>dynamic-tp-spring-boot-starter-adapter-common</artifactId>
+            <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

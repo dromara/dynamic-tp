@@ -10,6 +10,10 @@
     </parent>
     <artifactId>dynamic-tp-adapter-grpc</artifactId>
 
+    <properties>
+        <grpc.version>1.36.0</grpc.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.dromara.dynamictp</groupId>
@@ -24,8 +28,10 @@
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-core</artifactId>
+            <version>${grpc.version}</version>
             <optional>true</optional>
         </dependency>
+
     </dependencies>
 
 </project>

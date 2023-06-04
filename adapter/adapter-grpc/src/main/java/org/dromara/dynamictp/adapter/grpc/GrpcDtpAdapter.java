@@ -17,16 +17,17 @@
 
 package org.dromara.dynamictp.adapter.grpc;
 
+import io.grpc.inprocess.InProcessSocketAddress;
 import io.grpc.internal.InternalServer;
-import org.apache.commons.lang3.ArrayUtils;
-import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.jvmti.JVMTI;
 import io.grpc.internal.ServerImpl;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
+import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.jvmti.JVMTI;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -64,20 +65,21 @@ public class GrpcDtpAdapter extends AbstractDtpAdapter {
         }
         for (val serverImpl : beans) {
             val internalServer = (InternalServer) ReflectionUtil.getFieldValue(ServerImpl.class, SERVER_FIELD, serverImpl);
-            int port = Optional.ofNullable(internalServer)
+            String key = Optional.ofNullable(internalServer)
                     .map(server -> {
                         final SocketAddress address = server.getListenSocketAddress();
                         if (address instanceof InetSocketAddress) {
-                            return ((InetSocketAddress) address).getPort();
+                            return String.valueOf(((InetSocketAddress) address).getPort());
+                        } else if (address instanceof InProcessSocketAddress) {
+                            return ((InProcessSocketAddress) address).getName();
                         }
-                        return -1;
-                    })
-                    .orElse(-1);
-            if (port < 0) {
+                        return null;
+                    }).orElse(null);
+            if (Objects.isNull(key)) {
                 return;
             }
             val executor = (Executor) ReflectionUtil.getFieldValue(ServerImpl.class, EXECUTOR_FIELD, serverImpl);
-            String tpName = genTpName(port);
+            String tpName = genTpName(key);
             if (Objects.nonNull(executor)) {
                 val executorWrapper = new ExecutorWrapper(tpName, executor);
                 initNotifyItems(tpName, executorWrapper);
@@ -87,7 +89,7 @@ public class GrpcDtpAdapter extends AbstractDtpAdapter {
         log.info("DynamicTp adapter, grpc server executors init end, executors: {}", executors);
     }
 
-    private String genTpName(int port) {
-        return NAME + "#" + port;
+    private String genTpName(String key) {
+        return NAME + "#" + key;
     }
 }

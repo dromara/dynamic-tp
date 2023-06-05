@@ -21,6 +21,7 @@ import org.dromara.dynamictp.adapter.grpc.GrpcDtpAdapter;
 import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +33,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 1.0.9
  */
 @Configuration
+@ConditionalOnClass(name = "io.grpc.internal.ServerImpl")
 @ConditionalOnBean({DtpBaseBeanConfiguration.class})
 @AutoConfigureAfter({DtpBaseBeanConfiguration.class})
 @SuppressWarnings("all")

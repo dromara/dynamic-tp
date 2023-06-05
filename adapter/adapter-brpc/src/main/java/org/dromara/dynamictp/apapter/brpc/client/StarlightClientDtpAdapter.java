@@ -57,11 +57,7 @@ public class StarlightClientDtpAdapter extends AbstractDtpAdapter {
         super.initialize();
 
         List<StarlightClient> starlightClients = Lists.newArrayList();
-        try {
-            starlightClients.addAll(Arrays.asList(JVMTI.getInstances(StarlightClient.class)));
-        } catch (Throwable e) {
-            log.warn("getBean error, msg: {}", e.getMessage());
-        }
+        starlightClients.addAll(Arrays.asList(JVMTI.getInstances(StarlightClient.class)));
         if (CollectionUtils.isEmpty(starlightClients)) {
             log.warn("Cannot find beans of type StarlightClient.");
             return;

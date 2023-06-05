@@ -17,9 +17,9 @@
 
 package org.dromara.dynamictp.starter.cloud.huawei.refresher;
 
-import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import com.huaweicloud.common.event.ConfigRefreshEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.SmartApplicationListener;
 import org.springframework.lang.NonNull;
@@ -39,7 +39,7 @@ public class CloudHuaweiRefresher extends AbstractRefresher implements SmartAppl
     public void onApplicationEvent(@NonNull ApplicationEvent event) {
         // huawei config define RefreshEvent
         if (event instanceof ConfigRefreshEvent) {
-            doRefresh(dtpProperties);
+            refresh(environment);
         }
     }
 }

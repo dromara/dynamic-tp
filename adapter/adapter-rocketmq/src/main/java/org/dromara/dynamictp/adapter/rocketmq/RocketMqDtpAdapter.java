@@ -17,19 +17,19 @@
 
 package org.dromara.dynamictp.adapter.rocketmq;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.impl.consumer.ConsumeMessageConcurrentlyService;
 import org.apache.rocketmq.client.impl.consumer.ConsumeMessageOrderlyService;
 import org.apache.rocketmq.client.impl.consumer.DefaultMQPushConsumerImpl;
 import org.apache.rocketmq.client.impl.producer.DefaultMQProducerImpl;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
+import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.jvmti.JVMTI;
 
 import java.util.Objects;

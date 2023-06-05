@@ -53,7 +53,7 @@ public class BinderHelper {
     }
     
     public static void bindDtpProperties(Map<?, Object> properties, DtpProperties dtpProperties) {
-        final PropertiesBinder binder = BinderHelper.getBinder();
+        final PropertiesBinder binder = getBinder();
         if (Objects.isNull(binder)) {
             return;
         }
@@ -61,7 +61,7 @@ public class BinderHelper {
     }
     
     public static void bindDtpProperties(Environment environment, DtpProperties dtpProperties) {
-        final PropertiesBinder binder = BinderHelper.getBinder();
+        final PropertiesBinder binder = getBinder();
         if (Objects.isNull(binder)) {
             return;
         }

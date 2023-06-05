@@ -28,7 +28,6 @@
         <dependency>
             <groupId>org.dromara.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-adapter-rocketmq</artifactId>
-            <version>${revision}</version>
         </dependency>
 
         <dependency>

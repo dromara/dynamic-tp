@@ -28,6 +28,8 @@ import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.handler.ConfigHandler;
 import org.dromara.dynamictp.core.support.BinderHelper;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.Environment;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -41,10 +43,17 @@ import java.util.Objects;
  * @since 1.0.0
  **/
 @Slf4j
-public abstract class AbstractRefresher implements Refresher {
+public abstract class AbstractRefresher implements Refresher, EnvironmentAware {
 
     @Resource
     protected DtpProperties dtpProperties;
+
+    protected Environment environment;
+
+    @Override
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
 
     @Override
     public void refresh(String content, ConfigFileTypeEnum fileType) {
@@ -57,18 +66,23 @@ public abstract class AbstractRefresher implements Refresher {
         try {
             val configHandler = ConfigHandler.getInstance();
             val properties = configHandler.parseConfig(content, fileType);
-            doRefresh(properties);
+            refresh(properties);
         } catch (IOException e) {
             log.error("DynamicTp refresh error, content: {}, fileType: {}", content, fileType, e);
         }
     }
 
-    protected void doRefresh(Map<Object, Object> properties) {
+    protected void refresh(Map<Object, Object> properties) {
         if (MapUtils.isEmpty(properties)) {
             log.warn("DynamicTp refresh, empty properties.");
             return;
         }
         BinderHelper.bindDtpProperties(properties, dtpProperties);
+        doRefresh(dtpProperties);
+    }
+
+    protected void refresh(Environment environment) {
+        BinderHelper.bindDtpProperties(environment, dtpProperties);
         doRefresh(dtpProperties);
     }
 

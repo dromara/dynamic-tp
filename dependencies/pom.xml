@@ -327,12 +327,6 @@
 
             <dependency>
                 <groupId>org.dromara.dynamictp</groupId>
-                <artifactId>dynamic-tp-adapter-webserver</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.dromara.dynamictp</groupId>
                 <artifactId>dynamic-tp-adapter-dubbo</artifactId>
                 <version>${revision}</version>
             </dependency>

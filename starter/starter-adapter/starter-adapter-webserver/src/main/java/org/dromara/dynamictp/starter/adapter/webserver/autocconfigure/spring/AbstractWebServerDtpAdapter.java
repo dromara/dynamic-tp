@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.adapter.webserver;
+package org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;

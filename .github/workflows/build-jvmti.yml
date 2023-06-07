@@ -14,12 +14,12 @@ jobs:
           distribution: 'adopt'
       - name: Build with Maven
         run: |
-          cd ${{ github.workspace }}/jvmti
+          cd ${{ github.workspace }}/jvmti/jvmti-build
           mvn package
       - uses: actions/upload-artifact@v2
         with:
           name: lib
-          path: jvmti/target/classes/lib*
+          path: jvmti/jvmti-build/target/classes/lib*
           if-no-files-found: error
 
   mac:
@@ -33,12 +33,12 @@ jobs:
           distribution: 'adopt'
       - name: Build with Maven
         run: |
-          cd ${{ github.workspace }}/jvmti
+          cd ${{ github.workspace }}/jvmti/jvmti-build
           mvn package
       - uses: actions/upload-artifact@v2
         with:
           name: lib
-          path: jvmti/target/classes/lib*
+          path: jvmti/jvmti-build/target/classes/lib*
           if-no-files-found: error
 
   windows:
@@ -52,10 +52,10 @@ jobs:
           distribution: 'adopt'
       - name: Build with Maven
         run: |
-          cd ${{ github.workspace }}/jvmti
+          cd ${{ github.workspace }}/jvmti/jvmti-build
           mvn package
       - uses: actions/upload-artifact@v2
         with:
           name: lib
-          path: jvmti/target/classes/*.dll
+          path: jvmti/jvmti-build/target/classes/*.dll
           if-no-files-found: error

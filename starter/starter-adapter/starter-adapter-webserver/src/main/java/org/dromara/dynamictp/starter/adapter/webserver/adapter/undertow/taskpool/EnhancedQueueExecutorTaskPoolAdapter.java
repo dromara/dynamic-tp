@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.undertow.taskpool;
+package org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow.taskpool;
 
-import org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.undertow.UndertowTaskPoolEnum;
+import org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow.UndertowTaskPoolEnum;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.jboss.threads.EnhancedQueueExecutor;
 

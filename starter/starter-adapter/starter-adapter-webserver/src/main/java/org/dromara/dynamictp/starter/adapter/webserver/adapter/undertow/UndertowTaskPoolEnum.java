@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.undertow;
+package org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow;
 
 import lombok.Getter;
 

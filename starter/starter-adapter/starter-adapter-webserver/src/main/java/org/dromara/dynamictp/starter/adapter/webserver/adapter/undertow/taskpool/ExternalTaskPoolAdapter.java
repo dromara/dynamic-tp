@@ -15,15 +15,13 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.undertow.taskpool;
+package org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow.taskpool;
 
-import org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.undertow.TaskPoolHandlerFactory;
-import org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.undertow.UndertowTaskPoolEnum;
+import org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow.TaskPoolHandlerFactory;
+import org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow.UndertowTaskPoolEnum;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import lombok.val;
-
-import static org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.undertow.UndertowTaskPoolEnum.EXTERNAL_TASK_POOL;
 
 /**
  * ExternalTaskPoolHandler related
@@ -35,7 +33,7 @@ public class ExternalTaskPoolAdapter implements TaskPoolAdapter {
 
     @Override
     public UndertowTaskPoolEnum taskPoolType() {
-        return EXTERNAL_TASK_POOL;
+        return UndertowTaskPoolEnum.EXTERNAL_TASK_POOL;
     }
 
     @Override

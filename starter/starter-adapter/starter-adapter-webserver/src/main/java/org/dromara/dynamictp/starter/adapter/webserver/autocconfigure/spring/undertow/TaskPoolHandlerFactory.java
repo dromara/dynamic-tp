@@ -15,21 +15,21 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.adapter.webserver.undertow;
+package org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.undertow;
 
-import org.dromara.dynamictp.adapter.webserver.undertow.taskpool.EnhancedQueueExecutorTaskPoolAdapter;
-import org.dromara.dynamictp.adapter.webserver.undertow.taskpool.ExecutorServiceTaskPoolAdapter;
-import org.dromara.dynamictp.adapter.webserver.undertow.taskpool.ExternalTaskPoolAdapter;
-import org.dromara.dynamictp.adapter.webserver.undertow.taskpool.TaskPoolAdapter;
-import org.dromara.dynamictp.adapter.webserver.undertow.taskpool.ThreadPoolExecutorTaskPoolAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.undertow.taskpool.EnhancedQueueExecutorTaskPoolAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.undertow.taskpool.ExecutorServiceTaskPoolAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.undertow.taskpool.ExternalTaskPoolAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.undertow.taskpool.TaskPoolAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.undertow.taskpool.ThreadPoolExecutorTaskPoolAdapter;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.dromara.dynamictp.adapter.webserver.undertow.UndertowTaskPoolEnum.ENHANCED_QUEUE_EXECUTOR_TASK_POOL;
-import static org.dromara.dynamictp.adapter.webserver.undertow.UndertowTaskPoolEnum.EXECUTOR_SERVICE_TASK_POOL;
-import static org.dromara.dynamictp.adapter.webserver.undertow.UndertowTaskPoolEnum.EXTERNAL_TASK_POOL;
-import static org.dromara.dynamictp.adapter.webserver.undertow.UndertowTaskPoolEnum.THREAD_POOL_EXECUTOR_TASK_POOL;
+import static org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.undertow.UndertowTaskPoolEnum.ENHANCED_QUEUE_EXECUTOR_TASK_POOL;
+import static org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.undertow.UndertowTaskPoolEnum.EXECUTOR_SERVICE_TASK_POOL;
+import static org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.undertow.UndertowTaskPoolEnum.EXTERNAL_TASK_POOL;
+import static org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.undertow.UndertowTaskPoolEnum.THREAD_POOL_EXECUTOR_TASK_POOL;
 
 /**
  * TaskPoolHandlerFactory related

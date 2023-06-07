@@ -17,9 +17,9 @@
 
 package org.dromara.dynamictp.starter.adapter.webserver.autocconfigure;
 
-import org.dromara.dynamictp.adapter.webserver.JettyDtpAdapter;
-import org.dromara.dynamictp.adapter.webserver.TomcatDtpAdapter;
-import org.dromara.dynamictp.adapter.webserver.undertow.UndertowDtpAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.JettyDtpAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.TomcatDtpAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.spring.undertow.UndertowDtpAdapter;
 import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
 import org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.condition.ConditionalOnJettyWebServer;
 import org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.condition.ConditionalOnTomcatWebServer;

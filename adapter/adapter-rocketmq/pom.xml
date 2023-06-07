@@ -18,7 +18,7 @@
 
         <dependency>
             <groupId>org.dromara.dynamictp</groupId>
-            <artifactId>dynamic-tp-jvmti</artifactId>
+            <artifactId>dynamic-tp-jvmti-runtime</artifactId>
         </dependency>
 
         <dependency>

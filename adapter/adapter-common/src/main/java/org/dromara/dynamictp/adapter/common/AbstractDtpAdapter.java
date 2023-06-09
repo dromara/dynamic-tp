@@ -39,11 +39,8 @@ import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.GenericApplicationListener;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.Ordered;
-import org.springframework.core.ResolvableType;
 
 import java.util.Collections;
 import java.util.List;
@@ -63,43 +60,26 @@ import static java.util.stream.Collectors.toList;
  * @since 1.0.6
  */
 @Slf4j
-public abstract class AbstractDtpAdapter implements DtpAdapter, GenericApplicationListener {
+public abstract class AbstractDtpAdapter implements DtpAdapter, Ordered, InitializingBean {
 
     private static final Equator EQUATOR = new GetterBaseEquator();
 
     protected final Map<String, ExecutorWrapper> executors = Maps.newHashMap();
 
     @Override
-    public int getOrder() {
+    public final int getOrder() {
         //Compatible with Spring4.x
         return Ordered.LOWEST_PRECEDENCE;
     }
     
     @Override
-    public boolean supportsSourceType(Class<?> sourceType) {
-        //Compatible with Spring4.x
-        return true;
-    }
-    
-    @Override
-    public boolean supportsEventType(ResolvableType resolvableType) {
-        Class<?> type = resolvableType.getRawClass();
-        if (type != null) {
-            return ContextRefreshedEvent.class.isAssignableFrom(type);
-        }
-        return false;
-    }
-
-    @Override
-    public void onApplicationEvent(ApplicationEvent event) {
-        if (event instanceof ContextRefreshedEvent) {
-            try {
-                DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-                initialize();
-                refresh(dtpProperties);
-            } catch (Exception e) {
-                log.error("Init third party thread pool failed.", e);
-            }
+    public void afterPropertiesSet() throws Exception {
+        try {
+            DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+            initialize();
+            refresh(dtpProperties);
+        } catch (Exception e) {
+            log.error("Init third party thread pool failed.", e);
         }
     }
 

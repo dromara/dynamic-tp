@@ -26,7 +26,6 @@ import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.MapUtils;
-import org.springframework.beans.factory.InitializingBean;
 
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -43,7 +42,7 @@ import static com.alibaba.dubbo.common.Constants.EXECUTOR_SERVICE_COMPONENT_KEY;
  */
 @Slf4j
 @SuppressWarnings("all")
-public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements InitializingBean {
+public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter {
 
     private static final String NAME = "dubboTp";
     

@@ -82,17 +82,19 @@ public class AliyunOnsRocketMqAdapter extends AbstractDtpAdapter {
             return;
         }
         // consumer bean name replace topic name
-        String cusKey = defaultMqPushConsumer.getConsumerGroup() + "#" + k;
+        String cusKey = defaultMqPushConsumer.getConsumerGroup();
         ThreadPoolExecutor executor = null;
         val consumeMessageService = impl.getConsumeMessageService();
         if (consumeMessageService instanceof ConsumeMessageConcurrentlyService) {
             executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(
                     ConsumeMessageConcurrentlyService.class,
                     CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
+            cusKey = NAME + "#consumer#concurrently#" + cusKey;
         } else if (consumeMessageService instanceof ConsumeMessageOrderlyService) {
             executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(
                     ConsumeMessageOrderlyService.class,
                     CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
+            cusKey = NAME + "#consumer#orderly#" + cusKey;
         }
         if (Objects.nonNull(executor)) {
             val executorWrapper = new ExecutorWrapper(cusKey, executor);

@@ -17,7 +17,7 @@
 
 package org.dromara.dynamictp.core.spring;
 
-import org.dromara.dynamictp.common.ApplicationContextHolder;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.DeferredImportSelector;

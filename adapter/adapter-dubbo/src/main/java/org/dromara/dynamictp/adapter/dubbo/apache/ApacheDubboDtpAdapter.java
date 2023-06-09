@@ -17,12 +17,6 @@
 
 package org.dromara.dynamictp.adapter.dubbo.apache;
 
-import org.apache.dubbo.config.spring.context.event.ServiceBeanExportedEvent;
-import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.common.ApplicationContextHolder;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.util.ReflectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.MapUtils;
@@ -31,9 +25,14 @@ import org.apache.dubbo.common.extension.ExtensionLoader;
 import org.apache.dubbo.common.store.DataStore;
 import org.apache.dubbo.common.threadpool.manager.DefaultExecutorRepository;
 import org.apache.dubbo.common.threadpool.manager.ExecutorRepository;
+import org.apache.dubbo.config.spring.context.event.ServiceBeanExportedEvent;
 import org.apache.dubbo.rpc.model.ApplicationModel;
+import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.springframework.context.ApplicationEvent;
-import org.springframework.core.ResolvableType;
 
 import java.util.Map;
 import java.util.Objects;
@@ -54,15 +53,6 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
     private static final String NAME = "dubboTp";
 
     private static final String EXECUTOR_SERVICE_COMPONENT_KEY = ExecutorService.class.getName();
-    
-    @Override
-    public boolean supportsEventType(ResolvableType resolvableType) {
-        Class<?> type = resolvableType.getRawClass();
-        if (type != null) {
-            return ServiceBeanExportedEvent.class.isAssignableFrom(type);
-        }
-        return false;
-    }
     
     @Override
     public void onApplicationEvent(ApplicationEvent event) {

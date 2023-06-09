@@ -17,7 +17,7 @@
 
 package org.dromara.dynamictp.core.notifier.manager;
 
-import org.dromara.dynamictp.common.ApplicationContextHolder;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.em.NotifyTypeEnum;
 import org.dromara.dynamictp.common.pattern.filter.Filter;
 import org.dromara.dynamictp.common.pattern.filter.InvokerChain;

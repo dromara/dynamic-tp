@@ -19,8 +19,8 @@ package org.dromara.dynamictp.starter.adapter.webserver.adapter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.common.ApplicationContextHolder;
 import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.springframework.boot.web.context.WebServerApplicationContext;
@@ -28,7 +28,7 @@ import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.boot.web.server.WebServer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
-import org.springframework.core.ResolvableType;
+import org.springframework.context.ApplicationListener;
 
 import java.util.concurrent.Executor;
 
@@ -40,16 +40,8 @@ import java.util.concurrent.Executor;
  * @since 1.0.0
  */
 @Slf4j
-public abstract class AbstractWebServerDtpAdapter<A extends Executor> extends AbstractDtpAdapter {
-
-    @Override
-    public boolean supportsEventType(ResolvableType resolvableType) {
-        Class<?> type = resolvableType.getRawClass();
-        if (type != null) {
-            return WebServerInitializedEvent.class.isAssignableFrom(type);
-        }
-        return false;
-    }
+public abstract class AbstractWebServerDtpAdapter<A extends Executor> extends AbstractDtpAdapter
+        implements ApplicationListener<ApplicationEvent> {
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {

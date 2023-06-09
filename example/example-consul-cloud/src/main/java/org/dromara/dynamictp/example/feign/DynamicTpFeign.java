@@ -15,22 +15,24 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.example;
+package org.dromara.dynamictp.example.feign;
 
-import org.dromara.dynamictp.core.spring.EnableDynamicTp;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
- * @author Redick01
- */
-@EnableDynamicTp
-@EnableFeignClients
-@SpringBootApplication
-public class CloudConsulExampleApplication {
+ * DynamicTpFeign related
+ *
+ * @author yanhom
+ * @since 1.0.0
+ **/
+@FeignClient(name = "dynamicTpFeign", url = "https://dynamictp.cn")
+public interface DynamicTpFeign {
 
-    public static void main(String[] args) {
-        SpringApplication.run(CloudConsulExampleApplication.class, args);
-    }
+    /**
+     * test
+     * @return result
+     */
+    @GetMapping(value = "/guide/use/quick-start.html")
+    String test();
 }

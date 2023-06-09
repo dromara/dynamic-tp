@@ -21,7 +21,7 @@ import cn.hutool.core.io.FileUtil;
 import com.google.common.collect.Lists;
 import lombok.val;
 import org.apache.commons.collections4.MapUtils;
-import org.dromara.dynamictp.common.ApplicationContextHolder;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.entity.JvmStats;
 import org.dromara.dynamictp.common.entity.Metrics;
 import org.dromara.dynamictp.core.DtpRegistry;

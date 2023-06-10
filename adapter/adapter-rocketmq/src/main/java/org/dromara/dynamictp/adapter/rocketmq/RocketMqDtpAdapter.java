@@ -76,7 +76,7 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
             val pushConsumer = (DefaultMQPushConsumerImpl) ReflectionUtil.getFieldValue(DefaultMQPushConsumer.class,
                     "defaultMQPushConsumerImpl", consumer);
             if (Objects.isNull(pushConsumer)) {
-                return;
+                continue;
             }
 
             String cusKey = consumer.getConsumerGroup();
@@ -110,7 +110,7 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
             val producer = (DefaultMQProducerImpl) ReflectionUtil.getFieldValue(DefaultMQProducer.class,
                     "defaultMQProducerImpl", defaultMQProducer);
             if (Objects.isNull(producer)) {
-                return;
+                continue;
             }
 
             String proKey = NAME + "#producer#" + defaultMQProducer.getProducerGroup();

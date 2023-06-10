@@ -1,0 +1,39 @@
+package org.dromara.dynamictp.core.plugin;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+/**
+ * @author windsearcher.lq
+ * @since  2023/6/9 21:18
+ */
+public class DtpInvocation {
+
+    private Object target;
+
+    private Method method;
+
+    private Object[] args;
+
+    public DtpInvocation(Object target, Method method, Object[] args) {
+        this.target = target;
+        this.method = method;
+        this.args = args;
+    }
+
+    public Object getTarget() {
+        return target;
+    }
+
+    public Method getMethod() {
+        return method;
+    }
+
+    public Object[] getArgs() {
+        return args;
+    }
+
+    public Object proceed() throws InvocationTargetException, IllegalAccessException {
+        return method.invoke(target, args);
+    }
+}

@@ -62,4 +62,15 @@ public final class ReflectionUtil {
         ReflectionUtils.makeAccessible(field);
         return field;
     }
+
+    public static Object resolveObject(String path) {
+        if (path == null) {
+            return null;
+        }
+        try {
+            return Class.forName(path).newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("Error resolving object. Cause: " + e, e);
+        }
+    }
 }

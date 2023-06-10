@@ -61,8 +61,11 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
         if (!(bean instanceof ThreadPoolExecutor) && !(bean instanceof ThreadPoolTaskExecutor)) {
             return bean;
         }
+        // 在这里对所有我们需要代理的bean进行，当然这种方式适合代理加载到IOC的bean
         if (bean instanceof DtpExecutor) {
             // register DtpExecutor
+            // 按照注解上的class，对相应的类进行代理，目前先仅支持DtpExecutor
+            bean = DtpRegistry.pluginAll(bean);
             registerDtp(bean);
         } else {
             // register ThreadPoolExecutor or ThreadPoolTaskExecutor

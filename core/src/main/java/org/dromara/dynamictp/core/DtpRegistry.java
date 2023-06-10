@@ -35,6 +35,7 @@ import org.dromara.dynamictp.common.util.StreamUtil;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.core.notifier.manager.NoticeManager;
 import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
+import org.dromara.dynamictp.core.plugin.DtpExtension;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
@@ -44,11 +45,7 @@ import org.dromara.dynamictp.core.thread.DtpExecutor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
@@ -69,6 +66,8 @@ public class DtpRegistry implements ApplicationRunner {
      * Maintain all automatically registered and manually registered Executors(DtpExecutors and JUC ThreadPoolExecutors).
      */
     private static final Map<String, ExecutorWrapper> EXECUTOR_REGISTRY = new ConcurrentHashMap<>();
+
+    private static final List<DtpExtension> EXTENSIONS = new ArrayList<>();
 
     /**
      * equator for comparing two TpMainFields
@@ -114,6 +113,22 @@ public class DtpRegistry implements ApplicationRunner {
         EXECUTOR_REGISTRY.putIfAbsent(wrapper.getThreadPoolName(), wrapper);
     }
 
+    public static void registerExtension(DtpExtension dtpExtension) {
+        log.info("DynamicTp register dtpExtension: {}", dtpExtension);
+        EXTENSIONS.add(dtpExtension);
+    }
+
+    public static List<DtpExtension> getExtensions() {
+        return EXTENSIONS;
+    }
+
+    public static Object pluginAll(Object target) {
+        for (DtpExtension dtpExtension : EXTENSIONS) {
+            // 构建被代理类的代理类
+            target = dtpExtension.plugin(target);
+        }
+        return target;
+    }
     /**
      * Get Dynamic ThreadPoolExecutor by thread pool name.
      *
@@ -186,6 +201,7 @@ public class DtpRegistry implements ApplicationRunner {
     private static void refresh(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
         if (props.coreParamIsInValid()) {
             log.error("DynamicTp refresh, invalid parameters exist, properties: {}", props);
+            // TODO 对于error日志如何处理
             return;
         }
         TpMainFields oldFields = ExecutorConverter.toMainFields(executorWrapper);

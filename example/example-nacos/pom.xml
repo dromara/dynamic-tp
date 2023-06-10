@@ -62,11 +62,16 @@
             <version>${revision}</version>
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>org.dromara.dynamictp</groupId>-->
+<!--            <artifactId>dynamic-tp-spring-boot-starter-extension-limiter-redis</artifactId>-->
+<!--            <version>${revision}</version>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>org.dromara.dynamictp</groupId>
-            <artifactId>dynamic-tp-spring-boot-starter-extension-limiter-redis</artifactId>
-            <version>${revision}</version>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
+
     </dependencies>
 
 </project>

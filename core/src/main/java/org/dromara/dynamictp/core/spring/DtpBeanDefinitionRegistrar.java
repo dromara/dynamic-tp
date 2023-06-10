@@ -18,8 +18,13 @@
 package org.dromara.dynamictp.core.spring;
 
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
+import org.dromara.dynamictp.common.entity.DtpExtensionProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.BeanUtil;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.common.util.StringUtil;
+import org.dromara.dynamictp.core.DtpRegistry;
+import org.dromara.dynamictp.core.plugin.DtpExtension;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.ExecutorType;
 import org.dromara.dynamictp.core.support.TaskQueue;
@@ -36,6 +41,7 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
@@ -77,6 +83,15 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         DtpProperties dtpProperties = new DtpProperties();
         PropertiesBinder.bindDtpProperties(environment, dtpProperties);
         val executors = dtpProperties.getExecutors();
+        List<DtpExtensionProps> extensions = dtpProperties.getExtensions();
+        for (DtpExtensionProps extension : extensions) {
+            if (StringUtil.isEmpty(extension.getExtensionPath())) {
+                log.warn("DynamicTp registrar, no extension is configured.");
+                continue;
+            }
+            DtpExtension dtpExtension = (DtpExtension) ReflectionUtil.resolveObject(extension.getExtensionPath());
+            DtpRegistry.registerExtension(dtpExtension);
+        }
         if (CollectionUtils.isEmpty(executors)) {
             log.warn("DynamicTp registrar, no executors are configured.");
             return;

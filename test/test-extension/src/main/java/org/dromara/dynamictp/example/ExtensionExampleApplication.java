@@ -26,9 +26,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @EnableDynamicTp
 @SpringBootApplication
-public class NacosExampleApplication {
+public class ExtensionExampleApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(NacosExampleApplication.class, args);
+        SpringApplication.run(ExtensionExampleApplication.class, args);
     }
 }

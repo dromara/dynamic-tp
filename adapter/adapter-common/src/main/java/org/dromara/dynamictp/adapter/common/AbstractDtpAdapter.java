@@ -72,7 +72,7 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
             DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
             initialize();
             refresh(dtpProperties);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error("Init third party thread pool failed.", e);
         }
     }

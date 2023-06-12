@@ -76,7 +76,7 @@ public class GrpcDtpAdapter extends AbstractDtpAdapter {
                         return null;
                     }).orElse(null);
             if (Objects.isNull(key)) {
-                return;
+                continue;
             }
             val executor = (Executor) ReflectionUtil.getFieldValue(ServerImpl.class, EXECUTOR_FIELD, serverImpl);
             String tpName = genTpName(key);

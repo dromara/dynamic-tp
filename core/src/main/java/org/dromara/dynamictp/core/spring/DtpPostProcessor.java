@@ -18,6 +18,8 @@
 package org.dromara.dynamictp.core.spring;
 
 import org.dromara.dynamictp.core.DtpRegistry;
+import org.dromara.dynamictp.core.plugin.ExtensionRegistry;
+import org.dromara.dynamictp.core.plugin.ConstructorUtil;
 import org.dromara.dynamictp.core.support.DynamicTp;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.TaskQueue;
@@ -45,6 +47,8 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import static org.dromara.dynamictp.common.em.QueueTypeEnum.buildLbq;
+
 /**
  * BeanPostProcessor that handles all related beans managed by Spring.
  *
@@ -61,11 +65,13 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
         if (!(bean instanceof ThreadPoolExecutor) && !(bean instanceof ThreadPoolTaskExecutor)) {
             return bean;
         }
-        // 在这里对所有我们需要代理的bean进行，当然这种方式适合代理加载到IOC的bean
+
         if (bean instanceof DtpExecutor) {
             // register DtpExecutor
-            // 按照注解上的class，对相应的类进行代理，目前先仅支持DtpExecutor
-            bean = DtpRegistry.pluginAll(bean);
+            DtpExecutor dtpExecutor = (DtpExecutor) bean;
+            Object[] args = ConstructorUtil.buildDtpExecutorConstructorArgs(dtpExecutor);
+            Class[] argTypes = ConstructorUtil.buildDtpExecutorConstructorArgTypes();
+            bean = ExtensionRegistry.pluginAll(bean, argTypes, args);
             registerDtp(bean);
         } else {
             // register ThreadPoolExecutor or ThreadPoolTaskExecutor
@@ -126,5 +132,4 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE;
     }
-
 }

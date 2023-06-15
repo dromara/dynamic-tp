@@ -20,6 +20,11 @@ package org.dromara.dynamictp.core.plugin;
 
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * Extension interface
+ * @author windsearcher.lq
+ * @since  22:22
+ */
 public interface DtpExtension {
 
     Object intercept(DtpInvocation invocation) throws InvocationTargetException, IllegalAccessException;
@@ -28,4 +33,7 @@ public interface DtpExtension {
         return DtpExtensionProxyFactory.wrap(target, this);
     }
 
+    default Object plugin(Object target, Class[] argumentTypes, Object[] arguments) {
+        return DtpExtensionProxyFactory.wrap(target, argumentTypes, arguments, this);
+    }
 }

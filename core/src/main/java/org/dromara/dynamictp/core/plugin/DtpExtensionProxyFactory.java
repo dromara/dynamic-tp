@@ -32,17 +32,27 @@ import java.util.Set;
 public class DtpExtensionProxyFactory {
 
     public static Object wrap(Object target, DtpExtension interceptor) {
-        // 代理target
         Map<Class<?>, Set<Method>> signatureMap = getSignatureMap(interceptor);
-        // 不在注解所指定的类中，直接返回原对象
         if (!signatureMap.containsKey(target.getClass())) {
             return target;
         } else {
             Enhancer enhancer = new Enhancer();
             enhancer.setSuperclass(target.getClass());
             enhancer.setCallback(new DtpExtensionProxy(target, interceptor, signatureMap));
-            // 需要在DtpExecutor中添加一个默认无参构造函数
             return enhancer.create();
+        }
+    }
+
+    public static Object wrap(Object target, Class[] argumentTypes, Object[] arguments, DtpExtension interceptor) {
+        Map<Class<?>, Set<Method>> signatureMap = getSignatureMap(interceptor);
+        if (!signatureMap.containsKey(target.getClass())) {
+            return target;
+        } else {
+            Enhancer enhancer = new Enhancer();
+            System.out.println(target.getClass());
+            enhancer.setSuperclass(target.getClass());
+            enhancer.setCallback(new DtpExtensionProxy(target, interceptor, signatureMap));
+            return enhancer.create(argumentTypes, arguments);
         }
     }
 

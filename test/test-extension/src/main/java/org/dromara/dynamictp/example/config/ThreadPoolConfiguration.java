@@ -30,9 +30,6 @@ import java.util.concurrent.TimeUnit;
 
 import static org.dromara.dynamictp.common.em.QueueTypeEnum.SYNCHRONOUS_QUEUE;
 
-/**
- * @author Redick01
- */
 @Configuration
 public class ThreadPoolConfiguration {
 

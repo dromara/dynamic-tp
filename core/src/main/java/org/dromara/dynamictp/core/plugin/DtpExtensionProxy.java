@@ -19,23 +19,24 @@ package org.dromara.dynamictp.core.plugin;
 
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * 代理包装类，代理需要进行扩展的类
+ * Proxy packaging class
  * @author windsearcher.lq
  * @since 2023/6/9 21:02
  */
 public class DtpExtensionProxy implements MethodInterceptor {
 
-    private Object target;
+    private final Object target;
 
-    private DtpExtension interceptor;
+    private final DtpExtension interceptor;
 
-    private Map<Class<?>, Set<Method>> signatureMap;
+    private final Map<Class<?>, Set<Method>> signatureMap;
 
     public DtpExtensionProxy(Object target, DtpExtension interceptor, Map<Class<?>, Set<Method>> signatureMap) {
         this.target = target;
@@ -46,7 +47,7 @@ public class DtpExtensionProxy implements MethodInterceptor {
     @Override
     public Object intercept(Object object, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
         Set<Method> methods = signatureMap.get(method.getDeclaringClass());
-        if (methods != null && methods.contains(method)) {
+        if (CollectionUtils.isNotEmpty(methods) && methods.contains(method)) {
             return interceptor.intercept(new DtpInvocation(target, method, args));
         }
 

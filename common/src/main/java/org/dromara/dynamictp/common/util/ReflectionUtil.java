@@ -18,6 +18,7 @@
 package org.dromara.dynamictp.common.util;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -64,9 +65,10 @@ public final class ReflectionUtil {
     }
 
     public static Object resolveObject(String path) {
-        if (path == null) {
+        if (StringUtils.isBlank(path)) {
             return null;
         }
+
         try {
             return Class.forName(path).newInstance();
         } catch (Exception e) {

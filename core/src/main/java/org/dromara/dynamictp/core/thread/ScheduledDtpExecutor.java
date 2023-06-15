@@ -26,7 +26,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -46,12 +45,6 @@ import static java.util.concurrent.TimeUnit.NANOSECONDS;
 public class ScheduledDtpExecutor extends DtpExecutor implements ScheduledExecutorService {
 
     private final ScheduledThreadPoolExecutor delegate;
-
-    public ScheduledDtpExecutor() {
-        this(10, 50, 100, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(),
-                Executors.defaultThreadFactory(), new AbortPolicy());
-    }
-
     public ScheduledDtpExecutor(int corePoolSize,
                                 int maximumPoolSize,
                                 long keepAliveTime,

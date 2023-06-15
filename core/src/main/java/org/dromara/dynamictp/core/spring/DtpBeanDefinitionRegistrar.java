@@ -23,7 +23,7 @@ import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.BeanUtil;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.common.util.StringUtil;
-import org.dromara.dynamictp.core.DtpRegistry;
+import org.dromara.dynamictp.core.plugin.ExtensionRegistry;
 import org.dromara.dynamictp.core.plugin.DtpExtension;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.ExecutorType;
@@ -47,6 +47,8 @@ import java.util.concurrent.BlockingQueue;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.ALLOW_CORE_THREAD_TIMEOUT;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.AWAIT_TERMINATION_SECONDS;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.FAIR;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAXFREEMEMORY;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.NOTIFY_ENABLED;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.NOTIFY_ITEMS;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PLATFORM_IDS;
@@ -84,14 +86,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         PropertiesBinder.bindDtpProperties(environment, dtpProperties);
         val executors = dtpProperties.getExecutors();
         List<DtpExtensionProps> extensions = dtpProperties.getExtensions();
-        for (DtpExtensionProps extension : extensions) {
-            if (StringUtil.isEmpty(extension.getExtensionPath())) {
-                log.warn("DynamicTp registrar, no extension is configured.");
-                continue;
-            }
-            DtpExtension dtpExtension = (DtpExtension) ReflectionUtil.resolveObject(extension.getExtensionPath());
-            DtpRegistry.registerExtension(dtpExtension);
-        }
+        registerDtpExtensions(extensions);
         if (CollectionUtils.isEmpty(executors)) {
             log.warn("DynamicTp registrar, no executors are configured.");
             return;
@@ -103,6 +98,18 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
             Object[] args = buildConstructorArgs(executorTypeClass, e);
             BeanUtil.registerIfAbsent(registry, e.getThreadPoolName(), executorTypeClass, propertyValues, args);
         });
+    }
+
+    private void registerDtpExtensions(List<DtpExtensionProps> extensions) {
+
+        for (DtpExtensionProps extension : extensions) {
+            if (StringUtil.isEmpty(extension.getExtensionPath())) {
+                log.warn("DynamicTp registrar, no extension is configured.");
+                continue;
+            }
+            DtpExtension dtpExtension = (DtpExtension) ReflectionUtil.resolveObject(extension.getExtensionPath());
+            ExtensionRegistry.registerExtension(dtpExtension);
+        }
     }
 
     private Map<String, Object> buildPropertyValues(DtpExecutorProps props) {
@@ -117,7 +124,8 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         propertyValues.put(REJECT_ENHANCED, props.isRejectEnhanced());
         propertyValues.put(RUN_TIMEOUT, props.getRunTimeout());
         propertyValues.put(QUEUE_TIMEOUT, props.getQueueTimeout());
-
+        propertyValues.put(FAIR, props.isFair());
+        propertyValues.put(MAXFREEMEMORY, props.getMaxFreeMemory());
         val notifyItems = mergeAllNotifyItems(props.getNotifyItems());
         propertyValues.put(NOTIFY_ITEMS, notifyItems);
         propertyValues.put(PLATFORM_IDS, props.getPlatformIds());

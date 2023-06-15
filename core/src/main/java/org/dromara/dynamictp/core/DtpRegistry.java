@@ -72,9 +72,6 @@ public class DtpRegistry implements ApplicationRunner {
      * Maintain all automatically registered and manually registered Executors(DtpExecutors and JUC ThreadPoolExecutors).
      */
     private static final Map<String, ExecutorWrapper> EXECUTOR_REGISTRY = new ConcurrentHashMap<>();
-
-    private static final List<DtpExtension> EXTENSIONS = new ArrayList<>();
-
     /**
      * equator for comparing two TpMainFields
      */
@@ -119,22 +116,6 @@ public class DtpRegistry implements ApplicationRunner {
         EXECUTOR_REGISTRY.putIfAbsent(wrapper.getThreadPoolName(), wrapper);
     }
 
-    public static void registerExtension(DtpExtension dtpExtension) {
-        log.info("DynamicTp register dtpExtension: {}", dtpExtension);
-        EXTENSIONS.add(dtpExtension);
-    }
-
-    public static List<DtpExtension> getExtensions() {
-        return EXTENSIONS;
-    }
-
-    public static Object pluginAll(Object target) {
-        for (DtpExtension dtpExtension : EXTENSIONS) {
-            // 构建被代理类的代理类
-            target = dtpExtension.plugin(target);
-        }
-        return target;
-    }
     /**
      * Get Dynamic ThreadPoolExecutor by thread pool name.
      *
@@ -207,7 +188,6 @@ public class DtpRegistry implements ApplicationRunner {
     private static void refresh(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
         if (props.coreParamIsInValid()) {
             log.error("DynamicTp refresh, invalid parameters exist, properties: {}", props);
-            // TODO 对于error日志如何处理
             return;
         }
         TpMainFields oldFields = ExecutorConverter.toMainFields(executorWrapper);

@@ -27,9 +27,6 @@ import javax.annotation.Resource;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
-/**
- * @author Redick01
- */
 @Slf4j
 @RestController
 @SuppressWarnings("all")

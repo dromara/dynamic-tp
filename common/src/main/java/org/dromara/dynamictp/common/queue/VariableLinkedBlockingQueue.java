@@ -260,7 +260,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
 //     }
 
     /**
-     * Creates a {@code LinkedBlockingQueue} with a capacity of
+     * Creates a {@code VariableLinkedBlockingQueue} with a capacity of
      * {@link Integer#MAX_VALUE}.
      */
     public VariableLinkedBlockingQueue() {
@@ -268,7 +268,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
     }
 
     /**
-     * Creates a {@code LinkedBlockingQueue} with the given (fixed) capacity.
+     * Creates a {@code VariableLinkedBlockingQueue} with the given (fixed) capacity.
      *
      * @param capacity the capacity of this queue
      * @throws IllegalArgumentException if {@code capacity} is not greater
@@ -283,7 +283,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
     }
 
     /**
-     * Creates a {@code LinkedBlockingQueue} with a capacity of
+     * Creates a {@code VariableLinkedBlockingQueue} with a capacity of
      * {@link Integer#MAX_VALUE}, initially containing the elements of the
      * given collection,
      * added in traversal order of the collection's iterator.
@@ -321,6 +321,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
      *
      * @return the number of elements in this queue
      */
+    @Override
     public int size() {
         return count.get();
     }
@@ -353,6 +354,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
      * because it may be the case that another thread is about to
      * insert or remove an element.
      */
+    @Override
     public int remainingCapacity() {
         return capacity - count.get();
     }
@@ -364,6 +366,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
      * @throws InterruptedException {@inheritDoc}
      * @throws NullPointerException {@inheritDoc}
      */
+    @Override
     public void put(E e) throws InterruptedException {
         if (e == null) {
             throw new NullPointerException();
@@ -384,7 +387,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
              * signalled if it ever changes from capacity. Similarly
              * for all other uses of count in other wait guards.
              */
-            while (count.get() == capacity) {
+            while (count.get() >= capacity) {
                 notFull.await();
             }
             enqueue(node);
@@ -409,6 +412,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
      * @throws InterruptedException {@inheritDoc}
      * @throws NullPointerException {@inheritDoc}
      */
+    @Override
     public boolean offer(E e, long timeout, TimeUnit unit)
             throws InterruptedException {
 
@@ -421,7 +425,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
         final AtomicInteger count = this.count;
         putLock.lockInterruptibly();
         try {
-            while (count.get() == capacity) {
+            while (count.get() >= capacity) {
                 if (nanos <= 0) {
                     return false;
                 }
@@ -452,12 +456,13 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
      *
      * @throws NullPointerException if the specified element is null
      */
+    @Override
     public boolean offer(E e) {
         if (e == null) {
             throw new NullPointerException();
         }
         final AtomicInteger count = this.count;
-        if (count.get() == capacity) {
+        if (count.get() >= capacity) {
             return false;
         }
         int c = -1;
@@ -481,6 +486,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
         return c >= 0;
     }
 
+    @Override
     public E take() throws InterruptedException {
         E x;
         int c = -1;
@@ -499,12 +505,13 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
         } finally {
             takeLock.unlock();
         }
-        if (c == capacity) {
+        if (c >= capacity) {
             signalNotFull();
         }
         return x;
     }
 
+    @Override
     public E poll(long timeout, TimeUnit unit) throws InterruptedException {
         E x = null;
         int c = -1;
@@ -527,12 +534,13 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
         } finally {
             takeLock.unlock();
         }
-        if (c == capacity) {
+        if (c >= capacity) {
             signalNotFull();
         }
         return x;
     }
 
+    @Override
     public E poll() {
         final AtomicInteger count = this.count;
         if (count.get() == 0) {
@@ -553,12 +561,13 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
         } finally {
             takeLock.unlock();
         }
-        if (c == capacity) {
+        if (c >= capacity) {
             signalNotFull();
         }
         return x;
     }
 
+    @Override
     public E peek() {
         if (count.get() == 0) {
             return null;
@@ -589,7 +598,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
         if (last == p) {
             last = trail;
         }
-        if (count.getAndDecrement() == capacity) {
+        if (count.getAndDecrement() >= capacity) {
             notFull.signal();
         }
     }
@@ -605,6 +614,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
      * @param o element to be removed from this queue, if present
      * @return {@code true} if this queue changed as a result of the call
      */
+    @Override
     public boolean remove(Object o) {
         if (o == null) {
             return false;
@@ -633,6 +643,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
      * @param o object to be checked for containment in this queue
      * @return {@code true} if this queue contains the specified element
      */
+    @Override
     public boolean contains(Object o) {
         if (o == null) {
             return false;
@@ -663,6 +674,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
      *
      * @return an array containing all of the elements in this queue
      */
+    @Override
     public Object[] toArray() {
         fullyLock();
         try {
@@ -713,6 +725,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
      *         this queue
      * @throws NullPointerException if the specified array is null
      */
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T[] toArray(T[] a) {
         fullyLock();
@@ -735,6 +748,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
         }
     }
 
+    @Override
     public String toString() {
         fullyLock();
         try {
@@ -763,6 +777,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
      * Atomically removes all of the elements from this queue.
      * The queue will be empty after this call returns.
      */
+    @Override
     public void clear() {
         fullyLock();
         try {
@@ -772,7 +787,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
             }
             head = last;
             // assert head.item == null && head.next == null;
-            if (count.getAndSet(0) == capacity) {
+            if (count.getAndSet(0) >= capacity) {
                 notFull.signal();
             }
         } finally {
@@ -786,6 +801,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
      * @throws NullPointerException          {@inheritDoc}
      * @throws IllegalArgumentException      {@inheritDoc}
      */
+    @Override
     public int drainTo(Collection<? super E> c) {
         return drainTo(c, Integer.MAX_VALUE);
     }
@@ -796,6 +812,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
      * @throws NullPointerException          {@inheritDoc}
      * @throws IllegalArgumentException      {@inheritDoc}
      */
+    @Override
     public int drainTo(Collection<? super E> c, int maxElements) {
         if (c == null) {
             throw new NullPointerException();
@@ -829,7 +846,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
                 if (i > 0) {
                     // assert h.item == null;
                     head = h;
-                    signalNotFull = (count.getAndAdd(-i) == capacity);
+                    signalNotFull = (count.getAndAdd(-i) >= capacity);
                 }
             }
         } finally {
@@ -849,6 +866,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
      *
      * @return an iterator over the elements in this queue in proper sequence
      */
+    @Override
     public Iterator<E> iterator() {
         return new Itr();
     }
@@ -876,6 +894,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
             }
         }
 
+        @Override
         public boolean hasNext() {
             return current != null;
         }
@@ -900,6 +919,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
             }
         }
 
+        @Override
         public E next() {
             fullyLock();
             try {
@@ -916,6 +936,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
             }
         }
 
+        @Override
         public void remove() {
             if (lastRet == null) {
                 throw new IllegalStateException();
@@ -951,10 +972,12 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
             this.est = queue.size();
         }
 
+        @Override
         public long estimateSize() {
             return est;
         }
 
+        @Override
         public Spliterator<E> trySplit() {
             Node<E> h;
             final VariableLinkedBlockingQueue<E> q = this.queue;
@@ -993,6 +1016,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
             return null;
         }
 
+        @Override
         public void forEachRemaining(Consumer<? super E> action) {
             if (action == null) {
                 throw new NullPointerException();
@@ -1025,6 +1049,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
             }
         }
 
+        @Override
         public boolean tryAdvance(Consumer<? super E> action) {
             if (action == null) {
                 throw new NullPointerException();
@@ -1058,6 +1083,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
             return false;
         }
 
+        @Override
         public int characteristics() {
             return Spliterator.ORDERED | Spliterator.NONNULL |
                     Spliterator.CONCURRENT;
@@ -1079,6 +1105,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
      * @return a {@code Spliterator} over the elements in this queue
      * @since 1.8
      */
+    @Override
     public Spliterator<E> spliterator() {
         return new LBQSpliterator<E>(this);
     }

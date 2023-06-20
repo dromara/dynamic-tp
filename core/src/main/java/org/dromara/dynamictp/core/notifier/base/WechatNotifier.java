@@ -50,7 +50,7 @@ public class WechatNotifier implements Notifier {
      */
     @Override
     public void send(NotifyPlatform platform, String text) {
-        String serverUrl = WechatNotifyConst.WECHAT_WEH_HOOK + platform.getUrlKey();
+        String serverUrl = WechatNotifyConst.WECHAT_WEB_HOOK + platform.getUrlKey();
         MarkdownReq markdownReq = new MarkdownReq();
         markdownReq.setMsgtype("markdown");
         MarkdownReq.Markdown markdown = new MarkdownReq.Markdown();

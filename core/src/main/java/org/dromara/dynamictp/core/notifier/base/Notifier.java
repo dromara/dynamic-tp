@@ -17,7 +17,13 @@
 
 package org.dromara.dynamictp.core.notifier.base;
 
+import cn.hutool.core.util.StrUtil;
+import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
+import org.dromara.dynamictp.core.notifier.context.AlarmCtx;
+import org.dromara.dynamictp.core.notifier.context.DtpNotifyCtxHolder;
+
+import java.util.Optional;
 
 /**
  * Notifier related
@@ -38,7 +44,21 @@ public interface Notifier {
      * Send message.
      *
      * @param platform platform
-     * @param content content
+     * @param content  content
      */
     void send(NotifyPlatform platform, String content);
+
+    /**
+     * Get the notifyItem.receivers
+     * @param platform platform
+     * @return Receivers
+     */
+    default String getNotifyItemReceivers(NotifyPlatform platform) {
+        AlarmCtx context = (AlarmCtx) DtpNotifyCtxHolder.get();
+        String receivers = Optional.ofNullable(context)
+                .map(AlarmCtx::getNotifyItem)
+                .map(NotifyItem::getReceivers)
+                .orElse(null);
+        return StrUtil.isBlank(receivers) ? platform.getReceivers() : receivers;
+    }
 }

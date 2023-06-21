@@ -64,7 +64,7 @@ public class EmailNotifier implements Notifier {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
             messageHelper.setSubject(title);
             messageHelper.setFrom(sendFrom);
-            messageHelper.setTo(platform.getReceivers().split(","));
+            messageHelper.setTo(getNotifyItemReceivers(platform).split(","));
             messageHelper.setSentDate(new Date());
             messageHelper.setText(content, true);
             javaMailSender.send(mimeMessage);

@@ -65,7 +65,7 @@ public class DingNotifier implements Notifier {
 
         MarkdownReq.At at = new MarkdownReq.At();
 
-        List<String> mobiles = Lists.newArrayList(StringUtils.split(platform.getReceivers(), ','));
+        List<String> mobiles = Lists.newArrayList(StringUtils.split(getNotifyItemReceivers(platform), ','));
         at.setAtMobiles(mobiles);
         if (CollectionUtils.isEmpty(mobiles)) {
             at.setAtAll(true);

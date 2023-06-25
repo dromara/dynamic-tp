@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.core.notifier;
 
+import cn.hutool.core.util.StrUtil;
 import org.dromara.dynamictp.common.constant.DynamicTpConst;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
@@ -145,7 +146,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 alarmCounter.getRight(),
                 Optional.ofNullable(context.getAlarmInfo()).map(AlarmInfo::getLastAlarmTime).orElse(DynamicTpConst.UNKNOWN),
                 DateUtil.now(),
-                getReceives(platform.getPlatform(), platform.getReceivers()),
+                getReceives(platform.getPlatform(), StrUtil.isBlank(notifyItem.getReceivers()) ? platform.getReceivers() : notifyItem.getReceivers()),
                 Optional.ofNullable(MDC.get(DynamicTpConst.TRACE_ID)).orElse(DynamicTpConst.UNKNOWN),
                 notifyItem.getInterval()
         );

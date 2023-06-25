@@ -36,7 +36,8 @@ public final class WechatNotifyConst {
     public static final String COMMENT_COLOR = "comment";
 
     /**
-     * @ only supports userid, view more, see <a href="https://developers.weixin.qq.com/community/develop/doc/000a00b208c05076e49c0e5d451000">more</a>.
+     * receivers only supports userid, view more,
+     * see <a href="https://developers.weixin.qq.com/community/develop/doc/000a00b208c05076e49c0e5d451000">more</a>.
      */
     public static final String WECHAT_ALARM_TEMPLATE =
             "<font color='warning'>【报警】</font> 动态线程池告警 \n" +

@@ -366,6 +366,12 @@
 
             <dependency>
                 <groupId>org.dromara.dynamictp</groupId>
+                <artifactId>dynamic-tp-extension-notify-yunzhijia</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara.dynamictp</groupId>
                 <artifactId>dynamic-tp-extension-skywalking</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -451,6 +457,11 @@
             <dependency>
                 <groupId>org.dromara.dynamictp</groupId>
                 <artifactId>dynamic-tp-spring-boot-starter-extension-notify-email</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dromara.dynamictp</groupId>
+                <artifactId>dynamic-tp-spring-boot-starter-extension-notify-yunzhijia</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>

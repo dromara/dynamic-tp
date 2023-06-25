@@ -17,12 +17,20 @@
 
 package org.dromara.dynamictp.core.notifier;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.dromara.dynamictp.common.constant.LarkNotifyConst;
 import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
 import org.dromara.dynamictp.core.notifier.base.Notifier;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+import static org.dromara.dynamictp.common.constant.LarkNotifyConst.LARK_AT_FORMAT_OPENID;
+import static org.dromara.dynamictp.common.constant.LarkNotifyConst.LARK_AT_FORMAT_USERNAME;
+import static org.dromara.dynamictp.common.constant.LarkNotifyConst.LARK_OPENID_PREFIX;
 
 /**
  * DtpLarkNotifier
@@ -56,5 +64,13 @@ public class DtpLarkNotifier extends AbstractDtpNotifier {
     @Override
     protected Pair<String, String> getColors() {
         return new ImmutablePair<>(LarkNotifyConst.WARNING_COLOR, LarkNotifyConst.COMMENT_COLOR);
+    }
+
+    @Override
+    protected String formatReceivers(String receives) {
+        return Arrays.stream(receives.split(","))
+                .map(r -> StringUtils.startsWith(r, LARK_OPENID_PREFIX) ?
+                        String.format(LARK_AT_FORMAT_OPENID, r) : String.format(LARK_AT_FORMAT_USERNAME, r))
+                .collect(Collectors.joining(" "));
     }
 }

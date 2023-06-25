@@ -52,11 +52,11 @@ public abstract class AbstractNotifier implements Notifier {
     protected abstract void sendMode(NotifyPlatform platform, String content);
 
     /**
-     * Get the notifyItem.receivers
+     * Get the notify receivers
      * @param platform platform
      * @return Receivers
      */
-    protected String[] getNotifyItemReceivers(NotifyPlatform platform) {
+    protected String[] getNotifyReceivers(NotifyPlatform platform) {
         BaseNotifyCtx context = DtpNotifyCtxHolder.get();
         String receivers = Optional.ofNullable(context)
                 .map(BaseNotifyCtx::getNotifyItem)

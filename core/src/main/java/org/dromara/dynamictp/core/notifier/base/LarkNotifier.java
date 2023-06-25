@@ -17,14 +17,14 @@
 
 package org.dromara.dynamictp.core.notifier.base;
 
-import org.dromara.dynamictp.common.constant.LarkNotifyConst;
-import org.dromara.dynamictp.common.entity.NotifyPlatform;
-import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
-import org.dromara.dynamictp.common.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.dynamictp.common.constant.LarkNotifyConst;
+import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
+import org.dromara.dynamictp.common.entity.NotifyPlatform;
+import org.dromara.dynamictp.common.util.TimeUtil;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -79,14 +79,15 @@ public class LarkNotifier extends AbstractHttpNotifier {
 
     @Override
     protected String buildMsgBody(NotifyPlatform platform, String content) {
-        if (StringUtils.isNotBlank(platform.getSecret())) {
-            try {
-                val secondsTimestamp = TimeUtil.currentTimeSeconds();
-                val sign = genSign(platform.getSecret(), secondsTimestamp);
-                content = content.replace(SIGN_REPLACE, String.format(SIGN_PARAM, secondsTimestamp, sign));
-            } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-                log.error("DynamicTp notify, lark generate signature failed...", e);
-            }
+        if (StringUtils.isBlank(platform.getSecret())) {
+            return content;
+        }
+        try {
+            val secondsTimestamp = TimeUtil.currentTimeSeconds();
+            val sign = genSign(platform.getSecret(), secondsTimestamp);
+            content = content.replace(SIGN_REPLACE, String.format(SIGN_PARAM, secondsTimestamp, sign));
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            log.error("DynamicTp notify, lark generate signature failed...", e);
         }
         return content;
     }

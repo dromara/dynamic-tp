@@ -17,17 +17,17 @@
 
 package org.dromara.dynamictp.core.notifier.base;
 
-import org.dromara.dynamictp.common.constant.DingNotifyConst;
-import org.dromara.dynamictp.common.entity.MarkdownReq;
-import org.dromara.dynamictp.common.entity.NotifyPlatform;
-import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
-import org.dromara.dynamictp.common.util.DingSignUtil;
-import org.dromara.dynamictp.common.util.JsonUtil;
-import org.dromara.dynamictp.common.util.TimeUtil;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.dynamictp.common.constant.DingNotifyConst;
+import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
+import org.dromara.dynamictp.common.entity.MarkdownReq;
+import org.dromara.dynamictp.common.entity.NotifyPlatform;
+import org.dromara.dynamictp.common.util.DingSignUtil;
+import org.dromara.dynamictp.common.util.JsonUtil;
+import org.dromara.dynamictp.common.util.TimeUtil;
 
 import java.util.List;
 
@@ -37,6 +37,7 @@ import static org.dromara.dynamictp.common.constant.DingNotifyConst.DING_NOTICE_
  * DingNotifier related
  *
  * @author yanhom
+ * @author Kyao
  * @since 1.0.0
  **/
 @Slf4j
@@ -45,21 +46,6 @@ public class DingNotifier extends AbstractHttpNotifier {
     @Override
     public String platform() {
         return NotifyPlatformEnum.DING.name().toLowerCase();
-    }
-
-    /**
-     * Build target url.
-     * @param secret secret
-     * @param accessToken accessToken
-     * @return url
-     */
-    private String getTargetUrl(String secret, String accessToken) {
-        if (StringUtils.isBlank(secret)) {
-            return DingNotifyConst.DING_WEBHOOK + accessToken;
-        }
-        long timestamp = TimeUtil.currentTimeMillis();
-        String sign = DingSignUtil.dingSign(secret, timestamp);
-        return DingNotifyConst.DING_WEBHOOK + accessToken + "&timestamp=" + timestamp + "&sign=" + sign;
     }
 
     @Override
@@ -86,5 +72,20 @@ public class DingNotifier extends AbstractHttpNotifier {
     @Override
     protected String buildUrl(NotifyPlatform platform) {
         return getTargetUrl(platform.getSecret(), platform.getUrlKey());
+    }
+
+    /**
+     * Build target url.
+     * @param secret secret
+     * @param accessToken accessToken
+     * @return url
+     */
+    private String getTargetUrl(String secret, String accessToken) {
+        if (StringUtils.isBlank(secret)) {
+            return DingNotifyConst.DING_WEBHOOK + accessToken;
+        }
+        long timestamp = TimeUtil.currentTimeMillis();
+        String sign = DingSignUtil.dingSign(secret, timestamp);
+        return DingNotifyConst.DING_WEBHOOK + accessToken + "&timestamp=" + timestamp + "&sign=" + sign;
     }
 }

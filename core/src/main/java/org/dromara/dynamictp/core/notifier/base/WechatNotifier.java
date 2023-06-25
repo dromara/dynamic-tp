@@ -17,16 +17,12 @@
 
 package org.dromara.dynamictp.core.notifier.base;
 
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.constant.WechatNotifyConst;
+import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
 import org.dromara.dynamictp.common.entity.MarkdownReq;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
-import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
 import org.dromara.dynamictp.common.util.JsonUtil;
-import lombok.extern.slf4j.Slf4j;
-
-import java.util.Objects;
 
 /**
  * WechatNotifier related

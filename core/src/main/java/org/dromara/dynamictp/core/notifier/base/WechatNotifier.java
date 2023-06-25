@@ -35,36 +35,25 @@ import java.util.Objects;
  * @since 1.0.0
  **/
 @Slf4j
-public class WechatNotifier implements Notifier {
+public class WechatNotifier extends AbstractHttpNotifier {
 
     @Override
     public String platform() {
         return NotifyPlatformEnum.WECHAT.name().toLowerCase();
     }
 
-    /**
-     * Execute real wechat send.
-     *
-     * @param platform send platform
-     * @param text send content
-     */
     @Override
-    public void send(NotifyPlatform platform, String text) {
-        String serverUrl = WechatNotifyConst.WECHAT_WEB_HOOK + platform.getUrlKey();
+    protected String buildMsgBody(NotifyPlatform platform, String content) {
         MarkdownReq markdownReq = new MarkdownReq();
         markdownReq.setMsgtype("markdown");
         MarkdownReq.Markdown markdown = new MarkdownReq.Markdown();
-        markdown.setContent(text);
+        markdown.setContent(content);
         markdownReq.setMarkdown(markdown);
+        return JsonUtil.toJson(markdownReq);
+    }
 
-        try {
-            HttpResponse response = HttpRequest.post(serverUrl).body(JsonUtil.toJson(markdownReq)).execute();
-            if (Objects.nonNull(response)) {
-                log.info("DynamicTp notify, wechat send success, response: {}, request:{}",
-                        response.body(), JsonUtil.toJson(markdownReq));
-            }
-        } catch (Exception e) {
-            log.error("DynamicTp notify, wechat send failed...", e);
-        }
+    @Override
+    protected String buildUrl(NotifyPlatform platform) {
+        return WechatNotifyConst.WECHAT_WEB_HOOK + platform.getUrlKey();
     }
 }

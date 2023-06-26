@@ -17,18 +17,13 @@
 
 package org.dromara.dynamictp.extension.notify.yunzhijia;
 
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.util.JsonUtil;
-import org.dromara.dynamictp.core.notifier.base.Notifier;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import org.dromara.dynamictp.core.notifier.base.AbstractHttpNotifier;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * YunZhiJiaNotifier related
@@ -37,35 +32,23 @@ import java.util.Objects;
  * @since 1.0.0
  **/
 @Slf4j
-public class YunZhiJiaNotifier implements Notifier {
+public class YunZhiJiaNotifier extends AbstractHttpNotifier {
 
     @Override
     public String platform() {
         return YunZhiJiaNotifyConst.PLATFORM_NAME.toLowerCase();
     }
 
-    /**
-     * Execute real YunZhiJia send.
-     *
-     * @param platform send platform
-     * @param text     send content
-     */
     @Override
-    public void send(NotifyPlatform platform, String text) {
-        String serverUrl = YunZhiJiaNotifyConst.WEB_HOOK + platform.getUrlKey();
-        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Content-Type", "application/json;charset=UTF-8");
+    protected String buildMsgBody(NotifyPlatform platform, String content) {
         Map<String, Object> map = new HashMap<>();
-        map.put("content", text);
+        map.put("content", content);
         map.put("msgType", 0);
-        try {
-            HttpResponse response = HttpRequest.post(serverUrl).header(headers).body(JsonUtil.toJson(map)).execute();
-            if (Objects.nonNull(response)) {
-                log.info("DynamicTp notify, YunZhiJia send success, response: {}, request:{}",
-                        response.body(), JsonUtil.toJson(map));
-            }
-        } catch (Exception e) {
-            log.error("DynamicTp notify, YunZhiJia send failed...", e);
-        }
+        return JsonUtil.toJson(map);
+    }
+
+    @Override
+    protected String buildUrl(NotifyPlatform platform) {
+        return YunZhiJiaNotifyConst.WEB_HOOK + platform.getUrlKey();
     }
 }

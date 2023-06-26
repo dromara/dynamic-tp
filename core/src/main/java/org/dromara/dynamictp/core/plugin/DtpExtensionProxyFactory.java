@@ -49,7 +49,6 @@ public class DtpExtensionProxyFactory {
             return target;
         } else {
             Enhancer enhancer = new Enhancer();
-            System.out.println(target.getClass());
             enhancer.setSuperclass(target.getClass());
             enhancer.setCallback(new DtpExtensionProxy(target, interceptor, signatureMap));
             return enhancer.create(argumentTypes, arguments);

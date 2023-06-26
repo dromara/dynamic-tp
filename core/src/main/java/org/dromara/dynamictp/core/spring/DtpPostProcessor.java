@@ -47,7 +47,6 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import static org.dromara.dynamictp.common.em.QueueTypeEnum.buildLbq;
 
 /**
  * BeanPostProcessor that handles all related beans managed by Spring.

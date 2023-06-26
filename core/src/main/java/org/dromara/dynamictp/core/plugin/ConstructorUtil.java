@@ -17,9 +17,7 @@
 
 package org.dromara.dynamictp.core.plugin;
 
-import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
-import org.dromara.dynamictp.core.thread.NamedThreadFactory;
 
 import java.lang.reflect.Constructor;
 import java.util.concurrent.BlockingQueue;

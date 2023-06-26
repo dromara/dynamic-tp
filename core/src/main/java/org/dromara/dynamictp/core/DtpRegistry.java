@@ -35,7 +35,6 @@ import org.dromara.dynamictp.common.util.StreamUtil;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.core.notifier.manager.NoticeManager;
 import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
-import org.dromara.dynamictp.core.plugin.DtpExtension;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
@@ -46,7 +45,6 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

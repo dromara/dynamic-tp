@@ -38,10 +38,9 @@ public class TestExtension implements DtpExtension {
         System.out.println("--------------线程池开始执行任务-------------");
         DtpExecutor dtpExecutor = (DtpExecutor) invocation.getTarget();
 
-        log.info("dtpExecutor corePoolSize: {}, maximum size: {}, {}, {}, {}", dtpExecutor.getCorePoolSize(),
+        log.info("dtpExecutor name: {}, maximum size: {}, {}, {}, {}", dtpExecutor.getThreadPoolName(),
                 dtpExecutor.getMaximumPoolSize(), dtpExecutor.getThreadPoolName(), dtpExecutor.getQueueCapacity(),
                 dtpExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS));
-//        log.info("dtpExecutor : {}", executorWrapper);
 
         Object result = invocation.proceed();
 

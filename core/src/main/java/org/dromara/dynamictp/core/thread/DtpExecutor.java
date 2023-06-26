@@ -139,16 +139,6 @@ public class DtpExecutor extends ThreadPoolExecutor
      */
     protected int awaitTerminationSeconds = 0;
 
-    /**
-     * If fair strategy, for SynchronousQueue
-     */
-    private boolean fair = false;
-
-    /**
-     * Max free memory for MemorySafeLBQ, unit M
-     */
-    private int maxFreeMemory = 16;
-
     public DtpExecutor(int corePoolSize,
                        int maximumPoolSize,
                        long keepAliveTime,
@@ -413,21 +403,5 @@ public class DtpExecutor extends ThreadPoolExecutor
      */
     public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
         allowCoreThreadTimeOut(allowCoreThreadTimeOut);
-    }
-
-    public boolean isFair() {
-        return fair;
-    }
-
-    public void setFair(boolean fair) {
-        this.fair = fair;
-    }
-
-    public int getMaxFreeMemory() {
-        return maxFreeMemory;
-    }
-
-    public void setMaxFreeMemory(int maxFreeMemory) {
-        this.maxFreeMemory = maxFreeMemory;
     }
 }

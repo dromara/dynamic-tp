@@ -15,7 +15,6 @@
         <module>test-adapter</module>
         <module>test-common</module>
         <module>test-core</module>
-        <module>test-extension</module>
         <module>test-logging</module>
         <module>test-configcenter</module>
     </modules>

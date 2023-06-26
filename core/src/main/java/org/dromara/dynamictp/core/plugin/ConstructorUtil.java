@@ -30,14 +30,15 @@ import java.util.concurrent.TimeUnit;
 public class ConstructorUtil {
 
     public static Object[] buildDtpExecutorConstructorArgs(DtpExecutor dtpExecutor) {
+
         return new Object[] {
                 dtpExecutor.getCorePoolSize(),
                 dtpExecutor.getMaximumPoolSize(),
                 dtpExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS),
                 TimeUnit.MILLISECONDS,
                 dtpExecutor.getQueue(),
-                new NamedThreadFactory(dtpExecutor.getThreadPoolName()),
-                RejectHandlerGetter.buildRejectedHandler(dtpExecutor.getRejectHandlerType())
+                dtpExecutor.getThreadFactory(),
+                dtpExecutor.getRejectedExecutionHandler()
         };
     }
 

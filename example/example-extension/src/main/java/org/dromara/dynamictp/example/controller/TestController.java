@@ -17,9 +17,10 @@
 
 package org.dromara.dynamictp.example.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
-import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.core.thread.DtpExecutor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,8 +43,9 @@ public class TestController {
     }
 
     public void task() throws InterruptedException {
-        Executor dtpExecutor2 = DtpRegistry.getExecutor("dtpExecutor2");
+        DtpExecutor dtpExecutor2 = (DtpExecutor) DtpRegistry.getExecutor("dtpExecutor2");
         Executor dtpExecutor12 = DtpRegistry.getExecutor("dtpExecutor12");
+        dtpExecutor2.getThreadPoolAliasName();
         for (int i = 0; i < 2; i++) {
             Thread.sleep(100);
 //            dtpExecutor1.execute(() -> {

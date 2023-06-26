@@ -4,18 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.dromara.dynamictp</groupId>
-        <artifactId>dynamic-tp-starter</artifactId>
+        <artifactId>dynamic-tp-extension</artifactId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>dynamic-tp-starter-extension</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>dynamic-tp-extension-notify-yunzhijia</artifactId>
 
-    <modules>
-        <module>starter-extension-limiter-redis</module>
-        <module>starter-extension-notify-email</module>
-        <module>starter-extension-notify-yunzhijia</module>
-    </modules>
+
 
 </project>

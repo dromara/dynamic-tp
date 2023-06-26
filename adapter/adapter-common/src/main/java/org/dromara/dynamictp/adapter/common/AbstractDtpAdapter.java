@@ -17,18 +17,6 @@
 
 package org.dromara.dynamictp.adapter.common;
 
-import org.dromara.dynamictp.common.ApplicationContextHolder;
-import org.dromara.dynamictp.common.entity.NotifyPlatform;
-import org.dromara.dynamictp.common.entity.ThreadPoolStats;
-import org.dromara.dynamictp.common.entity.TpExecutorProps;
-import org.dromara.dynamictp.common.entity.TpMainFields;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.util.StreamUtil;
-import org.dromara.dynamictp.core.converter.ExecutorConverter;
-import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
-import org.dromara.dynamictp.core.notifier.manager.NoticeManager;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
@@ -39,11 +27,20 @@ import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.event.GenericApplicationListener;
-import org.springframework.core.Ordered;
-import org.springframework.core.ResolvableType;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
+import org.dromara.dynamictp.common.entity.NotifyPlatform;
+import org.dromara.dynamictp.common.entity.ThreadPoolStats;
+import org.dromara.dynamictp.common.entity.TpExecutorProps;
+import org.dromara.dynamictp.common.entity.TpMainFields;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.spring.OnceApplicationContextEventListener;
+import org.dromara.dynamictp.common.util.StreamUtil;
+import org.dromara.dynamictp.core.converter.ExecutorConverter;
+import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
+import org.dromara.dynamictp.core.notifier.manager.NoticeManager;
+import org.dromara.dynamictp.core.support.ExecutorAdapter;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.Collections;
 import java.util.List;
@@ -51,9 +48,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import static java.util.stream.Collectors.toList;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
 import static org.dromara.dynamictp.core.notifier.manager.NotifyHelper.updateNotifyInfo;
-import static java.util.stream.Collectors.toList;
 
 /**
  * AbstractDtpAdapter related
@@ -63,43 +60,20 @@ import static java.util.stream.Collectors.toList;
  * @since 1.0.6
  */
 @Slf4j
-public abstract class AbstractDtpAdapter implements DtpAdapter, GenericApplicationListener {
+public abstract class AbstractDtpAdapter extends OnceApplicationContextEventListener implements DtpAdapter {
 
     private static final Equator EQUATOR = new GetterBaseEquator();
 
     protected final Map<String, ExecutorWrapper> executors = Maps.newHashMap();
 
     @Override
-    public int getOrder() {
-        //Compatible with Spring4.x
-        return Ordered.LOWEST_PRECEDENCE;
-    }
-    
-    @Override
-    public boolean supportsSourceType(Class<?> sourceType) {
-        //Compatible with Spring4.x
-        return true;
-    }
-    
-    @Override
-    public boolean supportsEventType(ResolvableType resolvableType) {
-        Class<?> type = resolvableType.getRawClass();
-        if (type != null) {
-            return ApplicationReadyEvent.class.isAssignableFrom(type);
-        }
-        return false;
-    }
-
-    @Override
-    public void onApplicationEvent(ApplicationEvent event) {
-        if (event instanceof ApplicationReadyEvent) {
-            try {
-                DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-                initialize();
-                refresh(dtpProperties);
-            } catch (Exception e) {
-                log.error("Init third party thread pool failed.", e);
-            }
+    protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
+        try {
+            DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+            initialize();
+            refresh(dtpProperties);
+        } catch (Throwable e) {
+            log.error("Init third party thread pool failed.", e);
         }
     }
 

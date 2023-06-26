@@ -17,7 +17,7 @@
 
 package org.dromara.dynamictp.test.core.spring;
 
-import org.dromara.dynamictp.common.ApplicationContextHolder;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.monitor.DtpMonitor;
 import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;

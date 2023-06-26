@@ -31,6 +31,7 @@ import org.dromara.dynamictp.common.ex.DtpException;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.queue.MemorySafeLinkedBlockingQueue;
 import org.dromara.dynamictp.common.queue.VariableLinkedBlockingQueue;
+import org.dromara.dynamictp.common.spring.OnceApplicationContextEventListener;
 import org.dromara.dynamictp.common.util.StreamUtil;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.core.notifier.manager.NoticeManager;
@@ -41,8 +42,7 @@ import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.Collections;
 import java.util.List;
@@ -63,7 +63,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.PROPERTIES_CH
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpRegistry implements ApplicationRunner {
+public class DtpRegistry extends OnceApplicationContextEventListener {
 
     /**
      * Maintain all automatically registered and manually registered Executors(DtpExecutors and JUC ThreadPoolExecutors).
@@ -327,7 +327,7 @@ public class DtpRegistry implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) {
+    protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
         Set<String> remoteExecutors = Collections.emptySet();
         if (CollectionUtils.isNotEmpty(dtpProperties.getExecutors())) {
             remoteExecutors = dtpProperties.getExecutors().stream()

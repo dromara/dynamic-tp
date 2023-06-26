@@ -17,21 +17,20 @@
 
 package org.dromara.dynamictp.adapter.rocketmq;
 
-import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.common.ApplicationContextHolder;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.impl.consumer.ConsumeMessageConcurrentlyService;
 import org.apache.rocketmq.client.impl.consumer.ConsumeMessageOrderlyService;
 import org.apache.rocketmq.client.impl.consumer.DefaultMQPushConsumerImpl;
 import org.apache.rocketmq.client.impl.producer.DefaultMQProducerImpl;
 import org.apache.rocketmq.client.producer.DefaultMQProducer;
-import org.apache.rocketmq.spring.support.DefaultRocketMQListenerContainer;
+import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.jvmti.JVMTI;
 
 import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -40,6 +39,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * RocketMqDtpAdapter related
  *
  * @author yanhom
+ * @author dragon-zhang
  * @since 1.0.6
  */
 @SuppressWarnings("all")
@@ -67,54 +67,53 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
 
     public void adaptConsumerExecutors() {
 
-        val beans = ApplicationContextHolder.getBeansOfType(DefaultRocketMQListenerContainer.class);
-        if (MapUtils.isEmpty(beans)) {
-            log.warn("Cannot find beans of type DefaultRocketMQListenerContainer.");
+        val beans = JVMTI.getInstances(DefaultMQPushConsumer.class);
+        if (ArrayUtils.isEmpty(beans)) {
+            log.warn("Cannot find beans of type DefaultMQPushConsumer.");
             return;
         }
-        beans.forEach((k, v) -> {
-            DefaultRocketMQListenerContainer container = (DefaultRocketMQListenerContainer) v;
-            DefaultMQPushConsumer consumer = container.getConsumer();
+        for (DefaultMQPushConsumer consumer : beans) {
             val pushConsumer = (DefaultMQPushConsumerImpl) ReflectionUtil.getFieldValue(DefaultMQPushConsumer.class,
                     "defaultMQPushConsumerImpl", consumer);
             if (Objects.isNull(pushConsumer)) {
-                return;
+                continue;
             }
 
-            String cusKey = container.getConsumerGroup() + "#" + container.getTopic();
+            String cusKey = consumer.getConsumerGroup();
             ThreadPoolExecutor executor = null;
             val consumeMessageService = pushConsumer.getConsumeMessageService();
             if (consumeMessageService instanceof ConsumeMessageConcurrentlyService) {
                 executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(ConsumeMessageConcurrentlyService.class,
                         CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
+                cusKey = NAME + "#consumer#concurrently#" + cusKey;
             } else if (consumeMessageService instanceof ConsumeMessageOrderlyService) {
                 executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(ConsumeMessageOrderlyService.class,
                         CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
+                cusKey = NAME + "#consumer#orderly#" + cusKey;
             }
             if (Objects.nonNull(executor)) {
                 val executorWrapper = new ExecutorWrapper(cusKey, executor);
                 initNotifyItems(cusKey, executorWrapper);
                 executors.put(cusKey, executorWrapper);
             }
-        });
+        }
     }
 
     public void adaptProducerExecutors() {
 
-        val beans = ApplicationContextHolder.getBeansOfType(DefaultMQProducer.class);
-        if (MapUtils.isEmpty(beans)) {
-            log.warn("Cannot find beans of type TransactionMQProducer.");
+        val beans = JVMTI.getInstances(DefaultMQProducer.class);
+        if (ArrayUtils.isEmpty(beans)) {
+            log.warn("Cannot find beans of type DefaultMQProducer.");
             return;
         }
-        beans.forEach((k, v) -> {
-            DefaultMQProducer defaultMQProducer = (DefaultMQProducer) v;
+        for (DefaultMQProducer defaultMQProducer : beans) {
             val producer = (DefaultMQProducerImpl) ReflectionUtil.getFieldValue(DefaultMQProducer.class,
                     "defaultMQProducerImpl", defaultMQProducer);
             if (Objects.isNull(producer)) {
-                return;
+                continue;
             }
 
-            String proKey = defaultMQProducer.getProducerGroup() + "#" + defaultMQProducer.getCreateTopicKey();
+            String proKey = NAME + "#producer#" + defaultMQProducer.getProducerGroup();
             ThreadPoolExecutor executor = (ThreadPoolExecutor) producer.getAsyncSenderExecutor();
 
             if (Objects.nonNull(executor)) {
@@ -122,6 +121,6 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
                 initNotifyItems(proKey, executorWrapper);
                 executors.put(proKey, executorWrapper);
             }
-        });
+        }
     }
 }

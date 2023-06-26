@@ -25,4 +25,11 @@
         <module>starter-adapter-sofa</module>
         <module>starter-adapter-rabbitmq</module>
     </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.dromara.dynamictp</groupId>
+            <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
+        </dependency>
+    </dependencies>
 </project>

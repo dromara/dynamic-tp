@@ -17,8 +17,8 @@
 
 package org.dromara.dynamictp.starter.cloud.polaris.refresher;
 
-import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.SmartApplicationListener;
@@ -41,7 +41,7 @@ public class CloudPolarisRefresher extends AbstractRefresher implements SmartApp
     @Override
     public void onApplicationEvent(@NonNull ApplicationEvent event) {
         if (event instanceof RefreshScopeRefreshedEvent) {
-            doRefresh(dtpProperties);
+            refresh(environment);
         }
     }
 }

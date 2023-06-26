@@ -21,12 +21,5 @@
             <groupId>org.dromara.dynamictp</groupId>
             <artifactId>dynamic-tp-adapter-rocketmq</artifactId>
         </dependency>
-        
-        <dependency>
-            <groupId>com.aliyun.openservices</groupId>
-            <artifactId>ons-client</artifactId>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
     </dependencies>
 </project>

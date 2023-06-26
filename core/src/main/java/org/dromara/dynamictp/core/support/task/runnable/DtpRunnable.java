@@ -17,7 +17,7 @@
 
 package org.dromara.dynamictp.core.support.task.runnable;
 
-import org.dromara.dynamictp.common.ApplicationContextHolder;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.timer.HashedWheelTimer;
 import org.dromara.dynamictp.common.timer.Timeout;
 import org.dromara.dynamictp.core.thread.DtpExecutor;

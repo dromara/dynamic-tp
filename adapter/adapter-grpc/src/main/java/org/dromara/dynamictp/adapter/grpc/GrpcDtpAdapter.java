@@ -17,24 +17,29 @@
 
 package org.dromara.dynamictp.adapter.grpc;
 
-import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.common.ApplicationContextHolder;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.util.ReflectionUtil;
+import io.grpc.inprocess.InProcessSocketAddress;
+import io.grpc.internal.InternalServer;
 import io.grpc.internal.ServerImpl;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.devh.boot.grpc.server.serverfactory.GrpcServerLifecycle;
-import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.jvmti.JVMTI;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 
 /**
  * GrpcDtpAdapter related
  *
  * @author yanhom
+ * @author dragon-zhang
  * @since 1.0.9
  */
 @Slf4j
@@ -42,7 +47,7 @@ public class GrpcDtpAdapter extends AbstractDtpAdapter {
 
     private static final String NAME = "grpcTp";
 
-    private static final String SERVER_FIELD = "server";
+    private static final String SERVER_FIELD = "transportServer";
 
     private static final String EXECUTOR_FIELD = "executor";
 
@@ -53,35 +58,38 @@ public class GrpcDtpAdapter extends AbstractDtpAdapter {
 
     @Override
     protected void initialize() {
-        val beans = ApplicationContextHolder.getBeansOfType(GrpcServerLifecycle.class);
-        if (MapUtils.isEmpty(beans)) {
-            log.warn("Cannot find beans of type GrpcServerLifecycle.");
+        val beans = JVMTI.getInstances(ServerImpl.class);
+        if (ArrayUtils.isEmpty(beans)) {
+            log.warn("Cannot find beans of type ServerImpl.");
             return;
         }
-        beans.forEach((k, v) -> {
-            val server = ReflectionUtil.getFieldValue(GrpcServerLifecycle.class, SERVER_FIELD, v);
-            if (Objects.isNull(server)) {
-                return;
+        for (val serverImpl : beans) {
+            val internalServer = (InternalServer) ReflectionUtil.getFieldValue(ServerImpl.class, SERVER_FIELD, serverImpl);
+            String key = Optional.ofNullable(internalServer)
+                    .map(server -> {
+                        final SocketAddress address = server.getListenSocketAddress();
+                        if (address instanceof InetSocketAddress) {
+                            return String.valueOf(((InetSocketAddress) address).getPort());
+                        } else if (address instanceof InProcessSocketAddress) {
+                            return ((InProcessSocketAddress) address).getName();
+                        }
+                        return null;
+                    }).orElse(null);
+            if (Objects.isNull(key)) {
+                continue;
             }
-            val serverImpl = (ServerImpl) server;
             val executor = (Executor) ReflectionUtil.getFieldValue(ServerImpl.class, EXECUTOR_FIELD, serverImpl);
-            String tpName = genTpName(k);
+            String tpName = genTpName(key);
             if (Objects.nonNull(executor)) {
                 val executorWrapper = new ExecutorWrapper(tpName, executor);
                 initNotifyItems(tpName, executorWrapper);
                 executors.put(tpName, executorWrapper);
             }
-        });
+        }
         log.info("DynamicTp adapter, grpc server executors init end, executors: {}", executors);
     }
 
-    /**
-     * Gen tp name.
-     *
-     * @param serverLifeCycleName (shadedNettyGrpcServerLifecycle / inProcessGrpcServerLifecycle / nettyGrpcServerLifecycle)
-     * @return tp name
-     */
-    private String genTpName(String serverLifeCycleName) {
-        return serverLifeCycleName.replace("GrpcServerLifecycle", "Tp");
+    private String genTpName(String key) {
+        return NAME + "#" + key;
     }
 }

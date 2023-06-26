@@ -40,7 +40,7 @@ spring:
         - platform: email
           receivers: 123456@qq.com,789789@qq.com   # 收件人
       grpcTp:                                      # grpc 线程池配置
-        - threadPoolName: inProcessGrpcServerTp
+        - threadPoolName: grpcTp#9999
           corePoolSize: 100
           maximumPoolSize: 200
           keepAliveTime: 60

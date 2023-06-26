@@ -23,4 +23,11 @@
         <module>cloud-starter-polaris</module>
         <module>cloud-starter-huawei</module>
     </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.dromara.dynamictp</groupId>
+            <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
+        </dependency>
+    </dependencies>
 </project>

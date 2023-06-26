@@ -17,7 +17,7 @@
 
 package org.dromara.dynamictp.adapter.hystrix;
 
-import org.dromara.dynamictp.common.ApplicationContextHolder;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import com.netflix.hystrix.HystrixThreadPoolKey;

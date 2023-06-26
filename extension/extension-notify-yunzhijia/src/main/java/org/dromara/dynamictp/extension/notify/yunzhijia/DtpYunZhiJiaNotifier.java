@@ -24,7 +24,7 @@ import org.dromara.dynamictp.common.ApplicationContextHolder;
 import org.dromara.dynamictp.core.notifier.AbstractDtpNotifier;
 
 /**
- * DtpWechatNotifier related
+ * DtpYunZhiJiaNotifier related
  *
  * @author husky12138
  * @since 1.0.0

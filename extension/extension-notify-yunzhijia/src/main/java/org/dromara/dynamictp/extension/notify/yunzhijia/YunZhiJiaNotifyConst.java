@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.extension.notify.yunzhijia;
 
 /**
- * WechatNotifyConst related
+ * YunZhiJiaNotifyConst related
  *
  * @author husky12138
  * @since 1.0.0

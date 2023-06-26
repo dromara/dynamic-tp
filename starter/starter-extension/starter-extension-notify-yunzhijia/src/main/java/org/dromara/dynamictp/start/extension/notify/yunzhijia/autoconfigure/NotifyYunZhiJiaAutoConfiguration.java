@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.start.extension.notify.yunzhijia.autoconfigure;
 
-
 import org.dromara.dynamictp.core.notifier.DtpNotifier;
 import org.dromara.dynamictp.extension.notify.yunzhijia.DtpYunZhiJiaNotifier;
 import org.dromara.dynamictp.extension.notify.yunzhijia.YunZhiJiaNotifier;
@@ -27,7 +26,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * NotifyEmailAutoConfiguration related
+ * NotifyYunZhiJiaAutoConfiguration related
  *
  * @author husky12138
  * @since 1.0.8

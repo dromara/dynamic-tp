@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.common.spring;
+package org.dromara.dynamictp.starter.common.binder;
 
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.spring.PropertiesBinder;
@@ -32,7 +32,7 @@ import java.util.Map;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAIN_PROPERTIES_PREFIX;
 
 /**
- * PropertiesBinder related
+ * SpringBootPropertiesBinder related
  *
  * @author yanhom
  * @since 1.0.3

@@ -62,7 +62,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
                 initialize();
                 refresh(dtpProperties);
             } catch (Exception e) {
-                log.error("Init third party thread pool failed.", e);
+                log.error("Init apache dubbo thread pool failed.", e);
             }
         }
     }

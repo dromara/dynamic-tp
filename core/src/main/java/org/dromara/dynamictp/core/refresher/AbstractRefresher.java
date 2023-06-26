@@ -21,10 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
 import org.dromara.dynamictp.common.event.RefreshEvent;
 import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.handler.ConfigHandler;
 import org.dromara.dynamictp.core.support.BinderHelper;
@@ -86,9 +86,9 @@ public abstract class AbstractRefresher implements Refresher, EnvironmentAware {
         doRefresh(dtpProperties);
     }
 
-    protected void doRefresh(DtpProperties dtpProperties) {
-        DtpRegistry.refresh(dtpProperties);
-        publishEvent(dtpProperties);
+    protected void doRefresh(DtpProperties properties) {
+        DtpRegistry.refresh(properties);
+        publishEvent(properties);
     }
 
     private void publishEvent(DtpProperties dtpProperties) {

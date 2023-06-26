@@ -19,6 +19,7 @@ package org.dromara.dynamictp.core.notifier.base;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
@@ -62,7 +63,7 @@ public abstract class AbstractNotifier implements Notifier {
                 .map(BaseNotifyCtx::getNotifyItem)
                 .map(NotifyItem::getReceivers)
                 .orElse(null);
-        receivers = StrUtil.isBlank(receivers) ? platform.getReceivers() : receivers;
+        receivers = StringUtils.isBlank(receivers) ? platform.getReceivers() : receivers;
         return receivers.split(",");
     }
 

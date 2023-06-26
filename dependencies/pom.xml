@@ -53,6 +53,8 @@
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-flatten.version>1.3.0</maven-flatten.version>
+        <ttl.version>2.12.6</ttl.version>
+        <equator.version>1.0.4</equator.version>
     </properties>
 
     <dependencyManagement>
@@ -294,6 +296,18 @@
                 <groupId>org.scijava</groupId>
                 <artifactId>native-lib-loader</artifactId>
                 <version>${native-lib-loader.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>transmittable-thread-local</artifactId>
+                <version>${ttl.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.dadiyang</groupId>
+                <artifactId>equator</artifactId>
+                <version>${equator.version}</version>
             </dependency>
 
             <dependency>

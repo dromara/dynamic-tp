@@ -79,11 +79,6 @@ public final class DynamicTpConst {
     public static final String QUEUE_TIMEOUT = "queueTimeout";
 
     public static final String TASK_WRAPPERS = "taskWrappers";
-
-    public static final String FAIR = "fair";
-
-    public static final String MAXFREEMEMORY = "maxFreeMemory";
-
     /**
      * alarm
      */

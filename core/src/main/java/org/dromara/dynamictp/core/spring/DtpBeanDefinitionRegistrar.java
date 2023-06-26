@@ -47,8 +47,6 @@ import java.util.concurrent.BlockingQueue;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.ALLOW_CORE_THREAD_TIMEOUT;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.AWAIT_TERMINATION_SECONDS;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.FAIR;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAXFREEMEMORY;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.NOTIFY_ENABLED;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.NOTIFY_ITEMS;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PLATFORM_IDS;

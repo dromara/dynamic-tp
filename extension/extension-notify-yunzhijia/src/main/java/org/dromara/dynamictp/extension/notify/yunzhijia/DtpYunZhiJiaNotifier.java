@@ -20,14 +20,14 @@ package org.dromara.dynamictp.extension.notify.yunzhijia;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.dromara.dynamictp.common.ApplicationContextHolder;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.core.notifier.AbstractDtpNotifier;
 
 /**
  * DtpYunZhiJiaNotifier related
  *
  * @author husky12138
- * @since 1.0.0
+ * @since 1.1.4
  **/
 @Slf4j
 public class DtpYunZhiJiaNotifier extends AbstractDtpNotifier {

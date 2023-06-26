@@ -21,7 +21,7 @@ package org.dromara.dynamictp.extension.notify.yunzhijia;
  * YunZhiJiaNotifyConst related
  *
  * @author husky12138
- * @since 1.0.0
+ * @since 1.1.4
  **/
 public final class YunZhiJiaNotifyConst {
 

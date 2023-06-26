@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
  * NotifyYunZhiJiaAutoConfiguration related
  *
  * @author husky12138
- * @since 1.0.8
+ * @since 1.1.4
  **/
 @Configuration
 public class NotifyYunZhiJiaAutoConfiguration {

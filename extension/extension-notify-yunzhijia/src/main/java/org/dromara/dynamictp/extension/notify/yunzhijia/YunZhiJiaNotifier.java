@@ -29,7 +29,7 @@ import java.util.Map;
  * YunZhiJiaNotifier related
  *
  * @author husky12138
- * @since 1.0.0
+ * @since 1.1.4
  **/
 @Slf4j
 public class YunZhiJiaNotifier extends AbstractHttpNotifier {

@@ -27,35 +27,33 @@ import java.util.Set;
 
 /**
  * @author windsearcher.lq
- * @since 2023/6/10 08:57
+ * @since 1.1.4
  */
 public class DtpExtensionProxyFactory {
 
-    public static Object wrap(Object target, DtpExtension interceptor) {
+    public static Object enhance(Object target, DtpInterceptor interceptor) {
         Map<Class<?>, Set<Method>> signatureMap = getSignatureMap(interceptor);
         if (!signatureMap.containsKey(target.getClass())) {
             return target;
-        } else {
-            Enhancer enhancer = new Enhancer();
-            enhancer.setSuperclass(target.getClass());
-            enhancer.setCallback(new DtpExtensionProxy(target, interceptor, signatureMap));
-            return enhancer.create();
         }
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(target.getClass());
+        enhancer.setCallback(new DtpExtensionProxy(target, interceptor, signatureMap));
+        return enhancer.create();
     }
 
-    public static Object wrap(Object target, Class[] argumentTypes, Object[] arguments, DtpExtension interceptor) {
+    public static Object enhance(Object target, Class<?>[] argumentTypes, Object[] arguments, DtpInterceptor interceptor) {
         Map<Class<?>, Set<Method>> signatureMap = getSignatureMap(interceptor);
         if (!signatureMap.containsKey(target.getClass())) {
             return target;
-        } else {
-            Enhancer enhancer = new Enhancer();
-            enhancer.setSuperclass(target.getClass());
-            enhancer.setCallback(new DtpExtensionProxy(target, interceptor, signatureMap));
-            return enhancer.create(argumentTypes, arguments);
         }
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(target.getClass());
+        enhancer.setCallback(new DtpExtensionProxy(target, interceptor, signatureMap));
+        return enhancer.create(argumentTypes, arguments);
     }
 
-    private static Map<Class<?>, Set<Method>> getSignatureMap(DtpExtension interceptor) {
+    private static Map<Class<?>, Set<Method>> getSignatureMap(DtpInterceptor interceptor) {
         DtpExtensionPoint interceptsAnnotation = interceptor.getClass().getAnnotation(DtpExtensionPoint.class);
         if (interceptsAnnotation == null) {
             throw new RuntimeException("No @Intercepts annotation was found in interceptor " + interceptor.getClass().getName());

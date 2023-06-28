@@ -22,15 +22,15 @@ import java.lang.reflect.Method;
 
 /**
  * @author windsearcher.lq
- * @since  2023/6/9 21:18
+ * @since 1.1.4
  */
 public class DtpInvocation {
 
-    private Object target;
+    private final Object target;
 
-    private Method method;
+    private final Method method;
 
-    private Object[] args;
+    private final Object[] args;
 
     public DtpInvocation(Object target, Method method, Object[] args) {
         this.target = target;

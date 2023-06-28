@@ -15,19 +15,26 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.plugin;
-
-import org.dromara.dynamictp.core.thread.DtpExecutor;
+package org.dromara.dynamictp.common.util;
 
 import java.lang.reflect.Constructor;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * ConstructorUtil related
+ *
+ * @author windsearcher.lq
+ * @since 1.1.4
+ */
 public class ConstructorUtil {
 
-    public static Object[] buildDtpExecutorConstructorArgs(DtpExecutor dtpExecutor) {
+    private ConstructorUtil() { }
+
+    public static Object[] buildTpExecutorConstructorArgs(ThreadPoolExecutor dtpExecutor) {
 
         return new Object[] {
                 dtpExecutor.getCorePoolSize(),
@@ -40,7 +47,7 @@ public class ConstructorUtil {
         };
     }
 
-    public static Class[] buildDtpExecutorConstructorArgTypes() {
+    public static Class<?>[] buildTpExecutorConstructorArgTypes() {
 
         return new Class[] {
                 int.class,
@@ -53,19 +60,17 @@ public class ConstructorUtil {
         };
     }
 
-
-    public static Class[] buildConstructorArgs() {
-
-        return null;
+    public static Class<?>[] buildConstructorArgs() {
+        return new Class[0];
     }
 
-    public static Class[] buildConstructorArgTypes(Object obj) {
+    public static Class<?>[] buildConstructorArgTypes(Object obj) {
 
-        Class clazz = obj.getClass();
-        Constructor[] constructors = clazz.getConstructors();
-        if (constructors != null && constructors.length > 0) {
+        Class<?> clazz = obj.getClass();
+        Constructor<?>[] constructors = clazz.getConstructors();
+        if (constructors.length > 0) {
             return constructors[0].getParameterTypes();
         }
-        return null;
+        return new Class[0];
     }
 }

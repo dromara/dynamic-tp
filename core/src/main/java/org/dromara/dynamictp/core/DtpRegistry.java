@@ -44,7 +44,6 @@ import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
 import org.springframework.context.event.ContextRefreshedEvent;
 
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

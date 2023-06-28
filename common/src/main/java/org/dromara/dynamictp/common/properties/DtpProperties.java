@@ -17,14 +17,13 @@
 
 package org.dromara.dynamictp.common.properties;
 
-import org.dromara.dynamictp.common.entity.DtpExecutorProps;
-import org.dromara.dynamictp.common.entity.DtpExtensionProps;
-import org.dromara.dynamictp.common.entity.NotifyPlatform;
-import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.em.CollectorTypeEnum;
+import org.dromara.dynamictp.common.entity.DtpExecutorProps;
+import org.dromara.dynamictp.common.entity.NotifyPlatform;
+import org.dromara.dynamictp.common.entity.TpExecutorProps;
 
 import java.util.List;
 
@@ -38,8 +37,7 @@ import java.util.List;
 @Data
 public class DtpProperties {
 
-    private DtpProperties() {
-    }
+    private DtpProperties() { }
 
     /**
      * If enabled DynamicTp.
@@ -80,11 +78,6 @@ public class DtpProperties {
      * Notify platform configs.
      */
     private List<NotifyPlatform> platforms;
-
-    /**
-     * extension configs
-     */
-    private List<DtpExtensionProps> extensions;
 
     /**
      * Nacos config.

@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 
 /**
  * @author windsearcher.lq
- * @since 2023/6/9 20:47
+ * @since 1.1.4
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

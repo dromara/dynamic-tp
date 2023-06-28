@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.example.extensiontest;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.core.plugin.DtpExtension;
+import org.dromara.dynamictp.core.plugin.DtpInterceptor;
 import org.dromara.dynamictp.core.plugin.DtpExtensionPoint;
 import org.dromara.dynamictp.core.plugin.DtpInvocation;
 import org.dromara.dynamictp.core.plugin.DtpSignature;
@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 @DtpExtensionPoint({@DtpSignature(clazz = DtpExecutor.class, method = "execute", args = {Runnable.class}), @DtpSignature(clazz = ScheduledDtpExecutor.class, method = "execute", args = {Runnable.class})})
 @Slf4j
-public class TestExtension implements DtpExtension {
+public class TestInterceptor implements DtpInterceptor {
 
     @Override
     public Object intercept(DtpInvocation invocation) throws InvocationTargetException, IllegalAccessException {

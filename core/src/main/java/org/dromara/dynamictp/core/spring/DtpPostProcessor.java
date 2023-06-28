@@ -19,9 +19,9 @@ package org.dromara.dynamictp.core.spring;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.dynamictp.common.util.ConstructorUtil;
 import org.dromara.dynamictp.core.DtpRegistry;
-import org.dromara.dynamictp.core.plugin.ExtensionRegistry;
-import org.dromara.dynamictp.core.plugin.ConstructorUtil;
+import org.dromara.dynamictp.core.plugin.DtpInterceptorRegistry;
 import org.dromara.dynamictp.core.support.DynamicTp;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.TaskQueue;
@@ -47,7 +47,6 @@ import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
-
 /**
  * BeanPostProcessor that handles all related beans managed by Spring.
  *
@@ -68,9 +67,9 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
         if (bean instanceof DtpExecutor) {
             // register DtpExecutor
             DtpExecutor dtpExecutor = (DtpExecutor) bean;
-            Object[] args = ConstructorUtil.buildDtpExecutorConstructorArgs(dtpExecutor);
-            Class[] argTypes = ConstructorUtil.buildDtpExecutorConstructorArgTypes();
-            bean = ExtensionRegistry.pluginAll(bean, argTypes, args);
+            Object[] args = ConstructorUtil.buildTpExecutorConstructorArgs(dtpExecutor);
+            Class<?>[] argTypes = ConstructorUtil.buildTpExecutorConstructorArgTypes();
+            bean = DtpInterceptorRegistry.pluginAll(bean, argTypes, args);
             registerDtp(bean);
         } else {
             // register ThreadPoolExecutor or ThreadPoolTaskExecutor

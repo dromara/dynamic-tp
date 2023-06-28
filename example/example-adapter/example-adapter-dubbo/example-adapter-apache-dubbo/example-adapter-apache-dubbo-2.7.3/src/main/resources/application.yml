@@ -1,0 +1,71 @@
+server:
+  port: 9102
+
+spring:
+  application:
+    name: dynamic-tp-adapter-dubbo-demo
+  profiles:
+    active: dev
+
+  dynamic:
+    tp:
+      enabled: true
+      enabledBanner: true           # 是否开启banner打印，默认true
+      enabledCollect: true          # 是否开启监控指标采集，默认false
+      collectorTypes: logging       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+      monitorInterval: 5
+      platforms:                    # 通知报警平台配置
+        - platform: wechat
+          urlKey: 3a7500-1287-4bd-a798-c5c3d8b69c  # 替换
+          receivers: test1,test2                   # 接受人企微名称
+        - platform: ding
+          urlKey: f80dad441fcd655438f4a08dcd6a     # 替换
+          secret: SECb5441fa6f375d5b9d21           # 替换，非sign模式可以没有此值
+          receivers: 15810119805                   # 钉钉账号手机号
+        - platform: lark
+          urlKey: 0d944ae7-b24a-40                 # 替换
+          receivers: test1,test2                   # 接受人飞书名称/openid
+        - platform: email
+          receivers: 123456@qq.com,789789@qq.com   # 收件人
+      dubboTp:                                     # dubbo 线程池配置
+        - threadPoolName: dubboTp#20880            # 名称规则：dubboTp + "#" + 协议端口
+          threadPoolAliasName: 测试线程池
+          corePoolSize: 100
+          maximumPoolSize: 200
+          keepAliveTime: 60
+          notifyItems:                             # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警）
+            - type: capacity                       # 报警项类型，查看源码 NotifyTypeEnum枚举类
+              enabled: true
+              threshold: 80                        # 报警阈值
+              platforms: [ ding,wechat ]           # 可选配置，不配置默认拿上层platforms配置的所以平台
+              interval: 120                        # 报警间隔（单位：s）
+  # email notify configuration
+  mail:
+    # (optional) email subject, default:ThreadPool Notify
+    title: ThreadPool Notify
+    # mail service address
+    host: smtp.qq.com
+    port: 465
+    # send from
+    username: 123456@qq.com
+    # authorization code eg: rlpadadtcugh4152e
+    password: xxxxxxxxxxxxxxxx
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          socketFactoryClass: javax.net.ssl.SSLSocketFactory
+          ssl:
+            enable: true
+        debug: false
+
+dubbo:
+  application:
+    name: dynamic-tp-adapter-demo
+  registry:
+    id: zookeeper-registry
+    protocol: zookeeper
+    address: zookeeper://127.0.0.1:2181
+  protocol:
+    name: dubbo
+    port: 20880

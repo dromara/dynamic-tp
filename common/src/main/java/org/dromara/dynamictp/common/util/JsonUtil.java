@@ -73,6 +73,7 @@ public final class JsonUtil {
      * @param <T> the target type
      * @param json    要反序列化的json字符串
      * @param typeOfT 要反序列化的对象类型
+     * @param <T>     要反序列化的对象类型
      * @return T
      * @author topsuder 🌼🐇
      */

@@ -34,8 +34,7 @@ public class DtpPostProcessorRegistrar implements ImportBeanDefinitionRegistrar 
     private static final String BEAN_NAME = "dtpPostProcessor";
 
     @Override
-    public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata,
-                                        BeanDefinitionRegistry registry) {
+    public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         if (!registry.containsBeanDefinition(BEAN_NAME)) {
             AbstractBeanDefinition beanDefinition = BeanDefinitionBuilder
                     .genericBeanDefinition(DtpPostProcessor.class,

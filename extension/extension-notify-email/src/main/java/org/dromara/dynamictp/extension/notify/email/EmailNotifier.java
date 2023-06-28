@@ -17,10 +17,11 @@
 
 package org.dromara.dynamictp.extension.notify.email;
 
-import org.dromara.dynamictp.common.entity.NotifyPlatform;
-import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
-import org.dromara.dynamictp.core.notifier.base.Notifier;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
+import org.dromara.dynamictp.common.entity.NotifyPlatform;
+import org.dromara.dynamictp.core.notifier.base.AbstractNotifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -38,7 +39,7 @@ import java.util.Date;
  * @since 1.0.8
  */
 @Slf4j
-public class EmailNotifier implements Notifier {
+public class EmailNotifier extends AbstractNotifier {
 
     @Value("${spring.mail.username}")
     private String sendFrom;
@@ -57,21 +58,18 @@ public class EmailNotifier implements Notifier {
         return NotifyPlatformEnum.EMAIL.name().toLowerCase();
     }
 
+    @SneakyThrows
     @Override
-    public void send(NotifyPlatform platform, String content) {
-        try {
-            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-            messageHelper.setSubject(title);
-            messageHelper.setFrom(sendFrom);
-            messageHelper.setTo(platform.getReceivers().split(","));
-            messageHelper.setSentDate(new Date());
-            messageHelper.setText(content, true);
-            javaMailSender.send(mimeMessage);
-            log.info("DynamicTp notify, email send success.");
-        } catch (Exception e) {
-            log.error("DynamicTp notify, email send failed...", e);
-        }
+    protected void sendMode(NotifyPlatform platform, String content) {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+        messageHelper.setSubject(title);
+        messageHelper.setFrom(sendFrom);
+        messageHelper.setTo(getNotifyReceivers(platform));
+        messageHelper.setSentDate(new Date());
+        messageHelper.setText(content, true);
+        javaMailSender.send(mimeMessage);
+        log.info("DynamicTp notify, {} send success.", platform());
     }
 
     public String processTemplateContent(String template, Context context) {

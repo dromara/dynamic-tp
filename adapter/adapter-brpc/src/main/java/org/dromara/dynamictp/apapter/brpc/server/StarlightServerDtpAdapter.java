@@ -25,12 +25,12 @@ import com.baidu.cloud.starlight.core.rpc.DefaultStarlightServer;
 import com.baidu.cloud.starlight.core.rpc.ServerProcessor;
 import com.baidu.cloud.starlight.transport.netty.NettyServer;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.common.ApplicationContextHolder;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.dromara.dynamictp.jvmti.JVMTI;
 
 import java.util.Objects;
 
@@ -60,7 +60,7 @@ public class StarlightServerDtpAdapter extends AbstractDtpAdapter {
     protected void initialize() {
         super.initialize();
 
-        val bean = ApplicationContextHolder.getBean(StarlightServer.class);
+        val bean = JVMTI.getInstance(StarlightServer.class);
         if (!(bean instanceof DefaultStarlightServer)) {
             return;
         }

@@ -38,7 +38,8 @@ public interface Notifier {
      * Send message.
      *
      * @param platform platform
-     * @param content content
+     * @param content  content
      */
     void send(NotifyPlatform platform, String content);
+
 }

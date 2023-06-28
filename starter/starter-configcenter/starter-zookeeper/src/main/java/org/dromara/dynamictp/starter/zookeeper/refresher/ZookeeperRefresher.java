@@ -17,15 +17,15 @@
 
 package org.dromara.dynamictp.starter.zookeeper.refresher;
 
-import org.dromara.dynamictp.core.refresher.AbstractRefresher;
-import org.dromara.dynamictp.starter.zookeeper.util.CuratorUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.api.CuratorListener;
 import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.framework.state.ConnectionStateListener;
 import org.apache.zookeeper.WatchedEvent;
+import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.dromara.dynamictp.starter.zookeeper.autoconfigure.ZkConfigEnvironmentProcessor;
+import org.dromara.dynamictp.starter.zookeeper.util.CuratorUtil;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -73,7 +73,7 @@ public class ZookeeperRefresher extends AbstractRefresher implements Environment
      * load config and refresh
      */
     private void loadAndRefresh() {
-        doRefresh(CuratorUtil.genPropertiesMap(dtpProperties));
+        refresh(CuratorUtil.genPropertiesMap(dtpProperties));
     }
 
     @Override

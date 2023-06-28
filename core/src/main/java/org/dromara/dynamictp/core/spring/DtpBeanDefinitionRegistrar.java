@@ -17,6 +17,10 @@
 
 package org.dromara.dynamictp.core.spring;
 
+import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.entity.DtpExtensionProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
@@ -26,15 +30,12 @@ import org.dromara.dynamictp.common.util.StringUtil;
 import org.dromara.dynamictp.core.plugin.ExtensionRegistry;
 import org.dromara.dynamictp.core.plugin.DtpExtension;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
+import org.dromara.dynamictp.core.support.BinderHelper;
 import org.dromara.dynamictp.core.support.ExecutorType;
 import org.dromara.dynamictp.core.support.TaskQueue;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.dromara.dynamictp.core.thread.EagerDtpExecutor;
 import org.dromara.dynamictp.core.thread.NamedThreadFactory;
-import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -80,8 +81,8 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        DtpProperties dtpProperties = new DtpProperties();
-        PropertiesBinder.bindDtpProperties(environment, dtpProperties);
+        DtpProperties dtpProperties = DtpProperties.getInstance();
+        BinderHelper.bindDtpProperties(environment, dtpProperties);
         val executors = dtpProperties.getExecutors();
         List<DtpExtensionProps> extensions = dtpProperties.getExtensions();
         registerDtpExtensions(extensions);

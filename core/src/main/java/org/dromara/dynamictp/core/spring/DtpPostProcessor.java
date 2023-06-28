@@ -17,6 +17,8 @@
 
 package org.dromara.dynamictp.core.spring;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.plugin.ExtensionRegistry;
 import org.dromara.dynamictp.core.plugin.ConstructorUtil;
@@ -25,8 +27,6 @@ import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.TaskQueue;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
 import org.dromara.dynamictp.core.thread.EagerDtpExecutor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;

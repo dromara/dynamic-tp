@@ -17,8 +17,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.dromara.dynamictp</groupId>
+            <artifactId>dynamic-tp-jvmti-runtime</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.baidu.cloud</groupId>
-            <artifactId>spring-cloud-starter-baidu-starlight</artifactId>
+            <artifactId>starlight-all</artifactId>
             <optional>true</optional>
         </dependency>
     </dependencies>

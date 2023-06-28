@@ -17,20 +17,20 @@
 
 package org.dromara.dynamictp.core.monitor;
 
-import org.dromara.dynamictp.common.ApplicationContextHolder;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 import org.dromara.dynamictp.common.event.AlarmCheckEvent;
 import org.dromara.dynamictp.common.event.CollectEvent;
 import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.spring.OnceApplicationContextEventListener;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.core.handler.CollectorHandler;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.thread.NamedThreadFactory;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
@@ -46,7 +46,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTI
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpMonitor implements ApplicationRunner {
+public class DtpMonitor extends OnceApplicationContextEventListener {
 
     private static final ScheduledExecutorService MONITOR_EXECUTOR = new ScheduledThreadPoolExecutor(
             1, new NamedThreadFactory("dtp-monitor", true));
@@ -58,7 +58,7 @@ public class DtpMonitor implements ApplicationRunner {
     }
 
     @Override
-    public void run(ApplicationArguments args) {
+    protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
         MONITOR_EXECUTOR.scheduleWithFixedDelay(this::run,
                 0, dtpProperties.getMonitorInterval(), TimeUnit.SECONDS);
     }

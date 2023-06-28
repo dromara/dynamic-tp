@@ -16,6 +16,7 @@
         <module>extension-limiter-redis</module>
         <module>extension-notify-email</module>
         <module>extension-opentelemetry</module>
+        <module>extension-notify-yunzhijia</module>
     </modules>
 
     <dependencies>

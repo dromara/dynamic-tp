@@ -37,7 +37,7 @@ import java.util.Set;
 public class DtpExecutorProps extends TpExecutorProps {
 
     /**
-     * Executor type, used in create phase, see {@link com.dtp.core.support.ExecutorType}
+     * Executor type, used in create phase, see {@link org.dromara.dynamictp.core.support.ExecutorType}
      */
     private String executorType;
 

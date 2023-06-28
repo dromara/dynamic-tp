@@ -17,23 +17,20 @@
 
 package org.dromara.dynamictp.core.notifier.base;
 
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
-import org.dromara.dynamictp.common.constant.LarkNotifyConst;
-import org.dromara.dynamictp.common.entity.NotifyPlatform;
-import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
-import org.dromara.dynamictp.common.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.dynamictp.common.constant.LarkNotifyConst;
+import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
+import org.dromara.dynamictp.common.entity.NotifyPlatform;
+import org.dromara.dynamictp.common.util.TimeUtil;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Objects;
 
 import static org.dromara.dynamictp.common.constant.LarkNotifyConst.SIGN_PARAM;
 import static org.dromara.dynamictp.common.constant.LarkNotifyConst.SIGN_REPLACE;
@@ -46,7 +43,7 @@ import static org.dromara.dynamictp.common.constant.LarkNotifyConst.SIGN_REPLACE
  * @since 2022/4/28 23:25
  */
 @Slf4j
-public class LarkNotifier implements Notifier {
+public class LarkNotifier extends AbstractHttpNotifier {
 
     /**
      * LF
@@ -64,34 +61,6 @@ public class LarkNotifier implements Notifier {
     }
 
     /**
-     * Execute real Lark send.
-     *
-     * @param notifyPlatform {@link NotifyPlatform}
-     * @param text           send content
-     */
-    @Override
-    public void send(NotifyPlatform notifyPlatform, String text) {
-        String serverUrl = LarkNotifyConst.LARK_WEBHOOK + notifyPlatform.getUrlKey();
-        if (StringUtils.isNotBlank(notifyPlatform.getSecret())) {
-            try {
-                val secondsTimestamp = TimeUtil.currentTimeSeconds();
-                val sign = genSign(notifyPlatform.getSecret(), secondsTimestamp);
-                text = text.replace(SIGN_REPLACE, String.format(SIGN_PARAM, secondsTimestamp, sign));
-            } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-                log.error("DynamicTp notify, lark generate signature failed...", e);
-            }
-        }
-        try {
-            HttpResponse response = HttpRequest.post(serverUrl).body(text).execute();
-            if (Objects.nonNull(response)) {
-                log.info("DynamicTp notify, lark send success, response: {}, request:{}", response.body(), text);
-            }
-        } catch (Exception e) {
-            log.error("DynamicTp notify, lark send failed...", e);
-        }
-    }
-
-    /**
      * get signature
      *
      * @param secret    secret
@@ -106,5 +75,25 @@ public class LarkNotifier implements Notifier {
         mac.init(new SecretKeySpec(stringToSign.getBytes(StandardCharsets.UTF_8), HMAC_SHA_256));
         byte[] signData = mac.doFinal(new byte[]{});
         return new String(Base64.encodeBase64(signData));
+    }
+
+    @Override
+    protected String buildMsgBody(NotifyPlatform platform, String content) {
+        if (StringUtils.isBlank(platform.getSecret())) {
+            return content;
+        }
+        try {
+            val secondsTimestamp = TimeUtil.currentTimeSeconds();
+            val sign = genSign(platform.getSecret(), secondsTimestamp);
+            content = content.replace(SIGN_REPLACE, String.format(SIGN_PARAM, secondsTimestamp, sign));
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            log.error("DynamicTp notify, lark generate signature failed...", e);
+        }
+        return content;
+    }
+
+    @Override
+    protected String buildUrl(NotifyPlatform platform) {
+        return LarkNotifyConst.LARK_WEBHOOK + platform.getUrlKey();
     }
 }

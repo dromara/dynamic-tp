@@ -24,7 +24,7 @@ import com.aliyun.openservices.shade.com.alibaba.rocketmq.client.impl.consumer.C
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.client.impl.consumer.ConsumeMessageOrderlyService;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.client.impl.consumer.DefaultMQPushConsumerImpl;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.common.ApplicationContextHolder;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
@@ -81,15 +81,18 @@ public class AliyunOnsRocketMqAdapter extends AbstractDtpAdapter {
         if (Objects.isNull(impl)) {
             return;
         }
-        // consumer bean name replace topic name
-        String cusKey = defaultMqPushConsumer.getConsumerGroup() + "#" + k;
+
         ThreadPoolExecutor executor = null;
         val consumeMessageService = impl.getConsumeMessageService();
+        // consumer bean name replace topic name
+        String cusKey = defaultMqPushConsumer.getConsumerGroup();
         if (consumeMessageService instanceof ConsumeMessageConcurrentlyService) {
+            cusKey = NAME + "#consumer#concurrently#" + cusKey;
             executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(
                     ConsumeMessageConcurrentlyService.class,
                     CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
         } else if (consumeMessageService instanceof ConsumeMessageOrderlyService) {
+            cusKey = NAME + "#consumer#orderly#" + cusKey;
             executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(
                     ConsumeMessageOrderlyService.class,
                     CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);

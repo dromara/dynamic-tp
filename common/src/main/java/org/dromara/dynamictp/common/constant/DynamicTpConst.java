@@ -79,7 +79,6 @@ public final class DynamicTpConst {
     public static final String QUEUE_TIMEOUT = "queueTimeout";
 
     public static final String TASK_WRAPPERS = "taskWrappers";
-
     /**
      * alarm
      */

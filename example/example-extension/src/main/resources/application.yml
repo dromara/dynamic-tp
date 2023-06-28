@@ -19,6 +19,10 @@ spring:
     name: dynamic-tp-nacos-demo
   profiles:
     active: dev
+  dynamic:
+    tp:
+      extensions:
+        - extensionPath: org.dromara.dynamictp.example.extensiontest.TestExtension
 
 nacos:
   config:

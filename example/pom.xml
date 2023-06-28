@@ -26,6 +26,7 @@
         <module>example-adapter</module>
         <module>example-polaris-cloud</module>
         <module>example-huawei-cloud</module>
+        <module>example-extension</module>
     </modules>
 
     <build>

@@ -44,6 +44,7 @@ import org.dromara.dynamictp.core.thread.DtpExecutor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +70,6 @@ public class DtpRegistry implements ApplicationRunner {
      * Maintain all automatically registered and manually registered Executors(DtpExecutors and JUC ThreadPoolExecutors).
      */
     private static final Map<String, ExecutorWrapper> EXECUTOR_REGISTRY = new ConcurrentHashMap<>();
-
     /**
      * equator for comparing two TpMainFields
      */

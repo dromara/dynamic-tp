@@ -19,6 +19,7 @@ package org.dromara.dynamictp.common.properties;
 
 import org.dromara.dynamictp.common.constant.DynamicTpConst;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
+import org.dromara.dynamictp.common.entity.DtpExtensionProps;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import com.google.common.collect.Lists;
@@ -79,6 +80,11 @@ public class DtpProperties {
      * Notify platform configs.
      */
     private List<NotifyPlatform> platforms;
+
+    /**
+     * extension configs
+     */
+    private List<DtpExtensionProps> extensions;
 
     /**
      * Nacos config.

@@ -33,14 +33,14 @@ import org.slf4j.MDC;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.atomic.LongAdder;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
@@ -189,6 +189,7 @@ public class DtpExecutor extends ThreadPoolExecutor
 
     @Override
     public void execute(Runnable command) {
+        // 在这里计算动态线程池任务维度的QPS
         DtpRunnable dtpRunnable = (DtpRunnable) wrapTasks(command);
         dtpRunnable.startQueueTimeoutTask(this);
         super.execute(dtpRunnable);

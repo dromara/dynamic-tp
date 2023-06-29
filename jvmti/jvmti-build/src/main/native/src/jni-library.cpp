@@ -36,7 +36,7 @@ int init_agent(JavaVM *vm, void *reserved) {
     /* Get JVMTI environment */
     jint rc = vm->GetEnv((void **)&jvmti, JVMTI_VERSION_1_2);
     if (rc != JNI_OK) {
-        fprintf(stderr, "ERROR: shenyu Unable to create jvmtiEnv, GetEnv failed, error=%d\n", rc);
+        fprintf(stderr, "ERROR: dynamic-tp Unable to create jvmtiEnv, GetEnv failed, error=%d\n", rc);
         return -1;
     }
 
@@ -44,7 +44,7 @@ int init_agent(JavaVM *vm, void *reserved) {
     capabilities.can_tag_objects = 1;
     jvmtiError error = jvmti->AddCapabilities(&capabilities);
     if (error) {
-        fprintf(stderr, "ERROR: shenyu JVMTI AddCapabilities failed!%u\n", error);
+        fprintf(stderr, "ERROR: dynamic-tp JVMTI AddCapabilities failed!%u\n", error);
         return JNI_FALSE;
     }
 
@@ -94,7 +94,7 @@ Java_org_dromara_dynamictp_jvmti_JVMTI_getInstances0(JNIEnv *env, jclass thisCla
     jvmtiError error = jvmti->IterateOverInstancesOfClass(klass, JVMTI_HEAP_OBJECT_EITHER,
                                                HeapObjectCallback, &tag);
     if (error) {
-        printf("ERROR: JVMTI IterateOverInstancesOfClass failed!%u\n", error);
+        printf("ERROR: dynamic-tp JVMTI IterateOverInstancesOfClass failed!%u\n", error);
         return NULL;
     }
 
@@ -102,7 +102,7 @@ Java_org_dromara_dynamictp_jvmti_JVMTI_getInstances0(JNIEnv *env, jclass thisCla
     jobject *instances;
     error = jvmti->GetObjectsWithTags(1, &tag, &count, &instances, NULL);
     if (error) {
-        printf("ERROR: JVMTI GetObjectsWithTags failed!%u\n", error);
+        printf("ERROR: dynamic-tp JVMTI GetObjectsWithTags failed!%u\n", error);
         return NULL;
     }
 

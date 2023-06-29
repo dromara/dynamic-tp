@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.17)
-project(hutool-jvmti)
+project(dynamic-tp-jvmti)
 
 set(CMAKE_CXX_STANDARD 11)
 

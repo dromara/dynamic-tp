@@ -18,16 +18,31 @@
 package org.dromara.dynamictp.core.plugin;
 
 /**
- * 签名，用于指定具体需要拦截的类和对应的方法
+ * The annotation that indicate the method signature.
+ *
  * @author windsearcher.lq
  * @since 1.1.4
  */
 public @interface DtpSignature {
 
+    /**
+     * Target class type.
+     *
+     * @return class type
+     */
     Class<?> clazz();
 
+    /**
+     * Method name.
+     *
+     * @return method name
+     */
     String method();
 
+    /**
+     * Method argument types.
+     *
+     * @return method argument types
+     */
     Class<?>[] args();
-
 }

@@ -17,19 +17,29 @@
 
 package org.dromara.dynamictp.core.plugin;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.dromara.dynamictp.common.ex.DtpException;
 
 /**
- * @author windsearcher.lq
- * @since 1.1.4
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface DtpExtensionPoint {
+ * PluginException related
+ *
+ * @author yanhom
+ * @since 1.0.0
+ **/
+public class PluginException extends DtpException {
 
-    DtpSignature[] value();
+    public PluginException() {
+        super();
+    }
 
+    public PluginException(String message) {
+        super(message);
+    }
+
+    public PluginException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public PluginException(Throwable cause) {
+        super(cause);
+    }
 }

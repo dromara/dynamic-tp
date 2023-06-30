@@ -26,11 +26,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Proxy packaging class
  * @author windsearcher.lq
  * @since 1.1.4
  */
-public class DtpExtensionProxy implements MethodInterceptor {
+public class DtpInterceptorProxy implements MethodInterceptor {
 
     private final Object target;
 
@@ -38,7 +37,7 @@ public class DtpExtensionProxy implements MethodInterceptor {
 
     private final Map<Class<?>, Set<Method>> signatureMap;
 
-    public DtpExtensionProxy(Object target, DtpInterceptor interceptor, Map<Class<?>, Set<Method>> signatureMap) {
+    public DtpInterceptorProxy(Object target, DtpInterceptor interceptor, Map<Class<?>, Set<Method>> signatureMap) {
         this.target = target;
         this.interceptor = interceptor;
         this.signatureMap = signatureMap;

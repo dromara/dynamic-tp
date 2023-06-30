@@ -23,13 +23,34 @@ package org.dromara.dynamictp.core.plugin;
  */
 public interface DtpInterceptor {
 
+    /**
+     * Intercept method.
+     *
+     * @param invocation invocation
+     * @return result
+     * @throws Throwable Throwable
+     */
     Object intercept(DtpInvocation invocation) throws Throwable;
 
+    /**
+     * Enhance object.
+     *
+     * @param target target object
+     * @return enhanced object
+     */
     default Object plugin(Object target) {
-        return DtpExtensionProxyFactory.enhance(target, this);
+        return DtpInterceptorProxyFactory.enhance(target, this);
     }
 
+    /**
+     * Enhance object.
+     *
+     * @param target target object
+     * @param argumentTypes argument types
+     * @param arguments arguments
+     * @return enhanced object
+     */
     default Object plugin(Object target, Class<?>[] argumentTypes, Object[] arguments) {
-        return DtpExtensionProxyFactory.wrap(target, argumentTypes, arguments, this);
+        return DtpInterceptorProxyFactory.enhance(target, argumentTypes, arguments, this);
     }
 }

@@ -17,29 +17,23 @@
 
 package org.dromara.dynamictp.core.plugin;
 
+import com.google.common.collect.Maps;
 import net.sf.cglib.proxy.Enhancer;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
  * @author windsearcher.lq
  * @since 1.1.4
  */
-public class DtpExtensionProxyFactory {
+public class DtpInterceptorProxyFactory {
 
     public static Object enhance(Object target, DtpInterceptor interceptor) {
-        Map<Class<?>, Set<Method>> signatureMap = getSignatureMap(interceptor);
-        if (!signatureMap.containsKey(target.getClass())) {
-            return target;
-        }
-        Enhancer enhancer = new Enhancer();
-        enhancer.setSuperclass(target.getClass());
-        enhancer.setCallback(new DtpExtensionProxy(target, interceptor, signatureMap));
-        return enhancer.create();
+        return enhance(target, null, null, interceptor);
     }
 
     public static Object enhance(Object target, Class<?>[] argumentTypes, Object[] arguments, DtpInterceptor interceptor) {
@@ -49,29 +43,28 @@ public class DtpExtensionProxyFactory {
         }
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(target.getClass());
-        enhancer.setCallback(new DtpExtensionProxy(target, interceptor, signatureMap));
+        enhancer.setCallback(new DtpInterceptorProxy(target, interceptor, signatureMap));
+        if (Objects.isNull(argumentTypes) || Objects.isNull(arguments)) {
+            return enhancer.create();
+        }
         return enhancer.create(argumentTypes, arguments);
     }
 
     private static Map<Class<?>, Set<Method>> getSignatureMap(DtpInterceptor interceptor) {
-        DtpExtensionPoint interceptsAnnotation = interceptor.getClass().getAnnotation(DtpExtensionPoint.class);
-        if (interceptsAnnotation == null) {
-            throw new RuntimeException("No @Intercepts annotation was found in interceptor " + interceptor.getClass().getName());
+        DtpIntercepts interceptsAnno = interceptor.getClass().getAnnotation(DtpIntercepts.class);
+        if (interceptsAnno == null) {
+            throw new PluginException("No @DtpIntercepts annotation was found in interceptor " + interceptor.getClass().getName());
         }
 
-        DtpSignature[] signatures = interceptsAnnotation.value();
-        if (signatures == null) {
-            throw new RuntimeException("@Intercepts annotation was found in interceptor " + interceptor.getClass().getName());
-        }
-
-        Map<Class<?>, Set<Method>> signatureMap = new HashMap<>();
+        DtpSignature[] signatures = interceptsAnno.value();
+        Map<Class<?>, Set<Method>> signatureMap = Maps.newHashMap();
         for (DtpSignature signature : signatures) {
             Set<Method> methods = signatureMap.computeIfAbsent(signature.clazz(), k -> new HashSet<>());
             try {
                 Method method = signature.clazz().getMethod(signature.method(), signature.args());
                 methods.add(method);
             } catch (NoSuchMethodException e) {
-                throw new RuntimeException("Could not find method on " + signature.clazz() + " named " + signature.method() + ". Cause: " + e, e);
+                throw new PluginException("Could not find method on " + signature.clazz() + " named " + signature.method() + ". Cause: " + e, e);
             }
         }
         return signatureMap;

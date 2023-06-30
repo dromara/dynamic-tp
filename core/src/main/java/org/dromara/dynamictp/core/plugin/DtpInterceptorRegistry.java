@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 
 /**
- * ExtensionRegistry related
+ * DtpInterceptorRegistry related
  *
  * @author windsearcher.lq
  * @since 1.1.4
@@ -34,35 +34,35 @@ import java.util.ServiceLoader;
 public class DtpInterceptorRegistry {
 
     /**
-     * Maintain all automatically registered and manually registered EXTENSIONS
+     * Maintain all automatically registered and manually registered INTERCEPTORS
      */
-    private static final List<DtpInterceptor> EXTENSIONS = new ArrayList<>();
+    private static final List<DtpInterceptor> INTERCEPTORS = new ArrayList<>();
 
     static  {
         ServiceLoader<DtpInterceptor> loader = ServiceLoader.load(DtpInterceptor.class);
-        for (DtpInterceptor extension : loader) {
-            EXTENSIONS.add(extension);
+        for (DtpInterceptor interceptor : loader) {
+            INTERCEPTORS.add(interceptor);
         }
     }
 
     public static void register(DtpInterceptor dtpInterceptor) {
-        log.info("DynamicTp register dtpExtension: {}", dtpInterceptor);
-        EXTENSIONS.add(dtpInterceptor);
+        log.info("DynamicTp register DtpInterceptor: {}", dtpInterceptor);
+        INTERCEPTORS.add(dtpInterceptor);
     }
 
-    public static List<DtpInterceptor> getExtensions() {
-        return Collections.unmodifiableList(EXTENSIONS);
+    public static List<DtpInterceptor> getInterceptors() {
+        return Collections.unmodifiableList(INTERCEPTORS);
     }
 
     public static Object pluginAll(Object target) {
-        for (DtpInterceptor dtpInterceptor : EXTENSIONS) {
+        for (DtpInterceptor dtpInterceptor : INTERCEPTORS) {
             target = dtpInterceptor.plugin(target);
         }
         return target;
     }
 
     public static Object pluginAll(Object target, Class<?>[] argumentTypes, Object[] arguments) {
-        for (DtpInterceptor dtpInterceptor : EXTENSIONS) {
+        for (DtpInterceptor dtpInterceptor : INTERCEPTORS) {
             target = dtpInterceptor.plugin(target, argumentTypes, arguments);
         }
         return target;

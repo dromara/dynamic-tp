@@ -15,43 +15,35 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.example.extensiontest;
+package org.dromara.dynamictp.example.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.plugin.DtpInterceptor;
-import org.dromara.dynamictp.core.plugin.DtpExtensionPoint;
+import org.dromara.dynamictp.core.plugin.DtpIntercepts;
 import org.dromara.dynamictp.core.plugin.DtpInvocation;
 import org.dromara.dynamictp.core.plugin.DtpSignature;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
 import org.dromara.dynamictp.core.thread.ScheduledDtpExecutor;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.TimeUnit;
 
-@DtpExtensionPoint({@DtpSignature(clazz = DtpExecutor.class, method = "execute", args = {Runnable.class}), @DtpSignature(clazz = ScheduledDtpExecutor.class, method = "execute", args = {Runnable.class})})
+/**
+ * @author windsearcher.lq
+ */
+@DtpIntercepts({
+        @DtpSignature(clazz = DtpExecutor.class, method = "execute", args = {Runnable.class}),
+        @DtpSignature(clazz = ScheduledDtpExecutor.class, method = "execute", args = {Runnable.class})
+})
 @Slf4j
-public class TestInterceptor implements DtpInterceptor {
+public class TestExecuteInterceptor implements DtpInterceptor {
 
     @Override
     public Object intercept(DtpInvocation invocation) throws InvocationTargetException, IllegalAccessException {
 
-        System.out.println("--------------线程池开始执行任务-------------");
         DtpExecutor dtpExecutor = (DtpExecutor) invocation.getTarget();
-
-        log.info("dtpExecutor name: {}, maximum size: {}, {}, {}, {}", dtpExecutor.getThreadPoolName(),
-                dtpExecutor.getMaximumPoolSize(), dtpExecutor.getThreadPoolName(), dtpExecutor.getQueueCapacity(),
-                dtpExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS));
-
-        Object result = invocation.proceed();
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        System.out.println("--------------线程池结束执行任务-------------");
-
-        return result;
+        String method = invocation.getMethod().getName();
+        Object[] args = invocation.getArgs();
+        log.info("TestExecuteInterceptor: dtpExecutor: {}, method: {}, args: {}", dtpExecutor, method, args);
+        return invocation.proceed();
     }
 }

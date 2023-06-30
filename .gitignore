@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 .flattened-pom.xml
+polaris/
 
 ### STS ###
 .apt_generated

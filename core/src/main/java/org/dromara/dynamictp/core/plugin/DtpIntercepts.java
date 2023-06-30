@@ -15,17 +15,21 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.example;
+package org.dromara.dynamictp.core.plugin;
 
-import org.dromara.dynamictp.core.spring.EnableDynamicTp;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-@EnableDynamicTp
-@SpringBootApplication
-public class ExtensionExampleApplication {
+/**
+ * @author windsearcher.lq
+ * @since 1.1.4
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface DtpIntercepts {
 
-    public static void main(String[] args) {
-        SpringApplication.run(ExtensionExampleApplication.class, args);
-    }
+    DtpSignature[] value();
+
 }

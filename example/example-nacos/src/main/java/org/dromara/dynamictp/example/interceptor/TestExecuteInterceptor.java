@@ -26,7 +26,6 @@ import org.dromara.dynamictp.core.thread.DtpExecutor;
 import org.dromara.dynamictp.core.thread.ScheduledDtpExecutor;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * @author windsearcher.lq

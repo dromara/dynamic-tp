@@ -19,20 +19,15 @@ package org.dromara.dynamictp.core.reject;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.ex.DtpException;
-import org.dromara.dynamictp.common.parser.config.ConfigParser;
 import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
 
 import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.Objects;
-import java.util.ServiceLoader;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import static org.dromara.dynamictp.common.em.RejectedTypeEnum.ABORT_POLICY;
-import static org.dromara.dynamictp.common.em.RejectedTypeEnum.CALLER_RUNS_POLICY;
-import static org.dromara.dynamictp.common.em.RejectedTypeEnum.DISCARD_OLDEST_POLICY;
-import static org.dromara.dynamictp.common.em.RejectedTypeEnum.DISCARD_POLICY;
+import static org.dromara.dynamictp.common.em.RejectedTypeEnum.*;
 
 /**
  * RejectHandlerGetter related

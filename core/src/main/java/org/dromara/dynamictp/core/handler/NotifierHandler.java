@@ -17,26 +17,24 @@
 
 package org.dromara.dynamictp.core.handler;
 
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.TpMainFields;
 import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
-import org.dromara.dynamictp.core.monitor.collector.MetricsCollector;
 import org.dromara.dynamictp.core.notifier.DtpDingNotifier;
 import org.dromara.dynamictp.core.notifier.DtpLarkNotifier;
 import org.dromara.dynamictp.core.notifier.DtpNotifier;
 import org.dromara.dynamictp.core.notifier.DtpWechatNotifier;
-import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
 import org.dromara.dynamictp.core.notifier.base.DingNotifier;
 import org.dromara.dynamictp.core.notifier.base.LarkNotifier;
 import org.dromara.dynamictp.core.notifier.base.WechatNotifier;
 import org.dromara.dynamictp.core.notifier.context.DtpNotifyCtxHolder;
-import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 
 /**
  * NotifierHandler related

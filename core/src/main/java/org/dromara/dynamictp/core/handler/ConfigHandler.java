@@ -17,20 +17,18 @@
 
 package org.dromara.dynamictp.core.handler;
 
+import com.google.common.collect.Lists;
 import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
 import org.dromara.dynamictp.common.parser.config.ConfigParser;
 import org.dromara.dynamictp.common.parser.config.JsonConfigParser;
 import org.dromara.dynamictp.common.parser.config.PropertiesConfigParser;
 import org.dromara.dynamictp.common.parser.config.YamlConfigParser;
-import com.google.common.collect.Lists;
 import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
-import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 
 /**
  * ConfigHandler related

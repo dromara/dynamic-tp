@@ -17,15 +17,13 @@
 
 package org.dromara.dynamictp.core.support.task.wrapper;
 
-import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
-import org.dromara.dynamictp.common.util.StringUtil;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
-import org.dromara.dynamictp.core.monitor.collector.MetricsCollector;
+import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
+import org.dromara.dynamictp.common.util.StringUtil;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.ServiceLoader;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toList;

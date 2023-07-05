@@ -1,6 +1,5 @@
 package org.dromara.dynamictp.common.util;
 
-import lombok.experimental.UtilityClass;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -18,9 +17,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public  class ExtensionServiceLoader {
 
-    private static volatile Map<Class<?>, Object> extensionMap = new ConcurrentHashMap<>();
 
-    private static volatile Map<Class<?>, List<?>> extensionListMap = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, List<?>> extensionListMap = new ConcurrentHashMap<>();
 
     private ExtensionServiceLoader() {
     }
@@ -28,9 +26,10 @@ public  class ExtensionServiceLoader {
     /**
      * loader service
      * @param clazz SPI interface
-     * @return
-     * @param <T>
+     * @return services
+     * @param <T> interface class
      */
+    @SuppressWarnings("unchecked")
     public static <T> List<T> loader(Class<T> clazz) {
         List<T> services = (List<T>) extensionListMap.get(clazz);
         if (services == null) {
@@ -45,8 +44,8 @@ public  class ExtensionServiceLoader {
     /**
      * loader the first service
      * @param clazz SPI interface
-     * @return
-     * @param <T>
+     * @return service
+     * @param <T> interface class
      */
     public static <T>  T loaderFirst(Class<T> clazz){
         List<T> services=loader(clazz);

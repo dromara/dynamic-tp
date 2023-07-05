@@ -23,7 +23,6 @@ import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ServiceLoader;
 
 /**
  * DtpInterceptorRegistry related

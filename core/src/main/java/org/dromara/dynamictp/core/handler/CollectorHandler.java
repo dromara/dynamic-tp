@@ -17,19 +17,18 @@
 
 package org.dromara.dynamictp.core.handler;
 
+import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
 import org.dromara.dynamictp.core.monitor.collector.InternalLogCollector;
 import org.dromara.dynamictp.core.monitor.collector.LogCollector;
 import org.dromara.dynamictp.core.monitor.collector.MetricsCollector;
 import org.dromara.dynamictp.core.monitor.collector.MicroMeterCollector;
-import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 
 /**
  * CollectorHandler related

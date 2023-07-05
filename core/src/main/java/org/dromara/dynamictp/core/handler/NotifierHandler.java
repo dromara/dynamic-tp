@@ -20,6 +20,8 @@ package org.dromara.dynamictp.core.handler;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.TpMainFields;
+import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
+import org.dromara.dynamictp.core.monitor.collector.MetricsCollector;
 import org.dromara.dynamictp.core.notifier.DtpDingNotifier;
 import org.dromara.dynamictp.core.notifier.DtpLarkNotifier;
 import org.dromara.dynamictp.core.notifier.DtpNotifier;
@@ -48,7 +50,7 @@ public final class NotifierHandler {
     private static final Map<String, DtpNotifier> NOTIFIERS = new HashMap<>();
 
     private NotifierHandler() {
-        ServiceLoader<DtpNotifier> loader = ServiceLoader.load(DtpNotifier.class);
+        List<DtpNotifier> loader= ExtensionServiceLoader.loader(DtpNotifier.class);
         for (DtpNotifier notifier : loader) {
             NOTIFIERS.put(notifier.platform(), notifier);
         }

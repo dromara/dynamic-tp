@@ -19,8 +19,11 @@ package org.dromara.dynamictp.core.reject;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.ex.DtpException;
+import org.dromara.dynamictp.common.parser.config.ConfigParser;
+import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
 
 import java.lang.reflect.Proxy;
+import java.util.List;
 import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -52,8 +55,7 @@ public class RejectHandlerGetter {
         } else if (Objects.equals(name, DISCARD_POLICY.getName())) {
             return new ThreadPoolExecutor.DiscardPolicy();
         }
-
-        ServiceLoader<RejectedExecutionHandler> serviceLoader = ServiceLoader.load(RejectedExecutionHandler.class);
+        List<RejectedExecutionHandler> serviceLoader= ExtensionServiceLoader.loader(RejectedExecutionHandler.class);
         for (RejectedExecutionHandler handler : serviceLoader) {
             String handlerName = handler.getClass().getSimpleName();
             if (name.equalsIgnoreCase(handlerName)) {

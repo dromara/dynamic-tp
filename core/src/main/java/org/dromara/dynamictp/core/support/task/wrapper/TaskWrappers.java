@@ -17,9 +17,11 @@
 
 package org.dromara.dynamictp.core.support.task.wrapper;
 
+import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
 import org.dromara.dynamictp.common.util.StringUtil;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
+import org.dromara.dynamictp.core.monitor.collector.MetricsCollector;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +41,7 @@ public class TaskWrappers {
     private static final List<TaskWrapper> TASK_WRAPPERS = Lists.newArrayList();
 
     private TaskWrappers() {
-        ServiceLoader<TaskWrapper> loader = ServiceLoader.load(TaskWrapper.class);
+        List<TaskWrapper> loader= ExtensionServiceLoader.loader(TaskWrapper.class);
         for (TaskWrapper taskWrapper : loader) {
             TASK_WRAPPERS.add(taskWrapper);
         }

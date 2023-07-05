@@ -23,6 +23,8 @@ import org.dromara.dynamictp.common.parser.config.JsonConfigParser;
 import org.dromara.dynamictp.common.parser.config.PropertiesConfigParser;
 import org.dromara.dynamictp.common.parser.config.YamlConfigParser;
 import com.google.common.collect.Lists;
+import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
+import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -41,7 +43,7 @@ public final class ConfigHandler {
     private static final List<ConfigParser> PARSERS = Lists.newArrayList();
 
     private ConfigHandler() {
-        ServiceLoader<ConfigParser> loader = ServiceLoader.load(ConfigParser.class);
+        List<ConfigParser> loader= ExtensionServiceLoader.loader(ConfigParser.class);
         for (ConfigParser configParser : loader) {
             PARSERS.add(configParser);
         }

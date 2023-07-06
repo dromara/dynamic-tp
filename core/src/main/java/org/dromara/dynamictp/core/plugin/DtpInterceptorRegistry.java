@@ -18,11 +18,12 @@
 package org.dromara.dynamictp.core.plugin;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ServiceLoader;
 
 /**
  * DtpInterceptorRegistry related
@@ -39,11 +40,13 @@ public class DtpInterceptorRegistry {
     private static final List<DtpInterceptor> INTERCEPTORS = new ArrayList<>();
 
     static  {
-        ServiceLoader<DtpInterceptor> loader = ServiceLoader.load(DtpInterceptor.class);
-        for (DtpInterceptor interceptor : loader) {
-            INTERCEPTORS.add(interceptor);
+        List<DtpInterceptor> loadedInterceptors = ExtensionServiceLoader.get(DtpInterceptor.class);
+        if (CollectionUtils.isNotEmpty(loadedInterceptors)) {
+            INTERCEPTORS.addAll(loadedInterceptors);
         }
     }
+
+    private DtpInterceptorRegistry() { }
 
     public static void register(DtpInterceptor dtpInterceptor) {
         log.info("DynamicTp register DtpInterceptor: {}", dtpInterceptor);

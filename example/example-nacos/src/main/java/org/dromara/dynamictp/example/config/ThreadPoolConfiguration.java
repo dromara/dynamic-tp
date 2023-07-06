@@ -20,6 +20,7 @@ package org.dromara.dynamictp.example.config;
 import org.dromara.dynamictp.core.support.DynamicTp;
 import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
 import org.dromara.dynamictp.core.support.ThreadPoolCreator;
+import org.dromara.dynamictp.core.support.task.wrapper.TtlTaskWrapper;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -91,6 +92,7 @@ public class ThreadPoolConfiguration {
                 .workQueue(SYNCHRONOUS_QUEUE.getName(), null, false, null)
                 .waitForTasksToCompleteOnShutdown(true)
                 .awaitTerminationSeconds(5)
+                .taskWrapper(new TtlTaskWrapper())
                 .buildDynamic();
     }
 }

@@ -20,13 +20,12 @@ package org.dromara.dynamictp.core.support;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.pattern.singleton.Singleton;
 import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
 import org.dromara.dynamictp.core.spring.PropertiesBinder;
 import org.springframework.core.env.Environment;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
-import java.util.ServiceLoader;
 
 /**
  * BinderHelper related
@@ -42,12 +41,12 @@ public class BinderHelper {
         if (Objects.nonNull(binder)) {
             return binder;
         }
-        final Iterator<PropertiesBinder> iterator = ServiceLoader.load(PropertiesBinder.class).iterator();
-        if (!iterator.hasNext()) {
+        final PropertiesBinder propertiesBinder = ExtensionServiceLoader.loaderFirst(PropertiesBinder.class);
+        if (null==propertiesBinder) {
             log.error("DynamicTp refresh, no SPI for org.dromara.dynamictp.core.spring.PropertiesBinder.");
             return null;
         }
-        binder = iterator.next();
+        binder = propertiesBinder;
         Singleton.INST.single(PropertiesBinder.class, binder);
         return binder;
     }

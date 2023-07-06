@@ -35,20 +35,21 @@ import java.util.Objects;
  */
 @Slf4j
 public class BinderHelper {
-    
+
+    private BinderHelper() { }
+
     private static PropertiesBinder getBinder() {
         PropertiesBinder binder = Singleton.INST.get(PropertiesBinder.class);
         if (Objects.nonNull(binder)) {
             return binder;
         }
-        final PropertiesBinder propertiesBinder = ExtensionServiceLoader.loaderFirst(PropertiesBinder.class);
-        if (null==propertiesBinder) {
+        final PropertiesBinder loadedFirstBinder = ExtensionServiceLoader.getFirst(PropertiesBinder.class);
+        if (Objects.isNull(loadedFirstBinder)) {
             log.error("DynamicTp refresh, no SPI for org.dromara.dynamictp.core.spring.PropertiesBinder.");
             return null;
         }
-        binder = propertiesBinder;
-        Singleton.INST.single(PropertiesBinder.class, binder);
-        return binder;
+        Singleton.INST.single(PropertiesBinder.class, loadedFirstBinder);
+        return loadedFirstBinder;
     }
     
     public static void bindDtpProperties(Map<?, Object> properties, DtpProperties dtpProperties) {

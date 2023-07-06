@@ -48,10 +48,9 @@ public final class NotifierHandler {
     private static final Map<String, DtpNotifier> NOTIFIERS = new HashMap<>();
 
     private NotifierHandler() {
-        List<DtpNotifier> loader= ExtensionServiceLoader.loader(DtpNotifier.class);
-        for (DtpNotifier notifier : loader) {
-            NOTIFIERS.put(notifier.platform(), notifier);
-        }
+        List<DtpNotifier> loadedNotifiers = ExtensionServiceLoader.get(DtpNotifier.class);
+        loadedNotifiers.forEach(notifier -> NOTIFIERS.put(notifier.platform(), notifier));
+
         DtpNotifier dingNotifier = new DtpDingNotifier(new DingNotifier());
         DtpNotifier wechatNotifier = new DtpWechatNotifier(new WechatNotifier());
         DtpNotifier larkNotifier = new DtpLarkNotifier(new LarkNotifier());

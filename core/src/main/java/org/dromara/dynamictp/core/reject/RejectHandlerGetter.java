@@ -27,7 +27,10 @@ import java.util.Objects;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import static org.dromara.dynamictp.common.em.RejectedTypeEnum.*;
+import static org.dromara.dynamictp.common.em.RejectedTypeEnum.ABORT_POLICY;
+import static org.dromara.dynamictp.common.em.RejectedTypeEnum.CALLER_RUNS_POLICY;
+import static org.dromara.dynamictp.common.em.RejectedTypeEnum.DISCARD_OLDEST_POLICY;
+import static org.dromara.dynamictp.common.em.RejectedTypeEnum.DISCARD_POLICY;
 
 /**
  * RejectHandlerGetter related
@@ -50,8 +53,8 @@ public class RejectHandlerGetter {
         } else if (Objects.equals(name, DISCARD_POLICY.getName())) {
             return new ThreadPoolExecutor.DiscardPolicy();
         }
-        List<RejectedExecutionHandler> serviceLoader= ExtensionServiceLoader.loader(RejectedExecutionHandler.class);
-        for (RejectedExecutionHandler handler : serviceLoader) {
+        List<RejectedExecutionHandler> loadedHandlers = ExtensionServiceLoader.get(RejectedExecutionHandler.class);
+        for (RejectedExecutionHandler handler : loadedHandlers) {
             String handlerName = handler.getClass().getSimpleName();
             if (name.equalsIgnoreCase(handlerName)) {
                 return handler;

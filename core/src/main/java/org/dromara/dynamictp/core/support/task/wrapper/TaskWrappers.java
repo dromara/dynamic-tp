@@ -39,9 +39,9 @@ public class TaskWrappers {
     private static final List<TaskWrapper> TASK_WRAPPERS = Lists.newArrayList();
 
     private TaskWrappers() {
-        List<TaskWrapper> loader= ExtensionServiceLoader.loader(TaskWrapper.class);
-        for (TaskWrapper taskWrapper : loader) {
-            TASK_WRAPPERS.add(taskWrapper);
+        List<TaskWrapper> loadedWrappers = ExtensionServiceLoader.get(TaskWrapper.class);
+        if (CollectionUtils.isNotEmpty(loadedWrappers)) {
+            TASK_WRAPPERS.addAll(loadedWrappers);
         }
 
         TASK_WRAPPERS.add(new TtlTaskWrapper());

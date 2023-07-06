@@ -18,6 +18,7 @@
 package org.dromara.dynamictp.core.plugin;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
 
 import java.util.ArrayList;
@@ -39,11 +40,13 @@ public class DtpInterceptorRegistry {
     private static final List<DtpInterceptor> INTERCEPTORS = new ArrayList<>();
 
     static  {
-        List<DtpInterceptor> loader = ExtensionServiceLoader.loader(DtpInterceptor.class);
-        for (DtpInterceptor interceptor : loader) {
-            INTERCEPTORS.add(interceptor);
+        List<DtpInterceptor> loadedInterceptors = ExtensionServiceLoader.get(DtpInterceptor.class);
+        if (CollectionUtils.isNotEmpty(loadedInterceptors)) {
+            INTERCEPTORS.addAll(loadedInterceptors);
         }
     }
+
+    private DtpInterceptorRegistry() { }
 
     public static void register(DtpInterceptor dtpInterceptor) {
         log.info("DynamicTp register DtpInterceptor: {}", dtpInterceptor);

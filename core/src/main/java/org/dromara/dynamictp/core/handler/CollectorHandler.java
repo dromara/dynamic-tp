@@ -42,10 +42,8 @@ public final class CollectorHandler {
     private static final Map<String, MetricsCollector> COLLECTORS = Maps.newHashMap();
 
     private CollectorHandler() {
-        List<MetricsCollector> loader= ExtensionServiceLoader.loader(MetricsCollector.class);
-        for (MetricsCollector collector : loader) {
-            COLLECTORS.put(collector.type(), collector);
-        }
+        List<MetricsCollector> loadedCollectors = ExtensionServiceLoader.get(MetricsCollector.class);
+        loadedCollectors.forEach(collector -> COLLECTORS.put(collector.type(), collector));
 
         MetricsCollector microMeterCollector = new MicroMeterCollector();
         LogCollector logCollector = new LogCollector();

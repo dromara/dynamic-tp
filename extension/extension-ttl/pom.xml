@@ -4,26 +4,18 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.dromara.dynamictp</groupId>
-        <artifactId>dynamic-tp-all</artifactId>
+        <artifactId>dynamic-tp-extension</artifactId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>dynamic-tp-extension</artifactId>
-    <packaging>pom</packaging>
 
-    <modules>
-        <module>extension-skywalking</module>
-        <module>extension-limiter-redis</module>
-        <module>extension-notify-email</module>
-        <module>extension-opentelemetry</module>
-        <module>extension-notify-yunzhijia</module>
-        <module>extension-ttl</module>
-    </modules>
+    <artifactId>dynamic-tp-extension-ttl</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>org.dromara.dynamictp</groupId>
-            <artifactId>dynamic-tp-core</artifactId>
+            <groupId>com.alibaba</groupId>
+            <artifactId>transmittable-thread-local</artifactId>
         </dependency>
     </dependencies>
+
 </project>

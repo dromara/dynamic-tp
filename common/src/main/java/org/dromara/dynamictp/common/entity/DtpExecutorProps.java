@@ -17,11 +17,11 @@
 
 package org.dromara.dynamictp.common.entity;
 
-import org.dromara.dynamictp.common.em.QueueTypeEnum;
-import org.dromara.dynamictp.common.em.RejectedTypeEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.dromara.dynamictp.common.em.QueueTypeEnum;
+import org.dromara.dynamictp.common.em.RejectedTypeEnum;
 
 import java.util.Set;
 
@@ -113,6 +113,11 @@ public class DtpExecutorProps extends TpExecutorProps {
      * Task wrapper names.
      */
     private Set<String> taskWrapperNames;
+
+    /**
+     * Plugin names.
+     */
+    private Set<String> pluginNames;
 
     /**
      * 检查核心参数

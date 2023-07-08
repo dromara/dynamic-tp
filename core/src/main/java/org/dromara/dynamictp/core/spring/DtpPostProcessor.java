@@ -18,6 +18,7 @@
 package org.dromara.dynamictp.core.spring;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.util.ConstructorUtil;
 import org.dromara.dynamictp.core.DtpRegistry;
@@ -44,6 +45,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -65,25 +67,25 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
         }
 
         if (bean instanceof DtpExecutor) {
-            // register DtpExecutor
-            DtpExecutor dtpExecutor = (DtpExecutor) bean;
-            Object[] args = ConstructorUtil.buildTpExecutorConstructorArgs(dtpExecutor);
-            Class<?>[] argTypes = ConstructorUtil.buildTpExecutorConstructorArgTypes();
-            bean = DtpInterceptorRegistry.pluginAll(bean, argTypes, args);
-            registerDtp(bean);
-        } else {
-            // register ThreadPoolExecutor or ThreadPoolTaskExecutor
-            registerCommon(bean, beanName);
+            return registerDtp(bean);
         }
+        // register ThreadPoolExecutor or ThreadPoolTaskExecutor
+        registerCommon(bean, beanName);
         return bean;
     }
 
-    private void registerDtp(Object bean) {
+    private Object registerDtp(Object bean) {
         DtpExecutor dtpExecutor = (DtpExecutor) bean;
-        if (bean instanceof EagerDtpExecutor) {
-            ((TaskQueue) dtpExecutor.getQueue()).setExecutor((EagerDtpExecutor) dtpExecutor);
+        Object[] args = ConstructorUtil.buildTpExecutorConstructorArgs(dtpExecutor);
+        Class<?>[] argTypes = ConstructorUtil.buildTpExecutorConstructorArgTypes();
+        Set<String> pluginNames = dtpExecutor.getPluginNames();
+
+        val enhancedBean = (DtpExecutor) DtpInterceptorRegistry.plugin(bean, pluginNames, argTypes, args);
+        if (enhancedBean instanceof EagerDtpExecutor) {
+            ((TaskQueue) enhancedBean.getQueue()).setExecutor((EagerDtpExecutor) enhancedBean);
         }
-        DtpRegistry.registerExecutor(ExecutorWrapper.of(dtpExecutor), "beanPostProcessor");
+        DtpRegistry.registerExecutor(ExecutorWrapper.of(enhancedBean), "beanPostProcessor");
+        return enhancedBean;
     }
 
     private void registerCommon(Object bean, String beanName) {

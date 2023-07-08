@@ -17,8 +17,8 @@
 
 package org.dromara.dynamictp.common.constant;
 
-import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import com.google.common.collect.ImmutableList;
+import org.dromara.dynamictp.common.em.NotifyItemEnum;
 
 import java.util.List;
 
@@ -30,8 +30,7 @@ import java.util.List;
  **/
 public final class DynamicTpConst {
 
-    private DynamicTpConst() {
-    }
+    private DynamicTpConst() { }
 
     public static final String MAIN_PROPERTIES_PREFIX = "spring.dynamic.tp";
 
@@ -79,10 +78,8 @@ public final class DynamicTpConst {
     public static final String QUEUE_TIMEOUT = "queueTimeout";
 
     public static final String TASK_WRAPPERS = "taskWrappers";
-    /**
-     * alarm
-     */
-    public static final String ALARM_NAME = "dtp-alarm";
+
+    public static final String PLUGIN_NAMES = "pluginNames";
 
     /**
      * symbol

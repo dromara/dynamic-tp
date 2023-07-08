@@ -30,6 +30,17 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface DtpIntercepts {
 
-    DtpSignature[] value();
+    /**
+     * Intercept name.
+     *
+     * @return the intercept name.
+     */
+    String name();
 
+    /**
+     * Signatures.
+     *
+     * @return the dtp signatures.
+     */
+    DtpSignature[] signatures();
 }

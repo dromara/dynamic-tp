@@ -32,6 +32,8 @@ import java.util.Set;
  */
 public class DtpInterceptorProxyFactory {
 
+    private DtpInterceptorProxyFactory() { }
+
     public static Object enhance(Object target, DtpInterceptor interceptor) {
         return enhance(target, null, null, interceptor);
     }
@@ -56,7 +58,7 @@ public class DtpInterceptorProxyFactory {
             throw new PluginException("No @DtpIntercepts annotation was found in interceptor " + interceptor.getClass().getName());
         }
 
-        DtpSignature[] signatures = interceptsAnno.value();
+        DtpSignature[] signatures = interceptsAnno.signatures();
         Map<Class<?>, Set<Method>> signatureMap = Maps.newHashMap();
         for (DtpSignature signature : signatures) {
             Set<Method> methods = signatureMap.computeIfAbsent(signature.clazz(), k -> new HashSet<>());

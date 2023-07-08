@@ -24,9 +24,12 @@ import org.dromara.dynamictp.core.plugin.DtpInvocation;
 import org.dromara.dynamictp.core.plugin.DtpSignature;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
 
-@DtpIntercepts({
-        @DtpSignature(clazz = DtpExecutor.class, method = "execute", args = {Runnable.class})
-})
+@DtpIntercepts(
+        name = "testInterceptorLoader",
+        signatures = {
+                @DtpSignature(clazz = DtpExecutor.class, method = "execute", args = {Runnable.class})
+        }
+)
 @Slf4j
 public class TestInterceptorLoader implements DtpInterceptor {
 

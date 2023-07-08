@@ -35,10 +35,13 @@ import java.lang.reflect.InvocationTargetException;
  * @author yanhom
  * @since 1.1.4
  **/
-@DtpIntercepts({
-        @DtpSignature(clazz = DtpExecutor.class, method = "beforeExecute", args = {Thread.class, Runnable.class}),
-        @DtpSignature(clazz = DtpExecutor.class, method = "afterExecute", args = {Runnable.class, Throwable.class})
-})
+@DtpIntercepts(
+        name = "TtlInterceptor",
+        signatures = {
+                @DtpSignature(clazz = DtpExecutor.class, method = "beforeExecute", args = {Thread.class, Runnable.class}),
+                @DtpSignature(clazz = DtpExecutor.class, method = "afterExecute", args = {Runnable.class, Throwable.class})
+        }
+)
 @Slf4j
 public class TtlDtpInterceptor implements DtpInterceptor {
 

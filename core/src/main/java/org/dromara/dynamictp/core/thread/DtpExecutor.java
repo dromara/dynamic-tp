@@ -18,6 +18,7 @@
 package org.dromara.dynamictp.core.thread;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
@@ -33,14 +34,15 @@ import org.slf4j.MDC;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.atomic.LongAdder;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
@@ -84,6 +86,11 @@ public class DtpExecutor extends ThreadPoolExecutor
      * Task wrappers, do sth enhanced.
      */
     private List<TaskWrapper> taskWrappers = Lists.newArrayList();
+
+    /**
+     * Plugin names.
+     */
+    private Set<String> pluginNames = Sets.newHashSet();
 
     /**
      * If pre start all core threads.
@@ -311,6 +318,14 @@ public class DtpExecutor extends ThreadPoolExecutor
 
     public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
         this.taskWrappers = taskWrappers;
+    }
+
+    public Set<String> getPluginNames() {
+        return pluginNames;
+    }
+
+    public void setPluginNames(Set<String> pluginNames) {
+        this.pluginNames = pluginNames;
     }
 
     public boolean isPreStartAllCoreThreads() {

@@ -45,6 +45,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.AWAIT_TERMINA
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.NOTIFY_ENABLED;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.NOTIFY_ITEMS;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PLATFORM_IDS;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.PLUGIN_NAMES;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PRE_START_ALL_CORE_THREADS;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.QUEUE_TIMEOUT;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.REJECT_ENHANCED;
@@ -110,6 +111,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
 
         val taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
         propertyValues.put(TASK_WRAPPERS, taskWrappers);
+        propertyValues.put(PLUGIN_NAMES, props.getPluginNames());
 
         return propertyValues;
     }

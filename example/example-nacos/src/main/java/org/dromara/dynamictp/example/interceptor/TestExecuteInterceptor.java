@@ -30,10 +30,13 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * @author windsearcher.lq
  */
-@DtpIntercepts({
-        @DtpSignature(clazz = DtpExecutor.class, method = "execute", args = {Runnable.class}),
-        @DtpSignature(clazz = ScheduledDtpExecutor.class, method = "execute", args = {Runnable.class})
-})
+@DtpIntercepts(
+        name = "testExecuteInterceptor1",
+        signatures = {
+                @DtpSignature(clazz = DtpExecutor.class, method = "execute", args = {Runnable.class}),
+                @DtpSignature(clazz = ScheduledDtpExecutor.class, method = "execute", args = {Runnable.class})
+        }
+)
 @Slf4j
 public class TestExecuteInterceptor implements DtpInterceptor {
 

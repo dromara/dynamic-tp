@@ -10,8 +10,10 @@ spring:
   rabbitmq:
     host: 127.0.0.1
     port: 5672
-    username: admin
-    password: admin
+    #virtual-host: /playlet-channel
+    #username: rabbit
+    #password: rabbit
+    #addresses: 111111
 
   dynamic:
     tp:
@@ -20,3 +22,22 @@ spring:
       enabledCollect: true          # 是否开启监控指标采集，默认false
       collectorTypes: internal_logging       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
       monitorInterval: 5
+      rabbitmqTp: # rabbitmq 线程池配置 配置自行修改
+        - threadPoolName: rabbitConnectionFactoryTp
+          threadPoolAliasName: rabbit线程池
+          threadNamePrefix: rabbitExecutor
+          corePoolSize: 8
+          maximumPoolSize: 16
+          #单位秒
+          keepAliveTime: 60
+          notifyEnabled: true
+          notifyItems:
+            - type: change
+              enable: true
+            - type: liveness
+              enabled: true
+              threshold: 10
+              interval: 5
+            - type: capacity
+              enable: true
+              threshold: 10

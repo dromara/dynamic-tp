@@ -30,8 +30,14 @@ import org.springframework.stereotype.Component;
 @RabbitListener(queues = "testQueue")
 public class RabbitMqConsumer {
 
+    @RabbitListener(containerFactory = "rabbitListenerContainerFactory")
     @RabbitHandler
-    public void process(String text) {
-        log.info("Receiver  : " + text);
+    public void process(String text) throws InterruptedException {
+        Thread thread = Thread.currentThread();
+        String name = thread.getName();
+        long id = thread.getId();
+        //Thread.sleep(2000L);
+        //TimeUnit.SECONDS.sleep(1);
+        log.info("thread id :"+id+";thread name :"+name+"   Receiver  : " + text);
     }
 }

@@ -29,6 +29,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.util.concurrent.ThreadPoolExecutor;
+
 /**
  * @author fabian4
  */
@@ -40,22 +42,24 @@ public class RabbitMqConfig {
         return new Queue("testQueue");
     }
 
+    /**
+     * 往abstractConnectionFactory里面设置线程池
+     * 这里需要注意 配置文件      rabbitmqTp对应的threadPoolName 要与  RabbitMqDtpAdapter的genTpName方法生成的名字对上
+     */
     @Bean
-    public AbstractRabbitListenerContainerFactory<?> defaultRabbitListenerContainerFactory(AbstractConnectionFactory abstractConnectionFactory) {
-
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setMaxPoolSize(5);
-        executor.setCorePoolSize(5);
-        executor.setQueueCapacity(1000);
-        executor.setThreadNamePrefix("RabbitMqTaskExecutor-");
-
-        executor.initialize();
-
+    public AbstractRabbitListenerContainerFactory<?> rabbitListenerContainerFactory(AbstractConnectionFactory abstractConnectionFactory) {
         DirectRabbitListenerContainerFactory factory = new DirectRabbitListenerContainerFactory();
-        factory.setConnectionFactory(abstractConnectionFactory);
         factory.setMessageConverter(jackson2JsonMessageConverter());
-        factory.setConsumersPerQueue(10);
-        abstractConnectionFactory.setExecutor(executor);
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(4);
+        executor.setQueueCapacity(10);
+        executor.setThreadNamePrefix("rabbitConnectionFactoryTp");
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.initialize();
+        factory.setConnectionFactory(abstractConnectionFactory);
+        //factory.setConsumersPerQueue(10);
+        abstractConnectionFactory.setExecutor(executor.getThreadPoolExecutor());
         return factory;
     }
 

@@ -17,18 +17,18 @@
 
 package org.dromara.dynamictp.adapter.rabbitmq;
 
-import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.MapUtils;
+import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.springframework.amqp.rabbit.connection.AbstractConnectionFactory;
 
 import java.util.Objects;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ExecutorService;
 
 /**
  * RabbitMqDtpAdapter related
@@ -59,7 +59,7 @@ public class RabbitMqDtpAdapter extends AbstractDtpAdapter {
         }
         beans.forEach((k, v) -> {
             AbstractConnectionFactory abstractConnectionFactory = (AbstractConnectionFactory) v;
-            ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(
+            ExecutorService executor = (ExecutorService) ReflectionUtil.getFieldValue(
                     AbstractConnectionFactory.class, CONSUME_EXECUTOR_FIELD_NAME, abstractConnectionFactory);
 
             if (Objects.nonNull(executor)) {

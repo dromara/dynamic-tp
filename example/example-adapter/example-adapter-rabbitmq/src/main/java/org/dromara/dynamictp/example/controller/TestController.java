@@ -33,11 +33,10 @@ import javax.annotation.Resource;
 public class TestController {
 
     @Resource
-    RabbitTemplate rabbitTemplate;  //使用RabbitTemplate,这提供了接收/发送等等方法
+    RabbitTemplate rabbitTemplate;
 
     @GetMapping("/dtp-example-adapter/testRabbitMq")
     public String sendDirectMessage() {
-
         rabbitTemplate.convertAndSend("testQueue", "hello, dynamic-tp");
         return "ok";
     }

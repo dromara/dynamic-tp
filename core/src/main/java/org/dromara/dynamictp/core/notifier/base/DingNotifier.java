@@ -43,6 +43,8 @@ import static org.dromara.dynamictp.common.constant.DingNotifyConst.DING_NOTICE_
 @Slf4j
 public class DingNotifier extends AbstractHttpNotifier {
 
+    private final static String ALL = "all";
+
     @Override
     public String platform() {
         return NotifyPlatformEnum.DING.name().toLowerCase();
@@ -58,7 +60,7 @@ public class DingNotifier extends AbstractHttpNotifier {
 
         List<String> mobiles = Lists.newArrayList(getNotifyReceivers(platform));
         at.setAtMobiles(mobiles);
-        if (CollectionUtils.isEmpty(mobiles)) {
+        if (mobiles.contains(ALL) || CollectionUtils.isEmpty(mobiles)) {
             at.setAtAll(true);
         }
 
@@ -76,7 +78,8 @@ public class DingNotifier extends AbstractHttpNotifier {
 
     /**
      * Build target url.
-     * @param secret secret
+     *
+     * @param secret      secret
      * @param accessToken accessToken
      * @return url
      */

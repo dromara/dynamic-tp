@@ -432,12 +432,6 @@
 
             <dependency>
                 <groupId>org.dromara.dynamictp</groupId>
-                <artifactId>dynamic-tp-extension-ttl</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.dromara.dynamictp</groupId>
                 <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
                 <version>${revision}</version>
             </dependency>

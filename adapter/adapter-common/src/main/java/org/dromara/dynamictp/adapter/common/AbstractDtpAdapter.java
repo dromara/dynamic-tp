@@ -80,7 +80,8 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
     protected void initialize() {
     }
 
-    public void register(String poolName, ThreadPoolExecutor threadPoolExecutor) {
+    public ThreadPoolExecutor register(String poolName, ThreadPoolExecutor threadPoolExecutor) {
+        return threadPoolExecutor;
     }
 
     @Override

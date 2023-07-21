@@ -25,6 +25,8 @@ import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.StreamUtil;
+import org.dromara.dynamictp.core.ThirdPartTpAlarm;
+import org.dromara.dynamictp.core.ThirdPartTpAlarmHelper;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
 import com.google.common.collect.Lists;
@@ -174,6 +176,11 @@ public class NotifyHelper {
         executorWrapper.setNotifyItems(allNotifyItems);
         executorWrapper.setPlatformIds(props.getPlatformIds());
         executorWrapper.setNotifyEnabled(props.isNotifyEnabled());
+        if (executorWrapper.getThirdPartTpAlarm() != null) {
+            ThirdPartTpAlarmHelper thirdPartTpAlarmHelper = executorWrapper.getThirdPartTpAlarm().getThirdPartTpAlarmHelper();
+            thirdPartTpAlarmHelper.setRunTimeout(props.getRunTimeout());
+            thirdPartTpAlarmHelper.setQueueTimeout(props.getQueueTimeout());
+        }
     }
 
     public static void updateNotifyInfo(DtpExecutor executor, DtpExecutorProps props, List<NotifyPlatform> platforms) {

@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.adapter.hystrix;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
@@ -29,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.Objects;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -45,6 +47,9 @@ import static com.netflix.hystrix.strategy.properties.HystrixPropertiesChainedPr
 public class DtpMetricsPublisherThreadPool implements HystrixMetricsPublisherThreadPool {
 
     private static final String PROPERTY_PREFIX = "hystrix";
+
+    private static final String THREAD_POOL_FIELD_NAME = "threadPool";
+
     private static final int DEFAULT_CORE_SIZE = 10;
     private static final int DEFAULT_MAXIMUM_SIZE = 10;
     private static final int DEFAULT_KEEP_ALIVE_TIME_MINUTES = 1;
@@ -72,7 +77,12 @@ public class DtpMetricsPublisherThreadPool implements HystrixMetricsPublisherThr
         metricsPublisherForThreadPool.initialize();
         HystrixDtpAdapter hystrixTpHandler = ApplicationContextHolder.getBean(HystrixDtpAdapter.class);
         hystrixTpHandler.cacheMetricsPublisher(threadPoolKey.name(), this);
-        hystrixTpHandler.register(threadPoolKey.name(), metrics.getThreadPool());
+        ThreadPoolExecutor proxy = hystrixTpHandler.register(threadPoolKey.name(), metrics.getThreadPool());
+        try {
+            ReflectionUtil.setFieldValue(HystrixThreadPoolMetrics.class, THREAD_POOL_FIELD_NAME, metrics, proxy);
+        } catch (IllegalAccessException e) {
+            log.error(ExceptionUtil.stacktraceToOneLineString(e));
+        }
     }
 
     public void refreshProperties(TpExecutorProps props) {

@@ -22,6 +22,7 @@ import com.alibaba.dubbo.common.store.DataStore;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.core.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -82,6 +83,7 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements Initia
                 val executorWrapper = new ExecutorWrapper(name, (ThreadPoolExecutor) v);
                 initNotifyItems(name, executorWrapper);
                 executors.put(name, executorWrapper);
+                executorMap.replace(k, new ThreadPoolExecutorProxy(executorWrapper));
             });
         }
         log.info("DynamicTp adapter, alibaba dubbo provider executors init end, executors: {}", executors);

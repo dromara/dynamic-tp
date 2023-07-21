@@ -31,9 +31,11 @@ import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.springframework.context.ApplicationEvent;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
@@ -84,7 +86,10 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
             }
             Map<String, Object> executorMap = dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY);
             if (MapUtils.isNotEmpty(executorMap)) {
-                executorMap.forEach((k, v) -> doInit(k, (ThreadPoolExecutor) v));
+                executorMap.forEach((k, v) -> {
+                    ThreadPoolExecutor proxy = doInit(k, (ThreadPoolExecutor) v);
+                    executorMap.replace(k, proxy);
+                });
             }
             log.info("DynamicTp adapter, apache dubbo provider executors init end, executors: {}", executors);
             return;
@@ -107,16 +112,20 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
 
         Map<Integer, ExecutorService> executorMap = data.get(EXECUTOR_SERVICE_COMPONENT_KEY);
         if (MapUtils.isNotEmpty(executorMap)) {
-            executorMap.forEach((k, v) -> doInit(k.toString(), (ThreadPoolExecutor) v));
+            executorMap.forEach((k, v) -> {
+                ThreadPoolExecutor proxy = doInit(k.toString(), (ThreadPoolExecutor) v);
+                executorMap.replace(k, proxy);
+            });
         }
         log.info("DynamicTp adapter, apache dubbo provider executors init end, executors: {}", executors);
     }
 
-    private void doInit(String port, ThreadPoolExecutor executor) {
+    private ThreadPoolExecutor doInit(String port, ThreadPoolExecutor executor) {
         val name = genTpName(port);
         val executorWrapper = new ExecutorWrapper(name, executor);
         initNotifyItems(name, executorWrapper);
         executors.put(name, executorWrapper);
+        return new ThreadPoolExecutorProxy(executorWrapper);
     }
 
     private String genTpName(String port) {

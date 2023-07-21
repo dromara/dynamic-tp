@@ -19,6 +19,7 @@ package org.dromara.dynamictp.core.support;
 
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
+import org.dromara.dynamictp.core.ThirdPartTpAlarm;
 import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
 import lombok.Data;
@@ -69,6 +70,19 @@ public class ExecutorWrapper {
      */
     private boolean notifyEnabled = true;
 
+    public ThirdPartTpAlarm getThirdPartTpAlarm() {
+        return thirdPartTpAlarm;
+    }
+
+    public void setThirdPartTpAlarm(ThirdPartTpAlarm thirdPartTpAlarm) {
+        this.thirdPartTpAlarm = thirdPartTpAlarm;
+    }
+
+    /**
+     * Third-party thread pools support alarms
+     */
+    private ThirdPartTpAlarm thirdPartTpAlarm;
+
     public ExecutorWrapper() {
     }
 
@@ -90,7 +104,7 @@ public class ExecutorWrapper {
         } else {
             throw new IllegalArgumentException("unsupported Executor type !");
         }
-        this.notifyItems = NotifyItem.getSimpleNotifyItems();
+        this.notifyItems = NotifyItem.getAllNotifyItems();
     }
 
     public static ExecutorWrapper of(DtpExecutor executor) {

@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
 import org.dromara.dynamictp.starter.adapter.webserver.adapter.AbstractWebServerDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
@@ -24,11 +25,13 @@ import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import io.undertow.Undertow;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.dromara.dynamictp.core.ThreadPoolExecutorProxy;
 import org.springframework.boot.web.embedded.undertow.UndertowServletWebServer;
 import org.springframework.boot.web.server.WebServer;
 import org.xnio.XnioWorker;
 
 import java.util.Objects;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * UndertowDtpAdapter related
@@ -65,7 +68,17 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
         val handler = TaskPoolHandlerFactory.getTaskPoolHandler(taskPool.getClass().getSimpleName());
         Object executor = ReflectionUtil.getFieldValue(taskPool.getClass(),
                 handler.taskPoolType().getInternalExecutor(), taskPool);
-        return new ExecutorWrapper(POOL_NAME, handler.adapt(executor));
+        ExecutorWrapper executorWrapper = new ExecutorWrapper(POOL_NAME, handler.adapt(executor));
+        if (executor instanceof ThreadPoolExecutor) {
+            ThreadPoolExecutorProxy threadPoolExecutorProxy = new ThreadPoolExecutorProxy(executorWrapper);
+            try {
+                ReflectionUtil.setFieldValue(taskPool.getClass(),
+                        handler.taskPoolType().getInternalExecutor(), taskPool, threadPoolExecutorProxy);
+            } catch (IllegalAccessException e) {
+                log.error(ExceptionUtil.stacktraceToOneLineString(e));
+            }
+        }
+        return executorWrapper;
     }
 
     @Override

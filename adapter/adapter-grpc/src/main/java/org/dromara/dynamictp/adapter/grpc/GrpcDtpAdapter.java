@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.adapter.grpc;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
 import io.grpc.inprocess.InProcessSocketAddress;
 import io.grpc.internal.InternalServer;
 import io.grpc.internal.ServerImpl;
@@ -26,6 +27,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.jvmti.JVMTI;
 
@@ -34,6 +36,7 @@ import java.net.SocketAddress;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * GrpcDtpAdapter related
@@ -84,6 +87,15 @@ public class GrpcDtpAdapter extends AbstractDtpAdapter {
                 val executorWrapper = new ExecutorWrapper(tpName, executor);
                 initNotifyItems(tpName, executorWrapper);
                 executors.put(tpName, executorWrapper);
+                if (executor instanceof ThreadPoolExecutor) {
+                    ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
+                    try {
+                        ReflectionUtil.setFieldValue(ServerImpl.class, EXECUTOR_FIELD, serverImpl, proxy);
+                    } catch (IllegalAccessException e) {
+                        log.error(ExceptionUtil.stacktraceToOneLineString(e));
+                    }
+                }
+
             }
         }
         log.info("DynamicTp adapter, grpc server executors init end, executors: {}", executors);

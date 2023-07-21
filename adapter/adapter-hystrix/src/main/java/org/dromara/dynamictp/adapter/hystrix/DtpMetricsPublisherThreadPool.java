@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.adapter.hystrix;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
@@ -29,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.Objects;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -72,7 +74,12 @@ public class DtpMetricsPublisherThreadPool implements HystrixMetricsPublisherThr
         metricsPublisherForThreadPool.initialize();
         HystrixDtpAdapter hystrixTpHandler = ApplicationContextHolder.getBean(HystrixDtpAdapter.class);
         hystrixTpHandler.cacheMetricsPublisher(threadPoolKey.name(), this);
-        hystrixTpHandler.register(threadPoolKey.name(), metrics.getThreadPool());
+        ThreadPoolExecutor proxy = hystrixTpHandler.register(threadPoolKey.name(), metrics.getThreadPool());
+        try {
+            ReflectionUtil.setFieldValue(HystrixThreadPoolMetrics.class, "threadPool", metrics, proxy);
+        } catch (IllegalAccessException e) {
+            log.error(ExceptionUtil.stacktraceToOneLineString(e));
+        }
     }
 
     public void refreshProperties(TpExecutorProps props) {

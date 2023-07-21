@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.apapter.brpc.client;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
 import com.baidu.cloud.starlight.api.rpc.StarlightClient;
 import com.baidu.cloud.starlight.api.rpc.threadpool.ThreadPoolFactory;
 import com.baidu.cloud.starlight.core.rpc.SingleStarlightClient;
@@ -27,6 +28,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.jvmti.JVMTI;
 
@@ -75,6 +77,12 @@ public class StarlightClientDtpAdapter extends AbstractDtpAdapter {
                 val executorWrapper = new ExecutorWrapper(bizThreadPoolName, executor);
                 initNotifyItems(bizThreadPoolName, executorWrapper);
                 executors.put(bizThreadPoolName, executorWrapper);
+                ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
+                try {
+                    ReflectionUtil.setFieldValue(ThreadPoolFactory.class, "defaultThreadPool", threadPoolFactory, proxy);
+                } catch (IllegalAccessException e) {
+                    log.error(ExceptionUtil.stacktraceToOneLineString(e));
+                }
             }
         });
         log.info("DynamicTp adapter, brpc client executors init end, executors: {}", executors);

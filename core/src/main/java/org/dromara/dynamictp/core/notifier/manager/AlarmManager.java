@@ -80,13 +80,13 @@ public class AlarmManager {
     }
 
     public static void doAlarmAsync(DtpExecutor executor, NotifyItemEnum notifyType) {
-        AlarmCounter.incAlarmCounter(executor.getThreadPoolName(), notifyType.getValue());
+ //       AlarmCounter.incAlarmCounter(executor.getThreadPoolName(), notifyType.getValue());
         ALARM_EXECUTOR.execute(() -> doAlarm(ExecutorWrapper.of(executor), notifyType));
     }
 
     public static void doAlarmAsync(DtpExecutor executor, NotifyItemEnum notifyType, Runnable currRunnable) {
         MDC.put(TRACE_ID, ((DtpRunnable) currRunnable).getTraceId());
-        AlarmCounter.incAlarmCounter(executor.getThreadPoolName(), notifyType.getValue());
+     //   AlarmCounter.incAlarmCounter(executor.getThreadPoolName(), notifyType.getValue());
         ALARM_EXECUTOR.execute(() -> doAlarm(ExecutorWrapper.of(executor), notifyType));
     }
 
@@ -99,6 +99,7 @@ public class AlarmManager {
     }
 
     public static void doAlarm(ExecutorWrapper executorWrapper, NotifyItemEnum notifyItemEnum) {
+        AlarmCounter.incAlarmCounter(executorWrapper.getThreadPoolName(), notifyItemEnum.getValue());
         NotifyHelper.getNotifyItem(executorWrapper, notifyItemEnum).ifPresent(notifyItem -> {
             val alarmCtx = new AlarmCtx(executorWrapper, notifyItem);
             ALARM_INVOKER_CHAIN.proceed(alarmCtx);

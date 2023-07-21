@@ -19,7 +19,9 @@ package org.dromara.dynamictp.core.notifier.alarm;
 
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.AlarmInfo;
+import org.dromara.dynamictp.core.ThirdPartTpAlarmHelper;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
 import lombok.val;
 import lombok.var;
@@ -45,7 +47,8 @@ public class AlarmCounter {
 
     private static final String UNKNOWN_COUNT_STR = UNKNOWN + " / " + UNKNOWN;
 
-    private AlarmCounter() { }
+    private AlarmCounter() {
+    }
 
     private static final Map<String, AlarmInfo> ALARM_INFO_CACHE = new ConcurrentHashMap<>();
 
@@ -82,6 +85,21 @@ public class AlarmCounter {
         var alarmInfo = ALARM_INFO_CACHE.get(key);
         if (Objects.nonNull(alarmInfo)) {
             alarmInfo.incCounter();
+        }
+    }
+
+    public static Triple<String, String, String> countStrRrq(ExecutorWrapper executorWrapper) {
+        if (executorWrapper.getThirdPartTpAlarm() != null) {
+            String threadPoolName = executorWrapper.getThreadPoolName();
+            ThirdPartTpAlarmHelper thirdPartTpAlarmHelper = executorWrapper.getThirdPartTpAlarm().getThirdPartTpAlarmHelper();
+            String rejectCount = getCount(threadPoolName, REJECT.getValue()) + " / " + thirdPartTpAlarmHelper.getRejectedTaskCount();
+            String runTimeoutCount = getCount(threadPoolName, RUN_TIMEOUT.getValue()) + " / "
+                    + thirdPartTpAlarmHelper.getRunTimeoutCount();
+            String queueTimeoutCount = getCount(threadPoolName, QUEUE_TIMEOUT.getValue()) + " / "
+                    + thirdPartTpAlarmHelper.getQueueTimeoutCount();
+            return new ImmutableTriple<>(rejectCount, runTimeoutCount, queueTimeoutCount);
+        } else {
+            return countStrRrq(executorWrapper.getThreadPoolName(), executorWrapper.getExecutor());
         }
     }
 

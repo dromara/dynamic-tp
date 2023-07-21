@@ -25,6 +25,7 @@ import com.alipay.sofa.rpc.server.UserThreadPool;
 import com.alipay.sofa.rpc.server.bolt.BoltServer;
 import com.alipay.sofa.rpc.server.http.AbstractHttpServer;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.core.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
@@ -92,6 +93,8 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
             val executorWrapper = new ExecutorWrapper(key, executor);
             initNotifyItems(key, executorWrapper);
             executors.put(key, executorWrapper);
+            ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
+
         });
 
         if (hasUserThread) {

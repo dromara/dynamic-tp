@@ -17,8 +17,10 @@
 
 package org.dromara.dynamictp.adapter.motan;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
+import org.dromara.dynamictp.core.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
@@ -87,6 +89,12 @@ public class MotanDtpAdapter extends AbstractDtpAdapter {
                     val executorWrapper = new ExecutorWrapper(key, executor);
                     initNotifyItems(key, executorWrapper);
                     executors.put(key, executorWrapper);
+                    ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
+                    try {
+                        ReflectionUtil.setFieldValue(NettyServer.class, EXECUTOR_FIELD_NAME, nettyServer, proxy);
+                    } catch (IllegalAccessException ex) {
+                        log.error(ExceptionUtil.stacktraceToOneLineString(ex));
+                    }
                 }
             });
         });

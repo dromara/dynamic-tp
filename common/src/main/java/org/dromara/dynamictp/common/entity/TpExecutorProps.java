@@ -79,4 +79,14 @@ public class TpExecutorProps {
      * If enable notify.
      */
     private boolean notifyEnabled = true;
+
+    /**
+     * runTimeout (ms)
+     */
+    private long runTimeout = 0;
+
+    /**
+     * queueTimeout (ms)
+     */
+    private long queueTimeout = 0;
 }

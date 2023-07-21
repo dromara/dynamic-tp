@@ -90,7 +90,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         ExecutorWrapper executorWrapper = context.getExecutorWrapper();
         val executor = executorWrapper.getExecutor();
         NotifyItem notifyItem = context.getNotifyItem();
-        val alarmCounter = AlarmCounter.countStrRrq(executorWrapper.getThreadPoolName(), executor);
+        val alarmCounter = AlarmCounter.countStrRrq(executorWrapper);
 
         String content = String.format(
                 getAlarmTemplate(),

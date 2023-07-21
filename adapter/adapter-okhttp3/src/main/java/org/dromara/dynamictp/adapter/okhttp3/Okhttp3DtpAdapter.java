@@ -17,14 +17,20 @@
 
 package org.dromara.dynamictp.adapter.okhttp3;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
+import okhttp3.Dispatcher;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import okhttp3.OkHttpClient;
 import org.apache.commons.collections4.MapUtils;
+
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Okhttp3DtpAdapter related
@@ -56,6 +62,14 @@ public class Okhttp3DtpAdapter extends AbstractDtpAdapter {
             val executorWrapper = new ExecutorWrapper(key, executor);
             initNotifyItems(key, executorWrapper);
             executors.put(key, executorWrapper);
+            if (executor instanceof ThreadPoolExecutor) {
+                ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
+                try {
+                    ReflectionUtil.setFieldValue(Dispatcher.class, "executorService", v.dispatcher(), proxy);
+                } catch (IllegalAccessException e) {
+                    log.error(ExceptionUtil.stacktraceToOneLineString(e));
+                }
+            }
         });
         log.info("DynamicTp adapter, okhttp3 executors init end, executors: {}", executors);
     }

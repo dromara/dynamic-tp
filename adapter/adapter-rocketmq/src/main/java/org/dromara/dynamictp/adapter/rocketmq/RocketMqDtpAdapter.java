@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.adapter.rocketmq;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -29,6 +30,7 @@ import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.jvmti.JVMTI;
 
@@ -95,6 +97,20 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
                 val executorWrapper = new ExecutorWrapper(cusKey, executor);
                 initNotifyItems(cusKey, executorWrapper);
                 executors.put(cusKey, executorWrapper);
+                if (executor instanceof ThreadPoolExecutor) {
+                    ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
+                    try {
+                        if (consumeMessageService instanceof ConsumeMessageConcurrentlyService) {
+                            ReflectionUtil.setFieldValue(ConsumeMessageConcurrentlyService.class,
+                                    CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService, proxy);
+                        } else if (consumeMessageService instanceof ConsumeMessageOrderlyService) {
+                            ReflectionUtil.setFieldValue(ConsumeMessageOrderlyService.class,
+                                    CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService, proxy);
+                        }
+                    } catch (IllegalAccessException e) {
+                        log.error(ExceptionUtil.stacktraceToOneLineString(e));
+                    }
+                }
             }
         }
     }
@@ -120,6 +136,7 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
                 val executorWrapper = new ExecutorWrapper(proKey, executor);
                 initNotifyItems(proKey, executorWrapper);
                 executors.put(proKey, executorWrapper);
+                producer.setAsyncSenderExecutor(new ThreadPoolExecutorProxy(executorWrapper));
             }
         }
     }

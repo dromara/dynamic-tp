@@ -31,6 +31,7 @@ import org.dromara.dynamictp.core.support.BinderHelper;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
@@ -44,7 +45,8 @@ import java.util.Objects;
 @Slf4j
 public abstract class AbstractRefresher implements Refresher, EnvironmentAware {
 
-    protected DtpProperties dtpProperties = DtpProperties.getInstance();
+    @Resource
+    protected DtpProperties dtpProperties;
 
     protected Environment environment;
 

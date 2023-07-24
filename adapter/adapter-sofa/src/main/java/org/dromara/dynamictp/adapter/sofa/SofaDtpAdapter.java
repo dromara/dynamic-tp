@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.adapter.sofa;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
 import com.alipay.sofa.rpc.config.ServerConfig;
 import com.alipay.sofa.rpc.config.UserThreadPoolManager;
 import com.alipay.sofa.rpc.server.Server;
@@ -56,6 +57,10 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
 
     private static final String USER_THREAD_FIELD_NAME = "userThreadMap";
 
+    private static final String USER_THREAD_EXECUTOR_FIELD_NAME = "executor";
+
+    private static final String BIZ_THREAD_POOL_NAME = "bizThreadPool";
+
     @Override
     public void refresh(DtpProperties dtpProperties) {
         refresh(NAME, dtpProperties.getSofaTp(), dtpProperties.getPlatforms());
@@ -94,7 +99,19 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
             initNotifyItems(key, executorWrapper);
             executors.put(key, executorWrapper);
             ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
-
+            try {
+                if (v instanceof BoltServer) {
+                    BoltServer server = (BoltServer) v;
+                    ReflectionUtil.setFieldValue(BoltServer.class,
+                            BIZ_THREAD_POOL_NAME, server, proxy);
+                } else {
+                    AbstractHttpServer server = (AbstractHttpServer) v;
+                    ReflectionUtil.setFieldValue(AbstractHttpServer.class,
+                            BIZ_THREAD_POOL_NAME, server, proxy);
+                }
+            } catch (IllegalAccessException e) {
+                log.error(ExceptionUtil.stacktraceToOneLineString(e));
+            }
         });
 
         if (hasUserThread) {
@@ -113,6 +130,13 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
                     val executorWrapper = new ExecutorWrapper(k, v.getExecutor());
                     initNotifyItems(k, executorWrapper);
                     executors.put(k, executorWrapper);
+                    ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
+                    try {
+                        ReflectionUtil.setFieldValue(UserThreadPool.class,
+                                USER_THREAD_EXECUTOR_FIELD_NAME, v, proxy);
+                    } catch (IllegalAccessException e) {
+                        log.error(ExceptionUtil.stacktraceToOneLineString(e));
+                    }
                 });
             }
         } catch (Exception e) {

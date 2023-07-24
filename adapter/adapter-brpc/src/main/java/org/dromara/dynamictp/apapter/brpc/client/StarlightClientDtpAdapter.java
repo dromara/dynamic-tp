@@ -49,6 +49,8 @@ public class StarlightClientDtpAdapter extends AbstractDtpAdapter {
 
     private static final String THREAD_POOL_FIELD = "threadPoolOfAll";
 
+    private static final String DEFAULT_THREAD_POOL_FIELD_NAME = "defaultThreadPool";
+
     @Override
     public void refresh(DtpProperties dtpProperties) {
         refresh(NAME, dtpProperties.getBrpcTp(), dtpProperties.getPlatforms());
@@ -79,7 +81,7 @@ public class StarlightClientDtpAdapter extends AbstractDtpAdapter {
                 executors.put(bizThreadPoolName, executorWrapper);
                 ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
                 try {
-                    ReflectionUtil.setFieldValue(ThreadPoolFactory.class, "defaultThreadPool", threadPoolFactory, proxy);
+                    ReflectionUtil.setFieldValue(ThreadPoolFactory.class, DEFAULT_THREAD_POOL_FIELD_NAME, threadPoolFactory, proxy);
                 } catch (IllegalAccessException e) {
                     log.error(ExceptionUtil.stacktraceToOneLineString(e));
                 }

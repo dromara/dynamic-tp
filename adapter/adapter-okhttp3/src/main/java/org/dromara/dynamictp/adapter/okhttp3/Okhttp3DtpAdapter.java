@@ -43,6 +43,8 @@ public class Okhttp3DtpAdapter extends AbstractDtpAdapter {
 
     private static final String NAME = "okhttp3Tp";
 
+    private static final String EXECUTOR_SERVICE_FIELD_NAME = "executorService";
+
     @Override
     public void refresh(DtpProperties dtpProperties) {
         refresh(NAME, dtpProperties.getOkhttp3Tp(), dtpProperties.getPlatforms());
@@ -65,7 +67,7 @@ public class Okhttp3DtpAdapter extends AbstractDtpAdapter {
             if (executor instanceof ThreadPoolExecutor) {
                 ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
                 try {
-                    ReflectionUtil.setFieldValue(Dispatcher.class, "executorService", v.dispatcher(), proxy);
+                    ReflectionUtil.setFieldValue(Dispatcher.class, EXECUTOR_SERVICE_FIELD_NAME, v.dispatcher(), proxy);
                 } catch (IllegalAccessException e) {
                     log.error(ExceptionUtil.stacktraceToOneLineString(e));
                 }

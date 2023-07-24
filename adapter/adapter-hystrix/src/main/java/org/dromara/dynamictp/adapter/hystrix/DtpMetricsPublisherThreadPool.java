@@ -47,6 +47,9 @@ import static com.netflix.hystrix.strategy.properties.HystrixPropertiesChainedPr
 public class DtpMetricsPublisherThreadPool implements HystrixMetricsPublisherThreadPool {
 
     private static final String PROPERTY_PREFIX = "hystrix";
+
+    private static final String THREAD_POOL_FIELD_NAME = "threadPool";
+
     private static final int DEFAULT_CORE_SIZE = 10;
     private static final int DEFAULT_MAXIMUM_SIZE = 10;
     private static final int DEFAULT_KEEP_ALIVE_TIME_MINUTES = 1;
@@ -76,7 +79,7 @@ public class DtpMetricsPublisherThreadPool implements HystrixMetricsPublisherThr
         hystrixTpHandler.cacheMetricsPublisher(threadPoolKey.name(), this);
         ThreadPoolExecutor proxy = hystrixTpHandler.register(threadPoolKey.name(), metrics.getThreadPool());
         try {
-            ReflectionUtil.setFieldValue(HystrixThreadPoolMetrics.class, "threadPool", metrics, proxy);
+            ReflectionUtil.setFieldValue(HystrixThreadPoolMetrics.class, THREAD_POOL_FIELD_NAME, metrics, proxy);
         } catch (IllegalAccessException e) {
             log.error(ExceptionUtil.stacktraceToOneLineString(e));
         }

@@ -47,14 +47,12 @@ public class TomcatThreadProxy extends ThreadPoolExecutor implements ThirdPartTp
         super.beforeExecute(t, r);
         helper.cancelQueueTimeoutTask(r);
         helper.startRunTimeoutTask(t, r);
-        log.info("beforeExecute增强");
     }
 
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
         helper.cancelRunTimeoutTask(r);
-        System.out.println("afterExecute增强");
         super.afterExecute(r, t);
     }
 

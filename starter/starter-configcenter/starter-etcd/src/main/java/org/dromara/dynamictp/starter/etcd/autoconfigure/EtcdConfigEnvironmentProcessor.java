@@ -40,8 +40,7 @@ public class EtcdConfigEnvironmentProcessor implements EnvironmentPostProcessor,
 
     @SneakyThrows
     @Override
-    public void postProcessEnvironment(ConfigurableEnvironment environment,
-            SpringApplication application) {
+    public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
         DtpProperties dtpProperties = DtpProperties.getInstance();
         BinderHelper.bindDtpProperties(environment, dtpProperties);
         DtpProperties.Etcd etcd = dtpProperties.getEtcd();

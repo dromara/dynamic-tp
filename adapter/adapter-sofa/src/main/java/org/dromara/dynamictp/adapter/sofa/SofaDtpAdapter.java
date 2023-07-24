@@ -26,7 +26,7 @@ import com.alipay.sofa.rpc.server.UserThreadPool;
 import com.alipay.sofa.rpc.server.bolt.BoltServer;
 import com.alipay.sofa.rpc.server.http.AbstractHttpServer;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.core.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;

@@ -26,7 +26,7 @@ import com.baidu.cloud.starlight.core.rpc.DefaultStarlightServer;
 import com.baidu.cloud.starlight.core.rpc.ServerProcessor;
 import com.baidu.cloud.starlight.transport.netty.NettyServer;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.core.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;

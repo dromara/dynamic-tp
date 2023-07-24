@@ -16,55 +16,53 @@
  */
 
 package org.dromara.dynamictp.core.reject;
-
-import lombok.val;
+import cn.hutool.core.util.StrUtil;
+import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarm;
+import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarmHelper;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
-import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
+import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
-
-import java.util.concurrent.ThreadPoolExecutor;
-
+import java.util.Collections;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
 import static org.dromara.dynamictp.common.em.NotifyItemEnum.REJECT;
 
 /**
  * RejectedAware related
  *
- * @author yanhom
- * @since 1.0.0
+ * @author kyao
+ * @since 1.1.4
  **/
 public interface RejectedAware {
 
     /**
      * Do sth before reject.
      *
-     * @param runnable Runnable instance
-     * @param executor ThreadPoolExecutor instance
+     * @param runnable the runnable
+     * @param threadPoolAlarm ThreadPoolExecutor instance
      * @param log      logger
      */
-    default void beforeReject(Runnable runnable, ThreadPoolExecutor executor, Logger log) {
-        if (!(executor instanceof DtpExecutor)) {
+    default void beforeReject(Runnable runnable, ThreadPoolAlarm threadPoolAlarm, Logger log) {
+        if (threadPoolAlarm.getThirdPartTpAlarmHelper() == null) {
             return;
         }
-        String taskName = null;
-        if (runnable instanceof DtpRunnable) {
-            val dtpRunnable = (DtpRunnable) runnable;
-            dtpRunnable.cancelQueueTimeoutTask();
-            taskName = dtpRunnable.getTaskName();
-        }
-        DtpExecutor dtpExecutor = (DtpExecutor) executor;
-        dtpExecutor.incRejectCount(1);
-        AlarmManager.doAlarmAsync(dtpExecutor, REJECT);
-        log.warn("DynamicTp execute, thread pool is exhausted, tpName: {}, taskName: {}, traceId: {}, " +
+        ThreadPoolAlarmHelper helper = threadPoolAlarm.getThirdPartTpAlarmHelper();
+        ExecutorAdapter<?> executor = helper.getExecutorWrapper().getExecutor();
+        helper.cancelQueueTimeoutTask(runnable);
+        helper.incRejectCount(1);
+        AlarmManager.doAlarmAsync(helper.getExecutorWrapper(), Collections.singletonList(REJECT));
+        String logMsg = StrUtil.format("DynamicTp execute, thread pool is exhausted, tpName: {},  traceId: {}, " +
                         "poolSize: {} (active: {}, core: {}, max: {}, largest: {}), " +
-                        "task: {} (completed: {}), queueCapacity: {}, (currSize: {}, remaining: {}), " +
-                        "executorStatus: (isShutdown: {}, isTerminated: {}, isTerminating: {})",
-                dtpExecutor.getThreadPoolName(), taskName, MDC.get(TRACE_ID), executor.getPoolSize(),
+                        "task: {} (completed: {}), queueCapacity: {}, (currSize: {}, remaining: {}) ",
+                helper.getExecutorWrapper().getThreadPoolName(), MDC.get(TRACE_ID), executor.getPoolSize(),
                 executor.getActiveCount(), executor.getCorePoolSize(), executor.getMaximumPoolSize(),
                 executor.getLargestPoolSize(), executor.getTaskCount(), executor.getCompletedTaskCount(),
-                dtpExecutor.getQueueCapacity(), dtpExecutor.getQueue().size(), executor.getQueue().remainingCapacity(),
-                executor.isShutdown(), executor.isTerminated(), executor.isTerminating());
+                helper.getExecutorWrapper().getExecutor().getQueueCapacity(), executor.getQueue().size(), executor.getQueue().remainingCapacity());
+        if (executor instanceof DtpExecutor) {
+            DtpExecutor dtpExecutor = (DtpExecutor) executor;
+            logMsg += StrUtil.format(", executorStatus: (isShutdown: {}, isTerminated: {}, isTerminating: {})", dtpExecutor.isShutdown(), dtpExecutor.isTerminated(), dtpExecutor.isTerminating());
+        }
+        log.warn(logMsg);
     }
 }

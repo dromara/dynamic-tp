@@ -1,33 +1,28 @@
-package org.dromara.dynamictp.core;
+package org.dromara.dynamictp.core.notifier.alarm;
 
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.timer.HashedWheelTimer;
 import org.dromara.dynamictp.common.timer.Timeout;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.timer.ThirdPartQueueTimeoutTimerTask;
-import org.dromara.dynamictp.core.timer.ThirdPartRunTimeoutTimerTask;
-
+import org.dromara.dynamictp.core.timer.QueueTimeoutTimerTask;
+import org.dromara.dynamictp.core.timer.RunTimeoutTimerTask;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
+ * alarm helper
+ *
  * @author hanli
  * @date 2023年07月19日 6:31 PM
  */
-public class ThirdPartTpAlarmHelper {
-
-    public ThirdPartTpAlarmHelper(ExecutorWrapper executorWrapper) {
-        this.executorWrapper = executorWrapper;
-    }
-
-    private ExecutorWrapper executorWrapper;
+public class ThreadPoolAlarmHelper {
 
     /**
-     * RejectHandler type.
+     * executorWrapper
      */
-    private String rejectHandlerType;
+    private final ExecutorWrapper executorWrapper;
 
     /**
      * Task execute timeout, unit (ms), just for statistics.
@@ -54,16 +49,23 @@ public class ThirdPartTpAlarmHelper {
      */
     private final LongAdder queueTimeoutCount = new LongAdder();
 
+    /**
+     * runTimeoutMap  key -> Runnable  value -> Timeout
+     */
     private final Map<Runnable, Timeout> runTimeoutMap = new ConcurrentHashMap<>();
 
+    /**
+     * queueTimeoutMap  key -> Runnable  value -> Timeout
+     */
     private final Map<Runnable, Timeout> queueTimeoutMap = new ConcurrentHashMap<>();
 
-    public Map<Runnable, Timeout> getRunTimeoutMap() {
-        return runTimeoutMap;
+    private ThreadPoolAlarmHelper(ExecutorWrapper executorWrapper) {
+        this.executorWrapper = executorWrapper;
+        executorWrapper.setThreadPoolAlarmHelper(this);
     }
 
-    public Map<Runnable, Timeout> getQueueTimeoutMap() {
-        return queueTimeoutMap;
+    public static ThreadPoolAlarmHelper of(ExecutorWrapper executorWrapper) {
+        return new ThreadPoolAlarmHelper(executorWrapper);
     }
 
     public long getRejectedTaskCount() {
@@ -111,7 +113,7 @@ public class ThirdPartTpAlarmHelper {
             return;
         }
         HashedWheelTimer hashedWheelTimer = ApplicationContextHolder.getBean(HashedWheelTimer.class);
-        ThirdPartQueueTimeoutTimerTask queueTimeoutTimerTask = new ThirdPartQueueTimeoutTimerTask(executorWrapper);
+        QueueTimeoutTimerTask queueTimeoutTimerTask = new QueueTimeoutTimerTask(executorWrapper, r);
         queueTimeoutMap.put(r, hashedWheelTimer.newTimeout(queueTimeoutTimerTask, queueTimeout, TimeUnit.MILLISECONDS));
     }
 
@@ -128,7 +130,7 @@ public class ThirdPartTpAlarmHelper {
             return;
         }
         HashedWheelTimer hashedWheelTimer = ApplicationContextHolder.getBean(HashedWheelTimer.class);
-        ThirdPartRunTimeoutTimerTask runTimeoutTimerTask = new ThirdPartRunTimeoutTimerTask(executorWrapper, t);
+        RunTimeoutTimerTask runTimeoutTimerTask = new RunTimeoutTimerTask(executorWrapper, r, t);
         runTimeoutMap.put(r, hashedWheelTimer.newTimeout(runTimeoutTimerTask, runTimeout, TimeUnit.MILLISECONDS));
     }
 

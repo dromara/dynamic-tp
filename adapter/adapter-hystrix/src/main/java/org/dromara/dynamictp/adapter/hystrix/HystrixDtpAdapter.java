@@ -23,7 +23,7 @@ import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.StreamUtil;
-import org.dromara.dynamictp.core.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import com.google.common.collect.Maps;
 import com.netflix.hystrix.strategy.HystrixPlugins;

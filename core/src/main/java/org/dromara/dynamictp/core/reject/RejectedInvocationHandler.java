@@ -18,11 +18,11 @@
 package org.dromara.dynamictp.core.reject;
 
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarm;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * RejectedInvocationHandler related
@@ -42,9 +42,9 @@ public class RejectedInvocationHandler implements InvocationHandler, RejectedAwa
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         try {
-            Runnable runnable = (Runnable) args[0];
-            ThreadPoolExecutor executor = (ThreadPoolExecutor) args[1];
-            beforeReject(runnable, executor, log);
+            if (args[1] instanceof ThreadPoolAlarm) {
+                beforeReject((Runnable) args[0], (ThreadPoolAlarm) args[1], log);
+            }
             return method.invoke(target, args);
         } catch (InvocationTargetException ex) {
             throw ex.getCause();

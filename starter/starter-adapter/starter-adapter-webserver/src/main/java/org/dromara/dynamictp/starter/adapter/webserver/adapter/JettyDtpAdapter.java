@@ -17,11 +17,14 @@
 
 package org.dromara.dynamictp.starter.adapter.webserver.adapter;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.jetty.util.thread.ExecutorThreadPool;
 import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
@@ -29,6 +32,7 @@ import org.springframework.boot.web.embedded.jetty.JettyWebServer;
 import org.springframework.boot.web.server.WebServer;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -43,12 +47,25 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
 
     private static final String POOL_NAME = "jettyTp";
 
+    private static final String EXECUTOR_NAME = "_executor";
+
     @Override
     public ExecutorWrapper doInitExecutorWrapper(WebServer webServer) {
         JettyWebServer jettyWebServer = (JettyWebServer) webServer;
         final JettyExecutorAdapter adapter = new JettyExecutorAdapter(
                 (ThreadPool.SizedThreadPool) jettyWebServer.getServer().getThreadPool());
-        return new ExecutorWrapper(POOL_NAME, adapter);
+        ExecutorWrapper executorWrapper = new ExecutorWrapper(POOL_NAME, adapter);
+        if (jettyWebServer.getServer().getThreadPool() instanceof ExecutorThreadPool) {
+            ExecutorThreadPool executorThreadPool = (ExecutorThreadPool) jettyWebServer.getServer().getThreadPool();
+            ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(ExecutorThreadPool.class, EXECUTOR_NAME, executorThreadPool);
+            ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(new ExecutorWrapper(POOL_NAME + EXECUTOR_NAME, executor));
+            try {
+                ReflectionUtil.setFieldValue(ExecutorThreadPool.class, EXECUTOR_NAME, executorThreadPool, proxy);
+            } catch (IllegalAccessException e) {
+                log.error(ExceptionUtil.stacktraceToOneLineString(e));
+            }
+        }
+        return executorWrapper;
     }
 
     @Override

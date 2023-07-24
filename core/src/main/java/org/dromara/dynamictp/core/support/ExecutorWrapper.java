@@ -19,7 +19,7 @@ package org.dromara.dynamictp.core.support;
 
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
-import org.dromara.dynamictp.core.ThirdPartTpAlarm;
+import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarmHelper;
 import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
 import lombok.Data;
@@ -70,18 +70,10 @@ public class ExecutorWrapper {
      */
     private boolean notifyEnabled = true;
 
-    public ThirdPartTpAlarm getThirdPartTpAlarm() {
-        return thirdPartTpAlarm;
-    }
-
-    public void setThirdPartTpAlarm(ThirdPartTpAlarm thirdPartTpAlarm) {
-        this.thirdPartTpAlarm = thirdPartTpAlarm;
-    }
-
     /**
-     * Third-party thread pools support alarms
+     * alarm helper
      */
-    private ThirdPartTpAlarm thirdPartTpAlarm;
+    private ThreadPoolAlarmHelper alarmHelper;
 
     public ExecutorWrapper() {
     }
@@ -124,5 +116,13 @@ public class ExecutorWrapper {
 
     public boolean isThreadPoolExecutor() {
         return this.executor instanceof ThreadPoolExecutorAdapter;
+    }
+
+    public ThreadPoolAlarmHelper getThreadPoolAlarmHelper() {
+        return alarmHelper;
+    }
+
+    public void setThreadPoolAlarmHelper(ThreadPoolAlarmHelper alarmHelper) {
+        this.alarmHelper = alarmHelper;
     }
 }

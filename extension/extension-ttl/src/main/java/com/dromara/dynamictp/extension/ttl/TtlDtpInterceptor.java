@@ -19,7 +19,7 @@ package com.dromara.dynamictp.extension.ttl;
 
 import com.alibaba.ttl.TtlRunnable;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
+import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarmHelper;
 import org.dromara.dynamictp.core.plugin.DtpInterceptor;
 import org.dromara.dynamictp.core.plugin.DtpIntercepts;
 import org.dromara.dynamictp.core.plugin.DtpInvocation;
@@ -62,7 +62,7 @@ public class TtlDtpInterceptor implements DtpInterceptor {
         if (BEFORE_EXECUTE.equals(method)) {
             processBeforeExecute(dtpExecutor, args);
         } else if (AFTER_EXECUTE.equals(method)) {
-            processAfterExecute(args);
+            processAfterExecute(dtpExecutor, args);
         }
         return invocation.proceed();
     }
@@ -75,24 +75,16 @@ public class TtlDtpInterceptor implements DtpInterceptor {
         if (!(args[1] instanceof TtlRunnable)) {
             return;
         }
-        TtlRunnable ttlRunnable = (TtlRunnable) args[1];
-        val innerRunnable = ttlRunnable.getRunnable();
-        if (innerRunnable instanceof DtpRunnable) {
-            DtpRunnable runnable = (DtpRunnable) innerRunnable;
-            runnable.cancelQueueTimeoutTask();
-            runnable.startRunTimeoutTask(dtpExecutor, (Thread) args[0]);
-        }
+        ThreadPoolAlarmHelper alarmHelper = dtpExecutor.getThirdPartTpAlarmHelper();
+        alarmHelper.cancelQueueTimeoutTask((Runnable) args[1]);
+        alarmHelper.startRunTimeoutTask((Thread) args[0], (Runnable) args[1]);
     }
 
-    private void processAfterExecute(Object[] args) {
+    private void processAfterExecute(DtpExecutor dtpExecutor, Object[] args) {
         if (!(args[0] instanceof TtlRunnable)) {
             return;
         }
-        TtlRunnable ttlRunnable = (TtlRunnable) args[0];
-        val innerRunnable = ttlRunnable.getRunnable();
-        if (innerRunnable instanceof DtpRunnable) {
-            DtpRunnable runnable = (DtpRunnable) innerRunnable;
-            runnable.cancelRunTimeoutTask();
-        }
+        ThreadPoolAlarmHelper alarmHelper = dtpExecutor.getThirdPartTpAlarmHelper();
+        alarmHelper.cancelRunTimeoutTask((Runnable) args[0]);
     }
 }

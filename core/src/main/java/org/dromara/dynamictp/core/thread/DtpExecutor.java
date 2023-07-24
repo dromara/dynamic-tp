@@ -23,10 +23,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
+import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarm;
+import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarmHelper;
 import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.spring.SpringExecutor;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
 import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
@@ -43,7 +46,6 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.LongAdder;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
 
@@ -55,7 +57,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
  **/
 @Slf4j
 public class DtpExecutor extends ThreadPoolExecutor
-        implements SpringExecutor, ExecutorAdapter<ThreadPoolExecutor> {
+        implements SpringExecutor, ExecutorAdapter<ThreadPoolExecutor>, ThreadPoolAlarm {
 
     /**
      * The name of the thread pool.
@@ -108,29 +110,9 @@ public class DtpExecutor extends ThreadPoolExecutor
     private boolean rejectEnhanced = true;
 
     /**
-     * Task execute timeout, unit (ms), just for statistics.
+     * alarm helper
      */
-    private long runTimeout;
-
-    /**
-     * Task queue wait timeout, unit (ms), just for statistics.
-     */
-    private long queueTimeout;
-
-    /**
-     * Total reject count.
-     */
-    private final LongAdder rejectCount = new LongAdder();
-
-    /**
-     * Count run timeout tasks.
-     */
-    private final LongAdder runTimeoutCount = new LongAdder();
-
-    /**
-     * Count queue wait timeout tasks.
-     */
-    private final LongAdder queueTimeoutCount = new LongAdder();
+    private final ThreadPoolAlarmHelper alarmHelper;
 
     /**
      * Whether to wait for scheduled tasks to complete on shutdown,
@@ -182,6 +164,7 @@ public class DtpExecutor extends ThreadPoolExecutor
                        ThreadFactory threadFactory,
                        RejectedExecutionHandler handler) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
+        alarmHelper = ThreadPoolAlarmHelper.of(ExecutorWrapper.of(this));
     }
 
     @Override
@@ -198,26 +181,20 @@ public class DtpExecutor extends ThreadPoolExecutor
     public void execute(Runnable command) {
         // 在这里计算动态线程池任务维度的QPS
         DtpRunnable dtpRunnable = (DtpRunnable) wrapTasks(command);
-        dtpRunnable.startQueueTimeoutTask(this);
+        executeAlarmEnhance(dtpRunnable);
         super.execute(dtpRunnable);
     }
 
     @Override
     protected void beforeExecute(Thread t, Runnable r) {
         super.beforeExecute(t, r);
-        if (r instanceof DtpRunnable) {
-            DtpRunnable runnable = (DtpRunnable) r;
-            runnable.cancelQueueTimeoutTask();
-            runnable.startRunTimeoutTask(this, t);
-        }
+        beforeExecuteAlarmEnhance(t, r);
     }
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
-        if (r instanceof DtpRunnable) {
-            ((DtpRunnable) r).cancelRunTimeoutTask();
-        }
+        afterExecuteAlarmEnhance(r, t);
         tryPrintError(r, t);
         clearContext();
     }
@@ -355,43 +332,32 @@ public class DtpExecutor extends ThreadPoolExecutor
 
     @Override
     public long getRejectedTaskCount() {
-        return rejectCount.sum();
+        return alarmHelper.getRejectedTaskCount();
     }
 
     public long getRunTimeout() {
-        return runTimeout;
+        return alarmHelper.getRunTimeout();
     }
 
     public void setRunTimeout(long runTimeout) {
-        this.runTimeout = runTimeout;
+        alarmHelper.setRunTimeout(runTimeout);
     }
 
     public long getQueueTimeout() {
-        return queueTimeout;
+        return alarmHelper.getQueueTimeout();
     }
 
     public void setQueueTimeout(long queueTimeout) {
-        this.queueTimeout = queueTimeout;
+        alarmHelper.setQueueTimeout(queueTimeout);
     }
 
-    public void incRejectCount(int count) {
-        rejectCount.add(count);
-    }
 
     public long getRunTimeoutCount() {
-        return runTimeoutCount.sum();
-    }
-
-    public void incRunTimeoutCount(int count) {
-        runTimeoutCount.add(count);
+        return alarmHelper.getRunTimeoutCount();
     }
 
     public long getQueueTimeoutCount() {
-        return queueTimeoutCount.sum();
-    }
-
-    public void incQueueTimeoutCount(int count) {
-        queueTimeoutCount.add(count);
+        return alarmHelper.getQueueTimeoutCount();
     }
 
     public boolean isWaitForTasksToCompleteOnShutdown() {
@@ -417,5 +383,10 @@ public class DtpExecutor extends ThreadPoolExecutor
      */
     public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
         allowCoreThreadTimeOut(allowCoreThreadTimeOut);
+    }
+
+    @Override
+    public ThreadPoolAlarmHelper getThirdPartTpAlarmHelper() {
+        return alarmHelper;
     }
 }

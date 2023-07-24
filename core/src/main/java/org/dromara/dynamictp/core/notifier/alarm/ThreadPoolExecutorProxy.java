@@ -1,38 +1,34 @@
-package org.dromara.dynamictp.starter.adapter.webserver.adapter.proxy;
+package org.dromara.dynamictp.core.notifier.alarm;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.threads.ThreadPoolExecutor;
-import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarm;
-import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarmHelper;
-import org.dromara.dynamictp.core.reject.RejectedInvocationHandler;
+import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
-import java.lang.reflect.Proxy;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Tomcat ThreadPool Proxy
+ * ThreadPoolExecutor Proxy
+ *
  * @author kyao
  * @since 1.1.4
  */
 @Slf4j
-public class TomcatThreadProxy extends ThreadPoolExecutor implements ThreadPoolAlarm {
+public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements ThreadPoolAlarm {
 
     private ThreadPoolAlarmHelper helper;
 
-    private TomcatThreadProxy(ThreadPoolExecutor executor) {
+    private ThreadPoolExecutorProxy(ThreadPoolExecutor executor) {
         super(executor.getCorePoolSize(), executor.getMaximumPoolSize(), executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS, executor.getQueue(), executor.getThreadFactory(), executor.getRejectedExecutionHandler());
     }
 
-    public TomcatThreadProxy(ExecutorWrapper executorWrapper) {
+    public ThreadPoolExecutorProxy(ExecutorWrapper executorWrapper) {
         this((ThreadPoolExecutor) executorWrapper.getExecutor().getOriginal());
         helper = ThreadPoolAlarmHelper.of(executorWrapper);
 
         RejectedExecutionHandler handler = getRejectedExecutionHandler();
-        setRejectedExecutionHandler((RejectedExecutionHandler) Proxy
-                .newProxyInstance(handler.getClass().getClassLoader(),
-                        new Class[]{RejectedExecutionHandler.class},
-                        new RejectedInvocationHandler(handler)));
+        setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
     }
 
     @Override

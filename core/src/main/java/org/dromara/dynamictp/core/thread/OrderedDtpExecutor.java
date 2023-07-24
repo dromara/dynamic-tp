@@ -195,7 +195,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
 
     protected DtpRunnable getEnhancedTask(Runnable command) {
         DtpRunnable dtpRunnable = (DtpRunnable) wrapTasks(command);
-        dtpRunnable.startQueueTimeoutTask(this);
+        getThirdPartTpAlarmHelper().startRunTimeoutTask(Thread.currentThread(), command);
         return dtpRunnable;
     }
 

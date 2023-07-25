@@ -65,7 +65,7 @@ public class ZookeeperRefresher extends AbstractRefresher implements Environment
 
         curatorFramework.getConnectionStateListenable().addListener(connectionStateListener);
         curatorFramework.getCuratorListenable().addListener(curatorListener);
-
+        cleanZkPropertySource(environment);
         log.info("DynamicTp refresher, add listener success, nodePath: {}", nodePath);
     }
 
@@ -76,8 +76,12 @@ public class ZookeeperRefresher extends AbstractRefresher implements Environment
         refresh(CuratorUtil.genPropertiesMap(dtpProperties));
     }
 
-    @Override
-    public void setEnvironment(Environment environment) {
+    /**
+     * ZK_PROPERTY_SOURCE just for DtpBeanDefinitionRegistrar
+     *
+     * @param environment environment
+     */
+    private void cleanZkPropertySource(Environment environment) {
         ConfigurableEnvironment env = ((ConfigurableEnvironment) environment);
         env.getPropertySources().remove(ZkConfigEnvironmentProcessor.ZK_PROPERTY_SOURCE_NAME);
     }

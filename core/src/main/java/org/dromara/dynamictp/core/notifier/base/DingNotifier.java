@@ -43,7 +43,7 @@ import static org.dromara.dynamictp.common.constant.DingNotifyConst.DING_NOTICE_
 @Slf4j
 public class DingNotifier extends AbstractHttpNotifier {
 
-    private final static String ALL = "all";
+    private static final String ALL = "all";
 
     @Override
     public String platform() {

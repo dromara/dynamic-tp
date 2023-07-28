@@ -259,6 +259,33 @@ public interface ExecutorAdapter<E extends Executor> extends Executor {
     default void setKeepAliveTime(long time, TimeUnit unit) {
         //default unsupported
     }
+
+    /**
+     * is shutdown
+     * @return boolean
+     */
+    default boolean isShutdown() {
+        //default unsupported
+        return false;
+    }
+
+    /**
+     * is terminated
+     * @return boolean
+     */
+    default boolean isTerminated() {
+        //default unsupported
+        return false;
+    }
+
+    /**
+     * is terminating
+     * @return boolean
+     */
+    default boolean isTerminating() {
+        //default unsupported
+        return false;
+    }
     
     class UnsupportedBlockingQueue extends AbstractQueue<Runnable> implements BlockingQueue<Runnable> {
     

@@ -19,6 +19,8 @@ package org.dromara.dynamictp.core.notifier.alarm;
 
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.AlarmInfo;
+import org.dromara.dynamictp.core.notifier.manager.AwareManager;
+import org.dromara.dynamictp.core.aware.ExecutorAlarmAware;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
@@ -88,14 +90,15 @@ public class AlarmCounter {
     }
 
     public static Triple<String, String, String> countStrRrq(ExecutorWrapper executorWrapper) {
-        if (executorWrapper.getThreadPoolAlarmHelper() != null) {
+        ExecutorAlarmAware executorAware = AwareManager.getExecutorAwareByType(ExecutorAlarmAware.class);
+        ThreadPoolAlarmHelper alarmHelper = executorAware.getAlarmHelper(executorWrapper.getExecutor().getOriginal());
+        if (alarmHelper != null) {
             String threadPoolName = executorWrapper.getThreadPoolName();
-            ThreadPoolAlarmHelper threadPoolAlarmHelper = executorWrapper.getThreadPoolAlarmHelper();
-            String rejectCount = getCount(threadPoolName, REJECT.getValue()) + " / " + threadPoolAlarmHelper.getRejectedTaskCount();
+            String rejectCount = getCount(threadPoolName, REJECT.getValue()) + " / " + alarmHelper.getRejectedTaskCount();
             String runTimeoutCount = getCount(threadPoolName, RUN_TIMEOUT.getValue()) + " / "
-                    + threadPoolAlarmHelper.getRunTimeoutCount();
+                    + alarmHelper.getRunTimeoutCount();
             String queueTimeoutCount = getCount(threadPoolName, QUEUE_TIMEOUT.getValue()) + " / "
-                    + threadPoolAlarmHelper.getQueueTimeoutCount();
+                    + alarmHelper.getQueueTimeoutCount();
             return new ImmutableTriple<>(rejectCount, runTimeoutCount, queueTimeoutCount);
         } else {
             return countStrRrq(executorWrapper.getThreadPoolName(), executorWrapper.getExecutor());

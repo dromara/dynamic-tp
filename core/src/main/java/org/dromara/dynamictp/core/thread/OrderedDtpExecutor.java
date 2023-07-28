@@ -18,6 +18,8 @@
 package org.dromara.dynamictp.core.thread;
 
 import org.dromara.dynamictp.common.queue.VariableLinkedBlockingQueue;
+import org.dromara.dynamictp.core.notifier.manager.AwareManager;
+import org.dromara.dynamictp.core.aware.ExecutorAlarmAware;
 import org.dromara.dynamictp.core.support.selector.ExecutorSelector;
 import org.dromara.dynamictp.core.support.selector.HashedExecutorSelector;
 import org.dromara.dynamictp.core.support.task.Ordered;
@@ -195,7 +197,8 @@ public class OrderedDtpExecutor extends DtpExecutor {
 
     protected DtpRunnable getEnhancedTask(Runnable command) {
         DtpRunnable dtpRunnable = (DtpRunnable) wrapTasks(command);
-        getThirdPartTpAlarmHelper().startRunTimeoutTask(Thread.currentThread(), command);
+        ExecutorAlarmAware executorAware = AwareManager.getExecutorAwareByType(ExecutorAlarmAware.class);
+        executorAware.getAlarmHelper(this).startRunTimeoutTask(Thread.currentThread(), command);
         return dtpRunnable;
     }
 

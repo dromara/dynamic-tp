@@ -144,6 +144,11 @@ public class ScheduledDtpExecutor extends DtpExecutor implements ScheduledExecut
     }
 
     @Override
+    public boolean isTerminating() {
+        return delegate.isTerminating();
+    }
+
+    @Override
     public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
         return delegate.awaitTermination(timeout, unit);
     }

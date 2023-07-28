@@ -15,43 +15,40 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.support.task.runnable;
+package org.dromara.dynamictp.core.aware;
 
-import org.slf4j.MDC;
-
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
+import java.util.concurrent.Executor;
 
 /**
- * DtpRunnable related
+ * ExecutorAware related
  *
- * @author yanhom
- * @since 1.0.4
+ * @author kyao
+ * @Since 1.1.4
  */
-public class DtpRunnable implements Runnable {
+public interface ExecutorAware {
 
-    private final Runnable runnable;
+    /**
+     * execute enhance
+     *
+     * @param executor
+     * @param r
+     */
+    void executeEnhance(Executor executor, Runnable r);
 
-    private final String taskName;
+    /**
+     * beforeExecute enhance
+     * @param executor
+     * @param t
+     * @param r
+     */
+    void beforeExecuteEnhance(Executor executor, Thread t, Runnable r);
 
-    private final String traceId;
-
-    public DtpRunnable(Runnable runnable, String taskName) {
-        this.runnable = runnable;
-        this.taskName = taskName;
-        this.traceId = MDC.get(TRACE_ID);
-    }
-
-    @Override
-    public void run() {
-        runnable.run();
-    }
-
-    public String getTaskName() {
-        return taskName;
-    }
-
-    public String getTraceId() {
-        return traceId;
-    }
+    /**
+     * afterExecute enhance
+     * @param executor
+     * @param r
+     * @param t
+     */
+    void afterExecuteEnhance(Executor executor, Runnable r, Throwable t);
 
 }

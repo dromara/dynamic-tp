@@ -16,15 +16,17 @@
  */
 
 package org.dromara.dynamictp.core.reject;
+
 import cn.hutool.core.util.StrUtil;
-import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarm;
+import org.dromara.dynamictp.core.notifier.manager.AwareManager;
+import org.dromara.dynamictp.core.aware.ExecutorAlarmAware;
 import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarmHelper;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
-import org.dromara.dynamictp.core.thread.DtpExecutor;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 import java.util.Collections;
+import java.util.concurrent.Executor;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
 import static org.dromara.dynamictp.common.em.NotifyItemEnum.REJECT;
 
@@ -40,29 +42,29 @@ public interface RejectedAware {
      * Do sth before reject.
      *
      * @param runnable the runnable
-     * @param threadPoolAlarm ThreadPoolExecutor instance
+     * @param executor ThreadPoolExecutor instance
      * @param log      logger
      */
-    default void beforeReject(Runnable runnable, ThreadPoolAlarm threadPoolAlarm, Logger log) {
-        if (threadPoolAlarm.getThirdPartTpAlarmHelper() == null) {
+    default void beforeReject(Runnable runnable, Executor executor, Logger log) {
+        ExecutorAlarmAware executorAware = AwareManager.getExecutorAwareByType(ExecutorAlarmAware.class);
+        ThreadPoolAlarmHelper alarmHelper = executorAware.getAlarmHelper(executor);
+        if (alarmHelper == null) {
             return;
         }
-        ThreadPoolAlarmHelper helper = threadPoolAlarm.getThirdPartTpAlarmHelper();
-        ExecutorAdapter<?> executor = helper.getExecutorWrapper().getExecutor();
-        helper.cancelQueueTimeoutTask(runnable);
-        helper.incRejectCount(1);
-        AlarmManager.doAlarmAsync(helper.getExecutorWrapper(), Collections.singletonList(REJECT));
+
+        alarmHelper.cancelQueueTimeoutTask(runnable);
+        alarmHelper.incRejectCount(1);
+        AlarmManager.doAlarmAsync(alarmHelper.getExecutorWrapper(), Collections.singletonList(REJECT));
+        ExecutorAdapter<?> executorAdapter = alarmHelper.getExecutorWrapper().getExecutor();
         String logMsg = StrUtil.format("DynamicTp execute, thread pool is exhausted, tpName: {},  traceId: {}, " +
                         "poolSize: {} (active: {}, core: {}, max: {}, largest: {}), " +
-                        "task: {} (completed: {}), queueCapacity: {}, (currSize: {}, remaining: {}) ",
-                helper.getExecutorWrapper().getThreadPoolName(), MDC.get(TRACE_ID), executor.getPoolSize(),
-                executor.getActiveCount(), executor.getCorePoolSize(), executor.getMaximumPoolSize(),
-                executor.getLargestPoolSize(), executor.getTaskCount(), executor.getCompletedTaskCount(),
-                helper.getExecutorWrapper().getExecutor().getQueueCapacity(), executor.getQueue().size(), executor.getQueue().remainingCapacity());
-        if (executor instanceof DtpExecutor) {
-            DtpExecutor dtpExecutor = (DtpExecutor) executor;
-            logMsg += StrUtil.format(", executorStatus: (isShutdown: {}, isTerminated: {}, isTerminating: {})", dtpExecutor.isShutdown(), dtpExecutor.isTerminated(), dtpExecutor.isTerminating());
-        }
+                        "task: {} (completed: {}), queueCapacity: {}, (currSize: {}, remaining: {}) ," +
+                        "executorStatus: (isShutdown: {}, isTerminated: {}, isTerminating: {})",
+                alarmHelper.getExecutorWrapper().getThreadPoolName(), MDC.get(TRACE_ID), executorAdapter.getPoolSize(),
+                executorAdapter.getActiveCount(), executorAdapter.getCorePoolSize(), executorAdapter.getMaximumPoolSize(),
+                executorAdapter.getLargestPoolSize(), executorAdapter.getTaskCount(), executorAdapter.getCompletedTaskCount(),
+                alarmHelper.getExecutorWrapper().getExecutor().getQueueCapacity(), executorAdapter.getQueue().size(), executorAdapter.getQueue().remainingCapacity(),
+                executorAdapter.isShutdown(), executorAdapter.isTerminated(), executorAdapter.isTerminating());
         log.warn(logMsg);
     }
 }

@@ -40,6 +40,7 @@ import org.slf4j.MDC;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -172,7 +173,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     }
 
     private String highlightNotifyContent(String content, List<String> diffs) {
-        if (StringUtils.isBlank(content)) {
+        if (StringUtils.isBlank(content) || Objects.isNull(getColors())) {
             return content;
         }
 
@@ -187,7 +188,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     }
 
     private String highlightAlarmContent(String content, NotifyItemEnum notifyItemEnum) {
-        if (StringUtils.isBlank(content)) {
+        if (StringUtils.isBlank(content) || Objects.isNull(getColors())) {
             return content;
         }
 

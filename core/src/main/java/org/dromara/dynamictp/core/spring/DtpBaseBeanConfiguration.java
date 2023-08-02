@@ -18,17 +18,13 @@
 package org.dromara.dynamictp.core.spring;
 
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.timer.HashedWheelTimer;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.monitor.DtpMonitor;
 import org.dromara.dynamictp.core.support.DtpBannerPrinter;
-import org.dromara.dynamictp.core.thread.NamedThreadFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * DtpBaseBeanConfiguration related
@@ -64,10 +60,4 @@ public class DtpBaseBeanConfiguration {
     public DtpBannerPrinter dtpBannerPrinter() {
         return new DtpBannerPrinter();
     }
-
-    @Bean
-    public HashedWheelTimer hashedWheelTimer() {
-        return new HashedWheelTimer(new NamedThreadFactory("dtpRunnable-timeout", true), 10, TimeUnit.MILLISECONDS);
-    }
-
 }

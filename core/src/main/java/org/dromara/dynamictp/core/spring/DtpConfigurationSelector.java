@@ -47,7 +47,7 @@ public class DtpConfigurationSelector implements DeferredImportSelector, Ordered
             return new String[]{};
         }
         return new String[] {
-                DtpBaseProcessorRegistrar.class.getName(),
+                DtpBaseBeanDefinitionRegistrar.class.getName(),
                 DtpBeanDefinitionRegistrar.class.getName(),
                 DtpBaseBeanConfiguration.class.getName()
         };

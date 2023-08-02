@@ -185,7 +185,7 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
     private static void refresh(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
         if (props.coreParamIsInValid()) {
             log.error("DynamicTp refresh, invalid parameters exist, properties: {}", props);
-            return;
+            throw new IllegalArgumentException("DynamicTp refresh, invalid parameters exist, properties: " + props);
         }
         TpMainFields oldFields = ExecutorConverter.toMainFields(executorWrapper);
         doRefresh(executorWrapper, props);

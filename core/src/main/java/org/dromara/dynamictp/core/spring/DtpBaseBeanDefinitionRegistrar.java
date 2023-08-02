@@ -29,12 +29,12 @@ import org.springframework.core.type.AnnotationMetadata;
 import java.util.concurrent.TimeUnit;
 
 /**
- * DtpBaseProcessorRegistrar related
+ * DtpBaseBeanDefinitionRegistrar related
  *
  * @author yanhom
  * @since 1.0.4
  **/
-public class DtpBaseProcessorRegistrar implements ImportBeanDefinitionRegistrar {
+public class DtpBaseBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar {
 
     private static final String APPLICATION_CONTEXT_HOLDER = "dtpApplicationContextHolder";
 

@@ -196,7 +196,6 @@ public class DtpExecutor extends ThreadPoolExecutor
 
     @Override
     public void execute(Runnable command) {
-        // 在这里计算动态线程池任务维度的QPS
         DtpRunnable dtpRunnable = (DtpRunnable) wrapTasks(command);
         dtpRunnable.startQueueTimeoutTask(this);
         super.execute(dtpRunnable);

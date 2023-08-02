@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.core.spring;
 
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.DeferredImportSelector;
@@ -47,10 +46,9 @@ public class DtpConfigurationSelector implements DeferredImportSelector, Ordered
         if (!BooleanUtils.toBoolean(environment.getProperty(DTP_ENABLED_PROP, BooleanUtils.TRUE))) {
             return new String[]{};
         }
-        return new String[]{
+        return new String[] {
+                DtpBaseProcessorRegistrar.class.getName(),
                 DtpBeanDefinitionRegistrar.class.getName(),
-                DtpPostProcessorRegistrar.class.getName(),
-                ApplicationContextHolder.class.getName(),
                 DtpBaseBeanConfiguration.class.getName()
         };
     }

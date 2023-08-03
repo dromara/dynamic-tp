@@ -19,12 +19,10 @@ package org.dromara.dynamictp.core.notifier.manager;
 
 import cn.hutool.core.exceptions.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.core.aware.ExecutorAlarmAware;
 import org.dromara.dynamictp.core.aware.ExecutorAware;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.Executor;
 
@@ -48,12 +46,14 @@ public class AwareManager {
         for (ExecutorAware aware : serviceLoader) {
             EXECUTOR_AWARE_LIST.add(aware);
         }
-
-        Map<String, ExecutorAware> executorAwareMap = ApplicationContextHolder.getBeansOfType(ExecutorAware.class);
-        EXECUTOR_AWARE_LIST.addAll(executorAwareMap.values());
     }
 
     public static void addExecutorAware(ExecutorAware aware) {
+        for (ExecutorAware executorAware : EXECUTOR_AWARE_LIST) {
+            if (executorAware.getClass().equals(aware.getClass())) {
+                return;
+            }
+        }
         EXECUTOR_AWARE_LIST.add(aware);
     }
 

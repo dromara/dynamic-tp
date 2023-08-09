@@ -20,8 +20,6 @@ package org.dromara.dynamictp.core.timer;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.timer.Timeout;
 import org.dromara.dynamictp.common.timer.TimerTask;
-import org.dromara.dynamictp.core.notifier.manager.AwareManager;
-import org.dromara.dynamictp.core.aware.ExecutorAlarmAware;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
@@ -52,8 +50,7 @@ public class QueueTimeoutTimerTask implements TimerTask {
 
     @Override
     public void run(Timeout timeout) {
-        ExecutorAlarmAware executorAware = AwareManager.getExecutorAwareByType(ExecutorAlarmAware.class);
-        Optional.ofNullable(executorAware.getAlarmHelper(executorWrapper.getExecutor().getOriginal()))
+        Optional.ofNullable(executorWrapper.getAlarmHelper())
                 .ifPresent(alarmHelper -> alarmHelper.incQueueTimeoutCount(1));
         if (executorWrapper.getExecutor() instanceof DtpExecutor &&
                 runnable instanceof DtpRunnable) {

@@ -23,7 +23,7 @@ import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
 import lombok.val;
-
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -57,14 +57,12 @@ public class ExecutorConverter {
         }
         ThreadPoolStats poolStats = convertCommon(executor);
         poolStats.setPoolName(wrapper.getThreadPoolName());
-        if (executor instanceof DtpExecutor) {
-            DtpExecutor dtpExecutor = (DtpExecutor) executor;
-            poolStats.setRunTimeoutCount(dtpExecutor.getRunTimeoutCount());
-            poolStats.setQueueTimeoutCount(dtpExecutor.getQueueTimeoutCount());
-            poolStats.setDynamic(true);
-        } else {
-            poolStats.setDynamic(false);
-        }
+        Optional.ofNullable(wrapper.getAlarmHelper()).ifPresent(alarmHelper -> {
+            poolStats.setRunTimeoutCount(alarmHelper.getRunTimeoutCount());
+            poolStats.setQueueTimeoutCount(alarmHelper.getQueueTimeoutCount());
+            poolStats.setRejectCount(alarmHelper.getRejectedTaskCount());
+        });
+        poolStats.setDynamic(executor instanceof DtpExecutor);
         return poolStats;
     }
 
@@ -82,7 +80,6 @@ public class ExecutorConverter {
                 .taskCount(executor.getTaskCount())
                 .completedTaskCount(executor.getCompletedTaskCount())
                 .waitTaskCount(executor.getQueueSize())
-                .rejectCount(executor.getRejectedTaskCount())
                 .rejectHandlerName(executor.getRejectHandlerType())
                 .build();
     }

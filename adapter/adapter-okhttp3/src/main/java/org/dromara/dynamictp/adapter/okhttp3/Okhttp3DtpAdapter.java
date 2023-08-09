@@ -22,7 +22,7 @@ import okhttp3.Dispatcher;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import lombok.extern.slf4j.Slf4j;

@@ -78,6 +78,7 @@ public class ThreadPoolAlarmHelper {
 
     private ThreadPoolAlarmHelper(ExecutorWrapper executorWrapper) {
         this.executorWrapper = executorWrapper;
+        executorWrapper.setAlarmHelper(this);
     }
 
     public static ThreadPoolAlarmHelper of(ExecutorWrapper executorWrapper) {

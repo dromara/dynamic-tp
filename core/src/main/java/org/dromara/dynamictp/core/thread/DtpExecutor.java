@@ -23,14 +23,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
-import org.dromara.dynamictp.core.notifier.manager.AwareManager;
-import org.dromara.dynamictp.core.aware.ExecutorAlarmAware;
-import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarmHelper;
+import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.spring.SpringExecutor;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
 import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
@@ -110,6 +107,16 @@ public class DtpExecutor extends ThreadPoolExecutor
     private boolean rejectEnhanced = true;
 
     /**
+     * for manual builder thread pools only
+     */
+    private long runTimeout = 0;
+
+    /**
+     * for manual builder thread pools only
+     */
+    private long queueTimeout = 0;
+
+    /**
      * Whether to wait for scheduled tasks to complete on shutdown,
      * not interrupting running tasks and executing all tasks in the queue.
      */
@@ -159,8 +166,6 @@ public class DtpExecutor extends ThreadPoolExecutor
                        ThreadFactory threadFactory,
                        RejectedExecutionHandler handler) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
-        ExecutorAlarmAware executorAware = AwareManager.getExecutorAwareByType(ExecutorAlarmAware.class);
-        executorAware.addAlarmHelper(this, ThreadPoolAlarmHelper.of(ExecutorWrapper.of(this)));
     }
 
     @Override
@@ -326,34 +331,21 @@ public class DtpExecutor extends ThreadPoolExecutor
         this.rejectHandlerType = rejectHandlerType;
     }
 
-    @Override
-    public long getRejectedTaskCount() {
-        return getAlarmHelper().getRejectedTaskCount();
-    }
-
-    public long getRunTimeout() {
-        return getAlarmHelper().getRunTimeout();
-    }
 
     public void setRunTimeout(long runTimeout) {
-        getAlarmHelper().setRunTimeout(runTimeout);
-    }
-
-    public long getQueueTimeout() {
-        return getAlarmHelper().getQueueTimeout();
+        this.runTimeout = runTimeout;
     }
 
     public void setQueueTimeout(long queueTimeout) {
-        getAlarmHelper().setQueueTimeout(queueTimeout);
+        this.queueTimeout = queueTimeout;
     }
 
-
-    public long getRunTimeoutCount() {
-        return getAlarmHelper().getRunTimeoutCount();
+    public long getRunTimeout() {
+        return runTimeout;
     }
 
-    public long getQueueTimeoutCount() {
-        return getAlarmHelper().getQueueTimeoutCount();
+    public long getQueueTimeout() {
+        return queueTimeout;
     }
 
     public boolean isWaitForTasksToCompleteOnShutdown() {
@@ -381,9 +373,6 @@ public class DtpExecutor extends ThreadPoolExecutor
         allowCoreThreadTimeOut(allowCoreThreadTimeOut);
     }
 
-    private ThreadPoolAlarmHelper getAlarmHelper() {
-        ExecutorAlarmAware executorAware = AwareManager.getExecutorAwareByType(ExecutorAlarmAware.class);
-        return executorAware.getAlarmHelper(this);
-    }
+
 
 }

@@ -18,31 +18,27 @@
 package org.dromara.dynamictp.core.aware;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarmHelper;
-import java.util.Map;
+import org.slf4j.Logger;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 /**
- * ExecutorAlarmAware related
+ * TaskTimeoutAware related
  *
  * @author kyao
  * @Since 1.1.4
  */
 @Slf4j
-public class ExecutorAlarmAware implements ExecutorAware {
+public class TaskTimeoutAware extends AlarmAware {
 
-    private final Map<Executor, ThreadPoolAlarmHelper> alarmHelperMap = new ConcurrentHashMap<>();
-
-    public void addAlarmHelper(Executor executor, ThreadPoolAlarmHelper alarmHelper) {
-        alarmHelperMap.put(executor, alarmHelper);
-        alarmHelperMap.put(alarmHelper.getExecutorWrapper().getExecutor(), alarmHelper);
-        alarmHelperMap.put(alarmHelper.getExecutorWrapper().getExecutor().getOriginal(), alarmHelper);
+    @Override
+    public int getOrder() {
+        return AwareTypeEnum.TASK_TIMEOUT_AWARE.getOrder();
     }
 
-    public ThreadPoolAlarmHelper getAlarmHelper(Executor executor) {
-        return alarmHelperMap.get(executor);
+    @Override
+    public String getName() {
+        return AwareTypeEnum.TASK_TIMEOUT_AWARE.getName();
     }
 
     @Override
@@ -63,4 +59,10 @@ public class ExecutorAlarmAware implements ExecutorAware {
     public void afterExecuteEnhance(Executor executor, Runnable r, Throwable t) {
         Optional.ofNullable(alarmHelperMap.get(executor)).ifPresent(alarmHelper -> alarmHelper.cancelRunTimeoutTask(r));
     }
+
+    @Override
+    public void beforeReject(Runnable r, Executor executor, Logger log) {
+        Optional.ofNullable(alarmHelperMap.get(executor)).ifPresent(alarmHelper -> alarmHelper.cancelQueueTimeoutTask(r));
+    }
+
 }

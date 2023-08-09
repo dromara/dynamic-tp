@@ -35,6 +35,7 @@ import org.dromara.dynamictp.common.entity.TpMainFields;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.spring.OnceApplicationContextEventListener;
 import org.dromara.dynamictp.common.util.StreamUtil;
+import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.notifier.manager.NoticeManager;
@@ -168,6 +169,8 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
 
         // update notify items
         updateNotifyInfo(executorWrapper, props, platforms);
+        // update aware related
+        AwareManager.updateTpInfo(executorWrapper, props);
     }
 
     private void doRefreshPoolSize(ExecutorAdapter<?> executor, TpExecutorProps props) {

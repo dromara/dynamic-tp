@@ -33,6 +33,7 @@ import org.dromara.dynamictp.common.queue.MemorySafeLinkedBlockingQueue;
 import org.dromara.dynamictp.common.queue.VariableLinkedBlockingQueue;
 import org.dromara.dynamictp.common.spring.OnceApplicationContextEventListener;
 import org.dromara.dynamictp.common.util.StreamUtil;
+import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.core.notifier.manager.NoticeManager;
 import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
@@ -43,7 +44,6 @@ import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
 import org.springframework.context.event.ContextRefreshedEvent;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -110,6 +110,7 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
     public static void registerExecutor(ExecutorWrapper wrapper, String source) {
         log.info("DynamicTp register dtpExecutor, source: {}, executor: {}",
                 source, ExecutorConverter.toMainFields(wrapper));
+        AwareManager.register(wrapper);
         EXECUTOR_REGISTRY.putIfAbsent(wrapper.getThreadPoolName(), wrapper);
     }
 
@@ -247,6 +248,8 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
 
         // update notify related
         NotifyHelper.updateNotifyInfo(executorWrapper, props, dtpProperties.getPlatforms());
+        // update aware related
+        AwareManager.updateTpInfo(executorWrapper, props);
     }
 
     private static void doRefreshDtp(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
@@ -263,13 +266,13 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
         executor.setWaitForTasksToCompleteOnShutdown(props.isWaitForTasksToCompleteOnShutdown());
         executor.setAwaitTerminationSeconds(props.getAwaitTerminationSeconds());
         executor.setPreStartAllCoreThreads(props.isPreStartAllCoreThreads());
-        executor.setRunTimeout(props.getRunTimeout());
-        executor.setQueueTimeout(props.getQueueTimeout());
         List<TaskWrapper> taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
         executor.setTaskWrappers(taskWrappers);
 
         // update notify related
         NotifyHelper.updateNotifyInfo(executor, props, dtpProperties.getPlatforms());
+        // update aware related
+        AwareManager.updateTpInfo(executorWrapper, props);
         updateWrapper(executorWrapper, executor);
     }
 

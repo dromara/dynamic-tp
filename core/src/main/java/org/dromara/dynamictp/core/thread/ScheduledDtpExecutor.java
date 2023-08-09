@@ -18,7 +18,6 @@
 package org.dromara.dynamictp.core.thread;
 
 import org.dromara.dynamictp.common.em.JreEnum;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;

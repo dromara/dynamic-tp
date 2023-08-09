@@ -15,15 +15,17 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.notifier.manager;
+package org.dromara.dynamictp.core.aware;
 
-import cn.hutool.core.exceptions.ExceptionUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.core.aware.ExecutorAlarmAware;
-import org.dromara.dynamictp.core.aware.ExecutorAware;
+import org.dromara.dynamictp.common.entity.TpExecutorProps;
+import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.slf4j.Logger;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.ServiceLoader;
 import java.util.concurrent.Executor;
 
 /**
@@ -37,15 +39,16 @@ public class AwareManager {
 
     private static final List<ExecutorAware> EXECUTOR_AWARE_LIST = new ArrayList<>();
 
-    private AwareManager() {}
+    private AwareManager() {
+    }
 
     static {
-        EXECUTOR_AWARE_LIST.add(new ExecutorAlarmAware());
+        EXECUTOR_AWARE_LIST.add(new TaskTimeoutAware());
+        EXECUTOR_AWARE_LIST.add(new TaskRejectAware());
 
-        ServiceLoader<ExecutorAware> serviceLoader = ServiceLoader.load(ExecutorAware.class);
-        for (ExecutorAware aware : serviceLoader) {
-            EXECUTOR_AWARE_LIST.add(aware);
-        }
+        List<ExecutorAware> serviceLoader = ExtensionServiceLoader.get(ExecutorAware.class);
+        EXECUTOR_AWARE_LIST.addAll(serviceLoader);
+        EXECUTOR_AWARE_LIST.sort(Comparator.comparingInt(ExecutorAware::getOrder));
     }
 
     public static void addExecutorAware(ExecutorAware aware) {
@@ -55,22 +58,23 @@ public class AwareManager {
             }
         }
         EXECUTOR_AWARE_LIST.add(aware);
+        EXECUTOR_AWARE_LIST.sort(Comparator.comparingInt(ExecutorAware::getOrder));
     }
 
-    public static <T extends ExecutorAware> T getExecutorAwareByType(Class<? extends ExecutorAware> clazz) {
+    public static void register(ExecutorWrapper executorWrapper) {
         for (ExecutorAware executorAware : EXECUTOR_AWARE_LIST) {
-            if (clazz.equals(executorAware.getClass())) {
-                return (T) executorAware;
+            executorAware.updateInfo(executorWrapper, null);
+        }
+    }
+
+    public static void updateTpInfo(ExecutorWrapper executorWrapper, TpExecutorProps props) {
+        for (ExecutorAware executorAware : EXECUTOR_AWARE_LIST) {
+            if (CollectionUtil.isEmpty(props.getAwareTypes()) || props.getAwareTypes().contains(executorAware.getName())) {
+                executorAware.updateInfo(executorWrapper, props);
+            } else {
+                executorAware.remove(executorWrapper);
             }
         }
-
-        ExecutorAware executorAware = null;
-        try {
-            executorAware = clazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            log.warn(ExceptionUtil.stacktraceToOneLineString(e));
-        }
-        return (T) executorAware;
     }
 
     public static void executeEnhance(Executor executor, Runnable r) {
@@ -88,6 +92,12 @@ public class AwareManager {
     public static void afterExecuteEnhance(Executor executor, Runnable r, Throwable t) {
         for (ExecutorAware aware : EXECUTOR_AWARE_LIST) {
             aware.afterExecuteEnhance(executor, r, t);
+        }
+    }
+
+    public static void beforeReject(Runnable r, Executor executor, Logger log) {
+        for (ExecutorAware aware : EXECUTOR_AWARE_LIST) {
+            aware.beforeReject(r, executor, log);
         }
     }
 }

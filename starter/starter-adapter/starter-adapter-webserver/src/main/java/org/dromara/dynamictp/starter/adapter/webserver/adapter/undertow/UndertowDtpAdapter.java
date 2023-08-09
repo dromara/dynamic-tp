@@ -25,7 +25,7 @@ import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import io.undertow.Undertow;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.springframework.boot.web.embedded.undertow.UndertowServletWebServer;
 import org.springframework.boot.web.server.WebServer;
 import org.xnio.XnioWorker;

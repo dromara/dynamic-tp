@@ -27,10 +27,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.jvmti.JVMTI;
-
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Objects;

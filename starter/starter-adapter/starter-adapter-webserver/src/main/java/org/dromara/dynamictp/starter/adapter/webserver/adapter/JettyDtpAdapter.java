@@ -20,7 +20,7 @@ package org.dromara.dynamictp.starter.adapter.webserver.adapter;
 import cn.hutool.core.exceptions.ExceptionUtil;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;

@@ -15,13 +15,11 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.notifier.alarm;
+package org.dromara.dynamictp.core.support;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.core.notifier.manager.AwareManager;
-import org.dromara.dynamictp.core.aware.ExecutorAlarmAware;
+import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -41,8 +39,7 @@ public class ThreadPoolExecutorProxy extends ThreadPoolExecutor {
 
     public ThreadPoolExecutorProxy(ExecutorWrapper executorWrapper) {
         this((ThreadPoolExecutor) executorWrapper.getExecutor().getOriginal());
-        ExecutorAlarmAware executorAware = AwareManager.getExecutorAwareByType(ExecutorAlarmAware.class);
-        executorAware.addAlarmHelper(this, ThreadPoolAlarmHelper.of(executorWrapper));
+        executorWrapper.setOriginalProxy(this);
 
         RejectedExecutionHandler handler = getRejectedExecutionHandler();
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));

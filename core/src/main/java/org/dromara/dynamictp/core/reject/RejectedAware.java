@@ -18,8 +18,8 @@
 package org.dromara.dynamictp.core.reject;
 
 import cn.hutool.core.util.StrUtil;
-import org.dromara.dynamictp.core.notifier.manager.AwareManager;
-import org.dromara.dynamictp.core.aware.ExecutorAlarmAware;
+import org.dromara.dynamictp.core.aware.AwareManager;
+import org.dromara.dynamictp.core.aware.TaskTimeoutAware;
 import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarmHelper;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
@@ -46,25 +46,6 @@ public interface RejectedAware {
      * @param log      logger
      */
     default void beforeReject(Runnable runnable, Executor executor, Logger log) {
-        ExecutorAlarmAware executorAware = AwareManager.getExecutorAwareByType(ExecutorAlarmAware.class);
-        ThreadPoolAlarmHelper alarmHelper = executorAware.getAlarmHelper(executor);
-        if (alarmHelper == null) {
-            return;
-        }
-
-        alarmHelper.cancelQueueTimeoutTask(runnable);
-        alarmHelper.incRejectCount(1);
-        AlarmManager.doAlarmAsync(alarmHelper.getExecutorWrapper(), Collections.singletonList(REJECT));
-        ExecutorAdapter<?> executorAdapter = alarmHelper.getExecutorWrapper().getExecutor();
-        String logMsg = StrUtil.format("DynamicTp execute, thread pool is exhausted, tpName: {},  traceId: {}, " +
-                        "poolSize: {} (active: {}, core: {}, max: {}, largest: {}), " +
-                        "task: {} (completed: {}), queueCapacity: {}, (currSize: {}, remaining: {}) ," +
-                        "executorStatus: (isShutdown: {}, isTerminated: {}, isTerminating: {})",
-                alarmHelper.getExecutorWrapper().getThreadPoolName(), MDC.get(TRACE_ID), executorAdapter.getPoolSize(),
-                executorAdapter.getActiveCount(), executorAdapter.getCorePoolSize(), executorAdapter.getMaximumPoolSize(),
-                executorAdapter.getLargestPoolSize(), executorAdapter.getTaskCount(), executorAdapter.getCompletedTaskCount(),
-                alarmHelper.getExecutorWrapper().getExecutor().getQueueCapacity(), executorAdapter.getQueue().size(), executorAdapter.getQueue().remainingCapacity(),
-                executorAdapter.isShutdown(), executorAdapter.isTerminated(), executorAdapter.isTerminating());
-        log.warn(logMsg);
+        AwareManager.beforeReject(runnable, executor, log);
     }
 }

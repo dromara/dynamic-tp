@@ -19,8 +19,8 @@ package org.dromara.dynamictp.starter.adapter.webserver.adapter.proxy;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
-import org.dromara.dynamictp.core.notifier.manager.AwareManager;
-import org.dromara.dynamictp.core.aware.ExecutorAlarmAware;
+import org.dromara.dynamictp.core.aware.AwareManager;
+import org.dromara.dynamictp.core.aware.TaskTimeoutAware;
 import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarmHelper;
 import org.dromara.dynamictp.core.reject.RejectedInvocationHandler;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
@@ -42,8 +42,7 @@ public class TomcatThreadProxy extends ThreadPoolExecutor {
 
     public TomcatThreadProxy(ExecutorWrapper executorWrapper) {
         this((ThreadPoolExecutor) executorWrapper.getExecutor().getOriginal());
-        ExecutorAlarmAware executorAware = AwareManager.getExecutorAwareByType(ExecutorAlarmAware.class);
-        executorAware.addAlarmHelper(this, ThreadPoolAlarmHelper.of(executorWrapper));
+        executorWrapper.setOriginalProxy(this);
 
         RejectedExecutionHandler handler = getRejectedExecutionHandler();
         setRejectedExecutionHandler((RejectedExecutionHandler) Proxy

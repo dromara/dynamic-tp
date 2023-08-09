@@ -19,8 +19,8 @@ package org.dromara.dynamictp.core.notifier.alarm;
 
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.AlarmInfo;
-import org.dromara.dynamictp.core.notifier.manager.AwareManager;
-import org.dromara.dynamictp.core.aware.ExecutorAlarmAware;
+import org.dromara.dynamictp.core.aware.AwareManager;
+import org.dromara.dynamictp.core.aware.TaskTimeoutAware;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
@@ -90,8 +90,7 @@ public class AlarmCounter {
     }
 
     public static Triple<String, String, String> countStrRrq(ExecutorWrapper executorWrapper) {
-        ExecutorAlarmAware executorAware = AwareManager.getExecutorAwareByType(ExecutorAlarmAware.class);
-        ThreadPoolAlarmHelper alarmHelper = executorAware.getAlarmHelper(executorWrapper.getExecutor().getOriginal());
+        ThreadPoolAlarmHelper alarmHelper = executorWrapper.getAlarmHelper();
         if (alarmHelper != null) {
             String threadPoolName = executorWrapper.getThreadPoolName();
             String rejectCount = getCount(threadPoolName, REJECT.getValue()) + " / " + alarmHelper.getRejectedTaskCount();
@@ -101,23 +100,8 @@ public class AlarmCounter {
                     + alarmHelper.getQueueTimeoutCount();
             return new ImmutableTriple<>(rejectCount, runTimeoutCount, queueTimeoutCount);
         } else {
-            return countStrRrq(executorWrapper.getThreadPoolName(), executorWrapper.getExecutor());
-        }
-    }
-
-    public static Triple<String, String, String> countStrRrq(String threadPoolName, ExecutorAdapter<?> executor) {
-
-        if (!(executor.getOriginal() instanceof DtpExecutor)) {
             return new ImmutableTriple<>(UNKNOWN_COUNT_STR, UNKNOWN_COUNT_STR, UNKNOWN_COUNT_STR);
         }
-
-        DtpExecutor dtpExecutor = (DtpExecutor) executor.getOriginal();
-        String rejectCount = getCount(threadPoolName, REJECT.getValue()) + " / " + dtpExecutor.getRejectedTaskCount();
-        String runTimeoutCount = getCount(threadPoolName, RUN_TIMEOUT.getValue()) + " / "
-                + dtpExecutor.getRunTimeoutCount();
-        String queueTimeoutCount = getCount(threadPoolName, QUEUE_TIMEOUT.getValue()) + " / "
-                + dtpExecutor.getQueueTimeoutCount();
-        return new ImmutableTriple<>(rejectCount, runTimeoutCount, queueTimeoutCount);
     }
 
     private static String buildKey(String threadPoolName, String notifyItemType) {

@@ -17,6 +17,10 @@
 
 package org.dromara.dynamictp.core.aware;
 
+import org.dromara.dynamictp.common.entity.TpExecutorProps;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.slf4j.Logger;
+import javax.annotation.Nullable;
 import java.util.concurrent.Executor;
 
 /**
@@ -28,27 +32,75 @@ import java.util.concurrent.Executor;
 public interface ExecutorAware {
 
     /**
+     * aware order
+     *
+     * @return order
+     */
+    int getOrder();
+
+    /**
+     * aware name
+     *
+     * @return name
+     */
+    String getName();
+
+    /**
+     * registry and update
+     *
+     * @param wrapper
+     * @param props
+     */
+    void updateInfo(ExecutorWrapper wrapper, @Nullable TpExecutorProps props);
+
+    /**
+     * remove Executor
+     *
+     * @param wrapper
+     */
+    void remove(ExecutorWrapper wrapper);
+
+    /**
      * execute enhance
      *
      * @param executor
      * @param r
      */
-    void executeEnhance(Executor executor, Runnable r);
+    default void executeEnhance(Executor executor, Runnable r) {
+        // default no Operation
+    }
 
     /**
      * beforeExecute enhance
+     *
      * @param executor
      * @param t
      * @param r
      */
-    void beforeExecuteEnhance(Executor executor, Thread t, Runnable r);
+    default void beforeExecuteEnhance(Executor executor, Thread t, Runnable r) {
+        // default no Operation
+    }
 
     /**
      * afterExecute enhance
+     *
      * @param executor
      * @param r
      * @param t
      */
-    void afterExecuteEnhance(Executor executor, Runnable r, Throwable t);
+    default void afterExecuteEnhance(Executor executor, Runnable r, Throwable t) {
+        // default no Operation
+    }
+
+    /**
+     * reject enhance
+     * @param r
+     * @param executor
+     * @param log
+     */
+    default void beforeReject(Runnable r, Executor executor, Logger log) {
+        // default no Operation
+    }
+
 
 }

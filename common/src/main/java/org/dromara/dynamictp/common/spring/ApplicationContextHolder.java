@@ -42,21 +42,21 @@ public class ApplicationContextHolder implements ApplicationContextAware {
     }
 
     public static <T> T getBean(Class<T> clazz) {
-        if (Objects.isNull(context)) {
-            throw new NullPointerException("ApplicationContext is null, please check if the spring container is started.");
-        }
-        return context.getBean(clazz);
+        return getInstance().getBean(clazz);
     }
 
     public static <T> T getBean(String name, Class<T> clazz) {
-        return context.getBean(name, clazz);
+        return getInstance().getBean(name, clazz);
     }
 
     public static <T> Map<String, T> getBeansOfType(Class<T> clazz) {
-        return context.getBeansOfType(clazz);
+        return getInstance().getBeansOfType(clazz);
     }
 
     public static ApplicationContext getInstance() {
+        if (Objects.isNull(context)) {
+            throw new NullPointerException("ApplicationContext is null, please check if the spring container is started.");
+        }
         return context;
     }
 
@@ -65,7 +65,7 @@ public class ApplicationContextHolder implements ApplicationContextAware {
     }
 
     public static void publishEvent(ApplicationEvent event) {
-        context.publishEvent(event);
+        getInstance().publishEvent(event);
     }
 
 }

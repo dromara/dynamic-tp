@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.adapter.grpc;
 
-import cn.hutool.core.exceptions.ExceptionUtil;
 import io.grpc.inprocess.InProcessSocketAddress;
 import io.grpc.internal.InternalServer;
 import io.grpc.internal.ServerImpl;
@@ -91,7 +90,7 @@ public class GrpcDtpAdapter extends AbstractDtpAdapter {
                     try {
                         ReflectionUtil.setFieldValue(ServerImpl.class, EXECUTOR_FIELD, serverImpl, proxy);
                     } catch (IllegalAccessException e) {
-                        log.error(ExceptionUtil.stacktraceToOneLineString(e));
+                        log.error("Grpc executor proxy exception", e);
                     }
                 }
 

@@ -17,26 +17,31 @@
 
 package org.dromara.dynamictp.starter.adapter.webserver.adapter;
 
-import cn.hutool.core.exceptions.ExceptionUtil;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.plugin.DtpInterceptorRegistry;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.starter.adapter.webserver.adapter.proxy.JettyDtpInterceptor;
+import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ExecutorThreadPool;
 import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.springframework.boot.web.embedded.jetty.JettyWebServer;
 import org.springframework.boot.web.server.WebServer;
-
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
  * JettyDtpAdapter related
+ * <p>
+ * Other thread pools are brokered by {@link JettyDtpInterceptor}
  *
  * @author yanhom
  * @author dragon-zhang
@@ -49,21 +54,30 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
 
     private static final String EXECUTOR_NAME = "_executor";
 
+    private static final String THREAD_POOL_NAME = "_threadPool";
+
+    private static final String JETTY_DTP_INTERCEPTOR_NAME = "jettyDtpInterceptor";
+
     @Override
     public ExecutorWrapper doInitExecutorWrapper(WebServer webServer) {
         JettyWebServer jettyWebServer = (JettyWebServer) webServer;
+        ThreadPool threadPool = jettyWebServer.getServer().getThreadPool();
         final JettyExecutorAdapter adapter = new JettyExecutorAdapter(
-                (ThreadPool.SizedThreadPool) jettyWebServer.getServer().getThreadPool());
+                (ThreadPool.SizedThreadPool) threadPool);
         ExecutorWrapper executorWrapper = new ExecutorWrapper(POOL_NAME, adapter);
-        if (jettyWebServer.getServer().getThreadPool() instanceof ExecutorThreadPool) {
-            ExecutorThreadPool executorThreadPool = (ExecutorThreadPool) jettyWebServer.getServer().getThreadPool();
-            ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(ExecutorThreadPool.class, EXECUTOR_NAME, executorThreadPool);
-            ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(new ExecutorWrapper(POOL_NAME + EXECUTOR_NAME, executor));
-            try {
-                ReflectionUtil.setFieldValue(ExecutorThreadPool.class, EXECUTOR_NAME, executorThreadPool, proxy);
-            } catch (IllegalAccessException e) {
-                log.error(ExceptionUtil.stacktraceToOneLineString(e));
+
+        try {
+            if (threadPool instanceof ExecutorThreadPool) {
+                ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(ExecutorThreadPool.class, EXECUTOR_NAME, threadPool);
+                ThreadPoolExecutor proxy = new ThreadPoolExecutorProxy(new ExecutorWrapper(POOL_NAME + EXECUTOR_NAME, executor));
+                ReflectionUtil.setFieldValue(ExecutorThreadPool.class, EXECUTOR_NAME, threadPool, proxy);
+            } else {
+                DtpInterceptorRegistry.register(JETTY_DTP_INTERCEPTOR_NAME, new JettyDtpInterceptor());
+                Object jettyDtpInterceptor = DtpInterceptorRegistry.plugin(threadPool, new HashSet<>(Collections.singletonList(JETTY_DTP_INTERCEPTOR_NAME)));
+                ReflectionUtil.setFieldValue(Server.class, THREAD_POOL_NAME, jettyWebServer.getServer(), jettyDtpInterceptor);
             }
+        } catch (IllegalAccessException e) {
+            log.error("Jetty executor proxy exception", e);
         }
         return executorWrapper;
     }
@@ -83,43 +97,43 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
      * is to be compatible with {@link org.eclipse.jetty.util.thread.ThreadPool.SizedThreadPool}.
      **/
     private static class JettyExecutorAdapter implements ExecutorAdapter<ThreadPool.SizedThreadPool> {
-        
+
         private final ThreadPool.SizedThreadPool executor;
-        
+
         JettyExecutorAdapter(ThreadPool.SizedThreadPool executor) {
             this.executor = executor;
         }
-        
+
         @Override
         public ThreadPool.SizedThreadPool getOriginal() {
             return this.executor;
         }
-        
+
         @Override
         public int getCorePoolSize() {
             return this.executor.getMinThreads();
         }
-        
+
         @Override
         public void setCorePoolSize(int corePoolSize) {
             this.executor.setMinThreads(corePoolSize);
         }
-        
+
         @Override
         public int getMaximumPoolSize() {
             return this.executor.getMaxThreads();
         }
-        
+
         @Override
         public void setMaximumPoolSize(int maximumPoolSize) {
             this.executor.setMaxThreads(maximumPoolSize);
         }
-        
+
         @Override
         public int getPoolSize() {
             return this.executor.getThreads();
         }
-        
+
         @Override
         public int getActiveCount() {
             if (this.executor instanceof QueuedThreadPool) {
@@ -127,7 +141,7 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
             }
             return -1;
         }
-        
+
         @Override
         public int getLargestPoolSize() {
             if (this.executor instanceof MonitoredQueuedThreadPool) {
@@ -135,7 +149,7 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
             }
             return -1;
         }
-        
+
         @Override
         public long getCompletedTaskCount() {
             if (this.executor instanceof MonitoredQueuedThreadPool) {
@@ -143,7 +157,7 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
             }
             return -1;
         }
-        
+
         @SuppressWarnings("unchecked")
         @Override
         public BlockingQueue<Runnable> getQueue() {

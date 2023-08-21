@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow;
 
-import cn.hutool.core.exceptions.ExceptionUtil;
 import org.dromara.dynamictp.starter.adapter.webserver.adapter.AbstractWebServerDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
@@ -29,7 +28,6 @@ import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.springframework.boot.web.embedded.undertow.UndertowServletWebServer;
 import org.springframework.boot.web.server.WebServer;
 import org.xnio.XnioWorker;
-
 import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -75,7 +73,7 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
                 ReflectionUtil.setFieldValue(taskPool.getClass(),
                         handler.taskPoolType().getInternalExecutor(), taskPool, threadPoolExecutorProxy);
             } catch (IllegalAccessException e) {
-                log.error(ExceptionUtil.stacktraceToOneLineString(e));
+                log.error("Undertow executor proxy exception", e);
             }
         }
         return executorWrapper;

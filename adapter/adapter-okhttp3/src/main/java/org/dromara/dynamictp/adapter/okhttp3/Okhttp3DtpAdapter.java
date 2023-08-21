@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.adapter.okhttp3;
 
-import cn.hutool.core.exceptions.ExceptionUtil;
 import okhttp3.Dispatcher;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
@@ -69,7 +68,7 @@ public class Okhttp3DtpAdapter extends AbstractDtpAdapter {
                 try {
                     ReflectionUtil.setFieldValue(Dispatcher.class, EXECUTOR_SERVICE_FIELD_NAME, v.dispatcher(), proxy);
                 } catch (IllegalAccessException e) {
-                    log.error(ExceptionUtil.stacktraceToOneLineString(e));
+                    log.error("Okhttp3 executor proxy exception", e);
                 }
             }
         });

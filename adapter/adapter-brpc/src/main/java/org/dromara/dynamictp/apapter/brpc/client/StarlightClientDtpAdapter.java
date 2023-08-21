@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.apapter.brpc.client;
 
-import cn.hutool.core.exceptions.ExceptionUtil;
 import com.baidu.cloud.starlight.api.rpc.StarlightClient;
 import com.baidu.cloud.starlight.api.rpc.threadpool.ThreadPoolFactory;
 import com.baidu.cloud.starlight.core.rpc.SingleStarlightClient;
@@ -83,7 +82,7 @@ public class StarlightClientDtpAdapter extends AbstractDtpAdapter {
                 try {
                     ReflectionUtil.setFieldValue(ThreadPoolFactory.class, DEFAULT_THREAD_POOL_FIELD_NAME, threadPoolFactory, proxy);
                 } catch (IllegalAccessException e) {
-                    log.error(ExceptionUtil.stacktraceToOneLineString(e));
+                    log.error("Brpc client executor proxy exception", e);
                 }
             }
         });

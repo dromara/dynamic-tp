@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.adapter.rabbitmq;
 
-import cn.hutool.core.exceptions.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.MapUtils;
@@ -75,7 +74,7 @@ public class RabbitMqDtpAdapter extends AbstractDtpAdapter {
                     try {
                         ReflectionUtil.setFieldValue(AbstractConnectionFactory.class, CONSUME_EXECUTOR_FIELD_NAME, abstractConnectionFactory, proxy);
                     } catch (IllegalAccessException e) {
-                        log.error(ExceptionUtil.stacktraceToOneLineString(e));
+                        log.error("RabbiMq executor proxy exception", e);
                     }
                 }
             }

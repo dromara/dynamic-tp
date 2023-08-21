@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.adapter.hystrix;
 
-import cn.hutool.core.exceptions.ExceptionUtil;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
@@ -81,7 +80,7 @@ public class DtpMetricsPublisherThreadPool implements HystrixMetricsPublisherThr
         try {
             ReflectionUtil.setFieldValue(HystrixThreadPoolMetrics.class, THREAD_POOL_FIELD_NAME, metrics, proxy);
         } catch (IllegalAccessException e) {
-            log.error(ExceptionUtil.stacktraceToOneLineString(e));
+            log.error("Hystrix executor proxy exception", e);
         }
     }
 

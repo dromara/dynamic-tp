@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.adapter.rocketmq;
 
-import cn.hutool.core.exceptions.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -108,7 +107,7 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
                                     CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService, proxy);
                         }
                     } catch (IllegalAccessException e) {
-                        log.error(ExceptionUtil.stacktraceToOneLineString(e));
+                        log.error("RocketMq executor proxy exception", e);
                     }
                 }
             }

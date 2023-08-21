@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.adapter.sofa;
 
-import cn.hutool.core.exceptions.ExceptionUtil;
 import com.alipay.sofa.rpc.config.ServerConfig;
 import com.alipay.sofa.rpc.config.UserThreadPoolManager;
 import com.alipay.sofa.rpc.server.Server;
@@ -110,7 +109,7 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
                             BIZ_THREAD_POOL_NAME, server, proxy);
                 }
             } catch (IllegalAccessException e) {
-                log.error(ExceptionUtil.stacktraceToOneLineString(e));
+                log.error("Sofa executor proxy exception", e);
             }
         });
 
@@ -135,7 +134,7 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
                         ReflectionUtil.setFieldValue(UserThreadPool.class,
                                 USER_THREAD_EXECUTOR_FIELD_NAME, v, proxy);
                     } catch (IllegalAccessException e) {
-                        log.error(ExceptionUtil.stacktraceToOneLineString(e));
+                        log.error("Sofa executor proxy exception", e);
                     }
                 });
             }

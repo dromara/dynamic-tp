@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.adapter.rocketmq;
 
-import cn.hutool.core.exceptions.ExceptionUtil;
 import com.aliyun.openservices.ons.api.Consumer;
 import com.aliyun.openservices.ons.api.impl.rocketmq.ConsumerImpl;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.client.consumer.DefaultMQPushConsumer;
@@ -115,7 +114,7 @@ public class AliyunOnsRocketMqAdapter extends AbstractDtpAdapter {
                             CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService, proxy);
                 }
             } catch (IllegalAccessException e) {
-                log.error(ExceptionUtil.stacktraceToOneLineString(e));
+                log.error("AliyunOnsRocketMq executor proxy exception", e);
             }
         }
     }

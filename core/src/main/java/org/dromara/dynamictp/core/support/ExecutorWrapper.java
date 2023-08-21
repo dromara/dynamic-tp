@@ -19,12 +19,12 @@ package org.dromara.dynamictp.core.support;
 
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
+import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarmHelper;
 import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.core.thread.OrderedDtpExecutor;
 import org.springframework.beans.BeanUtils;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -83,14 +83,6 @@ public class ExecutorWrapper {
      */
     private boolean notifyEnabled = true;
 
-    public ThreadPoolAlarmHelper getAlarmHelper() {
-        return alarmHelper;
-    }
-
-    public void setAlarmHelper(ThreadPoolAlarmHelper alarmHelper) {
-        this.alarmHelper = alarmHelper;
-    }
-
     /**
      * alarmHelper
      */
@@ -106,12 +98,10 @@ public class ExecutorWrapper {
         this.notifyItems = executor.getNotifyItems();
         this.notifyEnabled = executor.isNotifyEnabled();
         this.platformIds = executor.getPlatformIds();
-        alarmHelper = ThreadPoolAlarmHelper.of(this);
-        alarmHelper.setRunTimeout(executor.getRunTimeout());
-        alarmHelper.setQueueTimeout(executor.getQueueTimeout());
-        if (executor instanceof OrderedDtpExecutor) {
-            ((OrderedDtpExecutor) executor).setAlarmHelper(alarmHelper);
-        }
+        this.alarmHelper = ThreadPoolAlarmHelper.of(this);
+        this.alarmHelper.setRunTimeout(executor.getRunTimeout());
+        this.alarmHelper.setQueueTimeout(executor.getQueueTimeout());
+        AwareManager.register(this);
     }
 
     public ExecutorWrapper(String threadPoolName, Executor executor) {
@@ -124,7 +114,8 @@ public class ExecutorWrapper {
             throw new IllegalArgumentException("unsupported Executor type !");
         }
         this.notifyItems = NotifyItem.getAllNotifyItems();
-        alarmHelper = ThreadPoolAlarmHelper.of(this);
+        this.alarmHelper = ThreadPoolAlarmHelper.of(this);
+        AwareManager.register(this);
     }
 
     public static ExecutorWrapper of(DtpExecutor executor) {
@@ -136,6 +127,10 @@ public class ExecutorWrapper {
         BeanUtils.copyProperties(this, executorWrapper);
         executorWrapper.executor = new CapturedExecutor(this.getExecutor());
         return executorWrapper;
+    }
+
+    public ThreadPoolAlarmHelper getAlarmHelper() {
+        return this.alarmHelper;
     }
 
     public boolean isDtpExecutor() {

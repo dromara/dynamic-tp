@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.core.thread;
 
 import org.dromara.dynamictp.common.queue.VariableLinkedBlockingQueue;
-import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarmHelper;
+import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.support.selector.ExecutorSelector;
 import org.dromara.dynamictp.core.support.selector.HashedExecutorSelector;
 import org.dromara.dynamictp.core.support.task.Ordered;
@@ -27,7 +27,6 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
@@ -56,8 +55,6 @@ public class OrderedDtpExecutor extends DtpExecutor {
     private final ExecutorSelector selector = new HashedExecutorSelector();
 
     private final List<Executor> childExecutors = Lists.newArrayList();
-
-    private ThreadPoolAlarmHelper alarmHelper;
 
     public OrderedDtpExecutor(int corePoolSize,
                               int maximumPoolSize,
@@ -215,11 +212,11 @@ public class OrderedDtpExecutor extends DtpExecutor {
             synchronized (this) {
                 try {
                     if (!taskQueue.add(getEnhancedTask(command))) {
-                        rejectedTaskIncrement();
+                        rejectedTaskIncrement(command);
                         throw new RejectedExecutionException("Task " + command.toString() + " rejected from " + this);
                     }
                 } catch (IllegalStateException ex) {
-                    rejectedTaskIncrement();
+                    rejectedTaskIncrement(command);
                     throw ex;
                 }
 
@@ -252,8 +249,8 @@ public class OrderedDtpExecutor extends DtpExecutor {
             }
         }
 
-        private void rejectedTaskIncrement() {
-            Optional.ofNullable(alarmHelper).ifPresent(alarmHelper -> alarmHelper.incRejectCount(1));
+        private void rejectedTaskIncrement(Runnable runnable) {
+            AwareManager.beforeReject(runnable, OrderedDtpExecutor.this, log);
             rejectedTaskCount.increment();
         }
 
@@ -288,8 +285,5 @@ public class OrderedDtpExecutor extends DtpExecutor {
         }
     }
 
-    public void setAlarmHelper(ThreadPoolAlarmHelper alarmHelper) {
-        this.alarmHelper = alarmHelper;
-    }
 }
 

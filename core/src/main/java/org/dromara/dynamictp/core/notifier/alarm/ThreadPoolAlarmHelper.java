@@ -23,7 +23,10 @@ import org.dromara.dynamictp.common.timer.Timeout;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.timer.QueueTimeoutTimerTask;
 import org.dromara.dynamictp.core.timer.RunTimeoutTimerTask;
+
+import java.lang.ref.SoftReference;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
@@ -69,16 +72,15 @@ public class ThreadPoolAlarmHelper {
     /**
      * runTimeoutMap  key -> Runnable  value -> Timeout
      */
-    private final Map<Runnable, Timeout> runTimeoutMap = new ConcurrentHashMap<>();
+    private final Map<Runnable, SoftReference<Timeout>> runTimeoutMap = new ConcurrentHashMap<>();
 
     /**
      * queueTimeoutMap  key -> Runnable  value -> Timeout
      */
-    private final Map<Runnable, Timeout> queueTimeoutMap = new ConcurrentHashMap<>();
+    private final Map<Runnable, SoftReference<Timeout>> queueTimeoutMap = new ConcurrentHashMap<>();
 
     private ThreadPoolAlarmHelper(ExecutorWrapper executorWrapper) {
         this.executorWrapper = executorWrapper;
-        executorWrapper.setAlarmHelper(this);
     }
 
     public static ThreadPoolAlarmHelper of(ExecutorWrapper executorWrapper) {
@@ -131,15 +133,16 @@ public class ThreadPoolAlarmHelper {
         }
         HashedWheelTimer hashedWheelTimer = ApplicationContextHolder.getBean(HashedWheelTimer.class);
         QueueTimeoutTimerTask queueTimeoutTimerTask = new QueueTimeoutTimerTask(executorWrapper, r);
-        queueTimeoutMap.put(r, hashedWheelTimer.newTimeout(queueTimeoutTimerTask, queueTimeout, TimeUnit.MILLISECONDS));
+        queueTimeoutMap.put(r, new SoftReference<>(hashedWheelTimer.newTimeout(queueTimeoutTimerTask, queueTimeout, TimeUnit.MILLISECONDS)));
     }
 
     public void cancelQueueTimeoutTask(Runnable r) {
-        Timeout queueTimeoutTimer = queueTimeoutMap.get(r);
-        if (queueTimeoutTimer != null) {
-            queueTimeoutTimer.cancel();
-            queueTimeoutMap.remove(r);
-        }
+        Optional.ofNullable(queueTimeoutMap.get(r))
+                .map(SoftReference::get)
+                .ifPresent(queueTimeoutTimer -> {
+                    queueTimeoutTimer.cancel();
+                    queueTimeoutMap.remove(r);
+                });
     }
 
     public void startRunTimeoutTask(Thread t, Runnable r) {
@@ -148,15 +151,16 @@ public class ThreadPoolAlarmHelper {
         }
         HashedWheelTimer hashedWheelTimer = ApplicationContextHolder.getBean(HashedWheelTimer.class);
         RunTimeoutTimerTask runTimeoutTimerTask = new RunTimeoutTimerTask(executorWrapper, r, t);
-        runTimeoutMap.put(r, hashedWheelTimer.newTimeout(runTimeoutTimerTask, runTimeout, TimeUnit.MILLISECONDS));
+        runTimeoutMap.put(r, new SoftReference<>(hashedWheelTimer.newTimeout(runTimeoutTimerTask, runTimeout, TimeUnit.MILLISECONDS)));
     }
 
     public void cancelRunTimeoutTask(Runnable r) {
-        Timeout runTimeoutTimer = runTimeoutMap.get(r);
-        if (runTimeoutTimer != null) {
-            runTimeoutTimer.cancel();
-            runTimeoutMap.remove(r);
-        }
+        Optional.ofNullable(runTimeoutMap.get(r))
+                .map(SoftReference::get)
+                .ifPresent(runTimeoutTimer -> {
+                    runTimeoutTimer.cancel();
+                    runTimeoutMap.remove(r);
+                });
     }
 
     public ExecutorWrapper getExecutorWrapper() {

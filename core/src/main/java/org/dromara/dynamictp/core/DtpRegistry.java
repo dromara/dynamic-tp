@@ -44,11 +44,8 @@ import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
 import org.springframework.context.event.ContextRefreshedEvent;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
@@ -110,7 +107,6 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
     public static void registerExecutor(ExecutorWrapper wrapper, String source) {
         log.info("DynamicTp register dtpExecutor, source: {}, executor: {}",
                 source, ExecutorConverter.toMainFields(wrapper));
-        AwareManager.register(wrapper);
         EXECUTOR_REGISTRY.putIfAbsent(wrapper.getThreadPoolName(), wrapper);
     }
 

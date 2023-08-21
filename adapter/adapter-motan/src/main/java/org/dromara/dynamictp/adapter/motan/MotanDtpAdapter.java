@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.adapter.motan;
 
-import cn.hutool.core.exceptions.ExceptionUtil;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
@@ -93,7 +92,7 @@ public class MotanDtpAdapter extends AbstractDtpAdapter {
                     try {
                         ReflectionUtil.setFieldValue(NettyServer.class, EXECUTOR_FIELD_NAME, nettyServer, proxy);
                     } catch (IllegalAccessException ex) {
-                        log.error(ExceptionUtil.stacktraceToOneLineString(ex));
+                        log.error("Motan server executor proxy exception", ex);
                     }
                 }
             });

@@ -27,6 +27,7 @@ import org.dromara.dynamictp.core.plugin.DtpSignature;
 import org.dromara.dynamictp.core.support.EnhanceRunnable;
 import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -38,9 +39,9 @@ import java.util.concurrent.RejectedExecutionException;
 @DtpIntercepts(
         name = "jettyDtpInterceptor",
         signatures = {
-                @DtpSignature(clazz = QueuedThreadPool.class, method = "execute", args = {Runnable.class}),
-                @DtpSignature(clazz = InstrumentedQueuedThreadPool.class, method = "execute", args = {Runnable.class}),
-                @DtpSignature(clazz = MonitoredQueuedThreadPool.class, method = "execute", args = {Runnable.class})
+            @DtpSignature(clazz = QueuedThreadPool.class, method = "execute", args = {Runnable.class}),
+            @DtpSignature(clazz = InstrumentedQueuedThreadPool.class, method = "execute", args = {Runnable.class}),
+            @DtpSignature(clazz = MonitoredQueuedThreadPool.class, method = "execute", args = {Runnable.class})
         }
 )
 @Slf4j

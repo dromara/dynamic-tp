@@ -18,6 +18,7 @@
 package org.dromara.dynamictp.core.aware;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
@@ -79,25 +80,41 @@ public class AwareManager {
 
     public static void executeEnhance(Executor executor, Runnable r) {
         for (ExecutorAware aware : EXECUTOR_AWARE_LIST) {
-            aware.executeEnhance(executor, r);
+            try {
+                aware.executeEnhance(executor, r);
+            } catch (Exception e) {
+                log.error(StrUtil.format("AwareName:{} executeEnhance exception", aware.getName()), e);
+            }
         }
     }
 
     public static void beforeExecuteEnhance(Executor executor, Thread t, Runnable r) {
         for (ExecutorAware aware : EXECUTOR_AWARE_LIST) {
-            aware.beforeExecuteEnhance(executor, t, r);
+            try {
+                aware.beforeExecuteEnhance(executor, t, r);
+            } catch (Exception e) {
+                log.error(StrUtil.format("AwareName:{} beforeExecuteEnhance exception", aware.getName()), e);
+            }
         }
     }
 
     public static void afterExecuteEnhance(Executor executor, Runnable r, Throwable t) {
         for (ExecutorAware aware : EXECUTOR_AWARE_LIST) {
-            aware.afterExecuteEnhance(executor, r, t);
+            try {
+                aware.afterExecuteEnhance(executor, r, t);
+            } catch (Exception e) {
+                log.error(StrUtil.format("AwareName:{} afterExecuteEnhance exception", aware.getName()), e);
+            }
         }
     }
 
     public static void beforeReject(Runnable r, Executor executor, Logger log) {
         for (ExecutorAware aware : EXECUTOR_AWARE_LIST) {
-            aware.beforeReject(r, executor, log);
+            try {
+                aware.beforeReject(r, executor, log);
+            } catch (Exception e) {
+                log.error(StrUtil.format("AwareName:{} beforeReject exception", aware.getName()), e);
+            }
         }
     }
 }

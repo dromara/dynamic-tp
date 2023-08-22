@@ -31,12 +31,12 @@ import java.util.concurrent.Executor;
 @Slf4j
 public class EnhanceRunnable implements Runnable {
 
-    private final Runnable runnable;
+    private final Runnable task;
 
     private final Executor executor;
 
     public EnhanceRunnable(Runnable runnable, Executor executor) {
-        this.runnable = runnable;
+        this.task = runnable;
         this.executor = executor;
     }
 
@@ -46,16 +46,15 @@ public class EnhanceRunnable implements Runnable {
 
     @Override
     public void run() {
+        AwareManager.beforeExecuteEnhance(executor, Thread.currentThread(), task);
+        Throwable t = null;
         try {
-            AwareManager.beforeExecuteEnhance(executor, Thread.currentThread(), runnable);
+            task.run();
         } catch (Exception e) {
-            log.error("beforeExecuteEnhance methods exception", e);
-        }
-        runnable.run();
-        try {
-            AwareManager.afterExecuteEnhance(executor, runnable, null);
-        } catch (Exception e) {
-            log.error("afterExecuteEnhance methods exception", e);
+            t = e;
+            throw e;
+        } finally {
+            AwareManager.afterExecuteEnhance(executor, task, t);
         }
     }
 }

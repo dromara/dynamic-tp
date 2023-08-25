@@ -17,31 +17,35 @@
 
 package org.dromara.dynamictp.starter.adapter.webserver.adapter;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.binder.jetty.InstrumentedQueuedThreadPool;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.plugin.DtpInterceptorRegistry;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.proxy.JettyDtpInterceptor;
+import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.starter.adapter.webserver.adapter.proxy.InstrumentedQueuedThreadPoolProxy;
+import org.dromara.dynamictp.starter.adapter.webserver.adapter.proxy.MonitoredQueuedThreadPoolProxy;
+import org.dromara.dynamictp.starter.adapter.webserver.adapter.proxy.QueuedThreadPoolProxy;
+import org.eclipse.jetty.io.SelectorManager;
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.ExecutorThreadPool;
 import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.springframework.boot.web.embedded.jetty.JettyWebServer;
 import org.springframework.boot.web.server.WebServer;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
  * JettyDtpAdapter related
- * <p>
- * Other thread pools are brokered by {@link JettyDtpInterceptor}
  *
  * @author yanhom
  * @author dragon-zhang
@@ -52,7 +56,9 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
 
     private static final String POOL_NAME = "jettyTp";
 
-    private static final String EXECUTOR_NAME = "_executor";
+    private static final String _EXECUTOR_NAME = "_executor";
+
+    private static final String EXECUTOR_NAME = "executor";
 
     private static final String THREAD_POOL_NAME = "_threadPool";
 
@@ -65,21 +71,81 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
         final JettyExecutorAdapter adapter = new JettyExecutorAdapter(
                 (ThreadPool.SizedThreadPool) threadPool);
         ExecutorWrapper executorWrapper = new ExecutorWrapper(POOL_NAME, adapter);
+        replaceOriginExecutor(jettyWebServer, threadPool);
+        return executorWrapper;
+    }
 
+    private void replaceOriginExecutor(JettyWebServer jettyWebServer, ThreadPool threadPool) {
         try {
             if (threadPool instanceof ExecutorThreadPool) {
-                ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(ExecutorThreadPool.class, EXECUTOR_NAME, threadPool);
-                ThreadPoolExecutor proxy = new ThreadPoolExecutorProxy(new ExecutorWrapper(POOL_NAME + EXECUTOR_NAME, executor));
-                ReflectionUtil.setFieldValue(ExecutorThreadPool.class, EXECUTOR_NAME, threadPool, proxy);
+                ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(ExecutorThreadPool.class, _EXECUTOR_NAME, threadPool);
+                ThreadPoolExecutor proxy = new ThreadPoolExecutorProxy(new ExecutorWrapper(POOL_NAME + _EXECUTOR_NAME, executor));
+                ReflectionUtil.setFieldValue(ExecutorThreadPool.class, _EXECUTOR_NAME, threadPool, proxy);
             } else {
-                DtpInterceptorRegistry.register(JETTY_DTP_INTERCEPTOR_NAME, new JettyDtpInterceptor());
-                Object jettyDtpInterceptor = DtpInterceptorRegistry.plugin(threadPool, new HashSet<>(Collections.singletonList(JETTY_DTP_INTERCEPTOR_NAME)));
+                Object jettyDtpInterceptor = createThreadPoolPlugin(threadPool);
                 ReflectionUtil.setFieldValue(Server.class, THREAD_POOL_NAME, jettyWebServer.getServer(), jettyDtpInterceptor);
+                for (Connector connector : jettyWebServer.getServer().getConnectors()) {
+                    if (connector.getExecutor() == threadPool) {
+                        ReflectionUtil.setFieldValue(Connector.class, _EXECUTOR_NAME, connector, jettyDtpInterceptor);
+                    }
+                    if (connector instanceof ServerConnector) {
+                        ReflectionUtil.setFieldValue(SelectorManager.class, EXECUTOR_NAME, ((ServerConnector) connector).getSelectorManager(), jettyDtpInterceptor);
+                    }
+                }
             }
         } catch (IllegalAccessException e) {
             log.error("Jetty executor proxy exception", e);
         }
-        return executorWrapper;
+    }
+
+    private Object createThreadPoolPlugin(ThreadPool threadPool) {
+        if (!(threadPool instanceof QueuedThreadPool)) {
+            return threadPool;
+        }
+
+        QueuedThreadPool queuedThreadPool = (QueuedThreadPool) threadPool;
+        int maxThreads = queuedThreadPool.getMaxThreads();
+        int minThreads = queuedThreadPool.getMinThreads();
+        int idleTimeout = queuedThreadPool.getIdleTimeout();
+        int reservedThreads = queuedThreadPool.getReservedThreads();
+        BlockingQueue<Runnable> queue = cast(ReflectionUtil.getFieldValue(QueuedThreadPool.class, "_jobs", threadPool));
+        ThreadGroup threadGroup = (ThreadGroup) ReflectionUtil.getFieldValue(QueuedThreadPool.class, "_threadGroup", threadPool);
+        ThreadFactory threadFactory = (ThreadFactory) ReflectionUtil.getFieldValue(QueuedThreadPool.class, "_threadFactory", threadPool);
+
+        if (threadPool instanceof InstrumentedQueuedThreadPool) {
+            MeterRegistry registry = (MeterRegistry) ReflectionUtil.getFieldValue(InstrumentedQueuedThreadPool.class, "registry", threadPool);
+            Iterable<Tag> tags = cast(ReflectionUtil.getFieldValue(InstrumentedQueuedThreadPool.class, "tags", threadPool));
+            return new InstrumentedQueuedThreadPoolProxy(
+                    (InstrumentedQueuedThreadPool) threadPool,
+                    registry,
+                    tags,
+                    maxThreads,
+                    minThreads,
+                    idleTimeout,
+                    queue);
+        } else if (threadPool instanceof MonitoredQueuedThreadPool) {
+            return new MonitoredQueuedThreadPoolProxy(
+                    (MonitoredQueuedThreadPool)threadPool,
+                    maxThreads,
+                    minThreads,
+                    idleTimeout,
+                    queue);
+        } else {
+            return new QueuedThreadPoolProxy(
+                    (QueuedThreadPool) threadPool,
+                    maxThreads,
+                    minThreads,
+                    idleTimeout,
+                    reservedThreads,
+                    queue,
+                    threadGroup,
+                    threadFactory);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T cast(Object obj) {
+        return (T) obj;
     }
 
     @Override

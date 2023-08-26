@@ -52,7 +52,6 @@ public class QueuedThreadPoolProxy extends QueuedThreadPool {
         } catch (IllegalAccessException e) {
             log.error("QueuedThreadPoolProxy Exception", e);
         }
-
     }
 
     @Override

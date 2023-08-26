@@ -29,10 +29,7 @@ import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.starter.adapter.webserver.adapter.proxy.InstrumentedQueuedThreadPoolProxy;
 import org.dromara.dynamictp.starter.adapter.webserver.adapter.proxy.MonitoredQueuedThreadPoolProxy;
 import org.dromara.dynamictp.starter.adapter.webserver.adapter.proxy.QueuedThreadPoolProxy;
-import org.eclipse.jetty.io.SelectorManager;
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.ExecutorThreadPool;
 import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -56,13 +53,9 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
 
     private static final String POOL_NAME = "jettyTp";
 
-    private static final String _EXECUTOR_NAME = "_executor";
-
-    private static final String EXECUTOR_NAME = "executor";
+    private static final String EXECUTOR_NAME = "_executor";
 
     private static final String THREAD_POOL_NAME = "_threadPool";
-
-    private static final String JETTY_DTP_INTERCEPTOR_NAME = "jettyDtpInterceptor";
 
     @Override
     public ExecutorWrapper doInitExecutorWrapper(WebServer webServer) {
@@ -78,19 +71,13 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
     private void replaceOriginExecutor(JettyWebServer jettyWebServer, ThreadPool threadPool) {
         try {
             if (threadPool instanceof ExecutorThreadPool) {
-                ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(ExecutorThreadPool.class, _EXECUTOR_NAME, threadPool);
-                ThreadPoolExecutor proxy = new ThreadPoolExecutorProxy(new ExecutorWrapper(POOL_NAME + _EXECUTOR_NAME, executor));
-                ReflectionUtil.setFieldValue(ExecutorThreadPool.class, _EXECUTOR_NAME, threadPool, proxy);
+                ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(ExecutorThreadPool.class, EXECUTOR_NAME, threadPool);
+                ThreadPoolExecutor proxy = new ThreadPoolExecutorProxy(new ExecutorWrapper(POOL_NAME + EXECUTOR_NAME, executor));
+                ReflectionUtil.setFieldValue(ExecutorThreadPool.class, EXECUTOR_NAME, threadPool, proxy);
             } else {
                 Object jettyDtpInterceptor = createThreadPoolPlugin(threadPool);
-                ReflectionUtil.setFieldValue(Server.class, THREAD_POOL_NAME, jettyWebServer.getServer(), jettyDtpInterceptor);
-                for (Connector connector : jettyWebServer.getServer().getConnectors()) {
-                    if (connector.getExecutor() == threadPool) {
-                        ReflectionUtil.setFieldValue(Connector.class, _EXECUTOR_NAME, connector, jettyDtpInterceptor);
-                    }
-                    if (connector instanceof ServerConnector) {
-                        ReflectionUtil.setFieldValue(SelectorManager.class, EXECUTOR_NAME, ((ServerConnector) connector).getSelectorManager(), jettyDtpInterceptor);
-                    }
+                if (!(jettyDtpInterceptor instanceof QueuedThreadPoolProxy)) {
+                    ReflectionUtil.setFieldValue(Server.class, THREAD_POOL_NAME, jettyWebServer.getServer(), jettyDtpInterceptor);
                 }
             }
         } catch (IllegalAccessException e) {
@@ -125,7 +112,7 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
                     queue);
         } else if (threadPool instanceof MonitoredQueuedThreadPool) {
             return new MonitoredQueuedThreadPoolProxy(
-                    (MonitoredQueuedThreadPool)threadPool,
+                    (MonitoredQueuedThreadPool) threadPool,
                     maxThreads,
                     minThreads,
                     idleTimeout,

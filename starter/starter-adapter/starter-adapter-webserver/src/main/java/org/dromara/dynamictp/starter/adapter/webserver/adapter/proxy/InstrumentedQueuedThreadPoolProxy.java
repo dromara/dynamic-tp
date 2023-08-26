@@ -22,6 +22,7 @@ import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.binder.jetty.InstrumentedQueuedThreadPool;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.aware.AwareManager;
+import org.dromara.dynamictp.core.support.EnhanceRunnable;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -41,11 +42,12 @@ public class InstrumentedQueuedThreadPoolProxy extends InstrumentedQueuedThreadP
 
     @Override
     public void execute(Runnable runnable) {
-        AwareManager.executeEnhance(original, runnable);
+        EnhanceRunnable enhanceTask = EnhanceRunnable.of(runnable, original);
+        AwareManager.executeEnhance(original, enhanceTask);
         try {
-            super.execute(runnable);
+            super.execute(enhanceTask);
         } catch (RejectedExecutionException e) {
-            AwareManager.beforeReject(runnable, original, log);
+            AwareManager.beforeReject(enhanceTask, original, log);
             throw e;
         }
     }

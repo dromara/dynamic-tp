@@ -19,6 +19,7 @@ package org.dromara.dynamictp.starter.adapter.webserver.adapter.proxy;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.aware.AwareManager;
+import org.dromara.dynamictp.core.support.EnhanceRunnable;
 import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -39,11 +40,12 @@ public class MonitoredQueuedThreadPoolProxy extends MonitoredQueuedThreadPool {
 
     @Override
     public void execute(Runnable runnable) {
-        AwareManager.executeEnhance(original, runnable);
+        EnhanceRunnable enhanceTask = EnhanceRunnable.of(runnable, original);
+        AwareManager.executeEnhance(original, enhanceTask);
         try {
-            super.execute(runnable);
+            super.execute(enhanceTask);
         } catch (RejectedExecutionException e) {
-            AwareManager.beforeReject(runnable, original, log);
+            AwareManager.beforeReject(enhanceTask, original, log);
             throw e;
         }
     }

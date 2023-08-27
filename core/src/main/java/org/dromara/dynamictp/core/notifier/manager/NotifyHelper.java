@@ -25,8 +25,6 @@ import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.StreamUtil;
-import org.dromara.dynamictp.core.aware.AwareManager;
-import org.dromara.dynamictp.core.aware.TaskTimeoutAware;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.thread.DtpExecutor;
 import com.google.common.collect.Lists;

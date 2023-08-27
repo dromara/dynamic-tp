@@ -19,20 +19,14 @@ package org.dromara.dynamictp.core.notifier.alarm;
 
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.AlarmInfo;
-import org.dromara.dynamictp.core.aware.AwareManager;
-import org.dromara.dynamictp.core.aware.TaskTimeoutAware;
-import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.thread.DtpExecutor;
 import lombok.val;
 import lombok.var;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
-
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.UNKNOWN;
 import static org.dromara.dynamictp.common.em.NotifyItemEnum.QUEUE_TIMEOUT;
 import static org.dromara.dynamictp.common.em.NotifyItemEnum.REJECT;

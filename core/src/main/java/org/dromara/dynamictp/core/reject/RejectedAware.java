@@ -17,18 +17,9 @@
 
 package org.dromara.dynamictp.core.reject;
 
-import cn.hutool.core.util.StrUtil;
 import org.dromara.dynamictp.core.aware.AwareManager;
-import org.dromara.dynamictp.core.aware.TaskTimeoutAware;
-import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarmHelper;
-import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
-import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.slf4j.Logger;
-import org.slf4j.MDC;
-import java.util.Collections;
 import java.util.concurrent.Executor;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
-import static org.dromara.dynamictp.common.em.NotifyItemEnum.REJECT;
 
 /**
  * RejectedAware related

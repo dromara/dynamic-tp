@@ -52,7 +52,7 @@ public class DtpBaseBeanDefinitionRegistrar implements ImportBeanDefinitionRegis
                 null, Lists.newArrayList(APPLICATION_CONTEXT_HOLDER, HASHED_WHEEL_TIMER));
     }
 
-    private void registerHashedWheelTimer( BeanDefinitionRegistry registry) {
+    private void registerHashedWheelTimer(BeanDefinitionRegistry registry) {
         Object[] constructorArgs = new Object[] {
                 new NamedThreadFactory("dtp-runnable-timeout", true),
                 10,

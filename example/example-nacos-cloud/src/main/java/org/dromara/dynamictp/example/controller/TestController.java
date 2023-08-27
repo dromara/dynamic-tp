@@ -47,7 +47,6 @@ public class TestController {
     }
     @GetMapping("/dtp12")
     public String test1() {
-        System.out.println("333");
         return "success";
     }
 

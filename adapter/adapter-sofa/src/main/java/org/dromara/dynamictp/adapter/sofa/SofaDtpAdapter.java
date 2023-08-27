@@ -97,26 +97,30 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
             val executorWrapper = new ExecutorWrapper(key, executor);
             initNotifyItems(key, executorWrapper);
             executors.put(key, executorWrapper);
-            ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
-            try {
-                if (v instanceof BoltServer) {
-                    BoltServer server = (BoltServer) v;
-                    ReflectionUtil.setFieldValue(BoltServer.class,
-                            BIZ_THREAD_POOL_NAME, server, proxy);
-                } else {
-                    AbstractHttpServer server = (AbstractHttpServer) v;
-                    ReflectionUtil.setFieldValue(AbstractHttpServer.class,
-                            BIZ_THREAD_POOL_NAME, server, proxy);
-                }
-            } catch (IllegalAccessException e) {
-                log.error("Sofa executor proxy exception", e);
-            }
+            proxyOriginalTP(v, executorWrapper);
         });
 
         if (hasUserThread) {
             handleUserThreadPools();
         }
         log.info("DynamicTp adapter, sofa executors init end, executors: {}", executors);
+    }
+
+    private void proxyOriginalTP(Server server, ExecutorWrapper executorWrapper) {
+        ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
+        try {
+            if (server instanceof BoltServer) {
+                BoltServer boltServer = (BoltServer) server;
+                ReflectionUtil.setFieldValue(BoltServer.class,
+                        BIZ_THREAD_POOL_NAME, boltServer, proxy);
+            } else {
+                AbstractHttpServer abstractHttpServer = (AbstractHttpServer) server;
+                ReflectionUtil.setFieldValue(AbstractHttpServer.class,
+                        BIZ_THREAD_POOL_NAME, abstractHttpServer, proxy);
+            }
+        } catch (IllegalAccessException e) {
+            log.error("Sofa executor proxy exception", e);
+        }
     }
 
     private void handleUserThreadPools() {

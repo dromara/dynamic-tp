@@ -23,7 +23,7 @@ import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.util.BeanUtil;
+import org.dromara.dynamictp.common.spring.SpringBeanHelper;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.BinderHelper;
 import org.dromara.dynamictp.core.support.ExecutorType;
@@ -88,7 +88,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
             Class<?> executorTypeClass = ExecutorType.getClass(e.getExecutorType());
             Map<String, Object> propertyValues = buildPropertyValues(e);
             Object[] args = buildConstructorArgs(executorTypeClass, e);
-            BeanUtil.registerIfAbsent(registry, e.getThreadPoolName(), executorTypeClass, propertyValues, args);
+            SpringBeanHelper.register(registry, e.getThreadPoolName(), executorTypeClass, propertyValues, args);
         });
     }
 

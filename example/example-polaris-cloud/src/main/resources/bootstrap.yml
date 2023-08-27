@@ -15,8 +15,6 @@ spring:
         port: 28082
       config:
         auto-refresh: true # auto refresh when config file changed
-        #   目前只支持 refresh_context 模式
-        refresh-type: refresh_context
         groups:
           - name: ${spring.application.name} # group name
             files: [ "config/dynamic-tp.yml" ]

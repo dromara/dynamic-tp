@@ -18,6 +18,7 @@
 package org.dromara.dynamictp.adapter.tars;
 
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
@@ -75,6 +76,12 @@ public class TarsDtpAdapter extends AbstractDtpAdapter {
             executorWrapper.setThreadPoolAliasName(v.getCommunicatorConfig().getLocator());
             initNotifyItems(id, executorWrapper);
             executors.put(id, executorWrapper);
+            ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
+            try {
+                ReflectionUtil.setFieldValue(Communicator.class, THREAD_POOL_FIELD, v, proxy);
+            } catch (IllegalAccessException e) {
+                log.error("Tars executor proxy exception", e);
+            }
         });
         log.info("DynamicTp adapter, tars executors init end, executors: {}", executors);
     }

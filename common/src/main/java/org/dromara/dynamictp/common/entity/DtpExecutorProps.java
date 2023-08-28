@@ -100,16 +100,6 @@ public class DtpExecutorProps extends TpExecutorProps {
     private boolean rejectEnhanced = true;
 
     /**
-     * Task execute timeout, unit (ms), just for statistics.
-     */
-    private long runTimeout = 0;
-
-    /**
-     * Task queue wait timeout, unit (ms), just for statistics.
-     */
-    private long queueTimeout = 0;
-
-    /**
      * Task wrapper names.
      */
     private Set<String> taskWrapperNames;

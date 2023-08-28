@@ -23,6 +23,7 @@ import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.StreamUtil;
+import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import com.google.common.collect.Maps;
 import com.netflix.hystrix.strategy.HystrixPlugins;
@@ -71,9 +72,9 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
     }
 
     @Override
-    public void register(String poolName, ThreadPoolExecutor threadPoolExecutor) {
+    public ThreadPoolExecutor register(String poolName, ThreadPoolExecutor threadPoolExecutor) {
         if (executors.containsKey(poolName)) {
-            return;
+            return threadPoolExecutor;
         }
         val executorWrapper = new ExecutorWrapper(poolName, threadPoolExecutor);
         initNotifyItems(poolName, executorWrapper);
@@ -83,6 +84,7 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
         val tmpMap = StreamUtil.toMap(dtpProperties.getHystrixTp(), TpExecutorProps::getThreadPoolName);
         log.info("DynamicTp adapter, hystrix init end, executor {}", executorWrapper);
         refresh(NAME, executorWrapper, dtpProperties.getPlatforms(), tmpMap.get(poolName));
+        return new ThreadPoolExecutorProxy(executorWrapper);
     }
 
     public void cacheMetricsPublisher(String poolName, DtpMetricsPublisherThreadPool metricsPublisher) {

@@ -27,6 +27,7 @@ import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -101,6 +102,20 @@ public class AliyunOnsRocketMqAdapter extends AbstractDtpAdapter {
             val executorWrapper = new ExecutorWrapper(cusKey, executor);
             initNotifyItems(cusKey, executorWrapper);
             executors.put(cusKey, executorWrapper);
+            ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
+            try {
+                if (consumeMessageService instanceof ConsumeMessageConcurrentlyService) {
+                    ReflectionUtil.setFieldValue(
+                            ConsumeMessageConcurrentlyService.class,
+                            CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService, proxy);
+                } else {
+                    ReflectionUtil.setFieldValue(
+                            ConsumeMessageOrderlyService.class,
+                            CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService, proxy);
+                }
+            } catch (IllegalAccessException e) {
+                log.error("AliyunOnsRocketMq executor proxy exception", e);
+            }
         }
     }
 }

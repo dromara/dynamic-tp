@@ -15,43 +15,38 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.support.task.runnable;
-
-import org.slf4j.MDC;
-
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
+package org.dromara.dynamictp.core.aware;
 
 /**
- * DtpRunnable related
+ * AwareType Enum
  *
- * @author yanhom
- * @since 1.0.4
+ * @author kyao
+ * @@since 1.1.4
  */
-public class DtpRunnable implements Runnable {
+public enum AwareTypeEnum {
 
-    private final Runnable runnable;
+    /**
+     * TaskTimeoutAware
+     */
+    TASK_TIMEOUT_AWARE(1, "timeout"),
+    /**
+     * TaskRejectAware
+     */
+    TASK_REJECT_AWARE(2, "reject");
 
-    private final String taskName;
+    private final int order;
+    private final String name;
 
-    private final String traceId;
-
-    public DtpRunnable(Runnable runnable, String taskName) {
-        this.runnable = runnable;
-        this.taskName = taskName;
-        this.traceId = MDC.get(TRACE_ID);
+    AwareTypeEnum(int order, String name) {
+        this.order = order;
+        this.name = name;
     }
 
-    @Override
-    public void run() {
-        runnable.run();
+    public int getOrder() {
+        return order;
     }
 
-    public String getTaskName() {
-        return taskName;
+    public String getName() {
+        return name;
     }
-
-    public String getTraceId() {
-        return traceId;
-    }
-
 }

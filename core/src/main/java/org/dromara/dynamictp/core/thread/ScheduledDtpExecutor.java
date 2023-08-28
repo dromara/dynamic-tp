@@ -18,7 +18,6 @@
 package org.dromara.dynamictp.core.thread;
 
 import org.dromara.dynamictp.common.em.JreEnum;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -141,6 +140,11 @@ public class ScheduledDtpExecutor extends DtpExecutor implements ScheduledExecut
     @Override
     public boolean isTerminated() {
         return delegate.isTerminated();
+    }
+
+    @Override
+    public boolean isTerminating() {
+        return delegate.isTerminating();
     }
 
     @Override

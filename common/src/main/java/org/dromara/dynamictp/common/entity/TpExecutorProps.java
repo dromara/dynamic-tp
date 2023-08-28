@@ -79,4 +79,19 @@ public class TpExecutorProps {
      * If enable notify.
      */
     private boolean notifyEnabled = true;
+
+    /**
+     * Task execute timeout, unit (ms), just for statistics.
+     */
+    private long runTimeout = 0;
+
+    /**
+     * Task queue wait timeout, unit (ms), just for statistics.
+     */
+    private long queueTimeout = 0;
+
+    /**
+     * aware type list
+     */
+    private List<String> awareTypes;
 }

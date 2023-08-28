@@ -18,13 +18,13 @@
 package org.dromara.dynamictp.core.thread;
 
 import org.dromara.dynamictp.common.queue.VariableLinkedBlockingQueue;
+import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.support.selector.ExecutorSelector;
 import org.dromara.dynamictp.core.support.selector.HashedExecutorSelector;
 import org.dromara.dynamictp.core.support.task.Ordered;
 import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
@@ -175,15 +175,6 @@ public class OrderedDtpExecutor extends DtpExecutor {
     }
 
     @Override
-    public long getRejectedTaskCount() {
-        long count = 0;
-        for (Executor executor : childExecutors) {
-            count += ((ChildExecutor) executor).getRejectedTaskCount();
-        }
-        return super.getRejectedTaskCount() + count;
-    }
-
-    @Override
     public void onRefreshQueueCapacity(int capacity) {
         for (Executor executor : childExecutors) {
             ChildExecutor childExecutor = (ChildExecutor) executor;
@@ -194,9 +185,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
     }
 
     protected DtpRunnable getEnhancedTask(Runnable command) {
-        DtpRunnable dtpRunnable = (DtpRunnable) wrapTasks(command);
-        dtpRunnable.startQueueTimeoutTask(this);
-        return dtpRunnable;
+        return (DtpRunnable) wrapTasks(command);
     }
 
     private final class ChildExecutor implements Executor, Runnable {
@@ -223,11 +212,11 @@ public class OrderedDtpExecutor extends DtpExecutor {
             synchronized (this) {
                 try {
                     if (!taskQueue.add(getEnhancedTask(command))) {
-                        rejectedTaskCount.increment();
+                        rejectedTaskIncrement(command);
                         throw new RejectedExecutionException("Task " + command.toString() + " rejected from " + this);
                     }
                 } catch (IllegalStateException ex) {
-                    rejectedTaskCount.increment();
+                    rejectedTaskIncrement(command);
                     throw ex;
                 }
 
@@ -260,6 +249,11 @@ public class OrderedDtpExecutor extends DtpExecutor {
             }
         }
 
+        private void rejectedTaskIncrement(Runnable runnable) {
+            AwareManager.beforeReject(runnable, OrderedDtpExecutor.this, log);
+            rejectedTaskCount.increment();
+        }
+
         private synchronized Runnable getTask() {
             Runnable task = taskQueue.poll();
             if (task == null) {
@@ -280,10 +274,6 @@ public class OrderedDtpExecutor extends DtpExecutor {
             return completedTaskCount.sum();
         }
 
-        public long getRejectedTaskCount() {
-            return rejectedTaskCount.sum();
-        }
-
         @Override
         public String toString() {
             return super.toString() +
@@ -294,5 +284,6 @@ public class OrderedDtpExecutor extends DtpExecutor {
                     "]";
         }
     }
+
 }
 

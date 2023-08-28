@@ -45,18 +45,22 @@ public class TestController {
         task();
         return "success";
     }
+    @GetMapping("/dtp12")
+    public String test1() {
+        return "success";
+    }
 
     public void task() throws InterruptedException {
         MDC.put("traceId", UUID.randomUUID().toString());
-        Executor dtpExecutor2 = DtpRegistry.getExecutor("dtpExecutor2");
-        for (int i = 0; i < 100; i++) {
+        Executor dtpExecutor2 = DtpRegistry.getExecutor("supplierExecutor");
+        for (int i = 0; i < 10; i++) {
             Thread.sleep(100);
             dtpExecutor1.execute(() -> {
                 log.info("i am dynamic-tp-test-1 task, mdc: {}", MDC.get("traceId"));
             });
             dtpExecutor2.execute(NamedRunnable.of(() -> {
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

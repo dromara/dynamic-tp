@@ -17,11 +17,6 @@
 
 package org.dromara.dynamictp.adapter.motan;
 
-import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.util.ReflectionUtil;
 import com.weibo.api.motan.config.springsupport.ServiceConfigBean;
 import com.weibo.api.motan.protocol.rpc.DefaultRpcExporter;
 import com.weibo.api.motan.rpc.Exporter;
@@ -31,6 +26,12 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.adapter.motan.proxy.StandardThreadExecutorProxy;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.util.List;
 import java.util.Objects;
@@ -87,6 +88,12 @@ public class MotanDtpAdapter extends AbstractDtpAdapter {
                     val executorWrapper = new ExecutorWrapper(key, executor);
                     initNotifyItems(key, executorWrapper);
                     executors.put(key, executorWrapper);
+                    StandardThreadExecutorProxy proxy = new StandardThreadExecutorProxy(executorWrapper);
+                    try {
+                        ReflectionUtil.setFieldValue(NettyServer.class, EXECUTOR_FIELD_NAME, nettyServer, proxy);
+                    } catch (IllegalAccessException ex) {
+                        log.error("Motan server executor proxy exception", ex);
+                    }
                 }
             });
         });

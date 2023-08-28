@@ -18,16 +18,17 @@
 package org.dromara.dynamictp.starter.adapter.webserver.adapter;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.starter.adapter.webserver.adapter.proxy.TomcatThreadProxy;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 import org.springframework.boot.web.server.WebServer;
-
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
 
 /**
  * TomcatDtpAdapter related
@@ -46,7 +47,10 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<Executor> {
         TomcatWebServer tomcatWebServer = (TomcatWebServer) webServer;
         final TomcatExecutorAdapter adapter = new TomcatExecutorAdapter(
                 tomcatWebServer.getTomcat().getConnector().getProtocolHandler().getExecutor());
-        return new ExecutorWrapper(POOL_NAME, adapter);
+        ExecutorWrapper executorWrapper = new ExecutorWrapper(POOL_NAME, adapter);
+        TomcatThreadProxy tomcatThreadProxy = new TomcatThreadProxy(executorWrapper);
+        tomcatWebServer.getTomcat().getConnector().getProtocolHandler().setExecutor(tomcatThreadProxy);
+        return executorWrapper;
     }
 
     @Override
@@ -157,5 +161,21 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<Executor> {
         public void setKeepAliveTime(long time, TimeUnit unit) {
             getTomcatExecutor().setKeepAliveTime(time, unit);
         }
+
+        @Override
+        public boolean isShutdown() {
+            return getTomcatExecutor().isShutdown();
+        }
+
+        @Override
+        public boolean isTerminated() {
+            return getTomcatExecutor().isTerminated();
+        }
+
+        @Override
+        public boolean isTerminating() {
+            return getTomcatExecutor().isTerminating();
+        }
+
     }
 }

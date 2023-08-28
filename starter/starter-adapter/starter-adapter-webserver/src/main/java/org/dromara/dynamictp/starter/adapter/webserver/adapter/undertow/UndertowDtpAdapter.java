@@ -24,11 +24,12 @@ import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import io.undertow.Undertow;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.springframework.boot.web.embedded.undertow.UndertowServletWebServer;
 import org.springframework.boot.web.server.WebServer;
 import org.xnio.XnioWorker;
-
 import java.util.Objects;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * UndertowDtpAdapter related
@@ -65,7 +66,17 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
         val handler = TaskPoolHandlerFactory.getTaskPoolHandler(taskPool.getClass().getSimpleName());
         Object executor = ReflectionUtil.getFieldValue(taskPool.getClass(),
                 handler.taskPoolType().getInternalExecutor(), taskPool);
-        return new ExecutorWrapper(POOL_NAME, handler.adapt(executor));
+        ExecutorWrapper executorWrapper = new ExecutorWrapper(POOL_NAME, handler.adapt(executor));
+        if (executor instanceof ThreadPoolExecutor) {
+            ThreadPoolExecutorProxy threadPoolExecutorProxy = new ThreadPoolExecutorProxy(executorWrapper);
+            try {
+                ReflectionUtil.setFieldValue(taskPool.getClass(),
+                        handler.taskPoolType().getInternalExecutor(), taskPool, threadPoolExecutorProxy);
+            } catch (IllegalAccessException e) {
+                log.error("Undertow executor proxy exception", e);
+            }
+        }
+        return executorWrapper;
     }
 
     @Override

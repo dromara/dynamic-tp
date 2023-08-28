@@ -143,13 +143,23 @@ public class EnhancedQueueExecutorTaskPoolAdapter implements TaskPoolAdapter {
         }
 
         @Override
-        public long getRejectedTaskCount() {
-            return this.executor.getRejectedTaskCount();
+        public String getRejectHandlerType() {
+            return this.executor.getHandoffExecutor().getClass().getSimpleName();
         }
 
         @Override
-        public String getRejectHandlerType() {
-            return this.executor.getHandoffExecutor().getClass().getSimpleName();
+        public boolean isTerminating() {
+            return this.executor.isTerminating();
+        }
+
+        @Override
+        public boolean isTerminated() {
+            return this.executor.isTerminated();
+        }
+
+        @Override
+        public boolean isShutdown() {
+            return this.executor.isShutdown();
         }
     }
 }

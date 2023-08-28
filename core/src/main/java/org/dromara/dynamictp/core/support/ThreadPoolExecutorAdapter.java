@@ -126,4 +126,19 @@ public class ThreadPoolExecutorAdapter implements ExecutorAdapter<ThreadPoolExec
     public void setKeepAliveTime(long time, TimeUnit unit) {
         this.executor.setKeepAliveTime(time, unit);
     }
+
+    @Override
+    public boolean isShutdown() {
+        return this.executor.isShutdown();
+    }
+
+    @Override
+    public boolean isTerminated() {
+        return this.executor.isTerminated();
+    }
+
+    @Override
+    public boolean isTerminating() {
+        return this.executor.isTerminating();
+    }
 }

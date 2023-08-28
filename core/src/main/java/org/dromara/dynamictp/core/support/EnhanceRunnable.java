@@ -15,28 +15,46 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.reject;
+package org.dromara.dynamictp.core.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.aware.AwareManager;
-import org.slf4j.Logger;
+
 import java.util.concurrent.Executor;
 
 /**
- * RejectedAware related
+ * Enhanced for some thread pools that do not have beforeExecute and afterExecute methods
  *
  * @author kyao
  * @since 1.1.4
- **/
-public interface RejectedAware {
+ */
+@Slf4j
+public class EnhanceRunnable implements Runnable {
 
-    /**
-     * Do sth before reject.
-     *
-     * @param runnable the runnable
-     * @param executor ThreadPoolExecutor instance
-     * @param log      logger
-     */
-    default void beforeReject(Runnable runnable, Executor executor, Logger log) {
-        AwareManager.beforeReject(runnable, executor, log);
+    private final Runnable task;
+
+    private final Executor executor;
+
+    public EnhanceRunnable(Runnable runnable, Executor executor) {
+        this.task = runnable;
+        this.executor = executor;
+    }
+
+    public static EnhanceRunnable of(Runnable runnable, Executor executor) {
+        return new EnhanceRunnable(runnable, executor);
+    }
+
+    @Override
+    public void run() {
+        AwareManager.beforeExecuteEnhance(executor, Thread.currentThread(), this);
+        Throwable t = null;
+        try {
+            task.run();
+        } catch (Exception e) {
+            t = e;
+            throw e;
+        } finally {
+            AwareManager.afterExecuteEnhance(executor, this, t);
+        }
     }
 }

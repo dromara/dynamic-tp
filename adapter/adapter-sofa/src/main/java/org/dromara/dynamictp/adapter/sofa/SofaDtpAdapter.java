@@ -25,6 +25,7 @@ import com.alipay.sofa.rpc.server.UserThreadPool;
 import com.alipay.sofa.rpc.server.bolt.BoltServer;
 import com.alipay.sofa.rpc.server.http.AbstractHttpServer;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
@@ -54,6 +55,10 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
     private static final String SERVER_CONFIG_FIELD_NAME = "serverConfig";
 
     private static final String USER_THREAD_FIELD_NAME = "userThreadMap";
+
+    private static final String USER_THREAD_EXECUTOR_FIELD_NAME = "executor";
+
+    private static final String BIZ_THREAD_POOL_NAME = "bizThreadPool";
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
@@ -92,12 +97,30 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
             val executorWrapper = new ExecutorWrapper(key, executor);
             initNotifyItems(key, executorWrapper);
             executors.put(key, executorWrapper);
+            proxyOriginalTP(v, executorWrapper);
         });
 
         if (hasUserThread) {
             handleUserThreadPools();
         }
         log.info("DynamicTp adapter, sofa executors init end, executors: {}", executors);
+    }
+
+    private void proxyOriginalTP(Server server, ExecutorWrapper executorWrapper) {
+        ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
+        try {
+            if (server instanceof BoltServer) {
+                BoltServer boltServer = (BoltServer) server;
+                ReflectionUtil.setFieldValue(BoltServer.class,
+                        BIZ_THREAD_POOL_NAME, boltServer, proxy);
+            } else {
+                AbstractHttpServer abstractHttpServer = (AbstractHttpServer) server;
+                ReflectionUtil.setFieldValue(AbstractHttpServer.class,
+                        BIZ_THREAD_POOL_NAME, abstractHttpServer, proxy);
+            }
+        } catch (IllegalAccessException e) {
+            log.error("Sofa executor proxy exception", e);
+        }
     }
 
     private void handleUserThreadPools() {
@@ -110,6 +133,13 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
                     val executorWrapper = new ExecutorWrapper(k, v.getExecutor());
                     initNotifyItems(k, executorWrapper);
                     executors.put(k, executorWrapper);
+                    ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
+                    try {
+                        ReflectionUtil.setFieldValue(UserThreadPool.class,
+                                USER_THREAD_EXECUTOR_FIELD_NAME, v, proxy);
+                    } catch (IllegalAccessException e) {
+                        log.error("Sofa executor proxy exception", e);
+                    }
                 });
             }
         } catch (Exception e) {

@@ -19,14 +19,14 @@ package org.dromara.dynamictp.adapter.dubbo.alibaba;
 
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 import com.alibaba.dubbo.common.store.DataStore;
-import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.MapUtils;
+import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.util.Map;
@@ -46,7 +46,7 @@ import static com.alibaba.dubbo.common.Constants.EXECUTOR_SERVICE_COMPONENT_KEY;
 @SuppressWarnings("all")
 public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements InitializingBean {
 
-    private static final String NAME = "dubboTp";
+    private static final String PREFIX = "dubboTp";
     
     private final AtomicBoolean registered = new AtomicBoolean(false);
     
@@ -69,7 +69,7 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements Initia
     
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        refresh(NAME, dtpProperties.getDubboTp(), dtpProperties.getPlatforms());
+        refresh(dtpProperties.getDubboTp(), dtpProperties.getPlatforms());
     }
 
     @Override
@@ -89,7 +89,12 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements Initia
         log.info("DynamicTp adapter, alibaba dubbo provider executors init end, executors: {}", executors);
     }
 
+    @Override
+    protected String getAdapterPrefix() {
+        return PREFIX;
+    }
+
     private String genTpName(String port) {
-        return NAME + "#" + port;
+        return PREFIX + "#" + port;
     }
 }

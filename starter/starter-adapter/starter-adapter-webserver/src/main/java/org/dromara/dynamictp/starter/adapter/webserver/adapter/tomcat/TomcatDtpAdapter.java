@@ -15,16 +15,17 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.adapter;
+package org.dromara.dynamictp.starter.adapter.webserver.adapter.tomcat;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.proxy.TomcatThreadProxy;
+import org.dromara.dynamictp.starter.adapter.webserver.adapter.AbstractWebServerDtpAdapter;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 import org.springframework.boot.web.server.WebServer;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -48,18 +49,18 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<Executor> {
         final TomcatExecutorAdapter adapter = new TomcatExecutorAdapter(
                 tomcatWebServer.getTomcat().getConnector().getProtocolHandler().getExecutor());
         ExecutorWrapper executorWrapper = new ExecutorWrapper(POOL_NAME, adapter);
-        TomcatThreadProxy tomcatThreadProxy = new TomcatThreadProxy(executorWrapper);
-        tomcatWebServer.getTomcat().getConnector().getProtocolHandler().setExecutor(tomcatThreadProxy);
+        TomcatExecutorProxy tomcatExecutorProxy = new TomcatExecutorProxy(executorWrapper);
+        tomcatWebServer.getTomcat().getConnector().getProtocolHandler().setExecutor(tomcatExecutorProxy);
         return executorWrapper;
     }
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        refresh(POOL_NAME, executors.get(getTpName()), dtpProperties.getPlatforms(), dtpProperties.getTomcatTp());
+        refresh(executors.get(getTpName()), dtpProperties.getPlatforms(), dtpProperties.getTomcatTp());
     }
 
     @Override
-    protected String getTpName() {
+    protected String getAdapterPrefix() {
         return POOL_NAME;
     }
 

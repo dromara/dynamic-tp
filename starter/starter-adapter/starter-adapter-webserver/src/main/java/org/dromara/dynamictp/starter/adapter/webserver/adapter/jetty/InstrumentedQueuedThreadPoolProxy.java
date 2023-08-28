@@ -15,20 +15,20 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.adapter.proxy;
+package org.dromara.dynamictp.starter.adapter.webserver.adapter.jetty;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.binder.jetty.InstrumentedQueuedThreadPool;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.aware.AwareManager;
-import org.dromara.dynamictp.core.support.EnhanceRunnable;
+import org.dromara.dynamictp.core.support.task.runnable.EnhancedRunnable;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
  * @author hanli
- * @date 2023年08月23日 09:49
+ * @since 1.1.4
  */
 @Slf4j
 public class InstrumentedQueuedThreadPoolProxy extends InstrumentedQueuedThreadPool {
@@ -42,7 +42,7 @@ public class InstrumentedQueuedThreadPoolProxy extends InstrumentedQueuedThreadP
 
     @Override
     public void execute(Runnable runnable) {
-        EnhanceRunnable enhanceTask = EnhanceRunnable.of(runnable, original);
+        EnhancedRunnable enhanceTask = EnhancedRunnable.of(runnable, original);
         AwareManager.executeEnhance(original, enhanceTask);
         try {
             super.execute(enhanceTask);

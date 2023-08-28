@@ -17,17 +17,17 @@
 
 package org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow;
 
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.AbstractWebServerDtpAdapter;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import io.undertow.Undertow;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.starter.adapter.webserver.adapter.AbstractWebServerDtpAdapter;
 import org.springframework.boot.web.embedded.undertow.UndertowServletWebServer;
 import org.springframework.boot.web.server.WebServer;
 import org.xnio.XnioWorker;
+
 import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -68,24 +68,18 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
                 handler.taskPoolType().getInternalExecutor(), taskPool);
         ExecutorWrapper executorWrapper = new ExecutorWrapper(POOL_NAME, handler.adapt(executor));
         if (executor instanceof ThreadPoolExecutor) {
-            ThreadPoolExecutorProxy threadPoolExecutorProxy = new ThreadPoolExecutorProxy(executorWrapper);
-            try {
-                ReflectionUtil.setFieldValue(taskPool.getClass(),
-                        handler.taskPoolType().getInternalExecutor(), taskPool, threadPoolExecutorProxy);
-            } catch (IllegalAccessException e) {
-                log.error("Undertow executor proxy exception", e);
-            }
+            enhanceOriginExecutor(executorWrapper, handler.taskPoolType().getInternalExecutor(), taskPool);
         }
         return executorWrapper;
     }
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        refresh(POOL_NAME, executors.get(getTpName()), dtpProperties.getPlatforms(), dtpProperties.getUndertowTp());
+        refresh(executors.get(getTpName()), dtpProperties.getPlatforms(), dtpProperties.getUndertowTp());
     }
 
     @Override
-    protected String getTpName() {
+    protected String getAdapterPrefix() {
         return POOL_NAME;
     }
 }

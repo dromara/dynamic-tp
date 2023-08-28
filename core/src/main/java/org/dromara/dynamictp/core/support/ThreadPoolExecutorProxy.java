@@ -20,7 +20,7 @@ package org.dromara.dynamictp.core.support;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
-import java.util.concurrent.RejectedExecutionHandler;
+
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -33,16 +33,16 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class ThreadPoolExecutorProxy extends ThreadPoolExecutor {
 
-    private ThreadPoolExecutorProxy(ThreadPoolExecutor executor) {
-        super(executor.getCorePoolSize(), executor.getMaximumPoolSize(), executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS, executor.getQueue(), executor.getThreadFactory(), executor.getRejectedExecutionHandler());
-    }
-
     public ThreadPoolExecutorProxy(ExecutorWrapper executorWrapper) {
         this((ThreadPoolExecutor) executorWrapper.getExecutor().getOriginal());
         executorWrapper.setOriginalProxy(this);
+        setRejectedExecutionHandler(RejectHandlerGetter.getProxy(getRejectedExecutionHandler()));
+    }
 
-        RejectedExecutionHandler handler = getRejectedExecutionHandler();
-        setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
+    private ThreadPoolExecutorProxy(ThreadPoolExecutor executor) {
+        super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
+                executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS, executor.getQueue(),
+                executor.getThreadFactory(), executor.getRejectedExecutionHandler());
     }
 
     @Override

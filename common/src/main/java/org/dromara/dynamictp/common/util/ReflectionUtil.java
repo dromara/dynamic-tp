@@ -33,6 +33,18 @@ public final class ReflectionUtil {
 
     private ReflectionUtil() { }
 
+    public static Object getFieldValue(String fieldName, Object targetObj) {
+        val field = getField(targetObj.getClass(), fieldName);
+        if (Objects.isNull(field)) {
+            return null;
+        }
+        val fieldObj = ReflectionUtils.getField(field, targetObj);
+        if (Objects.isNull(fieldObj)) {
+            return null;
+        }
+        return fieldObj;
+    }
+
     public static Object getFieldValue(Class<?> targetClass, String fieldName, Object targetObj) {
         val field = getField(targetClass, fieldName);
         if (Objects.isNull(field)) {
@@ -43,6 +55,15 @@ public final class ReflectionUtil {
             return null;
         }
         return fieldObj;
+    }
+
+    public static void setFieldValue(String fieldName, Object targetObj, Object targetVal)
+            throws IllegalAccessException {
+        val field = getField(targetObj.getClass(), fieldName);
+        if (Objects.isNull(field)) {
+            return;
+        }
+        field.set(targetObj, targetVal);
     }
 
     public static void setFieldValue(Class<?> targetClass, String fieldName, Object targetObj, Object targetVal)

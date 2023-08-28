@@ -23,17 +23,17 @@ import com.aliyun.openservices.shade.com.alibaba.rocketmq.client.consumer.Defaul
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.client.impl.consumer.ConsumeMessageConcurrentlyService;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.client.impl.consumer.ConsumeMessageOrderlyService;
 import com.aliyun.openservices.shade.com.alibaba.rocketmq.client.impl.consumer.DefaultMQPushConsumerImpl;
-import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import java.util.Objects;
-import java.util.concurrent.ThreadPoolExecutor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.MapUtils;
+import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
+
+import java.util.Objects;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Aliyun business version rocketmq adapter.
@@ -42,13 +42,18 @@ import org.apache.commons.collections4.MapUtils;
 @Slf4j
 public class AliyunOnsRocketMqAdapter extends AbstractDtpAdapter {
 
-    private static final String NAME = "rocketMqTp";
+    private static final String PREFIX = "rocketMqTp";
 
     private static final String CONSUME_EXECUTOR_FIELD_NAME = "consumeExecutor";
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        refresh(NAME, dtpProperties.getRocketMqTp(), dtpProperties.getPlatforms());
+        refresh(dtpProperties.getRocketMqTp(), dtpProperties.getPlatforms());
+    }
+
+    @Override
+    protected String getAdapterPrefix() {
+        return PREFIX;
     }
 
     @Override
@@ -83,39 +88,20 @@ public class AliyunOnsRocketMqAdapter extends AbstractDtpAdapter {
             return;
         }
 
-        ThreadPoolExecutor executor = null;
         val consumeMessageService = impl.getConsumeMessageService();
         // consumer bean name replace topic name
         String cusKey = defaultMqPushConsumer.getConsumerGroup();
         if (consumeMessageService instanceof ConsumeMessageConcurrentlyService) {
-            cusKey = NAME + "#consumer#concurrently#" + cusKey;
-            executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(
-                    ConsumeMessageConcurrentlyService.class,
-                    CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
+            cusKey = PREFIX + "#consumer#concurrently#" + cusKey;
         } else if (consumeMessageService instanceof ConsumeMessageOrderlyService) {
-            cusKey = NAME + "#consumer#orderly#" + cusKey;
-            executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(
-                    ConsumeMessageOrderlyService.class,
-                    CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
+            cusKey = PREFIX + "#consumer#orderly#" + cusKey;
         }
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
         if (Objects.nonNull(executor)) {
             val executorWrapper = new ExecutorWrapper(cusKey, executor);
             initNotifyItems(cusKey, executorWrapper);
             executors.put(cusKey, executorWrapper);
-            ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
-            try {
-                if (consumeMessageService instanceof ConsumeMessageConcurrentlyService) {
-                    ReflectionUtil.setFieldValue(
-                            ConsumeMessageConcurrentlyService.class,
-                            CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService, proxy);
-                } else {
-                    ReflectionUtil.setFieldValue(
-                            ConsumeMessageOrderlyService.class,
-                            CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService, proxy);
-                }
-            } catch (IllegalAccessException e) {
-                log.error("AliyunOnsRocketMq executor proxy exception", e);
-            }
+            enhanceOriginExecutor(executorWrapper, CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
         }
     }
 }

@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.adapter.proxy;
+package org.dromara.dynamictp.starter.adapter.webserver.adapter.jetty;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.aware.AwareManager;
-import org.dromara.dynamictp.core.support.EnhanceRunnable;
+import org.dromara.dynamictp.core.support.task.runnable.EnhancedRunnable;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ReservedThreadExecutor;
 import java.util.concurrent.BlockingQueue;
@@ -29,7 +29,7 @@ import java.util.concurrent.ThreadFactory;
 
 /**
  * @author hanli
- * @date 2023年08月23日 10:36
+ * @since 1.1.4
  */
 @Slf4j
 public class QueuedThreadPoolProxy extends QueuedThreadPool {
@@ -56,7 +56,7 @@ public class QueuedThreadPoolProxy extends QueuedThreadPool {
 
     @Override
     public void execute(Runnable runnable) {
-        EnhanceRunnable enhanceTask = EnhanceRunnable.of(runnable, original);
+        EnhancedRunnable enhanceTask = EnhancedRunnable.of(runnable, original);
         AwareManager.executeEnhance(original, enhanceTask);
         try {
             super.execute(enhanceTask);

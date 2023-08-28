@@ -24,15 +24,14 @@ import com.alipay.sofa.rpc.server.ServerFactory;
 import com.alipay.sofa.rpc.server.UserThreadPool;
 import com.alipay.sofa.rpc.server.bolt.BoltServer;
 import com.alipay.sofa.rpc.server.http.AbstractHttpServer;
-import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.util.ReflectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -50,7 +49,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class SofaDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String NAME = "sofaTp";
+    private static final String PREFIX = "sofaTp";
 
     private static final String SERVER_CONFIG_FIELD_NAME = "serverConfig";
 
@@ -62,7 +61,12 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        refresh(NAME, dtpProperties.getSofaTp(), dtpProperties.getPlatforms());
+        refresh(dtpProperties.getSofaTp(), dtpProperties.getPlatforms());
+    }
+
+    @Override
+    protected String getAdapterPrefix() {
+        return PREFIX;
     }
 
     @Override
@@ -93,34 +97,17 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
                 return;
             }
 
-            String key = NAME + "#" + serverConfig.getProtocol() + "#" + serverConfig.getPort();
+            String key = PREFIX + "#" + serverConfig.getProtocol() + "#" + serverConfig.getPort();
             val executorWrapper = new ExecutorWrapper(key, executor);
             initNotifyItems(key, executorWrapper);
             executors.put(key, executorWrapper);
-            proxyOriginalTP(v, executorWrapper);
+            enhanceOriginExecutor(executorWrapper, BIZ_THREAD_POOL_NAME, v);
         });
 
         if (hasUserThread) {
             handleUserThreadPools();
         }
         log.info("DynamicTp adapter, sofa executors init end, executors: {}", executors);
-    }
-
-    private void proxyOriginalTP(Server server, ExecutorWrapper executorWrapper) {
-        ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
-        try {
-            if (server instanceof BoltServer) {
-                BoltServer boltServer = (BoltServer) server;
-                ReflectionUtil.setFieldValue(BoltServer.class,
-                        BIZ_THREAD_POOL_NAME, boltServer, proxy);
-            } else {
-                AbstractHttpServer abstractHttpServer = (AbstractHttpServer) server;
-                ReflectionUtil.setFieldValue(AbstractHttpServer.class,
-                        BIZ_THREAD_POOL_NAME, abstractHttpServer, proxy);
-            }
-        } catch (IllegalAccessException e) {
-            log.error("Sofa executor proxy exception", e);
-        }
     }
 
     private void handleUserThreadPools() {
@@ -133,13 +120,7 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
                     val executorWrapper = new ExecutorWrapper(k, v.getExecutor());
                     initNotifyItems(k, executorWrapper);
                     executors.put(k, executorWrapper);
-                    ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
-                    try {
-                        ReflectionUtil.setFieldValue(UserThreadPool.class,
-                                USER_THREAD_EXECUTOR_FIELD_NAME, v, proxy);
-                    } catch (IllegalAccessException e) {
-                        log.error("Sofa executor proxy exception", e);
-                    }
+                    enhanceOriginExecutor(executorWrapper, USER_THREAD_FIELD_NAME, v);
                 });
             }
         } catch (Exception e) {

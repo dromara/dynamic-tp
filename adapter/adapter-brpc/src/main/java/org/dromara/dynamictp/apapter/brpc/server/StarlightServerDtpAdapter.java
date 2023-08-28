@@ -24,13 +24,12 @@ import com.baidu.cloud.starlight.api.transport.ServerPeer;
 import com.baidu.cloud.starlight.core.rpc.DefaultStarlightServer;
 import com.baidu.cloud.starlight.core.rpc.ServerProcessor;
 import com.baidu.cloud.starlight.transport.netty.NettyServer;
-import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.util.ReflectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.jvmti.JVMTI;
 
 import java.util.Objects;
@@ -44,7 +43,7 @@ import java.util.Objects;
 @Slf4j
 public class StarlightServerDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String NAME = "brpcServerTp";
+    private static final String PREFIX = "brpcServerTp";
 
     private static final String URI_FIELD = "uri";
 
@@ -56,7 +55,12 @@ public class StarlightServerDtpAdapter extends AbstractDtpAdapter {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        refresh(NAME, dtpProperties.getBrpcTp(), dtpProperties.getPlatforms());
+        refresh(dtpProperties.getBrpcTp(), dtpProperties.getPlatforms());
+    }
+
+    @Override
+    protected String getAdapterPrefix() {
+        return PREFIX;
     }
 
     @Override
@@ -91,12 +95,7 @@ public class StarlightServerDtpAdapter extends AbstractDtpAdapter {
             val executorWrapper = new ExecutorWrapper(bizThreadPoolName, executor);
             initNotifyItems(bizThreadPoolName, executorWrapper);
             executors.put(bizThreadPoolName, executorWrapper);
-            ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
-            try {
-                ReflectionUtil.setFieldValue(ThreadPoolFactory.class, DEFAULT_THREAD_POOL_FIELD_NAME, threadPoolFactory, proxy);
-            } catch (IllegalAccessException e) {
-                log.error("Brpc server executor proxy exception", e);
-            }
+            enhanceOriginExecutor(executorWrapper, DEFAULT_THREAD_POOL_FIELD_NAME, threadPoolFactory);
         }
         log.info("DynamicTp adapter, brpc server executors init end, executors: {}", executors);
     }

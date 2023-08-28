@@ -24,7 +24,6 @@ import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.springframework.amqp.rabbit.connection.AbstractConnectionFactory;
 
@@ -41,13 +40,19 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 @SuppressWarnings("all")
 public class RabbitMqDtpAdapter extends AbstractDtpAdapter {
-    private static final String NAME = "rabbitMqTp";
+
+    private static final String PREFIX = "rabbitMqTp";
 
     private static final String CONSUME_EXECUTOR_FIELD_NAME = "executorService";
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        refresh(NAME, dtpProperties.getRabbitmqTp(), dtpProperties.getPlatforms());
+        refresh(dtpProperties.getRabbitmqTp(), dtpProperties.getPlatforms());
+    }
+
+    @Override
+    protected String getAdapterPrefix() {
+        return PREFIX;
     }
 
     @Override
@@ -70,12 +75,7 @@ public class RabbitMqDtpAdapter extends AbstractDtpAdapter {
                 initNotifyItems(key, executorWrapper);
                 executors.put(key, executorWrapper);
                 if (executor instanceof ThreadPoolExecutor) {
-                    ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
-                    try {
-                        ReflectionUtil.setFieldValue(AbstractConnectionFactory.class, CONSUME_EXECUTOR_FIELD_NAME, abstractConnectionFactory, proxy);
-                    } catch (IllegalAccessException e) {
-                        log.error("RabbiMq executor proxy exception", e);
-                    }
+                    enhanceOriginExecutor(executorWrapper, CONSUME_EXECUTOR_FIELD_NAME, abstractConnectionFactory);
                 }
             }
         });

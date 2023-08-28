@@ -21,7 +21,7 @@ package org.dromara.dynamictp.core.aware;
  * AwareType Enum
  *
  * @author kyao
- * @@since 1.1.4
+ * @since 1.1.4
  */
 public enum AwareTypeEnum {
 

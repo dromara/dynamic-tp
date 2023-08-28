@@ -33,7 +33,7 @@ import static org.dromara.dynamictp.common.em.NotifyItemEnum.REJECT;
  * TaskRejectAware related
  *
  * @author kyao
- * @Since 1.1.4
+ * @since 1.1.4
  */
 public class TaskRejectAware extends AlarmAware {
 

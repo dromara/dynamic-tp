@@ -26,9 +26,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.jvmti.JVMTI;
+
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Objects;
@@ -46,7 +46,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class GrpcDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String NAME = "grpcTp";
+    private static final String PREFIX = "grpcTp";
 
     private static final String SERVER_FIELD = "transportServer";
 
@@ -54,7 +54,7 @@ public class GrpcDtpAdapter extends AbstractDtpAdapter {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        refresh(NAME, dtpProperties.getGrpcTp(), dtpProperties.getPlatforms());
+        refresh(dtpProperties.getGrpcTp(), dtpProperties.getPlatforms());
     }
 
     @Override
@@ -86,20 +86,19 @@ public class GrpcDtpAdapter extends AbstractDtpAdapter {
                 initNotifyItems(tpName, executorWrapper);
                 executors.put(tpName, executorWrapper);
                 if (executor instanceof ThreadPoolExecutor) {
-                    ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
-                    try {
-                        ReflectionUtil.setFieldValue(ServerImpl.class, EXECUTOR_FIELD, serverImpl, proxy);
-                    } catch (IllegalAccessException e) {
-                        log.error("Grpc executor proxy exception", e);
-                    }
+                    enhanceOriginExecutor(executorWrapper, EXECUTOR_FIELD, serverImpl);
                 }
-
             }
         }
         log.info("DynamicTp adapter, grpc server executors init end, executors: {}", executors);
     }
 
+    @Override
+    protected String getAdapterPrefix() {
+        return PREFIX;
+    }
+
     private String genTpName(String key) {
-        return NAME + "#" + key;
+        return PREFIX + "#" + key;
     }
 }

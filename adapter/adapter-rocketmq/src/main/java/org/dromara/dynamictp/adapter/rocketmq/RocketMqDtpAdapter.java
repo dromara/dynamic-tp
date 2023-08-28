@@ -29,8 +29,8 @@ import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.jvmti.JVMTI;
 
 import java.util.Objects;
@@ -47,13 +47,18 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class RocketMqDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String NAME = "rocketMqTp";
+    private static final String PREFIX = "rocketMqTp";
 
     private static final String CONSUME_EXECUTOR_FIELD_NAME = "consumeExecutor";
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        refresh(NAME, dtpProperties.getRocketMqTp(), dtpProperties.getPlatforms());
+        refresh(dtpProperties.getRocketMqTp(), dtpProperties.getPlatforms());
+    }
+
+    @Override
+    protected String getAdapterPrefix() {
+        return PREFIX;
     }
 
     @Override
@@ -81,34 +86,19 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
             }
 
             String cusKey = consumer.getConsumerGroup();
-            ThreadPoolExecutor executor = null;
             val consumeMessageService = pushConsumer.getConsumeMessageService();
             if (consumeMessageService instanceof ConsumeMessageConcurrentlyService) {
-                executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(ConsumeMessageConcurrentlyService.class,
-                        CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
-                cusKey = NAME + "#consumer#concurrently#" + cusKey;
+                cusKey = PREFIX + "#consumer#concurrently#" + cusKey;
             } else if (consumeMessageService instanceof ConsumeMessageOrderlyService) {
-                executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(ConsumeMessageOrderlyService.class,
-                        CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
-                cusKey = NAME + "#consumer#orderly#" + cusKey;
+                cusKey = PREFIX + "#consumer#orderly#" + cusKey;
             }
+            ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
             if (Objects.nonNull(executor)) {
                 val executorWrapper = new ExecutorWrapper(cusKey, executor);
                 initNotifyItems(cusKey, executorWrapper);
                 executors.put(cusKey, executorWrapper);
                 if (executor instanceof ThreadPoolExecutor) {
-                    ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
-                    try {
-                        if (consumeMessageService instanceof ConsumeMessageConcurrentlyService) {
-                            ReflectionUtil.setFieldValue(ConsumeMessageConcurrentlyService.class,
-                                    CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService, proxy);
-                        } else if (consumeMessageService instanceof ConsumeMessageOrderlyService) {
-                            ReflectionUtil.setFieldValue(ConsumeMessageOrderlyService.class,
-                                    CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService, proxy);
-                        }
-                    } catch (IllegalAccessException e) {
-                        log.error("RocketMq executor proxy exception", e);
-                    }
+                    enhanceOriginExecutor(executorWrapper, CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
                 }
             }
         }
@@ -128,7 +118,7 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
                 continue;
             }
 
-            String proKey = NAME + "#producer#" + defaultMQProducer.getProducerGroup();
+            String proKey = PREFIX + "#producer#" + defaultMQProducer.getProducerGroup();
             ThreadPoolExecutor executor = (ThreadPoolExecutor) producer.getAsyncSenderExecutor();
 
             if (Objects.nonNull(executor)) {

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.adapter.motan.proxy;
+package org.dromara.dynamictp.adapter.motan;
 
 import com.weibo.api.motan.transport.netty.StandardThreadExecutor;
 import org.dromara.dynamictp.core.aware.AwareManager;
@@ -31,16 +31,19 @@ import java.util.concurrent.TimeUnit;
  */
 public class StandardThreadExecutorProxy extends StandardThreadExecutor {
 
-    private StandardThreadExecutorProxy(StandardThreadExecutor executor) {
-        super(executor.getCorePoolSize(), executor.getMaximumPoolSize(), executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS, executor.getMaxSubmittedTaskCount() - executor.getMaximumPoolSize(), executor.getThreadFactory(), executor.getRejectedExecutionHandler());
-    }
-
     public StandardThreadExecutorProxy(ExecutorWrapper executorWrapper) {
         this((StandardThreadExecutor) executorWrapper.getExecutor().getOriginal());
         executorWrapper.setOriginalProxy(this);
 
         RejectedExecutionHandler handler = getRejectedExecutionHandler();
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
+    }
+
+    private StandardThreadExecutorProxy(StandardThreadExecutor executor) {
+        super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
+                executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS,
+                executor.getMaxSubmittedTaskCount() - executor.getMaximumPoolSize(),
+                executor.getThreadFactory(), executor.getRejectedExecutionHandler());
     }
 
     @Override
@@ -55,10 +58,9 @@ public class StandardThreadExecutorProxy extends StandardThreadExecutor {
         AwareManager.beforeExecuteEnhance(this, t, r);
     }
 
-
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
-        AwareManager.afterExecuteEnhance(this, r, t);
         super.afterExecute(r, t);
+        AwareManager.afterExecuteEnhance(this, r, t);
     }
 }

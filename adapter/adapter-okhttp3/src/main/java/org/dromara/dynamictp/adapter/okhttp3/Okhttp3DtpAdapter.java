@@ -17,17 +17,14 @@
 
 package org.dromara.dynamictp.adapter.okhttp3;
 
-import okhttp3.Dispatcher;
-import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
-import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.common.properties.DtpProperties;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import okhttp3.OkHttpClient;
 import org.apache.commons.collections4.MapUtils;
+import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -40,13 +37,18 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class Okhttp3DtpAdapter extends AbstractDtpAdapter {
 
-    private static final String NAME = "okhttp3Tp";
+    private static final String PREFIX = "okhttp3Tp";
 
     private static final String EXECUTOR_SERVICE_FIELD_NAME = "executorService";
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        refresh(NAME, dtpProperties.getOkhttp3Tp(), dtpProperties.getPlatforms());
+        refresh(dtpProperties.getOkhttp3Tp(), dtpProperties.getPlatforms());
+    }
+
+    @Override
+    protected String getAdapterPrefix() {
+        return PREFIX;
     }
 
     @Override
@@ -64,12 +66,7 @@ public class Okhttp3DtpAdapter extends AbstractDtpAdapter {
             initNotifyItems(key, executorWrapper);
             executors.put(key, executorWrapper);
             if (executor instanceof ThreadPoolExecutor) {
-                ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
-                try {
-                    ReflectionUtil.setFieldValue(Dispatcher.class, EXECUTOR_SERVICE_FIELD_NAME, v.dispatcher(), proxy);
-                } catch (IllegalAccessException e) {
-                    log.error("Okhttp3 executor proxy exception", e);
-                }
+                enhanceOriginExecutor(executorWrapper, EXECUTOR_SERVICE_FIELD_NAME, v.dispatcher());
             }
         });
         log.info("DynamicTp adapter, okhttp3 executors init end, executors: {}", executors);

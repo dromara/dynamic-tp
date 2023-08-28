@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.support;
+package org.dromara.dynamictp.core.support.task.runnable;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.aware.AwareManager;
@@ -29,19 +29,19 @@ import java.util.concurrent.Executor;
  * @since 1.1.4
  */
 @Slf4j
-public class EnhanceRunnable implements Runnable {
+public class EnhancedRunnable implements Runnable {
 
-    private final Runnable task;
+    private final Runnable runnable;
 
     private final Executor executor;
 
-    public EnhanceRunnable(Runnable runnable, Executor executor) {
-        this.task = runnable;
+    public EnhancedRunnable(Runnable runnable, Executor executor) {
+        this.runnable = runnable;
         this.executor = executor;
     }
 
-    public static EnhanceRunnable of(Runnable runnable, Executor executor) {
-        return new EnhanceRunnable(runnable, executor);
+    public static EnhancedRunnable of(Runnable runnable, Executor executor) {
+        return new EnhancedRunnable(runnable, executor);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class EnhanceRunnable implements Runnable {
         AwareManager.beforeExecuteEnhance(executor, Thread.currentThread(), this);
         Throwable t = null;
         try {
-            task.run();
+            runnable.run();
         } catch (Exception e) {
             t = e;
             throw e;

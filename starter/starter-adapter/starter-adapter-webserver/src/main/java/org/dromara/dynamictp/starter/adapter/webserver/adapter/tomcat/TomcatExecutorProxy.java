@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.adapter.proxy;
+package org.dromara.dynamictp.starter.adapter.webserver.adapter.tomcat;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.reject.RejectedInvocationHandler;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
+
 import java.lang.reflect.Proxy;
 import java.util.concurrent.TimeUnit;
 
@@ -32,13 +33,9 @@ import java.util.concurrent.TimeUnit;
  * @since 1.1.4
  */
 @Slf4j
-public class TomcatThreadProxy extends ThreadPoolExecutor {
+public class TomcatExecutorProxy extends ThreadPoolExecutor {
 
-    private TomcatThreadProxy(ThreadPoolExecutor executor) {
-        super(executor.getCorePoolSize(), executor.getMaximumPoolSize(), executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS, executor.getQueue(), executor.getThreadFactory(), executor.getRejectedExecutionHandler());
-    }
-
-    public TomcatThreadProxy(ExecutorWrapper executorWrapper) {
+    public TomcatExecutorProxy(ExecutorWrapper executorWrapper) {
         this((ThreadPoolExecutor) executorWrapper.getExecutor().getOriginal());
         executorWrapper.setOriginalProxy(this);
 
@@ -47,6 +44,12 @@ public class TomcatThreadProxy extends ThreadPoolExecutor {
                 .newProxyInstance(handler.getClass().getClassLoader(),
                         new Class[]{RejectedExecutionHandler.class},
                         new RejectedInvocationHandler(handler)));
+    }
+
+    private TomcatExecutorProxy(ThreadPoolExecutor executor) {
+        super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
+                executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS, executor.getQueue(),
+                executor.getThreadFactory(), executor.getRejectedExecutionHandler());
     }
 
     @Override
@@ -64,8 +67,8 @@ public class TomcatThreadProxy extends ThreadPoolExecutor {
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
-        AwareManager.afterExecuteEnhance(this, r, t);
         super.afterExecute(r, t);
+        AwareManager.afterExecuteEnhance(this, r, t);
     }
 
 }

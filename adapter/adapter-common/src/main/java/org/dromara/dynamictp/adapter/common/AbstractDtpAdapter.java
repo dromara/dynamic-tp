@@ -27,13 +27,14 @@ import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.entity.TpMainFields;
 import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.spring.OnceApplicationContextEventListener;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.common.util.StreamUtil;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
@@ -41,6 +42,7 @@ import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.notifier.manager.NoticeManager;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.Collections;
@@ -74,7 +76,7 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
             initialize();
             refresh(dtpProperties);
         } catch (Throwable e) {
-            log.error("Init third party thread pool failed.", e);
+            log.error("Initialize [{}] thread pool failed.", getAdapterPrefix(), e);
         }
     }
 
@@ -111,20 +113,17 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
         AlarmManager.initAlarm(poolName, executorWrapper.getNotifyItems());
     }
 
-    public void refresh(String name, List<TpExecutorProps> propsList, List<NotifyPlatform> platforms) {
+    public void refresh(List<TpExecutorProps> propsList, List<NotifyPlatform> platforms) {
         val executorWrappers = getExecutorWrappers();
         if (CollectionUtils.isEmpty(propsList) || MapUtils.isEmpty(executorWrappers)) {
             return;
         }
 
         val tmpMap = StreamUtil.toMap(propsList, TpExecutorProps::getThreadPoolName);
-        executorWrappers.forEach((k, v) -> refresh(name, v, platforms, tmpMap.get(k)));
+        executorWrappers.forEach((k, v) -> refresh(v, platforms, tmpMap.get(k)));
     }
 
-    public void refresh(String name,
-                        ExecutorWrapper executorWrapper,
-                        List<NotifyPlatform> platforms,
-                        TpExecutorProps props) {
+    public void refresh(ExecutorWrapper executorWrapper, List<NotifyPlatform> platforms, TpExecutorProps props) {
 
         if (Objects.isNull(props) || Objects.isNull(executorWrapper) || containsInvalidParams(props, log)) {
             return;
@@ -144,7 +143,7 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
         NoticeManager.doNoticeAsync(executorWrapper, oldFields, diffKeys);
         log.info("DynamicTp {} adapter, [{}] refreshed end, changed keys: {}, corePoolSize: [{}], "
                         + "maxPoolSize: [{}], keepAliveTime: [{}]",
-                name, executorWrapper.getThreadPoolName(), diffKeys,
+                getAdapterPrefix(), executorWrapper.getThreadPoolName(), diffKeys,
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldFields.getCorePoolSize(), newFields.getCorePoolSize()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldFields.getMaxPoolSize(), newFields.getMaxPoolSize()),
                 String.format(PROPERTIES_CHANGE_SHOW_STYLE, oldFields.getKeepAliveTime(), newFields.getKeepAliveTime()));
@@ -152,6 +151,21 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
 
     protected TpMainFields getTpMainFields(ExecutorWrapper executorWrapper, TpExecutorProps props) {
         return ExecutorConverter.toMainFields(executorWrapper);
+    }
+
+    /**
+     * Get adapter prefix.
+     * @return adapter prefix
+     */
+    protected abstract String getAdapterPrefix();
+
+    protected void enhanceOriginExecutor(ExecutorWrapper wrapper, String fieldName, Object targetObj) {
+        ThreadPoolExecutorProxy threadPoolExecutorProxy = new ThreadPoolExecutorProxy(wrapper);
+        try {
+            ReflectionUtil.setFieldValue(fieldName, targetObj, threadPoolExecutorProxy);
+        } catch (IllegalAccessException e) {
+            log.error("DynamicTp {} adapter, enhance origin executor failed.", getAdapterPrefix(), e);
+        }
     }
 
     protected void doRefresh(ExecutorWrapper executorWrapper,

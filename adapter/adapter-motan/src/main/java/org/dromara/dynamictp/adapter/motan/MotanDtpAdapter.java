@@ -27,7 +27,6 @@ import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.adapter.motan.proxy.StandardThreadExecutorProxy;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
@@ -46,7 +45,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class MotanDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String NAME = "motanTp";
+    private static final String PREFIX = "motanTp";
 
     private static final String SERVER_FIELD_NAME = "server";
 
@@ -54,7 +53,12 @@ public class MotanDtpAdapter extends AbstractDtpAdapter {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        refresh(NAME, dtpProperties.getMotanTp(), dtpProperties.getPlatforms());
+        refresh(dtpProperties.getMotanTp(), dtpProperties.getPlatforms());
+    }
+
+    @Override
+    protected String getAdapterPrefix() {
+        return PREFIX;
     }
 
     @Override
@@ -84,15 +88,15 @@ public class MotanDtpAdapter extends AbstractDtpAdapter {
                 val nettyServer = (NettyServer) server;
                 val executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(NettyServer.class, EXECUTOR_FIELD_NAME, nettyServer);
                 if (Objects.nonNull(executor)) {
-                    String key = NAME + "#" + nettyServer.getUrl().getPort();
+                    String key = PREFIX + "#" + nettyServer.getUrl().getPort();
                     val executorWrapper = new ExecutorWrapper(key, executor);
                     initNotifyItems(key, executorWrapper);
                     executors.put(key, executorWrapper);
                     StandardThreadExecutorProxy proxy = new StandardThreadExecutorProxy(executorWrapper);
                     try {
-                        ReflectionUtil.setFieldValue(NettyServer.class, EXECUTOR_FIELD_NAME, nettyServer, proxy);
+                        ReflectionUtil.setFieldValue(EXECUTOR_FIELD_NAME, nettyServer, proxy);
                     } catch (IllegalAccessException ex) {
-                        log.error("Motan server executor proxy exception", ex);
+                        log.error("DynamicTp {} adapter, enhance origin executor failed.", getAdapterPrefix(), ex);
                     }
                 }
             });

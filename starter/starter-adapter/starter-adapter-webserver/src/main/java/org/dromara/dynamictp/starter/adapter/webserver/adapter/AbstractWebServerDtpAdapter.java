@@ -69,6 +69,10 @@ public abstract class AbstractWebServerDtpAdapter<A extends Executor> extends Ab
         }
     }
 
+    protected String getTpName() {
+        return getAdapterPrefix();
+    }
+
     /**
      * Do init thread pool executor wrapper.
      *
@@ -76,10 +80,4 @@ public abstract class AbstractWebServerDtpAdapter<A extends Executor> extends Ab
      * @return the Executor instance
      */
     protected abstract ExecutorWrapper doInitExecutorWrapper(WebServer webServer);
-
-    /**
-     * Refresh thread pool executor wrapper.
-     * @return the thread pool name
-     */
-    protected abstract String getTpName();
 }

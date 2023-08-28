@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.adapter;
+package org.dromara.dynamictp.starter.adapter.webserver.adapter.jetty;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
@@ -26,9 +26,7 @@ import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.proxy.InstrumentedQueuedThreadPoolProxy;
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.proxy.MonitoredQueuedThreadPoolProxy;
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.proxy.QueuedThreadPoolProxy;
+import org.dromara.dynamictp.starter.adapter.webserver.adapter.AbstractWebServerDtpAdapter;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ExecutorThreadPool;
 import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
@@ -36,6 +34,7 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.springframework.boot.web.embedded.jetty.JettyWebServer;
 import org.springframework.boot.web.server.WebServer;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -137,11 +136,11 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        refresh(POOL_NAME, executors.get(getTpName()), dtpProperties.getPlatforms(), dtpProperties.getJettyTp());
+        refresh(executors.get(getTpName()), dtpProperties.getPlatforms(), dtpProperties.getJettyTp());
     }
 
     @Override
-    protected String getTpName() {
+    protected String getAdapterPrefix() {
         return POOL_NAME;
     }
 

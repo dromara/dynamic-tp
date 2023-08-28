@@ -17,16 +17,15 @@
 
 package org.dromara.dynamictp.adapter.tars;
 
-import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.util.ReflectionUtil;
 import com.qq.tars.client.Communicator;
 import com.qq.tars.client.CommunicatorFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.MapUtils;
+import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,7 +41,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class TarsDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String NAME = "tarsTp";
+    private static final String PREFIX = "tarsTp";
 
     private static final String COMMUNICATORS_FIELD = "CommunicatorMap";
 
@@ -52,7 +51,12 @@ public class TarsDtpAdapter extends AbstractDtpAdapter {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        refresh(NAME, dtpProperties.getTarsTp(), dtpProperties.getPlatforms());
+        refresh(dtpProperties.getTarsTp(), dtpProperties.getPlatforms());
+    }
+
+    @Override
+    protected String getAdapterPrefix() {
+        return PREFIX;
     }
 
     @Override
@@ -76,12 +80,7 @@ public class TarsDtpAdapter extends AbstractDtpAdapter {
             executorWrapper.setThreadPoolAliasName(v.getCommunicatorConfig().getLocator());
             initNotifyItems(id, executorWrapper);
             executors.put(id, executorWrapper);
-            ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
-            try {
-                ReflectionUtil.setFieldValue(Communicator.class, THREAD_POOL_FIELD, v, proxy);
-            } catch (IllegalAccessException e) {
-                log.error("Tars executor proxy exception", e);
-            }
+            enhanceOriginExecutor(executorWrapper, THREAD_POOL_FIELD, v);
         });
         log.info("DynamicTp adapter, tars executors init end, executors: {}", executors);
     }

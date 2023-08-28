@@ -17,14 +17,6 @@
 
 package org.dromara.dynamictp.adapter.hystrix;
 
-import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
-import org.dromara.dynamictp.common.entity.NotifyPlatform;
-import org.dromara.dynamictp.common.entity.TpExecutorProps;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.util.StreamUtil;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import com.google.common.collect.Maps;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
@@ -34,6 +26,14 @@ import com.netflix.hystrix.strategy.metrics.HystrixMetricsPublisher;
 import com.netflix.hystrix.strategy.properties.HystrixPropertiesStrategy;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.entity.NotifyPlatform;
+import org.dromara.dynamictp.common.entity.TpExecutorProps;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
+import org.dromara.dynamictp.common.util.StreamUtil;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 
 import java.util.List;
 import java.util.Map;
@@ -49,26 +49,28 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class HystrixDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String NAME = "hystrixTp";
+    private static final String PREFIX = "hystrixTp";
 
     private static final Map<String, DtpMetricsPublisherThreadPool> METRICS_PUBLISHERS = Maps.newHashMap();
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        refresh(NAME, dtpProperties.getHystrixTp(), dtpProperties.getPlatforms());
+        refresh(dtpProperties.getHystrixTp(), dtpProperties.getPlatforms());
     }
 
     @Override
-    public void refresh(String name,
-                        ExecutorWrapper executorWrapper,
-                        List<NotifyPlatform> platforms,
-                        TpExecutorProps props) {
-        super.refresh(name, executorWrapper, platforms, props);
+    public void refresh(ExecutorWrapper executorWrapper, List<NotifyPlatform> platforms, TpExecutorProps props) {
+        super.refresh(executorWrapper, platforms, props);
         val metricsPublisher = METRICS_PUBLISHERS.get(executorWrapper.getThreadPoolName());
         if (Objects.isNull(metricsPublisher)) {
             return;
         }
         metricsPublisher.refreshProperties(props);
+    }
+
+    @Override
+    protected String getAdapterPrefix() {
+        return PREFIX;
     }
 
     @Override
@@ -83,7 +85,7 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
         DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
         val tmpMap = StreamUtil.toMap(dtpProperties.getHystrixTp(), TpExecutorProps::getThreadPoolName);
         log.info("DynamicTp adapter, hystrix init end, executor {}", executorWrapper);
-        refresh(NAME, executorWrapper, dtpProperties.getPlatforms(), tmpMap.get(poolName));
+        refresh(executorWrapper, dtpProperties.getPlatforms(), tmpMap.get(poolName));
         return new ThreadPoolExecutorProxy(executorWrapper);
     }
 

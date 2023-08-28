@@ -27,7 +27,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.jvmti.JVMTI;
 
@@ -44,7 +43,7 @@ import java.util.Objects;
 @Slf4j
 public class StarlightClientDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String NAME = "brpcClientTp";
+    private static final String PREFIX = "brpcClientTp";
 
     private static final String THREAD_POOL_FIELD = "threadPoolOfAll";
 
@@ -52,7 +51,12 @@ public class StarlightClientDtpAdapter extends AbstractDtpAdapter {
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
-        refresh(NAME, dtpProperties.getBrpcTp(), dtpProperties.getPlatforms());
+        refresh(dtpProperties.getBrpcTp(), dtpProperties.getPlatforms());
+    }
+
+    @Override
+    protected String getAdapterPrefix() {
+        return PREFIX;
     }
 
     @Override
@@ -78,12 +82,7 @@ public class StarlightClientDtpAdapter extends AbstractDtpAdapter {
                 val executorWrapper = new ExecutorWrapper(bizThreadPoolName, executor);
                 initNotifyItems(bizThreadPoolName, executorWrapper);
                 executors.put(bizThreadPoolName, executorWrapper);
-                ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executorWrapper);
-                try {
-                    ReflectionUtil.setFieldValue(ThreadPoolFactory.class, DEFAULT_THREAD_POOL_FIELD_NAME, threadPoolFactory, proxy);
-                } catch (IllegalAccessException e) {
-                    log.error("Brpc client executor proxy exception", e);
-                }
+                enhanceOriginExecutor(executorWrapper, DEFAULT_THREAD_POOL_FIELD_NAME, threadPoolFactory);
             }
         });
         log.info("DynamicTp adapter, brpc client executors init end, executors: {}", executors);

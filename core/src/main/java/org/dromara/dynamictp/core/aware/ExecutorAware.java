@@ -48,8 +48,8 @@ public interface ExecutorAware {
     /**
      * registry and update
      *
-     * @param wrapper
-     * @param props
+     * @param wrapper executor wrapper
+     * @param props  executor props
      */
     void updateInfo(ExecutorWrapper wrapper, @Nullable TpExecutorProps props);
 

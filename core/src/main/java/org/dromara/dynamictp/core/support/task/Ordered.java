@@ -17,7 +17,7 @@
 
 package org.dromara.dynamictp.core.support.task;
 
-import org.dromara.dynamictp.core.thread.OrderedDtpExecutor;
+import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
 
 /**
  * Used in {@link OrderedDtpExecutor} to ensure that the tasks are executed in order.

@@ -26,7 +26,7 @@ import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.StreamUtil;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.thread.DtpExecutor;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;

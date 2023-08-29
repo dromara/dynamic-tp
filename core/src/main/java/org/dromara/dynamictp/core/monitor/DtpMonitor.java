@@ -29,7 +29,7 @@ import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.core.handler.CollectorHandler;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.thread.NamedThreadFactory;
+import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.Set;

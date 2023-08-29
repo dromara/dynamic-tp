@@ -20,7 +20,7 @@ package org.dromara.dynamictp.test.core;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
-import org.dromara.dynamictp.core.thread.DtpExecutor;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.thread;
+package org.dromara.dynamictp.core.executor;
 
 import org.dromara.dynamictp.common.em.JreEnum;
 import java.util.Collection;

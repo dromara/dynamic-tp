@@ -19,7 +19,7 @@ package org.dromara.dynamictp.example.config;
 
 import org.dromara.dynamictp.core.support.DynamicTp;
 import org.dromara.dynamictp.core.support.ThreadPoolCreator;
-import org.dromara.dynamictp.core.thread.DtpExecutor;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import org.springframework.context.annotation.Bean;

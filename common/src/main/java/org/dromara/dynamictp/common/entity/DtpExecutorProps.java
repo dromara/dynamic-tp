@@ -110,7 +110,7 @@ public class DtpExecutorProps extends TpExecutorProps {
     private Set<String> pluginNames;
 
     /**
-     * 检查核心参数
+     * check core param is inValid
      *
      * @return boolean return true means params is inValid
      */

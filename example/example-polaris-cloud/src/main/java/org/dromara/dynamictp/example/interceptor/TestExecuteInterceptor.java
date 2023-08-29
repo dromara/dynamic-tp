@@ -22,8 +22,8 @@ import org.dromara.dynamictp.core.plugin.DtpInterceptor;
 import org.dromara.dynamictp.core.plugin.DtpIntercepts;
 import org.dromara.dynamictp.core.plugin.DtpInvocation;
 import org.dromara.dynamictp.core.plugin.DtpSignature;
-import org.dromara.dynamictp.core.thread.DtpExecutor;
-import org.dromara.dynamictp.core.thread.ScheduledDtpExecutor;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
+import org.dromara.dynamictp.core.executor.ScheduledDtpExecutor;
 
 import java.lang.reflect.InvocationTargetException;
 

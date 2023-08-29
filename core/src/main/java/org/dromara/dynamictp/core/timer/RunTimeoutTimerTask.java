@@ -17,17 +17,17 @@
 
 package org.dromara.dynamictp.core.timer;
 
-import org.dromara.dynamictp.common.em.NotifyItemEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.timer.Timeout;
 import org.dromara.dynamictp.common.timer.TimerTask;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
-import org.dromara.dynamictp.core.thread.DtpExecutor;
-import lombok.extern.slf4j.Slf4j;
-import java.util.Collections;
-import java.util.List;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
+
 import java.util.Optional;
+
+import static org.dromara.dynamictp.common.em.NotifyItemEnum.RUN_TIMEOUT;
 
 /**
  * A timer task used to handle run timeout.
@@ -43,8 +43,6 @@ public class RunTimeoutTimerTask implements TimerTask {
 
     private final Thread thread;
 
-    private final List<NotifyItemEnum> notifyItemEnumList = Collections.singletonList(NotifyItemEnum.RUN_TIMEOUT);
-
     public RunTimeoutTimerTask(ExecutorWrapper executorWrapper, Runnable runnable, Thread thread) {
         this.executorWrapper = executorWrapper;
         this.runnable = runnable;
@@ -55,20 +53,18 @@ public class RunTimeoutTimerTask implements TimerTask {
     public void run(Timeout timeout) {
         Optional.ofNullable(executorWrapper.getAlarmHelper())
                 .ifPresent(alarmHelper -> alarmHelper.incRunTimeoutCount(1));
-        if (executorWrapper.getExecutor() instanceof DtpExecutor &&
-                runnable instanceof DtpRunnable) {
+        if (executorWrapper.isDtpExecutor() && runnable instanceof DtpRunnable) {
             DtpRunnable dtpRunnable = (DtpRunnable) runnable;
             DtpExecutor dtpExecutor = (DtpExecutor) executorWrapper.getExecutor();
-            AlarmManager.doAlarmAsync(dtpExecutor, NotifyItemEnum.RUN_TIMEOUT, runnable);
+            AlarmManager.doAlarmAsync(dtpExecutor, RUN_TIMEOUT, runnable);
             log.warn("DynamicTp execute, run timeout, tpName: {}, taskName: {}, traceId: {}, stackTrace: {}",
                     dtpExecutor.getThreadPoolName(), dtpRunnable.getTaskName(),
                     dtpRunnable.getTraceId(), traceToString(thread.getStackTrace()));
         } else {
-            AlarmManager.doAlarmAsync(this.executorWrapper, notifyItemEnumList);
+            AlarmManager.doAlarmAsync(executorWrapper, RUN_TIMEOUT);
             log.warn("DynamicTp execute, run timeout, tpName: {}, stackTrace: {}",
-                    this.executorWrapper.getThreadPoolName(), traceToString(thread.getStackTrace()));
+                    executorWrapper.getThreadPoolName(), traceToString(thread.getStackTrace()));
         }
-
     }
 
     public String traceToString(StackTraceElement[] trace) {

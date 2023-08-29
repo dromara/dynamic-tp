@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.core.support;
 
 import org.dromara.dynamictp.common.em.QueueTypeEnum;
-import org.dromara.dynamictp.core.thread.DtpExecutor;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;

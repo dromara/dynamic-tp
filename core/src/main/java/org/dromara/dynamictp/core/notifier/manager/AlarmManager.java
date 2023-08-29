@@ -18,6 +18,9 @@
 package org.dromara.dynamictp.core.notifier.manager;
 
 import cn.hutool.core.util.NumberUtil;
+import com.google.common.collect.Sets;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.em.RejectedTypeEnum;
 import org.dromara.dynamictp.common.entity.AlarmInfo;
@@ -31,10 +34,7 @@ import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
 import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
-import org.dromara.dynamictp.core.thread.DtpExecutor;
-import com.google.common.collect.Sets;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.slf4j.MDC;
 
 import java.util.List;
@@ -94,6 +94,10 @@ public class AlarmManager {
 
     public static void doAlarmAsync(ExecutorWrapper executorWrapper, List<NotifyItemEnum> notifyItemEnums) {
         ALARM_EXECUTOR.execute(() -> notifyItemEnums.forEach(x -> doAlarm(executorWrapper, x)));
+    }
+
+    public static void doAlarmAsync(ExecutorWrapper executorWrapper, NotifyItemEnum notifyItemEnum) {
+        ALARM_EXECUTOR.execute(() -> doAlarm(executorWrapper, notifyItemEnum));
     }
 
     public static void doAlarm(ExecutorWrapper executorWrapper, NotifyItemEnum notifyItemEnum) {

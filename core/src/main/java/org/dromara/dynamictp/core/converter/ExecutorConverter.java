@@ -21,7 +21,7 @@ import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 import org.dromara.dynamictp.common.entity.TpMainFields;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.thread.DtpExecutor;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 import lombok.val;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;

@@ -24,6 +24,7 @@ import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.slf4j.Logger;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -40,8 +41,7 @@ public class AwareManager {
 
     private static final List<ExecutorAware> EXECUTOR_AWARE_LIST = new ArrayList<>();
 
-    private AwareManager() {
-    }
+    private AwareManager() { }
 
     static {
         EXECUTOR_AWARE_LIST.add(new TaskTimeoutAware());

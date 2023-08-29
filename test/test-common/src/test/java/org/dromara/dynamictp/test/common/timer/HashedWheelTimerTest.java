@@ -38,7 +38,7 @@ import org.dromara.dynamictp.common.timer.HashedWheelTimer;
 import org.dromara.dynamictp.common.timer.Timeout;
 import org.dromara.dynamictp.common.timer.Timer;
 import org.dromara.dynamictp.common.timer.TimerTask;
-import org.dromara.dynamictp.core.thread.NamedThreadFactory;
+import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

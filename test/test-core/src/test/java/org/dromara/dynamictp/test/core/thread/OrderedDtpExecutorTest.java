@@ -22,7 +22,7 @@ import org.dromara.dynamictp.core.spring.EnableDynamicTp;
 import org.dromara.dynamictp.core.spring.YamlPropertySourceFactory;
 import org.dromara.dynamictp.core.support.task.Ordered;
 import org.dromara.dynamictp.core.support.task.callable.OrderedCallable;
-import org.dromara.dynamictp.core.thread.OrderedDtpExecutor;
+import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Data;

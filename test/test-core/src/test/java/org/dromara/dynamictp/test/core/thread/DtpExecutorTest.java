@@ -23,7 +23,7 @@ import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.spring.EnableDynamicTp;
 import org.dromara.dynamictp.core.spring.YamlPropertySourceFactory;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.thread.DtpExecutor;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.RepeatedTest;

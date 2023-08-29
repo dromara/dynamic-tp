@@ -42,7 +42,7 @@ import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
-import org.dromara.dynamictp.core.thread.DtpExecutor;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.springframework.context.event.ContextRefreshedEvent;
 import java.util.List;
 import java.util.Collections;

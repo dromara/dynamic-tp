@@ -17,10 +17,10 @@
 
 package org.dromara.dynamictp.core.support;
 
-import org.dromara.dynamictp.core.thread.DtpExecutor;
-import org.dromara.dynamictp.core.thread.ScheduledDtpExecutor;
-import org.dromara.dynamictp.core.thread.EagerDtpExecutor;
-import org.dromara.dynamictp.core.thread.OrderedDtpExecutor;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
+import org.dromara.dynamictp.core.executor.ScheduledDtpExecutor;
+import org.dromara.dynamictp.core.executor.EagerDtpExecutor;
+import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
 import lombok.Getter;
 
 /**

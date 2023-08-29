@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.thread;
+package org.dromara.dynamictp.core.executor;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

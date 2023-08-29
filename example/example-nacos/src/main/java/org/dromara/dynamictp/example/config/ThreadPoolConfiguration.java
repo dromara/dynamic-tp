@@ -21,7 +21,7 @@ import org.dromara.dynamictp.core.support.DynamicTp;
 import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
 import org.dromara.dynamictp.core.support.ThreadPoolCreator;
 import org.dromara.dynamictp.core.support.task.wrapper.TtlTaskWrapper;
-import org.dromara.dynamictp.core.thread.DtpExecutor;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.LongAdder;
  * alarm helper
  *
  * @author hanli
- * @date 2023年07月19日 6:31 PM
+ * @since 1.1.4
  */
 public class ThreadPoolAlarmHelper {
 

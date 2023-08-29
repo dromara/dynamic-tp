@@ -17,15 +17,16 @@
 
 package org.dromara.dynamictp.core.support;
 
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.core.aware.AwareManager;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarmHelper;
 import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
-import org.dromara.dynamictp.core.thread.DtpExecutor;
-import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -88,8 +89,7 @@ public class ExecutorWrapper {
      */
     private ThreadPoolAlarmHelper alarmHelper;
 
-    public ExecutorWrapper() {
-    }
+    public ExecutorWrapper() { }
 
     public ExecutorWrapper(DtpExecutor executor) {
         this.threadPoolName = executor.getThreadPoolName();

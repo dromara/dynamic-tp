@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.thread;
+package org.dromara.dynamictp.core.executor;
 
 import lombok.extern.slf4j.Slf4j;
 

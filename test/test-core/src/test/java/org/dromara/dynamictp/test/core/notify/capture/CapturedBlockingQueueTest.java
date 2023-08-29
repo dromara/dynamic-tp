@@ -20,7 +20,7 @@ package org.dromara.dynamictp.test.core.notify.capture;
 import org.dromara.dynamictp.common.queue.VariableLinkedBlockingQueue;
 import org.dromara.dynamictp.core.notifier.capture.CapturedBlockingQueue;
 import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
-import org.dromara.dynamictp.core.thread.DtpExecutor;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;

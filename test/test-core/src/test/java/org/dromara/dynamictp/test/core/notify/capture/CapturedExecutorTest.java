@@ -22,7 +22,7 @@ import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
 import org.dromara.dynamictp.core.support.ThreadPoolCreator;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorAdapter;
-import org.dromara.dynamictp.core.thread.DtpExecutor;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;

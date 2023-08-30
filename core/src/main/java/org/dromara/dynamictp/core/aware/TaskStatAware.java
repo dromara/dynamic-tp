@@ -51,6 +51,9 @@ public abstract class TaskStatAware implements ExecutorAware {
 
     @Override
     public void refresh(ExecutorWrapper wrapper, TpExecutorProps props) {
+        if (Objects.isNull(statProviders.get(wrapper.getExecutor()))) {
+            register(wrapper);
+        }
         ThreadPoolStatProvider statProvider = wrapper.getThreadPoolStatProvider();
         if (Objects.nonNull(props)) {
             statProvider.setRunTimeout(props.getRunTimeout());

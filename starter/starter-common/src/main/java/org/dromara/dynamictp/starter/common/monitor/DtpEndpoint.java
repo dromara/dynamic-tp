@@ -27,7 +27,7 @@ import org.dromara.dynamictp.common.entity.Metrics;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.support.MetricsAware;
+import org.dromara.dynamictp.core.aware.MetricsAware;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 

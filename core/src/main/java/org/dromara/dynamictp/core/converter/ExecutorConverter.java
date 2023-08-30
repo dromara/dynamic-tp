@@ -57,10 +57,10 @@ public class ExecutorConverter {
         }
         ThreadPoolStats poolStats = convertCommon(executor);
         poolStats.setPoolName(wrapper.getThreadPoolName());
-        Optional.ofNullable(wrapper.getAlarmHelper()).ifPresent(alarmHelper -> {
-            poolStats.setRunTimeoutCount(alarmHelper.getRunTimeoutCount());
-            poolStats.setQueueTimeoutCount(alarmHelper.getQueueTimeoutCount());
-            poolStats.setRejectCount(alarmHelper.getRejectedTaskCount());
+        Optional.ofNullable(wrapper.getThreadPoolStatProvider()).ifPresent(p -> {
+            poolStats.setRunTimeoutCount(p.getRunTimeoutCount());
+            poolStats.setQueueTimeoutCount(p.getQueueTimeoutCount());
+            poolStats.setRejectCount(p.getRejectedTaskCount());
         });
         poolStats.setDynamic(executor instanceof DtpExecutor);
         return poolStats;

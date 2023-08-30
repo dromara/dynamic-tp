@@ -23,6 +23,8 @@ import io.micrometer.core.instrument.binder.jetty.InstrumentedQueuedThreadPool;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.support.task.runnable.EnhancedRunnable;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -33,17 +35,18 @@ import java.util.concurrent.RejectedExecutionException;
 @Slf4j
 public class InstrumentedQueuedThreadPoolProxy extends InstrumentedQueuedThreadPool {
 
-    private final InstrumentedQueuedThreadPool original;
+    private final QueuedThreadPool original;
 
-    public InstrumentedQueuedThreadPoolProxy(InstrumentedQueuedThreadPool original, MeterRegistry registry, Iterable<Tag> tags, int maxThreads, int minThreads, int idleTimeout, BlockingQueue<Runnable> queue) {
-        super(registry, tags, maxThreads, minThreads, idleTimeout, queue);
-        this.original = original;
+    public InstrumentedQueuedThreadPoolProxy(QueuedThreadPool threadPool, MeterRegistry registry,
+                                             Iterable<Tag> tags, BlockingQueue<Runnable> queue) {
+        super(registry, tags, threadPool.getMaxThreads(), threadPool.getMinThreads(), threadPool.getIdleTimeout(), queue);
+        this.original = threadPool;
     }
 
     @Override
     public void execute(Runnable runnable) {
         EnhancedRunnable enhanceTask = EnhancedRunnable.of(runnable, original);
-        AwareManager.executeEnhance(original, enhanceTask);
+        AwareManager.execute(original, enhanceTask);
         try {
             super.execute(enhanceTask);
         } catch (RejectedExecutionException e) {

@@ -19,6 +19,7 @@ package org.dromara.dynamictp.core.aware;
 
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
+
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
@@ -29,7 +30,7 @@ import java.util.concurrent.Executor;
  * @since 1.1.4
  */
 @Slf4j
-public class TaskTimeoutAware extends AlarmAware {
+public class TaskTimeoutAware extends TaskStatAware {
 
     @Override
     public int getOrder() {
@@ -42,27 +43,25 @@ public class TaskTimeoutAware extends AlarmAware {
     }
 
     @Override
-    public void executeEnhance(Executor executor, Runnable r) {
-        Optional.ofNullable(alarmHelperMap.get(executor)).ifPresent(alarmHelper -> alarmHelper.startQueueTimeoutTask(r));
+    public void execute(Executor executor, Runnable r) {
+        Optional.ofNullable(statProviders.get(executor)).ifPresent(p -> p.startQueueTimeoutTask(r));
     }
 
     @Override
-    public void beforeExecuteEnhance(Executor executor, Thread t, Runnable r) {
-        Optional.ofNullable(alarmHelperMap.get(executor)).ifPresent(alarmHelper -> {
-            alarmHelper.cancelQueueTimeoutTask(r);
-            alarmHelper.startRunTimeoutTask(t, r);
+    public void beforeExecute(Executor executor, Thread t, Runnable r) {
+        Optional.ofNullable(statProviders.get(executor)).ifPresent(p -> {
+            p.cancelQueueTimeoutTask(r);
+            p.startRunTimeoutTask(t, r);
         });
-
     }
 
     @Override
-    public void afterExecuteEnhance(Executor executor, Runnable r, Throwable t) {
-        Optional.ofNullable(alarmHelperMap.get(executor)).ifPresent(alarmHelper -> alarmHelper.cancelRunTimeoutTask(r));
+    public void afterExecute(Executor executor, Runnable r, Throwable t) {
+        Optional.ofNullable(statProviders.get(executor)).ifPresent(p -> p.cancelRunTimeoutTask(r));
     }
 
     @Override
     public void beforeReject(Runnable r, Executor executor, Logger log) {
-        Optional.ofNullable(alarmHelperMap.get(executor)).ifPresent(alarmHelper -> alarmHelper.cancelQueueTimeoutTask(r));
+        Optional.ofNullable(statProviders.get(executor)).ifPresent(p -> p.cancelQueueTimeoutTask(r));
     }
-
 }

@@ -34,13 +34,8 @@ import java.util.Objects;
 @Slf4j
 public abstract class AbstractHttpNotifier extends AbstractNotifier {
 
-    /**
-     * Message sending mode
-     * @param platform platform
-     * @param content content
-     */
     @Override
-    protected void sendMode(NotifyPlatform platform, String content) {
+    protected void send0(NotifyPlatform platform, String content) {
         val url = buildUrl(platform);
         val msgBody = buildMsgBody(platform, content);
         HttpResponse response = HttpRequest.post(url).body(msgBody).execute();

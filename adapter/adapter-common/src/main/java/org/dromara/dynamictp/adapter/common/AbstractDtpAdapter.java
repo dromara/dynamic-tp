@@ -184,7 +184,7 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
         // update notify items
         updateNotifyInfo(executorWrapper, props, platforms);
         // update aware related
-        AwareManager.updateTpInfo(executorWrapper, props);
+        AwareManager.refresh(executorWrapper, props);
     }
 
     private void doRefreshPoolSize(ExecutorAdapter<?> executor, TpExecutorProps props) {

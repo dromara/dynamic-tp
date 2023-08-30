@@ -21,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.support.task.runnable.EnhancedRunnable;
 import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -31,17 +33,17 @@ import java.util.concurrent.RejectedExecutionException;
 @Slf4j
 public class MonitoredQueuedThreadPoolProxy extends MonitoredQueuedThreadPool {
 
-    private final MonitoredQueuedThreadPool original;
+    private final QueuedThreadPool original;
 
-    public MonitoredQueuedThreadPoolProxy(MonitoredQueuedThreadPool original, int maxThreads, int minThreads, int idleTimeOut, BlockingQueue<Runnable> queue) {
-        super(maxThreads, minThreads, idleTimeOut, queue);
-        this.original = original;
+    public MonitoredQueuedThreadPoolProxy(QueuedThreadPool threadPool, BlockingQueue<Runnable> queue) {
+        super(threadPool.getMaxThreads(), threadPool.getMinThreads(), threadPool.getIdleTimeout(), queue);
+        this.original = threadPool;
     }
 
     @Override
     public void execute(Runnable runnable) {
         EnhancedRunnable enhanceTask = EnhancedRunnable.of(runnable, original);
-        AwareManager.executeEnhance(original, enhanceTask);
+        AwareManager.execute(original, enhanceTask);
         try {
             super.execute(enhanceTask);
         } catch (RejectedExecutionException e) {

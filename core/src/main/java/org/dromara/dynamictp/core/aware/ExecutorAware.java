@@ -20,7 +20,9 @@ package org.dromara.dynamictp.core.aware;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.slf4j.Logger;
+
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.concurrent.Executor;
 
 /**
@@ -29,7 +31,7 @@ import java.util.concurrent.Executor;
  * @author kyao
  * @since 1.1.4
  */
-public interface ExecutorAware {
+public interface ExecutorAware extends DtpAware {
 
     /**
      * aware order
@@ -46,61 +48,96 @@ public interface ExecutorAware {
     String getName();
 
     /**
-     * registry and update
+     * registry Executor
+     *
+     * @param wrapper executor wrapper
+     */
+    void register(ExecutorWrapper wrapper);
+
+    /**
+     * refresh props
      *
      * @param wrapper executor wrapper
      * @param props  executor props
      */
-    void updateInfo(ExecutorWrapper wrapper, @Nullable TpExecutorProps props);
+    default void refresh(ExecutorWrapper wrapper, @Nullable TpExecutorProps props) {
+        // default no Operation
+    }
 
     /**
      * remove Executor
      *
-     * @param wrapper
+     * @param wrapper executor wrapper
      */
     void remove(ExecutorWrapper wrapper);
 
     /**
-     * execute enhance
+     * enhance execute
      *
-     * @param executor
-     * @param r
+     * @param executor executor
+     * @param r       runnable
      */
-    default void executeEnhance(Executor executor, Runnable r) {
+    default void execute(Executor executor, Runnable r) {
         // default no Operation
     }
 
     /**
-     * beforeExecute enhance
+     * enhance beforeExecute
      *
-     * @param executor
-     * @param t
-     * @param r
+     * @param executor executor
+     * @param t        thread
+     * @param r        runnable
      */
-    default void beforeExecuteEnhance(Executor executor, Thread t, Runnable r) {
+    default void beforeExecute(Executor executor, Thread t, Runnable r) {
         // default no Operation
     }
 
     /**
-     * afterExecute enhance
+     * enhance afterExecute
      *
-     * @param executor
-     * @param r
-     * @param t
+     * @param executor executor
+     * @param r        runnable
+     * @param t        throwable
      */
-    default void afterExecuteEnhance(Executor executor, Runnable r, Throwable t) {
+    default void afterExecute(Executor executor, Runnable r, Throwable t) {
         // default no Operation
     }
 
     /**
-     * reject enhance
-     * @param r
-     * @param executor
-     * @param log
+     * enhance shutdown
+     *
+     * @param executor executor
+     */
+    default void shutdown(Executor executor) {
+        // default no Operation
+    }
+
+    /**
+     * enhance shutdownNow
+     *
+     * @param executor executor
+     * @param tasks tasks
+     */
+    default void shutdownNow(Executor executor, List<Runnable> tasks) {
+        // default no Operation
+    }
+
+    /**
+     * enhance terminated
+     *
+     * @param executor executor
+     */
+    default void terminated(Executor executor) {
+        // default no Operation
+    }
+
+    /**
+     * enhance reject
+     * @param r runnable
+     * @param executor executor
+     * @param log logger
      */
     default void beforeReject(Runnable r, Executor executor, Logger log) {
         // default no Operation
     }
-
-
 }

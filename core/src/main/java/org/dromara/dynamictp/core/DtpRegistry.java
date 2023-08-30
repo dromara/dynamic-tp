@@ -69,6 +69,7 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
      * Maintain all automatically registered and manually registered Executors(DtpExecutors and JUC ThreadPoolExecutors).
      */
     private static final Map<String, ExecutorWrapper> EXECUTOR_REGISTRY = new ConcurrentHashMap<>();
+
     /**
      * equator for comparing two TpMainFields
      */
@@ -165,7 +166,7 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
      */
     public static void refresh(DtpProperties dtpProperties) {
         if (Objects.isNull(dtpProperties) || CollectionUtils.isEmpty(dtpProperties.getExecutors())) {
-            log.warn("DynamicTp refresh, empty threadPool properties.");
+            log.debug("DynamicTp refresh, empty threadPool properties.");
             return;
         }
         dtpProperties.getExecutors().forEach(x -> {
@@ -248,7 +249,7 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
         // update notify related
         NotifyHelper.updateNotifyInfo(executorWrapper, props, dtpProperties.getPlatforms());
         // update aware related
-        AwareManager.updateTpInfo(executorWrapper, props);
+        AwareManager.refresh(executorWrapper, props);
     }
 
     private static void doRefreshDtp(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
@@ -271,7 +272,7 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
         // update notify related
         NotifyHelper.updateNotifyInfo(executor, props, dtpProperties.getPlatforms());
         // update aware related
-        AwareManager.updateTpInfo(executorWrapper, props);
+        AwareManager.refresh(executorWrapper, props);
         updateWrapper(executorWrapper, executor);
     }
 

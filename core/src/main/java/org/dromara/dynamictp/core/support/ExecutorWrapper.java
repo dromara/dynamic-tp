@@ -90,8 +90,6 @@ public class ExecutorWrapper {
         this.notifyEnabled = executor.isNotifyEnabled();
         this.platformIds = executor.getPlatformIds();
         this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
-        this.threadPoolStatProvider.setRunTimeout(executor.getRunTimeout());
-        this.threadPoolStatProvider.setQueueTimeout(executor.getQueueTimeout());
         AwareManager.register(this);
     }
 
@@ -120,7 +118,7 @@ public class ExecutorWrapper {
         return executorWrapper;
     }
 
-    public ThreadPoolStatProvider getAlarmHelper() {
+    public ThreadPoolStatProvider getThreadPoolStatProvider() {
         return this.threadPoolStatProvider;
     }
 

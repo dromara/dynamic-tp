@@ -20,6 +20,7 @@ package org.dromara.dynamictp.core.executor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
@@ -32,6 +33,7 @@ import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
 import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.slf4j.MDC;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -181,22 +183,41 @@ public class DtpExecutor extends ThreadPoolExecutor
     @Override
     public void execute(Runnable command) {
         DtpRunnable dtpRunnable = (DtpRunnable) wrapTasks(command);
-        AwareManager.executeEnhance(this, command);
+        AwareManager.execute(this, command);
         super.execute(dtpRunnable);
     }
 
     @Override
     protected void beforeExecute(Thread t, Runnable r) {
         super.beforeExecute(t, r);
-        AwareManager.beforeExecuteEnhance(this, t, r);
+        AwareManager.beforeExecute(this, t, r);
     }
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
-        AwareManager.afterExecuteEnhance(this, r, t);
+        AwareManager.afterExecute(this, r, t);
         tryPrintError(r, t);
         clearContext();
+    }
+
+    @Override
+    public void shutdown() {
+        super.shutdown();
+        AwareManager.shutdown(this);
+    }
+
+    @Override
+    public List<Runnable> shutdownNow() {
+        val tasks = super.shutdownNow();
+        AwareManager.shutdownNow(this, tasks);
+        return tasks;
+    }
+
+    @Override
+    protected void terminated() {
+        super.terminated();
+        AwareManager.terminated(this);
     }
 
     public void initialize() {
@@ -371,7 +392,4 @@ public class DtpExecutor extends ThreadPoolExecutor
     public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
         allowCoreThreadTimeOut(allowCoreThreadTimeOut);
     }
-
-
-
 }

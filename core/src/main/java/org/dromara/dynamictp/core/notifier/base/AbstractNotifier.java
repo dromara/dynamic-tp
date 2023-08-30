@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.core.notifier.base;
 
-import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.entity.NotifyItem;
@@ -39,25 +38,26 @@ public abstract class AbstractNotifier implements Notifier {
     @Override
     public final void send(NotifyPlatform platform, String content) {
         try {
-            sendMode(platform, content);
+            send0(platform, content);
         } catch (Exception e) {
-            log.error(StrUtil.format("DynamicTp notify, {} send failed...", platform()), e);
+            log.error("DynamicTp notify, {} send failed.", platform(), e);
         }
     }
 
     /**
-     * Message sending mode
+     * Send message.
+     *
      * @param platform platform
      * @param content content
      */
-    protected abstract void sendMode(NotifyPlatform platform, String content);
+    protected abstract void send0(NotifyPlatform platform, String content);
 
     /**
      * Get the notify receivers
      * @param platform platform
      * @return Receivers
      */
-    protected String[] getNotifyReceivers(NotifyPlatform platform) {
+    protected String[] getReceivers(NotifyPlatform platform) {
         BaseNotifyCtx context = DtpNotifyCtxHolder.get();
         String receivers = Optional.ofNullable(context)
                 .map(BaseNotifyCtx::getNotifyItem)

@@ -46,7 +46,7 @@ public class EnhancedRunnable implements Runnable {
 
     @Override
     public void run() {
-        AwareManager.beforeExecuteEnhance(executor, Thread.currentThread(), this);
+        AwareManager.beforeExecute(executor, Thread.currentThread(), this);
         Throwable t = null;
         try {
             runnable.run();
@@ -54,7 +54,7 @@ public class EnhancedRunnable implements Runnable {
             t = e;
             throw e;
         } finally {
-            AwareManager.afterExecuteEnhance(executor, this, t);
+            AwareManager.afterExecute(executor, this, t);
         }
     }
 }

@@ -20,10 +20,10 @@ package org.dromara.dynamictp.core.timer;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.timer.Timeout;
 import org.dromara.dynamictp.common.timer.TimerTask;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
-import org.dromara.dynamictp.core.executor.DtpExecutor;
 
 import java.util.Optional;
 
@@ -51,8 +51,7 @@ public class RunTimeoutTimerTask implements TimerTask {
 
     @Override
     public void run(Timeout timeout) {
-        Optional.ofNullable(executorWrapper.getAlarmHelper())
-                .ifPresent(alarmHelper -> alarmHelper.incRunTimeoutCount(1));
+        Optional.ofNullable(executorWrapper.getThreadPoolStatProvider()).ifPresent(p -> p.incRunTimeoutCount(1));
         if (executorWrapper.isDtpExecutor() && runnable instanceof DtpRunnable) {
             DtpRunnable dtpRunnable = (DtpRunnable) runnable;
             DtpExecutor dtpExecutor = (DtpExecutor) executorWrapper.getExecutor();
@@ -60,11 +59,11 @@ public class RunTimeoutTimerTask implements TimerTask {
             log.warn("DynamicTp execute, run timeout, tpName: {}, taskName: {}, traceId: {}, stackTrace: {}",
                     dtpExecutor.getThreadPoolName(), dtpRunnable.getTaskName(),
                     dtpRunnable.getTraceId(), traceToString(thread.getStackTrace()));
-        } else {
-            AlarmManager.doAlarmAsync(executorWrapper, RUN_TIMEOUT);
-            log.warn("DynamicTp execute, run timeout, tpName: {}, stackTrace: {}",
-                    executorWrapper.getThreadPoolName(), traceToString(thread.getStackTrace()));
+            return;
         }
+        AlarmManager.doAlarmAsync(executorWrapper, RUN_TIMEOUT);
+        log.warn("DynamicTp execute, run timeout, tpName: {}, stackTrace: {}",
+                executorWrapper.getThreadPoolName(), traceToString(thread.getStackTrace()));
     }
 
     public String traceToString(StackTraceElement[] trace) {

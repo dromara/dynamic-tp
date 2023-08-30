@@ -18,49 +18,52 @@
 package org.dromara.dynamictp.core.aware;
 
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
-import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 /**
- * AlarmAware related
+ * TaskStatAware related
  *
  * @author kyao
  * @since 1.1.4
  */
-public abstract class AlarmAware implements ExecutorAware {
+public abstract class TaskStatAware implements ExecutorAware {
 
-    protected final Map<Executor, ThreadPoolStatProvider> alarmHelperMap = new ConcurrentHashMap<>();
+    protected final Map<Executor, ThreadPoolStatProvider> statProviders = new ConcurrentHashMap<>();
 
     @Override
-    public void updateInfo(ExecutorWrapper wrapper, TpExecutorProps props) {
-        ThreadPoolStatProvider alarmHelper = wrapper.getAlarmHelper();
-        if (Objects.isNull(alarmHelper)) {
-            alarmHelper = ThreadPoolStatProvider.of(wrapper);
+    public void register(ExecutorWrapper wrapper) {
+        ThreadPoolStatProvider statProvider = wrapper.getThreadPoolStatProvider();
+        if (Objects.isNull(statProvider)) {
+            statProvider = ThreadPoolStatProvider.of(wrapper);
         }
-
-        if (Objects.nonNull(props)) {
-            alarmHelper.setRunTimeout(props.getRunTimeout());
-            alarmHelper.setQueueTimeout(props.getQueueTimeout());
-        }
-
-        alarmHelperMap.put(wrapper.getExecutor(), alarmHelper);
-        alarmHelperMap.put(wrapper.getExecutor().getOriginal(), alarmHelper);
+        statProviders.put(wrapper.getExecutor(), statProvider);
+        statProviders.put(wrapper.getExecutor().getOriginal(), statProvider);
         if (Objects.nonNull(wrapper.getOriginalProxy())) {
-            alarmHelperMap.put(wrapper.getOriginalProxy(), alarmHelper);
+            statProviders.put(wrapper.getOriginalProxy(), statProvider);
+        }
+    }
+
+    @Override
+    public void refresh(ExecutorWrapper wrapper, TpExecutorProps props) {
+        ThreadPoolStatProvider statProvider = wrapper.getThreadPoolStatProvider();
+        if (Objects.nonNull(props)) {
+            statProvider.setRunTimeout(props.getRunTimeout());
+            statProvider.setQueueTimeout(props.getQueueTimeout());
         }
     }
 
     @Override
     public void remove(ExecutorWrapper wrapper) {
-        alarmHelperMap.remove(wrapper.getExecutor());
-        alarmHelperMap.remove(wrapper.getExecutor().getOriginal());
+        statProviders.remove(wrapper.getExecutor());
+        statProviders.remove(wrapper.getExecutor().getOriginal());
         if (Objects.nonNull(wrapper.getOriginalProxy())) {
-            alarmHelperMap.remove(wrapper.getOriginalProxy());
+            statProviders.remove(wrapper.getOriginalProxy());
         }
     }
-
 }

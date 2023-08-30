@@ -54,21 +54,21 @@ public class TomcatExecutorProxy extends ThreadPoolExecutor {
 
     @Override
     public void execute(Runnable command) {
-        AwareManager.executeEnhance(this, command);
+        AwareManager.execute(this, command);
         super.execute(command);
     }
 
     @Override
     protected void beforeExecute(Thread t, Runnable r) {
         super.beforeExecute(t, r);
-        AwareManager.beforeExecuteEnhance(this, t, r);
+        AwareManager.beforeExecute(this, t, r);
     }
 
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
-        AwareManager.afterExecuteEnhance(this, r, t);
+        AwareManager.afterExecute(this, r, t);
     }
 
 }

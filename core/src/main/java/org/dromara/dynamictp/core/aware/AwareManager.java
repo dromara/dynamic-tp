@@ -17,9 +17,8 @@
 
 package org.dromara.dynamictp.core.aware;
 
-import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
@@ -52,7 +51,7 @@ public class AwareManager {
         EXECUTOR_AWARE_LIST.sort(Comparator.comparingInt(ExecutorAware::getOrder));
     }
 
-    public static void addExecutorAware(ExecutorAware aware) {
+    public static void add(ExecutorAware aware) {
         for (ExecutorAware executorAware : EXECUTOR_AWARE_LIST) {
             if (executorAware.getClass().equals(aware.getClass())) {
                 return;
@@ -64,46 +63,77 @@ public class AwareManager {
 
     public static void register(ExecutorWrapper executorWrapper) {
         for (ExecutorAware executorAware : EXECUTOR_AWARE_LIST) {
-            executorAware.updateInfo(executorWrapper, null);
+            executorAware.register(executorWrapper);
         }
     }
 
-    public static void updateTpInfo(ExecutorWrapper executorWrapper, TpExecutorProps props) {
+    public static void refresh(ExecutorWrapper executorWrapper, TpExecutorProps props) {
         for (ExecutorAware executorAware : EXECUTOR_AWARE_LIST) {
-            if (CollectionUtil.isEmpty(props.getAwareTypes()) || props.getAwareTypes().contains(executorAware.getName())) {
-                executorAware.updateInfo(executorWrapper, props);
+            if (CollectionUtils.isEmpty(props.getAwareNames()) ||
+                    props.getAwareNames().contains(executorAware.getName())) {
+                executorAware.refresh(executorWrapper, props);
             } else {
                 executorAware.remove(executorWrapper);
             }
         }
     }
 
-    public static void executeEnhance(Executor executor, Runnable r) {
+    public static void execute(Executor executor, Runnable r) {
         for (ExecutorAware aware : EXECUTOR_AWARE_LIST) {
             try {
-                aware.executeEnhance(executor, r);
+                aware.execute(executor, r);
             } catch (Exception e) {
-                log.error(StrUtil.format("AwareName:{} executeEnhance exception", aware.getName()), e);
+                log.error("DynamicTp aware [{}], enhance execute error.", aware.getName(), e);
             }
         }
     }
 
-    public static void beforeExecuteEnhance(Executor executor, Thread t, Runnable r) {
+    public static void beforeExecute(Executor executor, Thread t, Runnable r) {
         for (ExecutorAware aware : EXECUTOR_AWARE_LIST) {
             try {
-                aware.beforeExecuteEnhance(executor, t, r);
+                aware.beforeExecute(executor, t, r);
             } catch (Exception e) {
-                log.error(StrUtil.format("AwareName:{} beforeExecuteEnhance exception", aware.getName()), e);
+                log.error("DynamicTp aware [{}], enhance beforeExecute error.", aware.getName(), e);
             }
         }
     }
 
-    public static void afterExecuteEnhance(Executor executor, Runnable r, Throwable t) {
+    public static void afterExecute(Executor executor, Runnable r, Throwable t) {
         for (ExecutorAware aware : EXECUTOR_AWARE_LIST) {
             try {
-                aware.afterExecuteEnhance(executor, r, t);
+                aware.afterExecute(executor, r, t);
             } catch (Exception e) {
-                log.error(StrUtil.format("AwareName:{} afterExecuteEnhance exception", aware.getName()), e);
+                log.error("DynamicTp aware [{}], enhance afterExecute error.", aware.getName(), e);
+            }
+        }
+    }
+
+    public static void shutdown(Executor executor) {
+        for (ExecutorAware aware : EXECUTOR_AWARE_LIST) {
+            try {
+                aware.shutdown(executor);
+            } catch (Exception e) {
+                log.error("DynamicTp aware [{}], enhance shutdown error.", aware.getName(), e);
+            }
+        }
+    }
+
+    public static void shutdownNow(Executor executor, List<Runnable> tasks) {
+        for (ExecutorAware aware : EXECUTOR_AWARE_LIST) {
+            try {
+                aware.shutdownNow(executor, tasks);
+            } catch (Exception e) {
+                log.error("DynamicTp aware [{}], enhance shutdownNow error.", aware.getName(), e);
+            }
+        }
+    }
+
+    public static void terminated(Executor executor) {
+        for (ExecutorAware aware : EXECUTOR_AWARE_LIST) {
+            try {
+                aware.terminated(executor);
+            } catch (Exception e) {
+                log.error("DynamicTp aware [{}], enhance terminated error.", aware.getName(), e);
             }
         }
     }
@@ -113,7 +143,7 @@ public class AwareManager {
             try {
                 aware.beforeReject(r, executor, log);
             } catch (Exception e) {
-                log.error(StrUtil.format("AwareName:{} beforeReject exception", aware.getName()), e);
+                log.error("DynamicTp aware [{}], enhance beforeReject error.", aware.getName(), e);
             }
         }
     }

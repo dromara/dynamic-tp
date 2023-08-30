@@ -23,6 +23,7 @@ import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.support.task.runnable.EnhancedRunnable;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ReservedThreadExecutor;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
@@ -36,28 +37,30 @@ public class QueuedThreadPoolProxy extends QueuedThreadPool {
 
     private final QueuedThreadPool original;
 
-    public QueuedThreadPoolProxy(QueuedThreadPool original, int maxThreads, int minThreads, int idleTimeout, int reservedThreads, BlockingQueue<Runnable> queue, ThreadGroup threadGroup, ThreadFactory threadFactory) {
-        super(maxThreads, minThreads, idleTimeout, reservedThreads, queue, threadGroup, threadFactory);
-        this.original = original;
+    public QueuedThreadPoolProxy(QueuedThreadPool threadPool, BlockingQueue<Runnable> queue,
+                                 ThreadGroup threadGroup, ThreadFactory threadFactory) {
+        super(threadPool.getMaxThreads(), threadPool.getMinThreads(), threadPool.getIdleTimeout(),
+                threadPool.getReservedThreads(), queue, threadGroup, threadFactory);
+        this.original = threadPool;
         try {
-            Object counts = ReflectionUtil.getFieldValue(QueuedThreadPool.class, "_counts", original);
-            ReflectionUtil.setFieldValue(QueuedThreadPool.class, "_counts", this, counts);
-            Object tryExecutor = ReflectionUtil.getFieldValue(QueuedThreadPool.class, "_tryExecutor", original);
+            Object counts = ReflectionUtil.getFieldValue("_counts", original);
+            ReflectionUtil.setFieldValue("_counts", this, counts);
+            Object tryExecutor = ReflectionUtil.getFieldValue("_tryExecutor", original);
             if (tryExecutor instanceof ReservedThreadExecutor) {
                 ReservedThreadExecutor rtExecutor = (ReservedThreadExecutor) tryExecutor;
                 if (rtExecutor.getExecutor() == original) {
-                    ReflectionUtil.setFieldValue(ReservedThreadExecutor.class, "_executor", rtExecutor, this);
+                    ReflectionUtil.setFieldValue("_executor", rtExecutor, this);
                 }
             }
         } catch (IllegalAccessException e) {
-            log.error("QueuedThreadPoolProxy Exception", e);
+            log.error("DynamicTp enhance origin executor of QueuedThreadPool failed.", e);
         }
     }
 
     @Override
     public void execute(Runnable runnable) {
         EnhancedRunnable enhanceTask = EnhancedRunnable.of(runnable, original);
-        AwareManager.executeEnhance(original, enhanceTask);
+        AwareManager.execute(original, enhanceTask);
         try {
             super.execute(enhanceTask);
         } catch (RejectedExecutionException e) {
@@ -65,5 +68,4 @@ public class QueuedThreadPoolProxy extends QueuedThreadPool {
             throw e;
         }
     }
-
 }

@@ -15,28 +15,36 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.reject;
+package org.dromara.dynamictp.core.aware;
 
-import org.dromara.dynamictp.core.aware.AwareManager;
-import org.slf4j.Logger;
-import java.util.concurrent.Executor;
+import org.dromara.dynamictp.common.entity.ThreadPoolStats;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
- * RejectedAware related
+ * MetricsAware related
  *
- * @author kyao
- * @since 1.1.4
- **/
-public interface RejectedAware {
+ * @author yanhom
+ * @since 1.0.9
+ */
+public interface MetricsAware extends DtpAware {
 
     /**
-     * Do sth before reject.
+     * Get thread pool stats.
      *
-     * @param runnable the runnable
-     * @param executor ThreadPoolExecutor instance
-     * @param log      logger
+     * @return the thread pool stats
      */
-    default void beforeReject(Runnable runnable, Executor executor, Logger log) {
-        AwareManager.beforeReject(runnable, executor, log);
+    default ThreadPoolStats getPoolStats() {
+        return null;
+    }
+
+    /**
+     * Get multi thread pool stats.
+     *
+     * @return thead pools stats
+     */
+    default List<ThreadPoolStats> getMultiPoolStats() {
+        return Collections.emptyList();
     }
 }

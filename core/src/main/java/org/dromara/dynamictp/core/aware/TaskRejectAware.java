@@ -18,12 +18,14 @@
 package org.dromara.dynamictp.core.aware;
 
 import cn.hutool.core.text.CharSequenceUtil;
-import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
+import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
+
 import java.util.Collections;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
@@ -35,7 +37,7 @@ import static org.dromara.dynamictp.common.em.NotifyItemEnum.REJECT;
  * @author kyao
  * @since 1.1.4
  */
-public class TaskRejectAware extends AlarmAware {
+public class TaskRejectAware extends TaskStatAware {
 
     @Override
     public int getOrder() {
@@ -49,24 +51,24 @@ public class TaskRejectAware extends AlarmAware {
 
     @Override
     public void beforeReject(Runnable runnable, Executor executor, Logger log) {
-        ThreadPoolStatProvider alarmHelper = alarmHelperMap.get(executor);
-        if (alarmHelper == null) {
+        ThreadPoolStatProvider statProvider = statProviders.get(executor);
+        if (Objects.isNull(statProvider)) {
             return;
         }
 
-        alarmHelper.incRejectCount(1);
-        AlarmManager.doAlarmAsync(alarmHelper.getExecutorWrapper(), Collections.singletonList(REJECT));
-        ExecutorAdapter<?> executorAdapter = alarmHelper.getExecutorWrapper().getExecutor();
+        statProvider.incRejectCount(1);
+        AlarmManager.doAlarmAsync(statProvider.getExecutorWrapper(), Collections.singletonList(REJECT));
+        ExecutorAdapter<?> executorAdapter = statProvider.getExecutorWrapper().getExecutor();
         String logMsg = CharSequenceUtil.format("DynamicTp execute, thread pool is exhausted, tpName: {},  traceId: {}, " +
                         "poolSize: {} (active: {}, core: {}, max: {}, largest: {}), " +
                         "task: {} (completed: {}), queueCapacity: {}, (currSize: {}, remaining: {}) ," +
                         "executorStatus: (isShutdown: {}, isTerminated: {}, isTerminating: {})",
-                alarmHelper.getExecutorWrapper().getThreadPoolName(), MDC.get(TRACE_ID), executorAdapter.getPoolSize(),
+                statProvider.getExecutorWrapper().getThreadPoolName(), MDC.get(TRACE_ID), executorAdapter.getPoolSize(),
                 executorAdapter.getActiveCount(), executorAdapter.getCorePoolSize(), executorAdapter.getMaximumPoolSize(),
                 executorAdapter.getLargestPoolSize(), executorAdapter.getTaskCount(), executorAdapter.getCompletedTaskCount(),
-                alarmHelper.getExecutorWrapper().getExecutor().getQueueCapacity(), executorAdapter.getQueue().size(), executorAdapter.getQueue().remainingCapacity(),
+                statProvider.getExecutorWrapper().getExecutor().getQueueCapacity(), executorAdapter.getQueue().size(),
+                executorAdapter.getQueue().remainingCapacity(),
                 executorAdapter.isShutdown(), executorAdapter.isTerminated(), executorAdapter.isTerminating());
         log.warn(logMsg);
     }
-
 }

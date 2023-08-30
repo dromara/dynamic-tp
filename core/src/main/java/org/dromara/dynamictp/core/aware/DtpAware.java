@@ -15,36 +15,13 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.support;
-
-import org.dromara.dynamictp.common.entity.ThreadPoolStats;
-
-import java.util.Collections;
-import java.util.List;
+package org.dromara.dynamictp.core.aware;
 
 /**
- * MetricsAware related
+ * A marker interface for DTP
  *
  * @author yanhom
- * @since 1.0.9
- */
-public interface MetricsAware {
-
-    /**
-     * Get thread pool stats.
-     *
-     * @return the thread pool stats
-     */
-    default ThreadPoolStats getPoolStats() {
-        return null;
-    }
-
-    /**
-     * Get multi thread pool stats.
-     *
-     * @return thead pools stats
-     */
-    default List<ThreadPoolStats> getMultiPoolStats() {
-        return Collections.emptyList();
-    }
+ * @since 1.1.4
+ **/
+public interface DtpAware {
 }

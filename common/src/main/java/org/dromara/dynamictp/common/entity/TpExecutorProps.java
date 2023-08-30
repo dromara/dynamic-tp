@@ -17,9 +17,9 @@
 
 package org.dromara.dynamictp.common.entity;
 
+import lombok.Data;
 import org.dromara.dynamictp.common.constant.DynamicTpConst;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
-import lombok.Data;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -91,7 +91,7 @@ public class TpExecutorProps {
     private long queueTimeout = 0;
 
     /**
-     * aware type list
+     * Aware names.
      */
-    private List<String> awareTypes;
+    private List<String> awareNames;
 }

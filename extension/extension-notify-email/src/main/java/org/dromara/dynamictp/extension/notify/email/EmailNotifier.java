@@ -60,12 +60,12 @@ public class EmailNotifier extends AbstractNotifier {
 
     @SneakyThrows
     @Override
-    protected void sendMode(NotifyPlatform platform, String content) {
+    protected void send0(NotifyPlatform platform, String content) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
         messageHelper.setSubject(title);
         messageHelper.setFrom(sendFrom);
-        messageHelper.setTo(getNotifyReceivers(platform));
+        messageHelper.setTo(getReceivers(platform));
         messageHelper.setSentDate(new Date());
         messageHelper.setText(content, true);
         javaMailSender.send(mimeMessage);

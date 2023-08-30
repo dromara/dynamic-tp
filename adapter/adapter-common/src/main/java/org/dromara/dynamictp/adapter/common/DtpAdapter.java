@@ -20,7 +20,7 @@ package org.dromara.dynamictp.adapter.common;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.support.MetricsAware;
+import org.dromara.dynamictp.core.aware.MetricsAware;
 import org.slf4j.Logger;
 
 import java.util.Collections;

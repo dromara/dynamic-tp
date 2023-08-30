@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author hanli
- * @date 2023年08月25日 10:11
+ * @since 1.1.4
  */
 public class StandardThreadExecutorProxy extends StandardThreadExecutor {
 

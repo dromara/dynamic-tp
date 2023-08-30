@@ -15,12 +15,11 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.notifier.alarm;
+package org.dromara.dynamictp.core.support;
 
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.timer.HashedWheelTimer;
 import org.dromara.dynamictp.common.timer.Timeout;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.timer.QueueTimeoutTimerTask;
 import org.dromara.dynamictp.core.timer.RunTimeoutTimerTask;
 
@@ -32,12 +31,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
- * alarm helper
+ * Stat provider for thread pool.
  *
  * @author hanli
  * @since 1.1.4
  */
-public class ThreadPoolAlarmHelper {
+public class ThreadPoolStatProvider {
 
     /**
      * executorWrapper
@@ -79,16 +78,16 @@ public class ThreadPoolAlarmHelper {
      */
     private final Map<Runnable, SoftReference<Timeout>> queueTimeoutMap = new ConcurrentHashMap<>();
 
-    private ThreadPoolAlarmHelper(ExecutorWrapper executorWrapper) {
+    private ThreadPoolStatProvider(ExecutorWrapper executorWrapper) {
         this.executorWrapper = executorWrapper;
     }
 
-    public static ThreadPoolAlarmHelper of(ExecutorWrapper executorWrapper) {
-        return new ThreadPoolAlarmHelper(executorWrapper);
+    public static ThreadPoolStatProvider of(ExecutorWrapper executorWrapper) {
+        return new ThreadPoolStatProvider(executorWrapper);
     }
 
-    public long getRejectedTaskCount() {
-        return rejectCount.sum();
+    public ExecutorWrapper getExecutorWrapper() {
+        return executorWrapper;
     }
 
     public long getRunTimeout() {
@@ -105,6 +104,10 @@ public class ThreadPoolAlarmHelper {
 
     public void setQueueTimeout(long queueTimeout) {
         this.queueTimeout = queueTimeout;
+    }
+
+    public long getRejectedTaskCount() {
+        return rejectCount.sum();
     }
 
     public void incRejectCount(int count) {
@@ -131,39 +134,29 @@ public class ThreadPoolAlarmHelper {
         if (queueTimeout <= 0) {
             return;
         }
-        HashedWheelTimer hashedWheelTimer = ApplicationContextHolder.getBean(HashedWheelTimer.class);
-        QueueTimeoutTimerTask queueTimeoutTimerTask = new QueueTimeoutTimerTask(executorWrapper, r);
-        queueTimeoutMap.put(r, new SoftReference<>(hashedWheelTimer.newTimeout(queueTimeoutTimerTask, queueTimeout, TimeUnit.MILLISECONDS)));
+        HashedWheelTimer timer = ApplicationContextHolder.getBean(HashedWheelTimer.class);
+        QueueTimeoutTimerTask timerTask = new QueueTimeoutTimerTask(executorWrapper, r);
+        queueTimeoutMap.put(r, new SoftReference<>(timer.newTimeout(timerTask, queueTimeout, TimeUnit.MILLISECONDS)));
     }
 
     public void cancelQueueTimeoutTask(Runnable r) {
-        Optional.ofNullable(queueTimeoutMap.get(r))
+        Optional.ofNullable(queueTimeoutMap.remove(r))
                 .map(SoftReference::get)
-                .ifPresent(queueTimeoutTimer -> {
-                    queueTimeoutTimer.cancel();
-                    queueTimeoutMap.remove(r);
-                });
+                .ifPresent(Timeout::cancel);
     }
 
     public void startRunTimeoutTask(Thread t, Runnable r) {
         if (runTimeout <= 0) {
             return;
         }
-        HashedWheelTimer hashedWheelTimer = ApplicationContextHolder.getBean(HashedWheelTimer.class);
-        RunTimeoutTimerTask runTimeoutTimerTask = new RunTimeoutTimerTask(executorWrapper, r, t);
-        runTimeoutMap.put(r, new SoftReference<>(hashedWheelTimer.newTimeout(runTimeoutTimerTask, runTimeout, TimeUnit.MILLISECONDS)));
+        HashedWheelTimer timer = ApplicationContextHolder.getBean(HashedWheelTimer.class);
+        RunTimeoutTimerTask timerTask = new RunTimeoutTimerTask(executorWrapper, r, t);
+        runTimeoutMap.put(r, new SoftReference<>(timer.newTimeout(timerTask, runTimeout, TimeUnit.MILLISECONDS)));
     }
 
     public void cancelRunTimeoutTask(Runnable r) {
-        Optional.ofNullable(runTimeoutMap.get(r))
+        Optional.ofNullable(runTimeoutMap.remove(r))
                 .map(SoftReference::get)
-                .ifPresent(runTimeoutTimer -> {
-                    runTimeoutTimer.cancel();
-                    runTimeoutMap.remove(r);
-                });
-    }
-
-    public ExecutorWrapper getExecutorWrapper() {
-        return executorWrapper;
+                .ifPresent(Timeout::cancel);
     }
 }

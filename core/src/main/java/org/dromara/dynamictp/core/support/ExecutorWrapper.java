@@ -23,7 +23,6 @@ import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
-import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarmHelper;
 import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
 import org.springframework.beans.BeanUtils;
 
@@ -56,14 +55,6 @@ public class ExecutorWrapper {
      */
     private ExecutorAdapter<?> executor;
 
-    public Executor getOriginalProxy() {
-        return originalProxy;
-    }
-
-    public void setOriginalProxy(Executor originalProxy) {
-        this.originalProxy = originalProxy;
-    }
-
     /**
      * original thread-pool proxy
      */
@@ -87,7 +78,7 @@ public class ExecutorWrapper {
     /**
      * alarmHelper
      */
-    private ThreadPoolAlarmHelper alarmHelper;
+    private ThreadPoolStatProvider threadPoolStatProvider;
 
     public ExecutorWrapper() { }
 
@@ -98,9 +89,9 @@ public class ExecutorWrapper {
         this.notifyItems = executor.getNotifyItems();
         this.notifyEnabled = executor.isNotifyEnabled();
         this.platformIds = executor.getPlatformIds();
-        this.alarmHelper = ThreadPoolAlarmHelper.of(this);
-        this.alarmHelper.setRunTimeout(executor.getRunTimeout());
-        this.alarmHelper.setQueueTimeout(executor.getQueueTimeout());
+        this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
+        this.threadPoolStatProvider.setRunTimeout(executor.getRunTimeout());
+        this.threadPoolStatProvider.setQueueTimeout(executor.getQueueTimeout());
         AwareManager.register(this);
     }
 
@@ -114,7 +105,7 @@ public class ExecutorWrapper {
             throw new IllegalArgumentException("unsupported Executor type !");
         }
         this.notifyItems = NotifyItem.getAllNotifyItems();
-        this.alarmHelper = ThreadPoolAlarmHelper.of(this);
+        this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
         AwareManager.register(this);
     }
 
@@ -129,8 +120,8 @@ public class ExecutorWrapper {
         return executorWrapper;
     }
 
-    public ThreadPoolAlarmHelper getAlarmHelper() {
-        return this.alarmHelper;
+    public ThreadPoolStatProvider getAlarmHelper() {
+        return this.threadPoolStatProvider;
     }
 
     public boolean isDtpExecutor() {
@@ -141,4 +132,11 @@ public class ExecutorWrapper {
         return this.executor instanceof ThreadPoolExecutorAdapter;
     }
 
+    public Executor getOriginalProxy() {
+        return originalProxy;
+    }
+
+    public void setOriginalProxy(Executor originalProxy) {
+        this.originalProxy = originalProxy;
+    }
 }

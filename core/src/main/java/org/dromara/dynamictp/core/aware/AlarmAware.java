@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.core.aware;
 
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
-import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarmHelper;
+import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import java.util.Map;
 import java.util.Objects;
@@ -33,13 +33,13 @@ import java.util.concurrent.Executor;
  */
 public abstract class AlarmAware implements ExecutorAware {
 
-    protected final Map<Executor, ThreadPoolAlarmHelper> alarmHelperMap = new ConcurrentHashMap<>();
+    protected final Map<Executor, ThreadPoolStatProvider> alarmHelperMap = new ConcurrentHashMap<>();
 
     @Override
     public void updateInfo(ExecutorWrapper wrapper, TpExecutorProps props) {
-        ThreadPoolAlarmHelper alarmHelper = wrapper.getAlarmHelper();
+        ThreadPoolStatProvider alarmHelper = wrapper.getAlarmHelper();
         if (Objects.isNull(alarmHelper)) {
-            alarmHelper = ThreadPoolAlarmHelper.of(wrapper);
+            alarmHelper = ThreadPoolStatProvider.of(wrapper);
         }
 
         if (Objects.nonNull(props)) {

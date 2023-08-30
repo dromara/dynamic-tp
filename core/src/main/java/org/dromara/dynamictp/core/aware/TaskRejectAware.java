@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.core.aware;
 
 import cn.hutool.core.text.CharSequenceUtil;
-import org.dromara.dynamictp.core.notifier.alarm.ThreadPoolAlarmHelper;
+import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.slf4j.Logger;
@@ -49,7 +49,7 @@ public class TaskRejectAware extends AlarmAware {
 
     @Override
     public void beforeReject(Runnable runnable, Executor executor, Logger log) {
-        ThreadPoolAlarmHelper alarmHelper = alarmHelperMap.get(executor);
+        ThreadPoolStatProvider alarmHelper = alarmHelperMap.get(executor);
         if (alarmHelper == null) {
             return;
         }

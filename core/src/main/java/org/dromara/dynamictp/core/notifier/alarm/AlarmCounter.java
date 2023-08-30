@@ -24,6 +24,8 @@ import lombok.val;
 import lombok.var;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
+import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -84,7 +86,7 @@ public class AlarmCounter {
     }
 
     public static Triple<String, String, String> countStrRrq(ExecutorWrapper executorWrapper) {
-        ThreadPoolAlarmHelper alarmHelper = executorWrapper.getAlarmHelper();
+        ThreadPoolStatProvider alarmHelper = executorWrapper.getAlarmHelper();
         if (alarmHelper != null) {
             String threadPoolName = executorWrapper.getThreadPoolName();
             String rejectCount = getCount(threadPoolName, REJECT.getValue()) + " / " + alarmHelper.getRejectedTaskCount();

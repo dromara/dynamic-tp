@@ -17,8 +17,8 @@
 
 package org.dromara.dynamictp.core.support;
 
-import org.dromara.dynamictp.core.executor.DtpExecutor;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.Objects;
@@ -46,10 +46,7 @@ public class DtpLifecycleSupport {
      * @param executorWrapper executor wrapper
      */
     public static void initialize(ExecutorWrapper executorWrapper) {
-        if (executorWrapper.isDtpExecutor()) {
-            DtpExecutor dtpExecutor = (DtpExecutor) executorWrapper.getExecutor();
-            dtpExecutor.initialize();
-        }
+        executorWrapper.initialize();
     }
 
     /**

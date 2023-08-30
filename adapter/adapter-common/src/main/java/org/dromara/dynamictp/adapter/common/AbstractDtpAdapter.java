@@ -74,6 +74,7 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
         try {
             DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
             initialize();
+            afterInitialize();
             refresh(dtpProperties);
         } catch (Throwable e) {
             log.error("Initialize [{}] thread pool failed.", getAdapterPrefix(), e);
@@ -81,6 +82,10 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
     }
 
     protected void initialize() {
+    }
+
+    protected void afterInitialize() {
+        getExecutorWrappers().forEach((k, v) -> AwareManager.register(v));
     }
 
     public ThreadPoolExecutor register(String poolName, ThreadPoolExecutor threadPoolExecutor) {

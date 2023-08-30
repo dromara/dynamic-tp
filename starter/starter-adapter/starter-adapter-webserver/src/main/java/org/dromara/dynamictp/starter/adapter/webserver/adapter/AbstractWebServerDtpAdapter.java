@@ -58,6 +58,7 @@ public abstract class AbstractWebServerDtpAdapter<A extends Executor> extends Ab
 
     @Override
     protected void initialize() {
+        super.initialize();
         if (executors.get(getTpName()) == null) {
             ApplicationContext applicationContext = ApplicationContextHolder.getInstance();
             WebServer webServer = ((WebServerApplicationContext) applicationContext).getWebServer();

@@ -90,7 +90,6 @@ public class ExecutorWrapper {
         this.notifyEnabled = executor.isNotifyEnabled();
         this.platformIds = executor.getPlatformIds();
         this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
-        AwareManager.register(this);
     }
 
     public ExecutorWrapper(String threadPoolName, Executor executor) {
@@ -104,7 +103,6 @@ public class ExecutorWrapper {
         }
         this.notifyItems = NotifyItem.getAllNotifyItems();
         this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
-        AwareManager.register(this);
     }
 
     public static ExecutorWrapper of(DtpExecutor executor) {
@@ -116,6 +114,16 @@ public class ExecutorWrapper {
         BeanUtils.copyProperties(this, executorWrapper);
         executorWrapper.executor = new CapturedExecutor(this.getExecutor());
         return executorWrapper;
+    }
+
+    public void initialize() {
+        if (isDtpExecutor()) {
+            DtpExecutor dtpExecutor = (DtpExecutor) getExecutor();
+            dtpExecutor.initialize();
+            AwareManager.register(this);
+        } else if (isThreadPoolExecutor()) {
+            AwareManager.register(this);
+        }
     }
 
     public ThreadPoolStatProvider getThreadPoolStatProvider() {

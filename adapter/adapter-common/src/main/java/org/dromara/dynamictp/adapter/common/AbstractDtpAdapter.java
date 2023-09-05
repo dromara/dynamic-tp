@@ -49,7 +49,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import static java.util.stream.Collectors.toList;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
@@ -86,10 +85,6 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
 
     protected void afterInitialize() {
         getExecutorWrappers().forEach((k, v) -> AwareManager.register(v));
-    }
-
-    public ThreadPoolExecutor register(String poolName, ThreadPoolExecutor threadPoolExecutor) {
-        return threadPoolExecutor;
     }
 
     @Override

@@ -29,6 +29,7 @@ public enum AwareTypeEnum {
      * TaskTimeoutAware
      */
     TASK_TIMEOUT_AWARE(1, "timeout"),
+
     /**
      * TaskRejectAware
      */

@@ -17,9 +17,6 @@
 
 package org.dromara.dynamictp.adapter.hystrix;
 
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
-import org.dromara.dynamictp.common.entity.TpExecutorProps;
-import org.dromara.dynamictp.common.util.ReflectionUtil;
 import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.HystrixThreadPoolMetrics;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
@@ -27,9 +24,11 @@ import com.netflix.hystrix.strategy.metrics.HystrixMetricsPublisherThreadPool;
 import com.netflix.hystrix.strategy.properties.HystrixProperty;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.dromara.dynamictp.common.entity.TpExecutorProps;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
 
 import java.util.Objects;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -46,9 +45,6 @@ import static com.netflix.hystrix.strategy.properties.HystrixPropertiesChainedPr
 public class DtpMetricsPublisherThreadPool implements HystrixMetricsPublisherThreadPool {
 
     private static final String PROPERTY_PREFIX = "hystrix";
-
-    private static final String THREAD_POOL_FIELD_NAME = "threadPool";
-
     private static final int DEFAULT_CORE_SIZE = 10;
     private static final int DEFAULT_MAXIMUM_SIZE = 10;
     private static final int DEFAULT_KEEP_ALIVE_TIME_MINUTES = 1;
@@ -76,12 +72,7 @@ public class DtpMetricsPublisherThreadPool implements HystrixMetricsPublisherThr
         metricsPublisherForThreadPool.initialize();
         HystrixDtpAdapter hystrixTpHandler = ApplicationContextHolder.getBean(HystrixDtpAdapter.class);
         hystrixTpHandler.cacheMetricsPublisher(threadPoolKey.name(), this);
-        ThreadPoolExecutor proxy = hystrixTpHandler.register(threadPoolKey.name(), metrics.getThreadPool());
-        try {
-            ReflectionUtil.setFieldValue(HystrixThreadPoolMetrics.class, THREAD_POOL_FIELD_NAME, metrics, proxy);
-        } catch (IllegalAccessException e) {
-            log.error("Hystrix executor proxy exception", e);
-        }
+        hystrixTpHandler.register(threadPoolKey.name(), metrics);
     }
 
     public void refreshProperties(TpExecutorProps props) {

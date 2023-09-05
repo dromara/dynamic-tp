@@ -34,6 +34,8 @@ public class ThreadPoolStats extends Metrics {
 
     private String poolName;
 
+    private String poolAliasName;
+
     private int corePoolSize;
 
     private int maximumPoolSize;

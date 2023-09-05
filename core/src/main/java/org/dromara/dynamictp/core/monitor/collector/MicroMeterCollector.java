@@ -18,6 +18,7 @@
 package org.dromara.dynamictp.core.monitor.collector;
 
 import cn.hutool.core.bean.BeanUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.em.CollectorTypeEnum;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 import org.dromara.dynamictp.common.util.CommonUtil;
@@ -26,6 +27,8 @@ import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tag;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -45,6 +48,8 @@ public class MicroMeterCollector extends AbstractCollector {
     public static final String DTP_METRIC_NAME_PREFIX = "thread.pool";
 
     public static final String POOL_NAME_TAG = DTP_METRIC_NAME_PREFIX + ".name";
+
+    public static final String POOL_ALIAS_TAG = DTP_METRIC_NAME_PREFIX + ".alias";
 
     public static final String APP_NAME_TAG = "app.name";
 
@@ -69,9 +74,7 @@ public class MicroMeterCollector extends AbstractCollector {
 
     public void gauge(ThreadPoolStats poolStats) {
 
-        Iterable<Tag> tags = Lists.newArrayList(
-                Tag.of(POOL_NAME_TAG, poolStats.getPoolName()),
-                Tag.of(APP_NAME_TAG, CommonUtil.getInstance().getServiceName()));
+        Iterable<Tag> tags = getTags(poolStats);
 
         Metrics.gauge(metricName("core.size"), tags, poolStats, ThreadPoolStats::getCorePoolSize);
         Metrics.gauge(metricName("maximum.size"), tags, poolStats, ThreadPoolStats::getMaximumPoolSize);
@@ -95,5 +98,21 @@ public class MicroMeterCollector extends AbstractCollector {
     private static String metricName(String name) {
         return String.join(".", DTP_METRIC_NAME_PREFIX, name);
     }
+
+
+    private Iterable<Tag> getTags(ThreadPoolStats poolStats) {
+
+        List<Tag> tags = new ArrayList<>(3);
+        tags.add(Tag.of(POOL_NAME_TAG, poolStats.getPoolName()));
+        tags.add(Tag.of(APP_NAME_TAG, CommonUtil.getInstance().getServiceName()));
+
+        if (StringUtils.isNotBlank(poolStats.getPoolAliasName())) {
+            tags.add(Tag.of(POOL_ALIAS_TAG, poolStats.getPoolAliasName()));
+        }
+
+        return tags;
+    }
+
+
 }
 

@@ -57,6 +57,7 @@ public class ExecutorConverter {
         }
         ThreadPoolStats poolStats = convertCommon(executor);
         poolStats.setPoolName(wrapper.getThreadPoolName());
+        poolStats.setPoolAliasName(wrapper.getThreadPoolAliasName());
         Optional.ofNullable(wrapper.getThreadPoolStatProvider()).ifPresent(p -> {
             poolStats.setRunTimeoutCount(p.getRunTimeoutCount());
             poolStats.setQueueTimeoutCount(p.getQueueTimeoutCount());

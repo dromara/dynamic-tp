@@ -99,20 +99,14 @@ public class MicroMeterCollector extends AbstractCollector {
         return String.join(".", DTP_METRIC_NAME_PREFIX, name);
     }
 
-
     private Iterable<Tag> getTags(ThreadPoolStats poolStats) {
-
         List<Tag> tags = new ArrayList<>(3);
         tags.add(Tag.of(POOL_NAME_TAG, poolStats.getPoolName()));
         tags.add(Tag.of(APP_NAME_TAG, CommonUtil.getInstance().getServiceName()));
-
         if (StringUtils.isNotBlank(poolStats.getPoolAliasName())) {
             tags.add(Tag.of(POOL_ALIAS_TAG, poolStats.getPoolAliasName()));
         }
-
         return tags;
     }
-
-
 }
 

@@ -41,9 +41,7 @@ public abstract class OnceApplicationContextEventListener implements Application
 
     private ApplicationContext applicationContext;
 
-    public OnceApplicationContextEventListener() {
-
-    }
+    protected OnceApplicationContextEventListener() { }
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
@@ -66,7 +64,6 @@ public abstract class OnceApplicationContextEventListener implements Application
      * @param event {@link ContextRefreshedEvent}
      */
     protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
-
     }
 
     /**
@@ -75,7 +72,6 @@ public abstract class OnceApplicationContextEventListener implements Application
      * @param event {@link ContextStartedEvent}
      */
     protected void onContextStartedEvent(ContextStartedEvent event) {
-
     }
 
     /**
@@ -84,7 +80,6 @@ public abstract class OnceApplicationContextEventListener implements Application
      * @param event {@link ContextStoppedEvent}
      */
     protected void onContextStoppedEvent(ContextStoppedEvent event) {
-
     }
 
     /**
@@ -93,7 +88,6 @@ public abstract class OnceApplicationContextEventListener implements Application
      * @param event {@link ContextClosedEvent}
      */
     protected void onContextClosedEvent(ContextClosedEvent event) {
-
     }
 
     /**

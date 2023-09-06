@@ -51,8 +51,8 @@ import java.util.concurrent.TimeUnit;
 import static org.awaitility.Awaitility.await;
 
 class HashedWheelTimerTest {
-    private CountDownLatch tryStopTaskCountDownLatch = new CountDownLatch(1);
-    private CountDownLatch errorTaskCountDownLatch = new CountDownLatch(1);
+    private final CountDownLatch tryStopTaskCountDownLatch = new CountDownLatch(1);
+    private final CountDownLatch errorTaskCountDownLatch = new CountDownLatch(1);
 
     private static class EmptyTask implements TimerTask {
         @Override
@@ -76,7 +76,7 @@ class HashedWheelTimerTest {
     }
 
     private class TryStopTask implements TimerTask {
-        private Timer timer;
+        private final Timer timer;
 
         public TryStopTask(Timer timer) {
             this.timer = timer;

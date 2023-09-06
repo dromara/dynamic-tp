@@ -1,13 +1,10 @@
 package org.dromara.dynamictp.test.core.thread;
 
-import cn.hutool.core.date.StopWatch;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.plugin.DtpInterceptor;
 import org.dromara.dynamictp.core.plugin.DtpIntercepts;
 import org.dromara.dynamictp.core.plugin.DtpInvocation;
 import org.dromara.dynamictp.core.plugin.DtpSignature;
-
-import java.util.concurrent.Executor;
 
 /**
  * @author hanli

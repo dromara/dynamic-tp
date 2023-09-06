@@ -71,7 +71,7 @@ public class CuratorUtil {
             try {
                 COUNT_DOWN_LATCH.await();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                log.error("get zk client error", e);
                 Thread.currentThread().interrupt();
             }
         }

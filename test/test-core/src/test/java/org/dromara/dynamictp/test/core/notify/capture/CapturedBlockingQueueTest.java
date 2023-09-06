@@ -59,7 +59,6 @@ public class CapturedBlockingQueueTest {
 
     @Test
     public void testBlockingQueueDefaultCapacity() {
-        ;
         CapturedBlockingQueue capturedBlockingQueue = new CapturedBlockingQueue(dtpExecutor);
         Assertions.assertEquals(0, capturedBlockingQueue.size());
         Assertions.assertEquals(Integer.MAX_VALUE, capturedBlockingQueue.remainingCapacity());

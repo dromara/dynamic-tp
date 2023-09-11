@@ -17,12 +17,16 @@
 
 package org.dromara.dynamictp.core.notifier;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.constant.WechatNotifyConst;
 import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
 import org.dromara.dynamictp.core.notifier.base.Notifier;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * DtpWechatNotifier related
@@ -55,5 +59,12 @@ public class DtpWechatNotifier extends AbstractDtpNotifier {
     @Override
     protected Pair<String, String> getColors() {
         return new ImmutablePair<>(WechatNotifyConst.WARNING_COLOR, WechatNotifyConst.COMMENT_COLOR);
+    }
+
+    @Override
+    protected String formatReceivers(String receives) {
+        return Arrays.stream(StringUtils.split(receives, ','))
+                .map(receiver -> "<@" + receiver + ">")
+                .collect(Collectors.joining(","));
     }
 }

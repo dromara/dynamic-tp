@@ -38,7 +38,7 @@ public class EtcdRefresher extends AbstractRefresher implements InitializingBean
     public void afterPropertiesSet() {
         DtpProperties.Etcd etcd = dtpProperties.getEtcd();
         Map<Object, Object> map = loadConfig(etcd);
-        if (map.size() > 0) {
+        if (!map.isEmpty()) {
             EtcdUtil.initWatcher(this, dtpProperties, map);
         }
     }

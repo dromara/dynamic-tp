@@ -63,11 +63,11 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
         final JettyExecutorAdapter adapter = new JettyExecutorAdapter(
                 (ThreadPool.SizedThreadPool) threadPool);
         ExecutorWrapper executorWrapper = new ExecutorWrapper(POOL_NAME, adapter);
-        replaceOriginExecutor(jettyWebServer, threadPool);
+        enhanceOriginExecutor(jettyWebServer, threadPool);
         return executorWrapper;
     }
 
-    private void replaceOriginExecutor(JettyWebServer webServer, ThreadPool threadPool) {
+    private void enhanceOriginExecutor(JettyWebServer webServer, ThreadPool threadPool) {
         try {
             if (threadPool instanceof ExecutorThreadPool) {
                 val executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(EXECUTOR_NAME, threadPool);

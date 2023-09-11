@@ -24,7 +24,6 @@ import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 
-import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 
@@ -57,7 +56,7 @@ public class TaskRejectAware extends TaskStatAware {
         }
 
         statProvider.incRejectCount(1);
-        AlarmManager.doAlarmAsync(statProvider.getExecutorWrapper(), Collections.singletonList(REJECT));
+        AlarmManager.doAlarmAsync(statProvider.getExecutorWrapper(), REJECT);
         ExecutorAdapter<?> executorAdapter = statProvider.getExecutorWrapper().getExecutor();
         String logMsg = CharSequenceUtil.format("DynamicTp execute, thread pool is exhausted, tpName: {},  traceId: {}, " +
                         "poolSize: {} (active: {}, core: {}, max: {}, largest: {}), " +

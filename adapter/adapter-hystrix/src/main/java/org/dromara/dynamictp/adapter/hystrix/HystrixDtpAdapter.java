@@ -18,6 +18,7 @@
 package org.dromara.dynamictp.adapter.hystrix;
 
 import com.google.common.collect.Maps;
+import com.netflix.hystrix.HystrixThreadPoolMetrics;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
 import com.netflix.hystrix.strategy.eventnotifier.HystrixEventNotifier;
@@ -31,6 +32,7 @@ import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.common.util.StreamUtil;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
@@ -50,6 +52,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class HystrixDtpAdapter extends AbstractDtpAdapter {
 
     private static final String PREFIX = "hystrixTp";
+
+    private static final String THREAD_POOL_FIELD_NAME = "threadPool";
 
     private static final Map<String, DtpMetricsPublisherThreadPool> METRICS_PUBLISHERS = Maps.newHashMap();
 
@@ -73,10 +77,10 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
         return PREFIX;
     }
 
-    @Override
-    public ThreadPoolExecutor register(String poolName, ThreadPoolExecutor threadPoolExecutor) {
+    public void register(String poolName, HystrixThreadPoolMetrics metrics) {
+        ThreadPoolExecutor threadPoolExecutor = metrics.getThreadPool();
         if (executors.containsKey(poolName)) {
-            return threadPoolExecutor;
+            return;
         }
         val executorWrapper = new ExecutorWrapper(poolName, threadPoolExecutor);
         initNotifyItems(poolName, executorWrapper);
@@ -86,7 +90,11 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
         val tmpMap = StreamUtil.toMap(dtpProperties.getHystrixTp(), TpExecutorProps::getThreadPoolName);
         log.info("DynamicTp adapter, hystrix init end, executor {}", executorWrapper);
         refresh(executorWrapper, dtpProperties.getPlatforms(), tmpMap.get(poolName));
-        return new ThreadPoolExecutorProxy(executorWrapper);
+        try {
+            ReflectionUtil.setFieldValue(THREAD_POOL_FIELD_NAME, metrics, new ThreadPoolExecutorProxy(executorWrapper));
+        } catch (IllegalAccessException e) {
+            log.error("DynamicTp {} adapter, enhance origin executor failed.", getAdapterPrefix(), e);
+        }
     }
 
     public void cacheMetricsPublisher(String poolName, DtpMetricsPublisherThreadPool metricsPublisher) {

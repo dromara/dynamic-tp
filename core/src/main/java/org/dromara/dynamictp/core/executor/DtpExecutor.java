@@ -188,7 +188,7 @@ public class DtpExecutor extends ThreadPoolExecutor
     @Override
     public void execute(Runnable command) {
         DtpRunnable dtpRunnable = (DtpRunnable) wrapTasks(command);
-        AwareManager.execute(this, command);
+        AwareManager.execute(this, dtpRunnable);
         super.execute(dtpRunnable);
     }
 

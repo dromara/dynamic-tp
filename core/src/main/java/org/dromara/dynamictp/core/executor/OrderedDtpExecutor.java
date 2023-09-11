@@ -210,11 +210,12 @@ public class OrderedDtpExecutor extends DtpExecutor {
         @Override
         public void execute(Runnable command) {
             boolean start = false;
+            command = getEnhancedTask(command);
             synchronized (this) {
                 try {
-                    if (!taskQueue.add(getEnhancedTask(command))) {
+                    if (!taskQueue.add(command)) {
                         rejectedTaskIncrement(command);
-                        throw new RejectedExecutionException("Task " + command.toString() + " rejected from " + this);
+                        throw new RejectedExecutionException("Task " + command + " rejected from " + this);
                     }
                 } catch (IllegalStateException ex) {
                     rejectedTaskIncrement(command);

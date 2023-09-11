@@ -81,6 +81,6 @@ public final class WechatNotifyConst {
             "> <font color='comment'>队列类型：%s</font> \n" +
             "> <font color='queueCapacity'>队列容量：%s => %s</font> \n" +
             "> <font color='rejectType'>拒绝策略：%s => %s</font> \n" +
-            "> <font color='comment'>接收人：<@%s></font> \n" +
+            "> <font color='comment'>接收人：%s</font> \n" +
             "> <font color='comment'>通知时间：%s</font> \n";
 }

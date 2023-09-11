@@ -39,11 +39,13 @@ import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.slf4j.MDC;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.UNKNOWN;
 import static org.dromara.dynamictp.core.notifier.manager.NotifyHelper.getAlarmKeys;
@@ -161,7 +163,10 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
     protected String formatReceivers(String receives) {
         String[] receivers = StringUtils.split(receives, ',');
-        return Joiner.on(", @").join(receivers);
+        return Arrays.stream(receivers)
+                .filter(StringUtils::isNotBlank)
+                .map(receiver -> "@" + receiver)
+                .collect(Collectors.joining(","));
     }
 
     protected String populatePoolName(ExecutorWrapper executorWrapper) {

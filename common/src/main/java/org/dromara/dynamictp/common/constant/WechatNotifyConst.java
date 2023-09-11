@@ -64,7 +64,7 @@ public final class WechatNotifyConst {
             "> <font color='queueTimeoutCount'>等待超时任务数量：%s</font> \n" +
             "> <font color='comment'>上次报警时间：%s</font> \n" +
             "> <font color='comment'>报警时间：%s</font> \n" +
-            "> <font color='comment'>接收人：<@%s></font> \n" +
+            "> <font color='comment'>接收人：%s</font> \n" +
             "> <font color='comment'>tid：%s</font> \n" +
             "> <font color='info'>报警间隔：%ss</font> \n";
 

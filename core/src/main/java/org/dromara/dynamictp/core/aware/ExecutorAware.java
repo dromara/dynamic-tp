@@ -19,7 +19,6 @@ package org.dromara.dynamictp.core.aware;
 
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -48,7 +47,7 @@ public interface ExecutorAware extends DtpAware {
     String getName();
 
     /**
-     * registry Executor
+     * register Executor
      *
      * @param wrapper executor wrapper
      */
@@ -135,9 +134,8 @@ public interface ExecutorAware extends DtpAware {
      * enhance reject
      * @param r runnable
      * @param executor executor
-     * @param log logger
      */
-    default void beforeReject(Runnable r, Executor executor, Logger log) {
+    default void beforeReject(Runnable r, Executor executor) {
         // default no Operation
     }
 }

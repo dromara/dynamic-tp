@@ -17,14 +17,15 @@
 
 package org.dromara.dynamictp.core.executor;
 
+import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.queue.VariableLinkedBlockingQueue;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.support.selector.ExecutorSelector;
 import org.dromara.dynamictp.core.support.selector.HashedExecutorSelector;
 import org.dromara.dynamictp.core.support.task.Ordered;
 import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
-import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
@@ -250,7 +251,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
         }
 
         private void rejectedTaskIncrement(Runnable runnable) {
-            AwareManager.beforeReject(runnable, OrderedDtpExecutor.this, log);
+            AwareManager.beforeReject(runnable, OrderedDtpExecutor.this);
             rejectedTaskCount.increment();
         }
 

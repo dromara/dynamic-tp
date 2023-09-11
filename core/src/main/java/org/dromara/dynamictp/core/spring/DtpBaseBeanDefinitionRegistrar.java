@@ -60,5 +60,4 @@ public class DtpBaseBeanDefinitionRegistrar implements ImportBeanDefinitionRegis
         };
         SpringBeanHelper.registerIfAbsent(registry, HASHED_WHEEL_TIMER, HashedWheelTimer.class, constructorArgs);
     }
-
 }

@@ -47,7 +47,7 @@ public class MonitoredQueuedThreadPoolProxy extends MonitoredQueuedThreadPool {
         try {
             super.execute(enhanceTask);
         } catch (RejectedExecutionException e) {
-            AwareManager.beforeReject(enhanceTask, original, log);
+            AwareManager.beforeReject(enhanceTask, original);
             throw e;
         }
     }

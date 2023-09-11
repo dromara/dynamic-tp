@@ -18,8 +18,10 @@
 package org.dromara.dynamictp.core.aware;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
+import org.dromara.dynamictp.common.entity.TpExecutorProps;
+import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
@@ -43,6 +45,15 @@ public class TaskTimeoutAware extends TaskStatAware {
     }
 
     @Override
+    protected void refresh(TpExecutorProps props, ThreadPoolStatProvider statProvider) {
+        super.refresh(props, statProvider);
+        if (Objects.nonNull(props)) {
+            statProvider.setRunTimeout(props.getRunTimeout());
+            statProvider.setQueueTimeout(props.getQueueTimeout());
+        }
+    }
+
+    @Override
     public void execute(Executor executor, Runnable r) {
         Optional.ofNullable(statProviders.get(executor)).ifPresent(p -> p.startQueueTimeoutTask(r));
     }
@@ -61,7 +72,7 @@ public class TaskTimeoutAware extends TaskStatAware {
     }
 
     @Override
-    public void beforeReject(Runnable r, Executor executor, Logger log) {
+    public void beforeReject(Runnable r, Executor executor) {
         Optional.ofNullable(statProviders.get(executor)).ifPresent(p -> p.cancelQueueTimeoutTask(r));
     }
 }

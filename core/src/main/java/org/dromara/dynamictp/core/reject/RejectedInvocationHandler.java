@@ -57,6 +57,6 @@ public class RejectedInvocationHandler implements InvocationHandler {
      * @param executor ThreadPoolExecutor instance
      */
     private void beforeReject(Runnable runnable, Executor executor) {
-        AwareManager.beforeReject(runnable, executor, log);
+        AwareManager.beforeReject(runnable, executor);
     }
 }

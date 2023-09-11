@@ -94,6 +94,11 @@ public class DtpExecutor extends ThreadPoolExecutor
     private Set<String> pluginNames = Sets.newHashSet();
 
     /**
+     * Aware names.
+     */
+    private Set<String> awareNames = Sets.newHashSet();
+
+    /**
      * If pre start all core threads.
      */
     private boolean preStartAllCoreThreads;
@@ -324,6 +329,14 @@ public class DtpExecutor extends ThreadPoolExecutor
 
     public void setPluginNames(Set<String> pluginNames) {
         this.pluginNames = pluginNames;
+    }
+
+    public Set<String> getAwareNames() {
+        return awareNames;
+    }
+
+    public void setAwareNames(Set<String> awareNames) {
+        this.awareNames = awareNames;
     }
 
     public boolean isPreStartAllCoreThreads() {

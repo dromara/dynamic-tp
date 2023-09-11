@@ -18,11 +18,11 @@
 package org.dromara.dynamictp.core.aware;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -53,7 +53,7 @@ public class AwareManager {
 
     public static void add(ExecutorAware aware) {
         for (ExecutorAware executorAware : EXECUTOR_AWARE_LIST) {
-            if (executorAware.getClass().equals(aware.getClass())) {
+            if (executorAware.getName().equalsIgnoreCase(aware.getName())) {
                 return;
             }
         }
@@ -63,14 +63,18 @@ public class AwareManager {
 
     public static void register(ExecutorWrapper executorWrapper) {
         for (ExecutorAware executorAware : EXECUTOR_AWARE_LIST) {
-            executorAware.register(executorWrapper);
+            val awareNames = executorWrapper.getAwareNames();
+            // if awareNames is empty, register all
+            if (CollectionUtils.isEmpty(awareNames) || awareNames.contains(executorAware.getName())) {
+                executorAware.register(executorWrapper);
+            }
         }
     }
 
     public static void refresh(ExecutorWrapper executorWrapper, TpExecutorProps props) {
         for (ExecutorAware executorAware : EXECUTOR_AWARE_LIST) {
-            if (CollectionUtils.isEmpty(props.getAwareNames()) ||
-                    props.getAwareNames().contains(executorAware.getName())) {
+            val awareNames = props.getAwareNames();
+            if (CollectionUtils.isEmpty(awareNames) || awareNames.contains(executorAware.getName())) {
                 executorAware.refresh(executorWrapper, props);
             } else {
                 executorAware.remove(executorWrapper);
@@ -138,10 +142,10 @@ public class AwareManager {
         }
     }
 
-    public static void beforeReject(Runnable r, Executor executor, Logger log) {
+    public static void beforeReject(Runnable r, Executor executor) {
         for (ExecutorAware aware : EXECUTOR_AWARE_LIST) {
             try {
-                aware.beforeReject(r, executor, log);
+                aware.beforeReject(r, executor);
             } catch (Exception e) {
                 log.error("DynamicTp aware [{}], enhance beforeReject error.", aware.getName(), e);
             }

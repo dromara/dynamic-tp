@@ -24,13 +24,13 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.spring.SpringBeanHelper;
+import org.dromara.dynamictp.core.executor.EagerDtpExecutor;
+import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.BinderHelper;
 import org.dromara.dynamictp.core.support.ExecutorType;
 import org.dromara.dynamictp.core.support.TaskQueue;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
-import org.dromara.dynamictp.core.executor.EagerDtpExecutor;
-import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -42,6 +42,7 @@ import java.util.concurrent.BlockingQueue;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.ALLOW_CORE_THREAD_TIMEOUT;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.AWAIT_TERMINATION_SECONDS;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.AWARE_NAMES;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.NOTIFY_ENABLED;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.NOTIFY_ITEMS;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PLATFORM_IDS;
@@ -112,7 +113,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         val taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
         propertyValues.put(TASK_WRAPPERS, taskWrappers);
         propertyValues.put(PLUGIN_NAMES, props.getPluginNames());
-
+        propertyValues.put(AWARE_NAMES, props.getAwareNames());
         return propertyValues;
     }
 

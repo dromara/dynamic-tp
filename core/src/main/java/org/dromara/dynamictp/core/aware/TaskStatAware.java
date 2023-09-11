@@ -55,10 +55,7 @@ public abstract class TaskStatAware implements ExecutorAware {
             register(wrapper);
         }
         ThreadPoolStatProvider statProvider = wrapper.getThreadPoolStatProvider();
-        if (Objects.nonNull(props)) {
-            statProvider.setRunTimeout(props.getRunTimeout());
-            statProvider.setQueueTimeout(props.getQueueTimeout());
-        }
+        refresh(props, statProvider);
     }
 
     @Override
@@ -69,4 +66,6 @@ public abstract class TaskStatAware implements ExecutorAware {
             statProviders.remove(wrapper.getOriginalProxy());
         }
     }
+
+    protected void refresh(TpExecutorProps props, ThreadPoolStatProvider statProvider) { }
 }

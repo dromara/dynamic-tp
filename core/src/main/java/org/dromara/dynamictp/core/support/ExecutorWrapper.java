@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.core.support;
 
+import com.google.common.collect.Sets;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
@@ -27,6 +28,7 @@ import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
 import org.springframework.beans.BeanUtils;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -76,9 +78,14 @@ public class ExecutorWrapper {
     private boolean notifyEnabled = true;
 
     /**
-     * alarmHelper
+     * Thread pool stat provider
      */
     private ThreadPoolStatProvider threadPoolStatProvider;
+
+    /**
+     * Aware names
+     */
+    private Set<String> awareNames = Sets.newHashSet();
 
     public ExecutorWrapper() { }
 
@@ -89,6 +96,7 @@ public class ExecutorWrapper {
         this.notifyItems = executor.getNotifyItems();
         this.notifyEnabled = executor.isNotifyEnabled();
         this.platformIds = executor.getPlatformIds();
+        this.awareNames = executor.getAwareNames();
         this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
     }
 

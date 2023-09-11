@@ -81,6 +81,8 @@ public final class DynamicTpConst {
 
     public static final String PLUGIN_NAMES = "pluginNames";
 
+    public static final String AWARE_NAMES = "awareNames";
+
     /**
      * symbol
      */

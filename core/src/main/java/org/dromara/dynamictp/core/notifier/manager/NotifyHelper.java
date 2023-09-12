@@ -59,7 +59,7 @@ import static org.dromara.dynamictp.common.entity.NotifyItem.mergeAllNotifyItems
 @Slf4j
 public class NotifyHelper {
 
-    private static final List<String> COMMON_ALARM_KEYS = Lists.newArrayList("alarmType", "threshold");
+    private static final List<String> COMMON_ALARM_KEYS = Lists.newArrayList("alarmType", "alarmValue");
 
     private static final Set<String> LIVENESS_ALARM_KEYS = Sets.newHashSet(
             "corePoolSize", "maximumPoolSize", "poolSize", "activeCount");

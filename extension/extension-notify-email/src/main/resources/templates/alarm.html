@@ -247,10 +247,10 @@
                                                         <strong>报警类型：</strong><span th:text="${alarmType}"></span></p>
                                                     <p
                                                             style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
-                                                        <span th:if="${#sets.contains(highlightVariables, 'threshold')}" style="color: #ff0013">
+                                                        <span th:if="${#sets.contains(highlightVariables, 'alarmValue')}" style="color: #ff0013">
                                                             🔴
                                                         </span>
-                                                        <strong>报警阈值：</strong><span th:text="${threshold}"></span></p>
+                                                        <strong>阈值/当前值：</strong><span th:text="${alarmValue}"></span></p>
                                                     <p
                                                             style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
                                                         <span th:if="${#sets.contains(highlightVariables, 'corePoolSize')}" style="color: #ff0013">

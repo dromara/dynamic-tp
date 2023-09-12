@@ -91,8 +91,9 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         ExecutorWrapper executorWrapper = context.getExecutorWrapper();
         val executor = executorWrapper.getExecutor();
         NotifyItem notifyItem = context.getNotifyItem();
-        val alarmCounter = AlarmCounter.countStrRrq(executorWrapper);
-
+        val statProvider = executorWrapper.getThreadPoolStatProvider();
+        val alarmValue = notifyItem.getThreshold() + notifyItemEnum.getUnit() + "/"
+                + AlarmCounter.calcCurrentValue(executorWrapper, notifyItemEnum) + notifyItemEnum.getUnit();
         String content = String.format(
                 getAlarmTemplate(),
                 CommonUtil.getInstance().getServiceName(),
@@ -100,7 +101,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 CommonUtil.getInstance().getEnv(),
                 populatePoolName(executorWrapper),
                 notifyItemEnum.getValue(),
-                notifyItem.getThreshold() + notifyItemEnum.getUnit(),
+                alarmValue,
                 executor.getCorePoolSize(),
                 executor.getMaximumPoolSize(),
                 executor.getPoolSize(),
@@ -114,9 +115,9 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 executor.getQueueSize(),
                 executor.getQueueRemainingCapacity(),
                 executor.getRejectHandlerType(),
-                alarmCounter.getLeft(),
-                alarmCounter.getMiddle(),
-                alarmCounter.getRight(),
+                statProvider.getRejectedTaskCount(),
+                statProvider.getRunTimeoutCount(),
+                statProvider.getQueueTimeoutCount(),
                 Optional.ofNullable(context.getAlarmInfo()).map(AlarmInfo::getLastAlarmTime).orElse(UNKNOWN),
                 DateUtil.now(),
                 getReceives(notifyItem, platform),

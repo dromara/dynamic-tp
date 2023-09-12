@@ -17,23 +17,19 @@
 
 package org.dromara.dynamictp.core.notifier.alarm;
 
+import cn.hutool.core.util.NumberUtil;
 import lombok.val;
 import lombok.var;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.AlarmInfo;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.UNKNOWN;
-import static org.dromara.dynamictp.common.em.NotifyItemEnum.QUEUE_TIMEOUT;
 import static org.dromara.dynamictp.common.em.NotifyItemEnum.REJECT;
-import static org.dromara.dynamictp.common.em.NotifyItemEnum.RUN_TIMEOUT;
 
 /**
  * AlarmCounter related
@@ -42,8 +38,6 @@ import static org.dromara.dynamictp.common.em.NotifyItemEnum.RUN_TIMEOUT;
  * @since 1.0.4
  **/
 public class AlarmCounter {
-
-    private static final String UNKNOWN_COUNT_STR = UNKNOWN + " / " + UNKNOWN;
 
     private static final Map<String, AlarmInfo> ALARM_INFO_CACHE = new ConcurrentHashMap<>();
 
@@ -85,19 +79,19 @@ public class AlarmCounter {
         }
     }
 
-    public static Triple<String, String, String> countStrRrq(ExecutorWrapper executorWrapper) {
-        ThreadPoolStatProvider statProvider = executorWrapper.getThreadPoolStatProvider();
-        if (Objects.nonNull(statProvider)) {
-            String threadPoolName = executorWrapper.getThreadPoolName();
-            String rejectCount = getCount(threadPoolName, REJECT.getValue()) + " / "
-                    + statProvider.getRejectedTaskCount();
-            String runTimeoutCount = getCount(threadPoolName, RUN_TIMEOUT.getValue()) + " / "
-                    + statProvider.getRunTimeoutCount();
-            String queueTimeoutCount = getCount(threadPoolName, QUEUE_TIMEOUT.getValue()) + " / "
-                    + statProvider.getQueueTimeoutCount();
-            return new ImmutableTriple<>(rejectCount, runTimeoutCount, queueTimeoutCount);
-        } else {
-            return new ImmutableTriple<>(UNKNOWN_COUNT_STR, UNKNOWN_COUNT_STR, UNKNOWN_COUNT_STR);
+    public static int calcCurrentValue(ExecutorWrapper wrapper, NotifyItemEnum itemEnum) {
+        val executor = wrapper.getExecutor();
+        switch (itemEnum) {
+            case CAPACITY:
+                return (int) (NumberUtil.div(executor.getQueueSize(), executor.getQueueCapacity(), 2) * 100);
+            case LIVENESS:
+                return (int) (NumberUtil.div(executor.getActiveCount(), executor.getMaximumPoolSize(), 2) * 100);
+            case REJECT:
+            case RUN_TIMEOUT:
+            case QUEUE_TIMEOUT:
+                return Integer.parseInt(getCount(wrapper.getThreadPoolName(), REJECT.getValue()));
+            default:
+                return 0;
         }
     }
 

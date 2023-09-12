@@ -17,13 +17,16 @@
 
 package org.dromara.dynamictp.extension.notify.email;
 
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
 import org.dromara.dynamictp.common.entity.AlarmInfo;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.TpMainFields;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.util.CommonUtil;
 import org.dromara.dynamictp.common.util.DateUtil;
 import org.dromara.dynamictp.core.notifier.AbstractDtpNotifier;
@@ -32,9 +35,6 @@ import org.dromara.dynamictp.core.notifier.context.AlarmCtx;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
 import org.dromara.dynamictp.core.notifier.context.DtpNotifyCtxHolder;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.MDC;
 import org.thymeleaf.context.Context;
 
@@ -87,12 +87,13 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         val executor = executorWrapper.getExecutor();
         NotifyItem notifyItem = alarmCtx.getNotifyItem();
         AlarmInfo alarmInfo = alarmCtx.getAlarmInfo();
-
-        val alarmCounter = AlarmCounter.countStrRrq(executorWrapper);
+        val statProvider = executorWrapper.getThreadPoolStatProvider();
+        val alarmValue = notifyItem.getThreshold() + notifyItemEnum.getUnit() + "/"
+                + AlarmCounter.calcCurrentValue(executorWrapper, notifyItemEnum) + notifyItemEnum.getUnit();
 
         Context context = newContext(executorWrapper);
         context.setVariable("alarmType", notifyItemEnum.getValue());
-        context.setVariable("threshold", notifyItem.getThreshold());
+        context.setVariable("alarmValue", alarmValue);
         context.setVariable("corePoolSize", executor.getCorePoolSize());
         context.setVariable("maximumPoolSize", executor.getMaximumPoolSize());
         context.setVariable("poolSize", executor.getPoolSize());
@@ -106,9 +107,9 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("queueSize", executor.getQueueSize());
         context.setVariable("queueRemaining", executor.getQueueRemainingCapacity());
         context.setVariable("rejectType", executor.getRejectHandlerType());
-        context.setVariable("rejectCount", alarmCounter.getLeft());
-        context.setVariable("runTimeoutCount", alarmCounter.getMiddle());
-        context.setVariable("queueTimeoutCount", alarmCounter.getRight());
+        context.setVariable("rejectCount", statProvider.getRejectedTaskCount());
+        context.setVariable("runTimeoutCount", statProvider.getRunTimeoutCount());
+        context.setVariable("queueTimeoutCount", statProvider.getQueueTimeoutCount());
         context.setVariable("lastAlarmTime", alarmInfo.getLastAlarmTime() == null ? UNKNOWN : alarmInfo.getLastAlarmTime());
         context.setVariable("alarmTime", DateUtil.now());
         context.setVariable("tid", Optional.ofNullable(MDC.get(TRACE_ID)).orElse(UNKNOWN));

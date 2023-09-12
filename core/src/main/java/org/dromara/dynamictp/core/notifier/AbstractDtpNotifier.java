@@ -100,7 +100,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 CommonUtil.getInstance().getEnv(),
                 populatePoolName(executorWrapper),
                 notifyItemEnum.getValue(),
-                notifyItem.getThreshold(),
+                notifyItem.getThreshold() + notifyItemEnum.getUnit(),
                 executor.getCorePoolSize(),
                 executor.getMaximumPoolSize(),
                 executor.getPoolSize(),

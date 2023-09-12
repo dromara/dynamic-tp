@@ -22,12 +22,13 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.util.ConstructorUtil;
 import org.dromara.dynamictp.core.DtpRegistry;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
+import org.dromara.dynamictp.core.executor.EagerDtpExecutor;
 import org.dromara.dynamictp.core.plugin.DtpInterceptorRegistry;
 import org.dromara.dynamictp.core.support.DynamicTp;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.TaskQueue;
-import org.dromara.dynamictp.core.executor.DtpExecutor;
-import org.dromara.dynamictp.core.executor.EagerDtpExecutor;
+import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -120,7 +121,9 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
         } else {
             executor = (Executor) bean;
         }
-        DtpRegistry.registerExecutor(new ExecutorWrapper(poolName, executor), "beanPostProcessor");
+        val executorWrapper = new ExecutorWrapper(poolName, executor);
+        new ThreadPoolExecutorProxy(executorWrapper);
+        DtpRegistry.registerExecutor(executorWrapper, "beanPostProcessor");
     }
 
     @Override

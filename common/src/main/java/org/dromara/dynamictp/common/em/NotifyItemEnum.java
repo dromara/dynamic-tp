@@ -31,38 +31,41 @@ public enum NotifyItemEnum {
     /**
      * Config change notify.
      */
-    CHANGE("change"),
+    CHANGE("change", ""),
 
     /**
      * ThreadPool liveness notify.
      * liveness = activeCount / maximumPoolSize
      */
-    LIVENESS("liveness"),
+    LIVENESS("liveness", "%"),
 
     /**
      * Capacity threshold notify
      */
-    CAPACITY("capacity"),
+    CAPACITY("capacity", "%"),
 
     /**
      * Reject notify.
      */
-    REJECT("reject"),
+    REJECT("reject", ""),
 
     /**
      * Task run timeout alarm.
      */
-    RUN_TIMEOUT("run_timeout"),
+    RUN_TIMEOUT("run_timeout", ""),
 
     /**
      * Task queue wait timeout alarm.
      */
-    QUEUE_TIMEOUT("queue_timeout");
+    QUEUE_TIMEOUT("queue_timeout", "");
 
     private final String value;
 
-    NotifyItemEnum(String value) {
+    private final String unit;
+
+    NotifyItemEnum(String value, String unit) {
         this.value = value;
+        this.unit = unit;
     }
 
     public static NotifyItemEnum of(String value) {

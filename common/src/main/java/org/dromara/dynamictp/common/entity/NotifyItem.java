@@ -17,11 +17,11 @@
 
 package org.dromara.dynamictp.common.entity;
 
-import org.dromara.dynamictp.common.em.NotifyItemEnum;
-import org.dromara.dynamictp.common.util.StringUtil;
 import lombok.Data;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
+import org.dromara.dynamictp.common.em.NotifyItemEnum;
+import org.dromara.dynamictp.common.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,41 +73,6 @@ public class NotifyItem {
      */
     private String receivers;
 
-    public static List<NotifyItem> mergeSimpleNotifyItems(List<NotifyItem> source) {
-        // update notify items
-        if (CollectionUtils.isEmpty(source)) {
-            return getSimpleNotifyItems();
-        } else {
-            val configuredTypes = source.stream().map(NotifyItem::getType).collect(toList());
-            val defaultItems = getSimpleNotifyItems().stream()
-                    .filter(t -> !StringUtil.containsIgnoreCase(t.getType(), configuredTypes))
-                    .collect(Collectors.toList());
-            source.addAll(defaultItems);
-            return source;
-        }
-    }
-
-    public static List<NotifyItem> getSimpleNotifyItems() {
-        NotifyItem changeNotify = new NotifyItem();
-        changeNotify.setType(NotifyItemEnum.CHANGE.getValue());
-        changeNotify.setInterval(1);
-
-        NotifyItem livenessNotify = new NotifyItem();
-        livenessNotify.setType(NotifyItemEnum.LIVENESS.getValue());
-        livenessNotify.setThreshold(70);
-
-        NotifyItem capacityNotify = new NotifyItem();
-        capacityNotify.setType(NotifyItemEnum.CAPACITY.getValue());
-        capacityNotify.setThreshold(70);
-
-        List<NotifyItem> notifyItems = new ArrayList<>(3);
-        notifyItems.add(livenessNotify);
-        notifyItems.add(changeNotify);
-        notifyItems.add(capacityNotify);
-
-        return notifyItems;
-    }
-
     public static List<NotifyItem> mergeAllNotifyItems(List<NotifyItem> source) {
         // update notify items
         if (CollectionUtils.isEmpty(source)) {
@@ -140,6 +105,27 @@ public class NotifyItem {
         notifyItems.add(rejectNotify);
         notifyItems.add(runTimeoutNotify);
         notifyItems.add(queueTimeoutNotify);
+
+        return notifyItems;
+    }
+
+    public static List<NotifyItem> getSimpleNotifyItems() {
+        NotifyItem changeNotify = new NotifyItem();
+        changeNotify.setType(NotifyItemEnum.CHANGE.getValue());
+        changeNotify.setInterval(1);
+
+        NotifyItem livenessNotify = new NotifyItem();
+        livenessNotify.setType(NotifyItemEnum.LIVENESS.getValue());
+        livenessNotify.setThreshold(70);
+
+        NotifyItem capacityNotify = new NotifyItem();
+        capacityNotify.setType(NotifyItemEnum.CAPACITY.getValue());
+        capacityNotify.setThreshold(70);
+
+        List<NotifyItem> notifyItems = new ArrayList<>(3);
+        notifyItems.add(livenessNotify);
+        notifyItems.add(changeNotify);
+        notifyItems.add(capacityNotify);
 
         return notifyItems;
     }

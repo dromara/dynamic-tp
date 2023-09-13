@@ -88,7 +88,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         NotifyItem notifyItem = alarmCtx.getNotifyItem();
         AlarmInfo alarmInfo = alarmCtx.getAlarmInfo();
         val statProvider = executorWrapper.getThreadPoolStatProvider();
-        val alarmValue = notifyItem.getThreshold() + notifyItemEnum.getUnit() + "/"
+        val alarmValue = notifyItem.getThreshold() + notifyItemEnum.getUnit() + " / "
                 + AlarmCounter.calcCurrentValue(executorWrapper, notifyItemEnum) + notifyItemEnum.getUnit();
 
         Context context = newContext(executorWrapper);

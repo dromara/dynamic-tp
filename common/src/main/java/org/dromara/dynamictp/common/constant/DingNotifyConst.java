@@ -42,7 +42,7 @@ public final class DingNotifyConst {
             "<font color=#664B4B size=2>环境：%s</font> \n\n " +
             "<font color=#664B4B size=2>线程池名称：%s</font> \n\n " +
             "<font color=alarmType size=2>报警类型：%s</font> \n\n " +
-            "<font color=alarmValue size=2>阈值/当前值：%s</font> \n\n " +
+            "<font color=alarmValue size=2>阈值 / 当前值：%s</font> \n\n " +
             "<font color=corePoolSize size=2>核心线程数：%d</font> \n\n " +
             "<font color=maximumPoolSize size=2>最大线程数：%d</font> \n\n " +
             "<font color=poolSize size=2>当前线程数：%d</font> \n\n " +
@@ -56,9 +56,9 @@ public final class DingNotifyConst {
             "<font color=queueSize size=2>队列任务数量：%d</font> \n\n " +
             "<font color=queueRemaining size=2>队列剩余容量：%d</font> \n\n " +
             "<font color=rejectType size=2>拒绝策略：%s</font> \n\n" +
-            "<font color=rejectCount size=2>拒绝任务数量：%s</font> \n\n " +
-            "<font color=runTimeoutCount size=2>执行超时任务数量：%s</font> \n\n " +
-            "<font color=queueTimeoutCount size=2>等待超时任务数量：%s</font> \n\n " +
+            "<font color=rejectCount size=2>总拒绝任务数量：%s</font> \n\n " +
+            "<font color=runTimeoutCount size=2>总执行超时任务数量：%s</font> \n\n " +
+            "<font color=queueTimeoutCount size=2>总等待超时任务数量：%s</font> \n\n " +
             "<font color=#664B4B size=2>上次报警时间：%s</font> \n\n" +
             "<font color=#664B4B size=2>报警时间：%s</font> \n\n" +
             "<font color=#664B4B size=2>接收人：@%s</font> \n\n" +

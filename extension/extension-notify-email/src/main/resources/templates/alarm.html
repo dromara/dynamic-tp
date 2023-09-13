@@ -250,7 +250,7 @@
                                                         <span th:if="${#sets.contains(highlightVariables, 'alarmValue')}" style="color: #ff0013">
                                                             🔴
                                                         </span>
-                                                        <strong>阈值/当前值：</strong><span th:text="${alarmValue}"></span></p>
+                                                        <strong>阈值 / 当前值：</strong><span th:text="${alarmValue}"></span></p>
                                                     <p
                                                             style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
                                                         <span th:if="${#sets.contains(highlightVariables, 'corePoolSize')}" style="color: #ff0013">
@@ -322,19 +322,19 @@
                                                         <span th:if="${#sets.contains(highlightVariables, 'rejectCount')}" style="color: #ff0013">
                                                             🔴
                                                         </span>
-                                                        <strong>拒绝任务数量：</strong><span th:text="${rejectCount}"></span></p>
+                                                        <strong>总拒绝任务数量：</strong><span th:text="${rejectCount}"></span></p>
                                                     <p
                                                             style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
                                                         <span th:if="${#sets.contains(highlightVariables, 'runTimeoutCount')}" style="color: #ff0013">
                                                             🔴
                                                         </span>
-                                                        <strong>执行超时任务数量：</strong><span th:text="${runTimeoutCount}"></span></p>
+                                                        <strong>总执行超时任务数量：</strong><span th:text="${runTimeoutCount}"></span></p>
                                                     <p
                                                             style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
                                                         <span th:if="${#sets.contains(highlightVariables, 'queueTimeoutCount')}" style="color: #ff0013">
                                                             🔴
                                                         </span>
-                                                        <strong>等待超时任务数量：</strong><span th:text="${queueTimeoutCount}"></span></p>
+                                                        <strong>总等待超时任务数量：</strong><span th:text="${queueTimeoutCount}"></span></p>
                                                     <p
                                                             style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
                                                         <strong>上次报警时间：</strong><span th:text="${lastAlarmTime}"></span></p>

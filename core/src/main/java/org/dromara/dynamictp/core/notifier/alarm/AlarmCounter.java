@@ -29,7 +29,6 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.UNKNOWN;
-import static org.dromara.dynamictp.common.em.NotifyItemEnum.REJECT;
 
 /**
  * AlarmCounter related
@@ -89,7 +88,7 @@ public class AlarmCounter {
             case REJECT:
             case RUN_TIMEOUT:
             case QUEUE_TIMEOUT:
-                return Integer.parseInt(getCount(wrapper.getThreadPoolName(), REJECT.getValue()));
+                return Integer.parseInt(getCount(wrapper.getThreadPoolName(), itemEnum.getValue()));
             default:
                 return 0;
         }

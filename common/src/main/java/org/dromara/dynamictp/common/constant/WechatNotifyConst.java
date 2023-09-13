@@ -45,7 +45,7 @@ public final class WechatNotifyConst {
             "> <font color='comment'>环境：%s</font> \n" +
             "> <font color='comment'>线程池名称：%s</font> \n" +
             "> <font color='alarmType'>报警类型：%s</font> \n" +
-            "> <font color='alarmValue'>阈值/当前值：%s</font> \n" +
+            "> <font color='alarmValue'>阈值 / 当前值：%s</font> \n" +
             "> <font color='corePoolSize'>核心线程数：%s</font> \n" +
             "> <font color='maximumPoolSize'>最大线程数：%s</font> \n" +
             "> <font color='poolSize'>当前线程数：%s</font> \n" +
@@ -59,9 +59,9 @@ public final class WechatNotifyConst {
             "> <font color='queueSize'>队列任务数量：%s</font> \n" +
             "> <font color='queueRemaining'>队列剩余容量：%s</font> \n" +
             "> <font color='rejectType'>拒绝策略：%s</font> \n" +
-            "> <font color='rejectCount'>拒绝任务数量：%s</font> \n" +
-            "> <font color='runTimeoutCount'>执行超时任务数量：%s</font> \n" +
-            "> <font color='queueTimeoutCount'>等待超时任务数量：%s</font> \n" +
+            "> <font color='rejectCount'>总拒绝任务数量：%s</font> \n" +
+            "> <font color='runTimeoutCount'>总执行超时任务数量：%s</font> \n" +
+            "> <font color='queueTimeoutCount'>总等待超时任务数量：%s</font> \n" +
             "> <font color='comment'>上次报警时间：%s</font> \n" +
             "> <font color='comment'>报警时间：%s</font> \n" +
             "> <font color='comment'>接收人：%s</font> \n" +

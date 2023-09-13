@@ -24,7 +24,6 @@ import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.support.selector.ExecutorSelector;
 import org.dromara.dynamictp.core.support.selector.HashedExecutorSelector;
 import org.dromara.dynamictp.core.support.task.Ordered;
-import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
 
 import java.util.List;
 import java.util.Objects;
@@ -185,10 +184,6 @@ public class OrderedDtpExecutor extends DtpExecutor {
         }
     }
 
-    protected DtpRunnable getEnhancedTask(Runnable command) {
-        return (DtpRunnable) wrapTasks(command);
-    }
-
     private final class ChildExecutor implements Executor, Runnable {
 
         private final BlockingQueue<Runnable> taskQueue;
@@ -210,7 +205,7 @@ public class OrderedDtpExecutor extends DtpExecutor {
         @Override
         public void execute(Runnable command) {
             boolean start = false;
-            command = getEnhancedTask(command);
+            command = getEnhancedTask(command, getTaskWrappers());
             synchronized (this) {
                 try {
                     if (!taskQueue.add(command)) {

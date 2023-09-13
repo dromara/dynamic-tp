@@ -20,10 +20,13 @@ package org.dromara.dynamictp.starter.adapter.webserver.adapter.tomcat;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.dromara.dynamictp.core.aware.AwareManager;
+import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.reject.RejectedInvocationHandler;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 
 import java.lang.reflect.Proxy;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -33,12 +36,14 @@ import java.util.concurrent.TimeUnit;
  * @since 1.1.4
  */
 @Slf4j
-public class TomcatExecutorProxy extends ThreadPoolExecutor {
+public class TomcatExecutorProxy extends ThreadPoolExecutor implements TaskEnhanceAware {
+
+    private List<TaskWrapper> taskWrappers;
 
     public TomcatExecutorProxy(ExecutorWrapper executorWrapper) {
         this((ThreadPoolExecutor) executorWrapper.getExecutor().getOriginal());
         executorWrapper.setOriginalProxy(this);
-
+        this.taskWrappers = executorWrapper.getTaskWrappers();
         RejectedExecutionHandler handler = getRejectedExecutionHandler();
         setRejectedExecutionHandler((RejectedExecutionHandler) Proxy
                 .newProxyInstance(handler.getClass().getClassLoader(),
@@ -54,6 +59,7 @@ public class TomcatExecutorProxy extends ThreadPoolExecutor {
 
     @Override
     public void execute(Runnable command) {
+        command = getEnhancedTask(command, taskWrappers);
         AwareManager.execute(this, command);
         super.execute(command);
     }

@@ -35,15 +35,12 @@ import org.dromara.dynamictp.core.notifier.context.AlarmCtx;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
 import org.dromara.dynamictp.core.notifier.context.DtpNotifyCtxHolder;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.slf4j.MDC;
 import org.thymeleaf.context.Context;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.UNKNOWN;
 import static org.dromara.dynamictp.core.notifier.manager.NotifyHelper.getAlarmKeys;
 
@@ -112,7 +109,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("queueTimeoutCount", statProvider.getQueueTimeoutCount());
         context.setVariable("lastAlarmTime", alarmInfo.getLastAlarmTime() == null ? UNKNOWN : alarmInfo.getLastAlarmTime());
         context.setVariable("alarmTime", DateUtil.now());
-        context.setVariable("tid", Optional.ofNullable(MDC.get(TRACE_ID)).orElse(UNKNOWN));
+        context.setVariable("trace", getTraceInfo());
         context.setVariable("alarmInterval", notifyItem.getInterval());
         context.setVariable("highlightVariables", getAlarmKeys(notifyItemEnum));
         return ((EmailNotifier) notifier).processTemplateContent("alarm", context);

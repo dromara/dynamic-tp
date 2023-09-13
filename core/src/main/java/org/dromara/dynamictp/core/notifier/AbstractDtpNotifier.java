@@ -22,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.dromara.dynamictp.common.constant.DynamicTpConst;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.AlarmInfo;
 import org.dromara.dynamictp.common.entity.NotifyItem;
@@ -45,6 +44,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.UNKNOWN;
 import static org.dromara.dynamictp.core.notifier.manager.NotifyHelper.getAlarmKeys;
 import static org.dromara.dynamictp.core.notifier.manager.NotifyHelper.getAllAlarmKeys;
@@ -121,7 +121,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 Optional.ofNullable(context.getAlarmInfo()).map(AlarmInfo::getLastAlarmTime).orElse(UNKNOWN),
                 DateUtil.now(),
                 getReceives(notifyItem, platform),
-                Optional.ofNullable(MDC.get(DynamicTpConst.TRACE_ID)).orElse(UNKNOWN),
+                getTraceInfo(),
                 notifyItem.getInterval()
         );
         return highlightAlarmContent(content, notifyItemEnum);
@@ -149,6 +149,14 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 DateUtil.now()
         );
         return highlightNotifyContent(content, diffs);
+    }
+
+    protected String getTraceInfo() {
+        String tid = MDC.get(TRACE_ID);
+        if (StringUtils.isBlank(tid)) {
+            return UNKNOWN;
+        }
+        return tid;
     }
 
     protected String getReceives(NotifyItem notifyItem, NotifyPlatform platform) {

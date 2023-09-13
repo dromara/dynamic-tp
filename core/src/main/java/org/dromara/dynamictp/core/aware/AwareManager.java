@@ -45,6 +45,7 @@ public class AwareManager {
     static {
         EXECUTOR_AWARE_LIST.add(new TaskTimeoutAware());
         EXECUTOR_AWARE_LIST.add(new TaskRejectAware());
+        EXECUTOR_AWARE_LIST.add(new TaskExecAware());
 
         List<ExecutorAware> serviceLoader = ExtensionServiceLoader.get(ExecutorAware.class);
         EXECUTOR_AWARE_LIST.addAll(serviceLoader);

@@ -33,7 +33,12 @@ public enum AwareTypeEnum {
     /**
      * TaskRejectAware
      */
-    TASK_REJECT_AWARE(2, "reject");
+    TASK_REJECT_AWARE(2, "reject"),
+
+    /**
+     * TaskExecAware
+     */
+    TASK_EXEC_AWARE(3, "exec");
 
     private final int order;
     private final String name;

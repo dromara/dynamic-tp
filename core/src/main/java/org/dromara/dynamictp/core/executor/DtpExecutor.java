@@ -21,32 +21,24 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.core.aware.AwareManager;
+import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.spring.SpringExecutor;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
-import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
-import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
-import org.slf4j.MDC;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
 
 /**
  * Dynamic ThreadPoolExecutor, extending ThreadPoolExecutor, implements some new features
@@ -56,7 +48,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
  **/
 @Slf4j
 public class DtpExecutor extends ThreadPoolExecutor
-        implements SpringExecutor, ExecutorAdapter<ThreadPoolExecutor> {
+        implements SpringExecutor, TaskEnhanceAware, ExecutorAdapter<ThreadPoolExecutor> {
 
     /**
      * The name of the thread pool.
@@ -187,9 +179,9 @@ public class DtpExecutor extends ThreadPoolExecutor
 
     @Override
     public void execute(Runnable command) {
-        DtpRunnable dtpRunnable = (DtpRunnable) wrapTasks(command);
-        AwareManager.execute(this, dtpRunnable);
-        super.execute(dtpRunnable);
+        command = getEnhancedTask(command, taskWrappers);
+        AwareManager.execute(this, command);
+        super.execute(command);
     }
 
     @Override
@@ -202,8 +194,6 @@ public class DtpExecutor extends ThreadPoolExecutor
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
         AwareManager.afterExecute(this, r, t);
-        tryPrintError(r, t);
-        clearContext();
     }
 
     @Override
@@ -232,38 +222,6 @@ public class DtpExecutor extends ThreadPoolExecutor
         }
         // reset reject handler in initialize phase according to rejectEnhanced
         setRejectHandler(RejectHandlerGetter.buildRejectedHandler(getRejectHandlerType()));
-    }
-
-    protected Runnable wrapTasks(Runnable command) {
-        if (CollectionUtils.isNotEmpty(taskWrappers)) {
-            for (TaskWrapper t : taskWrappers) {
-                command = t.wrap(command);
-            }
-        }
-        String taskName = (command instanceof NamedRunnable) ? ((NamedRunnable) command).getName() : null;
-        command = new DtpRunnable(command, taskName);
-        return command;
-    }
-
-    private void clearContext() {
-        MDC.remove(TRACE_ID);
-    }
-
-    private void tryPrintError(Runnable r, Throwable t) {
-        if (Objects.nonNull(t)) {
-            log.error("thread {} throw exception {}", Thread.currentThread(), t.getMessage(), t);
-            return;
-        }
-        if (r instanceof FutureTask) {
-            try {
-                Future<?> future = (Future<?>) r;
-                future.get();
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            } catch (Exception e) {
-                log.error("thread {} throw exception {}", Thread.currentThread(), e.getMessage(), e);
-            }
-        }
     }
 
     public void setRejectHandler(RejectedExecutionHandler handler) {

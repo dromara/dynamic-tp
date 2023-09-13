@@ -19,9 +19,12 @@ package org.dromara.dynamictp.adapter.motan;
 
 import com.weibo.api.motan.transport.netty.StandardThreadExecutor;
 import org.dromara.dynamictp.core.aware.AwareManager;
+import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 
+import java.util.List;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
 
@@ -29,12 +32,14 @@ import java.util.concurrent.TimeUnit;
  * @author hanli
  * @since 1.1.4
  */
-public class StandardThreadExecutorProxy extends StandardThreadExecutor {
+public class StandardThreadExecutorProxy extends StandardThreadExecutor implements TaskEnhanceAware {
+
+    private List<TaskWrapper> taskWrappers;
 
     public StandardThreadExecutorProxy(ExecutorWrapper executorWrapper) {
         this((StandardThreadExecutor) executorWrapper.getExecutor().getOriginal());
         executorWrapper.setOriginalProxy(this);
-
+        this.taskWrappers = executorWrapper.getTaskWrappers();
         RejectedExecutionHandler handler = getRejectedExecutionHandler();
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
     }
@@ -48,6 +53,7 @@ public class StandardThreadExecutorProxy extends StandardThreadExecutor {
 
     @Override
     public void execute(Runnable command) {
+        command = getEnhancedTask(command, taskWrappers);
         AwareManager.execute(this, command);
         super.execute(command);
     }

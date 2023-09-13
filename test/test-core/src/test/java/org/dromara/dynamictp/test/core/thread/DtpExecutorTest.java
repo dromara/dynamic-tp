@@ -17,14 +17,12 @@
 
 package org.dromara.dynamictp.test.core.thread;
 
-import org.dromara.dynamictp.common.em.NotifyItemEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.spring.EnableDynamicTp;
 import org.dromara.dynamictp.core.spring.YamlPropertySourceFactory;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.executor.DtpExecutor;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -58,9 +56,7 @@ public class DtpExecutorTest {
 
     public void mock(MockedStatic<AlarmManager> mockAlarmManager) {
         mockAlarmManager.when(() -> AlarmManager.doAlarmAsync(any(), any(), any())).then(invocation -> null);
-        mockAlarmManager.when(() -> AlarmManager.doAlarmAsync(any(DtpExecutor.class), any(NotifyItemEnum.class))).then(invocation -> null);
         mockAlarmManager.when(() -> AlarmManager.doAlarmAsync(any(ExecutorWrapper.class), anyList())).then(invocation -> null);
-        mockAlarmManager.when(() -> AlarmManager.doAlarmAsync(any(DtpExecutor.class), anyList())).then(invocation -> null);
     }
 
     @RepeatedTest(100)

@@ -19,8 +19,11 @@ package org.dromara.dynamictp.core.support;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.aware.AwareManager;
+import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
+import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 
+import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -31,11 +34,14 @@ import java.util.concurrent.TimeUnit;
  * @since 1.1.4
  */
 @Slf4j
-public class ThreadPoolExecutorProxy extends ThreadPoolExecutor {
+public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskEnhanceAware {
+
+    private List<TaskWrapper> taskWrappers;
 
     public ThreadPoolExecutorProxy(ExecutorWrapper executorWrapper) {
         this((ThreadPoolExecutor) executorWrapper.getExecutor().getOriginal());
         executorWrapper.setOriginalProxy(this);
+        this.taskWrappers = executorWrapper.getTaskWrappers();
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(getRejectedExecutionHandler()));
     }
 
@@ -47,6 +53,7 @@ public class ThreadPoolExecutorProxy extends ThreadPoolExecutor {
 
     @Override
     public void execute(Runnable command) {
+        command = getEnhancedTask(command, taskWrappers);
         AwareManager.execute(this, command);
         super.execute(command);
     }

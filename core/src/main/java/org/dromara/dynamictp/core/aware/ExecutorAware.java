@@ -51,7 +51,7 @@ public interface ExecutorAware extends DtpAware {
      *
      * @param wrapper executor wrapper
      */
-    void register(ExecutorWrapper wrapper);
+    default void register(ExecutorWrapper wrapper) { }
 
     /**
      * refresh props
@@ -68,7 +68,7 @@ public interface ExecutorAware extends DtpAware {
      *
      * @param wrapper executor wrapper
      */
-    void remove(ExecutorWrapper wrapper);
+    default void remove(ExecutorWrapper wrapper) { }
 
     /**
      * enhance execute

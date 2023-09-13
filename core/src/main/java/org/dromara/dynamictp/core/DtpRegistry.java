@@ -246,6 +246,9 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
             executor.setRejectedExecutionHandler(rejectHandler);
         }
 
+        List<TaskWrapper> taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
+        executorWrapper.setTaskWrappers(taskWrappers);
+
         // update notify related
         NotifyHelper.updateNotifyInfo(executorWrapper, props, dtpProperties.getPlatforms());
         // update aware related

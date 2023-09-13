@@ -100,11 +100,6 @@ public class DtpExecutorProps extends TpExecutorProps {
     private boolean rejectEnhanced = true;
 
     /**
-     * Task wrapper names.
-     */
-    private Set<String> taskWrapperNames;
-
-    /**
      * Plugin names.
      */
     private Set<String> pluginNames;

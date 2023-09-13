@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.core.support;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
+import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.springframework.beans.BeanUtils;
 
 import java.util.List;
@@ -81,6 +83,11 @@ public class ExecutorWrapper {
      * Thread pool stat provider
      */
     private ThreadPoolStatProvider threadPoolStatProvider;
+
+    /**
+     * Task wrappers
+     */
+    private List<TaskWrapper> taskWrappers = Lists.newArrayList();
 
     /**
      * Aware names

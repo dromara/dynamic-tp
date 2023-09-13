@@ -20,7 +20,6 @@ package org.dromara.dynamictp.core.timer;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.timer.Timeout;
 import org.dromara.dynamictp.common.timer.TimerTask;
-import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
@@ -52,18 +51,16 @@ public class RunTimeoutTimerTask implements TimerTask {
     @Override
     public void run(Timeout timeout) {
         Optional.ofNullable(executorWrapper.getThreadPoolStatProvider()).ifPresent(p -> p.incRunTimeoutCount(1));
-        if (executorWrapper.isDtpExecutor() && runnable instanceof DtpRunnable) {
+        AlarmManager.doAlarmAsync(executorWrapper, RUN_TIMEOUT, runnable);
+        if (executorWrapper.isDtpExecutor()) {
             DtpRunnable dtpRunnable = (DtpRunnable) runnable;
-            DtpExecutor dtpExecutor = (DtpExecutor) executorWrapper.getExecutor();
-            AlarmManager.doAlarmAsync(dtpExecutor, RUN_TIMEOUT, runnable);
             log.warn("DynamicTp execute, run timeout, tpName: {}, taskName: {}, traceId: {}, stackTrace: {}",
-                    dtpExecutor.getThreadPoolName(), dtpRunnable.getTaskName(),
+                    executorWrapper.getThreadPoolName(), dtpRunnable.getTaskName(),
                     dtpRunnable.getTraceId(), traceToString(thread.getStackTrace()));
-            return;
+        } else {
+            log.warn("DynamicTp execute, run timeout, tpName: {}, stackTrace: {}",
+                    executorWrapper.getThreadPoolName(), traceToString(thread.getStackTrace()));
         }
-        AlarmManager.doAlarmAsync(executorWrapper, RUN_TIMEOUT);
-        log.warn("DynamicTp execute, run timeout, tpName: {}, stackTrace: {}",
-                executorWrapper.getThreadPoolName(), traceToString(thread.getStackTrace()));
     }
 
     public String traceToString(StackTraceElement[] trace) {

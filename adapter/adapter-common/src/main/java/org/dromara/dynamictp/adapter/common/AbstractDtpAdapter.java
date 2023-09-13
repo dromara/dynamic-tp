@@ -43,6 +43,8 @@ import org.dromara.dynamictp.core.notifier.manager.NoticeManager;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
+import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.Collections;
@@ -180,6 +182,9 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
         if (StringUtils.isNotBlank(props.getThreadPoolAliasName())) {
             executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());
         }
+
+        List<TaskWrapper> taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
+        executorWrapper.setTaskWrappers(taskWrappers);
 
         // update notify items
         updateNotifyInfo(executorWrapper, props, platforms);

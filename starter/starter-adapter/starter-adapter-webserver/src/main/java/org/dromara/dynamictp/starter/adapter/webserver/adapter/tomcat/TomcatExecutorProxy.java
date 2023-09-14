@@ -20,6 +20,7 @@ package org.dromara.dynamictp.starter.adapter.webserver.adapter.tomcat;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.dromara.dynamictp.core.aware.AwareManager;
+import org.dromara.dynamictp.core.aware.RejectHandlerAware;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.reject.RejectedInvocationHandler;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
@@ -35,18 +36,21 @@ import java.util.concurrent.TimeUnit;
  * @since 1.1.4
  */
 @Slf4j
-public class TomcatExecutorProxy extends ThreadPoolExecutor implements TaskEnhanceAware {
+public class TomcatExecutorProxy extends ThreadPoolExecutor implements TaskEnhanceAware, RejectHandlerAware {
 
     /**
      * Task wrappers, do sth enhanced.
      */
     private List<TaskWrapper> taskWrappers;
 
+    private final String rejectHandlerType;
+
     public TomcatExecutorProxy(ThreadPoolExecutor executor) {
         super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
                 executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS, executor.getQueue(),
                 executor.getThreadFactory(), executor.getRejectedExecutionHandler());
         RejectedExecutionHandler handler = getRejectedExecutionHandler();
+        this.rejectHandlerType = handler.getClass().getSimpleName();
         setRejectedExecutionHandler((RejectedExecutionHandler) Proxy
                 .newProxyInstance(handler.getClass().getClassLoader(),
                         new Class[]{RejectedExecutionHandler.class},
@@ -76,5 +80,10 @@ public class TomcatExecutorProxy extends ThreadPoolExecutor implements TaskEnhan
     @Override
     public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
         this.taskWrappers = taskWrappers;
+    }
+
+    @Override
+    public String getRejectHandlerType() {
+        return rejectHandlerType;
     }
 }

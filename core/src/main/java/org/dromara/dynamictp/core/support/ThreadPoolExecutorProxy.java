@@ -19,6 +19,7 @@ package org.dromara.dynamictp.core.support;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.aware.AwareManager;
+import org.dromara.dynamictp.core.aware.RejectHandlerAware;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
@@ -34,17 +35,20 @@ import java.util.concurrent.TimeUnit;
  * @since 1.1.4
  */
 @Slf4j
-public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskEnhanceAware {
+public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskEnhanceAware, RejectHandlerAware {
 
     /**
      * Task wrappers, do sth enhanced.
      */
     private List<TaskWrapper> taskWrappers;
 
+    private final String rejectHandlerType;
+
     public ThreadPoolExecutorProxy(ThreadPoolExecutor executor) {
         super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
                 executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS, executor.getQueue(),
                 executor.getThreadFactory(), executor.getRejectedExecutionHandler());
+        this.rejectHandlerType = getRejectedExecutionHandler().getClass().getSimpleName();
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(getRejectedExecutionHandler()));
         executor.shutdownNow();
     }
@@ -72,5 +76,10 @@ public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskE
     @Override
     public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
         this.taskWrappers = taskWrappers;
+    }
+
+    @Override
+    public String getRejectHandlerType() {
+        return rejectHandlerType;
     }
 }

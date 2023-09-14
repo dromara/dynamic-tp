@@ -19,6 +19,7 @@ package org.dromara.dynamictp.adapter.motan;
 
 import com.weibo.api.motan.transport.netty.StandardThreadExecutor;
 import org.dromara.dynamictp.core.aware.AwareManager;
+import org.dromara.dynamictp.core.aware.RejectHandlerAware;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
@@ -31,12 +32,14 @@ import java.util.concurrent.TimeUnit;
  * @author hanli
  * @since 1.1.4
  */
-public class StandardThreadExecutorProxy extends StandardThreadExecutor implements TaskEnhanceAware {
+public class StandardThreadExecutorProxy extends StandardThreadExecutor implements TaskEnhanceAware, RejectHandlerAware {
 
     /**
      * Task wrappers, do sth enhanced.
      */
     private List<TaskWrapper> taskWrappers;
+
+    private final String rejectHandlerType;
 
     public StandardThreadExecutorProxy(StandardThreadExecutor executor) {
         super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
@@ -44,6 +47,7 @@ public class StandardThreadExecutorProxy extends StandardThreadExecutor implemen
                 executor.getMaxSubmittedTaskCount() - executor.getMaximumPoolSize(),
                 executor.getThreadFactory(), executor.getRejectedExecutionHandler());
         RejectedExecutionHandler handler = getRejectedExecutionHandler();
+        this.rejectHandlerType = handler.getClass().getSimpleName();
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
         executor.shutdownNow();
     }
@@ -70,5 +74,10 @@ public class StandardThreadExecutorProxy extends StandardThreadExecutor implemen
     @Override
     public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
         this.taskWrappers = taskWrappers;
+    }
+
+    @Override
+    public String getRejectHandlerType() {
+        return rejectHandlerType;
     }
 }

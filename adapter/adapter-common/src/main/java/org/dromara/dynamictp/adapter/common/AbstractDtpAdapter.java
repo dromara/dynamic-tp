@@ -163,10 +163,10 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
     protected abstract String getAdapterPrefix();
 
     protected void enhanceOriginExecutor(String tpName, ThreadPoolExecutor executor, String fieldName, Object targetObj) {
-        ThreadPoolExecutorProxy threadPoolExecutorProxy = new ThreadPoolExecutorProxy(executor);
+        ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executor);
         try {
-            ReflectionUtil.setFieldValue(fieldName, targetObj, threadPoolExecutorProxy);
-            val executorWrapper = new ExecutorWrapper(tpName, threadPoolExecutorProxy);
+            ReflectionUtil.setFieldValue(fieldName, targetObj, proxy);
+            val executorWrapper = new ExecutorWrapper(tpName, proxy);
             initNotifyItems(tpName, executorWrapper);
             executors.put(tpName, executorWrapper);
         } catch (IllegalAccessException e) {

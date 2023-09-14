@@ -323,7 +323,6 @@ public class DtpExecutor extends ThreadPoolExecutor
         this.rejectHandlerType = rejectHandlerType;
     }
 
-
     public void setRunTimeout(long runTimeout) {
         this.runTimeout = runTimeout;
     }

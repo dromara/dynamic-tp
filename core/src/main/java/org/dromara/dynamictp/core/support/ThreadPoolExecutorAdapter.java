@@ -17,6 +17,8 @@
 
 package org.dromara.dynamictp.core.support;
 
+import org.dromara.dynamictp.core.aware.RejectHandlerAware;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -101,7 +103,15 @@ public class ThreadPoolExecutorAdapter implements ExecutorAdapter<ThreadPoolExec
     public RejectedExecutionHandler getRejectedExecutionHandler() {
         return this.executor.getRejectedExecutionHandler();
     }
-    
+
+    @Override
+    public String getRejectHandlerType() {
+        if (executor instanceof RejectHandlerAware) {
+            return ((RejectHandlerAware) executor).getRejectHandlerType();
+        }
+        return getRejectedExecutionHandler().getClass().getSimpleName();
+    }
+
     @Override
     public void setRejectedExecutionHandler(RejectedExecutionHandler handler) {
         this.executor.setRejectedExecutionHandler(handler);

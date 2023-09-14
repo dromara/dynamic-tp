@@ -20,6 +20,7 @@ package org.dromara.dynamictp.starter.adapter.webserver.adapter.tomcat;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.core.aware.RejectHandlerAware;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.starter.adapter.webserver.adapter.AbstractWebServerDtpAdapter;
@@ -29,7 +30,6 @@ import org.springframework.boot.web.server.WebServer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
-
 
 /**
  * TomcatDtpAdapter related
@@ -41,15 +41,15 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<Executor> {
 
-    private static final String POOL_NAME = "tomcatTp";
+    private static final String TP_NAME = "tomcatTp";
 
     @Override
     public ExecutorWrapper doInitExecutorWrapper(WebServer webServer) {
         TomcatWebServer tomcatWebServer = (TomcatWebServer) webServer;
         Executor originExecutor = tomcatWebServer.getTomcat().getConnector().getProtocolHandler().getExecutor();
-        TomcatExecutorProxy tomcatExecutorProxy = new TomcatExecutorProxy((ThreadPoolExecutor) originExecutor);
-        tomcatWebServer.getTomcat().getConnector().getProtocolHandler().setExecutor(tomcatExecutorProxy);
-        return new ExecutorWrapper(POOL_NAME, new TomcatExecutorAdapter(tomcatExecutorProxy));
+        TomcatExecutorProxy proxy = new TomcatExecutorProxy((ThreadPoolExecutor) originExecutor);
+        tomcatWebServer.getTomcat().getConnector().getProtocolHandler().setExecutor(proxy);
+        return new ExecutorWrapper(TP_NAME, new TomcatExecutorAdapter(proxy));
     }
 
     @Override
@@ -59,7 +59,7 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<Executor> {
 
     @Override
     protected String getAdapterPrefix() {
-        return POOL_NAME;
+        return TP_NAME;
     }
 
     /**
@@ -79,8 +79,8 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<Executor> {
             return this.executor;
         }
 
-        public org.apache.tomcat.util.threads.ThreadPoolExecutor getTomcatExecutor() {
-            return (org.apache.tomcat.util.threads.ThreadPoolExecutor) this.executor;
+        public ThreadPoolExecutor getTomcatExecutor() {
+            return (ThreadPoolExecutor) this.executor;
         }
         
         @Override
@@ -135,10 +135,7 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<Executor> {
     
         @Override
         public String getRejectHandlerType() {
-            if (executor instanceof ThreadPoolExecutor) {
-                return ((ThreadPoolExecutor) executor).getRejectedExecutionHandler().getClass().getSimpleName();
-            }
-            return getTomcatExecutor().getRejectedExecutionHandler().getClass().getSimpleName();
+            return ((RejectHandlerAware) getTomcatExecutor()).getRejectHandlerType();
         }
         
         @Override

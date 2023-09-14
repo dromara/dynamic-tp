@@ -49,4 +49,11 @@ public interface TaskEnhanceAware extends DtpAware {
         command = new DtpRunnable(command, taskName);
         return command;
     }
+
+    /**
+     * Set task wrappers
+     *
+     * @param taskWrappers task wrappers
+     */
+    void setTaskWrappers(List<TaskWrapper> taskWrappers);
 }

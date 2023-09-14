@@ -17,14 +17,12 @@
 
 package org.dromara.dynamictp.core.timer;
 
+import cn.hutool.core.text.CharSequenceUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.common.timer.Timeout;
-import org.dromara.dynamictp.common.timer.TimerTask;
+import lombok.val;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
+import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
-
-import java.util.Optional;
 
 import static org.dromara.dynamictp.common.em.NotifyItemEnum.QUEUE_TIMEOUT;
 
@@ -34,27 +32,28 @@ import static org.dromara.dynamictp.common.em.NotifyItemEnum.QUEUE_TIMEOUT;
  * @author kamtohung
  **/
 @Slf4j
-public class QueueTimeoutTimerTask implements TimerTask {
-
-    private final ExecutorWrapper executorWrapper;
-
-    private final Runnable runnable;
+public class QueueTimeoutTimerTask extends AbstractTimeoutTimerTask {
 
     public QueueTimeoutTimerTask(ExecutorWrapper executorWrapper, Runnable runnable) {
-        this.executorWrapper = executorWrapper;
-        this.runnable = runnable;
+        super(executorWrapper, runnable);
     }
 
     @Override
-    public void run(Timeout timeout) {
-        Optional.ofNullable(executorWrapper.getThreadPoolStatProvider()).ifPresent(p -> p.incQueueTimeoutCount(1));
+    protected void doRun() {
+        val statProvider = executorWrapper.getThreadPoolStatProvider();
+        ExecutorAdapter<?> executor = statProvider.getExecutorWrapper().getExecutor();
+        val pair = getTaskNameAndTraceId();
+        statProvider.incQueueTimeoutCount(1);
         AlarmManager.doAlarmAsync(executorWrapper, QUEUE_TIMEOUT, runnable);
-        if (executorWrapper.isDtpExecutor()) {
-            DtpRunnable dtpRunnable = (DtpRunnable) runnable;
-            log.warn("DynamicTp execute, queue timeout, tpName: {}, taskName: {}, traceId: {}",
-                    executorWrapper.getThreadPoolName(), dtpRunnable.getTaskName(), dtpRunnable.getTraceId());
-        } else {
-            log.warn("DynamicTp execute, queue timeout, tpName: {}", executorWrapper.getThreadPoolName());
-        }
+        String logMsg = CharSequenceUtil.format("DynamicTp execute, queue timeout, " +
+                        "tpName: {}, taskName: {}, traceId: {}, queueTimeout: {}ms, " +
+                        "poolSize: {} (active: {}, core: {}, max: {}, largest: {}), " +
+                        "queueCapacity: {} (currSize: {}, remaining: {})",
+                statProvider.getExecutorWrapper().getThreadPoolName(), pair.getLeft(), pair.getRight(),
+                statProvider.getQueueTimeout(), executor.getPoolSize(), executor.getActiveCount(),
+                executor.getCorePoolSize(), executor.getMaximumPoolSize(),
+                executor.getLargestPoolSize(), statProvider.getExecutorWrapper().getExecutor().getQueueCapacity(),
+                executor.getQueue().size(), executor.getQueue().remainingCapacity());
+        log.warn(logMsg);
     }
 }

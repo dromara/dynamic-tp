@@ -30,7 +30,6 @@ import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -90,18 +89,15 @@ public class AliyunOnsRocketMqAdapter extends AbstractDtpAdapter {
 
         val consumeMessageService = impl.getConsumeMessageService();
         // consumer bean name replace topic name
-        String cusKey = defaultMqPushConsumer.getConsumerGroup();
+        String tpName = defaultMqPushConsumer.getConsumerGroup();
         if (consumeMessageService instanceof ConsumeMessageConcurrentlyService) {
-            cusKey = PREFIX + "#consumer#concurrently#" + cusKey;
+            tpName = PREFIX + "#consumer#concurrently#" + tpName;
         } else if (consumeMessageService instanceof ConsumeMessageOrderlyService) {
-            cusKey = PREFIX + "#consumer#orderly#" + cusKey;
+            tpName = PREFIX + "#consumer#orderly#" + tpName;
         }
         ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
         if (Objects.nonNull(executor)) {
-            val executorWrapper = new ExecutorWrapper(cusKey, executor);
-            initNotifyItems(cusKey, executorWrapper);
-            executors.put(cusKey, executorWrapper);
-            enhanceOriginExecutor(executorWrapper, CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
+            enhanceOriginExecutor(tpName, executor, CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
         }
     }
 }

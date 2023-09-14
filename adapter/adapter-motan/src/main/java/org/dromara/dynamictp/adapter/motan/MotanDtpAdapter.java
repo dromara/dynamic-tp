@@ -22,6 +22,7 @@ import com.weibo.api.motan.protocol.rpc.DefaultRpcExporter;
 import com.weibo.api.motan.rpc.Exporter;
 import com.weibo.api.motan.transport.Server;
 import com.weibo.api.motan.transport.netty.NettyServer;
+import com.weibo.api.motan.transport.netty.StandardThreadExecutor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
@@ -34,7 +35,6 @@ import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * MotanDtpAdapter related
@@ -86,18 +86,18 @@ public class MotanDtpAdapter extends AbstractDtpAdapter {
                     return;
                 }
                 val nettyServer = (NettyServer) server;
-                val executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(NettyServer.class, EXECUTOR_FIELD_NAME, nettyServer);
+                val executor = (StandardThreadExecutor) ReflectionUtil.getFieldValue(NettyServer.class, EXECUTOR_FIELD_NAME, nettyServer);
                 if (Objects.nonNull(executor)) {
-                    String key = PREFIX + "#" + nettyServer.getUrl().getPort();
-                    val executorWrapper = new ExecutorWrapper(key, executor);
-                    initNotifyItems(key, executorWrapper);
-                    executors.put(key, executorWrapper);
-                    StandardThreadExecutorProxy proxy = new StandardThreadExecutorProxy(executorWrapper);
+                    StandardThreadExecutorProxy proxy = new StandardThreadExecutorProxy(executor);
                     try {
                         ReflectionUtil.setFieldValue(EXECUTOR_FIELD_NAME, nettyServer, proxy);
                     } catch (IllegalAccessException ex) {
                         log.error("DynamicTp {} adapter, enhance origin executor failed.", getAdapterPrefix(), ex);
                     }
+                    String key = PREFIX + "#" + nettyServer.getUrl().getPort();
+                    val executorWrapper = new ExecutorWrapper(key, proxy);
+                    initNotifyItems(key, executorWrapper);
+                    executors.put(key, executorWrapper);
                 }
             });
         });

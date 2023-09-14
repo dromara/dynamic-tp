@@ -121,8 +121,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
         } else {
             executor = (Executor) bean;
         }
-        val executorWrapper = new ExecutorWrapper(poolName, executor);
-        new ThreadPoolExecutorProxy(executorWrapper);
+        val executorWrapper = new ExecutorWrapper(poolName, new ThreadPoolExecutorProxy((ThreadPoolExecutor) executor));
         DtpRegistry.registerExecutor(executorWrapper, "beanPostProcessor");
     }
 

@@ -51,6 +51,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import static java.util.stream.Collectors.toList;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
@@ -161,10 +162,13 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
      */
     protected abstract String getAdapterPrefix();
 
-    protected void enhanceOriginExecutor(ExecutorWrapper wrapper, String fieldName, Object targetObj) {
-        ThreadPoolExecutorProxy threadPoolExecutorProxy = new ThreadPoolExecutorProxy(wrapper);
+    protected void enhanceOriginExecutor(String tpName, ThreadPoolExecutor executor, String fieldName, Object targetObj) {
+        ThreadPoolExecutorProxy threadPoolExecutorProxy = new ThreadPoolExecutorProxy(executor);
         try {
             ReflectionUtil.setFieldValue(fieldName, targetObj, threadPoolExecutorProxy);
+            val executorWrapper = new ExecutorWrapper(tpName, threadPoolExecutorProxy);
+            initNotifyItems(tpName, executorWrapper);
+            executors.put(tpName, executorWrapper);
         } catch (IllegalAccessException e) {
             log.error("DynamicTp {} adapter, enhance origin executor failed.", getAdapterPrefix(), e);
         }
@@ -182,7 +186,6 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
         if (StringUtils.isNotBlank(props.getThreadPoolAliasName())) {
             executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());
         }
-
         List<TaskWrapper> taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
         executorWrapper.setTaskWrappers(taskWrappers);
 

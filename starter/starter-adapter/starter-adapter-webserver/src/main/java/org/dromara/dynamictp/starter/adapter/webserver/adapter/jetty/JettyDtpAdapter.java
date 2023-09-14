@@ -35,6 +35,7 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import org.springframework.boot.web.embedded.jetty.JettyWebServer;
 import org.springframework.boot.web.server.WebServer;
 
+import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -71,8 +72,10 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
         try {
             if (threadPool instanceof ExecutorThreadPool) {
                 val executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(EXECUTOR_NAME, threadPool);
-                val proxy = new ThreadPoolExecutorProxy(new ExecutorWrapper(POOL_NAME + EXECUTOR_NAME, executor));
-                ReflectionUtil.setFieldValue(EXECUTOR_NAME, threadPool, proxy);
+                if (Objects.isNull(executor)) {
+                    return;
+                }
+                ReflectionUtil.setFieldValue(EXECUTOR_NAME, threadPool, new ThreadPoolExecutorProxy(executor));
                 return;
             }
             Object threadPoolProxy = createThreadPoolProxy(threadPool);

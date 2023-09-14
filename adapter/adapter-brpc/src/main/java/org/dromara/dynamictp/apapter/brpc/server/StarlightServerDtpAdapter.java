@@ -29,7 +29,6 @@ import lombok.val;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.jvmti.JVMTI;
 
 import java.util.Objects;
@@ -88,13 +87,10 @@ public class StarlightServerDtpAdapter extends AbstractDtpAdapter {
         if (Objects.isNull(threadPoolFactory)) {
             return;
         }
-        String bizThreadPoolName = uri.getParameter("biz_thread_pool_name") + "#server";
+        String tpName = uri.getParameter("biz_thread_pool_name") + "#server";
         val executor = threadPoolFactory.defaultThreadPool();
         if (Objects.nonNull(executor)) {
-            val executorWrapper = new ExecutorWrapper(bizThreadPoolName, executor);
-            initNotifyItems(bizThreadPoolName, executorWrapper);
-            executors.put(bizThreadPoolName, executorWrapper);
-            enhanceOriginExecutor(executorWrapper, DEFAULT_THREAD_POOL_FIELD_NAME, threadPoolFactory);
+            enhanceOriginExecutor(tpName, executor, DEFAULT_THREAD_POOL_FIELD_NAME, threadPoolFactory);
         }
         log.info("DynamicTp adapter, brpc server executors init end, executors: {}", executors);
     }

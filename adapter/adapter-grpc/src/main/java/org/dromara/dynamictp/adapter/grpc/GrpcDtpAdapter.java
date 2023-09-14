@@ -26,7 +26,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.jvmti.JVMTI;
 
 import java.net.InetSocketAddress;
@@ -81,13 +80,8 @@ public class GrpcDtpAdapter extends AbstractDtpAdapter {
             }
             val executor = (Executor) ReflectionUtil.getFieldValue(ServerImpl.class, EXECUTOR_FIELD, serverImpl);
             String tpName = genTpName(key);
-            if (Objects.nonNull(executor)) {
-                val executorWrapper = new ExecutorWrapper(tpName, executor);
-                initNotifyItems(tpName, executorWrapper);
-                executors.put(tpName, executorWrapper);
-                if (executor instanceof ThreadPoolExecutor) {
-                    enhanceOriginExecutor(executorWrapper, EXECUTOR_FIELD, serverImpl);
-                }
+            if (Objects.nonNull(executor) && executor instanceof ThreadPoolExecutor) {
+                enhanceOriginExecutor(tpName, (ThreadPoolExecutor) executor, EXECUTOR_FIELD, serverImpl);
             }
         }
         log.info("DynamicTp adapter, grpc server executors init end, executors: {}", executors);

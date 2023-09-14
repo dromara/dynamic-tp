@@ -21,7 +21,6 @@ import com.weibo.api.motan.transport.netty.StandardThreadExecutor;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 
 import java.util.List;
@@ -34,21 +33,19 @@ import java.util.concurrent.TimeUnit;
  */
 public class StandardThreadExecutorProxy extends StandardThreadExecutor implements TaskEnhanceAware {
 
+    /**
+     * Task wrappers, do sth enhanced.
+     */
     private List<TaskWrapper> taskWrappers;
 
-    public StandardThreadExecutorProxy(ExecutorWrapper executorWrapper) {
-        this((StandardThreadExecutor) executorWrapper.getExecutor().getOriginal());
-        executorWrapper.setOriginalProxy(this);
-        this.taskWrappers = executorWrapper.getTaskWrappers();
-        RejectedExecutionHandler handler = getRejectedExecutionHandler();
-        setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
-    }
-
-    private StandardThreadExecutorProxy(StandardThreadExecutor executor) {
+    public StandardThreadExecutorProxy(StandardThreadExecutor executor) {
         super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
                 executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS,
                 executor.getMaxSubmittedTaskCount() - executor.getMaximumPoolSize(),
                 executor.getThreadFactory(), executor.getRejectedExecutionHandler());
+        RejectedExecutionHandler handler = getRejectedExecutionHandler();
+        setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
+        executor.shutdownNow();
     }
 
     @Override
@@ -68,5 +65,10 @@ public class StandardThreadExecutorProxy extends StandardThreadExecutor implemen
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
         AwareManager.afterExecute(this, r, t);
+    }
+
+    @Override
+    public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
+        this.taskWrappers = taskWrappers;
     }
 }

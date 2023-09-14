@@ -17,13 +17,13 @@
 
 package org.dromara.dynamictp.core.support;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.core.aware.AwareManager;
+import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
@@ -60,11 +60,6 @@ public class ExecutorWrapper {
     private ExecutorAdapter<?> executor;
 
     /**
-     * original thread-pool proxy
-     */
-    private Executor originalProxy;
-
-    /**
      * Notify items, see {@link NotifyItemEnum}.
      */
     private List<NotifyItem> notifyItems;
@@ -83,11 +78,6 @@ public class ExecutorWrapper {
      * Thread pool stat provider
      */
     private ThreadPoolStatProvider threadPoolStatProvider;
-
-    /**
-     * Task wrappers
-     */
-    private List<TaskWrapper> taskWrappers = Lists.newArrayList();
 
     /**
      * Aware names
@@ -153,11 +143,9 @@ public class ExecutorWrapper {
         return this.executor instanceof ThreadPoolExecutorAdapter;
     }
 
-    public Executor getOriginalProxy() {
-        return originalProxy;
-    }
-
-    public void setOriginalProxy(Executor originalProxy) {
-        this.originalProxy = originalProxy;
+    public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
+        if (executor.getOriginal() instanceof TaskEnhanceAware) {
+            ((TaskEnhanceAware) executor.getOriginal()).setTaskWrappers(taskWrappers);
+        }
     }
 }

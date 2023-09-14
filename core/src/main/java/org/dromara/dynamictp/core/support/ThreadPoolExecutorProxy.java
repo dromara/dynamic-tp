@@ -36,19 +36,17 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskEnhanceAware {
 
+    /**
+     * Task wrappers, do sth enhanced.
+     */
     private List<TaskWrapper> taskWrappers;
 
-    public ThreadPoolExecutorProxy(ExecutorWrapper executorWrapper) {
-        this((ThreadPoolExecutor) executorWrapper.getExecutor().getOriginal());
-        executorWrapper.setOriginalProxy(this);
-        this.taskWrappers = executorWrapper.getTaskWrappers();
-        setRejectedExecutionHandler(RejectHandlerGetter.getProxy(getRejectedExecutionHandler()));
-    }
-
-    private ThreadPoolExecutorProxy(ThreadPoolExecutor executor) {
+    public ThreadPoolExecutorProxy(ThreadPoolExecutor executor) {
         super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
                 executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS, executor.getQueue(),
                 executor.getThreadFactory(), executor.getRejectedExecutionHandler());
+        setRejectedExecutionHandler(RejectHandlerGetter.getProxy(getRejectedExecutionHandler()));
+        executor.shutdownNow();
     }
 
     @Override
@@ -69,5 +67,10 @@ public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskE
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
         AwareManager.afterExecute(this, r, t);
+    }
+
+    @Override
+    public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
+        this.taskWrappers = taskWrappers;
     }
 }

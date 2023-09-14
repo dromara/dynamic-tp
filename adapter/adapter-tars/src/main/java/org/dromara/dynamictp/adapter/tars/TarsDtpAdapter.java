@@ -25,7 +25,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -75,12 +74,8 @@ public class TarsDtpAdapter extends AbstractDtpAdapter {
             if (Objects.isNull(executor)) {
                 return;
             }
-            val id = (String) ReflectionUtil.getFieldValue(Communicator.class, COMMUNICATOR_ID_FIELD, v);
-            val executorWrapper = new ExecutorWrapper(id, executor);
-            executorWrapper.setThreadPoolAliasName(v.getCommunicatorConfig().getLocator());
-            initNotifyItems(id, executorWrapper);
-            executors.put(id, executorWrapper);
-            enhanceOriginExecutor(executorWrapper, THREAD_POOL_FIELD, v);
+            val tpName = (String) ReflectionUtil.getFieldValue(Communicator.class, COMMUNICATOR_ID_FIELD, v);
+            enhanceOriginExecutor(tpName, executor, THREAD_POOL_FIELD, v);
         });
         log.info("DynamicTp adapter, tars executors init end, executors: {}", executors);
     }

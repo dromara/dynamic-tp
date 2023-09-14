@@ -44,8 +44,8 @@ public final class WechatNotifyConst {
             "> <font color='comment'>实例信息：%s</font> \n" +
             "> <font color='comment'>环境：%s</font> \n" +
             "> <font color='comment'>线程池名称：%s</font> \n" +
-            "> <font color='alarmType'>报警类型：%s</font> \n" +
-            "> <font color='alarmValue'>阈值 / 当前值：%s</font> \n" +
+            "> <font color='alarmType'>报警项：%s</font> \n" +
+            "> <font color='alarmValue'>报警阈值 / 当前值：%s</font> \n" +
             "> <font color='corePoolSize'>核心线程数：%s</font> \n" +
             "> <font color='maximumPoolSize'>最大线程数：%s</font> \n" +
             "> <font color='poolSize'>当前线程数：%s</font> \n" +

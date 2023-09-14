@@ -22,7 +22,6 @@ import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.reject.RejectedInvocationHandler;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 
 import java.lang.reflect.Proxy;
@@ -38,23 +37,21 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class TomcatExecutorProxy extends ThreadPoolExecutor implements TaskEnhanceAware {
 
+    /**
+     * Task wrappers, do sth enhanced.
+     */
     private List<TaskWrapper> taskWrappers;
 
-    public TomcatExecutorProxy(ExecutorWrapper executorWrapper) {
-        this((ThreadPoolExecutor) executorWrapper.getExecutor().getOriginal());
-        executorWrapper.setOriginalProxy(this);
-        this.taskWrappers = executorWrapper.getTaskWrappers();
+    public TomcatExecutorProxy(ThreadPoolExecutor executor) {
+        super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
+                executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS, executor.getQueue(),
+                executor.getThreadFactory(), executor.getRejectedExecutionHandler());
         RejectedExecutionHandler handler = getRejectedExecutionHandler();
         setRejectedExecutionHandler((RejectedExecutionHandler) Proxy
                 .newProxyInstance(handler.getClass().getClassLoader(),
                         new Class[]{RejectedExecutionHandler.class},
                         new RejectedInvocationHandler(handler)));
-    }
-
-    private TomcatExecutorProxy(ThreadPoolExecutor executor) {
-        super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
-                executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS, executor.getQueue(),
-                executor.getThreadFactory(), executor.getRejectedExecutionHandler());
+        executor.shutdownNow();
     }
 
     @Override
@@ -70,11 +67,14 @@ public class TomcatExecutorProxy extends ThreadPoolExecutor implements TaskEnhan
         AwareManager.beforeExecute(this, t, r);
     }
 
-
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
         AwareManager.afterExecute(this, r, t);
     }
 
+    @Override
+    public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
+        this.taskWrappers = taskWrappers;
+    }
 }

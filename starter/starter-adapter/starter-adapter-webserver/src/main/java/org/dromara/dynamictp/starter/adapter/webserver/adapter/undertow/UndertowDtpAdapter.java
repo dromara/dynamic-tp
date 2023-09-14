@@ -58,7 +58,6 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
             return null;
         }
         XnioWorker xnioWorker = undertow.getWorker();
-
         Object taskPool = ReflectionUtil.getFieldValue(XnioWorker.class, "taskPool", xnioWorker);
         if (Objects.isNull(taskPool)) {
             return null;
@@ -66,11 +65,12 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
         val handler = TaskPoolHandlerFactory.getTaskPoolHandler(taskPool.getClass().getSimpleName());
         Object executor = ReflectionUtil.getFieldValue(taskPool.getClass(),
                 handler.taskPoolType().getInternalExecutor(), taskPool);
-        ExecutorWrapper executorWrapper = new ExecutorWrapper(POOL_NAME, handler.adapt(executor));
         if (executor instanceof ThreadPoolExecutor) {
-            enhanceOriginExecutor(executorWrapper, handler.taskPoolType().getInternalExecutor(), taskPool);
+            enhanceOriginExecutor(POOL_NAME, (ThreadPoolExecutor) executor, handler.taskPoolType().getInternalExecutor(), taskPool);
+            return executors.get(POOL_NAME);
+        } else {
+            return new ExecutorWrapper(POOL_NAME, handler.adapt(executor));
         }
-        return executorWrapper;
     }
 
     @Override

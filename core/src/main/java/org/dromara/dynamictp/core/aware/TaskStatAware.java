@@ -44,9 +44,6 @@ public abstract class TaskStatAware implements ExecutorAware {
         }
         statProviders.put(wrapper.getExecutor(), statProvider);
         statProviders.put(wrapper.getExecutor().getOriginal(), statProvider);
-        if (Objects.nonNull(wrapper.getOriginalProxy())) {
-            statProviders.put(wrapper.getOriginalProxy(), statProvider);
-        }
     }
 
     @Override
@@ -62,9 +59,6 @@ public abstract class TaskStatAware implements ExecutorAware {
     public void remove(ExecutorWrapper wrapper) {
         statProviders.remove(wrapper.getExecutor());
         statProviders.remove(wrapper.getExecutor().getOriginal());
-        if (Objects.nonNull(wrapper.getOriginalProxy())) {
-            statProviders.remove(wrapper.getOriginalProxy());
-        }
     }
 
     protected void refresh(TpExecutorProps props, ThreadPoolStatProvider statProvider) { }

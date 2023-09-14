@@ -89,7 +89,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
                 + AlarmCounter.calcCurrentValue(executorWrapper, notifyItemEnum) + notifyItemEnum.getUnit();
 
         Context context = newContext(executorWrapper);
-        context.setVariable("alarmType", notifyItemEnum.getValue());
+        context.setVariable("alarmType", populateAlarmItem(notifyItemEnum, executorWrapper));
         context.setVariable("alarmValue", alarmValue);
         context.setVariable("corePoolSize", executor.getCorePoolSize());
         context.setVariable("maximumPoolSize", executor.getMaximumPoolSize());

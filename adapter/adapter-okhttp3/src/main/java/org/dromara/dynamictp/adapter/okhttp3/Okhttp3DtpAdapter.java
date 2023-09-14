@@ -24,7 +24,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -61,12 +60,9 @@ public class Okhttp3DtpAdapter extends AbstractDtpAdapter {
         }
         beans.forEach((k, v) -> {
             val executor = v.dispatcher().executorService();
-            String key = genTpName(k);
-            val executorWrapper = new ExecutorWrapper(key, executor);
-            initNotifyItems(key, executorWrapper);
-            executors.put(key, executorWrapper);
+            String tpName = genTpName(k);
             if (executor instanceof ThreadPoolExecutor) {
-                enhanceOriginExecutor(executorWrapper, EXECUTOR_SERVICE_FIELD_NAME, v.dispatcher());
+                enhanceOriginExecutor(tpName, (ThreadPoolExecutor) executor, EXECUTOR_SERVICE_FIELD_NAME, v.dispatcher());
             }
         });
         log.info("DynamicTp adapter, okhttp3 executors init end, executors: {}", executors);

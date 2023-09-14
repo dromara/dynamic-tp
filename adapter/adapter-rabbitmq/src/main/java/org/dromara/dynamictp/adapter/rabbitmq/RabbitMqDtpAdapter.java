@@ -24,7 +24,6 @@ import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.springframework.amqp.rabbit.connection.AbstractConnectionFactory;
 
 import java.util.Objects;
@@ -68,15 +67,9 @@ public class RabbitMqDtpAdapter extends AbstractDtpAdapter {
             AbstractConnectionFactory abstractConnectionFactory = (AbstractConnectionFactory) v;
             ExecutorService executor = (ExecutorService) ReflectionUtil.getFieldValue(
                     AbstractConnectionFactory.class, CONSUME_EXECUTOR_FIELD_NAME, abstractConnectionFactory);
-
-            if (Objects.nonNull(executor)) {
-                String key = genTpName(k);
-                val executorWrapper = new ExecutorWrapper(key, executor);
-                initNotifyItems(key, executorWrapper);
-                executors.put(key, executorWrapper);
-                if (executor instanceof ThreadPoolExecutor) {
-                    enhanceOriginExecutor(executorWrapper, CONSUME_EXECUTOR_FIELD_NAME, abstractConnectionFactory);
-                }
+            if (Objects.nonNull(executor) && executor instanceof ThreadPoolExecutor) {
+                String tpName = genTpName(k);
+                enhanceOriginExecutor(tpName, (ThreadPoolExecutor) executor, CONSUME_EXECUTOR_FIELD_NAME, abstractConnectionFactory);
             }
         });
         log.info("DynamicTp adapter, rabbitmq executors init end, executors: {}", executors);

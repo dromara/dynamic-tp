@@ -100,7 +100,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 CommonUtil.getInstance().getIp() + ":" + CommonUtil.getInstance().getPort(),
                 CommonUtil.getInstance().getEnv(),
                 populatePoolName(executorWrapper),
-                notifyItemEnum.getValue(),
+                populateAlarmItem(notifyItemEnum, executorWrapper),
                 alarmValue,
                 executor.getCorePoolSize(),
                 executor.getMaximumPoolSize(),
@@ -178,7 +178,17 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         if (StringUtils.isBlank(poolAlisaName)) {
             return executorWrapper.getThreadPoolName();
         }
-        return executorWrapper.getThreadPoolName() + "(" + poolAlisaName + ")";
+        return executorWrapper.getThreadPoolName() + " (" + poolAlisaName + ")";
+    }
+
+    protected String populateAlarmItem(NotifyItemEnum notifyType, ExecutorWrapper executorWrapper) {
+        String suffix = StringUtils.EMPTY;
+        if (notifyType == NotifyItemEnum.RUN_TIMEOUT) {
+            suffix = " (" + executorWrapper.getThreadPoolStatProvider().getRunTimeout() + "ms)";
+        } else if (notifyType == NotifyItemEnum.QUEUE_TIMEOUT) {
+            suffix = " (" + executorWrapper.getThreadPoolStatProvider().getQueueTimeout() + "ms)";
+        }
+        return notifyType.getValue() + suffix;
     }
 
     private String highlightNotifyContent(String content, List<String> diffs) {

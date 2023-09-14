@@ -46,12 +46,10 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<Executor> {
     @Override
     public ExecutorWrapper doInitExecutorWrapper(WebServer webServer) {
         TomcatWebServer tomcatWebServer = (TomcatWebServer) webServer;
-        final TomcatExecutorAdapter adapter = new TomcatExecutorAdapter(
-                tomcatWebServer.getTomcat().getConnector().getProtocolHandler().getExecutor());
-        ExecutorWrapper executorWrapper = new ExecutorWrapper(POOL_NAME, adapter);
-        TomcatExecutorProxy tomcatExecutorProxy = new TomcatExecutorProxy(executorWrapper);
+        Executor originExecutor = tomcatWebServer.getTomcat().getConnector().getProtocolHandler().getExecutor();
+        TomcatExecutorProxy tomcatExecutorProxy = new TomcatExecutorProxy((ThreadPoolExecutor) originExecutor);
         tomcatWebServer.getTomcat().getConnector().getProtocolHandler().setExecutor(tomcatExecutorProxy);
-        return executorWrapper;
+        return new ExecutorWrapper(POOL_NAME, new TomcatExecutorAdapter(tomcatExecutorProxy));
     }
 
     @Override

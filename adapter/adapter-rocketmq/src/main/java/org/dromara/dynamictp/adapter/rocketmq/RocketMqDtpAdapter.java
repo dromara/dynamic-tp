@@ -85,21 +85,16 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
                 continue;
             }
 
-            String cusKey = consumer.getConsumerGroup();
+            String tpName = consumer.getConsumerGroup();
             val consumeMessageService = pushConsumer.getConsumeMessageService();
             if (consumeMessageService instanceof ConsumeMessageConcurrentlyService) {
-                cusKey = PREFIX + "#consumer#concurrently#" + cusKey;
+                tpName = PREFIX + "#consumer#concurrently#" + tpName;
             } else if (consumeMessageService instanceof ConsumeMessageOrderlyService) {
-                cusKey = PREFIX + "#consumer#orderly#" + cusKey;
+                tpName = PREFIX + "#consumer#orderly#" + tpName;
             }
             ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
             if (Objects.nonNull(executor)) {
-                val executorWrapper = new ExecutorWrapper(cusKey, executor);
-                initNotifyItems(cusKey, executorWrapper);
-                executors.put(cusKey, executorWrapper);
-                if (executor instanceof ThreadPoolExecutor) {
-                    enhanceOriginExecutor(executorWrapper, CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
-                }
+                enhanceOriginExecutor(tpName, executor, CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
             }
         }
     }
@@ -122,10 +117,12 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
             ThreadPoolExecutor executor = (ThreadPoolExecutor) producer.getAsyncSenderExecutor();
 
             if (Objects.nonNull(executor)) {
-                val executorWrapper = new ExecutorWrapper(proKey, executor);
+                ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executor);
+                producer.setAsyncSenderExecutor(proxy);
+
+                val executorWrapper = new ExecutorWrapper(proKey, proxy);
                 initNotifyItems(proKey, executorWrapper);
                 executors.put(proKey, executorWrapper);
-                producer.setAsyncSenderExecutor(new ThreadPoolExecutorProxy(executorWrapper));
             }
         }
     }

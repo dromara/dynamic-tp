@@ -31,7 +31,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -97,11 +96,8 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
                 return;
             }
 
-            String key = PREFIX + "#" + serverConfig.getProtocol() + "#" + serverConfig.getPort();
-            val executorWrapper = new ExecutorWrapper(key, executor);
-            initNotifyItems(key, executorWrapper);
-            executors.put(key, executorWrapper);
-            enhanceOriginExecutor(executorWrapper, BIZ_THREAD_POOL_NAME, v);
+            String tpName = PREFIX + "#" + serverConfig.getProtocol() + "#" + serverConfig.getPort();
+            enhanceOriginExecutor(tpName, executor, BIZ_THREAD_POOL_NAME, v);
         });
 
         if (hasUserThread) {
@@ -116,12 +112,7 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
             f.setAccessible(true);
             val userThreadMap = (Map<String, UserThreadPool>) f.get(null);
             if (MapUtils.isNotEmpty(userThreadMap)) {
-                userThreadMap.forEach((k, v) -> {
-                    val executorWrapper = new ExecutorWrapper(k, v.getExecutor());
-                    initNotifyItems(k, executorWrapper);
-                    executors.put(k, executorWrapper);
-                    enhanceOriginExecutor(executorWrapper, USER_THREAD_FIELD_NAME, v);
-                });
+                userThreadMap.forEach((k, v) -> enhanceOriginExecutor(k, v.getExecutor(), USER_THREAD_FIELD_NAME, v));
             }
         } catch (Exception e) {
             log.warn("UserThreadPoolManager handles failed", e);

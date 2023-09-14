@@ -91,9 +91,10 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
             Map<String, Object> executorMap = dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY);
             if (MapUtils.isNotEmpty(executorMap)) {
                 executorMap.forEach((k, v) -> {
-                    ExecutorWrapper wrapper = buildWrapper(k, (ThreadPoolExecutor) v);
+                    ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) v);
+                    executorMap.replace(k, proxy);
+                    ExecutorWrapper wrapper = buildWrapper(k, proxy);
                     executors.put(genTpName(k), wrapper);
-                    executorMap.replace(k, new ThreadPoolExecutorProxy(wrapper));
                 });
             }
             log.info("DynamicTp adapter, apache dubbo provider executors init end, executors: {}", executors);
@@ -118,9 +119,10 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
         Map<Integer, ExecutorService> executorMap = data.get(EXECUTOR_SERVICE_COMPONENT_KEY);
         if (MapUtils.isNotEmpty(executorMap)) {
             executorMap.forEach((k, v) -> {
-                ExecutorWrapper wrapper = buildWrapper(k.toString(), (ThreadPoolExecutor) v);
+                ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) v);
+                executorMap.replace(k, proxy);
+                ExecutorWrapper wrapper = buildWrapper(k.toString(), proxy);
                 executors.put(genTpName(k.toString()), wrapper);
-                executorMap.replace(k, new ThreadPoolExecutorProxy(wrapper));
             });
         }
         log.info("DynamicTp adapter, apache dubbo provider executors init end, executors: {}", executors);

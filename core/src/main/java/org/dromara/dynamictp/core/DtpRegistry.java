@@ -245,7 +245,6 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
             val rejectHandler = RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType());
             executor.setRejectedExecutionHandler(rejectHandler);
         }
-
         List<TaskWrapper> taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
         executorWrapper.setTaskWrappers(taskWrappers);
 

@@ -80,10 +80,11 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements Initia
         if (MapUtils.isNotEmpty(executorMap) && registered.compareAndSet(false, true)) {
             executorMap.forEach((k, v) -> {
                 val name = genTpName(k);
-                val executorWrapper = new ExecutorWrapper(name, (ThreadPoolExecutor) v);
+                ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) v);
+                executorMap.replace(k, proxy);
+                val executorWrapper = new ExecutorWrapper(name, proxy);
                 initNotifyItems(name, executorWrapper);
                 executors.put(name, executorWrapper);
-                executorMap.replace(k, new ThreadPoolExecutorProxy(executorWrapper));
             });
         }
         log.info("DynamicTp adapter, alibaba dubbo provider executors init end, executors: {}", executors);

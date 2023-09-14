@@ -32,10 +32,8 @@ import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
-import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.common.util.StreamUtil;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 
 import java.util.List;
 import java.util.Map;
@@ -82,19 +80,12 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
         if (executors.containsKey(poolName)) {
             return;
         }
-        val executorWrapper = new ExecutorWrapper(poolName, threadPoolExecutor);
-        initNotifyItems(poolName, executorWrapper);
-        executors.put(poolName, executorWrapper);
 
         DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
         val tmpMap = StreamUtil.toMap(dtpProperties.getHystrixTp(), TpExecutorProps::getThreadPoolName);
-        log.info("DynamicTp adapter, hystrix init end, executor {}", executorWrapper);
-        refresh(executorWrapper, dtpProperties.getPlatforms(), tmpMap.get(poolName));
-        try {
-            ReflectionUtil.setFieldValue(THREAD_POOL_FIELD_NAME, metrics, new ThreadPoolExecutorProxy(executorWrapper));
-        } catch (IllegalAccessException e) {
-            log.error("DynamicTp {} adapter, enhance origin executor failed.", getAdapterPrefix(), e);
-        }
+        enhanceOriginExecutor(poolName, threadPoolExecutor, THREAD_POOL_FIELD_NAME, metrics);
+        refresh(executors.get(poolName), dtpProperties.getPlatforms(), tmpMap.get(poolName));
+        log.info("DynamicTp adapter, hystrix init end, executor {}", executors.get(poolName));
     }
 
     public void cacheMetricsPublisher(String poolName, DtpMetricsPublisherThreadPool metricsPublisher) {

@@ -1,0 +1,39 @@
+package org.dromara.dynamictp.test.adapter.webserver.proxy;
+
+import org.apache.tomcat.util.threads.TaskQueue;
+import org.apache.tomcat.util.threads.ThreadPoolExecutor;
+import org.dromara.dynamictp.core.executor.NamedThreadFactory;
+import org.dromara.dynamictp.starter.adapter.webserver.adapter.tomcat.TomcatExecutorProxy;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.concurrent.TimeUnit;
+
+/**
+ * @author kyao
+ * @date 2023年09月15日 10:26
+ */
+public class TomcatExecutorProxyTest {
+
+    @Test
+    public void testParamAndStatus() {
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 10, 5, TimeUnit.SECONDS, new TaskQueue(1), new NamedThreadFactory("测试线程池"));
+        TomcatExecutorProxy proxy = new TomcatExecutorProxy(executor);
+
+        Assert.assertEquals(executor.getCorePoolSize(), proxy.getCorePoolSize());
+        Assert.assertEquals(executor.getMaximumPoolSize(), proxy.getMaximumPoolSize());
+        Assert.assertEquals(executor.getActiveCount(), proxy.getActiveCount());
+        Assert.assertEquals(executor.getPoolSize(), proxy.getPoolSize());
+        Assert.assertEquals(executor.getCompletedTaskCount(), proxy.getCompletedTaskCount());
+        Assert.assertEquals(executor.getLargestPoolSize(), proxy.getLargestPoolSize());
+        Assert.assertEquals(executor.getTaskCount(), proxy.getTaskCount());
+        Assert.assertEquals(executor.getThreadFactory(), proxy.getThreadFactory());
+        Assert.assertEquals(executor.getKeepAliveTime(TimeUnit.SECONDS), proxy.getKeepAliveTime(TimeUnit.SECONDS));
+        Assert.assertEquals(executor.getQueue(), proxy.getQueue());
+        Assert.assertEquals(executor.allowsCoreThreadTimeOut(), proxy.allowsCoreThreadTimeOut());
+
+        Assert.assertTrue(executor.isShutdown());
+        Assert.assertTrue(executor.isTerminated());
+        Assert.assertFalse(executor.isTerminating());
+    }
+}

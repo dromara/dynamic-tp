@@ -41,7 +41,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> {
 
-    private static final String POOL_NAME = "undertowTp";
+    private static final String TP_NAME = "undertowTp";
 
     public UndertowDtpAdapter() {
         super();
@@ -50,7 +50,7 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
     }
 
     @Override
-    public ExecutorWrapper doInitExecutorWrapper(WebServer webServer) {
+    public ExecutorWrapper enhanceAndGetExecutorWrapper(WebServer webServer) {
         UndertowServletWebServer undertowServletWebServer = (UndertowServletWebServer) webServer;
         val undertow = (Undertow) ReflectionUtil.getFieldValue(UndertowServletWebServer.class,
                 "undertow", undertowServletWebServer);
@@ -66,10 +66,10 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
         Object executor = ReflectionUtil.getFieldValue(taskPool.getClass(),
                 handler.taskPoolType().getInternalExecutor(), taskPool);
         if (executor instanceof ThreadPoolExecutor) {
-            enhanceOriginExecutor(POOL_NAME, (ThreadPoolExecutor) executor, handler.taskPoolType().getInternalExecutor(), taskPool);
-            return executors.get(POOL_NAME);
+            enhanceOriginExecutor(TP_NAME, (ThreadPoolExecutor) executor, handler.taskPoolType().getInternalExecutor(), taskPool);
+            return executors.get(TP_NAME);
         } else {
-            return new ExecutorWrapper(POOL_NAME, handler.adapt(executor));
+            return new ExecutorWrapper(TP_NAME, handler.adapt(executor));
         }
     }
 
@@ -80,6 +80,6 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
 
     @Override
     protected String getAdapterPrefix() {
-        return POOL_NAME;
+        return TP_NAME;
     }
 }

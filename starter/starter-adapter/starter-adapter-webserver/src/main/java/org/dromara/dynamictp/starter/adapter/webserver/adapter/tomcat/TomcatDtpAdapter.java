@@ -44,7 +44,7 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<Executor> {
     private static final String TP_NAME = "tomcatTp";
 
     @Override
-    public ExecutorWrapper doInitExecutorWrapper(WebServer webServer) {
+    public ExecutorWrapper enhanceAndGetExecutorWrapper(WebServer webServer) {
         TomcatWebServer tomcatWebServer = (TomcatWebServer) webServer;
         Executor originExecutor = tomcatWebServer.getTomcat().getConnector().getProtocolHandler().getExecutor();
         TomcatExecutorProxy proxy = new TomcatExecutorProxy((ThreadPoolExecutor) originExecutor);

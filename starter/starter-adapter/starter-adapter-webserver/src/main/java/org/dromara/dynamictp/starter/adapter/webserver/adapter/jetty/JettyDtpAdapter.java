@@ -51,19 +51,18 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.SizedThreadPool> {
 
-    private static final String POOL_NAME = "jettyTp";
+    private static final String TP_NAME = "jettyTp";
 
     private static final String EXECUTOR_NAME = "_executor";
 
     private static final String THREAD_POOL_NAME = "_threadPool";
 
     @Override
-    public ExecutorWrapper doInitExecutorWrapper(WebServer webServer) {
+    public ExecutorWrapper enhanceAndGetExecutorWrapper(WebServer webServer) {
         JettyWebServer jettyWebServer = (JettyWebServer) webServer;
         ThreadPool threadPool = jettyWebServer.getServer().getThreadPool();
-        final JettyExecutorAdapter adapter = new JettyExecutorAdapter(
-                (ThreadPool.SizedThreadPool) threadPool);
-        ExecutorWrapper executorWrapper = new ExecutorWrapper(POOL_NAME, adapter);
+        JettyExecutorAdapter adapter = new JettyExecutorAdapter((ThreadPool.SizedThreadPool) threadPool);
+        ExecutorWrapper executorWrapper = new ExecutorWrapper(TP_NAME, adapter);
         enhanceOriginExecutor(jettyWebServer, threadPool);
         return executorWrapper;
     }
@@ -119,7 +118,7 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
 
     @Override
     protected String getAdapterPrefix() {
-        return POOL_NAME;
+        return TP_NAME;
     }
 
     /**

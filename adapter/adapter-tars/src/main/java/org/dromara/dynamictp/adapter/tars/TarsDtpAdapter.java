@@ -40,7 +40,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class TarsDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String PREFIX = "tarsTp";
+    private static final String TP_PREFIX = "tarsTp";
 
     private static final String COMMUNICATORS_FIELD = "CommunicatorMap";
 
@@ -54,8 +54,8 @@ public class TarsDtpAdapter extends AbstractDtpAdapter {
     }
 
     @Override
-    protected String getAdapterPrefix() {
-        return PREFIX;
+    protected String getTpPrefix() {
+        return TP_PREFIX;
     }
 
     @Override
@@ -74,9 +74,8 @@ public class TarsDtpAdapter extends AbstractDtpAdapter {
             if (Objects.isNull(executor)) {
                 return;
             }
-            val tpName = (String) ReflectionUtil.getFieldValue(Communicator.class, COMMUNICATOR_ID_FIELD, v);
+            val tpName = TP_PREFIX + "#" + ReflectionUtil.getFieldValue(Communicator.class, COMMUNICATOR_ID_FIELD, v);
             enhanceOriginExecutor(tpName, executor, THREAD_POOL_FIELD, v);
         });
-        log.info("DynamicTp adapter, tars executors init end, executors: {}", executors);
     }
 }

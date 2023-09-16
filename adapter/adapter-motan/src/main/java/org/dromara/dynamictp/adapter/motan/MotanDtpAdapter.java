@@ -43,13 +43,14 @@ import java.util.Objects;
  * @since 1.1.0
  */
 @Slf4j
+@SuppressWarnings("all")
 public class MotanDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String PREFIX = "motanTp";
+    private static final String TP_PREFIX = "motanTp";
 
-    private static final String SERVER_FIELD_NAME = "server";
+    private static final String SERVER_FIELD = "server";
 
-    private static final String EXECUTOR_FIELD_NAME = "standardThreadExecutor";
+    private static final String EXECUTOR_FIELD = "standardThreadExecutor";
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
@@ -57,8 +58,8 @@ public class MotanDtpAdapter extends AbstractDtpAdapter {
     }
 
     @Override
-    protected String getAdapterPrefix() {
-        return PREFIX;
+    protected String getTpPrefix() {
+        return TP_PREFIX;
     }
 
     @Override
@@ -71,7 +72,6 @@ public class MotanDtpAdapter extends AbstractDtpAdapter {
             return;
         }
         beans.forEach((k, v) -> {
-            @SuppressWarnings("unchecked")
             List<Exporter<?>> exporters = v.getExporters();
             if (CollectionUtils.isEmpty(exporters)) {
                 return;
@@ -81,26 +81,23 @@ public class MotanDtpAdapter extends AbstractDtpAdapter {
                     return;
                 }
                 val defaultRpcExporter = (DefaultRpcExporter<?>) e;
-                val server = (Server) ReflectionUtil.getFieldValue(DefaultRpcExporter.class, SERVER_FIELD_NAME, defaultRpcExporter);
+                val server = (Server) ReflectionUtil.getFieldValue(DefaultRpcExporter.class, SERVER_FIELD, defaultRpcExporter);
                 if (Objects.isNull(server) || !(server instanceof NettyServer)) {
                     return;
                 }
                 val nettyServer = (NettyServer) server;
-                val executor = (StandardThreadExecutor) ReflectionUtil.getFieldValue(NettyServer.class, EXECUTOR_FIELD_NAME, nettyServer);
+                val executor = (StandardThreadExecutor) ReflectionUtil.getFieldValue(NettyServer.class, EXECUTOR_FIELD, nettyServer);
                 if (Objects.nonNull(executor)) {
                     StandardThreadExecutorProxy proxy = new StandardThreadExecutorProxy(executor);
+                    String tpName = TP_PREFIX + "#" + nettyServer.getUrl().getPort();
                     try {
-                        ReflectionUtil.setFieldValue(EXECUTOR_FIELD_NAME, nettyServer, proxy);
+                        ReflectionUtil.setFieldValue(EXECUTOR_FIELD, nettyServer, proxy);
+                        executors.put(tpName, new ExecutorWrapper(tpName, proxy));
                     } catch (IllegalAccessException ex) {
-                        log.error("DynamicTp {} adapter, enhance origin executor failed.", getAdapterPrefix(), ex);
+                        log.error("DynamicTp adapter, enhance {} failed.", tpName, ex);
                     }
-                    String key = PREFIX + "#" + nettyServer.getUrl().getPort();
-                    val executorWrapper = new ExecutorWrapper(key, proxy);
-                    initNotifyItems(key, executorWrapper);
-                    executors.put(key, executorWrapper);
                 }
             });
         });
-        log.info("DynamicTp adapter, motan server executors init end, executors: {}", executors);
     }
 }

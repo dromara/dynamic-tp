@@ -47,9 +47,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class RocketMqDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String PREFIX = "rocketMqTp";
+    private static final String TP_PREFIX = "rocketMqTp";
 
-    private static final String CONSUME_EXECUTOR_FIELD_NAME = "consumeExecutor";
+    private static final String CONSUME_EXECUTOR_FIELD = "consumeExecutor";
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
@@ -57,18 +57,15 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
     }
 
     @Override
-    protected String getAdapterPrefix() {
-        return PREFIX;
+    protected String getTpPrefix() {
+        return TP_PREFIX;
     }
 
     @Override
     protected void initialize() {
-
         super.initialize();
         adaptConsumerExecutors();
         adaptProducerExecutors();
-
-        log.info("DynamicTp adapter, rocketMq consumer and producer executors init end, executors: {}", executors);
     }
 
     public void adaptConsumerExecutors() {
@@ -84,17 +81,16 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
             if (Objects.isNull(pushConsumer)) {
                 continue;
             }
-
-            String tpName = consumer.getConsumerGroup();
             val consumeMessageService = pushConsumer.getConsumeMessageService();
-            if (consumeMessageService instanceof ConsumeMessageConcurrentlyService) {
-                tpName = PREFIX + "#consumer#concurrently#" + tpName;
-            } else if (consumeMessageService instanceof ConsumeMessageOrderlyService) {
-                tpName = PREFIX + "#consumer#orderly#" + tpName;
-            }
-            ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
+            ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(CONSUME_EXECUTOR_FIELD, consumeMessageService);
             if (Objects.nonNull(executor)) {
-                enhanceOriginExecutor(tpName, executor, CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
+                String tpName = consumer.getConsumerGroup();
+                if (consumeMessageService instanceof ConsumeMessageConcurrentlyService) {
+                    tpName = TP_PREFIX + "#consumer#concurrently#" + tpName;
+                } else if (consumeMessageService instanceof ConsumeMessageOrderlyService) {
+                    tpName = TP_PREFIX + "#consumer#orderly#" + tpName;
+                }
+                enhanceOriginExecutor(tpName, executor, CONSUME_EXECUTOR_FIELD, consumeMessageService);
             }
         }
     }
@@ -112,17 +108,12 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
             if (Objects.isNull(producer)) {
                 continue;
             }
-
-            String proKey = PREFIX + "#producer#" + defaultMQProducer.getProducerGroup();
             ThreadPoolExecutor executor = (ThreadPoolExecutor) producer.getAsyncSenderExecutor();
-
             if (Objects.nonNull(executor)) {
                 ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executor);
                 producer.setAsyncSenderExecutor(proxy);
-
-                val executorWrapper = new ExecutorWrapper(proKey, proxy);
-                initNotifyItems(proKey, executorWrapper);
-                executors.put(proKey, executorWrapper);
+                String proKey = TP_PREFIX + "#producer#" + defaultMQProducer.getProducerGroup();
+                executors.put(proKey, new ExecutorWrapper(proKey, proxy));
             }
         }
     }

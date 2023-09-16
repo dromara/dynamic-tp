@@ -41,7 +41,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> {
 
-    private static final String TP_NAME = "undertowTp";
+    private static final String TP_PREFIX = "undertowTp";
 
     public UndertowDtpAdapter() {
         super();
@@ -66,10 +66,10 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
         Object executor = ReflectionUtil.getFieldValue(taskPool.getClass(),
                 handler.taskPoolType().getInternalExecutor(), taskPool);
         if (executor instanceof ThreadPoolExecutor) {
-            enhanceOriginExecutor(TP_NAME, (ThreadPoolExecutor) executor, handler.taskPoolType().getInternalExecutor(), taskPool);
-            return executors.get(TP_NAME);
+            enhanceOriginExecutor(getTpName(), (ThreadPoolExecutor) executor, handler.taskPoolType().getInternalExecutor(), taskPool);
+            return executors.get(getTpName());
         } else {
-            return new ExecutorWrapper(TP_NAME, handler.adapt(executor));
+            return new ExecutorWrapper(getTpName(), handler.adapt(executor));
         }
     }
 
@@ -79,7 +79,7 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
     }
 
     @Override
-    protected String getAdapterPrefix() {
-        return TP_NAME;
+    protected String getTpPrefix() {
+        return TP_PREFIX;
     }
 }

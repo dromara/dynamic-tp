@@ -51,7 +51,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @SuppressWarnings("all")
 public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String PREFIX = "dubboTp";
+    private static final String TP_PREFIX = "dubboTp";
 
     private static final String EXECUTOR_SERVICE_COMPONENT_KEY = ExecutorService.class.getName();
     
@@ -63,7 +63,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
                 initialize();
                 refresh(dtpProperties);
             } catch (Exception e) {
-                log.error("Init apache dubbo thread pool failed.", e);
+                log.error("DynamicTp adapter, {} init failed.", getTpPrefix(), e);
             }
         }
     }
@@ -74,8 +74,8 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
     }
 
     @Override
-    protected String getAdapterPrefix() {
-        return PREFIX;
+    protected String getTpPrefix() {
+        return TP_PREFIX;
     }
 
     @Override
@@ -93,11 +93,10 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
                 executorMap.forEach((k, v) -> {
                     ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) v);
                     executorMap.replace(k, proxy);
-                    ExecutorWrapper wrapper = buildWrapper(k, proxy);
-                    executors.put(genTpName(k), wrapper);
+                    String tpName = genTpName(k);
+                    executors.put(tpName, new ExecutorWrapper(tpName, proxy));
                 });
             }
-            log.info("DynamicTp adapter, apache dubbo provider executors init end, executors: {}", executors);
             return;
         }
 
@@ -121,21 +120,13 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
             executorMap.forEach((k, v) -> {
                 ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) v);
                 executorMap.replace(k, proxy);
-                ExecutorWrapper wrapper = buildWrapper(k.toString(), proxy);
-                executors.put(genTpName(k.toString()), wrapper);
+                String tpName = genTpName(k.toString());
+                executors.put(tpName, new ExecutorWrapper(tpName, proxy));
             });
         }
-        log.info("DynamicTp adapter, apache dubbo provider executors init end, executors: {}", executors);
-    }
-
-    private ExecutorWrapper buildWrapper(String port, ThreadPoolExecutor executor) {
-        val name = genTpName(port);
-        val executorWrapper = new ExecutorWrapper(name, executor);
-        initNotifyItems(name, executorWrapper);
-        return executorWrapper;
     }
 
     private String genTpName(String port) {
-        return PREFIX + "#" + port;
+        return TP_PREFIX + "#" + port;
     }
 }

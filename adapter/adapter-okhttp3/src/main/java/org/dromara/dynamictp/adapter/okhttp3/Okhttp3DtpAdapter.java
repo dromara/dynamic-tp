@@ -36,9 +36,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class Okhttp3DtpAdapter extends AbstractDtpAdapter {
 
-    private static final String PREFIX = "okhttp3Tp";
+    private static final String TP_PREFIX = "okhttp3Tp";
 
-    private static final String EXECUTOR_SERVICE_FIELD_NAME = "executorService";
+    private static final String EXECUTOR_SERVICE_FIELD = "executorService";
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
@@ -46,8 +46,8 @@ public class Okhttp3DtpAdapter extends AbstractDtpAdapter {
     }
 
     @Override
-    protected String getAdapterPrefix() {
-        return PREFIX;
+    protected String getTpPrefix() {
+        return TP_PREFIX;
     }
 
     @Override
@@ -60,15 +60,13 @@ public class Okhttp3DtpAdapter extends AbstractDtpAdapter {
         }
         beans.forEach((k, v) -> {
             val executor = v.dispatcher().executorService();
-            String tpName = genTpName(k);
             if (executor instanceof ThreadPoolExecutor) {
-                enhanceOriginExecutor(tpName, (ThreadPoolExecutor) executor, EXECUTOR_SERVICE_FIELD_NAME, v.dispatcher());
+                enhanceOriginExecutor(genTpName(k), (ThreadPoolExecutor) executor, EXECUTOR_SERVICE_FIELD, v.dispatcher());
             }
         });
-        log.info("DynamicTp adapter, okhttp3 executors init end, executors: {}", executors);
     }
 
     private String genTpName(String clientName) {
-        return clientName + "Tp";
+        return TP_PREFIX + "#" + clientName;
     }
 }

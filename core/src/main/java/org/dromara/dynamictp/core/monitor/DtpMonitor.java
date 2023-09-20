@@ -64,7 +64,7 @@ public class DtpMonitor extends OnceApplicationContextEventListener {
     }
 
     private void run() {
-        Set<String> executorNames = DtpRegistry.listAllExecutorNames();
+        Set<String> executorNames = DtpRegistry.getAllExecutorNames();
         checkAlarm(executorNames);
         collect(executorNames);
     }

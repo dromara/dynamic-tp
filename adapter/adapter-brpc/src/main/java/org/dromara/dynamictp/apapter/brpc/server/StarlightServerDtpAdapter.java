@@ -42,7 +42,7 @@ import java.util.Objects;
 @Slf4j
 public class StarlightServerDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String PREFIX = "brpcServerTp";
+    private static final String TP_PREFIX = "brpcServerTp";
 
     private static final String URI_FIELD = "uri";
 
@@ -50,7 +50,7 @@ public class StarlightServerDtpAdapter extends AbstractDtpAdapter {
 
     private static final String THREAD_POOL_FACTORY_FIELD = "threadPoolFactory";
 
-    private static final String DEFAULT_THREAD_POOL_FIELD_NAME = "defaultThreadPool";
+    private static final String DEFAULT_THREAD_POOL_FIELD = "defaultThreadPool";
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
@@ -58,8 +58,8 @@ public class StarlightServerDtpAdapter extends AbstractDtpAdapter {
     }
 
     @Override
-    protected String getAdapterPrefix() {
-        return PREFIX;
+    protected String getTpPrefix() {
+        return TP_PREFIX;
     }
 
     @Override
@@ -87,11 +87,10 @@ public class StarlightServerDtpAdapter extends AbstractDtpAdapter {
         if (Objects.isNull(threadPoolFactory)) {
             return;
         }
-        String tpName = uri.getParameter("biz_thread_pool_name") + "#server";
+        String tpName = TP_PREFIX + "#" + uri.getParameter("biz_thread_pool_name");
         val executor = threadPoolFactory.defaultThreadPool();
         if (Objects.nonNull(executor)) {
-            enhanceOriginExecutor(tpName, executor, DEFAULT_THREAD_POOL_FIELD_NAME, threadPoolFactory);
+            enhanceOriginExecutor(tpName, executor, DEFAULT_THREAD_POOL_FIELD, threadPoolFactory);
         }
-        log.info("DynamicTp adapter, brpc server executors init end, executors: {}", executors);
     }
 }

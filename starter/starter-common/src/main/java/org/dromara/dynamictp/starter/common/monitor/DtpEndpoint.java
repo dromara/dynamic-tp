@@ -46,7 +46,7 @@ public class DtpEndpoint {
     public List<Metrics> invoke() {
 
         List<Metrics> metricsList = Lists.newArrayList();
-        DtpRegistry.listAllExecutorNames().forEach(x -> {
+        DtpRegistry.getAllExecutorNames().forEach(x -> {
             ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(x);
             metricsList.add(ExecutorConverter.toMetrics(wrapper));
         });

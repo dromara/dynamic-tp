@@ -19,7 +19,6 @@ package org.dromara.dynamictp.adapter.dubbo.alibaba;
 
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 import com.alibaba.dubbo.common.store.DataStore;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.MapUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
@@ -42,11 +41,10 @@ import static com.alibaba.dubbo.common.Constants.EXECUTOR_SERVICE_COMPONENT_KEY;
  * @author yanhom
  * @since 1.0.6
  */
-@Slf4j
 @SuppressWarnings("all")
 public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements InitializingBean {
 
-    private static final String PREFIX = "dubboTp";
+    private static final String TP_PREFIX = "dubboTp";
     
     private final AtomicBoolean registered = new AtomicBoolean(false);
     
@@ -83,19 +81,17 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements Initia
                 ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) v);
                 executorMap.replace(k, proxy);
                 val executorWrapper = new ExecutorWrapper(name, proxy);
-                initNotifyItems(name, executorWrapper);
                 executors.put(name, executorWrapper);
             });
         }
-        log.info("DynamicTp adapter, alibaba dubbo provider executors init end, executors: {}", executors);
     }
 
     @Override
-    protected String getAdapterPrefix() {
-        return PREFIX;
+    protected String getTpPrefix() {
+        return TP_PREFIX;
     }
 
     private String genTpName(String port) {
-        return PREFIX + "#" + port;
+        return TP_PREFIX + "#" + port;
     }
 }

@@ -16,7 +16,7 @@ spring:
       monitorInterval: 5
       platforms:                    # 通知报警平台配置
         - platform: wechat
-          urlKey: 32d7bf40-1353-4859              # 替换
+          urlKey: 32d7bf40-1353              # 替换
           receivers: test1,test2                   # 接受人企微名称
         - platform: ding
           urlKey: f80dad441fcd655438f4a08dcd6a     # 替换

@@ -49,9 +49,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class HystrixDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String PREFIX = "hystrixTp";
+    private static final String TP_PREFIX = "hystrixTp";
 
-    private static final String THREAD_POOL_FIELD_NAME = "threadPool";
+    private static final String THREAD_POOL_FIELD = "threadPool";
 
     private static final Map<String, DtpMetricsPublisherThreadPool> METRICS_PUBLISHERS = Maps.newHashMap();
 
@@ -71,8 +71,8 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
     }
 
     @Override
-    protected String getAdapterPrefix() {
-        return PREFIX;
+    protected String getTpPrefix() {
+        return TP_PREFIX;
     }
 
     public void register(String poolName, HystrixThreadPoolMetrics metrics) {
@@ -82,10 +82,11 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
         }
 
         DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-        val tmpMap = StreamUtil.toMap(dtpProperties.getHystrixTp(), TpExecutorProps::getThreadPoolName);
-        enhanceOriginExecutor(poolName, threadPoolExecutor, THREAD_POOL_FIELD_NAME, metrics);
-        refresh(executors.get(poolName), dtpProperties.getPlatforms(), tmpMap.get(poolName));
-        log.info("DynamicTp adapter, hystrix init end, executor {}", executors.get(poolName));
+        val prop = StreamUtil.toMap(dtpProperties.getHystrixTp(), TpExecutorProps::getThreadPoolName);
+        String tpName = TP_PREFIX + "#" + poolName;
+        enhanceOriginExecutor(tpName, threadPoolExecutor, THREAD_POOL_FIELD, metrics);
+        refresh(executors.get(tpName), dtpProperties.getPlatforms(), prop.get(tpName));
+        log.info("DynamicTp adapter, {} init end, executor {}", getTpPrefix(), executors.get(tpName));
     }
 
     public void cacheMetricsPublisher(String poolName, DtpMetricsPublisherThreadPool metricsPublisher) {

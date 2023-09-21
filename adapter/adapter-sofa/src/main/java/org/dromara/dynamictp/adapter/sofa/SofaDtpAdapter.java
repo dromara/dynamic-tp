@@ -48,15 +48,15 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class SofaDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String PREFIX = "sofaTp";
+    private static final String TP_PREFIX = "sofaTp";
 
-    private static final String SERVER_CONFIG_FIELD_NAME = "serverConfig";
+    private static final String SERVER_CONFIG_FIELD = "serverConfig";
 
-    private static final String USER_THREAD_FIELD_NAME = "userThreadMap";
+    private static final String USER_THREAD_FIELD = "userThreadMap";
 
-    private static final String USER_THREAD_EXECUTOR_FIELD_NAME = "executor";
+    private static final String USER_THREAD_EXECUTOR_FIELD = "executor";
 
-    private static final String BIZ_THREAD_POOL_NAME = "bizThreadPool";
+    private static final String BIZ_THREAD_POOL = "bizThreadPool";
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
@@ -64,8 +64,8 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
     }
 
     @Override
-    protected String getAdapterPrefix() {
-        return PREFIX;
+    protected String getTpPrefix() {
+        return TP_PREFIX;
     }
 
     @Override
@@ -85,34 +85,35 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
                 BoltServer server = (BoltServer) v;
                 executor = server.getBizThreadPool();
                 serverConfig = (ServerConfig) ReflectionUtil.getFieldValue(BoltServer.class,
-                        SERVER_CONFIG_FIELD_NAME, server);
+                        SERVER_CONFIG_FIELD, server);
             } else if (v instanceof AbstractHttpServer) {
                 AbstractHttpServer server = (AbstractHttpServer) v;
                 executor = server.getBizThreadPool();
                 serverConfig = (ServerConfig) ReflectionUtil.getFieldValue(AbstractHttpServer.class,
-                        SERVER_CONFIG_FIELD_NAME, server);
+                        SERVER_CONFIG_FIELD, server);
             }
             if (Objects.isNull(executor) || Objects.isNull(serverConfig)) {
                 return;
             }
-
-            String tpName = PREFIX + "#" + serverConfig.getProtocol() + "#" + serverConfig.getPort();
-            enhanceOriginExecutor(tpName, executor, BIZ_THREAD_POOL_NAME, v);
+            String tpName = TP_PREFIX + "#" + serverConfig.getProtocol() + "#" + serverConfig.getPort();
+            enhanceOriginExecutor(tpName, executor, BIZ_THREAD_POOL, v);
         });
 
         if (hasUserThread) {
             handleUserThreadPools();
         }
-        log.info("DynamicTp adapter, sofa executors init end, executors: {}", executors);
     }
 
     private void handleUserThreadPools() {
         try {
-            Field f = UserThreadPoolManager.class.getDeclaredField(USER_THREAD_FIELD_NAME);
+            Field f = UserThreadPoolManager.class.getDeclaredField(USER_THREAD_FIELD);
             f.setAccessible(true);
             val userThreadMap = (Map<String, UserThreadPool>) f.get(null);
             if (MapUtils.isNotEmpty(userThreadMap)) {
-                userThreadMap.forEach((k, v) -> enhanceOriginExecutor(k, v.getExecutor(), USER_THREAD_FIELD_NAME, v));
+                userThreadMap.forEach((k, v) -> {
+                    String tpName = TP_PREFIX + "#" + k;
+                    enhanceOriginExecutor(tpName, v.getExecutor(), USER_THREAD_FIELD, v);
+                });
             }
         } catch (Exception e) {
             log.warn("UserThreadPoolManager handles failed", e);

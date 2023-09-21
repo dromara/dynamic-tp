@@ -41,9 +41,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class AliyunOnsRocketMqAdapter extends AbstractDtpAdapter {
 
-    private static final String PREFIX = "rocketMqTp";
+    private static final String TP_PREFIX = "rocketMqTp";
 
-    private static final String CONSUME_EXECUTOR_FIELD_NAME = "consumeExecutor";
+    private static final String CONSUME_EXECUTOR_FIELD = "consumeExecutor";
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
@@ -51,17 +51,14 @@ public class AliyunOnsRocketMqAdapter extends AbstractDtpAdapter {
     }
 
     @Override
-    protected String getAdapterPrefix() {
-        return PREFIX;
+    protected String getTpPrefix() {
+        return TP_PREFIX;
     }
 
     @Override
     protected void initialize() {
         super.initialize();
         adaptConsumerExecutors();
-
-        log.info("DynamicTp adapter, Aliyun business version RocketMQ consumer executors init end"
-                + ", executors: {}", executors);
     }
 
     private void adaptConsumerExecutors() {
@@ -88,16 +85,15 @@ public class AliyunOnsRocketMqAdapter extends AbstractDtpAdapter {
         }
 
         val consumeMessageService = impl.getConsumeMessageService();
-        // consumer bean name replace topic name
         String tpName = defaultMqPushConsumer.getConsumerGroup();
         if (consumeMessageService instanceof ConsumeMessageConcurrentlyService) {
-            tpName = PREFIX + "#consumer#concurrently#" + tpName;
+            tpName = TP_PREFIX + "#consumer#concurrently#" + tpName;
         } else if (consumeMessageService instanceof ConsumeMessageOrderlyService) {
-            tpName = PREFIX + "#consumer#orderly#" + tpName;
+            tpName = TP_PREFIX + "#consumer#orderly#" + tpName;
         }
-        ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(CONSUME_EXECUTOR_FIELD, consumeMessageService);
         if (Objects.nonNull(executor)) {
-            enhanceOriginExecutor(tpName, executor, CONSUME_EXECUTOR_FIELD_NAME, consumeMessageService);
+            enhanceOriginExecutor(tpName, executor, CONSUME_EXECUTOR_FIELD, consumeMessageService);
         }
     }
 }

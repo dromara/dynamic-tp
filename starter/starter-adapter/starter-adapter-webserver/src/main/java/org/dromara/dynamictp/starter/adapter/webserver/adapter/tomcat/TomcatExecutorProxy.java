@@ -19,6 +19,7 @@ package org.dromara.dynamictp.starter.adapter.webserver.adapter.tomcat;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.RejectHandlerAware;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
@@ -48,13 +49,27 @@ public class TomcatExecutorProxy extends ThreadPoolExecutor implements TaskEnhan
     public TomcatExecutorProxy(ThreadPoolExecutor executor) {
         super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
                 executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS, executor.getQueue(),
-                executor.getThreadFactory(), executor.getRejectedExecutionHandler());
-        RejectedExecutionHandler handler = getRejectedExecutionHandler();
+                executor.getThreadFactory());
+        setThreadRenewalDelay(executor.getThreadRenewalDelay());
+        Object handler = getRejectedExecutionHandler(executor);
         this.rejectHandlerType = handler.getClass().getSimpleName();
-        setRejectedExecutionHandler((RejectedExecutionHandler) Proxy
-                .newProxyInstance(handler.getClass().getClassLoader(),
-                        new Class[]{RejectedExecutionHandler.class},
-                        new RejectedInvocationHandler(handler)));
+
+        // for different tomcat version
+        try {
+            setRejectedExecutionHandler((RejectedExecutionHandler) Proxy
+                    .newProxyInstance(handler.getClass().getClassLoader(),
+                            new Class[]{RejectedExecutionHandler.class},
+                            new RejectedInvocationHandler(handler)));
+        } catch (Throwable t) {
+            try {
+                ReflectionUtil.setFieldValue("handler", this, Proxy
+                        .newProxyInstance(handler.getClass().getClassLoader(),
+                                new Class[]{java.util.concurrent.RejectedExecutionHandler.class},
+                                new RejectedInvocationHandler(handler)));
+            } catch (IllegalAccessException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
         executor.shutdownNow();
     }
 
@@ -85,5 +100,9 @@ public class TomcatExecutorProxy extends ThreadPoolExecutor implements TaskEnhan
     @Override
     public String getRejectHandlerType() {
         return rejectHandlerType;
+    }
+
+    private Object getRejectedExecutionHandler(ThreadPoolExecutor executor) {
+        return ReflectionUtil.getFieldValue("handler", executor);
     }
 }

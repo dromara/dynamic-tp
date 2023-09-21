@@ -41,15 +41,15 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<Executor> {
 
-    private static final String TP_NAME = "tomcatTp";
+    private static final String TP_PREFIX = "tomcatTp";
 
     @Override
-    public ExecutorWrapper doInitExecutorWrapper(WebServer webServer) {
+    public ExecutorWrapper enhanceAndGetExecutorWrapper(WebServer webServer) {
         TomcatWebServer tomcatWebServer = (TomcatWebServer) webServer;
         Executor originExecutor = tomcatWebServer.getTomcat().getConnector().getProtocolHandler().getExecutor();
         TomcatExecutorProxy proxy = new TomcatExecutorProxy((ThreadPoolExecutor) originExecutor);
         tomcatWebServer.getTomcat().getConnector().getProtocolHandler().setExecutor(proxy);
-        return new ExecutorWrapper(TP_NAME, new TomcatExecutorAdapter(proxy));
+        return new ExecutorWrapper(getTpName(), new TomcatExecutorAdapter(proxy));
     }
 
     @Override
@@ -58,8 +58,8 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<Executor> {
     }
 
     @Override
-    protected String getAdapterPrefix() {
-        return TP_NAME;
+    protected String getTpPrefix() {
+        return TP_PREFIX;
     }
 
     /**

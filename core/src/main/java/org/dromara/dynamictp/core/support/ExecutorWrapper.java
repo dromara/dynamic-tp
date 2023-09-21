@@ -26,6 +26,7 @@ import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
+import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.springframework.beans.BeanUtils;
 
@@ -108,6 +109,7 @@ public class ExecutorWrapper {
         }
         this.notifyItems = NotifyItem.getAllNotifyItems();
         this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
+        AlarmManager.initAlarm(threadPoolName, notifyItems);
     }
 
     public static ExecutorWrapper of(DtpExecutor executor) {

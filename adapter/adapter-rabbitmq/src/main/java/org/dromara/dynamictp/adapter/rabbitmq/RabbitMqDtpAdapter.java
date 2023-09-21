@@ -40,9 +40,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 @SuppressWarnings("all")
 public class RabbitMqDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String PREFIX = "rabbitMqTp";
+    private static final String TP_PREFIX = "rabbitMqTp";
 
-    private static final String CONSUME_EXECUTOR_FIELD_NAME = "executorService";
+    private static final String CONSUME_EXECUTOR_FIELD = "executorService";
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
@@ -50,8 +50,8 @@ public class RabbitMqDtpAdapter extends AbstractDtpAdapter {
     }
 
     @Override
-    protected String getAdapterPrefix() {
-        return PREFIX;
+    protected String getTpPrefix() {
+        return TP_PREFIX;
     }
 
     @Override
@@ -64,18 +64,17 @@ public class RabbitMqDtpAdapter extends AbstractDtpAdapter {
             return;
         }
         beans.forEach((k, v) -> {
-            AbstractConnectionFactory abstractConnectionFactory = (AbstractConnectionFactory) v;
+            AbstractConnectionFactory connFactory = (AbstractConnectionFactory) v;
             ExecutorService executor = (ExecutorService) ReflectionUtil.getFieldValue(
-                    AbstractConnectionFactory.class, CONSUME_EXECUTOR_FIELD_NAME, abstractConnectionFactory);
+                    AbstractConnectionFactory.class, CONSUME_EXECUTOR_FIELD, connFactory);
             if (Objects.nonNull(executor) && executor instanceof ThreadPoolExecutor) {
                 String tpName = genTpName(k);
-                enhanceOriginExecutor(tpName, (ThreadPoolExecutor) executor, CONSUME_EXECUTOR_FIELD_NAME, abstractConnectionFactory);
+                enhanceOriginExecutor(tpName, (ThreadPoolExecutor) executor, CONSUME_EXECUTOR_FIELD, connFactory);
             }
         });
-        log.info("DynamicTp adapter, rabbitmq executors init end, executors: {}", executors);
     }
 
     private String genTpName(String beanName) {
-        return beanName + "Tp";
+        return TP_PREFIX + "#" + beanName;
     }
 }

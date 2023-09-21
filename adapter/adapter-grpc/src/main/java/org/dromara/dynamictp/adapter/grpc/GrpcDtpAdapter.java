@@ -45,7 +45,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class GrpcDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String PREFIX = "grpcTp";
+    private static final String TP_PREFIX = "grpcTp";
 
     private static final String SERVER_FIELD = "transportServer";
 
@@ -79,20 +79,18 @@ public class GrpcDtpAdapter extends AbstractDtpAdapter {
                 continue;
             }
             val executor = (Executor) ReflectionUtil.getFieldValue(ServerImpl.class, EXECUTOR_FIELD, serverImpl);
-            String tpName = genTpName(key);
             if (Objects.nonNull(executor) && executor instanceof ThreadPoolExecutor) {
-                enhanceOriginExecutor(tpName, (ThreadPoolExecutor) executor, EXECUTOR_FIELD, serverImpl);
+                enhanceOriginExecutor(genTpName(key), (ThreadPoolExecutor) executor, EXECUTOR_FIELD, serverImpl);
             }
         }
-        log.info("DynamicTp adapter, grpc server executors init end, executors: {}", executors);
     }
 
     @Override
-    protected String getAdapterPrefix() {
-        return PREFIX;
+    protected String getTpPrefix() {
+        return TP_PREFIX;
     }
 
     private String genTpName(String key) {
-        return PREFIX + "#" + key;
+        return TP_PREFIX + "#" + key;
     }
 }

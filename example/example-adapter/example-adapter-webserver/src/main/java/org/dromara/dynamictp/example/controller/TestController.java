@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     @GetMapping("/dtp-example-adapter/testWebserver")
-    public String testRocketMq() throws InterruptedException {
+    public String testWebserver() throws InterruptedException {
         Thread.sleep(1000);
         return "success";
     }

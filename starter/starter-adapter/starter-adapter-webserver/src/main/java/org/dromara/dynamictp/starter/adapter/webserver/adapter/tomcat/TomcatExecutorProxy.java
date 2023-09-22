@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
  * @since 1.1.4
  */
 @Slf4j
+@SuppressWarnings("all")
 public class TomcatExecutorProxy extends ThreadPoolExecutor implements TaskEnhanceAware, RejectHandlerAware {
 
     /**

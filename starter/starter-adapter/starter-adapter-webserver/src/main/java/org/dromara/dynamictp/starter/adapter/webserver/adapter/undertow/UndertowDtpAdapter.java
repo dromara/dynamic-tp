@@ -24,6 +24,9 @@ import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.starter.adapter.webserver.adapter.AbstractWebServerDtpAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.adapter.tomcat.TomcatDtpAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow.taskpool.EnhancedQueueExecutorTaskPoolAdapter;
+import org.jboss.threads.EnhancedQueueExecutor;
 import org.springframework.boot.web.embedded.undertow.UndertowServletWebServer;
 import org.springframework.boot.web.server.WebServer;
 import org.xnio.XnioWorker;
@@ -63,13 +66,23 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
             return null;
         }
         val handler = TaskPoolHandlerFactory.getTaskPoolHandler(taskPool.getClass().getSimpleName());
-        Object executor = ReflectionUtil.getFieldValue(taskPool.getClass(),
-                handler.taskPoolType().getInternalExecutor(), taskPool);
+        String internalExecutor = handler.taskPoolType().getInternalExecutor();
+        Object executor = ReflectionUtil.getFieldValue(taskPool.getClass(), internalExecutor, taskPool);
+        String tpName = getTpName();
         if (executor instanceof ThreadPoolExecutor) {
-            enhanceOriginExecutor(getTpName(), (ThreadPoolExecutor) executor, handler.taskPoolType().getInternalExecutor(), taskPool);
+            enhanceOriginExecutor(tpName, (ThreadPoolExecutor) executor, internalExecutor, taskPool);
+            return executors.get(getTpName());
+        } else if (executor instanceof EnhancedQueueExecutor) {
+            EnhancedQueueExecutorProxy proxy = new EnhancedQueueExecutorProxy((EnhancedQueueExecutor) executor);
+            try {
+                ReflectionUtil.setFieldValue(internalExecutor, taskPool, proxy);
+                executors.put(tpName, new ExecutorWrapper(tpName, new EnhancedQueueExecutorTaskPoolAdapter.EnhancedQueueExecutorAdapter(proxy)));
+            } catch (IllegalAccessException e) {
+                log.error("DynamicTp adapter, enhance {} failed.", tpName, e);
+            }
             return executors.get(getTpName());
         } else {
-            return new ExecutorWrapper(getTpName(), handler.adapt(executor));
+            return new ExecutorWrapper(tpName, handler.adapt(executor));
         }
     }
 

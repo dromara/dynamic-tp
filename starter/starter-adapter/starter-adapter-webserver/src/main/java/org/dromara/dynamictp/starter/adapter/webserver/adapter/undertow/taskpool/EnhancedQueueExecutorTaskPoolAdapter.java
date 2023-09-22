@@ -44,11 +44,11 @@ public class EnhancedQueueExecutorTaskPoolAdapter implements TaskPoolAdapter {
         return new EnhancedQueueExecutorAdapter((EnhancedQueueExecutor) executor);
     }
 
-    private static class EnhancedQueueExecutorAdapter implements ExecutorAdapter<EnhancedQueueExecutor> {
+    public static class EnhancedQueueExecutorAdapter implements ExecutorAdapter<EnhancedQueueExecutor> {
 
         private final EnhancedQueueExecutor executor;
 
-        EnhancedQueueExecutorAdapter(EnhancedQueueExecutor executor) {
+        public EnhancedQueueExecutorAdapter(EnhancedQueueExecutor executor) {
             this.executor = executor;
         }
 

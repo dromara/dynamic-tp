@@ -20,6 +20,7 @@ package org.dromara.dynamictp.core.support.task.runnable;
 import org.apache.commons.collections4.MapUtils;
 import org.slf4j.MDC;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
 
@@ -53,7 +54,7 @@ public class MdcRunnable implements Runnable {
     @Override
     public void run() {
 
-        if (MapUtils.isEmpty(parentMdc) || Thread.currentThread() == parentThread) {
+        if (MapUtils.isEmpty(parentMdc) || Objects.equals(Thread.currentThread(), parentThread)) {
             runnable.run();
             return;
         }

@@ -34,9 +34,9 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.springframework.boot.web.embedded.jetty.JettyWebServer;
 import org.springframework.boot.web.server.WebServer;
-
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -61,29 +61,38 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
     public ExecutorWrapper enhanceAndGetExecutorWrapper(WebServer webServer) {
         JettyWebServer jettyWebServer = (JettyWebServer) webServer;
         ThreadPool threadPool = jettyWebServer.getServer().getThreadPool();
-        JettyExecutorAdapter adapter = new JettyExecutorAdapter((ThreadPool.SizedThreadPool) threadPool);
-        ExecutorWrapper executorWrapper = new ExecutorWrapper(getTpName(), adapter);
-        enhanceOriginExecutor(jettyWebServer, threadPool);
-        return executorWrapper;
+        Executor executorProxy = enhanceOriginExecutor(jettyWebServer, threadPool);
+        ExecutorWrapper wrapper;
+        if (executorProxy instanceof ThreadPoolExecutor) {
+            wrapper = new ExecutorWrapper(TP_PREFIX, executorProxy);
+        } else {
+            final JettyExecutorAdapter adapter = new JettyExecutorAdapter(
+                    (ThreadPool.SizedThreadPool) executorProxy);
+            wrapper = new ExecutorWrapper(TP_PREFIX, adapter);
+        }
+        return wrapper;
     }
 
-    private void enhanceOriginExecutor(JettyWebServer webServer, ThreadPool threadPool) {
+    private Executor enhanceOriginExecutor(JettyWebServer webServer, ThreadPool threadPool) {
         try {
             if (threadPool instanceof ExecutorThreadPool) {
                 val executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(EXECUTOR_FIELD, threadPool);
                 if (Objects.isNull(executor)) {
-                    return;
+                    return threadPool;
                 }
-                ReflectionUtil.setFieldValue(EXECUTOR_FIELD, threadPool, new ThreadPoolExecutorProxy(executor));
-                return;
+                ThreadPoolExecutorProxy executorProxy = new ThreadPoolExecutorProxy(executor);
+                ReflectionUtil.setFieldValue(EXECUTOR_FIELD, threadPool, executorProxy);
+                return executorProxy;
             }
             Object threadPoolProxy = createThreadPoolProxy(threadPool);
             if (!(threadPoolProxy instanceof QueuedThreadPoolProxy)) {
                 ReflectionUtil.setFieldValue(THREAD_POOL_FIELD, webServer.getServer(), threadPoolProxy);
             }
+            return (Executor) threadPoolProxy;
         } catch (IllegalAccessException e) {
             log.error("DynamicTp enhance jetty origin executor failed.", e);
         }
+        return threadPool;
     }
 
     private Object createThreadPoolProxy(ThreadPool threadPool) {

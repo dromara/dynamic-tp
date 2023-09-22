@@ -1,0 +1,94 @@
+server:
+  port: 9101
+
+spring:
+  application:
+    name: dynamic-tp-adapter-webserver-demo
+  profiles:
+    active: dev
+
+  dynamic:
+    tp:
+      enabled: true
+      enabledBanner: true           # 是否开启banner打印，默认true
+      enabledCollect: true          # 是否开启监控指标采集，默认false
+      collectorTypes: logging       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+      monitorInterval: 5
+      platforms:                    # 通知报警平台配置
+        - platform: wechat
+          urlKey: 32d7bf40-1353-4859              # 替换
+          receivers: test1,test2                   # 接受人企微名称
+        - platform: ding
+          urlKey: a05f38f61fdc748df55957c9         # 替换
+          secret: SEC0e93872f969493536bae4           # 替换，非sign模式可以没有此值
+          receivers: 15810119805                   # 钉钉账号手机号
+        - platform: lark
+          urlKey: 0d944ae7-b24a-40                 # 替换
+          receivers: test1,test2                   # 接受人飞书名称/openid
+      tomcatTp:                                    # tomcat webserver 线程池配置
+        corePoolSize: 1
+        maximumPoolSize: 1
+        keepAliveTime: 60
+        runTimeout: 20
+        queueTimeout: 10
+        taskWrapperNames: ["swTrace"]
+        notifyItems: # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警）
+          - type: run_timeout                       # 报警项类型，查看源码 NotifyTypeEnum枚举类
+            enabled: true
+            threshold: 1                        # 报警阈值
+            platforms: [ding]             # 可选配置，不配置默认拿上层platforms配置的所以平台
+            interval: 1                        # 报警间隔（单位：s）
+          - type: queue_timeout                       # 报警项类型，查看源码 NotifyTypeEnum枚举类
+            enabled: true
+            threshold: 1                        # 报警阈值
+            platforms: [ding]             # 可选配置，不配置默认拿上层platforms配置的所以平台
+            interval: 1                        # 报警间隔（单位：s）
+          - type: reject
+            enabled: true
+            threshold: 1
+            platforms: [ding]             # 可选配置，不配置默认拿上层platforms配置的所以平台
+            interval: 1                        # 报警间隔（单位：s）
+      jettyTp:                                    # jetty webserver 线程池配置
+        corePoolSize: 1
+        maximumPoolSize: 1
+        keepAliveTime: 60
+        runTimeout: 20
+        queueTimeout: 10
+        taskWrapperNames: ["swTrace"]
+        notifyItems: # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警）
+          - type: run_timeout                       # 报警项类型，查看源码 NotifyTypeEnum枚举类
+            enabled: true
+            threshold: 1                        # 报警阈值
+            platforms: [ding]             # 可选配置，不配置默认拿上层platforms配置的所以平台
+            interval: 1                        # 报警间隔（单位：s）
+          - type: queue_timeout                       # 报警项类型，查看源码 NotifyTypeEnum枚举类
+            enabled: true
+            threshold: 1                        # 报警阈值
+            platforms: [ding]             # 可选配置，不配置默认拿上层platforms配置的所以平台
+            interval: 1                        # 报警间隔（单位：s）
+          - type: reject
+            enabled: true
+            threshold: 1
+            platforms: [ding]             # 可选配置，不配置默认拿上层platforms配置的所以平台
+            interval: 1                        # 报警间隔（单位：s）
+      undertowTp: # undertow webserver 线程池配置
+        corePoolSize: 1
+        maximumPoolSize: 1
+        keepAliveTime: 60
+        runTimeout: 20
+        queueTimeout: 10
+        taskWrapperNames: ["swTrace"]
+        notifyItems: # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警）
+          - type: run_timeout                       # 报警项类型，查看源码 NotifyTypeEnum枚举类
+            enabled: true
+            threshold: 1                        # 报警阈值
+            platforms: [ding]             # 可选配置，不配置默认拿上层platforms配置的所以平台
+            interval: 120                        # 报警间隔（单位：s）
+          - type: queue_timeout                       # 报警项类型，查看源码 NotifyTypeEnum枚举类
+            enabled: true
+            threshold: 1                        # 报警阈值
+            platforms: [ding]             # 可选配置，不配置默认拿上层platforms配置的所以平台
+            interval: 120                        # 报警间隔（单位：s）
+          - type: reject
+            enabled: true
+            threshold: 1

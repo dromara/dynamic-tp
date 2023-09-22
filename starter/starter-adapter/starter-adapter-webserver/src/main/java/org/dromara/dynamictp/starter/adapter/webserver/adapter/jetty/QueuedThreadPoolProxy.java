@@ -29,26 +29,23 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
 
 /**
- * @author hanli
+ * @author kyao
  * @since 1.1.4
  */
 @Slf4j
 public class QueuedThreadPoolProxy extends QueuedThreadPool {
 
-    private final QueuedThreadPool original;
-
     public QueuedThreadPoolProxy(QueuedThreadPool threadPool, BlockingQueue<Runnable> queue,
                                  ThreadGroup threadGroup, ThreadFactory threadFactory) {
         super(threadPool.getMaxThreads(), threadPool.getMinThreads(), threadPool.getIdleTimeout(),
                 threadPool.getReservedThreads(), queue, threadGroup, threadFactory);
-        this.original = threadPool;
         try {
-            Object counts = ReflectionUtil.getFieldValue("_counts", original);
+            Object counts = ReflectionUtil.getFieldValue("_counts", threadPool);
             ReflectionUtil.setFieldValue("_counts", this, counts);
-            Object tryExecutor = ReflectionUtil.getFieldValue("_tryExecutor", original);
+            Object tryExecutor = ReflectionUtil.getFieldValue("_tryExecutor", threadPool);
             if (tryExecutor instanceof ReservedThreadExecutor) {
                 ReservedThreadExecutor rtExecutor = (ReservedThreadExecutor) tryExecutor;
-                if (rtExecutor.getExecutor() == original) {
+                if (rtExecutor.getExecutor() == threadPool) {
                     ReflectionUtil.setFieldValue("_executor", rtExecutor, this);
                 }
             }
@@ -59,12 +56,12 @@ public class QueuedThreadPoolProxy extends QueuedThreadPool {
 
     @Override
     public void execute(Runnable runnable) {
-        EnhancedRunnable enhanceTask = EnhancedRunnable.of(runnable, original);
-        AwareManager.execute(original, enhanceTask);
+        EnhancedRunnable enhanceTask = EnhancedRunnable.of(runnable, this);
+        AwareManager.execute(this, enhanceTask);
         try {
             super.execute(enhanceTask);
         } catch (RejectedExecutionException e) {
-            AwareManager.beforeReject(enhanceTask, original);
+            AwareManager.beforeReject(enhanceTask, this);
             throw e;
         }
     }

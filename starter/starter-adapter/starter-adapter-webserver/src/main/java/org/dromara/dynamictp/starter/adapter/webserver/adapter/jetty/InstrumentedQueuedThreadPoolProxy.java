@@ -35,22 +35,19 @@ import java.util.concurrent.RejectedExecutionException;
 @Slf4j
 public class InstrumentedQueuedThreadPoolProxy extends InstrumentedQueuedThreadPool {
 
-    private final QueuedThreadPool original;
-
     public InstrumentedQueuedThreadPoolProxy(QueuedThreadPool threadPool, MeterRegistry registry,
                                              Iterable<Tag> tags, BlockingQueue<Runnable> queue) {
         super(registry, tags, threadPool.getMaxThreads(), threadPool.getMinThreads(), threadPool.getIdleTimeout(), queue);
-        this.original = threadPool;
     }
 
     @Override
     public void execute(Runnable runnable) {
-        EnhancedRunnable enhanceTask = EnhancedRunnable.of(runnable, original);
-        AwareManager.execute(original, enhanceTask);
+        EnhancedRunnable enhanceTask = EnhancedRunnable.of(runnable, this);
+        AwareManager.execute(this, enhanceTask);
         try {
             super.execute(enhanceTask);
         } catch (RejectedExecutionException e) {
-            AwareManager.beforeReject(enhanceTask, original);
+            AwareManager.beforeReject(enhanceTask, this);
             throw e;
         }
     }

@@ -60,4 +60,9 @@ public class WebServerTpAutoConfiguration {
         return new UndertowDtpAdapter();
     }
 
+    @Bean
+    @ConditionalOnUndertowWebServer
+    public Lis lis() {
+        return new Lis();
+    }
 }

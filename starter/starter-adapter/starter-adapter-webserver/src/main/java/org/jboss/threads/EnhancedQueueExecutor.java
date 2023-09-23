@@ -126,7 +126,7 @@ public class EnhancedQueueExecutor extends EnhancedQueueExecutorBase6 implements
      * This hint defaults to {@code false} but can be changed to {@code true} by setting the {@code jboss.threads.eqe.disable}
      * property to {@code true} before this class is initialized.
      */
-    public static final boolean DISABLE_HINT = readBooleanPropertyPrefixed("disable", false);
+    public static boolean DISABLE_HINT = readBooleanPropertyPrefixed("disable", false);
 
     /**
      * Update the tail pointer opportunistically.

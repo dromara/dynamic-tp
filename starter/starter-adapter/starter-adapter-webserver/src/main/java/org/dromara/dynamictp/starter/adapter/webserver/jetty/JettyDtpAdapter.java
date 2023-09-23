@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.adapter.jetty;
+package org.dromara.dynamictp.starter.adapter.webserver.jetty;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
@@ -27,7 +27,7 @@ import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.AbstractWebServerDtpAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.AbstractWebServerDtpAdapter;
 import org.eclipse.jetty.util.thread.ExecutorThreadPool;
 import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;

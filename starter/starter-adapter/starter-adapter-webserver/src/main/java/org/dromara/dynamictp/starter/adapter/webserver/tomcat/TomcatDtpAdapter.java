@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.adapter.tomcat;
+package org.dromara.dynamictp.starter.adapter.webserver.tomcat;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
@@ -23,7 +23,7 @@ import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.aware.RejectHandlerAware;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.AbstractWebServerDtpAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.AbstractWebServerDtpAdapter;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 import org.springframework.boot.web.server.WebServer;
 

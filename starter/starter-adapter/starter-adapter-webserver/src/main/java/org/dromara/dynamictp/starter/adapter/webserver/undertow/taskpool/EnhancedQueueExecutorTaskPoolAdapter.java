@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow.taskpool;
+package org.dromara.dynamictp.starter.adapter.webserver.undertow.taskpool;
 
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow.UndertowTaskPoolEnum;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.undertow.UndertowTaskPoolEnum;
 import org.jboss.threads.EnhancedQueueExecutor;
 
 import java.time.Duration;
@@ -94,7 +94,7 @@ public class EnhancedQueueExecutorTaskPoolAdapter implements TaskPoolAdapter {
 
         @Override
         public long getTaskCount() {
-            return Math.max(this.executor.getSubmittedTaskCount(), getCompletedTaskCount()) + getQueueSize();
+            return getCompletedTaskCount() + getQueueSize() + getActiveCount();
         }
 
         @Override
@@ -104,7 +104,7 @@ public class EnhancedQueueExecutorTaskPoolAdapter implements TaskPoolAdapter {
 
         @Override
         public String getQueueType() {
-            return "EnhancedQueueExecutor.TaskNode";
+            return "TaskNode";
         }
 
         @Override

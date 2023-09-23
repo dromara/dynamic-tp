@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow.taskpool;
+package org.dromara.dynamictp.starter.adapter.webserver.undertow.taskpool;
 
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow.TaskPoolHandlerFactory;
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow.UndertowTaskPoolEnum;
+import org.dromara.dynamictp.starter.adapter.webserver.undertow.TaskPoolHandlerFactory;
+import org.dromara.dynamictp.starter.adapter.webserver.undertow.UndertowTaskPoolEnum;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import lombok.val;

@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.test.adapter.webserver.proxy;
 
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.jetty.MonitoredQueuedThreadPoolProxy;
+import org.dromara.dynamictp.starter.adapter.webserver.jetty.MonitoredQueuedThreadPoolProxy;
 import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
 import org.junit.Assert;
 import org.junit.Test;

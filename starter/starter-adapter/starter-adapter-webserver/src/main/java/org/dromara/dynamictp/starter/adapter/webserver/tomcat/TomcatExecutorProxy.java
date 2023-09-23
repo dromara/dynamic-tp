@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.adapter.tomcat;
+package org.dromara.dynamictp.starter.adapter.webserver.tomcat;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;

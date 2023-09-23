@@ -15,43 +15,29 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.adapter.jetty;
+package org.dromara.dynamictp.starter.adapter.webserver.jetty;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.binder.jetty.InstrumentedQueuedThreadPool;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.support.task.runnable.EnhancedRunnable;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import org.eclipse.jetty.util.thread.ReservedThreadExecutor;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadFactory;
 
 /**
- * @author kyao
+ * @author hanli
  * @since 1.1.4
  */
 @Slf4j
-public class QueuedThreadPoolProxy extends QueuedThreadPool {
+public class InstrumentedQueuedThreadPoolProxy extends InstrumentedQueuedThreadPool {
 
-    public QueuedThreadPoolProxy(QueuedThreadPool threadPool, BlockingQueue<Runnable> queue,
-                                 ThreadGroup threadGroup, ThreadFactory threadFactory) {
-        super(threadPool.getMaxThreads(), threadPool.getMinThreads(), threadPool.getIdleTimeout(),
-                threadPool.getReservedThreads(), queue, threadGroup, threadFactory);
-        try {
-            Object counts = ReflectionUtil.getFieldValue("_counts", threadPool);
-            ReflectionUtil.setFieldValue("_counts", this, counts);
-            Object tryExecutor = ReflectionUtil.getFieldValue("_tryExecutor", threadPool);
-            if (tryExecutor instanceof ReservedThreadExecutor) {
-                ReservedThreadExecutor rtExecutor = (ReservedThreadExecutor) tryExecutor;
-                if (rtExecutor.getExecutor() == threadPool) {
-                    ReflectionUtil.setFieldValue("_executor", rtExecutor, this);
-                }
-            }
-        } catch (IllegalAccessException e) {
-            log.error("DynamicTp enhance origin executor of QueuedThreadPool failed.", e);
-        }
+    public InstrumentedQueuedThreadPoolProxy(QueuedThreadPool threadPool, MeterRegistry registry,
+                                             Iterable<Tag> tags, BlockingQueue<Runnable> queue) {
+        super(registry, tags, threadPool.getMaxThreads(), threadPool.getMinThreads(), threadPool.getIdleTimeout(), queue);
     }
 
     @Override

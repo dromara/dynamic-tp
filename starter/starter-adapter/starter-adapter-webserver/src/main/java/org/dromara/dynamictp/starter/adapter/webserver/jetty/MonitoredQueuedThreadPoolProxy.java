@@ -15,14 +15,12 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.adapter.jetty;
+package org.dromara.dynamictp.starter.adapter.webserver.jetty;
 
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Tag;
-import io.micrometer.core.instrument.binder.jetty.InstrumentedQueuedThreadPool;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.support.task.runnable.EnhancedRunnable;
+import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 import java.util.concurrent.BlockingQueue;
@@ -33,11 +31,10 @@ import java.util.concurrent.RejectedExecutionException;
  * @since 1.1.4
  */
 @Slf4j
-public class InstrumentedQueuedThreadPoolProxy extends InstrumentedQueuedThreadPool {
+public class MonitoredQueuedThreadPoolProxy extends MonitoredQueuedThreadPool {
 
-    public InstrumentedQueuedThreadPoolProxy(QueuedThreadPool threadPool, MeterRegistry registry,
-                                             Iterable<Tag> tags, BlockingQueue<Runnable> queue) {
-        super(registry, tags, threadPool.getMaxThreads(), threadPool.getMinThreads(), threadPool.getIdleTimeout(), queue);
+    public MonitoredQueuedThreadPoolProxy(QueuedThreadPool threadPool, BlockingQueue<Runnable> queue) {
+        super(threadPool.getMaxThreads(), threadPool.getMinThreads(), threadPool.getIdleTimeout(), queue);
     }
 
     @Override

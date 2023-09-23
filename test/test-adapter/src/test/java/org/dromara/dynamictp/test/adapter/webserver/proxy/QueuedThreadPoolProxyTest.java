@@ -19,7 +19,7 @@ package org.dromara.dynamictp.test.adapter.webserver.proxy;
 
 import lombok.val;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.jetty.QueuedThreadPoolProxy;
+import org.dromara.dynamictp.starter.adapter.webserver.jetty.QueuedThreadPoolProxy;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.junit.Assert;
 import org.junit.Test;

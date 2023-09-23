@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow;
+package org.dromara.dynamictp.starter.adapter.webserver.undertow;
 
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow.taskpool.EnhancedQueueExecutorTaskPoolAdapter;
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow.taskpool.ExecutorServiceTaskPoolAdapter;
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow.taskpool.ExternalTaskPoolAdapter;
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow.taskpool.TaskPoolAdapter;
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow.taskpool.ThreadPoolExecutorTaskPoolAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.undertow.taskpool.EnhancedQueueExecutorTaskPoolAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.undertow.taskpool.ExecutorServiceTaskPoolAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.undertow.taskpool.ExternalTaskPoolAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.undertow.taskpool.TaskPoolAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.undertow.taskpool.ThreadPoolExecutorTaskPoolAdapter;
 
 import java.util.HashMap;
 import java.util.Map;

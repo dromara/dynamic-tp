@@ -15,33 +15,29 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow.taskpool;
+package org.dromara.dynamictp.starter.adapter.webserver.undertow.taskpool;
 
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow.UndertowTaskPoolEnum;
+import org.dromara.dynamictp.starter.adapter.webserver.undertow.UndertowTaskPoolEnum;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
+import org.dromara.dynamictp.core.support.ThreadPoolExecutorAdapter;
 
-import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * TaskPoolAdapter related
+ * ExecutorServiceTaskPoolAdapter related
  *
  * @author yanhom
  * @since 1.1.3
  */
-public interface TaskPoolAdapter {
+public class ExecutorServiceTaskPoolAdapter implements TaskPoolAdapter {
 
-    /**
-     * Get the task pool type
-     *
-     * @return task pool type
-     */
-    UndertowTaskPoolEnum taskPoolType();
+    @Override
+    public UndertowTaskPoolEnum taskPoolType() {
+        return UndertowTaskPoolEnum.EXECUTOR_SERVICE_TASK_POOL;
+    }
 
-    /**
-     * Adapt the task pool
-     *
-     * @param taskPool task pool
-     * @return executor adapter
-     */
-    ExecutorAdapter<? extends Executor> adapt(Object taskPool);
+    @Override
+    public ExecutorAdapter<ThreadPoolExecutor> adapt(Object executor) {
+        return new ThreadPoolExecutorAdapter((ThreadPoolExecutor) executor);
+    }
 }

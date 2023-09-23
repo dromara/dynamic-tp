@@ -15,30 +15,31 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.test.adapter.webserver.proxy;
+package org.dromara.dynamictp.test.adapter.webserver.jetty;
 
-import lombok.val;
+import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.binder.jetty.InstrumentedQueuedThreadPool;
+import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.starter.adapter.webserver.jetty.QueuedThreadPoolProxy;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.dromara.dynamictp.starter.adapter.webserver.jetty.InstrumentedQueuedThreadPoolProxy;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ThreadFactory;
 
 /**
- * @author kao
+ * @author kyao
+ * @date 2023年09月15日 14:26
  */
-public class QueuedThreadPoolProxyTest {
-
+public class InstrumentedQueuedThreadPoolProxyTest {
     @Test
-    public void testParamAndStatus() {
-        QueuedThreadPool executor = new QueuedThreadPool();
+    public void testParam() {
+        CompositeMeterRegistry meterRegistry = new CompositeMeterRegistry();
+        Iterable<Tag> tags = new ArrayList<>();
+        InstrumentedQueuedThreadPool executor = new InstrumentedQueuedThreadPool(meterRegistry, tags);
         BlockingQueue<Runnable> queue = (BlockingQueue<Runnable>) ReflectionUtil.getFieldValue("_jobs", executor);
-        val threadGroup = (ThreadGroup) ReflectionUtil.getFieldValue("_threadGroup", executor);
-        val threadFactory = (ThreadFactory) ReflectionUtil.getFieldValue("_threadFactory", executor);
-        QueuedThreadPoolProxy proxy = new QueuedThreadPoolProxy(executor, queue, threadGroup, threadFactory);
+        InstrumentedQueuedThreadPoolProxy proxy = new InstrumentedQueuedThreadPoolProxy(executor,meterRegistry,tags, queue);
 
         Assert.assertEquals(executor.getMaxThreads(), proxy.getMaxThreads());
         Assert.assertEquals(executor.getIdleTimeout(), proxy.getIdleTimeout());
@@ -58,6 +59,7 @@ public class QueuedThreadPoolProxyTest {
         Assert.assertEquals(executor.getUtilizationRate(), proxy.getUtilizationRate(), 0.0);
         Assert.assertEquals(executor.getStopTimeout(), proxy.getStopTimeout());
         Assert.assertEquals(executor.getUtilizedThreads(), proxy.getUtilizedThreads());
+
 
     }
 }

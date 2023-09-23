@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.test.adapter.webserver.proxy;
+package org.dromara.dynamictp.test.adapter.webserver.tomcat;
 
 import org.apache.tomcat.util.threads.TaskQueue;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;

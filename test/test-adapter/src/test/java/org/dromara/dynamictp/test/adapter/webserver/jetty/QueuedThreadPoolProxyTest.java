@@ -15,35 +15,33 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.test.adapter.webserver.proxy;
+package org.dromara.dynamictp.test.adapter.webserver.jetty;
 
+import lombok.val;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.starter.adapter.webserver.jetty.MonitoredQueuedThreadPoolProxy;
-import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
+import org.dromara.dynamictp.starter.adapter.webserver.jetty.QueuedThreadPoolProxy;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ThreadFactory;
 
 /**
  * @author kao
- * @date 2023年09月15日 11:50
  */
-public class MonitoredQueuedThreadPoolProxyTest {
+public class QueuedThreadPoolProxyTest {
 
     @Test
-    public void testParam() {
-        MonitoredQueuedThreadPool executor = new MonitoredQueuedThreadPool();
+    public void testParamAndStatus() {
+        QueuedThreadPool executor = new QueuedThreadPool();
         BlockingQueue<Runnable> queue = (BlockingQueue<Runnable>) ReflectionUtil.getFieldValue("_jobs", executor);
-        MonitoredQueuedThreadPoolProxy proxy = new MonitoredQueuedThreadPoolProxy(executor, queue);
+        val threadGroup = (ThreadGroup) ReflectionUtil.getFieldValue("_threadGroup", executor);
+        val threadFactory = (ThreadFactory) ReflectionUtil.getFieldValue("_threadFactory", executor);
+        QueuedThreadPoolProxy proxy = new QueuedThreadPoolProxy(executor, queue, threadGroup, threadFactory);
 
-        Assert.assertEquals(executor.getMaxBusyThreads(), proxy.getMaxBusyThreads());
-        Assert.assertEquals(executor.getTasks(), proxy.getTasks());
-        Assert.assertEquals(executor.getAverageQueueLatency(), proxy.getAverageQueueLatency());
-        Assert.assertEquals(executor.getMaxQueueLatency(), proxy.getMaxQueueLatency());
         Assert.assertEquals(executor.getMaxThreads(), proxy.getMaxThreads());
         Assert.assertEquals(executor.getIdleTimeout(), proxy.getIdleTimeout());
-        Assert.assertEquals(executor.getMaxQueueSize(), proxy.getMaxQueueSize());
         Assert.assertEquals(executor.getMinThreads(), proxy.getMinThreads());
         Assert.assertEquals(executor.getBusyThreads(), proxy.getBusyThreads());
         Assert.assertEquals(executor.getReservedThreads(), proxy.getReservedThreads());
@@ -60,5 +58,6 @@ public class MonitoredQueuedThreadPoolProxyTest {
         Assert.assertEquals(executor.getUtilizationRate(), proxy.getUtilizationRate(), 0.0);
         Assert.assertEquals(executor.getStopTimeout(), proxy.getStopTimeout());
         Assert.assertEquals(executor.getUtilizedThreads(), proxy.getUtilizedThreads());
+
     }
 }

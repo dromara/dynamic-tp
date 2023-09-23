@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 public class TomcatExecutorProxyTest {
 
     @Test
-    public void testParamAndStatus() {
+    public void testParamAndStatus() throws InterruptedException {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 10, 5, TimeUnit.SECONDS, new TaskQueue(1), new NamedThreadFactory("测试线程池"));
         TomcatExecutorProxy proxy = new TomcatExecutorProxy(executor);
 
@@ -50,6 +50,7 @@ public class TomcatExecutorProxyTest {
         Assert.assertEquals(executor.allowsCoreThreadTimeOut(), proxy.allowsCoreThreadTimeOut());
 
         Assert.assertTrue(executor.isShutdown());
+        Thread.sleep(100);
         Assert.assertTrue(executor.isTerminated());
         Assert.assertFalse(executor.isTerminating());
     }

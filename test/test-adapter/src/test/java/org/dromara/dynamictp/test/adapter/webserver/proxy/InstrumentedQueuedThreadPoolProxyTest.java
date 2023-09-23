@@ -21,7 +21,7 @@ import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.binder.jetty.InstrumentedQueuedThreadPool;
 import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.jetty.InstrumentedQueuedThreadPoolProxy;
+import org.dromara.dynamictp.starter.adapter.webserver.jetty.InstrumentedQueuedThreadPoolProxy;
 import org.junit.Assert;
 import org.junit.Test;
 

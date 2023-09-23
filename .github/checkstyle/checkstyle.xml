@@ -5,6 +5,11 @@
 
 <module name="Checker">
 
+  <!--排除不需要扫描的路径-->
+  <module name="SuppressionFilter">
+    <property name="file" value=".github/checkstyle/suppressions.xml"/>
+  </module>
+
   <!-- 检查文件是否以一个空行结束 -->
   <module name="NewlineAtEndOfFile"/>
 

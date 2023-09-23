@@ -20,7 +20,7 @@ package org.dromara.dynamictp.test.adapter.webserver.proxy;
 import org.apache.tomcat.util.threads.TaskQueue;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.tomcat.TomcatExecutorProxy;
+import org.dromara.dynamictp.starter.adapter.webserver.tomcat.TomcatExecutorProxy;
 import org.junit.Assert;
 import org.junit.Test;
 

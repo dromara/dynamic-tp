@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow;
+package org.dromara.dynamictp.starter.adapter.webserver.undertow;
 
 import lombok.Getter;
 

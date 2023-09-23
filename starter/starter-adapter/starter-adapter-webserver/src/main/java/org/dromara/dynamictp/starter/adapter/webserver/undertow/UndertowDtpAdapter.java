@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow;
+package org.dromara.dynamictp.starter.adapter.webserver.undertow;
 
 import io.undertow.Undertow;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +23,8 @@ import lombok.val;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.AbstractWebServerDtpAdapter;
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.tomcat.TomcatDtpAdapter;
-import org.dromara.dynamictp.starter.adapter.webserver.adapter.undertow.taskpool.EnhancedQueueExecutorTaskPoolAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.AbstractWebServerDtpAdapter;
+import org.dromara.dynamictp.starter.adapter.webserver.undertow.taskpool.EnhancedQueueExecutorTaskPoolAdapter.EnhancedQueueExecutorAdapter;
 import org.jboss.threads.EnhancedQueueExecutor;
 import org.springframework.boot.web.embedded.undertow.UndertowServletWebServer;
 import org.springframework.boot.web.server.WebServer;
@@ -42,6 +41,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @since 1.0.0
  */
 @Slf4j
+@SuppressWarnings("all")
 public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> {
 
     private static final String TP_PREFIX = "undertowTp";
@@ -73,14 +73,17 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
             enhanceOriginExecutor(tpName, (ThreadPoolExecutor) executor, internalExecutor, taskPool);
             return executors.get(getTpName());
         } else if (executor instanceof EnhancedQueueExecutor) {
-            EnhancedQueueExecutorProxy proxy = new EnhancedQueueExecutorProxy((EnhancedQueueExecutor) executor);
             try {
+                EnhancedQueueExecutorProxy proxy = new EnhancedQueueExecutorProxy((EnhancedQueueExecutor) executor);
                 ReflectionUtil.setFieldValue(internalExecutor, taskPool, proxy);
-                executors.put(tpName, new ExecutorWrapper(tpName, new EnhancedQueueExecutorTaskPoolAdapter.EnhancedQueueExecutorAdapter(proxy)));
-            } catch (IllegalAccessException e) {
-                log.error("DynamicTp adapter, enhance {} failed.", tpName, e);
+                val executorWrapper = new ExecutorWrapper(tpName, new EnhancedQueueExecutorAdapter(proxy));
+                executors.put(tpName, executorWrapper);
+                return executorWrapper;
+            } catch (Throwable t) {
+                log.error("DynamicTp adapter, enhance {} failed, please adjust the order of the two dependencies" +
+                        "(starter-undertow and starter-adapter-webserver) and try again.", tpName, t);
+                return new ExecutorWrapper(tpName, handler.adapt(executor));
             }
-            return executors.get(getTpName());
         } else {
             return new ExecutorWrapper(tpName, handler.adapt(executor));
         }

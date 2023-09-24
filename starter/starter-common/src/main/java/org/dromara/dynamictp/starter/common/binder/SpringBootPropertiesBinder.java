@@ -44,6 +44,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAIN_PROPERTI
  * @since 1.0.3
  **/
 @Slf4j
+@SuppressWarnings("all")
 public class SpringBootPropertiesBinder implements PropertiesBinder {
 
     @Override
@@ -81,7 +82,6 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
         binder.bind(MAIN_PROPERTIES_PREFIX, target);
     }
 
-    @SuppressWarnings("all")
     private void doBindIn1X(Environment environment, DtpProperties dtpProperties) {
         try {
             // new RelaxedPropertyResolver(environment)
@@ -101,7 +101,6 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
         }
     }
 
-    @SuppressWarnings("all")
     private void doBindIn1X(Map<?, ?> properties, DtpProperties dtpProperties) {
         try {
             // new RelaxedDataBinder(dtpProperties, MAIN_PROPERTIES_PREFIX)

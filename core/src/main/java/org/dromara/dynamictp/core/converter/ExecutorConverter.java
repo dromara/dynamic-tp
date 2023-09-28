@@ -17,13 +17,15 @@
 
 package org.dromara.dynamictp.core.converter;
 
+import lombok.val;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 import org.dromara.dynamictp.common.entity.TpMainFields;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.executor.DtpExecutor;
-import lombok.val;
-import java.util.Optional;
+import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
+import org.dromara.dynamictp.core.support.TpPerformanceProvider;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -55,15 +57,18 @@ public class ExecutorConverter {
         if (executor == null) {
             return null;
         }
+        ThreadPoolStatProvider provider = wrapper.getThreadPoolStatProvider();
+        TpPerformanceProvider performanceProvider = provider.getPerformanceProvider();
+        TpPerformanceProvider.PerformanceData performanceData = performanceProvider.getDataAndRefresh();
         ThreadPoolStats poolStats = convertCommon(executor);
         poolStats.setPoolName(wrapper.getThreadPoolName());
         poolStats.setPoolAliasName(wrapper.getThreadPoolAliasName());
-        Optional.ofNullable(wrapper.getThreadPoolStatProvider()).ifPresent(p -> {
-            poolStats.setRunTimeoutCount(p.getRunTimeoutCount());
-            poolStats.setQueueTimeoutCount(p.getQueueTimeoutCount());
-            poolStats.setRejectCount(p.getRejectedTaskCount());
-        });
+        poolStats.setRunTimeoutCount(provider.getRunTimeoutCount());
+        poolStats.setQueueTimeoutCount(provider.getQueueTimeoutCount());
+        poolStats.setRejectCount(provider.getRejectedTaskCount());
         poolStats.setDynamic(executor instanceof DtpExecutor);
+        poolStats.setTps(performanceData.getTps());
+        poolStats.setCompletedTaskTimeAvg(performanceData.getCompletedTaskTimeAvg());
         return poolStats;
     }
 

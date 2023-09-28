@@ -92,6 +92,9 @@ public class MicroMeterCollector extends AbstractCollector {
         Metrics.gauge(metricName("reject.count"), tags, poolStats, ThreadPoolStats::getRejectCount);
         Metrics.gauge(metricName("run.timeout.count"), tags, poolStats, ThreadPoolStats::getRunTimeoutCount);
         Metrics.gauge(metricName("queue.timeout.count"), tags, poolStats, ThreadPoolStats::getQueueTimeoutCount);
+
+        Metrics.gauge(metricName("tps"), tags, poolStats, ThreadPoolStats::getTps);
+        Metrics.gauge(metricName("completed.task.time.avg"), tags, poolStats, ThreadPoolStats::getCompletedTaskTimeAvg);
     }
 
     private static String metricName(String name) {

@@ -31,7 +31,7 @@ public class TestController {
 
     @GetMapping("/dtp-example-adapter/testWebserver")
     public String testWebserver() throws InterruptedException {
-        Thread.sleep(1000);
+
         return "success";
     }
 }

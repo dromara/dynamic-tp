@@ -39,9 +39,6 @@ public abstract class TaskStatAware implements ExecutorAware {
     @Override
     public void register(ExecutorWrapper wrapper) {
         ThreadPoolStatProvider statProvider = wrapper.getThreadPoolStatProvider();
-        if (Objects.isNull(statProvider)) {
-            statProvider = ThreadPoolStatProvider.of(wrapper);
-        }
         statProviders.put(wrapper.getExecutor(), statProvider);
         statProviders.put(wrapper.getExecutor().getOriginal(), statProvider);
     }

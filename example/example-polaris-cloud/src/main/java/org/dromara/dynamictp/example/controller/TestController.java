@@ -17,10 +17,10 @@
 
 package org.dromara.dynamictp.example.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -53,7 +53,7 @@ public class TestController {
         for (int i = 0; i < 100; i++) {
             Thread.sleep(100);
             dtpExecutor1.execute(() -> {
-                log.info("i am dynamic-tp-test-1 task");
+                log.info("i am a dtp1 task");
             });
             dtpExecutor2.execute(NamedRunnable.of(() -> {
                 try {
@@ -61,7 +61,7 @@ public class TestController {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                log.info("i am dynamic-tp-test-2 task");
+                log.info("i am a dtp2 task");
             }, "task-" + i));
         }
     }

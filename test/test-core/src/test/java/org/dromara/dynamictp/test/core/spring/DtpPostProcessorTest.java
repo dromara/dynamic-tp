@@ -20,6 +20,7 @@ package org.dromara.dynamictp.test.core.spring;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.spring.EnableDynamicTp;
 import org.dromara.dynamictp.core.spring.YamlPropertySourceFactory;
+import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,8 +29,10 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
@@ -37,7 +40,7 @@ import java.util.concurrent.Executor;
 @EnableDynamicTp
 @EnableAutoConfiguration
 @PropertySource(value = "classpath:/postprocessor-dtp-dev.yml", factory = YamlPropertySourceFactory.class)
-@ComponentScan(basePackages = "com.dtp.test.core.spring")
+@ComponentScan(basePackages = "org.dromara.dynamictp.test.core.spring")
 public class DtpPostProcessorTest {
 
     private static ConfigurableApplicationContext context;
@@ -51,6 +54,14 @@ public class DtpPostProcessorTest {
     void test() {
         Executor executor = DtpRegistry.getExecutor("asyncExecutor");
         Assertions.assertNotNull(executor);
+
+        Executor commonExecutor = context.getBean("commonExecutor", ThreadPoolExecutor.class);
+        Assertions.assertEquals(commonExecutor.getClass(), ThreadPoolExecutorProxy.class);
+        commonExecutor.execute(() -> System.out.println("enhance commonExecutor success!"));
+
+        ThreadPoolTaskExecutor taskExecutor = context.getBean("taskExecutor", ThreadPoolTaskExecutor.class);
+        Assertions.assertEquals(taskExecutor.getThreadPoolExecutor().getClass(), ThreadPoolExecutorProxy.class);
+        taskExecutor.execute(() -> System.out.println("enhance taskExecutor success!"));
     }
 
 }

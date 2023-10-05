@@ -52,10 +52,6 @@ public class TaskExecAware implements ExecutorAware {
         clearContext();
     }
 
-    private void clearContext() {
-        MDC.remove(TRACE_ID);
-    }
-
     private void tryPrintError(Runnable r, Throwable t) {
         if (Objects.nonNull(t)) {
             log.error("thread {} throw exception {}", Thread.currentThread(), t.getMessage(), t);
@@ -65,11 +61,15 @@ public class TaskExecAware implements ExecutorAware {
             try {
                 Future<?> future = (Future<?>) r;
                 future.get();
-            } catch (InterruptedException ex) {
+            } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } catch (Exception e) {
                 log.error("thread {} throw exception {}", Thread.currentThread(), e.getMessage(), e);
             }
         }
+    }
+
+    private void clearContext() {
+        MDC.remove(TRACE_ID);
     }
 }

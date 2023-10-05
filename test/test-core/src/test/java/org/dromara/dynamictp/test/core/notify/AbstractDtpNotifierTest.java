@@ -63,7 +63,7 @@ import static org.powermock.api.mockito.PowerMockito.when;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ApplicationContextHolder.class, CommonUtil.class})
-@SuppressStaticInitializationFor("com.dtp.common.util.CommonUtil")
+@SuppressStaticInitializationFor("org.dromara.dynamictp.common.util.CommonUtil")
 public class AbstractDtpNotifierTest {
 
     private final Notifier notifier = Mockito.mock(Notifier.class);

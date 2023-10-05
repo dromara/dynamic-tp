@@ -18,10 +18,14 @@
 package org.dromara.dynamictp.test.core.spring;
 
 import org.dromara.dynamictp.core.spring.EnableDynamicTp;
+import org.dromara.dynamictp.core.support.DynamicTp;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author fei biao team
@@ -44,8 +48,19 @@ public class Config {
      * @see org.springframework.core.PriorityOrdered
      */
     @Bean
-    //public DemoService demoService(@Lazy Executor asyncExecutor) {
     public DemoService demoService(Executor asyncExecutor) {
         return new DemoService(asyncExecutor);
+    }
+
+    @DynamicTp("commonExecutor")
+    @Bean
+    public ThreadPoolExecutor commonExecutor() {
+        return (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+    }
+
+    @DynamicTp("taskExecutor")
+    @Bean
+    public ThreadPoolTaskExecutor taskExecutor() {
+        return new ThreadPoolTaskExecutor();
     }
 }

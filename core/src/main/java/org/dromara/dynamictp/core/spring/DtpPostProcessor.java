@@ -118,8 +118,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
         Executor proxy;
         Object result;
         if (bean instanceof ThreadPoolTaskExecutor) {
-            val executor = ((ThreadPoolTaskExecutor) bean).getThreadPoolExecutor();
-            proxy = new ThreadPoolExecutorProxy(executor);
+            proxy = new ThreadPoolExecutorProxy(((ThreadPoolTaskExecutor) bean).getThreadPoolExecutor());
             try {
                 ReflectionUtil.setFieldValue("threadPoolExecutor", bean, proxy);
             } catch (IllegalAccessException ignored) { }

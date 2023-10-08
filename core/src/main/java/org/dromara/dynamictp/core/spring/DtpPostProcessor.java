@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.util.ConstructorUtil;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.executor.EagerDtpExecutor;
@@ -57,6 +58,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @since 1.0.0
  **/
 @Slf4j
+@SuppressWarnings("all")
 public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, PriorityOrdered {
 
     private DefaultListableBeanFactory beanFactory;
@@ -66,16 +68,14 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
         if (!(bean instanceof ThreadPoolExecutor) && !(bean instanceof ThreadPoolTaskExecutor)) {
             return bean;
         }
-
         if (bean instanceof DtpExecutor) {
-            return registerDtp(bean);
+            return registerAndReturnDtp(bean);
         }
-        // register ThreadPoolExecutor or ThreadPoolTaskExecutor
-        registerCommon(bean, beanName);
-        return bean;
+        // register juc ThreadPoolExecutor or ThreadPoolTaskExecutor
+        return registerAndReturnCommon(bean, beanName);
     }
 
-    private Object registerDtp(Object bean) {
+    private Object registerAndReturnDtp(Object bean) {
         DtpExecutor dtpExecutor = (DtpExecutor) bean;
         Object[] args = ConstructorUtil.buildTpExecutorConstructorArgs(dtpExecutor);
         Class<?>[] argTypes = ConstructorUtil.buildTpExecutorConstructorArgTypes();
@@ -89,40 +89,47 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
         return enhancedBean;
     }
 
-    private void registerCommon(Object bean, String beanName) {
-        String dtpAnnotationVal;
+    private Object registerAndReturnCommon(Object bean, String beanName) {
+        String dtpAnnoValue;
         try {
             DynamicTp dynamicTp = beanFactory.findAnnotationOnBean(beanName, DynamicTp.class);
             if (Objects.nonNull(dynamicTp)) {
-                dtpAnnotationVal = dynamicTp.value();
+                dtpAnnoValue = dynamicTp.value();
             } else {
                 BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanName);
                 if (!(beanDefinition instanceof AnnotatedBeanDefinition)) {
-                    return;
+                    return bean;
                 }
                 AnnotatedBeanDefinition annotatedBeanDefinition = (AnnotatedBeanDefinition) beanDefinition;
                 MethodMetadata methodMetadata = (MethodMetadata) annotatedBeanDefinition.getSource();
                 if (Objects.isNull(methodMetadata) || !methodMetadata.isAnnotated(DynamicTp.class.getName())) {
-                    return;
+                    return bean;
                 }
-                dtpAnnotationVal = Optional.ofNullable(methodMetadata.getAnnotationAttributes(DynamicTp.class.getName()))
+                dtpAnnoValue = Optional.ofNullable(methodMetadata.getAnnotationAttributes(DynamicTp.class.getName()))
                         .orElse(Collections.emptyMap())
                         .getOrDefault("value", "")
                         .toString();
             }
         } catch (NoSuchBeanDefinitionException e) {
-            log.error("There is no bean with the given name {}", beanName, e);
-            return;
+            log.warn("There is no bean with the given name {}", beanName, e);
+            return bean;
         }
-        String poolName = StringUtils.isNotBlank(dtpAnnotationVal) ? dtpAnnotationVal : beanName;
-        Executor executor;
+        String poolName = StringUtils.isNotBlank(dtpAnnoValue) ? dtpAnnoValue : beanName;
+        Executor proxy;
+        Object result;
         if (bean instanceof ThreadPoolTaskExecutor) {
-            executor = ((ThreadPoolTaskExecutor) bean).getThreadPoolExecutor();
+            proxy = new ThreadPoolExecutorProxy(((ThreadPoolTaskExecutor) bean).getThreadPoolExecutor());
+            try {
+                ReflectionUtil.setFieldValue("threadPoolExecutor", bean, proxy);
+            } catch (IllegalAccessException ignored) { }
+            result = bean;
         } else {
-            executor = (Executor) bean;
+            proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) bean);
+            result = proxy;
         }
-        val executorWrapper = new ExecutorWrapper(poolName, new ThreadPoolExecutorProxy((ThreadPoolExecutor) executor));
+        val executorWrapper = new ExecutorWrapper(poolName, proxy);
         DtpRegistry.registerExecutor(executorWrapper, "beanPostProcessor");
+        return result;
     }
 
     @Override

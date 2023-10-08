@@ -135,7 +135,7 @@ public class ThreadPoolStats extends Metrics {
     /**
      * tps
      */
-    private int tps;
+    private float tps;
 
     /**
      * 任务平均耗时(单位:ms)

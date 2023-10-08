@@ -18,6 +18,8 @@
 package org.dromara.dynamictp.core.support;
 
 import lombok.Getter;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -70,12 +72,12 @@ public class TpPerformanceProvider {
     @Getter
     public class PerformanceData {
 
-        private final int tps;
+        private final float tps;
 
         private final int completedTaskTimeAvg;
 
         public PerformanceData(int monitorInterval) {
-            tps = Math.floorDiv(completedTaskNum.get(), Math.max(monitorInterval, 1));
+            tps = new BigDecimal(completedTaskNum.get()).divide(BigDecimal.valueOf(Math.max(monitorInterval, 1)), 1, RoundingMode.HALF_UP).floatValue();
             completedTaskTimeAvg = (int) Math.floorDiv(finishTimeTotal.get(), Math.max(completedTaskNum.get(), 1));
         }
 

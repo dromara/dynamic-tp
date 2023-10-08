@@ -17,11 +17,8 @@
 
 package org.dromara.dynamictp.core.aware;
 
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
-import org.dromara.dynamictp.core.support.TpPerformanceProvider;
 import org.springframework.util.StopWatch;
-
 import java.lang.ref.SoftReference;
 import java.util.Map;
 import java.util.Optional;
@@ -34,9 +31,7 @@ import java.util.concurrent.Executor;
  * @author kyao
  * @date 2023年09月24日 15:36
  */
-public class PerformanceMonitorAware implements ExecutorAware {
-
-    private final Map<Executor, TpPerformanceProvider> performanceProviders = new ConcurrentHashMap<>();
+public class PerformanceMonitorAware extends TaskStatAware {
 
     private final Map<Runnable, SoftReference<StopWatch>> stopWatches = new ConcurrentHashMap<>();
 
@@ -52,6 +47,9 @@ public class PerformanceMonitorAware implements ExecutorAware {
 
     @Override
     public void beforeExecute(Executor executor, Thread t, Runnable r) {
+        if (!statProviders.containsKey(executor)) {
+            return;
+        }
         StopWatch stopWatch = new StopWatch();
         SoftReference<StopWatch> stopWatchSoftReference = new SoftReference<>(stopWatch);
         stopWatches.put(r, stopWatchSoftReference);
@@ -60,27 +58,17 @@ public class PerformanceMonitorAware implements ExecutorAware {
 
     @Override
     public void afterExecute(Executor executor, Runnable r, Throwable t) {
-        Optional.ofNullable(stopWatches.get(r).get()).ifPresent(stopWatch -> {
-            stopWatch.stop();
-            long totalTimeMillis = stopWatch.getTotalTimeMillis();
-            Optional.ofNullable(performanceProviders.get(executor)).ifPresent(provider ->
-                    provider.finishTask(totalTimeMillis)
-            );
-        });
-        stopWatches.remove(r);
-    }
-
-    @Override
-    public void register(ExecutorWrapper wrapper) {
-        ThreadPoolStatProvider statProvider = wrapper.getThreadPoolStatProvider();
-        performanceProviders.put(wrapper.getExecutor(), statProvider.getPerformanceProvider());
-        performanceProviders.put(wrapper.getExecutor().getOriginal(), statProvider.getPerformanceProvider());
-    }
-
-    @Override
-    public void remove(ExecutorWrapper wrapper) {
-        performanceProviders.remove(wrapper.getExecutor());
-        performanceProviders.remove(wrapper.getExecutor().getOriginal());
+        Optional.ofNullable(stopWatches.remove(r))
+                .map(SoftReference::get)
+                .ifPresent(stopWatch -> {
+                    stopWatch.stop();
+                    long totalTimeMillis = stopWatch.getTotalTimeMillis();
+                    Optional.ofNullable(statProviders.get(executor))
+                            .map(ThreadPoolStatProvider::getPerformanceProvider)
+                            .ifPresent(provider ->
+                            provider.finishTask(totalTimeMillis)
+                    );
+                });
     }
 
 }

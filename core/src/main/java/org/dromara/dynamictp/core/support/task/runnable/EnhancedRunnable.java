@@ -19,7 +19,7 @@ package org.dromara.dynamictp.core.support.task.runnable;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.aware.AwareManager;
-
+import java.util.Objects;
 import java.util.concurrent.Executor;
 
 /**
@@ -46,6 +46,9 @@ public class EnhancedRunnable implements Runnable {
 
     @Override
     public void run() {
+        if (Objects.isNull(runnable)) {
+            return;
+        }
         AwareManager.beforeExecute(executor, Thread.currentThread(), this);
         Throwable t = null;
         try {

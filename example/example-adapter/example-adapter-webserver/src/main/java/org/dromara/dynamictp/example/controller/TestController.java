@@ -20,6 +20,8 @@ package org.dromara.dynamictp.example.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import javax.annotation.Resource;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author kyao
@@ -29,9 +31,19 @@ import org.springframework.web.bind.annotation.RestController;
 @SuppressWarnings("all")
 public class TestController {
 
+    @Resource
+    private ThreadPoolExecutor testExecutor;
+
     @GetMapping("/dtp-example-adapter/testWebserver")
     public String testWebserver() throws InterruptedException {
-
+        testExecutor.execute(() -> {
+            try {
+                Thread.sleep((int) (Math.random() * 1000));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            log.info("success");
+        });
         return "success";
     }
 }

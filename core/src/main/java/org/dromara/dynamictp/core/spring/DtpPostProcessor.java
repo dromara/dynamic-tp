@@ -48,7 +48,6 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -60,6 +59,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 @SuppressWarnings("all")
 public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, PriorityOrdered {
+
+    private static final String REGISTER_SOURCE = "beanPostProcessor";
 
     private DefaultListableBeanFactory beanFactory;
 
@@ -85,7 +86,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
         if (enhancedBean instanceof EagerDtpExecutor) {
             ((TaskQueue) enhancedBean.getQueue()).setExecutor((EagerDtpExecutor) enhancedBean);
         }
-        DtpRegistry.registerExecutor(ExecutorWrapper.of(enhancedBean), "beanPostProcessor");
+        DtpRegistry.registerExecutor(ExecutorWrapper.of(enhancedBean), REGISTER_SOURCE);
         return enhancedBean;
     }
 
@@ -115,21 +116,21 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
             return bean;
         }
         String poolName = StringUtils.isNotBlank(dtpAnnoValue) ? dtpAnnoValue : beanName;
-        Executor proxy;
-        Object result;
+        return doRegisterAndReturnCommon(bean, poolName);
+    }
+
+    private Object doRegisterAndReturnCommon(Object bean, String poolName) {
         if (bean instanceof ThreadPoolTaskExecutor) {
-            proxy = new ThreadPoolExecutorProxy(((ThreadPoolTaskExecutor) bean).getThreadPoolExecutor());
+            val proxy = new ThreadPoolExecutorProxy(((ThreadPoolTaskExecutor) bean).getThreadPoolExecutor());
             try {
                 ReflectionUtil.setFieldValue("threadPoolExecutor", bean, proxy);
             } catch (IllegalAccessException ignored) { }
-            result = bean;
-        } else {
-            proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) bean);
-            result = proxy;
+            DtpRegistry.registerExecutor(new ExecutorWrapper(poolName, proxy), REGISTER_SOURCE);
+            return bean;
         }
-        val executorWrapper = new ExecutorWrapper(poolName, proxy);
-        DtpRegistry.registerExecutor(executorWrapper, "beanPostProcessor");
-        return result;
+        val proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) bean);
+        DtpRegistry.registerExecutor(new ExecutorWrapper(poolName, proxy), REGISTER_SOURCE);
+        return proxy;
     }
 
     @Override

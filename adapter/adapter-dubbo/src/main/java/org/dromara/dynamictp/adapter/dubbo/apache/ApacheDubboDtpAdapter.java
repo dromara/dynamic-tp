@@ -25,6 +25,7 @@ import org.apache.dubbo.common.extension.ExtensionLoader;
 import org.apache.dubbo.common.store.DataStore;
 import org.apache.dubbo.common.threadpool.manager.DefaultExecutorRepository;
 import org.apache.dubbo.common.threadpool.manager.ExecutorRepository;
+import org.apache.dubbo.common.threadpool.support.eager.EagerThreadPoolExecutor;
 import org.apache.dubbo.config.spring.context.event.ServiceBeanExportedEvent;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
@@ -38,6 +39,7 @@ import org.springframework.context.ApplicationEvent;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -54,7 +56,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
     private static final String TP_PREFIX = "dubboTp";
 
     private static final String EXECUTOR_SERVICE_COMPONENT_KEY = ExecutorService.class.getName();
-    
+
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof ServiceBeanExportedEvent) {
@@ -67,7 +69,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
             }
         }
     }
-    
+
     @Override
     public void refresh(DtpProperties dtpProperties) {
         refresh(dtpProperties.getDubboTp(), dtpProperties.getPlatforms());
@@ -91,7 +93,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
             Map<String, Object> executorMap = dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY);
             if (MapUtils.isNotEmpty(executorMap)) {
                 executorMap.forEach((k, v) -> {
-                    ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) v);
+                    ThreadPoolExecutor proxy = getProxy((ThreadPoolExecutor) v);
                     executorMap.replace(k, proxy);
                     String tpName = genTpName(k);
                     executors.put(tpName, new ExecutorWrapper(tpName, proxy));
@@ -118,12 +120,22 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
         Map<Integer, ExecutorService> executorMap = data.get(EXECUTOR_SERVICE_COMPONENT_KEY);
         if (MapUtils.isNotEmpty(executorMap)) {
             executorMap.forEach((k, v) -> {
-                ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) v);
+                ThreadPoolExecutor proxy = getProxy(v);
                 executorMap.replace(k, proxy);
                 String tpName = genTpName(k.toString());
                 executors.put(tpName, new ExecutorWrapper(tpName, proxy));
             });
         }
+    }
+
+    private ThreadPoolExecutor getProxy(Executor executor) {
+        ThreadPoolExecutor proxy;
+        if (executor instanceof EagerThreadPoolExecutor) {
+            proxy = new EagerThreadPoolExecutorProxy((EagerThreadPoolExecutor) executor);
+        } else {
+            proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) executor);
+        }
+        return proxy;
     }
 
     private String genTpName(String port) {

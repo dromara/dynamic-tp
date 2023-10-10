@@ -20,6 +20,7 @@ package org.dromara.dynamictp.example.controller;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.example.service.TestService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,6 +38,16 @@ public class TestController {
 
     @Resource
     private ThreadPoolExecutor dtpExecutor1;
+
+    @Resource
+    private TestService testService;
+
+
+    @GetMapping("/dtp-zookeeper-example/testAsync")
+    public String testAsync() throws InterruptedException {
+        testService.test();
+        return "success";
+    }
 
     @GetMapping("/dtp-zookeeper-example/test")
     public String test() throws InterruptedException {

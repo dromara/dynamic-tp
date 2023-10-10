@@ -42,6 +42,9 @@ public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskE
      */
     private List<TaskWrapper> taskWrappers;
 
+    /**
+     * Reject handler type.
+     */
     private final String rejectHandlerType;
 
     public ThreadPoolExecutorProxy(ThreadPoolExecutor executor) {

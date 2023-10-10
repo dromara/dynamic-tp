@@ -41,6 +41,9 @@ public class EagerThreadPoolExecutorProxy extends EagerThreadPoolExecutor implem
      */
     private List<TaskWrapper> taskWrappers;
 
+    /**
+     * Reject handler type.
+     */
     private final String rejectHandlerType;
 
     public EagerThreadPoolExecutorProxy(EagerThreadPoolExecutor executor) {

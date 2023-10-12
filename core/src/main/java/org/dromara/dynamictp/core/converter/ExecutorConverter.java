@@ -59,7 +59,7 @@ public class ExecutorConverter {
         }
         ThreadPoolStatProvider provider = wrapper.getThreadPoolStatProvider();
         TpPerformanceProvider performanceProvider = provider.getPerformanceProvider();
-        TpPerformanceProvider.PerformanceData performanceData = performanceProvider.getDataAndRefresh();
+        TpPerformanceProvider.PerformanceSnapshot performanceSnapshot = performanceProvider.getSnapshotAndRefresh();
         ThreadPoolStats poolStats = convertCommon(executor);
         poolStats.setPoolName(wrapper.getThreadPoolName());
         poolStats.setPoolAliasName(wrapper.getThreadPoolAliasName());
@@ -67,8 +67,14 @@ public class ExecutorConverter {
         poolStats.setQueueTimeoutCount(provider.getQueueTimeoutCount());
         poolStats.setRejectCount(provider.getRejectedTaskCount());
         poolStats.setDynamic(executor instanceof DtpExecutor);
-        poolStats.setTps(performanceData.getTps());
-        poolStats.setCompletedTaskTimeAvg(performanceData.getCompletedTaskTimeAvg());
+        poolStats.setTps(performanceSnapshot.getTps());
+        poolStats.setCompletedTaskTimeAvg(performanceSnapshot.getCompletedTaskTimeAvg());
+        poolStats.setMaxRt(performanceSnapshot.getMaxRt());
+        poolStats.setMinRt(performanceSnapshot.getMinRt());
+        poolStats.setTp75(performanceSnapshot.getTp75());
+        poolStats.setTp90(performanceSnapshot.getTp90());
+        poolStats.setTp95(performanceSnapshot.getTp95());
+        poolStats.setTp99(performanceSnapshot.getTp99());
         return poolStats;
     }
 

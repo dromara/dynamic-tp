@@ -20,8 +20,7 @@ package org.dromara.dynamictp.core.support;
 import lombok.Getter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * TpPerformanceProvider related
@@ -32,14 +31,9 @@ import java.util.concurrent.atomic.AtomicLong;
 public class TpPerformanceProvider {
 
     /**
-     * 完成任务数量
+     * 任务执行时间集合
      */
-    private final AtomicInteger completedTaskNum = new AtomicInteger(0);
-
-    /**
-     * 完成任务的时间总和(单位:ms)
-     */
-    private final AtomicLong finishTimeTotal = new AtomicLong(0);
+    private final CopyOnWriteArrayList<Long> finishTimeList = new CopyOnWriteArrayList<>();
 
     /**
      * 上一次刷新数据时间
@@ -47,21 +41,19 @@ public class TpPerformanceProvider {
     private long lastRefreshTime = this.getCurrentSeconds();
 
     public void finishTask(long finishTime) {
-        completedTaskNum.incrementAndGet();
-        finishTimeTotal.addAndGet(finishTime);
+        finishTimeList.add(finishTime);
     }
 
-    public PerformanceData getDataAndRefresh() {
+    public PerformanceSnapshot getSnapshotAndRefresh() {
         long currentSeconds = getCurrentSeconds();
         int monitorInterval = (int) (currentSeconds - lastRefreshTime);
-        PerformanceData performanceData = new PerformanceData(monitorInterval);
+        PerformanceSnapshot performanceSnapshot = new PerformanceSnapshot(monitorInterval);
         refresh(currentSeconds);
-        return performanceData;
+        return performanceSnapshot;
     }
 
     private void refresh(long currentSeconds) {
-        completedTaskNum.set(0);
-        finishTimeTotal.set(0L);
+        finishTimeList.clear();
         lastRefreshTime = currentSeconds;
     }
 
@@ -70,15 +62,35 @@ public class TpPerformanceProvider {
     }
 
     @Getter
-    public class PerformanceData {
+    public class PerformanceSnapshot {
 
-        private final float tps;
+        private final double tps;
 
-        private final int completedTaskTimeAvg;
+        private final double completedTaskTimeAvg;
 
-        public PerformanceData(int monitorInterval) {
-            tps = new BigDecimal(completedTaskNum.get()).divide(BigDecimal.valueOf(Math.max(monitorInterval, 1)), 1, RoundingMode.HALF_UP).floatValue();
-            completedTaskTimeAvg = (int) Math.floorDiv(finishTimeTotal.get(), Math.max(completedTaskNum.get(), 1));
+        private final long maxRt;
+
+        private final long minRt;
+
+        private final double tp75;
+
+        private final double tp90;
+
+        private final double tp95;
+
+        private final double tp99;
+
+        public PerformanceSnapshot(int monitorInterval) {
+            int completedTaskNum = finishTimeList.size();
+            tps = BigDecimal.valueOf(completedTaskNum).divide(BigDecimal.valueOf(Math.max(monitorInterval, 1)), 1, RoundingMode.HALF_UP).doubleValue();
+            Snapshot tpSnapshot = new Snapshot(finishTimeList);
+            completedTaskTimeAvg = tpSnapshot.getMean();
+            maxRt = tpSnapshot.getMax();
+            minRt = tpSnapshot.getMin();
+            tp75 = tpSnapshot.get75thPercentile();
+            tp90 = tpSnapshot.getValue(0.9);
+            tp95 = tpSnapshot.get95thPercentile();
+            tp99 = tpSnapshot.get99thPercentile();
         }
 
     }

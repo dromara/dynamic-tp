@@ -19,8 +19,8 @@ spring:
           urlKey: 32d7bf40-1353-4859              # 替换
           receivers: test1,test2                   # 接受人企微名称
         - platform: ding
-          urlKey: a05f38f61fdc748df55957c90ccbe64eb02c265dd4142328e5562d80a5fbfea3         # 替换
-          secret: SEC0e93872f969493536bae4c188bd2badfd20054c331dcaa3c5c6b0eca8f678673           # 替换，非sign模式可以没有此值
+          urlKey: a05f38f61fdc748df55957c        # 替换
+          secret: SEC0e93872f969493536           # 替换，非sign模式可以没有此值
           receivers: 15810119805                   # 钉钉账号手机号
         - platform: lark
           urlKey: 0d944ae7-b24a-40                 # 替换

@@ -77,6 +77,11 @@ public class ThreadPoolStatProvider {
      */
     private final Map<Runnable, SoftReference<Timeout>> queueTimeoutMap = new ConcurrentHashMap<>();
 
+    /**
+     * performance monitor
+     */
+    private final TpPerformanceProvider tpPerformanceProvider = new TpPerformanceProvider();
+
     private ThreadPoolStatProvider(ExecutorWrapper executorWrapper) {
         this.executorWrapper = executorWrapper;
     }
@@ -164,4 +169,9 @@ public class ThreadPoolStatProvider {
                 .map(SoftReference::get)
                 .ifPresent(Timeout::cancel);
     }
+
+    public TpPerformanceProvider getPerformanceProvider() {
+        return this.tpPerformanceProvider;
+    }
+
 }

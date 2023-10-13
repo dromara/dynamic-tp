@@ -15,49 +15,37 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.support.task.runnable;
+package org.dromara.dynamictp.starter.adapter.webserver.jetty;
 
-import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.aware.AwareManager;
+import org.dromara.dynamictp.core.support.task.runnable.EnhancedRunnable;
+import org.eclipse.jetty.util.thread.ExecutionStrategy;
 import java.util.Objects;
 import java.util.concurrent.Executor;
 
 /**
- * Enhanced for some thread pools that do not have beforeExecute and afterExecute methods
- *
  * @author kyao
- * @since 1.1.4
+ * @date 2023年09月25日 14:43
  */
-@Slf4j
-public class EnhancedRunnable implements Runnable {
+public class SelectorProducerProxy implements ExecutionStrategy.Producer {
 
-    private final Runnable runnable;
+    private final ExecutionStrategy.Producer producer;
 
     private final Executor executor;
 
-    public EnhancedRunnable(Runnable runnable, Executor executor) {
-        this.runnable = runnable;
+    public SelectorProducerProxy(ExecutionStrategy.Producer producer, Executor executor) {
+        this.producer = producer;
         this.executor = executor;
     }
 
-    public static EnhancedRunnable of(Runnable runnable, Executor executor) {
-        return new EnhancedRunnable(runnable, executor);
-    }
-
     @Override
-    public void run() {
-        if (Objects.isNull(runnable)) {
-            return;
+    public Runnable produce() {
+        Runnable task = producer.produce();
+        if (Objects.isNull(task)) {
+            return task;
         }
-        AwareManager.beforeExecute(executor, Thread.currentThread(), this);
-        Throwable t = null;
-        try {
-            runnable.run();
-        } catch (Exception e) {
-            t = e;
-            throw e;
-        } finally {
-            AwareManager.afterExecute(executor, this, t);
-        }
+        EnhancedRunnable enhancedTask = EnhancedRunnable.of(task, executor);
+        AwareManager.execute(executor, enhancedTask);
+        return enhancedTask;
     }
 }

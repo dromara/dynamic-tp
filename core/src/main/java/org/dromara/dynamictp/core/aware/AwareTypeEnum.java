@@ -26,19 +26,23 @@ package org.dromara.dynamictp.core.aware;
 public enum AwareTypeEnum {
 
     /**
+     * PerformanceMonitorAware
+     */
+    PERFORMANCE_MONITOR_AWARE(1, "monitor"),
+    /**
      * TaskTimeoutAware
      */
-    TASK_TIMEOUT_AWARE(1, "timeout"),
+    TASK_TIMEOUT_AWARE(2, "timeout"),
 
     /**
      * TaskRejectAware
      */
-    TASK_REJECT_AWARE(2, "reject"),
+    TASK_REJECT_AWARE(3, "reject"),
 
     /**
      * TaskExecAware
      */
-    TASK_EXEC_AWARE(3, "exec");
+    TASK_EXEC_AWARE(4, "exec");
 
     private final int order;
     private final String name;

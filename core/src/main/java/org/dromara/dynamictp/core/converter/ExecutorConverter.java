@@ -17,13 +17,15 @@
 
 package org.dromara.dynamictp.core.converter;
 
+import lombok.val;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 import org.dromara.dynamictp.common.entity.TpMainFields;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.executor.DtpExecutor;
-import lombok.val;
-import java.util.Optional;
+import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
+import org.dromara.dynamictp.core.support.TpPerformanceProvider;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -55,15 +57,24 @@ public class ExecutorConverter {
         if (executor == null) {
             return null;
         }
+        ThreadPoolStatProvider provider = wrapper.getThreadPoolStatProvider();
+        TpPerformanceProvider performanceProvider = provider.getPerformanceProvider();
+        TpPerformanceProvider.PerformanceSnapshot performanceSnapshot = performanceProvider.getSnapshotAndRefresh();
         ThreadPoolStats poolStats = convertCommon(executor);
         poolStats.setPoolName(wrapper.getThreadPoolName());
         poolStats.setPoolAliasName(wrapper.getThreadPoolAliasName());
-        Optional.ofNullable(wrapper.getThreadPoolStatProvider()).ifPresent(p -> {
-            poolStats.setRunTimeoutCount(p.getRunTimeoutCount());
-            poolStats.setQueueTimeoutCount(p.getQueueTimeoutCount());
-            poolStats.setRejectCount(p.getRejectedTaskCount());
-        });
+        poolStats.setRunTimeoutCount(provider.getRunTimeoutCount());
+        poolStats.setQueueTimeoutCount(provider.getQueueTimeoutCount());
+        poolStats.setRejectCount(provider.getRejectedTaskCount());
         poolStats.setDynamic(executor instanceof DtpExecutor);
+        poolStats.setTps(performanceSnapshot.getTps());
+        poolStats.setCompletedTaskTimeAvg(performanceSnapshot.getCompletedTaskTimeAvg());
+        poolStats.setMaxRt(performanceSnapshot.getMaxRt());
+        poolStats.setMinRt(performanceSnapshot.getMinRt());
+        poolStats.setTp75(performanceSnapshot.getTp75());
+        poolStats.setTp90(performanceSnapshot.getTp90());
+        poolStats.setTp95(performanceSnapshot.getTp95());
+        poolStats.setTp99(performanceSnapshot.getTp99());
         return poolStats;
     }
 

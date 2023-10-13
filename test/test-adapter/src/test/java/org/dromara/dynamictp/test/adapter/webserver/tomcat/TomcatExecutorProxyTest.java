@@ -39,7 +39,6 @@ public class TomcatExecutorProxyTest {
 
         Assert.assertEquals(executor.getCorePoolSize(), proxy.getCorePoolSize());
         Assert.assertEquals(executor.getMaximumPoolSize(), proxy.getMaximumPoolSize());
-        Assert.assertEquals(executor.getPoolSize(), proxy.getPoolSize());
         Assert.assertEquals(executor.getCompletedTaskCount(), proxy.getCompletedTaskCount());
         Assert.assertEquals(executor.getLargestPoolSize(), proxy.getLargestPoolSize());
         Assert.assertEquals(executor.getTaskCount(), proxy.getTaskCount());

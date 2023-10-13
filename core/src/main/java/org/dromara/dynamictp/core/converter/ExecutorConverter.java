@@ -24,7 +24,7 @@ import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
-import org.dromara.dynamictp.core.support.TpPerformanceProvider;
+import org.dromara.dynamictp.core.monitor.TpPerformanceProvider;
 
 import java.util.concurrent.TimeUnit;
 
@@ -59,7 +59,7 @@ public class ExecutorConverter {
         }
         ThreadPoolStatProvider provider = wrapper.getThreadPoolStatProvider();
         TpPerformanceProvider performanceProvider = provider.getPerformanceProvider();
-        TpPerformanceProvider.PerformanceSnapshot performanceSnapshot = performanceProvider.getSnapshotAndRefresh();
+        TpPerformanceProvider.PerformanceSnapshot performanceSnapshot = performanceProvider.getSnapshotAndReset();
         ThreadPoolStats poolStats = convertCommon(executor);
         poolStats.setPoolName(wrapper.getThreadPoolName());
         poolStats.setPoolAliasName(wrapper.getThreadPoolAliasName());
@@ -67,14 +67,17 @@ public class ExecutorConverter {
         poolStats.setQueueTimeoutCount(provider.getQueueTimeoutCount());
         poolStats.setRejectCount(provider.getRejectedTaskCount());
         poolStats.setDynamic(executor instanceof DtpExecutor);
+
         poolStats.setTps(performanceSnapshot.getTps());
-        poolStats.setCompletedTaskTimeAvg(performanceSnapshot.getCompletedTaskTimeAvg());
+        poolStats.setMean(performanceSnapshot.getMean());
         poolStats.setMaxRt(performanceSnapshot.getMaxRt());
         poolStats.setMinRt(performanceSnapshot.getMinRt());
+        poolStats.setMedian(performanceSnapshot.getMedian());
         poolStats.setTp75(performanceSnapshot.getTp75());
         poolStats.setTp90(performanceSnapshot.getTp90());
         poolStats.setTp95(performanceSnapshot.getTp95());
         poolStats.setTp99(performanceSnapshot.getTp99());
+        poolStats.setTp999(performanceSnapshot.getTp999());
         return poolStats;
     }
 

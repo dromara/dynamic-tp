@@ -15,9 +15,10 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.support;
+package org.dromara.dynamictp.core.monitor;
 
 import lombok.Getter;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -26,34 +27,33 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * TpPerformanceProvider related
  *
  * @author kyao
- * @date 2023年09月24日 14:28
+ * @since 1.1.5
  */
 public class TpPerformanceProvider {
 
     /**
-     * 任务执行时间集合
+     * 任务执行耗时列表
      */
-    private final CopyOnWriteArrayList<Long> finishTimeList = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<Long> rtList = new CopyOnWriteArrayList<>();
 
     /**
      * 上一次刷新数据时间
      */
     private long lastRefreshTime = this.getCurrentSeconds();
 
-    public void finishTask(long finishTime) {
-        finishTimeList.add(finishTime);
+    public void finishTask(long rt) {
+        rtList.add(rt);
     }
 
-    public PerformanceSnapshot getSnapshotAndRefresh() {
+    public PerformanceSnapshot getSnapshotAndReset() {
         long currentSeconds = getCurrentSeconds();
         int monitorInterval = (int) (currentSeconds - lastRefreshTime);
-        PerformanceSnapshot performanceSnapshot = new PerformanceSnapshot(monitorInterval);
-        refresh(currentSeconds);
-        return performanceSnapshot;
+        reset(currentSeconds);
+        return new PerformanceSnapshot(monitorInterval);
     }
 
-    private void refresh(long currentSeconds) {
-        finishTimeList.clear();
+    private void reset(long currentSeconds) {
+        rtList.clear();
         lastRefreshTime = currentSeconds;
     }
 
@@ -66,11 +66,13 @@ public class TpPerformanceProvider {
 
         private final double tps;
 
-        private final double completedTaskTimeAvg;
+        private final double mean;
 
         private final long maxRt;
 
         private final long minRt;
+
+        private final double median;
 
         private final double tp75;
 
@@ -80,19 +82,21 @@ public class TpPerformanceProvider {
 
         private final double tp99;
 
+        private final double tp999;
+
         public PerformanceSnapshot(int monitorInterval) {
-            int completedTaskNum = finishTimeList.size();
-            tps = BigDecimal.valueOf(completedTaskNum).divide(BigDecimal.valueOf(Math.max(monitorInterval, 1)), 1, RoundingMode.HALF_UP).doubleValue();
-            Snapshot tpSnapshot = new Snapshot(finishTimeList);
-            completedTaskTimeAvg = tpSnapshot.getMean();
+            Snapshot tpSnapshot = new Snapshot(rtList);
+            tps = BigDecimal.valueOf(tpSnapshot.size()).divide(BigDecimal.valueOf(Math.max(monitorInterval, 1)),
+                    1, RoundingMode.HALF_UP).doubleValue();
+            mean = tpSnapshot.getMean();
             maxRt = tpSnapshot.getMax();
             minRt = tpSnapshot.getMin();
+            median = tpSnapshot.getMedian();
             tp75 = tpSnapshot.get75thPercentile();
             tp90 = tpSnapshot.getValue(0.9);
             tp95 = tpSnapshot.get95thPercentile();
             tp99 = tpSnapshot.get99thPercentile();
+            tp999 = tpSnapshot.get999thPercentile();
         }
-
     }
-
 }

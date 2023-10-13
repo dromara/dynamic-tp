@@ -29,7 +29,7 @@ import java.util.concurrent.Executor;
  * PerformanceMonitorAware related
  *
  * @author kyao
- * @date 2023年09月24日 15:36
+ * @since 1.1.5
  */
 public class PerformanceMonitorAware extends TaskStatAware {
 
@@ -65,10 +65,7 @@ public class PerformanceMonitorAware extends TaskStatAware {
                     long totalTimeMillis = stopWatch.getTotalTimeMillis();
                     Optional.ofNullable(statProviders.get(executor))
                             .map(ThreadPoolStatProvider::getPerformanceProvider)
-                            .ifPresent(provider ->
-                            provider.finishTask(totalTimeMillis)
-                    );
+                            .ifPresent(provider -> provider.finishTask(totalTimeMillis));
                 });
     }
-
 }

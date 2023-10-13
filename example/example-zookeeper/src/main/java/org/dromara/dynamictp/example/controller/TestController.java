@@ -42,7 +42,6 @@ public class TestController {
     @Resource
     private TestService testService;
 
-
     @GetMapping("/dtp-zookeeper-example/testAsync")
     public String testAsync() throws InterruptedException {
         testService.test();

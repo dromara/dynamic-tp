@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.support;
+package org.dromara.dynamictp.core.monitor;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -28,11 +28,9 @@ import java.util.Collection;
  * Copy from com.codahale.metrics.Snapshot
  *
  * @author kyao
- * @date 2023/10/12 09:11
+ * @since 1.1.5
  */
 public class Snapshot {
-
-    private static final Charset UTF_8 = Charset.forName("UTF-8");
 
     private final long[] values;
 
@@ -210,7 +208,6 @@ public class Snapshot {
      */
     public double getStdDev() {
         // two-pass algorithm for variance, avoids numeric overflow
-
         if (values.length <= 1) {
             return 0;
         }
@@ -233,13 +230,10 @@ public class Snapshot {
      * @param output an output stream
      */
     public void dump(OutputStream output) {
-        final PrintWriter out = new PrintWriter(new OutputStreamWriter(output, UTF_8));
-        try {
+        try (PrintWriter out = new PrintWriter(new OutputStreamWriter(output, StandardCharsets.UTF_8))) {
             for (long value : values) {
                 out.printf("%d%n", value);
             }
-        } finally {
-            out.close();
         }
     }
 }

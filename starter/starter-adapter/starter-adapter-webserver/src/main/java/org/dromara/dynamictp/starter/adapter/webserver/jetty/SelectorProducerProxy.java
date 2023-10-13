@@ -25,7 +25,7 @@ import java.util.concurrent.Executor;
 
 /**
  * @author kyao
- * @date 2023年09月25日 14:43
+ * @since 1.1.5
  */
 public class SelectorProducerProxy implements ExecutionStrategy.Producer {
 

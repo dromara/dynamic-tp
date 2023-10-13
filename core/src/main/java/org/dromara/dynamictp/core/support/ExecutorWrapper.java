@@ -78,7 +78,7 @@ public class ExecutorWrapper {
     /**
      * Thread pool stat provider
      */
-    private ThreadPoolStatProvider threadPoolStatProvider;
+    private ThreadPoolStatProvider threadPoolStatProvider = ThreadPoolStatProvider.of(this);
 
     /**
      * Aware names
@@ -95,7 +95,6 @@ public class ExecutorWrapper {
         this.notifyEnabled = executor.isNotifyEnabled();
         this.platformIds = executor.getPlatformIds();
         this.awareNames = executor.getAwareNames();
-        this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
     }
 
     public ExecutorWrapper(String threadPoolName, Executor executor) {
@@ -108,7 +107,6 @@ public class ExecutorWrapper {
             throw new IllegalArgumentException("unsupported Executor type !");
         }
         this.notifyItems = NotifyItem.getAllNotifyItems();
-        this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
         AlarmManager.initAlarm(threadPoolName, notifyItems);
     }
 

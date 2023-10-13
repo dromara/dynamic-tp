@@ -17,28 +17,26 @@
 
 package org.dromara.dynamictp.starter.adapter.webserver.jetty;
 
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Tag;
-import io.micrometer.core.instrument.binder.jetty.InstrumentedQueuedThreadPool;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.starter.adapter.webserver.AbstractWebServerDtpAdapter;
-import org.eclipse.jetty.util.thread.ExecutorThreadPool;
+import org.eclipse.jetty.io.ManagedSelector;
+import org.eclipse.jetty.io.SelectorManager;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.util.thread.ExecutionStrategy;
 import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
+import org.eclipse.jetty.util.thread.strategy.EatWhatYouKill;
 import org.springframework.boot.web.embedded.jetty.JettyWebServer;
 import org.springframework.boot.web.server.WebServer;
+
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -53,71 +51,56 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
 
     private static final String TP_PREFIX = "jettyTp";
 
-    private static final String EXECUTOR_FIELD = "_executor";
+    private static final String CONNECTORS_FIELD = "connectors";
 
-    private static final String THREAD_POOL_FIELD = "_threadPool";
+    private static final String MANAGER_FIELD = "_manager";
+
+    private static final String SELECTORS_FIELD = "_selectors";
+
+    private static final String STRATEGY_FIELD = "_strategy";
+
+    private static final String PRODUCER_FIELD = "_producer";
 
     @Override
     public ExecutorWrapper enhanceAndGetExecutorWrapper(WebServer webServer) {
         JettyWebServer jettyWebServer = (JettyWebServer) webServer;
         ThreadPool threadPool = jettyWebServer.getServer().getThreadPool();
-        Executor executorProxy = enhanceOriginExecutor(jettyWebServer, threadPool);
-        ExecutorWrapper wrapper;
-        if (executorProxy instanceof ThreadPoolExecutor) {
-            wrapper = new ExecutorWrapper(TP_PREFIX, executorProxy);
-        } else {
-            final JettyExecutorAdapter adapter = new JettyExecutorAdapter(
-                    (ThreadPool.SizedThreadPool) executorProxy);
-            wrapper = new ExecutorWrapper(TP_PREFIX, adapter);
-        }
-        return wrapper;
+        final JettyExecutorAdapter adapter = new JettyExecutorAdapter(
+                (ThreadPool.SizedThreadPool) threadPool);
+        enhanceOriginTask(jettyWebServer, threadPool);
+        return new ExecutorWrapper(TP_PREFIX, adapter);
     }
 
-    private Executor enhanceOriginExecutor(JettyWebServer webServer, ThreadPool threadPool) {
-        try {
-            if (threadPool instanceof ExecutorThreadPool) {
-                val executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(EXECUTOR_FIELD, threadPool);
-                if (Objects.isNull(executor)) {
-                    return threadPool;
+    private void enhanceOriginTask(JettyWebServer jettyWebServer, ThreadPool threadPool) {
+        Connector[] connectors = (Connector[]) ReflectionUtil.getFieldValue(CONNECTORS_FIELD, jettyWebServer);
+        if (Objects.isNull(connectors)) {
+            return;
+        }
+        for (Connector connector : connectors) {
+            if (connector instanceof ServerConnector) {
+                SelectorManager selectorManager = (SelectorManager) ReflectionUtil.getFieldValue(MANAGER_FIELD, connector);
+                if (Objects.isNull(selectorManager)) {
+                    return;
                 }
-                ThreadPoolExecutorProxy executorProxy = new ThreadPoolExecutorProxy(executor);
-                ReflectionUtil.setFieldValue(EXECUTOR_FIELD, threadPool, executorProxy);
-                return executorProxy;
+                ManagedSelector[] managedSelectors = (ManagedSelector[]) ReflectionUtil.getFieldValue(SELECTORS_FIELD, selectorManager);
+                if (Objects.isNull(managedSelectors)) {
+                    return;
+                }
+                for (ManagedSelector managedSelector : managedSelectors) {
+                    EatWhatYouKill eatWhatYouKill = (EatWhatYouKill) ReflectionUtil.getFieldValue(STRATEGY_FIELD, managedSelector);
+                    if (Objects.isNull(eatWhatYouKill)) {
+                        continue;
+                    }
+                    ExecutionStrategy.Producer producer = (ExecutionStrategy.Producer) ReflectionUtil.getFieldValue(PRODUCER_FIELD, eatWhatYouKill);
+                    SelectorProducerProxy selectorProducerProxy = new SelectorProducerProxy(producer, threadPool);
+                    try {
+                        ReflectionUtil.setFieldValue(PRODUCER_FIELD, eatWhatYouKill, selectorProducerProxy);
+                    } catch (IllegalAccessException e) {
+                        log.error("DynamicTp enhance jetty origin executor failed.", e);
+                    }
+                }
             }
-            Object threadPoolProxy = createThreadPoolProxy(threadPool);
-            if (!(threadPoolProxy instanceof QueuedThreadPoolProxy)) {
-                ReflectionUtil.setFieldValue(THREAD_POOL_FIELD, webServer.getServer(), threadPoolProxy);
-            }
-            return (Executor) threadPoolProxy;
-        } catch (IllegalAccessException e) {
-            log.error("DynamicTp enhance jetty origin executor failed.", e);
         }
-        return threadPool;
-    }
-
-    private Object createThreadPoolProxy(ThreadPool threadPool) {
-        if (!(threadPool instanceof QueuedThreadPool)) {
-            return threadPool;
-        }
-
-        QueuedThreadPool queuedThreadPool = (QueuedThreadPool) threadPool;
-        BlockingQueue<Runnable> queue = cast(ReflectionUtil.getFieldValue("_jobs", threadPool));
-        if (threadPool instanceof InstrumentedQueuedThreadPool) {
-            MeterRegistry registry = (MeterRegistry) ReflectionUtil.getFieldValue("registry", threadPool);
-            Iterable<Tag> tags = cast(ReflectionUtil.getFieldValue("tags", threadPool));
-            return new InstrumentedQueuedThreadPoolProxy(queuedThreadPool, registry, tags, queue);
-        } else if (threadPool instanceof MonitoredQueuedThreadPool) {
-            return new MonitoredQueuedThreadPoolProxy(queuedThreadPool, queue);
-        } else {
-            val threadGroup = (ThreadGroup) ReflectionUtil.getFieldValue("_threadGroup", threadPool);
-            val threadFactory = (ThreadFactory) ReflectionUtil.getFieldValue("_threadFactory", threadPool);
-            return new QueuedThreadPoolProxy(queuedThreadPool, queue, threadGroup, threadFactory);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> T cast(Object obj) {
-        return (T) obj;
     }
 
     @Override

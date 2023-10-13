@@ -32,16 +32,34 @@ import lombok.EqualsAndHashCode;
 @Builder
 public class ThreadPoolStats extends Metrics {
 
+    /**
+     * 线程池名字
+     */
     private String poolName;
 
+    /**
+     * 线程池别名
+     */
     private String poolAliasName;
 
+    /**
+     * 核心线程数
+     */
     private int corePoolSize;
 
+    /**
+     * 最大线程数
+     */
     private int maximumPoolSize;
 
+    /**
+     * 队列类型
+     */
     private String queueType;
 
+    /**
+     * 队列容量
+     */
     private int queueCapacity;
 
     /**
@@ -113,4 +131,45 @@ public class ThreadPoolStats extends Metrics {
      * 在队列等待超时任务数量
      */
     private long queueTimeoutCount;
+
+    /**
+     * tps
+     */
+    private double tps;
+
+    /**
+     * 任务平均耗时(单位:ms)
+     */
+    private double completedTaskTimeAvg;
+
+    /**
+     * 最大任务耗时
+     */
+    private long maxRt;
+
+    /**
+     * 最小任务耗时
+     */
+    private long minRt;
+
+    /**
+     * 满足75%的任务执行所需的最低耗时
+     */
+    private double tp75;
+
+    /**
+     * 满足90%的任务执行所需的最低耗时
+     */
+    private double tp90;
+
+    /**
+     * 满足95%的任务执行所需的最低耗时
+     */
+    private double tp95;
+
+    /**
+     * 满足99%的任务执行所需的最低耗时
+     */
+    private double tp99;
+
 }

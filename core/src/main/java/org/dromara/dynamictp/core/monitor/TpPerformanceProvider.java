@@ -48,8 +48,9 @@ public class TpPerformanceProvider {
     public PerformanceSnapshot getSnapshotAndReset() {
         long currentSeconds = getCurrentSeconds();
         int monitorInterval = (int) (currentSeconds - lastRefreshTime);
+        PerformanceSnapshot performanceSnapshot = new PerformanceSnapshot(monitorInterval);
         reset(currentSeconds);
-        return new PerformanceSnapshot(monitorInterval);
+        return performanceSnapshot;
     }
 
     private void reset(long currentSeconds) {

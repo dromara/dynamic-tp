@@ -51,13 +51,13 @@ public class TestController {
     public void task() throws InterruptedException {
         Executor dtpExecutor2 = DtpRegistry.getExecutor("dtpExecutor2");
         for (int i = 0; i < 100; i++) {
-            Thread.sleep(100);
+            Thread.sleep((int) (Math.random() * 1000));
             dtpExecutor1.execute(() -> {
                 log.info("i am a dtp1 task");
             });
             dtpExecutor2.execute(NamedRunnable.of(() -> {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep((int) (Math.random() * 1000));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

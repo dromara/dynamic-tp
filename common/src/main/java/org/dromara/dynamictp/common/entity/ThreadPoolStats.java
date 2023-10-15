@@ -138,11 +138,6 @@ public class ThreadPoolStats extends Metrics {
     private double tps;
 
     /**
-     * 任务平均耗时(单位:ms)
-     */
-    private double mean;
-
-    /**
      * 最大任务耗时
      */
     private long maxRt;
@@ -153,9 +148,14 @@ public class ThreadPoolStats extends Metrics {
     private long minRt;
 
     /**
+     * 任务平均耗时(单位:ms)
+     */
+    private double avg;
+
+    /**
      * 满足50%的任务执行所需的最低耗时
      */
-    private double median;
+    private double tp50;
 
     /**
      * 满足75%的任务执行所需的最低耗时

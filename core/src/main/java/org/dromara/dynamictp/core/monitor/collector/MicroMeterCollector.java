@@ -18,13 +18,13 @@
 package org.dromara.dynamictp.core.monitor.collector;
 
 import cn.hutool.core.bean.BeanUtil;
+import io.micrometer.core.instrument.Metrics;
+import io.micrometer.core.instrument.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.em.CollectorTypeEnum;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 import org.dromara.dynamictp.common.util.CommonUtil;
-import io.micrometer.core.instrument.Metrics;
-import io.micrometer.core.instrument.Tag;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,10 +94,10 @@ public class MicroMeterCollector extends AbstractCollector {
         Metrics.gauge(metricName("queue.timeout.count"), tags, poolStats, ThreadPoolStats::getQueueTimeoutCount);
 
         Metrics.gauge(metricName("tps"), tags, poolStats, ThreadPoolStats::getTps);
-        Metrics.gauge(metricName("completed.task.time.mean"), tags, poolStats, ThreadPoolStats::getMean);
+        Metrics.gauge(metricName("completed.task.time.avg"), tags, poolStats, ThreadPoolStats::getAvg);
         Metrics.gauge(metricName("completed.task.rt.max"), tags, poolStats, ThreadPoolStats::getMaxRt);
         Metrics.gauge(metricName("completed.task.rt.min"), tags, poolStats, ThreadPoolStats::getMinRt);
-        Metrics.gauge(metricName("completed.task.time.median"), tags, poolStats, ThreadPoolStats::getMedian);
+        Metrics.gauge(metricName("completed.task.time.tp50"), tags, poolStats, ThreadPoolStats::getTp50);
         Metrics.gauge(metricName("completed.task.time.tp75"), tags, poolStats, ThreadPoolStats::getTp75);
         Metrics.gauge(metricName("completed.task.time.tp90"), tags, poolStats, ThreadPoolStats::getTp90);
         Metrics.gauge(metricName("completed.task.time.tp95"), tags, poolStats, ThreadPoolStats::getTp95);

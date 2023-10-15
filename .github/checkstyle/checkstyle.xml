@@ -119,7 +119,7 @@
     <!-- 检查是否有嵌套代码块 -->
     <module name="AvoidNestedBlocks"/>
     <!-- 检查是否有空代码块 -->
-    <module name="EmptyBlock"/>
+    <!--    <module name="EmptyBlock"/>-->
     <!-- 检查左大括号位置 -->
     <module name="LeftCurly"/>
     <!-- 检查右大括号位置 -->

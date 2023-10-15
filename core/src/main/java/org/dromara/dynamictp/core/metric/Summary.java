@@ -15,22 +15,20 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.example.service;
-
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
+package org.dromara.dynamictp.core.metric;
 
 /**
- * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
+ * Summary related
+ *
+ * @author yanhom
+ * @since 1.1.5
  */
-@Slf4j
-@Service
-public class TestService {
+public interface Summary {
 
-    @Async("commonExecutor")
-    public void test() {
-      log.info("I am dynamic-tp-test-1 task");
-    }
-
+    /**
+     * Add value.
+     *
+     * @param value current value
+     */
+    void add(long value);
 }

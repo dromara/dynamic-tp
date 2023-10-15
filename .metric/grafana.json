@@ -3,7 +3,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -19,36 +22,294 @@
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 6,
-  "iteration": 1650595506578,
+  "id": 2,
   "links": [],
+  "liveNow": false,
   "panels": [
     {
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
+      "description": "核心线程数",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      },
+      "id": 25,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "10.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+          },
+          "editorMode": "code",
+          "expr": "thread_pool_core_size{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "核心线程数",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
+      "description": "最大线程数",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 6,
+        "y": 0
+      },
+      "id": 26,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "10.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+          },
+          "editorMode": "code",
+          "expr": "thread_pool_maximum_size{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "最大线程数",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
+      "description": "tps",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 12,
+        "y": 0
+      },
+      "id": 28,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "10.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+          },
+          "editorMode": "code",
+          "expr": "thread_pool_tps{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "tps",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
+      "description": "tp99 耗时",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      },
+      "id": 29,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "10.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+          },
+          "editorMode": "code",
+          "expr": "thread_pool_completed_task_time_tp99{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "instant": false,
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "tp99 耗时",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
       "description": "当前线程数",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "continuous-GrYlRd"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
             "fillOpacity": 5,
-            "gradientMode": "hue",
+            "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
             "lineInterpolation": "smooth",
-            "lineStyle": {
-              "fill": "solid"
-            },
             "lineWidth": 1,
             "pointSize": 7,
             "scaleDistribution": {
@@ -85,9 +346,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 0
+        "y": 5
       },
-      "id": 12,
+      "id": 27,
       "links": [
         {
           "title": "https://github.com/lyh200/dynamic-tp",
@@ -98,31 +359,37 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "WcpShMYnk"
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
           },
+          "editorMode": "code",
           "exemplar": true,
           "expr": "thread_pool_current_size{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
           "interval": "",
           "legendFormat": "{{thread_pool_name}}",
+          "range": true,
           "refId": "A"
         }
       ],
       "title": "当前线程数",
-      "transparent": true,
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
       "description": "活跃线程数",
       "fieldConfig": {
         "defaults": {
@@ -130,6 +397,8 @@
             "mode": "continuous-GrYlRd"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -178,7 +447,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 0
+        "y": 5
       },
       "id": 8,
       "links": [
@@ -191,22 +460,26 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "WcpShMYnk"
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
           },
+          "editorMode": "code",
           "exemplar": true,
           "expr": "thread_pool_active_count{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
           "interval": "",
           "legendFormat": "{{thread_pool_name}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -214,14 +487,19 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
       "description": "任务队列大小",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "continuous-YlBl"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -270,7 +548,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 8
+        "y": 13
       },
       "id": 6,
       "links": [
@@ -283,17 +561,19 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "WcpShMYnk"
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
           },
           "exemplar": true,
           "expr": "thread_pool_queue_size{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}\n",
@@ -306,14 +586,19 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
       "description": "任务队列剩余大小",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "continuous-YlBl"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -363,7 +648,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 8
+        "y": 13
       },
       "id": 2,
       "links": [
@@ -376,10 +661,12 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.3.3",
@@ -387,7 +674,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "WcpShMYnk"
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
           },
           "exemplar": true,
           "expr": "thread_pool_queue_remaining_capacity{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
@@ -402,14 +689,19 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
       "description": "完成任务数",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -442,8 +734,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -458,7 +749,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 16
+        "y": 21
       },
       "id": 10,
       "links": [
@@ -471,17 +762,19 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "WcpShMYnk"
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
           },
           "exemplar": true,
           "expr": "thread_pool_completed_task_count{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
@@ -494,7 +787,10 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
       "description": "拒绝任务数",
       "fieldConfig": {
         "defaults": {
@@ -502,6 +798,8 @@
             "mode": "continuous-reds"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -534,8 +832,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -551,7 +848,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 16
+        "y": 21
       },
       "id": 4,
       "links": [
@@ -564,10 +861,12 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.3.3",
@@ -575,7 +874,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "WcpShMYnk"
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
           },
           "exemplar": true,
           "expr": "thread_pool_reject_count{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}\n",
@@ -590,7 +889,10 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
       "description": "执行超时任务数",
       "fieldConfig": {
         "defaults": {
@@ -598,6 +900,8 @@
             "mode": "continuous-reds"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -630,8 +934,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -646,7 +949,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 24
+        "y": 29
       },
       "id": 14,
       "links": [
@@ -659,17 +962,19 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "WcpShMYnk"
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
           },
           "exemplar": true,
           "expr": "thread_pool_run_timeout_count{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
@@ -682,14 +987,19 @@
       "type": "timeseries"
     },
     {
-      "datasource": null,
-      "description": "队列等待超时任务数",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
+      "description": "执行超时任务数",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "continuous-reds"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -722,8 +1032,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -738,7 +1047,205 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 24
+        "y": 29
+      },
+      "id": 18,
+      "links": [
+        {
+          "title": "https://github.com/lyh200/dynamic-tp",
+          "url": "https://github.com/lyh200/dynamic-tp"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+          },
+          "exemplar": true,
+          "expr": "thread_pool_run_timeout_count{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "interval": "",
+          "legendFormat": "{{thread_pool_name}}",
+          "refId": "A"
+        }
+      ],
+      "title": "执行超时任务数",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
+      "description": "tps",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic-by-name"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 5,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 7,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 37
+      },
+      "id": 17,
+      "links": [
+        {
+          "title": "https://github.com/lyh200/dynamic-tp",
+          "url": "https://github.com/lyh200/dynamic-tp"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "thread_pool_tps{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "interval": "",
+          "legendFormat": "{{thread_pool_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "tps",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
+      "description": "tp999 耗时",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 5,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 7,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 37
       },
       "id": 16,
       "links": [
@@ -751,46 +1258,650 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "WcpShMYnk"
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "thread_pool_queue_timeout_count{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_completed_task_time_tp999{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
           "interval": "",
           "legendFormat": "{{thread_pool_name}}",
+          "range": true,
           "refId": "A"
         }
       ],
-      "title": "队列等待超时任务数",
+      "title": "tp999 耗时",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
+      "description": "tp99 耗时",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 5,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 7,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 45
+      },
+      "id": 19,
+      "links": [
+        {
+          "title": "https://github.com/lyh200/dynamic-tp",
+          "url": "https://github.com/lyh200/dynamic-tp"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "thread_pool_completed_task_time_tp99{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "interval": "",
+          "legendFormat": "{{thread_pool_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "tp99 耗时",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
+      "description": "tp95 耗时",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 5,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 7,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 45
+      },
+      "id": 20,
+      "links": [
+        {
+          "title": "https://github.com/lyh200/dynamic-tp",
+          "url": "https://github.com/lyh200/dynamic-tp"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "thread_pool_completed_task_time_tp95{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "interval": "",
+          "legendFormat": "{{thread_pool_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "tp95 耗时",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
+      "description": "tp90 耗时",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 5,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 7,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 53
+      },
+      "id": 21,
+      "links": [
+        {
+          "title": "https://github.com/lyh200/dynamic-tp",
+          "url": "https://github.com/lyh200/dynamic-tp"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "thread_pool_completed_task_time_tp90{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "interval": "",
+          "legendFormat": "{{thread_pool_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "tp90 耗时",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
+      "description": "tp50 耗时",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 5,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 7,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 53
+      },
+      "id": 22,
+      "links": [
+        {
+          "title": "https://github.com/lyh200/dynamic-tp",
+          "url": "https://github.com/lyh200/dynamic-tp"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "thread_pool_completed_task_time_tp50{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "interval": "",
+          "legendFormat": "{{thread_pool_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "tp50 耗时",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
+      "description": "任务平均耗时",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 5,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 7,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 61
+      },
+      "id": 23,
+      "links": [
+        {
+          "title": "https://github.com/lyh200/dynamic-tp",
+          "url": "https://github.com/lyh200/dynamic-tp"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "thread_pool_completed_task_time_avg{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "interval": "",
+          "legendFormat": "{{thread_pool_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "任务平均耗时",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+      },
+      "description": "任务最大耗时",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-BlPu"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 5,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 7,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 61
+      },
+      "id": 24,
+      "links": [
+        {
+          "title": "https://github.com/lyh200/dynamic-tp",
+          "url": "https://github.com/lyh200/dynamic-tp"
+        }
+      ],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+          },
+          "editorMode": "code",
+          "exemplar": true,
+          "expr": "thread_pool_completed_task_time_max{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "interval": "",
+          "legendFormat": "{{thread_pool_name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "任务最大耗时",
       "type": "timeseries"
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 30,
+  "schemaVersion": 38,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
-        "allValue": null,
         "current": {
           "selected": false,
-          "text": "dynamic-tp-nacos-cloud-demo",
-          "value": "dynamic-tp-nacos-cloud-demo"
+          "text": "dynamic-tp-polaris-cloud-demo",
+          "value": "dynamic-tp-polaris-cloud-demo"
         },
-        "datasource": null,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        },
         "definition": "label_values(app_name)",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Application",
@@ -808,16 +1919,16 @@
         "type": "query"
       },
       {
-        "allValue": null,
         "current": {
-          "selected": true,
-          "text": "10.2.109.132:9100",
-          "value": "10.2.109.132:9100"
+          "selected": false,
+          "text": "192.168.1.2:9018",
+          "value": "192.168.1.2:9018"
         },
-        "datasource": null,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        },
         "definition": "label_values({app_name=\"$application\"}, instance)",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Instance",
@@ -835,16 +1946,16 @@
         "type": "query"
       },
       {
-        "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "dtpExecutor2",
           "value": "dtpExecutor2"
         },
-        "datasource": null,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        },
         "definition": "label_values({app_name=\"$application\"}, thread_pool_name)",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "ThreadPoolName",
@@ -869,7 +1980,8 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "线程池监控（DynamicTp）",
-  "uid": "5wBx-ysnk",
-  "version": 7
+  "title": "线程池监控（DynamicTp） Copy",
+  "uid": "b48d82b2-96b0-45ea-801e-1d0a030459dc",
+  "version": 1,
+  "weekStart": ""
 }

@@ -95,8 +95,8 @@ public class MicroMeterCollector extends AbstractCollector {
 
         Metrics.gauge(metricName("tps"), tags, poolStats, ThreadPoolStats::getTps);
         Metrics.gauge(metricName("completed.task.time.avg"), tags, poolStats, ThreadPoolStats::getAvg);
-        Metrics.gauge(metricName("completed.task.rt.max"), tags, poolStats, ThreadPoolStats::getMaxRt);
-        Metrics.gauge(metricName("completed.task.rt.min"), tags, poolStats, ThreadPoolStats::getMinRt);
+        Metrics.gauge(metricName("completed.task.time.max"), tags, poolStats, ThreadPoolStats::getMaxRt);
+        Metrics.gauge(metricName("completed.task.time.min"), tags, poolStats, ThreadPoolStats::getMinRt);
         Metrics.gauge(metricName("completed.task.time.tp50"), tags, poolStats, ThreadPoolStats::getTp50);
         Metrics.gauge(metricName("completed.task.time.tp75"), tags, poolStats, ThreadPoolStats::getTp75);
         Metrics.gauge(metricName("completed.task.time.tp90"), tags, poolStats, ThreadPoolStats::getTp90);

@@ -18,10 +18,12 @@
 package org.dromara.dynamictp.core.monitor;
 
 import lombok.Getter;
+import lombok.val;
+import org.dromara.dynamictp.core.metric.MMAPCounter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * TpPerformanceProvider related
@@ -31,30 +33,31 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class TpPerformanceProvider {
 
-    /**
-     * 任务执行耗时列表
-     */
-    private final CopyOnWriteArrayList<Long> rtList = new CopyOnWriteArrayList<>();
+    private final AtomicLong intervalCounter = new AtomicLong();
 
     /**
-     * 上一次刷新数据时间
+     * last refresh time
      */
     private long lastRefreshTime = this.getCurrentSeconds();
 
+    private final MMAPCounter mmapCounter = new MMAPCounter();
+
     public void finishTask(long rt) {
-        rtList.add(rt);
+        intervalCounter.incrementAndGet();
+        mmapCounter.add(rt);
     }
 
     public PerformanceSnapshot getSnapshotAndReset() {
         long currentSeconds = getCurrentSeconds();
         int monitorInterval = (int) (currentSeconds - lastRefreshTime);
-        PerformanceSnapshot performanceSnapshot = new PerformanceSnapshot(monitorInterval);
+        val performanceSnapshot = new PerformanceSnapshot(mmapCounter, intervalCounter.get(), monitorInterval);
         reset(currentSeconds);
         return performanceSnapshot;
     }
 
     private void reset(long currentSeconds) {
-        rtList.clear();
+        mmapCounter.reset();
+        intervalCounter.set(0);
         lastRefreshTime = currentSeconds;
     }
 
@@ -63,17 +66,17 @@ public class TpPerformanceProvider {
     }
 
     @Getter
-    public class PerformanceSnapshot {
+    public static class PerformanceSnapshot {
 
         private final double tps;
-
-        private final double mean;
 
         private final long maxRt;
 
         private final long minRt;
 
-        private final double median;
+        private final double avg;
+
+        private final double tp50;
 
         private final double tp75;
 
@@ -85,19 +88,20 @@ public class TpPerformanceProvider {
 
         private final double tp999;
 
-        public PerformanceSnapshot(int monitorInterval) {
-            Snapshot tpSnapshot = new Snapshot(rtList);
-            tps = BigDecimal.valueOf(tpSnapshot.size()).divide(BigDecimal.valueOf(Math.max(monitorInterval, 1)),
+        public PerformanceSnapshot(MMAPCounter mmapCounter, long intervalCounter, int interval) {
+            tps = BigDecimal.valueOf(intervalCounter).divide(BigDecimal.valueOf(Math.max(interval, 1)),
                     1, RoundingMode.HALF_UP).doubleValue();
-            mean = tpSnapshot.getMean();
-            maxRt = tpSnapshot.getMax();
-            minRt = tpSnapshot.getMin();
-            median = tpSnapshot.getMedian();
-            tp75 = tpSnapshot.get75thPercentile();
-            tp90 = tpSnapshot.getValue(0.9);
-            tp95 = tpSnapshot.get95thPercentile();
-            tp99 = tpSnapshot.get99thPercentile();
-            tp999 = tpSnapshot.get999thPercentile();
+
+            maxRt = mmapCounter.getMmaCounter().getMax();
+            minRt = mmapCounter.getMmaCounter().getMin();
+            avg = mmapCounter.getMmaCounter().getAvg();
+
+            tp50 = mmapCounter.getSnapshot().getMedian();
+            tp75 = mmapCounter.getSnapshot().get75thPercentile();
+            tp90 = mmapCounter.getSnapshot().getValue(0.9);
+            tp95 = mmapCounter.getSnapshot().get95thPercentile();
+            tp99 = mmapCounter.getSnapshot().get99thPercentile();
+            tp999 = mmapCounter.getSnapshot().get999thPercentile();
         }
     }
 }

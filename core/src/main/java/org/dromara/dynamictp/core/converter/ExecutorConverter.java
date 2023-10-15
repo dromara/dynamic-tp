@@ -69,10 +69,10 @@ public class ExecutorConverter {
         poolStats.setDynamic(executor instanceof DtpExecutor);
 
         poolStats.setTps(performanceSnapshot.getTps());
-        poolStats.setMean(performanceSnapshot.getMean());
+        poolStats.setAvg(performanceSnapshot.getAvg());
         poolStats.setMaxRt(performanceSnapshot.getMaxRt());
         poolStats.setMinRt(performanceSnapshot.getMinRt());
-        poolStats.setMedian(performanceSnapshot.getMedian());
+        poolStats.setTp50(performanceSnapshot.getTp50());
         poolStats.setTp75(performanceSnapshot.getTp75());
         poolStats.setTp90(performanceSnapshot.getTp90());
         poolStats.setTp95(performanceSnapshot.getTp95());

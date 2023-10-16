@@ -153,4 +153,14 @@ public class AwareManager {
             }
         }
     }
+
+    public static void afterReject(Runnable r, Executor executor) {
+        for (ExecutorAware aware : EXECUTOR_AWARE_LIST) {
+            try {
+                aware.afterReject(r, executor);
+            } catch (Exception e) {
+                log.error("DynamicTp aware [{}], enhance afterReject error.", aware.getName(), e);
+            }
+        }
+    }
 }

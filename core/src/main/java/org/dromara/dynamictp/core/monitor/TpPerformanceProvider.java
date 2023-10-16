@@ -19,6 +19,7 @@ package org.dromara.dynamictp.core.monitor;
 
 import lombok.Getter;
 import lombok.val;
+import org.dromara.dynamictp.common.util.TimeUtil;
 import org.dromara.dynamictp.core.metric.MMAPCounter;
 
 import java.math.BigDecimal;
@@ -33,36 +34,28 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class TpPerformanceProvider {
 
-    private final AtomicLong intervalCounter = new AtomicLong();
-
     /**
-     * last refresh time
+     * last refresh timestamp
      */
-    private long lastRefreshTime = this.getCurrentSeconds();
+    private final AtomicLong lastRefreshTs = new AtomicLong(TimeUtil.currentTimeSeconds());
 
     private final MMAPCounter mmapCounter = new MMAPCounter();
 
-    public void finishTask(long rt) {
-        intervalCounter.incrementAndGet();
+    public void completeTask(long rt) {
         mmapCounter.add(rt);
     }
 
     public PerformanceSnapshot getSnapshotAndReset() {
-        long currentSeconds = getCurrentSeconds();
-        int monitorInterval = (int) (currentSeconds - lastRefreshTime);
-        val performanceSnapshot = new PerformanceSnapshot(mmapCounter, intervalCounter.get(), monitorInterval);
-        reset(currentSeconds);
+        long currentTs = TimeUtil.currentTimeSeconds();
+        int monitorInterval = (int) (currentTs - lastRefreshTs.get());
+        val performanceSnapshot = new PerformanceSnapshot(mmapCounter, monitorInterval);
+        reset(currentTs);
         return performanceSnapshot;
     }
 
-    private void reset(long currentSeconds) {
+    private void reset(long currentTs) {
         mmapCounter.reset();
-        intervalCounter.set(0);
-        lastRefreshTime = currentSeconds;
-    }
-
-    private long getCurrentSeconds() {
-        return System.currentTimeMillis() / 1000;
+        lastRefreshTs.compareAndSet(lastRefreshTs.get(), currentTs);
     }
 
     @Getter
@@ -88,9 +81,10 @@ public class TpPerformanceProvider {
 
         private final double tp999;
 
-        public PerformanceSnapshot(MMAPCounter mmapCounter, long intervalCounter, int interval) {
-            tps = BigDecimal.valueOf(intervalCounter).divide(BigDecimal.valueOf(Math.max(interval, 1)),
-                    1, RoundingMode.HALF_UP).doubleValue();
+        public PerformanceSnapshot(MMAPCounter mmapCounter, int monitorInterval) {
+            tps = BigDecimal.valueOf(mmapCounter.getMmaCounter().getCount())
+                    .divide(BigDecimal.valueOf(Math.max(monitorInterval, 1)), 1, RoundingMode.HALF_UP)
+                    .doubleValue();
 
             maxRt = mmapCounter.getMmaCounter().getMax();
             minRt = mmapCounter.getMmaCounter().getMin();

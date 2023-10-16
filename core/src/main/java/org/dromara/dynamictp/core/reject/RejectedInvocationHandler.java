@@ -44,7 +44,9 @@ public class RejectedInvocationHandler implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         try {
             beforeReject((Runnable) args[0], (Executor) args[1]);
-            return method.invoke(target, args);
+            Object result = method.invoke(target, args);
+            afterReject((Runnable) args[0], (Executor) args[1]);
+            return result;
         } catch (InvocationTargetException ex) {
             throw ex.getCause();
         }
@@ -58,5 +60,15 @@ public class RejectedInvocationHandler implements InvocationHandler {
      */
     private void beforeReject(Runnable runnable, Executor executor) {
         AwareManager.beforeReject(runnable, executor);
+    }
+
+    /**
+     * Do sth after reject.
+     *
+     * @param runnable the runnable
+     * @param executor ThreadPoolExecutor instance
+     */
+    private void afterReject(Runnable runnable, Executor executor) {
+        AwareManager.afterReject(runnable, executor);
     }
 }

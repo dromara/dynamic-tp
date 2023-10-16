@@ -19,6 +19,7 @@ package org.dromara.dynamictp.core.aware;
 
 import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
 import org.springframework.util.StopWatch;
+
 import java.lang.ref.SoftReference;
 import java.util.Map;
 import java.util.Optional;
@@ -46,7 +47,7 @@ public class PerformanceMonitorAware extends TaskStatAware {
     }
 
     @Override
-    public void beforeExecute(Executor executor, Thread t, Runnable r) {
+    public void execute(Executor executor, Runnable r) {
         if (!statProviders.containsKey(executor)) {
             return;
         }
@@ -58,6 +59,15 @@ public class PerformanceMonitorAware extends TaskStatAware {
 
     @Override
     public void afterExecute(Executor executor, Runnable r, Throwable t) {
+        completeTask(executor, r);
+    }
+
+    @Override
+    public void afterReject(Runnable r, Executor executor) {
+        completeTask(executor, r);
+    }
+
+    private void completeTask(Executor executor, Runnable r) {
         Optional.ofNullable(stopWatches.remove(r))
                 .map(SoftReference::get)
                 .ifPresent(stopWatch -> {
@@ -65,7 +75,7 @@ public class PerformanceMonitorAware extends TaskStatAware {
                     long totalTimeMillis = stopWatch.getTotalTimeMillis();
                     Optional.ofNullable(statProviders.get(executor))
                             .map(ThreadPoolStatProvider::getPerformanceProvider)
-                            .ifPresent(provider -> provider.finishTask(totalTimeMillis));
+                            .ifPresent(provider -> provider.completeTask(totalTimeMillis));
                 });
     }
 }

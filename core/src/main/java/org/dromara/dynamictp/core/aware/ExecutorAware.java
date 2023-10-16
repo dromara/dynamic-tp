@@ -131,11 +131,20 @@ public interface ExecutorAware extends DtpAware {
     }
 
     /**
-     * enhance reject
+     * enhance before reject
      * @param r runnable
      * @param executor executor
      */
     default void beforeReject(Runnable r, Executor executor) {
+        // default no Operation
+    }
+
+    /**
+     * enhance after reject
+     * @param r runnable
+     * @param executor executor
+     */
+    default void afterReject(Runnable r, Executor executor) {
         // default no Operation
     }
 }

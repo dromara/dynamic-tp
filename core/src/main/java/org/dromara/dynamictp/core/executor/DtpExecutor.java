@@ -179,7 +179,7 @@ public class DtpExecutor extends ThreadPoolExecutor
 
     @Override
     public void execute(Runnable command) {
-        command = getEnhancedTask(command, taskWrappers);
+        command = getEnhancedTask(command);
         AwareManager.execute(this, command);
         super.execute(command);
     }
@@ -273,6 +273,7 @@ public class DtpExecutor extends ThreadPoolExecutor
         this.platformIds = platformIds;
     }
 
+    @Override
     public List<TaskWrapper> getTaskWrappers() {
         return taskWrappers;
     }

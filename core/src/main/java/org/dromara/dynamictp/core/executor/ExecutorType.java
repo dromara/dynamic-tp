@@ -15,12 +15,9 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.support;
+package org.dromara.dynamictp.core.executor;
 
-import org.dromara.dynamictp.core.executor.DtpExecutor;
-import org.dromara.dynamictp.core.executor.ScheduledDtpExecutor;
-import org.dromara.dynamictp.core.executor.EagerDtpExecutor;
-import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
+import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
 import lombok.Getter;
 
 /**

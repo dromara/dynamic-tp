@@ -45,11 +45,12 @@ public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskE
     /**
      * Reject handler type.
      */
-    private final String rejectHandlerType;
+    private String rejectHandlerType;
 
     public ThreadPoolExecutorProxy(ThreadPoolExecutor executor) {
         super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
-                executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS, executor.getQueue(),
+                executor.getKeepAliveTime(TimeUnit.MILLISECONDS),
+                TimeUnit.MILLISECONDS, executor.getQueue(),
                 executor.getThreadFactory(), executor.getRejectedExecutionHandler());
         this.rejectHandlerType = getRejectedExecutionHandler().getClass().getSimpleName();
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(getRejectedExecutionHandler()));
@@ -58,7 +59,7 @@ public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskE
 
     @Override
     public void execute(Runnable command) {
-        command = getEnhancedTask(command, taskWrappers);
+        command = getEnhancedTask(command);
         AwareManager.execute(this, command);
         super.execute(command);
     }
@@ -74,6 +75,11 @@ public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskE
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
         AwareManager.afterExecute(this, r, t);
+    }
+
+    @Override
+    public List<TaskWrapper> getTaskWrappers() {
+        return taskWrappers;
     }
 
     @Override

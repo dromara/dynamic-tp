@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.executor;
+package org.dromara.dynamictp.core.executor.eager;
 
-import org.dromara.dynamictp.core.support.TaskQueue;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;

@@ -45,7 +45,7 @@ public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskE
     /**
      * Reject handler type.
      */
-    private String rejectHandlerType;
+    private final String rejectHandlerType;
 
     public ThreadPoolExecutorProxy(ThreadPoolExecutor executor) {
         super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),

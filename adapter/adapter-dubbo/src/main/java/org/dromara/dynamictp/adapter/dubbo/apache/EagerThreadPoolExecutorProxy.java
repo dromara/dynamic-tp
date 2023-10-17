@@ -59,7 +59,7 @@ public class EagerThreadPoolExecutorProxy extends EagerThreadPoolExecutor implem
 
     @Override
     public void execute(Runnable command) {
-        command = getEnhancedTask(command, taskWrappers);
+        command = getEnhancedTask(command);
         AwareManager.execute(this, command);
         super.execute(command);
     }
@@ -74,6 +74,11 @@ public class EagerThreadPoolExecutorProxy extends EagerThreadPoolExecutor implem
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
         AwareManager.afterExecute(this, r, t);
+    }
+
+    @Override
+    public List<TaskWrapper> getTaskWrappers() {
+        return taskWrappers;
     }
 
     @Override

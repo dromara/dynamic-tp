@@ -76,7 +76,7 @@ public class TomcatExecutorProxy extends ThreadPoolExecutor implements TaskEnhan
 
     @Override
     public void execute(Runnable command) {
-        command = getEnhancedTask(command, taskWrappers);
+        command = getEnhancedTask(command);
         AwareManager.execute(this, command);
         super.execute(command);
     }
@@ -91,6 +91,11 @@ public class TomcatExecutorProxy extends ThreadPoolExecutor implements TaskEnhan
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
         AwareManager.afterExecute(this, r, t);
+    }
+
+    @Override
+    public List<TaskWrapper> getTaskWrappers() {
+        return taskWrappers;
     }
 
     @Override

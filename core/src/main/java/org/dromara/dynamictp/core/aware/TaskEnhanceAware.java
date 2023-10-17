@@ -51,6 +51,23 @@ public interface TaskEnhanceAware extends DtpAware {
     }
 
     /**
+     * Enhance task
+     *
+     * @param command command
+     * @return enhanced task
+     */
+    default Runnable getEnhancedTask(Runnable command) {
+        return getEnhancedTask(command, getTaskWrappers());
+    }
+
+    /**
+     * Get task wrappers
+     *
+     * @return task wrappers
+     */
+    List<TaskWrapper> getTaskWrappers();
+
+    /**
      * Set task wrappers
      *
      * @param taskWrappers task wrappers

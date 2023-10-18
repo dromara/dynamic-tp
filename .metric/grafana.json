@@ -734,7 +734,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -832,7 +833,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -934,7 +936,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -991,7 +994,7 @@
         "type": "prometheus",
         "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
       },
-      "description": "执行超时任务数",
+      "description": "排队超时任务数",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1032,7 +1035,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1074,14 +1078,16 @@
             "type": "prometheus",
             "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "thread_pool_run_timeout_count{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_queue_timeout_count{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
           "interval": "",
           "legendFormat": "{{thread_pool_name}}",
+          "range": true,
           "refId": "A"
         }
       ],
-      "title": "执行超时任务数",
+      "title": "排队超时任务数",
       "type": "timeseries"
     },
     {
@@ -1130,7 +1136,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1230,7 +1237,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1330,7 +1338,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1430,7 +1439,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1530,7 +1540,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1630,7 +1641,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1730,7 +1742,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1830,7 +1843,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1947,9 +1961,9 @@
       },
       {
         "current": {
-          "selected": false,
-          "text": "dtpExecutor2",
-          "value": "dtpExecutor2"
+          "selected": true,
+          "text": "undertowTp",
+          "value": "undertowTp"
         },
         "datasource": {
           "type": "prometheus",
@@ -1982,6 +1996,6 @@
   "timezone": "",
   "title": "线程池监控（DynamicTp） Copy",
   "uid": "b48d82b2-96b0-45ea-801e-1d0a030459dc",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

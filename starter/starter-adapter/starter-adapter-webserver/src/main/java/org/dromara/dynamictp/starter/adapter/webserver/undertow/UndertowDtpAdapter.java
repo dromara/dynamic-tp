@@ -54,7 +54,7 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
 
     @Override
     public ExecutorWrapper enhanceAndGetExecutorWrapper(WebServer webServer) {
-        UndertowServletWebServer undertowServletWebServer = (UndertowServletWebServer) webServer;
+        val undertowServletWebServer = (UndertowServletWebServer) webServer;
         val undertow = (Undertow) ReflectionUtil.getFieldValue(UndertowServletWebServer.class,
                 "undertow", undertowServletWebServer);
         if (Objects.isNull(undertow)) {
@@ -74,10 +74,11 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
             return executors.get(getTpName());
         } else if (executor instanceof EnhancedQueueExecutor) {
             try {
-                EnhancedQueueExecutorProxy proxy = new EnhancedQueueExecutorProxy((EnhancedQueueExecutor) executor);
+                val proxy = new EnhancedQueueExecutorProxy((EnhancedQueueExecutor) executor);
                 ReflectionUtil.setFieldValue(internalExecutor, taskPool, proxy);
                 val executorWrapper = new ExecutorWrapper(tpName, new EnhancedQueueExecutorAdapter(proxy));
                 executors.put(tpName, executorWrapper);
+                ((EnhancedQueueExecutor) executor).shutdownNow();
                 return executorWrapper;
             } catch (Throwable t) {
                 log.error("DynamicTp adapter, enhance {} failed, please adjust the order of the two dependencies" +

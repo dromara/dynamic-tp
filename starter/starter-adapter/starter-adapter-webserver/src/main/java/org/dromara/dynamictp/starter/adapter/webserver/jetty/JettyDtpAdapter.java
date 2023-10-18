@@ -77,27 +77,28 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
             return;
         }
         for (Connector connector : connectors) {
-            if (connector instanceof ServerConnector) {
-                SelectorManager selectorManager = (SelectorManager) ReflectionUtil.getFieldValue(MANAGER_FIELD, connector);
-                if (Objects.isNull(selectorManager)) {
-                    return;
+            if (!(connector instanceof ServerConnector)) {
+                continue;
+            }
+            SelectorManager selectorManager = (SelectorManager) ReflectionUtil.getFieldValue(MANAGER_FIELD, connector);
+            if (Objects.isNull(selectorManager)) {
+                return;
+            }
+            ManagedSelector[] managedSelectors = (ManagedSelector[]) ReflectionUtil.getFieldValue(SELECTORS_FIELD, selectorManager);
+            if (Objects.isNull(managedSelectors)) {
+                return;
+            }
+            for (ManagedSelector managedSelector : managedSelectors) {
+                EatWhatYouKill eatWhatYouKill = (EatWhatYouKill) ReflectionUtil.getFieldValue(STRATEGY_FIELD, managedSelector);
+                if (Objects.isNull(eatWhatYouKill)) {
+                    continue;
                 }
-                ManagedSelector[] managedSelectors = (ManagedSelector[]) ReflectionUtil.getFieldValue(SELECTORS_FIELD, selectorManager);
-                if (Objects.isNull(managedSelectors)) {
-                    return;
-                }
-                for (ManagedSelector managedSelector : managedSelectors) {
-                    EatWhatYouKill eatWhatYouKill = (EatWhatYouKill) ReflectionUtil.getFieldValue(STRATEGY_FIELD, managedSelector);
-                    if (Objects.isNull(eatWhatYouKill)) {
-                        continue;
-                    }
-                    ExecutionStrategy.Producer producer = (ExecutionStrategy.Producer) ReflectionUtil.getFieldValue(PRODUCER_FIELD, eatWhatYouKill);
-                    SelectorProducerProxy selectorProducerProxy = new SelectorProducerProxy(producer, threadPool);
-                    try {
-                        ReflectionUtil.setFieldValue(PRODUCER_FIELD, eatWhatYouKill, selectorProducerProxy);
-                    } catch (IllegalAccessException e) {
-                        log.error("DynamicTp enhance jetty origin executor failed.", e);
-                    }
+                ExecutionStrategy.Producer producer = (ExecutionStrategy.Producer) ReflectionUtil.getFieldValue(PRODUCER_FIELD, eatWhatYouKill);
+                SelectorProducerProxy selectorProducerProxy = new SelectorProducerProxy(producer, threadPool);
+                try {
+                    ReflectionUtil.setFieldValue(PRODUCER_FIELD, eatWhatYouKill, selectorProducerProxy);
+                } catch (IllegalAccessException e) {
+                    log.error("DynamicTp enhance jetty origin executor failed.", e);
                 }
             }
         }

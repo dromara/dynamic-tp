@@ -42,7 +42,7 @@ public class SelectorProducerProxy implements ExecutionStrategy.Producer {
     public Runnable produce() {
         Runnable task = producer.produce();
         if (Objects.isNull(task)) {
-            return task;
+            return null;
         }
         EnhancedRunnable enhancedTask = EnhancedRunnable.of(task, executor);
         AwareManager.execute(executor, enhancedTask);

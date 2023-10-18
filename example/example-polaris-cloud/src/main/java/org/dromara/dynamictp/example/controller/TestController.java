@@ -43,7 +43,8 @@ public class TestController {
     private DtpProperties dtpProperties;
 
     @GetMapping("/index")
-    public String index() {
+    public String index() throws InterruptedException {
+        Thread.sleep(20);
         return "index";
     }
 

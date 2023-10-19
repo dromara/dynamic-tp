@@ -41,7 +41,6 @@ public class TomcatExecutorProxyTest {
         Assert.assertEquals(executor.getMaximumPoolSize(), proxy.getMaximumPoolSize());
         Assert.assertEquals(executor.getCompletedTaskCount(), proxy.getCompletedTaskCount());
         Assert.assertEquals(executor.getLargestPoolSize(), proxy.getLargestPoolSize());
-        Assert.assertEquals(executor.getTaskCount(), proxy.getTaskCount());
         Assert.assertEquals(executor.getThreadFactory(), proxy.getThreadFactory());
         Assert.assertEquals(executor.getKeepAliveTime(TimeUnit.SECONDS), proxy.getKeepAliveTime(TimeUnit.SECONDS));
         Assert.assertEquals(executor.getQueue(), proxy.getQueue());

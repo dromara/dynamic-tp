@@ -47,16 +47,17 @@ public class MMAPCounter implements Summary {
         histogram.update(value);
     }
 
+    @Override
+    public void reset() {
+        mmaCounter.reset();
+        reservoir.reset();
+    }
+
     public Snapshot getSnapshot() {
         return histogram.getSnapshot();
     }
 
     public MMACounter getMmaCounter() {
         return mmaCounter;
-    }
-
-    public void reset() {
-        mmaCounter.reset();
-        reservoir.reset();
     }
 }

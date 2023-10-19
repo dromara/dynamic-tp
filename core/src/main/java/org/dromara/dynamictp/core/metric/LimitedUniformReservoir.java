@@ -33,6 +33,7 @@ import java.util.concurrent.atomic.AtomicLongArray;
  * @author yanhom
  * @since 1.1.5
  */
+@SuppressWarnings("all")
 public class LimitedUniformReservoir implements Reservoir {
 
     private static final int DEFAULT_SIZE = 4096;

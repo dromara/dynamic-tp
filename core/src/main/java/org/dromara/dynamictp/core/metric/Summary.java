@@ -23,7 +23,7 @@ package org.dromara.dynamictp.core.metric;
  * @author yanhom
  * @since 1.1.5
  */
-public interface Summary {
+public interface Summary extends Meter {
 
     /**
      * Add value.

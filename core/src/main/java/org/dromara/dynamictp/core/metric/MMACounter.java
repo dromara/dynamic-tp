@@ -46,6 +46,14 @@ public class MMACounter implements Summary {
         setMax(value);
     }
 
+    @Override
+    public void reset() {
+        total.set(0);
+        count.set(0);
+        min.set(Long.MAX_VALUE);
+        max.set(Long.MIN_VALUE);
+    }
+
     public long getTotal() {
         return total.get();
     }
@@ -73,13 +81,6 @@ public class MMACounter implements Summary {
             return bg.setScale(4, RoundingMode.HALF_UP).doubleValue();
         }
         return 0;
-    }
-
-    public void reset() {
-        total.set(0);
-        count.set(0);
-        min.set(Long.MAX_VALUE);
-        max.set(Long.MIN_VALUE);
     }
 
     private void setMax(long value) {

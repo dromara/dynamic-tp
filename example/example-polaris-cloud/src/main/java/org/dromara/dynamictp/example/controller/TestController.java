@@ -44,7 +44,7 @@ public class TestController {
 
     @GetMapping("/index")
     public String index() throws InterruptedException {
-        Thread.sleep(20);
+        Thread.sleep((int) (Math.random() * 100));
         return "index";
     }
 

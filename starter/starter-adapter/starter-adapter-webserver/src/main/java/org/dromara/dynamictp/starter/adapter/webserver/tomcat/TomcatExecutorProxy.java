@@ -18,6 +18,7 @@
 package org.dromara.dynamictp.starter.adapter.webserver.tomcat;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.threads.TaskQueue;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.aware.AwareManager;
@@ -29,6 +30,8 @@ import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGracefulAsync;
 
 /**
  * Tomcat ThreadPool Proxy
@@ -71,7 +74,10 @@ public class TomcatExecutorProxy extends ThreadPoolExecutor implements TaskEnhan
                 throw new RuntimeException(ex);
             }
         }
-        executor.shutdownNow();
+        if (executor.getQueue() instanceof TaskQueue) {
+            ((TaskQueue) executor.getQueue()).setParent(this);
+        }
+        shutdownGracefulAsync(executor, "tomcat", 5);
     }
 
     @Override

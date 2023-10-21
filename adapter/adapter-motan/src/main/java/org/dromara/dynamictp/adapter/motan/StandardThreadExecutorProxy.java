@@ -18,6 +18,7 @@
 package org.dromara.dynamictp.adapter.motan;
 
 import com.weibo.api.motan.transport.netty.StandardThreadExecutor;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.RejectHandlerAware;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
@@ -28,11 +29,15 @@ import java.util.List;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
 
+import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGracefulAsync;
+
 /**
  * @author hanli
  * @since 1.1.4
  */
 public class StandardThreadExecutorProxy extends StandardThreadExecutor implements TaskEnhanceAware, RejectHandlerAware {
+
+    private static final String EXECUTOR_QUEUE = "ExecutorQueue";
 
     /**
      * Task wrappers, do sth enhanced.
@@ -49,7 +54,14 @@ public class StandardThreadExecutorProxy extends StandardThreadExecutor implemen
         RejectedExecutionHandler handler = getRejectedExecutionHandler();
         this.rejectHandlerType = handler.getClass().getSimpleName();
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
-        executor.shutdownNow();
+        if (EXECUTOR_QUEUE.equals(executor.getQueue().getClass().getSimpleName())) {
+            try {
+                ReflectionUtil.setFieldValue("threadPoolExecutor", executor.getQueue(), this);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        shutdownGracefulAsync(executor, "motan", 5);
     }
 
     @Override

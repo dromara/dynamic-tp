@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 public class ThreadPoolExecutorTest {
 
     @Test
-    public void testParamAndStatus() {
+    public void testParamAndStatus() throws InterruptedException {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 10, 5, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new NamedThreadFactory("测试线程池"));
         ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executor);
 
@@ -50,6 +50,7 @@ public class ThreadPoolExecutorTest {
         Assert.assertEquals(executor.getQueue(), proxy.getQueue());
         Assert.assertEquals(executor.allowsCoreThreadTimeOut(), proxy.allowsCoreThreadTimeOut());
 
+        Thread.sleep(3000);
         Assert.assertTrue(executor.isShutdown());
         Assert.assertTrue(executor.isTerminated());
         Assert.assertFalse(executor.isTerminating());

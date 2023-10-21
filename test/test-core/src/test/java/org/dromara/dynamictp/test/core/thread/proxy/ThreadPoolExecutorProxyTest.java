@@ -45,7 +45,7 @@ import java.util.concurrent.*;
 public class ThreadPoolExecutorProxyTest {
 
     @Test
-    public void testParamAndStatus() {
+    public void testParamAndStatus() throws InterruptedException {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 10, 5, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new NamedThreadFactory("测试线程池"));
         ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executor);
 
@@ -61,6 +61,7 @@ public class ThreadPoolExecutorProxyTest {
         Assertions.assertEquals(executor.getQueue(), proxy.getQueue());
         Assertions.assertEquals(executor.allowsCoreThreadTimeOut(), proxy.allowsCoreThreadTimeOut());
 
+        Thread.sleep(3000);
         Assertions.assertTrue(executor.isShutdown());
         Assertions.assertTrue(executor.isTerminated());
         Assertions.assertFalse(executor.isTerminating());
@@ -140,6 +141,4 @@ public class ThreadPoolExecutorProxyTest {
         props.setQueueTimeout(10);
         return props;
     }
-
-
 }

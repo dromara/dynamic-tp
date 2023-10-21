@@ -18,7 +18,6 @@
 package org.dromara.dynamictp.core.executor.eager;
 
 import org.dromara.dynamictp.common.queue.VariableLinkedBlockingQueue;
-import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
 import org.springframework.lang.NonNull;
 
 import java.util.concurrent.RejectedExecutionException;

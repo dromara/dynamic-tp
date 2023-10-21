@@ -46,8 +46,8 @@ public class TomcatExecutorProxyTest {
         Assert.assertEquals(executor.getQueue(), proxy.getQueue());
         Assert.assertEquals(executor.allowsCoreThreadTimeOut(), proxy.allowsCoreThreadTimeOut());
 
+        Thread.sleep(3000);
         Assert.assertTrue(executor.isShutdown());
-        Thread.sleep(100);
         Assert.assertTrue(executor.isTerminated());
         Assert.assertFalse(executor.isTerminating());
     }

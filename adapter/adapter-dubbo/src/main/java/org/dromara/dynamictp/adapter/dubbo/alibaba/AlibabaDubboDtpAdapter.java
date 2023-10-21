@@ -29,6 +29,7 @@ import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -45,26 +46,27 @@ import static com.alibaba.dubbo.common.Constants.EXECUTOR_SERVICE_COMPONENT_KEY;
 public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements InitializingBean {
 
     private static final String TP_PREFIX = "dubboTp";
-    
+
     private final AtomicBoolean registered = new AtomicBoolean(false);
-    
+
     @Override
     public void afterPropertiesSet() throws Exception {
         //从ApplicationReadyEvent改为ContextRefreshedEvent后，
         //启动时无法dubbo获取线程池，这里直接每隔1s轮循，直至成功初始化线程池
-        Executors.newCachedThreadPool().submit(() -> {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
             while (!registered.get()) {
                 try {
                     Thread.sleep(1000);
                     final DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
                     this.initialize();
                     this.refresh(dtpProperties);
-                } catch (Throwable e) {
-                }
+                } catch (Throwable e) { }
             }
         });
+        executor.shutdown();
     }
-    
+
     @Override
     public void refresh(DtpProperties dtpProperties) {
         refresh(dtpProperties.getDubboTp(), dtpProperties.getPlatforms());

@@ -31,7 +31,10 @@ import org.springframework.boot.web.server.WebServer;
 import org.xnio.XnioWorker;
 
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
+
+import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGracefulAsync;
 
 /**
  * UndertowDtpAdapter related
@@ -78,7 +81,7 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
                 ReflectionUtil.setFieldValue(internalExecutor, taskPool, proxy);
                 val executorWrapper = new ExecutorWrapper(tpName, new EnhancedQueueExecutorAdapter(proxy));
                 executors.put(tpName, executorWrapper);
-                ((EnhancedQueueExecutor) executor).shutdownNow();
+                shutdownGracefulAsync((ExecutorService) executor, "undertow", 5);
                 return executorWrapper;
             } catch (Throwable t) {
                 log.error("DynamicTp adapter, enhance {} failed, please adjust the order of the two dependencies" +

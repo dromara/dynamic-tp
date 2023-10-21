@@ -44,6 +44,12 @@ public class TestController {
     @Resource
     private DynamicTpFeign dynamicTpFeign;
 
+    @GetMapping("/index")
+    public String index() throws InterruptedException {
+        Thread.sleep((int) (Math.random() * 100));
+        return "index";
+    }
+
     @GetMapping("/dtp-consul-example/test")
     public String test() throws InterruptedException {
         task();

@@ -49,6 +49,7 @@ public abstract class AbstractWebServerDtpAdapter<A extends Executor> extends Ab
             try {
                 DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
                 initialize();
+                afterInitialize();
                 refresh(dtpProperties);
             } catch (Exception e) {
                 log.error("Init web server thread pool failed.", e);

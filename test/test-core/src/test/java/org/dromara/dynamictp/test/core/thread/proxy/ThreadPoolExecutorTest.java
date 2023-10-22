@@ -50,11 +50,10 @@ public class ThreadPoolExecutorTest {
         Assert.assertEquals(executor.getQueue(), proxy.getQueue());
         Assert.assertEquals(executor.allowsCoreThreadTimeOut(), proxy.allowsCoreThreadTimeOut());
 
+        executor.shutdown();
         Thread.sleep(3000);
         Assert.assertTrue(executor.isShutdown());
         Assert.assertTrue(executor.isTerminated());
         Assert.assertFalse(executor.isTerminating());
     }
-
-
 }

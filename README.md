@@ -124,7 +124,7 @@ protected void afterExecute(Runnable r, Throwable t);
 >
 > 5. 三方组件线程池管理模块
 
-![技术架构](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/38e4bf71d2c84b7ba67d7059b5432a7e~tplv-k3u1fbpfcp-zoom-1.image)
+![技术架构](resources/img/arch.jpg)
 
 详细查看官网文档，[架构设计](https://dynamictp.cn/guide/introduction/architecture.html)
 
@@ -150,11 +150,11 @@ protected void afterExecute(Runnable r, Throwable t);
 
 - 触发报警阈值会推送相应报警消息（活性、容量、拒绝、任务等待超时、任务执行超时），且会高亮显示相应字段
 
-<img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d65151e3e9ca460eac18f30ea6be05d3~tplv-k3u1fbpfcp-zoom-1.image" alt="告警" width="50%" />
+<img src="resources/img/alarm.jpg" alt="告警" width="50%" />
 
 - 配置变更会推送通知消息，且会高亮变更的字段
 
-<img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/30093a6ede914887bb5566139352fb8b~tplv-k3u1fbpfcp-zoom-1.image" alt="变更通知" width="50%" />
+<img src="resources/img/notice.jpg" alt="变更通知" width="50%" />
 
 更多见官网文档，[通知报警](https://dynamictp.cn/guide/notice/alarm.html)
 
@@ -162,9 +162,9 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ## 监控
 
-![监控数据1](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/98776a0475864a85a2f1f5c63d063f15~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3012\&h=1856\&s=346732\&e=png\&b=1a1c20)
-![监控数据2](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6112e049e714407db060512c832b41ba~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3020\&h=1384\&s=237861\&e=png\&b=1a1c20)
-![监控数据3](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a7fe42fdeb4d4fe8acfcbdcc72b3578e~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3014\&h=926\&s=163650\&e=png\&b=1a1c20)
+![监控数据1](resources/img/monitor1.jpg)
+![监控数据2](resources/img/monitor2.jpg)
+![监控数据3](resources/img/monitor3.jpg)
 
 目前框架提供了四种监控数据采集方式，通过 collectorTypes 属性配置监控指标采集类型，默认 Micrometer
 
@@ -188,7 +188,7 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ## 知识星球
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/894a4e918ff14c13b4a66d3f30f7ff7e~tplv-k3u1fbpfcp-zoom-1.image)
+![](/resource/img/zsxq.jpg)
 
 ---
 
@@ -206,7 +206,7 @@ protected void afterExecute(Runnable r, Throwable t);
 
 微信群已满 200 人，可以关注微信公众号，加我个人微信拉群（备注：dynamic-tp）。
 
-![](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/530709dc29604630b6d1537d7c160ea5~tplv-k3u1fbpfcp-watermark.image)
+![](resource/img/contact.jpg)
 
 为了项目更好的发展，请在此进行登记，[使用登记](https://dynamictp.cn/guide/other/users.html)
 

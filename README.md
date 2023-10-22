@@ -1,5 +1,5 @@
 <p align="center">
-	<img alt="logo" src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9e7ecd174be74499a11dab4bca62a9d8~tplv-k3u1fbpfcp-zoom-1.image" width="50%">
+	<img alt="logo" src="resources/img/logo.png" width="50%">
 </p>
 <p align="center">
 	<strong>基于配置中心的轻量级动态线程池，内置监控告警功能，集成常用中间件线程池管理，可通过SPI自定义扩展实现</strong>
@@ -11,7 +11,7 @@
   <a href="https://github.com/dromara/dynamic-tp"><img src="https://img.shields.io/github/stars/dromara/dynamic-tp?style=flat-square&logo=github"></a>
   <a href="https://github.com/dromara/dynamic-tp/network/members"><img src="https://img.shields.io/github/forks/dromara/dynamic-tp?style=flat-square&logo=GitHub"></a>
   <a href="https://github.com/dromara/dynamic-tp/blob/master/LICENSE"><img src="https://img.shields.io/github/license/dromara/dynamic-tp.svg?style=flat-square"></a>
-  <a target="_blank" href="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/530709dc29604630b6d1537d7c160ea5~tplv-k3u1fbpfcp-watermark.image"><img src='https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ddfaed2cce2a47608fb0c0c375a10f08~tplv-k3u1fbpfcp-zoom-1.image' alt='备注加群'></a>
+  <a target="_blank" href="/resources/img/contact.jpg"><img src='resources/img/wechat.jpg' alt='备注加群'></a>
 </p>
 
 <p align="center">

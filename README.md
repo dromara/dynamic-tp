@@ -188,7 +188,7 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ## 知识星球
 
-![](/resource/img/zsxq.jpg)
+![](/resources/img/zsxq.jpg)
 
 ---
 
@@ -206,7 +206,7 @@ protected void afterExecute(Runnable r, Throwable t);
 
 微信群已满 200 人，可以关注微信公众号，加我个人微信拉群（备注：dynamic-tp）。
 
-![](resource/img/contact.jpg)
+![](resources/img/contact.jpg)
 
 为了项目更好的发展，请在此进行登记，[使用登记](https://dynamictp.cn/guide/other/users.html)
 

@@ -162,7 +162,9 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ## 监控
 
-![监控数据](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ec5a7d1a31e7418ba5d9a101a5c03826~tplv-k3u1fbpfcp-zoom-1.image)
+![监控数据1](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/98776a0475864a85a2f1f5c63d063f15~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3012\&h=1856\&s=346732\&e=png\&b=1a1c20)
+![监控数据2](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6112e049e714407db060512c832b41ba~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3020\&h=1384\&s=237861\&e=png\&b=1a1c20)
+![监控数据3](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a7fe42fdeb4d4fe8acfcbdcc72b3578e~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3014\&h=926\&s=163650\&e=png\&b=1a1c20)
 
 目前框架提供了四种监控数据采集方式，通过 collectorTypes 属性配置监控指标采集类型，默认 Micrometer
 

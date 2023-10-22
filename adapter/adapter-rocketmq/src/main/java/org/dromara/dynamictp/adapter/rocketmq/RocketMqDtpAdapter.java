@@ -112,10 +112,8 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
             if (Objects.nonNull(executor)) {
                 ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executor);
                 producer.setAsyncSenderExecutor(proxy);
-                shutdownOriginalExecutor(executor);
-
                 String proKey = TP_PREFIX + "#producer#" + defaultMQProducer.getProducerGroup();
-                executors.put(proKey, new ExecutorWrapper(proKey, proxy));
+                putAndFinalize(proKey, executor, proxy);
             }
         }
     }

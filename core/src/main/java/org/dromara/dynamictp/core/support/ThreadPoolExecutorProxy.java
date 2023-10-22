@@ -49,9 +49,9 @@ public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskE
 
     public ThreadPoolExecutorProxy(ThreadPoolExecutor executor) {
         super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
-                executor.getKeepAliveTime(TimeUnit.MILLISECONDS),
-                TimeUnit.MILLISECONDS, executor.getQueue(),
-                executor.getThreadFactory(), executor.getRejectedExecutionHandler());
+                executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS,
+                executor.getQueue(), executor.getThreadFactory(),
+                executor.getRejectedExecutionHandler());
         this.rejectHandlerType = getRejectedExecutionHandler().getClass().getSimpleName();
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(getRejectedExecutionHandler()));
     }

@@ -48,9 +48,9 @@ public class EagerThreadPoolExecutorProxy extends EagerThreadPoolExecutor implem
 
     public EagerThreadPoolExecutorProxy(EagerThreadPoolExecutor executor) {
         super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
-                executor.getKeepAliveTime(TimeUnit.MILLISECONDS),
-                TimeUnit.MILLISECONDS, (TaskQueue<Runnable>) executor.getQueue(),
-                executor.getThreadFactory(), executor.getRejectedExecutionHandler());
+                executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS,
+                (TaskQueue<Runnable>) executor.getQueue(), executor.getThreadFactory(),
+                executor.getRejectedExecutionHandler());
         this.rejectHandlerType = getRejectedExecutionHandler().getClass().getSimpleName();
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(getRejectedExecutionHandler()));
         ((TaskQueue<Runnable>) getQueue()).setExecutor(this);

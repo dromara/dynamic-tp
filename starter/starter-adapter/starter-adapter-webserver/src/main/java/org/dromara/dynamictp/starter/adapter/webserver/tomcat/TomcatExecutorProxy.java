@@ -50,8 +50,8 @@ public class TomcatExecutorProxy extends ThreadPoolExecutor implements TaskEnhan
 
     public TomcatExecutorProxy(ThreadPoolExecutor executor) {
         super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
-                executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS, executor.getQueue(),
-                executor.getThreadFactory());
+                executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS,
+                executor.getQueue(), executor.getThreadFactory());
         setThreadRenewalDelay(executor.getThreadRenewalDelay());
         Object handler = getRejectedExecutionHandler(executor);
         this.rejectHandlerType = handler.getClass().getSimpleName();

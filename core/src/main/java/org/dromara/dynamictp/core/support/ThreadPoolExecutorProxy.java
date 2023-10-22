@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGracefulAsync;
-
 /**
  * ThreadPoolExecutor Proxy
  *
@@ -56,7 +54,6 @@ public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskE
                 executor.getThreadFactory(), executor.getRejectedExecutionHandler());
         this.rejectHandlerType = getRejectedExecutionHandler().getClass().getSimpleName();
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(getRejectedExecutionHandler()));
-        shutdownGracefulAsync(executor, "", 5);
     }
 
     @Override
@@ -71,7 +68,6 @@ public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskE
         super.beforeExecute(t, r);
         AwareManager.beforeExecute(this, t, r);
     }
-
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {

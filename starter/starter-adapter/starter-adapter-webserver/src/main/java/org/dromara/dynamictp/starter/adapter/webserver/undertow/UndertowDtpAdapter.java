@@ -34,8 +34,6 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGracefulAsync;
-
 /**
  * UndertowDtpAdapter related
  *
@@ -56,17 +54,17 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
     }
 
     @Override
-    public ExecutorWrapper enhanceAndGetExecutorWrapper(WebServer webServer) {
+    public void doEnhance(WebServer webServer) {
         val undertowServletWebServer = (UndertowServletWebServer) webServer;
         val undertow = (Undertow) ReflectionUtil.getFieldValue(UndertowServletWebServer.class,
                 "undertow", undertowServletWebServer);
         if (Objects.isNull(undertow)) {
-            return null;
+            return;
         }
         XnioWorker xnioWorker = undertow.getWorker();
         Object taskPool = ReflectionUtil.getFieldValue(XnioWorker.class, "taskPool", xnioWorker);
         if (Objects.isNull(taskPool)) {
-            return null;
+            return;
         }
         val handler = TaskPoolHandlerFactory.getTaskPoolHandler(taskPool.getClass().getSimpleName());
         String internalExecutor = handler.taskPoolType().getInternalExecutor();
@@ -74,22 +72,18 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
         String tpName = getTpName();
         if (executor instanceof ThreadPoolExecutor) {
             enhanceOriginExecutor(tpName, (ThreadPoolExecutor) executor, internalExecutor, taskPool);
-            return executors.get(getTpName());
         } else if (executor instanceof EnhancedQueueExecutor) {
             try {
                 val proxy = new EnhancedQueueExecutorProxy((EnhancedQueueExecutor) executor);
                 ReflectionUtil.setFieldValue(internalExecutor, taskPool, proxy);
-                val executorWrapper = new ExecutorWrapper(tpName, new EnhancedQueueExecutorAdapter(proxy));
-                executors.put(tpName, executorWrapper);
-                shutdownGracefulAsync((ExecutorService) executor, "undertow", 5);
-                return executorWrapper;
+                putAndFinalize(tpName, (ExecutorService) executor, new EnhancedQueueExecutorAdapter(proxy));
             } catch (Throwable t) {
                 log.error("DynamicTp adapter, enhance {} failed, please adjust the order of the two dependencies" +
                         "(starter-undertow and starter-adapter-webserver) and try again.", tpName, t);
-                return new ExecutorWrapper(tpName, handler.adapt(executor));
+                executors.put(tpName, new ExecutorWrapper(tpName, handler.adapt(executor)));
             }
         } else {
-            return new ExecutorWrapper(tpName, handler.adapt(executor));
+            executors.put(tpName, new ExecutorWrapper(tpName, handler.adapt(executor)));
         }
     }
 

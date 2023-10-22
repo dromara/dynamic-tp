@@ -24,7 +24,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -58,7 +57,7 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements Initia
             while (!registered.get()) {
                 try {
                     Thread.sleep(1000);
-                    final DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+                    DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
                     this.initialize();
                     this.refresh(dtpProperties);
                 } catch (Throwable e) { }
@@ -79,11 +78,9 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements Initia
         Map<String, Object> executorMap = dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY);
         if (MapUtils.isNotEmpty(executorMap) && registered.compareAndSet(false, true)) {
             executorMap.forEach((k, v) -> {
-                val name = genTpName(k);
-                ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) v);
+                val proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) v);
                 executorMap.replace(k, proxy);
-                val executorWrapper = new ExecutorWrapper(name, proxy);
-                executors.put(name, executorWrapper);
+                putAndFinalize(genTpName(k), (ExecutorService) v, proxy);
             });
         }
     }

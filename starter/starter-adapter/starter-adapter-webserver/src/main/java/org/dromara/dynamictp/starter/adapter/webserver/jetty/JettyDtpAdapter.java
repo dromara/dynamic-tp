@@ -62,13 +62,13 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
     private static final String PRODUCER_FIELD = "_producer";
 
     @Override
-    public ExecutorWrapper enhanceAndGetExecutorWrapper(WebServer webServer) {
+    public void doEnhance(WebServer webServer) {
         JettyWebServer jettyWebServer = (JettyWebServer) webServer;
         ThreadPool threadPool = jettyWebServer.getServer().getThreadPool();
-        final JettyExecutorAdapter adapter = new JettyExecutorAdapter(
-                (ThreadPool.SizedThreadPool) threadPool);
+        JettyExecutorAdapter adapter = new JettyExecutorAdapter((ThreadPool.SizedThreadPool) threadPool);
         enhanceOriginTask(jettyWebServer, threadPool);
-        return new ExecutorWrapper(TP_PREFIX, adapter);
+        String tpName = getTpName();
+        executors.put(tpName, new ExecutorWrapper(tpName, adapter));
     }
 
     private void enhanceOriginTask(JettyWebServer jettyWebServer, ThreadPool threadPool) {

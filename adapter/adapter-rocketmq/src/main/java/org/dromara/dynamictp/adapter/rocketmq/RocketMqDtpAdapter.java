@@ -36,6 +36,8 @@ import org.dromara.dynamictp.jvmti.JVMTI;
 import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGracefulAsync;
+
 /**
  * RocketMqDtpAdapter related
  *
@@ -112,6 +114,8 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
             if (Objects.nonNull(executor)) {
                 ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executor);
                 producer.setAsyncSenderExecutor(proxy);
+                shutdownGracefulAsync(executor, getTpPrefix(), 5);
+
                 String proKey = TP_PREFIX + "#producer#" + defaultMQProducer.getProducerGroup();
                 executors.put(proKey, new ExecutorWrapper(proKey, proxy));
             }

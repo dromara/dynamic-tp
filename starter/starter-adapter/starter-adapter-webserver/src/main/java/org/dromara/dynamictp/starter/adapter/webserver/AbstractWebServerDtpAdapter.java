@@ -22,7 +22,6 @@ import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.springframework.boot.web.context.WebServerApplicationContext;
 import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.boot.web.server.WebServer;
@@ -63,10 +62,9 @@ public abstract class AbstractWebServerDtpAdapter<A extends Executor> extends Ab
         if (executors.get(getTpName()) == null) {
             ApplicationContext applicationContext = ApplicationContextHolder.getInstance();
             WebServer webServer = ((WebServerApplicationContext) applicationContext).getWebServer();
-            ExecutorWrapper wrapper = enhanceAndGetExecutorWrapper(webServer);
-            executors.put(getTpName(), wrapper);
+            doEnhance(webServer);
             log.info("DynamicTp adapter, web server {} executor init end, executor: {}",
-                    getTpName(), ExecutorConverter.toMainFields(wrapper));
+                    getTpName(), ExecutorConverter.toMainFields(executors.get(getTpName())));
         }
     }
 
@@ -75,10 +73,9 @@ public abstract class AbstractWebServerDtpAdapter<A extends Executor> extends Ab
     }
 
     /**
-     * Enhance and get thread pool executor wrapper.
+     * Do enhance.
      *
      * @param webServer webServer
-     * @return the Executor instance
      */
-    protected abstract ExecutorWrapper enhanceAndGetExecutorWrapper(WebServer webServer);
+    protected abstract void doEnhance(WebServer webServer);
 }

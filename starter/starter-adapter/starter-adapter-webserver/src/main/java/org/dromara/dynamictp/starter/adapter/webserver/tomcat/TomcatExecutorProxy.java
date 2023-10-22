@@ -31,8 +31,6 @@ import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGracefulAsync;
-
 /**
  * Tomcat ThreadPool Proxy
  *
@@ -77,7 +75,6 @@ public class TomcatExecutorProxy extends ThreadPoolExecutor implements TaskEnhan
         if (executor.getQueue() instanceof TaskQueue) {
             ((TaskQueue) executor.getQueue()).setParent(this);
         }
-        shutdownGracefulAsync(executor, "tomcat", 5);
     }
 
     @Override

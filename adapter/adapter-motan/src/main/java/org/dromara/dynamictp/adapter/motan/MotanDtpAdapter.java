@@ -31,7 +31,6 @@ import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.util.List;
 import java.util.Objects;
@@ -92,7 +91,7 @@ public class MotanDtpAdapter extends AbstractDtpAdapter {
                     String tpName = TP_PREFIX + "#" + nettyServer.getUrl().getPort();
                     try {
                         ReflectionUtil.setFieldValue(EXECUTOR_FIELD, nettyServer, proxy);
-                        executors.put(tpName, new ExecutorWrapper(tpName, proxy));
+                        putAndFinalize(tpName, executor, proxy);
                     } catch (IllegalAccessException ex) {
                         log.error("DynamicTp adapter, enhance {} failed.", tpName, ex);
                     }

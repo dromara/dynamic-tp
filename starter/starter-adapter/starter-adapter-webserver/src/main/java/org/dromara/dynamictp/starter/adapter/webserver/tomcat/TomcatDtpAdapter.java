@@ -22,13 +22,13 @@ import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.aware.RejectHandlerAware;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.starter.adapter.webserver.AbstractWebServerDtpAdapter;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 import org.springframework.boot.web.server.WebServer;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -44,12 +44,12 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<Executor> {
     private static final String TP_PREFIX = "tomcatTp";
 
     @Override
-    public ExecutorWrapper enhanceAndGetExecutorWrapper(WebServer webServer) {
+    public void doEnhance(WebServer webServer) {
         TomcatWebServer tomcatWebServer = (TomcatWebServer) webServer;
         Executor originExecutor = tomcatWebServer.getTomcat().getConnector().getProtocolHandler().getExecutor();
         TomcatExecutorProxy proxy = new TomcatExecutorProxy((ThreadPoolExecutor) originExecutor);
         tomcatWebServer.getTomcat().getConnector().getProtocolHandler().setExecutor(proxy);
-        return new ExecutorWrapper(getTpName(), new TomcatExecutorAdapter(proxy));
+        putAndFinalize(getTpName(), (ExecutorService) originExecutor, new TomcatExecutorAdapter(proxy));
     }
 
     @Override

@@ -39,8 +39,8 @@ public abstract class AbstractHttpNotifier extends AbstractNotifier {
         val url = buildUrl(platform);
         val msgBody = buildMsgBody(platform, content);
         HttpRequest request = HttpRequest.post(url)
-                .setConnectionTimeout(platform.getTimeOut())
-                .setReadTimeout(platform.getTimeOut())
+                .setConnectionTimeout(platform.getTimeout())
+                .setReadTimeout(platform.getTimeout())
                 .body(msgBody);
         HttpResponse response = request.execute();
         if (Objects.nonNull(response)) {

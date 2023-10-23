@@ -57,7 +57,7 @@ public class NotifyPlatform {
 
     /**
      * http请求超时时间，单位（毫秒）<br>
-     * 默认5000毫秒
+     * 默认3000毫秒
      */
-    private Integer timeOut = 5000;
+    private Integer timeout = 3000;
 }

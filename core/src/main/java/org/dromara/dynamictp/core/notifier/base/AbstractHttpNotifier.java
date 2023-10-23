@@ -38,7 +38,11 @@ public abstract class AbstractHttpNotifier extends AbstractNotifier {
     protected void send0(NotifyPlatform platform, String content) {
         val url = buildUrl(platform);
         val msgBody = buildMsgBody(platform, content);
-        HttpResponse response = HttpRequest.post(url).body(msgBody).execute();
+        HttpRequest request = HttpRequest.post(url)
+                .setConnectionTimeout(platform.getTimeout())
+                .setReadTimeout(platform.getTimeout())
+                .body(msgBody);
+        HttpResponse response = request.execute();
         if (Objects.nonNull(response)) {
             log.info("DynamicTp notify, {} send success, response: {}, request: {}",
                     platform(), response.body(), msgBody);

@@ -16,6 +16,7 @@
  */
 
 package org.dromara.dynamictp.core.system;
+
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.util.MethodUtil;
 

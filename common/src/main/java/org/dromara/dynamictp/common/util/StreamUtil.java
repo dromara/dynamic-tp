@@ -35,8 +35,7 @@ import java.util.stream.Collectors;
  **/
 public final class StreamUtil {
 
-    private StreamUtil() {
-    }
+    private StreamUtil() { }
 
     /**
      * Fetches id to list.

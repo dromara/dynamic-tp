@@ -29,8 +29,7 @@ import java.util.Date;
  */
 public class DateUtil {
 
-    private DateUtil() {
-    }
+    private DateUtil() { }
 
     public static String now() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));

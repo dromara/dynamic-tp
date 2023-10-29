@@ -30,7 +30,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * SystemMetricManager related
+ * Refer to sentinel, @see <a href="https://github.com/alibaba/Sentinel/blob/master/sentinel-core/src/main/java/com/alibaba/csp/sentinel/slots/system/SystemStatusListener.java">SystemStatusListener</a>
  *
  * @author yanhom
  * @since 1.1.5
@@ -49,9 +49,11 @@ public class SystemMetricManager {
     }
 
     public static String getSystemMetric() {
+        int cpuCores = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getAvailableProcessors();
         return "SystemMetric{" +
                 "systemAvgLoad=" + getSystemAvgLoad() +
                 ", cpuUsage=" + getCpuUsage() +
+                ", cpuCores=" + cpuCores +
                 '}';
     }
 

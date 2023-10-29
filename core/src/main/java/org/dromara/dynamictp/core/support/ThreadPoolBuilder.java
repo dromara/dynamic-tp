@@ -187,8 +187,7 @@ public class ThreadPoolBuilder {
      */
     private boolean notifyEnabled = true;
 
-    private ThreadPoolBuilder() {
-    }
+    private ThreadPoolBuilder() { }
 
     public static ThreadPoolBuilder newBuilder() {
         return new ThreadPoolBuilder();

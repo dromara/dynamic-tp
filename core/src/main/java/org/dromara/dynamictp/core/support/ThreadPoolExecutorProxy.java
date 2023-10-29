@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.core.support;
 
-import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.RejectHandlerAware;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
@@ -34,7 +33,6 @@ import java.util.concurrent.TimeUnit;
  * @author kyao
  * @since 1.1.4
  */
-@Slf4j
 public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskEnhanceAware, RejectHandlerAware {
 
     /**

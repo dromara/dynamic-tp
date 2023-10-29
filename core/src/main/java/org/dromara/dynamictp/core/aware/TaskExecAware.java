@@ -54,7 +54,8 @@ public class TaskExecAware implements ExecutorAware {
 
     private void tryPrintError(Runnable r, Throwable t) {
         if (Objects.nonNull(t)) {
-            log.error("thread {} throw exception {}", Thread.currentThread(), t.getMessage(), t);
+            log.error("DynamicTp execute, thread {} throw exception, traceId {}",
+                    Thread.currentThread(), MDC.get(TRACE_ID), t);
             return;
         }
         if (r instanceof FutureTask) {
@@ -64,7 +65,8 @@ public class TaskExecAware implements ExecutorAware {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } catch (Exception e) {
-                log.error("thread {} throw exception {}", Thread.currentThread(), e.getMessage(), e);
+                log.error("DynamicTp execute, thread {} throw exception, traceId {}",
+                        Thread.currentThread(),  MDC.get(TRACE_ID), e);
             }
         }
     }

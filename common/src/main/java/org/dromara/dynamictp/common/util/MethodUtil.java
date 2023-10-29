@@ -38,9 +38,9 @@ public final class MethodUtil {
      */
     public static double invokeAndReturnDouble(Method method, Object targetObj) {
         try {
-            return method != null ? (double) method.invoke(targetObj) : Double.NaN;
+            return method != null ? (double) method.invoke(targetObj) : 0;
         } catch (Exception e) {
-            return Double.NaN;
+            return 0;
         }
     }
 

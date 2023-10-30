@@ -52,7 +52,7 @@ public class DtpProperties {
     /**
      * Config file type.
      */
-    private String configType = "yml";
+    private String configType;
 
     /**
      * If enabled metrics collect.

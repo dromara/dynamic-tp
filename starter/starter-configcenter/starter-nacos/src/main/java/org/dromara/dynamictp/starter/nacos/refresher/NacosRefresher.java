@@ -17,6 +17,9 @@
 
 package org.dromara.dynamictp.starter.nacos.refresher;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.ObjUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.nacos.api.annotation.NacosInjected;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.listener.Listener;
@@ -53,7 +56,8 @@ public class NacosRefresher extends AbstractRefresher implements InitializingBea
     public void afterPropertiesSet() {
 
         DtpProperties.Nacos nacos = dtpProperties.getNacos();
-        configFileType = NacosUtil.getConfigType(dtpProperties, ConfigFileTypeEnum.PROPERTIES);
+        ConfigFileTypeEnum deduceType = getConfigFileType(nacos.getDataId());
+        configFileType = NacosUtil.getConfigType(dtpProperties, deduceType);
         String dataId = NacosUtil.deduceDataId(nacos, environment, configFileType);
         String group = NacosUtil.getGroup(nacos, "DEFAULT_GROUP");
 
@@ -64,6 +68,20 @@ public class NacosRefresher extends AbstractRefresher implements InitializingBea
             log.error("DynamicTp refresher, add listener error, dataId: {}, group: {}", dataId, group, e);
         }
     }
+
+    /**
+     * 根据dataId后缀识别配置类型
+     * @param dataId
+     * @return
+     */
+    private ConfigFileTypeEnum getConfigFileType(String dataId) {
+        String suffix = FileUtil.getSuffix(dataId);
+        if (StrUtil.isBlank(suffix)) {
+            return ConfigFileTypeEnum.PROPERTIES;
+        }
+        return ConfigFileTypeEnum.of(suffix);
+    }
+
 
     @Override
     public Executor getExecutor() {

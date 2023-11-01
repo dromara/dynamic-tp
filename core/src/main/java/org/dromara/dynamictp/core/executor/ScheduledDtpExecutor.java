@@ -58,8 +58,6 @@ public class ScheduledDtpExecutor extends DtpExecutor implements ScheduledExecut
             corePoolSize = corePoolSize == 0 ? 1 : corePoolSize;
         }
         delegate = new ScheduledThreadPoolExecutor(corePoolSize, threadFactory, handler);
-        delegate.setKeepAliveTime(keepAliveTime, unit);
-        delegate.setMaximumPoolSize(maximumPoolSize);
     }
 
     @Override
@@ -192,7 +190,7 @@ public class ScheduledDtpExecutor extends DtpExecutor implements ScheduledExecut
 
     @Override
     public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
-        delegate.allowCoreThreadTimeOut(allowCoreThreadTimeOut);
+        // cancel the assignment to allowCoreThreadTimeOut
     }
 
     @Override

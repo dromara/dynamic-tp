@@ -78,14 +78,15 @@ public class ExecutorWrapper {
     /**
      * Thread pool stat provider
      */
-    private ThreadPoolStatProvider threadPoolStatProvider = ThreadPoolStatProvider.of(this);
+    private ThreadPoolStatProvider threadPoolStatProvider;
 
     /**
      * Aware names
      */
     private Set<String> awareNames = Sets.newHashSet();
 
-    public ExecutorWrapper() { }
+    private ExecutorWrapper() {
+    }
 
     public ExecutorWrapper(DtpExecutor executor) {
         this.threadPoolName = executor.getThreadPoolName();
@@ -95,6 +96,7 @@ public class ExecutorWrapper {
         this.notifyEnabled = executor.isNotifyEnabled();
         this.platformIds = executor.getPlatformIds();
         this.awareNames = executor.getAwareNames();
+        this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
     }
 
     public ExecutorWrapper(String threadPoolName, Executor executor) {
@@ -108,6 +110,7 @@ public class ExecutorWrapper {
         }
         this.notifyItems = NotifyItem.getAllNotifyItems();
         AlarmManager.initAlarm(threadPoolName, notifyItems);
+        this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
     }
 
     public static ExecutorWrapper of(DtpExecutor executor) {

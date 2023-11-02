@@ -19,6 +19,7 @@ package org.dromara.dynamictp.core.support;
 
 import com.google.common.collect.Sets;
 import lombok.Data;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
@@ -88,6 +89,11 @@ public class ExecutorWrapper {
     private ExecutorWrapper() {
     }
 
+    /**
+     * Instantiates a new Executor wrapper.
+     *
+     * @param executor the DtpExecutor
+     */
     public ExecutorWrapper(DtpExecutor executor) {
         this.threadPoolName = executor.getThreadPoolName();
         this.threadPoolAliasName = executor.getThreadPoolAliasName();
@@ -99,6 +105,12 @@ public class ExecutorWrapper {
         this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
     }
 
+    /**
+     * Instantiates a new Executor wrapper.
+     *
+     * @param threadPoolName the thread pool name
+     * @param executor       the executor
+     */
     public ExecutorWrapper(String threadPoolName, Executor executor) {
         this.threadPoolName = threadPoolName;
         if (executor instanceof ThreadPoolExecutor) {
@@ -113,10 +125,21 @@ public class ExecutorWrapper {
         this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
     }
 
+    /**
+     * Create executor wrapper.
+     *
+     * @param executor the executor
+     * @return the executor wrapper
+     */
     public static ExecutorWrapper of(DtpExecutor executor) {
         return new ExecutorWrapper(executor);
     }
 
+    /**
+     * capture executor
+     *
+     * @return ExecutorWrapper
+     */
     public ExecutorWrapper capture() {
         ExecutorWrapper executorWrapper = new ExecutorWrapper();
         BeanUtils.copyProperties(this, executorWrapper);
@@ -124,6 +147,9 @@ public class ExecutorWrapper {
         return executorWrapper;
     }
 
+    /**
+     * Initialize.
+     */
     public void initialize() {
         if (isDtpExecutor()) {
             DtpExecutor dtpExecutor = (DtpExecutor) getExecutor();
@@ -134,18 +160,36 @@ public class ExecutorWrapper {
         }
     }
 
+    /**
+     * get ThreadPoolStatProvider
+     *
+     * @return ThreadPoolStatProvider
+     */
     public ThreadPoolStatProvider getThreadPoolStatProvider() {
         return this.threadPoolStatProvider;
     }
 
+    /**
+     * whether is DtpExecutor
+     *
+     * @return boolean
+     */
     public boolean isDtpExecutor() {
         return this.executor instanceof DtpExecutor;
     }
 
+    /**
+     *  whether is ThreadPoolExecutor
+     * @return boolean
+     */
     public boolean isThreadPoolExecutor() {
         return this.executor instanceof ThreadPoolExecutorAdapter;
     }
 
+    /**
+     * set taskWrappers
+     * @param taskWrappers taskWrappers
+     */
     public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
         if (executor.getOriginal() instanceof TaskEnhanceAware) {
             ((TaskEnhanceAware) executor.getOriginal()).setTaskWrappers(taskWrappers);

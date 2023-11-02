@@ -179,7 +179,8 @@ public class ExecutorWrapper {
     }
 
     /**
-     *  whether is ThreadPoolExecutor
+     * whether is ThreadPoolExecutor
+     *
      * @return boolean
      */
     public boolean isThreadPoolExecutor() {
@@ -188,6 +189,7 @@ public class ExecutorWrapper {
 
     /**
      * set taskWrappers
+     *
      * @param taskWrappers taskWrappers
      */
     public void setTaskWrappers(List<TaskWrapper> taskWrappers) {

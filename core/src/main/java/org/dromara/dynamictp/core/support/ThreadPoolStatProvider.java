@@ -79,7 +79,7 @@ public class ThreadPoolStatProvider {
     private final Map<Runnable, SoftReference<Timeout>> queueTimeoutMap = new ConcurrentHashMap<>();
 
     /**
-     * stopWatchMap  key -> Runnable  value -> StopWatch
+     * stopWatchMap  key -> Runnable  value -> millis
      */
     private final Map<Runnable, Long> stopWatchMap = new ConcurrentHashMap<>();
 

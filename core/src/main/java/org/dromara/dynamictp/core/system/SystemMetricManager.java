@@ -48,11 +48,11 @@ public class SystemMetricManager {
 
     public static String getSystemMetric() {
         OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
-        double currAvgLoad = osBean.getSystemLoadAverage();
+        double systemAvgLoad = osBean.getSystemLoadAverage();
         double systemCpuUsage = OperatingSystemBeanManager.getSystemCpuUsage();
         int cpuCores = osBean.getAvailableProcessors();
         return String.format("SystemMetric{sAvgLoad=%.2f, sCpuUsage=%.2f, pCpuUsage=%.2f, cpuCores=%d}",
-                currAvgLoad, systemCpuUsage, getProcessCpuUsage(), cpuCores);
+                systemAvgLoad, systemCpuUsage, getProcessCpuUsage(), cpuCores);
     }
 
     public static double getProcessCpuUsage() {

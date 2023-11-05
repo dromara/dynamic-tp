@@ -17,13 +17,7 @@
 
 package org.dromara.dynamictp.core.aware;
 
-import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
-import org.springframework.util.StopWatch;
-
-import java.lang.ref.SoftReference;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 /**
@@ -33,8 +27,6 @@ import java.util.concurrent.Executor;
  * @since 1.1.5
  */
 public class PerformanceMonitorAware extends TaskStatAware {
-
-    private final Map<Runnable, SoftReference<StopWatch>> stopWatches = new ConcurrentHashMap<>();
 
     @Override
     public int getOrder() {
@@ -48,34 +40,16 @@ public class PerformanceMonitorAware extends TaskStatAware {
 
     @Override
     public void execute(Executor executor, Runnable r) {
-        if (!statProviders.containsKey(executor)) {
-            return;
-        }
-        StopWatch stopWatch = new StopWatch();
-        SoftReference<StopWatch> stopWatchSoftReference = new SoftReference<>(stopWatch);
-        stopWatches.put(r, stopWatchSoftReference);
-        stopWatch.start();
+        Optional.ofNullable(statProviders.get(executor)).ifPresent(p -> p.startTask(r));
     }
 
     @Override
     public void afterExecute(Executor executor, Runnable r, Throwable t) {
-        completeTask(executor, r);
+        Optional.ofNullable(statProviders.get(executor)).ifPresent(p -> p.completeTask(r));
     }
 
     @Override
     public void afterReject(Runnable r, Executor executor) {
-        completeTask(executor, r);
-    }
-
-    private void completeTask(Executor executor, Runnable r) {
-        Optional.ofNullable(stopWatches.remove(r))
-                .map(SoftReference::get)
-                .ifPresent(stopWatch -> {
-                    stopWatch.stop();
-                    long totalTimeMillis = stopWatch.getTotalTimeMillis();
-                    Optional.ofNullable(statProviders.get(executor))
-                            .map(ThreadPoolStatProvider::getPerformanceProvider)
-                            .ifPresent(provider -> provider.completeTask(totalTimeMillis));
-                });
+        Optional.ofNullable(statProviders.get(executor)).ifPresent(p -> p.completeTask(r));
     }
 }

@@ -21,10 +21,10 @@ import lombok.val;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 import org.dromara.dynamictp.common.entity.TpMainFields;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
+import org.dromara.dynamictp.core.monitor.PerformanceProvider;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
-import org.dromara.dynamictp.core.monitor.TpPerformanceProvider;
 
 import java.util.concurrent.TimeUnit;
 
@@ -58,8 +58,8 @@ public class ExecutorConverter {
             return null;
         }
         ThreadPoolStatProvider provider = wrapper.getThreadPoolStatProvider();
-        TpPerformanceProvider performanceProvider = provider.getPerformanceProvider();
-        TpPerformanceProvider.PerformanceSnapshot performanceSnapshot = performanceProvider.getSnapshotAndReset();
+        PerformanceProvider performanceProvider = provider.getPerformanceProvider();
+        val performanceSnapshot = performanceProvider.getSnapshotAndReset();
         ThreadPoolStats poolStats = convertCommon(executor);
         poolStats.setPoolName(wrapper.getThreadPoolName());
         poolStats.setPoolAliasName(wrapper.getThreadPoolAliasName());

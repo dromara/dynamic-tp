@@ -20,6 +20,9 @@ package org.dromara.dynamictp.core.aware;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.DTP_EXECUTE_ENHANCED;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRUE_STR;
+
 /**
  * PerformanceMonitorAware related
  *
@@ -40,7 +43,9 @@ public class PerformanceMonitorAware extends TaskStatAware {
 
     @Override
     public void execute(Executor executor, Runnable r) {
-        Optional.ofNullable(statProviders.get(executor)).ifPresent(p -> p.startTask(r));
+        if (TRUE_STR.equals(System.getProperty(DTP_EXECUTE_ENHANCED, TRUE_STR))) {
+            Optional.ofNullable(statProviders.get(executor)).ifPresent(p -> p.startTask(r));
+        }
     }
 
     @Override

@@ -25,6 +25,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.DTP_EXECUTE_ENHANCED;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRUE_STR;
+
 /**
  * TaskTimeoutAware related
  *
@@ -55,7 +58,9 @@ public class TaskTimeoutAware extends TaskStatAware {
 
     @Override
     public void execute(Executor executor, Runnable r) {
-        Optional.ofNullable(statProviders.get(executor)).ifPresent(p -> p.startQueueTimeoutTask(r));
+        if (TRUE_STR.equals(System.getProperty(DTP_EXECUTE_ENHANCED, TRUE_STR))) {
+            Optional.ofNullable(statProviders.get(executor)).ifPresent(p -> p.startQueueTimeoutTask(r));
+        }
     }
 
     @Override

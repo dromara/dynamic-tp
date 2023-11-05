@@ -24,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.constant.LarkNotifyConst;
 import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
-import org.dromara.dynamictp.common.util.TimeUtil;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -83,7 +82,7 @@ public class LarkNotifier extends AbstractHttpNotifier {
             return content;
         }
         try {
-            val secondsTimestamp = TimeUtil.currentTimeSeconds();
+            val secondsTimestamp = System.currentTimeMillis() / 1000;
             val sign = genSign(platform.getSecret(), secondsTimestamp);
             content = content.replace(SIGN_REPLACE, String.format(SIGN_PARAM, secondsTimestamp, sign));
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {

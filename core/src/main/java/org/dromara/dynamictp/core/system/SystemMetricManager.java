@@ -38,31 +38,28 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class SystemMetricManager {
 
-    private static final SystemMetricPoller SYSTEM_METRIC_POLLER;
+    private static final SystemMetricPoller METRIC_POLLER;
 
     private static final ScheduledExecutorService EXECUTOR = new ScheduledThreadPoolExecutor(
             1, new NamedThreadFactory("system-metric", true));
 
     static {
-        SYSTEM_METRIC_POLLER = new SystemMetricPoller();
-        EXECUTOR.scheduleAtFixedRate(SYSTEM_METRIC_POLLER, 0, 2, TimeUnit.SECONDS);
+        METRIC_POLLER = new SystemMetricPoller();
+        EXECUTOR.scheduleAtFixedRate(METRIC_POLLER, 0, 2, TimeUnit.SECONDS);
     }
 
     public static String getSystemMetric() {
-        int cpuCores = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getAvailableProcessors();
-        return "SystemMetric{" +
-                "systemAvgLoad=" + getSystemAvgLoad() +
-                ", cpuUsage=" + getCpuUsage() +
-                ", cpuCores=" + cpuCores +
-                '}';
+        OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+        double currAvgLoad = osBean.getSystemLoadAverage();
+        double systemCpuUsage = OperatingSystemBeanManager.getSystemCpuUsage();
+        int cpuCores = osBean.getAvailableProcessors();
+        return String.format("SystemMetric{sAvgLoad=%.2f, sCpuUsage=%.2f, pCpuUsage=%.2f, cpuCores=%d}",
+                currAvgLoad, systemCpuUsage, getProcessCpuUsage(), cpuCores);
     }
 
-    public static double getSystemAvgLoad() {
-        return BigDecimal.valueOf(SYSTEM_METRIC_POLLER.getSystemAvgLoad()).setScale(2, RoundingMode.HALF_UP).doubleValue();
-    }
-
-    public static double getCpuUsage() {
-        return BigDecimal.valueOf(SYSTEM_METRIC_POLLER.getCpuUsage()).setScale(2, RoundingMode.HALF_UP).doubleValue();
+    public static double getProcessCpuUsage() {
+        return BigDecimal.valueOf(METRIC_POLLER.getProcessCpuUsage())
+                .setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 
     public static void stop() {
@@ -71,27 +68,20 @@ public class SystemMetricManager {
 
     private static class SystemMetricPoller implements Runnable {
 
-        private double currAverageLoad = -1;
-
-        private double currCpuUsage = -1;
+        private double currProcessCpuUsage = -1;
 
         private long prevProcessCpuTime = 0;
 
         private long prevUpTime = 0;
 
-        public double getSystemAvgLoad() {
-            return currAverageLoad;
-        }
-
-        public double getCpuUsage() {
-            return currCpuUsage;
+        public double getProcessCpuUsage() {
+            return currProcessCpuUsage;
         }
 
         @Override
         public void run() {
             try {
                 OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
-                currAverageLoad = osBean.getSystemLoadAverage();
                 int cpuCores = osBean.getAvailableProcessors();
 
                 long newProcessCpuTime = OperatingSystemBeanManager.getProcessCpuTime();
@@ -102,9 +92,7 @@ public class SystemMetricManager {
                 double processCpuUsage = (double) elapsedCpu / elapsedTime / cpuCores;
                 prevProcessCpuTime = newProcessCpuTime;
                 prevUpTime = newUpTime;
-
-                double systemCpuUsage = OperatingSystemBeanManager.getSystemCpuUsage();
-                currCpuUsage = Math.max(processCpuUsage, systemCpuUsage);
+                currProcessCpuUsage = Math.min(processCpuUsage, 1);
             } catch (Throwable e) {
                 log.warn("Get system metrics error.", e);
             }

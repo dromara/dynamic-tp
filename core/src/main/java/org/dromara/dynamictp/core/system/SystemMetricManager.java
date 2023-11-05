@@ -23,8 +23,6 @@ import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -58,8 +56,7 @@ public class SystemMetricManager {
     }
 
     public static double getProcessCpuUsage() {
-        return BigDecimal.valueOf(METRIC_POLLER.getProcessCpuUsage())
-                .setScale(2, RoundingMode.HALF_UP).doubleValue();
+        return METRIC_POLLER.getProcessCpuUsage();
     }
 
     public static void stop() {

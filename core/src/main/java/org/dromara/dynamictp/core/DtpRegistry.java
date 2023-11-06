@@ -21,6 +21,7 @@ import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
 import com.google.common.collect.Sets;
+import java.util.concurrent.ThreadPoolExecutor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
@@ -41,6 +42,7 @@ import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -109,6 +111,20 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
     public static void registerExecutor(ExecutorWrapper wrapper, String source) {
         log.info("DynamicTp register executor: {}, source: {}", ExecutorConverter.toMainFields(wrapper), source);
         EXECUTOR_REGISTRY.putIfAbsent(wrapper.getThreadPoolName(), wrapper);
+    }
+    
+    /**
+     * Wrap and register executor.
+     *
+     * @param threadPoolName the name of the thread pool
+     * @param executor the ThreadPoolExecutor instance, possibly a class field
+     * @param source   the source of the call to register method
+     * @return the enhanced executor
+     */
+    public static ThreadPoolExecutorProxy wrap(String threadPoolName, ThreadPoolExecutor executor, String source) {
+        final ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executor);
+        registerExecutor(new ExecutorWrapper(threadPoolName, proxy), source);
+        return proxy;
     }
 
     /**

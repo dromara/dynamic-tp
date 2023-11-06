@@ -36,16 +36,17 @@ public class SwInitializer implements DtpInitializer {
 
     @Override
     public void init() {
-        try {
-            Class.forName(SW_RUNNABLE_WRAPPER);
+        if (conditionOnClass(SW_RUNNABLE_WRAPPER) || conditionOnClass(SW_CALLABLE_WRAPPER)) {
             System.setProperty(DTP_EXECUTE_ENHANCED, FALSE_STR);
+        }
+    }
+
+    private boolean conditionOnClass(String className) {
+        try {
+            Class.forName(className);
+            return true;
         } catch (ClassNotFoundException e) {
-            try {
-                Class.forName(SW_CALLABLE_WRAPPER);
-                System.setProperty(DTP_EXECUTE_ENHANCED, FALSE_STR);
-            } catch (ClassNotFoundException ex) {
-                // ignore
-            }
+            return false;
         }
     }
 }

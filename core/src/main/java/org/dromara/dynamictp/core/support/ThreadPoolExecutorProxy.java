@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.core.support;
 
-import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.RejectHandlerAware;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
@@ -28,15 +27,12 @@ import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGracefulAsync;
-
 /**
  * ThreadPoolExecutor Proxy
  *
  * @author kyao
  * @since 1.1.4
  */
-@Slf4j
 public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskEnhanceAware, RejectHandlerAware {
 
     /**
@@ -51,12 +47,11 @@ public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskE
 
     public ThreadPoolExecutorProxy(ThreadPoolExecutor executor) {
         super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
-                executor.getKeepAliveTime(TimeUnit.MILLISECONDS),
-                TimeUnit.MILLISECONDS, executor.getQueue(),
-                executor.getThreadFactory(), executor.getRejectedExecutionHandler());
+                executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS,
+                executor.getQueue(), executor.getThreadFactory(),
+                executor.getRejectedExecutionHandler());
         this.rejectHandlerType = getRejectedExecutionHandler().getClass().getSimpleName();
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(getRejectedExecutionHandler()));
-        shutdownGracefulAsync(executor, "", 5);
     }
 
     @Override
@@ -71,7 +66,6 @@ public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskE
         super.beforeExecute(t, r);
         AwareManager.beforeExecute(this, t, r);
     }
-
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {

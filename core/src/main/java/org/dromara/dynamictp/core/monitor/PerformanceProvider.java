@@ -19,7 +19,6 @@ package org.dromara.dynamictp.core.monitor;
 
 import lombok.Getter;
 import lombok.val;
-import org.dromara.dynamictp.common.util.TimeUtil;
 import org.dromara.dynamictp.core.metric.MMAPCounter;
 
 import java.math.BigDecimal;
@@ -27,17 +26,17 @@ import java.math.RoundingMode;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * TpPerformanceProvider related
+ * PerformanceProvider related
  *
  * @author kyao
  * @since 1.1.5
  */
-public class TpPerformanceProvider {
+public class PerformanceProvider {
 
     /**
      * last refresh timestamp
      */
-    private final AtomicLong lastRefreshTs = new AtomicLong(TimeUtil.currentTimeSeconds());
+    private final AtomicLong lastRefreshMillis = new AtomicLong(System.currentTimeMillis());
 
     private final MMAPCounter mmapCounter = new MMAPCounter();
 
@@ -46,16 +45,16 @@ public class TpPerformanceProvider {
     }
 
     public PerformanceSnapshot getSnapshotAndReset() {
-        long currentTs = TimeUtil.currentTimeSeconds();
-        int monitorInterval = (int) (currentTs - lastRefreshTs.get());
-        val performanceSnapshot = new PerformanceSnapshot(mmapCounter, monitorInterval);
-        reset(currentTs);
+        long currentMillis = System.currentTimeMillis();
+        int intervalTs = (int) (currentMillis - lastRefreshMillis.get()) / 1000;
+        val performanceSnapshot = new PerformanceSnapshot(mmapCounter, intervalTs);
+        reset(currentMillis);
         return performanceSnapshot;
     }
 
-    private void reset(long currentTs) {
+    private void reset(long currentMillis) {
         mmapCounter.reset();
-        lastRefreshTs.compareAndSet(lastRefreshTs.get(), currentTs);
+        lastRefreshMillis.compareAndSet(lastRefreshMillis.get(), currentMillis);
     }
 
     @Getter

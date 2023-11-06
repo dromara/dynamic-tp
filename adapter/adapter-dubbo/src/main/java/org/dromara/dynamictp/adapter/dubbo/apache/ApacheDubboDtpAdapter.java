@@ -32,7 +32,6 @@ import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.springframework.context.ApplicationEvent;
 
@@ -95,8 +94,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
                 executorMap.forEach((k, v) -> {
                     ThreadPoolExecutor proxy = getProxy((ThreadPoolExecutor) v);
                     executorMap.replace(k, proxy);
-                    String tpName = genTpName(k);
-                    executors.put(tpName, new ExecutorWrapper(tpName, proxy));
+                    putAndFinalize(genTpName(k), (ExecutorService) v, proxy);
                 });
             }
             return;
@@ -122,8 +120,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
             executorMap.forEach((k, v) -> {
                 ThreadPoolExecutor proxy = getProxy(v);
                 executorMap.replace(k, proxy);
-                String tpName = genTpName(k.toString());
-                executors.put(tpName, new ExecutorWrapper(tpName, proxy));
+                putAndFinalize(genTpName(k.toString()), (ExecutorService) v, proxy);
             });
         }
     }

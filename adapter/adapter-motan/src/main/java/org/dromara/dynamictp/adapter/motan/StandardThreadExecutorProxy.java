@@ -29,8 +29,6 @@ import java.util.List;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
 
-import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGracefulAsync;
-
 /**
  * @author hanli
  * @since 1.1.4
@@ -61,7 +59,6 @@ public class StandardThreadExecutorProxy extends StandardThreadExecutor implemen
                 throw new RuntimeException(e);
             }
         }
-        shutdownGracefulAsync(executor, "motan", 5);
     }
 
     @Override

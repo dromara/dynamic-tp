@@ -28,14 +28,14 @@ spring:
       executors: # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
         - threadPoolName: testExecutor
           threadPoolAliasName: 测试线程池             # 线程池别名
-          executorType: common                     # 线程池类型common、eager：适用于io密集型
+          executorType: scheduled                     # 线程池类型common、eager：适用于io密集型
           corePoolSize: 6
           maximumPoolSize: 8
           queueCapacity: 100
           queueType: LinkedBlockingQueue   # 任务队列，查看源码QueueTypeEnum枚举类
           rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
           keepAliveTime: 50
-          allowCoreThreadTimeOut: false                  # 是否允许核心线程池超时
+          allowCoreThreadTimeOut: true                  # 是否允许核心线程池超时
           threadNamePrefix: test                         # 线程名前缀
           waitForTasksToCompleteOnShutdown: false        # 参考spring线程池设计，优雅关闭线程池
           awaitTerminationSeconds: 5                     # 单位（s）

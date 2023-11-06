@@ -19,8 +19,6 @@ package org.dromara.dynamictp.core.support;
 
 import com.google.common.collect.Sets;
 import lombok.Data;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.core.aware.AwareManager;
@@ -43,7 +41,6 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @since 1.0.3
  **/
 @Data
-@Slf4j
 public class ExecutorWrapper {
 
     /**

@@ -35,8 +35,7 @@ public class ExtensionServiceLoader {
 
     private static final Map<Class<?>, List<?>> EXTENSION_MAP = new ConcurrentHashMap<>();
 
-    private ExtensionServiceLoader() {
-    }
+    private ExtensionServiceLoader() { }
 
     /**
      * load service

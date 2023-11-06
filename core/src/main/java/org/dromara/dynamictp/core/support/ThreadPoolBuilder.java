@@ -19,23 +19,23 @@ package org.dromara.dynamictp.core.support;
 
 import com.alibaba.ttl.TtlRunnable;
 import com.alibaba.ttl.threadpool.TtlExecutors;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.constant.DynamicTpConst;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.em.QueueTypeEnum;
 import org.dromara.dynamictp.common.em.RejectedTypeEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.queue.VariableLinkedBlockingQueue;
-import org.dromara.dynamictp.core.executor.eager.TaskQueue;
-import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
-import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
-import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
 import org.dromara.dynamictp.core.executor.ScheduledDtpExecutor;
-import com.google.common.collect.Lists;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
+import org.dromara.dynamictp.core.executor.eager.TaskQueue;
+import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
+import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.springframework.util.Assert;
 
 import java.util.List;
@@ -187,8 +187,7 @@ public class ThreadPoolBuilder {
      */
     private boolean notifyEnabled = true;
 
-    private ThreadPoolBuilder() {
-    }
+    private ThreadPoolBuilder() { }
 
     public static ThreadPoolBuilder newBuilder() {
         return new ThreadPoolBuilder();

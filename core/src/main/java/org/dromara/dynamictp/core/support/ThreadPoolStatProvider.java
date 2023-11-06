@@ -22,7 +22,7 @@ import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.timer.HashedWheelTimer;
 import org.dromara.dynamictp.common.timer.Timeout;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
-import org.dromara.dynamictp.core.monitor.TpPerformanceProvider;
+import org.dromara.dynamictp.core.monitor.PerformanceProvider;
 import org.dromara.dynamictp.core.timer.QueueTimeoutTimerTask;
 import org.dromara.dynamictp.core.timer.RunTimeoutTimerTask;
 
@@ -79,9 +79,14 @@ public class ThreadPoolStatProvider {
     private final Map<Runnable, SoftReference<Timeout>> queueTimeoutMap = new ConcurrentHashMap<>();
 
     /**
-     * performance monitor
+     * stopWatchMap  key -> Runnable  value -> millis
      */
-    private final TpPerformanceProvider tpPerformanceProvider = new TpPerformanceProvider();
+    private final Map<Runnable, Long> stopWatchMap = new ConcurrentHashMap<>();
+
+    /**
+     * performance provider
+     */
+    private final PerformanceProvider performanceProvider = new PerformanceProvider();
 
     private ThreadPoolStatProvider(ExecutorWrapper executorWrapper) {
         this.executorWrapper = executorWrapper;
@@ -171,8 +176,19 @@ public class ThreadPoolStatProvider {
                 .ifPresent(Timeout::cancel);
     }
 
-    public TpPerformanceProvider getPerformanceProvider() {
-        return this.tpPerformanceProvider;
+    public void startTask(Runnable r) {
+        stopWatchMap.put(r, System.currentTimeMillis());
     }
 
+    public void completeTask(Runnable r) {
+        Optional.ofNullable(stopWatchMap.remove(r))
+                .ifPresent(millis -> {
+                    long rt = System.currentTimeMillis() - millis;
+                    performanceProvider.completeTask(rt);
+                });
+    }
+
+    public PerformanceProvider getPerformanceProvider() {
+        return this.performanceProvider;
+    }
 }

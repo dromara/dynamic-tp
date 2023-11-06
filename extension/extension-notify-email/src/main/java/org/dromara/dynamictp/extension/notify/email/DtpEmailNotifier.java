@@ -112,6 +112,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("trace", getTraceInfo());
         context.setVariable("alarmInterval", notifyItem.getInterval());
         context.setVariable("highlightVariables", getAlarmKeys(notifyItemEnum));
+        context.setVariable("ext", getExtInfo());
         return ((EmailNotifier) notifier).processTemplateContent("alarm", context);
     }
 

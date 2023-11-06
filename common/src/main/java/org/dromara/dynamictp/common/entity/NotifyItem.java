@@ -90,15 +90,15 @@ public class NotifyItem {
     public static List<NotifyItem> getAllNotifyItems() {
         NotifyItem rejectNotify = new NotifyItem();
         rejectNotify.setType(NotifyItemEnum.REJECT.getValue());
-        rejectNotify.setThreshold(1);
+        rejectNotify.setThreshold(10);
 
         NotifyItem runTimeoutNotify = new NotifyItem();
         runTimeoutNotify.setType(NotifyItemEnum.RUN_TIMEOUT.getValue());
-        runTimeoutNotify.setThreshold(1);
+        runTimeoutNotify.setThreshold(10);
 
         NotifyItem queueTimeoutNotify = new NotifyItem();
         queueTimeoutNotify.setType(NotifyItemEnum.QUEUE_TIMEOUT.getValue());
-        queueTimeoutNotify.setThreshold(1);
+        queueTimeoutNotify.setThreshold(10);
 
         List<NotifyItem> notifyItems = new ArrayList<>(6);
         notifyItems.addAll(getSimpleNotifyItems());

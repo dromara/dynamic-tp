@@ -50,11 +50,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static java.util.stream.Collectors.toList;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
 import static org.dromara.dynamictp.core.notifier.manager.NotifyHelper.updateNotifyInfo;
+import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGracefulAsync;
 
 /**
  * AbstractDtpAdapter related
@@ -162,10 +165,19 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
         ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executor);
         try {
             ReflectionUtil.setFieldValue(fieldName, targetObj, proxy);
-            executors.put(tpName, new ExecutorWrapper(tpName, proxy));
+            putAndFinalize(tpName, executor, proxy);
         } catch (IllegalAccessException e) {
             log.error("DynamicTp adapter, enhance {} failed.", tpName, e);
         }
+    }
+
+    protected void putAndFinalize(String tpName, ExecutorService origin, Executor targetForWrapper) {
+        executors.put(tpName, new ExecutorWrapper(tpName, targetForWrapper));
+        shutdownOriginalExecutor(origin);
+    }
+
+    protected void shutdownOriginalExecutor(ExecutorService executor) {
+        shutdownGracefulAsync(executor, getTpPrefix(), 5);
     }
 
     protected void doRefresh(ExecutorWrapper executorWrapper,

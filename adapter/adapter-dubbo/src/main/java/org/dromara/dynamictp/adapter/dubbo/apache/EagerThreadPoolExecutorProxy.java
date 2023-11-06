@@ -28,8 +28,6 @@ import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGracefulAsync;
-
 /**
  * EagerThreadPoolExecutorProxy related
  *
@@ -50,13 +48,12 @@ public class EagerThreadPoolExecutorProxy extends EagerThreadPoolExecutor implem
 
     public EagerThreadPoolExecutorProxy(EagerThreadPoolExecutor executor) {
         super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
-                executor.getKeepAliveTime(TimeUnit.MILLISECONDS),
-                TimeUnit.MILLISECONDS, (TaskQueue<Runnable>) executor.getQueue(),
-                executor.getThreadFactory(), executor.getRejectedExecutionHandler());
+                executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS,
+                (TaskQueue<Runnable>) executor.getQueue(), executor.getThreadFactory(),
+                executor.getRejectedExecutionHandler());
         this.rejectHandlerType = getRejectedExecutionHandler().getClass().getSimpleName();
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(getRejectedExecutionHandler()));
         ((TaskQueue<Runnable>) getQueue()).setExecutor(this);
-        shutdownGracefulAsync(executor, "dubbo", 5);
     }
 
     @Override

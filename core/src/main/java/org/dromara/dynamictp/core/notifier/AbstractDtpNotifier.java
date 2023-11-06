@@ -35,6 +35,7 @@ import org.dromara.dynamictp.core.notifier.context.AlarmCtx;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
 import org.dromara.dynamictp.core.notifier.context.DtpNotifyCtxHolder;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.core.system.SystemMetricManager;
 import org.slf4j.MDC;
 
 import java.lang.reflect.Field;
@@ -122,7 +123,8 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 DateUtil.now(),
                 getReceives(notifyItem, platform),
                 getTraceInfo(),
-                notifyItem.getInterval()
+                notifyItem.getInterval(),
+                getExtInfo()
         );
         return highlightAlarmContent(content, notifyItemEnum);
     }
@@ -157,6 +159,10 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
             return UNKNOWN;
         }
         return tid;
+    }
+
+    protected String getExtInfo() {
+        return SystemMetricManager.getSystemMetric();
     }
 
     protected String getReceives(NotifyItem notifyItem, NotifyPlatform platform) {

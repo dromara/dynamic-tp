@@ -27,7 +27,6 @@ import org.dromara.dynamictp.common.entity.MarkdownReq;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.util.DingSignUtil;
 import org.dromara.dynamictp.common.util.JsonUtil;
-import org.dromara.dynamictp.common.util.TimeUtil;
 
 import java.util.List;
 
@@ -87,7 +86,7 @@ public class DingNotifier extends AbstractHttpNotifier {
         if (StringUtils.isBlank(secret)) {
             return DingNotifyConst.DING_WEBHOOK + accessToken;
         }
-        long timestamp = TimeUtil.currentTimeMillis();
+        long timestamp = System.currentTimeMillis();
         String sign = DingSignUtil.dingSign(secret, timestamp);
         return DingNotifyConst.DING_WEBHOOK + accessToken + "&timestamp=" + timestamp + "&sign=" + sign;
     }

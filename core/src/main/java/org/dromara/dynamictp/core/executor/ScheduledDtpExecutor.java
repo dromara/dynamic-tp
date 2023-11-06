@@ -44,6 +44,7 @@ import static java.util.concurrent.TimeUnit.NANOSECONDS;
 public class ScheduledDtpExecutor extends DtpExecutor implements ScheduledExecutorService {
 
     private final ScheduledThreadPoolExecutor delegate;
+
     public ScheduledDtpExecutor(int corePoolSize,
                                 int maximumPoolSize,
                                 long keepAliveTime,
@@ -174,7 +175,7 @@ public class ScheduledDtpExecutor extends DtpExecutor implements ScheduledExecut
 
     @Override
     public void setMaximumPoolSize(int maximumPoolSize) {
-        delegate.setMaximumPoolSize(maximumPoolSize);
+        // cancel the assignment to maximumPoolSize
     }
 
     @Override
@@ -190,7 +191,7 @@ public class ScheduledDtpExecutor extends DtpExecutor implements ScheduledExecut
 
     @Override
     public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
-        delegate.allowCoreThreadTimeOut(allowCoreThreadTimeOut);
+        // cancel the assignment to allowCoreThreadTimeOut
     }
 
     @Override
@@ -210,7 +211,7 @@ public class ScheduledDtpExecutor extends DtpExecutor implements ScheduledExecut
 
     @Override
     public void setKeepAliveTime(long time, TimeUnit unit) {
-        delegate.setKeepAliveTime(time, unit);
+        // cancel the assignment to keepAliveTime
     }
 
     @Override
@@ -235,7 +236,7 @@ public class ScheduledDtpExecutor extends DtpExecutor implements ScheduledExecut
 
     @Override
     public void allowCoreThreadTimeOut(boolean value) {
-        delegate.allowCoreThreadTimeOut(value);
+        // cancel the assignment to allowCoreThreadTimeOut
     }
 
     @Override

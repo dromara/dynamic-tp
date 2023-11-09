@@ -76,15 +76,21 @@ public class ExecutorWrapper {
     /**
      * Thread pool stat provider
      */
-    private ThreadPoolStatProvider threadPoolStatProvider = ThreadPoolStatProvider.of(this);
+    private ThreadPoolStatProvider threadPoolStatProvider;
 
     /**
      * Aware names
      */
     private Set<String> awareNames = Sets.newHashSet();
 
-    public ExecutorWrapper() { }
+    private ExecutorWrapper() {
+    }
 
+    /**
+     * Instantiates a new Executor wrapper.
+     *
+     * @param executor the DtpExecutor
+     */
     public ExecutorWrapper(DtpExecutor executor) {
         this.threadPoolName = executor.getThreadPoolName();
         this.threadPoolAliasName = executor.getThreadPoolAliasName();
@@ -93,8 +99,15 @@ public class ExecutorWrapper {
         this.notifyEnabled = executor.isNotifyEnabled();
         this.platformIds = executor.getPlatformIds();
         this.awareNames = executor.getAwareNames();
+        this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
     }
 
+    /**
+     * Instantiates a new Executor wrapper.
+     *
+     * @param threadPoolName the thread pool name
+     * @param executor       the executor
+     */
     public ExecutorWrapper(String threadPoolName, Executor executor) {
         this.threadPoolName = threadPoolName;
         if (executor instanceof ThreadPoolExecutor) {
@@ -106,12 +119,24 @@ public class ExecutorWrapper {
         }
         this.notifyItems = NotifyItem.getAllNotifyItems();
         AlarmManager.initAlarm(threadPoolName, notifyItems);
+        this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
     }
 
+    /**
+     * Create executor wrapper.
+     *
+     * @param executor the executor
+     * @return the executor wrapper
+     */
     public static ExecutorWrapper of(DtpExecutor executor) {
         return new ExecutorWrapper(executor);
     }
 
+    /**
+     * capture executor
+     *
+     * @return ExecutorWrapper
+     */
     public ExecutorWrapper capture() {
         ExecutorWrapper executorWrapper = new ExecutorWrapper();
         BeanUtils.copyProperties(this, executorWrapper);
@@ -119,6 +144,9 @@ public class ExecutorWrapper {
         return executorWrapper;
     }
 
+    /**
+     * Initialize.
+     */
     public void initialize() {
         if (isDtpExecutor()) {
             DtpExecutor dtpExecutor = (DtpExecutor) getExecutor();
@@ -129,18 +157,38 @@ public class ExecutorWrapper {
         }
     }
 
+    /**
+     * get ThreadPoolStatProvider
+     *
+     * @return ThreadPoolStatProvider
+     */
     public ThreadPoolStatProvider getThreadPoolStatProvider() {
         return this.threadPoolStatProvider;
     }
 
+    /**
+     * whether is DtpExecutor
+     *
+     * @return boolean
+     */
     public boolean isDtpExecutor() {
         return this.executor instanceof DtpExecutor;
     }
 
+    /**
+     * whether is ThreadPoolExecutor
+     *
+     * @return boolean
+     */
     public boolean isThreadPoolExecutor() {
         return this.executor instanceof ThreadPoolExecutorAdapter;
     }
 
+    /**
+     * set taskWrappers
+     *
+     * @param taskWrappers taskWrappers
+     */
     public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
         if (executor.getOriginal() instanceof TaskEnhanceAware) {
             ((TaskEnhanceAware) executor.getOriginal()).setTaskWrappers(taskWrappers);

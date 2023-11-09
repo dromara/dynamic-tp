@@ -30,15 +30,21 @@ import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.spring.SpringExecutor;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
+import org.slf4j.MDC;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
 
 /**
  * Dynamic ThreadPoolExecutor, extending ThreadPoolExecutor, implements some new features
@@ -194,6 +200,8 @@ public class DtpExecutor extends ThreadPoolExecutor
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
         AwareManager.afterExecute(this, r, t);
+        tryPrintError(r, t);
+        clearContext();
     }
 
     @Override
@@ -231,6 +239,29 @@ public class DtpExecutor extends ThreadPoolExecutor
             return;
         }
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
+    }
+
+    private void tryPrintError(Runnable r, Throwable t) {
+        if (Objects.nonNull(t)) {
+            log.error("DynamicTp execute, thread {} throw exception, traceId {}",
+                    Thread.currentThread(), MDC.get(TRACE_ID), t);
+            return;
+        }
+        if (r instanceof FutureTask) {
+            try {
+                Future<?> future = (Future<?>) r;
+                future.get();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            } catch (Exception e) {
+                log.error("DynamicTp execute, thread {} throw exception, traceId {}",
+                        Thread.currentThread(),  MDC.get(TRACE_ID), e);
+            }
+        }
+    }
+
+    private void clearContext() {
+        MDC.remove(TRACE_ID);
     }
 
     public String getThreadPoolName() {

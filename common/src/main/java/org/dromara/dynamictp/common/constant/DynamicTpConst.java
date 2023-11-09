@@ -108,4 +108,12 @@ public final class DynamicTpConst {
 
     public static final String OS_WIN_PREFIX = "win";
 
+    /**
+     * switch
+     */
+    public static final String DTP_EXECUTE_ENHANCED = "dtp.execute.enhanced";
+
+    public static final String TRUE_STR = "true";
+
+    public static final String FALSE_STR = "false";
 }

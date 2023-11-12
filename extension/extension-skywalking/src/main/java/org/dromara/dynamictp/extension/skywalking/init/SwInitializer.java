@@ -17,7 +17,11 @@
 
 package org.dromara.dynamictp.extension.skywalking.init;
 
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.support.init.DtpInitializer;
+import org.dromara.dynamictp.jvmti.JVMTI;
+
+import java.util.Objects;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.DTP_EXECUTE_ENHANCED;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.FALSE_STR;
@@ -28,22 +32,46 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.FALSE_STR;
  * @author yanhom
  * @since 1.1.6
  */
+@Slf4j
 public class SwInitializer implements DtpInitializer {
+
+    private static final String SW_AGENT_CLASS_LOADER = "org.apache.skywalking.apm.agent.core.plugin.loader.AgentClassLoader";
 
     private static final String SW_RUNNABLE_WRAPPER = "org.apache.skywalking.apm.plugin.wrapper.SwRunnableWrapper";
 
     private static final String SW_CALLABLE_WRAPPER = "org.apache.skywalking.apm.plugin.wrapper.SwCallableWrapper";
 
     @Override
+    public String getName() {
+        return "SwInitializer";
+    }
+
+    @Override
     public void init() {
-        if (conditionOnClass(SW_RUNNABLE_WRAPPER) || conditionOnClass(SW_CALLABLE_WRAPPER)) {
-            System.setProperty(DTP_EXECUTE_ENHANCED, FALSE_STR);
+        try {
+            ClassLoader[] classLoaders = JVMTI.getInstances(ClassLoader.class);
+            if (Objects.isNull(classLoaders)) {
+                return;
+            }
+            for (ClassLoader cl : classLoaders) {
+                if (!SW_AGENT_CLASS_LOADER.equals(cl.getClass().getName())) {
+                    continue;
+                }
+                if (conditionOnClass(SW_RUNNABLE_WRAPPER, cl) || conditionOnClass(SW_CALLABLE_WRAPPER, cl)) {
+                    System.setProperty(DTP_EXECUTE_ENHANCED, FALSE_STR);
+                    log.warn("DynamicTp init, disable enhancement for the execute method " +
+                            "in the presence of the skywalking threadpool plugin.");
+                    return;
+                }
+            }
+        } catch (Throwable e) {
+            log.error("DynamicTp {} init error", getName(), e);
         }
     }
 
-    private boolean conditionOnClass(String className) {
+    private boolean conditionOnClass(String className, ClassLoader classLoader) {
         try {
-            Class.forName(className);
+            Class.forName(className, false, classLoader);
             return true;
         } catch (ClassNotFoundException e) {
             return false;

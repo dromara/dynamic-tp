@@ -26,13 +26,20 @@ package org.dromara.dynamictp.core.support.init;
 public interface DtpInitializer {
 
     /**
-     * Initializer order.
+     * Get initializer order.
      *
      * @return order
      */
     default int getOrder() {
         return 0;
     }
+
+    /**
+     * Get initializer name.
+     *
+     * @return name
+     */
+    String getName();
 
     /**
      * Init.

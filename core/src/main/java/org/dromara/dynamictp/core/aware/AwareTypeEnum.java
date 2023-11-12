@@ -29,6 +29,7 @@ public enum AwareTypeEnum {
      * PerformanceMonitorAware
      */
     PERFORMANCE_MONITOR_AWARE(1, "monitor"),
+
     /**
      * TaskTimeoutAware
      */
@@ -37,14 +38,10 @@ public enum AwareTypeEnum {
     /**
      * TaskRejectAware
      */
-    TASK_REJECT_AWARE(3, "reject"),
-
-    /**
-     * TaskExecAware
-     */
-    TASK_EXEC_AWARE(4, "exec");
+    TASK_REJECT_AWARE(3, "reject");
 
     private final int order;
+
     private final String name;
 
     AwareTypeEnum(int order, String name) {

@@ -29,7 +29,6 @@ import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.jvmti.JVMTI;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -63,7 +62,7 @@ public class StarlightClientDtpAdapter extends AbstractDtpAdapter {
         super.initialize();
 
         List<StarlightClient> starlightClients = Lists.newArrayList();
-        starlightClients.addAll(Arrays.asList(JVMTI.getInstances(StarlightClient.class)));
+        starlightClients.addAll(JVMTI.getInstances(StarlightClient.class));
         if (CollectionUtils.isEmpty(starlightClients)) {
             log.warn("Cannot find beans of type StarlightClient.");
             return;

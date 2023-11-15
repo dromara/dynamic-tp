@@ -22,7 +22,7 @@ import io.grpc.internal.InternalServer;
 import io.grpc.internal.ServerImpl;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
@@ -59,7 +59,7 @@ public class GrpcDtpAdapter extends AbstractDtpAdapter {
     @Override
     protected void initialize() {
         val beans = JVMTI.getInstances(ServerImpl.class);
-        if (ArrayUtils.isEmpty(beans)) {
+        if (CollectionUtils.isEmpty(beans)) {
             log.warn("Cannot find beans of type ServerImpl.");
             return;
         }

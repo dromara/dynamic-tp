@@ -19,6 +19,7 @@ package org.dromara.dynamictp.adapter.rocketmq;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.client.impl.consumer.ConsumeMessageConcurrentlyService;
@@ -70,7 +71,7 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
     public void adaptConsumerExecutors() {
 
         val beans = JVMTI.getInstances(DefaultMQPushConsumer.class);
-        if (ArrayUtils.isEmpty(beans)) {
+        if (CollectionUtils.isEmpty(beans)) {
             log.warn("Cannot find beans of type DefaultMQPushConsumer.");
             return;
         }
@@ -97,7 +98,7 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
     public void adaptProducerExecutors() {
 
         val beans = JVMTI.getInstances(DefaultMQProducer.class);
-        if (ArrayUtils.isEmpty(beans)) {
+        if (CollectionUtils.isEmpty(beans)) {
             log.warn("Cannot find beans of type DefaultMQProducer.");
             return;
         }

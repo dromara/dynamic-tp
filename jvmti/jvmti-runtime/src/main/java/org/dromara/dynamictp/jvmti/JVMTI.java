@@ -18,10 +18,15 @@
 package org.dromara.dynamictp.jvmti;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.scijava.nativelib.JniExtractor;
 import org.scijava.nativelib.NativeLoader;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Use JVMTI technology to implement some things that Java code can't do.
@@ -36,18 +41,22 @@ public class JVMTI {
 
 	private static final String LIB_NAME = "JniLibrary";
 
+	private static final AtomicBoolean AVAILABLE = new AtomicBoolean(false);
+
 	static {
 		try {
 			final JniExtractor extractor = NativeLoader.getJniExtractor();
 			final String path = extractor.extractJni("", LIB_NAME).getAbsolutePath();
 			System.load(path);
+			AVAILABLE.set(true);
 		} catch (Throwable ignored) {
 			try {
 				File path = new File(JVMTI.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 				String libPath = new File(path, JVMTIUtils.detectLibName()).getAbsolutePath();
 				System.load(libPath);
+				AVAILABLE.set(true);
 			} catch (Throwable t) {
-				log.error("JVMTI init failed !", t);
+				log.error("JVMTI initialization failed, currently only linux and macos are supported!", t);
 			}
 		}
 	}
@@ -61,14 +70,14 @@ public class JVMTI {
 	 * @throws RuntimeException if find many instances
 	 */
 	public static <T> T getInstance(final Class<T> klass) {
-		final T[] instances = getInstances0(klass, 1);
-		if (null == instances || instances.length == 0) {
+		final List<T> instances = getInstances(klass, 1);
+		if (CollectionUtils.isEmpty(instances)) {
 			return null;
 		}
-		if (instances.length > 1) {
+		if (instances.size() > 1) {
 			throw new RuntimeException("expect only one instance, actually find many instances !");
 		}
-		return instances[0];
+		return instances.get(0);
 	}
 
 	/**
@@ -80,8 +89,8 @@ public class JVMTI {
 	 * @param <T>   class type
 	 * @return current surviving instances
 	 */
-	public static <T> T[] getInstances(final Class<T> klass) {
-		return getInstances0(klass, -1);
+	public static <T> List<T> getInstances(final Class<T> klass) {
+		return getInstances(klass, -1);
 	}
 
 	/**
@@ -95,8 +104,11 @@ public class JVMTI {
 	 *              It is recommended to pass in a small {@code limit} value which is larger than 0.
 	 * @return current surviving instances
 	 */
-	public static <T> T[] getInstances(final Class<T> klass, final int limit) {
-		return getInstances0(klass, limit);
+	public static <T> List<T> getInstances(final Class<T> klass, final int limit) {
+		if (!AVAILABLE.get()) {
+			return Collections.emptyList();
+		}
+		return Arrays.asList(getInstances0(klass, limit));
 	}
 
 	/**

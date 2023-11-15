@@ -89,9 +89,9 @@ public class SystemMetricManager {
                 double processCpuUsage = (double) elapsedCpu / elapsedTime / cpuCores;
                 prevProcessCpuTime = newProcessCpuTime;
                 prevUpTime = newUpTime;
-                currProcessCpuUsage = Math.min(processCpuUsage, 1);
+                currProcessCpuUsage = processCpuUsage;
             } catch (Throwable e) {
-                log.warn("Get system metrics error.", e);
+                log.error("Get system metrics error.", e);
             }
         }
     }

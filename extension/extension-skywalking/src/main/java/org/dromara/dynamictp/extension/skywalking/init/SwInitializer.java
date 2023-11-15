@@ -18,10 +18,11 @@
 package org.dromara.dynamictp.extension.skywalking.init;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.core.support.init.DtpInitializer;
 import org.dromara.dynamictp.jvmti.JVMTI;
 
-import java.util.Objects;
+import java.util.List;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.DTP_EXECUTE_ENHANCED;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.FALSE_STR;
@@ -49,8 +50,8 @@ public class SwInitializer implements DtpInitializer {
     @Override
     public void init() {
         try {
-            ClassLoader[] classLoaders = JVMTI.getInstances(ClassLoader.class);
-            if (Objects.isNull(classLoaders)) {
+            List<ClassLoader> classLoaders = JVMTI.getInstances(ClassLoader.class);
+            if (CollectionUtils.isEmpty(classLoaders)) {
                 return;
             }
             for (ClassLoader cl : classLoaders) {
@@ -65,7 +66,7 @@ public class SwInitializer implements DtpInitializer {
                 }
             }
         } catch (Throwable e) {
-            log.error("DynamicTp {} init error", getName(), e);
+            log.error("DynamicTp {} init failed", getName(), e);
         }
     }
 

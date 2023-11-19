@@ -13,7 +13,7 @@
     <url>https://github.com/yanhom1314/dynamic-tp</url>
 
     <properties>
-        <revision>1.1.3</revision>
+        <revision>1.1.5</revision>
         <java.version>1.8</java.version>
         <spring-boot.version>2.5.14</spring-boot.version>
         <spring-cloud.version>2020.0.5</spring-cloud.version>
@@ -28,6 +28,7 @@
         <nexus-staging-maven-plugin.version>1.6.7</nexus-staging-maven-plugin.version>
         <maven-site-plugin.version>3.7.1</maven-site-plugin.version>
         <maven-checkstyle-plugin.version>3.1.0</maven-checkstyle-plugin.version>
+        <cglib.version>3.3.0</cglib.version>
     </properties>
 
     <modules>
@@ -38,16 +39,12 @@
         <module>logging</module>
         <module>example</module>
         <module>extension</module>
+        <module>jvmti</module>
         <module>test</module>
         <module>dependencies</module>
     </modules>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -98,6 +95,14 @@
                 <groupId>org.dromara.dynamictp</groupId>
                 <artifactId>dynamic-tp-dependencies</artifactId>
                 <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>cglib</groupId>
+                <artifactId>cglib</artifactId>
+                <version>${cglib.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -208,9 +213,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven-javadoc-plugin.version}</version>
+                <configuration>
+                    <detectJavaApiLink>false</detectJavaApiLink>
+                    <source>8</source>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>package</id>
+                        <id>attach-javadocs</id>
                         <goals>
                             <goal>jar</goal>
                         </goals>

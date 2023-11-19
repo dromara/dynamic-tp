@@ -16,7 +16,7 @@ spring:
       monitorInterval: 5
       platforms:                    # 通知报警平台配置
         - platform: wechat
-          urlKey: 3a7500-1287-4bd-a798-c5c3d8b69c  # 替换
+          urlKey: 32d7bf40-1353              # 替换
           receivers: test1,test2                   # 接受人企微名称
         - platform: ding
           urlKey: f80dad441fcd655438f4a08dcd6a     # 替换
@@ -25,30 +25,17 @@ spring:
         - platform: lark
           urlKey: 0d944ae7-b24a-40                 # 替换
           receivers: test1,test2                   # 接受人飞书名称/openid
-        - platform: email
-          receivers: 123456@qq.com,789789@qq.com   # 收件人
       okhttp3Tp:                                   # okhttp3 线程池配置
         - threadPoolName: okHttpClientTp
-          corePoolSize: 100
-          maximumPoolSize: 200
+          corePoolSize: 1
+          maximumPoolSize: 1
           keepAliveTime: 60
-
-  # email notify configuration
-  mail:
-    # (optional) email subject, default:ThreadPool Notify
-    title: ThreadPool Notify
-    # mail service address
-    host: smtp.qq.com
-    port: 465
-    # send from
-    username: 123456@qq.com
-    # authorization code eg: rlpadadtcugh4152e
-    password: xxxxxxxxxxxxxxxx
-    default-encoding: UTF-8
-    properties:
-      mail:
-        smtp:
-          socketFactoryClass: javax.net.ssl.SSLSocketFactory
-          ssl:
-            enable: true
-        debug: false
+          runTimeout: 20
+          queueTimeout: 10
+      tomcatTp:                                    # tomcat webserver 线程池配置
+        corePoolSize: 1
+        maximumPoolSize: 1
+        keepAliveTime: 60
+        runTimeout: 20
+        queueTimeout: 10
+        taskWrapperNames: ["swTrace"]

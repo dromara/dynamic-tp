@@ -1,14 +1,31 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dromara.dynamictp.core.support;
 
-import org.dromara.dynamictp.core.thread.DtpExecutor;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.RunnableFuture;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,10 +46,7 @@ public class DtpLifecycleSupport {
      * @param executorWrapper executor wrapper
      */
     public static void initialize(ExecutorWrapper executorWrapper) {
-        if (executorWrapper.isDtpExecutor()) {
-            DtpExecutor dtpExecutor = (DtpExecutor) executorWrapper.getExecutor();
-            dtpExecutor.initialize();
-        }
+        executorWrapper.initialize();
     }
 
     /**
@@ -58,12 +72,21 @@ public class DtpLifecycleSupport {
                 executor.getAwaitTerminationSeconds());
     }
 
+    public static void shutdownGracefulAsync(ExecutorService executor,
+                                             String threadPoolName,
+                                             int timeout) {
+        ExecutorService tmpExecutor = Executors.newSingleThreadExecutor();
+        tmpExecutor.execute(() -> internalShutdown(executor, threadPoolName,
+                true, timeout));
+        tmpExecutor.shutdown();
+    }
+
     /**
      * Perform a shutdown on the underlying ExecutorService.
      * @see ExecutorService#shutdown()
      * @see ExecutorService#shutdownNow()
      */
-    public static void internalShutdown(ThreadPoolExecutor executor,
+    public static void internalShutdown(ExecutorService executor,
                                         String threadPoolName,
                                         boolean waitForTasksToCompleteOnShutdown,
                                         int awaitTerminationSeconds) {
@@ -97,7 +120,7 @@ public class DtpLifecycleSupport {
      * Wait for the executor to terminate, according to the value of the awaitTerminationSeconds property.
      * @param executor executor
      */
-    private static void awaitTerminationIfNecessary(ThreadPoolExecutor executor,
+    private static void awaitTerminationIfNecessary(ExecutorService executor,
                                                     String threadPoolName,
                                                     int awaitTerminationSeconds) {
         if (awaitTerminationSeconds <= 0) {

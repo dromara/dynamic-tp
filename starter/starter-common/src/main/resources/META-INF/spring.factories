@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.dromara.dynamictp.starter.common.DtpBootBeanConfiguration
+org.springframework.context.ApplicationContextInitializer=\
+  org.dromara.dynamictp.starter.common.initializer.DtpApplicationContextInitializer

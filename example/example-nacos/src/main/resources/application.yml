@@ -2,6 +2,17 @@ server:
   port: 8888
   servlet:
     context-path: "/dynamic-tp"
+# 开启 SpringBoot Actuator Endpoint 暴露出DynamicTp指标接口
+# 开启 prometheus 指标采集端点
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'   # 测试使用，线上不要用*，按需开启
 
 spring:
   application:
@@ -13,7 +24,7 @@ nacos:
   config:
     server-addr: 127.0.0.1:8848
     type: yaml
-    data-ids: dynamic-tp-nacos-demo-dev.yml,dynamic-tp-nacos-demo-dtp-dev.yml
+    data-ids: dynamic-tp-nacos-demo-dev.yml,dynamic-tp-nacos-demo-dtp-dev.yml   # 线程池配置文件必须要在此处配置
     auto-refresh: true
     group: DEFAULT_GROUP
     bootstrap:
@@ -24,4 +35,4 @@ nacos:
 logging:
   level:
     #root: DEBUG
-    com.alibaba.nacos.client.config.impl: WARN
+    com.alibaba.nacos.client.config.impl: DEBUG

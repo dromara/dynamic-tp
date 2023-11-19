@@ -1,22 +1,34 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dromara.dynamictp.core.notifier.alarm;
 
-import org.dromara.dynamictp.common.em.NotifyItemEnum;
-import org.dromara.dynamictp.common.entity.AlarmInfo;
-import org.dromara.dynamictp.core.support.ExecutorAdapter;
-import org.dromara.dynamictp.core.thread.DtpExecutor;
+import cn.hutool.core.util.NumberUtil;
 import lombok.val;
 import lombok.var;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
+import org.dromara.dynamictp.common.em.NotifyItemEnum;
+import org.dromara.dynamictp.common.entity.AlarmInfo;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.UNKNOWN;
-import static org.dromara.dynamictp.common.em.NotifyItemEnum.QUEUE_TIMEOUT;
-import static org.dromara.dynamictp.common.em.NotifyItemEnum.REJECT;
-import static org.dromara.dynamictp.common.em.NotifyItemEnum.RUN_TIMEOUT;
 
 /**
  * AlarmCounter related
@@ -26,11 +38,9 @@ import static org.dromara.dynamictp.common.em.NotifyItemEnum.RUN_TIMEOUT;
  **/
 public class AlarmCounter {
 
-    private static final String UNKNOWN_COUNT_STR = UNKNOWN + " / " + UNKNOWN;
+    private static final Map<String, AlarmInfo> ALARM_INFO_CACHE = new ConcurrentHashMap<>();
 
     private AlarmCounter() { }
-
-    private static final Map<String, AlarmInfo> ALARM_INFO_CACHE = new ConcurrentHashMap<>();
 
     public static void init(String threadPoolName, String notifyItemType) {
         String key = buildKey(threadPoolName, notifyItemType);
@@ -68,19 +78,20 @@ public class AlarmCounter {
         }
     }
 
-    public static Triple<String, String, String> countStrRrq(String threadPoolName, ExecutorAdapter<?> executor) {
-
-        if (!(executor.getOriginal() instanceof DtpExecutor)) {
-            return new ImmutableTriple<>(UNKNOWN_COUNT_STR, UNKNOWN_COUNT_STR, UNKNOWN_COUNT_STR);
+    public static int calcCurrentValue(ExecutorWrapper wrapper, NotifyItemEnum itemEnum) {
+        val executor = wrapper.getExecutor();
+        switch (itemEnum) {
+            case CAPACITY:
+                return (int) (NumberUtil.div(executor.getQueueSize(), executor.getQueueCapacity(), 2) * 100);
+            case LIVENESS:
+                return (int) (NumberUtil.div(executor.getActiveCount(), executor.getMaximumPoolSize(), 2) * 100);
+            case REJECT:
+            case RUN_TIMEOUT:
+            case QUEUE_TIMEOUT:
+                return Integer.parseInt(getCount(wrapper.getThreadPoolName(), itemEnum.getValue()));
+            default:
+                return 0;
         }
-
-        DtpExecutor dtpExecutor = (DtpExecutor) executor.getOriginal();
-        String rejectCount = getCount(threadPoolName, REJECT.getValue()) + " / " + dtpExecutor.getRejectedTaskCount();
-        String runTimeoutCount = getCount(threadPoolName, RUN_TIMEOUT.getValue()) + " / "
-                + dtpExecutor.getRunTimeoutCount();
-        String queueTimeoutCount = getCount(threadPoolName, QUEUE_TIMEOUT.getValue()) + " / "
-                + dtpExecutor.getQueueTimeoutCount();
-        return new ImmutableTriple<>(rejectCount, runTimeoutCount, queueTimeoutCount);
     }
 
     private static String buildKey(String threadPoolName, String notifyItemType) {

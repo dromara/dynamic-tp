@@ -1,1 +1,1 @@
-org.dromara.dynamictp.starter.extension.limiter.redis.autoconfigure.RedisLimiterAutoConfiguration
+org.dromara.dynamictp.starter.nacos.autoconfigure.DtpNacosAutoConfiguration

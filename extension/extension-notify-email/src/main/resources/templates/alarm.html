@@ -244,13 +244,13 @@
                                                         <span th:if="${#sets.contains(highlightVariables, 'alarmType')}" style="color: #ff0013">
                                                             🔴
                                                         </span>
-                                                        <strong>报警类型：</strong><span th:text="${alarmType}"></span></p>
+                                                        <strong>报警项：</strong><span th:text="${alarmType}"></span></p>
                                                     <p
                                                             style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
-                                                        <span th:if="${#sets.contains(highlightVariables, 'threshold')}" style="color: #ff0013">
+                                                        <span th:if="${#sets.contains(highlightVariables, 'alarmValue')}" style="color: #ff0013">
                                                             🔴
                                                         </span>
-                                                        <strong>报警阈值：</strong><span th:text="${threshold}"></span></p>
+                                                        <strong>报警阈值 / 当前值：</strong><span th:text="${alarmValue}"></span></p>
                                                     <p
                                                             style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
                                                         <span th:if="${#sets.contains(highlightVariables, 'corePoolSize')}" style="color: #ff0013">
@@ -322,19 +322,19 @@
                                                         <span th:if="${#sets.contains(highlightVariables, 'rejectCount')}" style="color: #ff0013">
                                                             🔴
                                                         </span>
-                                                        <strong>拒绝任务数量：</strong><span th:text="${rejectCount}"></span></p>
+                                                        <strong>总拒绝任务数量：</strong><span th:text="${rejectCount}"></span></p>
                                                     <p
                                                             style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
                                                         <span th:if="${#sets.contains(highlightVariables, 'runTimeoutCount')}" style="color: #ff0013">
                                                             🔴
                                                         </span>
-                                                        <strong>执行超时任务数量：</strong><span th:text="${runTimeoutCount}"></span></p>
+                                                        <strong>总执行超时任务数量：</strong><span th:text="${runTimeoutCount}"></span></p>
                                                     <p
                                                             style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
                                                         <span th:if="${#sets.contains(highlightVariables, 'queueTimeoutCount')}" style="color: #ff0013">
                                                             🔴
                                                         </span>
-                                                        <strong>等待超时任务数量：</strong><span th:text="${queueTimeoutCount}"></span></p>
+                                                        <strong>总等待超时任务数量：</strong><span th:text="${queueTimeoutCount}"></span></p>
                                                     <p
                                                             style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
                                                         <strong>上次报警时间：</strong><span th:text="${lastAlarmTime}"></span></p>
@@ -343,7 +343,13 @@
                                                         <strong>报警时间：</strong><span th:text="${alarmTime}"></span></p>
                                                     <p
                                                             style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <strong>trace 信息：</strong><span th:text="${trace}"></span></p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
                                                         <strong>报警间隔：</strong><span th:text="${alarmInterval}"></span> s</p>
+                                                    <p
+                                                            style="font-family:Arial;font-size:14px;margin-top:0px;margin-bottom:0px;font-weight:normal;color:#000000;">
+                                                        <strong>扩展信息：</strong><span th:text="${ext}"></span></p>
                                                 </div>
                                             </td>
                                         </tr>

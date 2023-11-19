@@ -6,7 +6,7 @@ spring:
     name: dynamic-tp-polaris-cloud-demo
   cloud:
     polaris:
-      address: grpc://183.47.111.80:8091
+      address: grpc://119.91.66.223:8091
       namespace: default # 设置配置中心命名空间
       discovery:
         enabled: true
@@ -15,8 +15,16 @@ spring:
         port: 28082
       config:
         auto-refresh: true # auto refresh when config file changed
-        #   目前只支持 refresh_context 模式
-        refresh-type: refresh_context
         groups:
           - name: ${spring.application.name} # group name
             files: [ "config/dynamic-tp.yml" ]
+
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'   # 测试使用，线上不要用*，按需开启

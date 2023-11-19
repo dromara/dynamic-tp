@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 .flattened-pom.xml
+polaris/
 
 ### STS ###
 .apt_generated
@@ -13,7 +14,6 @@ target/
 .settings
 .springBeans
 .sts4-cache
-.flattened-pom.xml
 
 ### IntelliJ IDEA ###
 .idea

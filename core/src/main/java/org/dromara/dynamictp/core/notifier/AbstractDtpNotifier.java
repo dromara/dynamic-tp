@@ -1,8 +1,28 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dromara.dynamictp.core.notifier;
 
-import org.dromara.dynamictp.common.constant.DynamicTpConst;
+import com.google.common.base.Joiner;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
-import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
 import org.dromara.dynamictp.common.entity.AlarmInfo;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
@@ -15,24 +35,18 @@ import org.dromara.dynamictp.core.notifier.context.AlarmCtx;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
 import org.dromara.dynamictp.core.notifier.context.DtpNotifyCtxHolder;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import com.google.common.base.Joiner;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
+import org.dromara.dynamictp.core.system.SystemMetricManager;
 import org.slf4j.MDC;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
-import static org.dromara.dynamictp.common.constant.LarkNotifyConst.LARK_AT_FORMAT_OPENID;
-import static org.dromara.dynamictp.common.constant.LarkNotifyConst.LARK_AT_FORMAT_USERNAME;
-import static org.dromara.dynamictp.common.constant.LarkNotifyConst.LARK_OPENID_PREFIX;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.UNKNOWN;
 import static org.dromara.dynamictp.core.notifier.manager.NotifyHelper.getAlarmKeys;
 import static org.dromara.dynamictp.core.notifier.manager.NotifyHelper.getAllAlarmKeys;
 
@@ -47,8 +61,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
     protected Notifier notifier;
 
-    protected AbstractDtpNotifier() {
-    }
+    protected AbstractDtpNotifier() { }
 
     protected AbstractDtpNotifier(Notifier notifier) {
         this.notifier = notifier;
@@ -74,42 +87,22 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         notifier.send(notifyPlatform, content);
     }
 
-    /**
-     * Implement by subclass, get notice template.
-     *
-     * @return notice template
-     */
-    protected abstract String getNoticeTemplate();
-
-    /**
-     * Implement by subclass, get alarm template.
-     *
-     * @return alarm template
-     */
-    protected abstract String getAlarmTemplate();
-
-    /**
-     * Implement by subclass, get content color config.
-     *
-     * @return left: highlight color, right: other content color
-     */
-    protected abstract Pair<String, String> getColors();
-
     protected String buildAlarmContent(NotifyPlatform platform, NotifyItemEnum notifyItemEnum) {
         AlarmCtx context = (AlarmCtx) DtpNotifyCtxHolder.get();
         ExecutorWrapper executorWrapper = context.getExecutorWrapper();
         val executor = executorWrapper.getExecutor();
         NotifyItem notifyItem = context.getNotifyItem();
-        val alarmCounter = AlarmCounter.countStrRrq(executorWrapper.getThreadPoolName(), executor);
-
+        val statProvider = executorWrapper.getThreadPoolStatProvider();
+        val alarmValue = notifyItem.getThreshold() + notifyItemEnum.getUnit() + " / "
+                + AlarmCounter.calcCurrentValue(executorWrapper, notifyItemEnum) + notifyItemEnum.getUnit();
         String content = String.format(
                 getAlarmTemplate(),
                 CommonUtil.getInstance().getServiceName(),
                 CommonUtil.getInstance().getIp() + ":" + CommonUtil.getInstance().getPort(),
                 CommonUtil.getInstance().getEnv(),
                 populatePoolName(executorWrapper),
-                notifyItemEnum.getValue(),
-                notifyItem.getThreshold(),
+                populateAlarmItem(notifyItemEnum, executorWrapper),
+                alarmValue,
                 executor.getCorePoolSize(),
                 executor.getMaximumPoolSize(),
                 executor.getPoolSize(),
@@ -123,14 +116,15 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 executor.getQueueSize(),
                 executor.getQueueRemainingCapacity(),
                 executor.getRejectHandlerType(),
-                alarmCounter.getLeft(),
-                alarmCounter.getMiddle(),
-                alarmCounter.getRight(),
-                Optional.ofNullable(context.getAlarmInfo()).map(AlarmInfo::getLastAlarmTime).orElse(DynamicTpConst.UNKNOWN),
+                statProvider.getRejectedTaskCount(),
+                statProvider.getRunTimeoutCount(),
+                statProvider.getQueueTimeoutCount(),
+                Optional.ofNullable(context.getAlarmInfo()).map(AlarmInfo::getLastAlarmTime).orElse(UNKNOWN),
                 DateUtil.now(),
-                getReceives(platform.getPlatform(), platform.getReceivers()),
-                Optional.ofNullable(MDC.get(DynamicTpConst.TRACE_ID)).orElse(DynamicTpConst.UNKNOWN),
-                notifyItem.getInterval()
+                getReceives(notifyItem, platform),
+                getTraceInfo(),
+                notifyItem.getInterval(),
+                getExtInfo()
         );
         return highlightAlarmContent(content, notifyItemEnum);
     }
@@ -153,25 +147,36 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 executor.getQueueType(),
                 oldFields.getQueueCapacity(), executor.getQueueCapacity(),
                 oldFields.getRejectType(), executor.getRejectHandlerType(),
-                getReceives(platform.getPlatform(), platform.getReceivers()),
+                getReceives(context.getNotifyItem(), platform),
                 DateUtil.now()
         );
         return highlightNotifyContent(content, diffs);
     }
 
-    private String getReceives(String platform, String receives) {
+    protected String getTraceInfo() {
+        String tid = MDC.get(TRACE_ID);
+        if (StringUtils.isBlank(tid)) {
+            return UNKNOWN;
+        }
+        return tid;
+    }
+
+    protected String getExtInfo() {
+        return SystemMetricManager.getSystemMetric();
+    }
+
+    protected String getReceives(NotifyItem notifyItem, NotifyPlatform platform) {
+        String receives = StringUtils.isBlank(notifyItem.getReceivers()) ?
+                platform.getReceivers() : notifyItem.getReceivers();
         if (StringUtils.isBlank(receives)) {
-            return "";
+            return StringUtils.EMPTY;
         }
-        if (!NotifyPlatformEnum.LARK.name().toLowerCase().equals(platform)) {
-            String[] receivers = StringUtils.split(receives, ',');
-            return Joiner.on(", @").join(receivers);
-        }
-        return Arrays.stream(receives.split(","))
-                .map(receive -> StringUtils.startsWith(receive, LARK_OPENID_PREFIX)
-                        ? String.format(LARK_AT_FORMAT_OPENID, receive) :
-                        String.format(LARK_AT_FORMAT_USERNAME, receive))
-                .collect(Collectors.joining(" "));
+        return formatReceivers(receives);
+    }
+
+    protected String formatReceivers(String receives) {
+        String[] receivers = StringUtils.split(receives, ',');
+        return Joiner.on(", @").join(receivers);
     }
 
     protected String populatePoolName(ExecutorWrapper executorWrapper) {
@@ -179,11 +184,21 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         if (StringUtils.isBlank(poolAlisaName)) {
             return executorWrapper.getThreadPoolName();
         }
-        return executorWrapper.getThreadPoolName() + "(" + poolAlisaName + ")";
+        return executorWrapper.getThreadPoolName() + " (" + poolAlisaName + ")";
+    }
+
+    protected String populateAlarmItem(NotifyItemEnum notifyType, ExecutorWrapper executorWrapper) {
+        String suffix = StringUtils.EMPTY;
+        if (notifyType == NotifyItemEnum.RUN_TIMEOUT) {
+            suffix = " (" + executorWrapper.getThreadPoolStatProvider().getRunTimeout() + "ms)";
+        } else if (notifyType == NotifyItemEnum.QUEUE_TIMEOUT) {
+            suffix = " (" + executorWrapper.getThreadPoolStatProvider().getQueueTimeout() + "ms)";
+        }
+        return notifyType.getValue() + suffix;
     }
 
     private String highlightNotifyContent(String content, List<String> diffs) {
-        if (StringUtils.isBlank(content)) {
+        if (StringUtils.isBlank(content) || Objects.isNull(getColors())) {
             return content;
         }
 
@@ -198,7 +213,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     }
 
     private String highlightAlarmContent(String content, NotifyItemEnum notifyItemEnum) {
-        if (StringUtils.isBlank(content)) {
+        if (StringUtils.isBlank(content) || Objects.isNull(getColors())) {
             return content;
         }
 
@@ -212,4 +227,25 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         }
         return content;
     }
+
+    /**
+     * Implement by subclass, get notice template.
+     *
+     * @return notice template
+     */
+    protected abstract String getNoticeTemplate();
+
+    /**
+     * Implement by subclass, get alarm template.
+     *
+     * @return alarm template
+     */
+    protected abstract String getAlarmTemplate();
+
+    /**
+     * Implement by subclass, get content color config.
+     *
+     * @return left: highlight color, right: other content color
+     */
+    protected abstract Pair<String, String> getColors();
 }

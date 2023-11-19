@@ -15,7 +15,7 @@
         <module>starter-configcenter</module>
         <module>starter-adapter</module>
         <module>starter-extension</module>
-        <module>starter-spring-boot-adapter-3.x</module>
+        <module>starter-common</module>
     </modules>
 
     <dependencies>
@@ -27,6 +27,11 @@
         <dependency>
             <groupId>org.dromara.dynamictp</groupId>
             <artifactId>dynamic-tp-logging</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
         </dependency>
     </dependencies>
 

@@ -15,13 +15,13 @@
         <module>test-adapter</module>
         <module>test-common</module>
         <module>test-core</module>
-        <module>test-extension</module>
         <module>test-logging</module>
         <module>test-configcenter</module>
     </modules>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
+        <powermock.version>2.0.9</powermock.version>
     </properties>
 
     <dependencies>
@@ -89,6 +89,19 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <version>${powermock.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

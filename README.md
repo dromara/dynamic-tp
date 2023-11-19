@@ -1,5 +1,5 @@
 <p align="center">
-	<img alt="logo" src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9e7ecd174be74499a11dab4bca62a9d8~tplv-k3u1fbpfcp-zoom-1.image" width="50%">
+	<img alt="logo" src="resources/img/logo.png" width="50%">
 </p>
 <p align="center">
 	<strong>基于配置中心的轻量级动态线程池，内置监控告警功能，集成常用中间件线程池管理，可通过SPI自定义扩展实现</strong>
@@ -11,7 +11,7 @@
   <a href="https://github.com/dromara/dynamic-tp"><img src="https://img.shields.io/github/stars/dromara/dynamic-tp?style=flat-square&logo=github"></a>
   <a href="https://github.com/dromara/dynamic-tp/network/members"><img src="https://img.shields.io/github/forks/dromara/dynamic-tp?style=flat-square&logo=GitHub"></a>
   <a href="https://github.com/dromara/dynamic-tp/blob/master/LICENSE"><img src="https://img.shields.io/github/license/dromara/dynamic-tp.svg?style=flat-square"></a>
-  <a target="_blank" href="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/530709dc29604630b6d1537d7c160ea5~tplv-k3u1fbpfcp-watermark.image"><img src='https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ddfaed2cce2a47608fb0c0c375a10f08~tplv-k3u1fbpfcp-zoom-1.image' alt='备注加群'></a>
+  <a target="_blank" href="/resources/img/contact.jpg"><img src='resources/img/wechat.jpg' alt='备注加群'></a>
 </p>
 
 <p align="center">
@@ -82,11 +82,11 @@ protected void afterExecute(Runnable r, Throwable t);
 >
 > 3. 定时采集线程池指标数据，配合像 Grafana 这种可视化监控平台做大盘监控
 
-**经过多个版本的迭代，目前最新版本 v1.1.2 具有以下特性** ✅
+**经过多个版本的迭代，目前最新版本 v1.1.4 具有以下特性** ✅
 
 - **代码零侵入**：我们改变了线程池以往的使用姿势，所有配置均放在配置中心，服务启动时会从配置中心拉取配置生成线程池对象放到 Spring 容器中，使用时直接从 Spring 容器中获取，对业务代码零侵入
 
-- **通知告警**：提供多种报警维度（配置变更通知、活性报警、容量阈值报警、拒绝触发报警、任务执行或等待超时报警），已支持企业微信、钉钉、飞书、邮件报警，同时提供 SPI 接口可自定义扩展实现
+- **通知告警**：提供多种报警维度（配置变更通知、活性报警、容量阈值报警、拒绝触发报警、任务执行或等待超时报警），已支持企业微信、钉钉、飞书、邮件、云之家报警，同时提供 SPI 接口可自定义扩展实现
 
 - **运行监控**：定时采集线程池指标数据，支持通过 MicroMeter、JsonLog 日志输出、Endpoint 三种方式，可通过 SPI 接口自定义扩展实现
 
@@ -98,9 +98,9 @@ protected void afterExecute(Runnable r, Throwable t);
 
 - **轻量简单**：基于 SpringBoot 实现，引入 starter，接入只需简单 4 步就可完成，顺利 3 分钟搞定
 
-- **多模式**：参考 Tomcat 线程池提供了 IO 密集型场景使用的 EagerDtpExecutor 线程池
+- **多模式**：提供了增强线程池 DtpExecutor，IO 密集型场景使用的线程池 EagerDtpExecutor，调度线程池 ScheduledDtpExecutor，有序线程池 OrderedDtpExecutor，可以根据业务场景选择合适的线程池
 
-- **兼容性**：JUC 普通线程池和 Spring 中的 ThreadPoolTaskExecutor 也可以被框架监控，@Bean 定义时加 @DynamicTp 注解即可
+- **兼容性**：JUC 普通线程池和 Spring 中的 ThreadPoolTaskExecutor 也可以被框架管理，@Bean 定义时加 @DynamicTp 注解即可
 
 - **可靠性**：框架提供的线程池实现 Spring 生命周期方法，可以在 Spring 容器关闭前尽可能多的处理队列中的任务
 
@@ -124,7 +124,7 @@ protected void afterExecute(Runnable r, Throwable t);
 >
 > 5. 三方组件线程池管理模块
 
-![技术架构](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/38e4bf71d2c84b7ba67d7059b5432a7e~tplv-k3u1fbpfcp-zoom-1.image)
+![技术架构](resources/img/arch.jpg)
 
 详细查看官网文档，[架构设计](https://dynamictp.cn/guide/introduction/architecture.html)
 
@@ -150,11 +150,11 @@ protected void afterExecute(Runnable r, Throwable t);
 
 - 触发报警阈值会推送相应报警消息（活性、容量、拒绝、任务等待超时、任务执行超时），且会高亮显示相应字段
 
-<img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d65151e3e9ca460eac18f30ea6be05d3~tplv-k3u1fbpfcp-zoom-1.image" alt="告警" width="50%" />
+<img src="resources/img/alarm.jpg" alt="告警" width="50%" />
 
 - 配置变更会推送通知消息，且会高亮变更的字段
 
-<img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/30093a6ede914887bb5566139352fb8b~tplv-k3u1fbpfcp-zoom-1.image" alt="变更通知" width="50%" />
+<img src="resources/img/notice.jpg" alt="变更通知" width="50%" />
 
 更多见官网文档，[通知报警](https://dynamictp.cn/guide/notice/alarm.html)
 
@@ -162,7 +162,9 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ## 监控
 
-![监控数据](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ec5a7d1a31e7418ba5d9a101a5c03826~tplv-k3u1fbpfcp-zoom-1.image)
+![监控数据1](resources/img/monitor1.jpg)
+![监控数据2](resources/img/monitor2.jpg)
+![监控数据3](resources/img/monitor3.jpg)
 
 目前框架提供了四种监控数据采集方式，通过 collectorTypes 属性配置监控指标采集类型，默认 Micrometer
 
@@ -186,7 +188,7 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ## 知识星球
 
-![](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/894a4e918ff14c13b4a66d3f30f7ff7e~tplv-k3u1fbpfcp-zoom-1.image)
+![](/resources/img/zsxq.jpg)
 
 ---
 
@@ -200,11 +202,11 @@ protected void afterExecute(Runnable r, Throwable t);
 
 看到这儿，**请给项目一个 star**，你的支持是我们前进的动力！
 
-使用过程中有任何问题，或者对项目有什么想法或者建议，可以加入社群，跟 700+ 群友一起交流讨论。
+使用过程中有任何问题，或者对项目有什么想法或者建议，可以加入社群，跟 1000+ 群友一起交流讨论。
 
 微信群已满 200 人，可以关注微信公众号，加我个人微信拉群（备注：dynamic-tp）。
 
-![](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/530709dc29604630b6d1537d7c160ea5~tplv-k3u1fbpfcp-watermark.image)
+![](resources/img/contact.jpg)
 
 为了项目更好的发展，请在此进行登记，[使用登记](https://dynamictp.cn/guide/other/users.html)
 

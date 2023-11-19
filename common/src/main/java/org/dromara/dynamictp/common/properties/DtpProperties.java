@@ -1,14 +1,29 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dromara.dynamictp.common.properties;
 
-import org.dromara.dynamictp.common.constant.DynamicTpConst;
-import org.dromara.dynamictp.common.entity.DtpExecutorProps;
-import org.dromara.dynamictp.common.entity.NotifyPlatform;
-import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.em.CollectorTypeEnum;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.dromara.dynamictp.common.entity.DtpExecutorProps;
+import org.dromara.dynamictp.common.entity.NotifyPlatform;
+import org.dromara.dynamictp.common.entity.TpExecutorProps;
 
 import java.util.List;
 
@@ -20,8 +35,9 @@ import java.util.List;
  **/
 @Slf4j
 @Data
-@ConfigurationProperties(prefix = DynamicTpConst.MAIN_PROPERTIES_PREFIX)
 public class DtpProperties {
+
+    private DtpProperties() { }
 
     /**
      * If enabled DynamicTp.
@@ -36,7 +52,7 @@ public class DtpProperties {
     /**
      * Config file type.
      */
-    private String configType = "yml";
+    private String configType;
 
     /**
      * If enabled metrics collect.
@@ -152,6 +168,10 @@ public class DtpProperties {
      * Rabbitmq thread pools.
      */
     private List<TpExecutorProps> rabbitmqTp;
+    
+    public static DtpProperties getInstance() {
+        return Holder.INSTANCE;
+    }
 
     @Data
     public static class Nacos {
@@ -202,5 +222,9 @@ public class DtpProperties {
         private String authority = "ssl";
 
         private String key;
+    }
+    
+    private static class Holder {
+        private static final DtpProperties INSTANCE = new DtpProperties();
     }
 }

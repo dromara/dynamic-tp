@@ -1,23 +1,41 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dromara.dynamictp.core.support;
 
 import com.alibaba.ttl.TtlRunnable;
 import com.alibaba.ttl.threadpool.TtlExecutors;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.constant.DynamicTpConst;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.em.QueueTypeEnum;
 import org.dromara.dynamictp.common.em.RejectedTypeEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.queue.VariableLinkedBlockingQueue;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
+import org.dromara.dynamictp.core.executor.NamedThreadFactory;
+import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
+import org.dromara.dynamictp.core.executor.ScheduledDtpExecutor;
+import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
+import org.dromara.dynamictp.core.executor.eager.TaskQueue;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
-import org.dromara.dynamictp.core.thread.DtpExecutor;
-import org.dromara.dynamictp.core.thread.EagerDtpExecutor;
-import org.dromara.dynamictp.core.thread.NamedThreadFactory;
-import org.dromara.dynamictp.core.thread.OrderedDtpExecutor;
-import org.dromara.dynamictp.core.thread.ScheduledDtpExecutor;
-import com.google.common.collect.Lists;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 import java.util.List;
@@ -169,8 +187,7 @@ public class ThreadPoolBuilder {
      */
     private boolean notifyEnabled = true;
 
-    private ThreadPoolBuilder() {
-    }
+    private ThreadPoolBuilder() { }
 
     public static ThreadPoolBuilder newBuilder() {
         return new ThreadPoolBuilder();

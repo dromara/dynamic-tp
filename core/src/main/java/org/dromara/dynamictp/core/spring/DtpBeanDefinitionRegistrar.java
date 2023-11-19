@@ -1,18 +1,36 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dromara.dynamictp.core.spring;
 
-import org.dromara.dynamictp.common.entity.DtpExecutorProps;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.util.BeanUtil;
-import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
-import org.dromara.dynamictp.core.support.ExecutorType;
-import org.dromara.dynamictp.core.support.TaskQueue;
-import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
-import org.dromara.dynamictp.core.thread.EagerDtpExecutor;
-import org.dromara.dynamictp.core.thread.NamedThreadFactory;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
+import org.dromara.dynamictp.common.entity.DtpExecutorProps;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.spring.SpringBeanHelper;
+import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
+import org.dromara.dynamictp.core.executor.NamedThreadFactory;
+import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
+import org.dromara.dynamictp.core.support.BinderHelper;
+import org.dromara.dynamictp.core.executor.ExecutorType;
+import org.dromara.dynamictp.core.executor.eager.TaskQueue;
+import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -24,9 +42,11 @@ import java.util.concurrent.BlockingQueue;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.ALLOW_CORE_THREAD_TIMEOUT;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.AWAIT_TERMINATION_SECONDS;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.AWARE_NAMES;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.NOTIFY_ENABLED;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.NOTIFY_ITEMS;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PLATFORM_IDS;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.PLUGIN_NAMES;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PRE_START_ALL_CORE_THREADS;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.QUEUE_TIMEOUT;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.REJECT_ENHANCED;
@@ -57,8 +77,8 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        DtpProperties dtpProperties = new DtpProperties();
-        PropertiesBinder.bindDtpProperties(environment, dtpProperties);
+        DtpProperties dtpProperties = DtpProperties.getInstance();
+        BinderHelper.bindDtpProperties(environment, dtpProperties);
         val executors = dtpProperties.getExecutors();
         if (CollectionUtils.isEmpty(executors)) {
             log.warn("DynamicTp registrar, no executors are configured.");
@@ -69,7 +89,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
             Class<?> executorTypeClass = ExecutorType.getClass(e.getExecutorType());
             Map<String, Object> propertyValues = buildPropertyValues(e);
             Object[] args = buildConstructorArgs(executorTypeClass, e);
-            BeanUtil.registerIfAbsent(registry, e.getThreadPoolName(), executorTypeClass, propertyValues, args);
+            SpringBeanHelper.register(registry, e.getThreadPoolName(), executorTypeClass, propertyValues, args);
         });
     }
 
@@ -85,7 +105,6 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         propertyValues.put(REJECT_ENHANCED, props.isRejectEnhanced());
         propertyValues.put(RUN_TIMEOUT, props.getRunTimeout());
         propertyValues.put(QUEUE_TIMEOUT, props.getQueueTimeout());
-
         val notifyItems = mergeAllNotifyItems(props.getNotifyItems());
         propertyValues.put(NOTIFY_ITEMS, notifyItems);
         propertyValues.put(PLATFORM_IDS, props.getPlatformIds());
@@ -93,7 +112,8 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
 
         val taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
         propertyValues.put(TASK_WRAPPERS, taskWrappers);
-
+        propertyValues.put(PLUGIN_NAMES, props.getPluginNames());
+        propertyValues.put(AWARE_NAMES, props.getAwareNames());
         return propertyValues;
     }
 

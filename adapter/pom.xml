@@ -13,7 +13,6 @@
 
     <modules>
         <module>adapter-common</module>
-        <module>adapter-webserver</module>
         <module>adapter-dubbo</module>
         <module>adapter-rocketmq</module>
         <module>adapter-hystrix</module>

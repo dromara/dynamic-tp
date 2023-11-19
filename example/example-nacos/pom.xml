@@ -56,6 +56,17 @@
             <artifactId>dynamic-tp-spring-boot-starter-nacos</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>org.dromara.dynamictp</groupId>
+            <artifactId>dynamic-tp-spring-boot-starter-adapter-webserver</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

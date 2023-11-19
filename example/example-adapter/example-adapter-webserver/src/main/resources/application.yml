@@ -1,0 +1,128 @@
+server:
+  port: 9101
+
+spring:
+  application:
+    name: dynamic-tp-adapter-webserver-demo
+  profiles:
+    active: dev
+
+  dynamic:
+    tp:
+      enabled: true
+      enabledBanner: true           # 是否开启banner打印，默认true
+      enabledCollect: true          # 是否开启监控指标采集，默认false
+      collectorTypes: logging,micrometer       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+      monitorInterval: 5
+      platforms:                    # 通知报警平台配置
+        - platform: wechat
+          urlKey: 32d7bf40-1353-4859              # 替换
+          receivers: test1,test2                   # 接受人企微名称
+        - platform: ding
+          urlKey: a05f38f61fdc748df55957c        # 替换
+          secret: SEC0e93872f969493536           # 替换，非sign模式可以没有此值
+          receivers: 15810119805                   # 钉钉账号手机号
+        - platform: lark
+          urlKey: 0d944ae7-b24a-40                 # 替换
+          receivers: test1,test2                   # 接受人飞书名称/openid
+      executors: # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
+        - threadPoolName: testExecutor
+          threadPoolAliasName: 测试线程池             # 线程池别名
+          executorType: scheduled                     # 线程池类型common、eager：适用于io密集型
+          corePoolSize: 6
+          maximumPoolSize: 8
+          queueCapacity: 100
+          queueType: LinkedBlockingQueue   # 任务队列，查看源码QueueTypeEnum枚举类
+          rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
+          keepAliveTime: 50
+          allowCoreThreadTimeOut: true                  # 是否允许核心线程池超时
+          threadNamePrefix: test                         # 线程名前缀
+          waitForTasksToCompleteOnShutdown: false        # 参考spring线程池设计，优雅关闭线程池
+          awaitTerminationSeconds: 5                     # 单位（s）
+          preStartAllCoreThreads: false                  # 是否预热所有核心线程，默认false
+          runTimeout: 200                                # 任务执行超时阈值，目前只做告警用，单位（ms）
+          queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
+          taskWrapperNames: [ "swTrace","mdc" ]
+          notifyItems: # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警、拒绝报警、任务超时报警）
+            - type: run_timeout               # 报警项类型，查看源码 NotifyTypeEnum枚举类
+              enabled: true
+              threshold: 1                # 报警阈值
+              platforms: [ ding ]     # 可选配置，不配置默认拿上层platforms配置的所以平台
+              interval: 5                # 报警间隔（单位：s）
+      tomcatTp:                                    # tomcat webserver 线程池配置
+        corePoolSize: 1
+        maximumPoolSize: 1
+        keepAliveTime: 60
+        runTimeout: 200
+        queueTimeout: 100
+        taskWrapperNames: ["swTrace"]
+        notifyItems: # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警）
+          - type: run_timeout                       # 报警项类型，查看源码 NotifyTypeEnum枚举类
+            enabled: true
+            threshold: 1                        # 报警阈值
+            platforms: [ding]             # 可选配置，不配置默认拿上层platforms配置的所以平台
+            interval: 1                        # 报警间隔（单位：s）
+          - type: queue_timeout                       # 报警项类型，查看源码 NotifyTypeEnum枚举类
+            enabled: true
+            threshold: 1                        # 报警阈值
+            platforms: [ding]             # 可选配置，不配置默认拿上层platforms配置的所以平台
+            interval: 1                        # 报警间隔（单位：s）
+          - type: reject
+            enabled: true
+            threshold: 1
+            platforms: [ding]             # 可选配置，不配置默认拿上层platforms配置的所以平台
+            interval: 1                        # 报警间隔（单位：s）
+      jettyTp:                                    # jetty webserver 线程池配置
+        corePoolSize: 1
+        maximumPoolSize: 8
+        keepAliveTime: 60
+        runTimeout: 200
+        queueTimeout: 1000
+        taskWrapperNames: ["swTrace"]
+        notifyItems: # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警）
+          - type: run_timeout                       # 报警项类型，查看源码 NotifyTypeEnum枚举类
+            enabled: true
+            threshold: 1                        # 报警阈值
+            platforms: [ding]             # 可选配置，不配置默认拿上层platforms配置的所以平台
+            interval: 1                        # 报警间隔（单位：s）
+          - type: queue_timeout                       # 报警项类型，查看源码 NotifyTypeEnum枚举类
+            enabled: true
+            threshold: 1                        # 报警阈值
+            platforms: [ding]             # 可选配置，不配置默认拿上层platforms配置的所以平台
+            interval: 1                        # 报警间隔（单位：s）
+          - type: reject
+            enabled: true
+            threshold: 1
+            platforms: [ding]             # 可选配置，不配置默认拿上层platforms配置的所以平台
+            interval: 1                        # 报警间隔（单位：s）
+      undertowTp: # undertow webserver 线程池配置
+        corePoolSize: 1
+        maximumPoolSize: 1
+        keepAliveTime: 60
+        runTimeout: 20
+        queueTimeout: 10
+        taskWrapperNames: ["swTrace"]
+        notifyItems: # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警）
+          - type: run_timeout                       # 报警项类型，查看源码 NotifyTypeEnum枚举类
+            enabled: true
+            threshold: 1                        # 报警阈值
+            platforms: [ding]             # 可选配置，不配置默认拿上层platforms配置的所以平台
+            interval: 120                        # 报警间隔（单位：s）
+          - type: queue_timeout                       # 报警项类型，查看源码 NotifyTypeEnum枚举类
+            enabled: true
+            threshold: 1                        # 报警阈值
+            platforms: [ding]             # 可选配置，不配置默认拿上层platforms配置的所以平台
+            interval: 120                        # 报警间隔（单位：s）
+          - type: reject
+            enabled: true
+            threshold: 1
+
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'

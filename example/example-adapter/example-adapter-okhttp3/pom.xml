@@ -29,7 +29,16 @@
         <dependency>
             <groupId>org.dromara.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-adapter-okhttp3</artifactId>
-            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dromara.dynamictp</groupId>
+            <artifactId>dynamic-tp-spring-boot-starter-adapter-webserver</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dromara.dynamictp</groupId>
+            <artifactId>dynamic-tp-extension-skywalking</artifactId>
         </dependency>
 
         <dependency>

@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dromara.dynamictp.core.support;
 
 import java.util.AbstractQueue;
@@ -194,16 +211,6 @@ public interface ExecutorAdapter<E extends Executor> extends Executor {
     }
 
     /**
-     * Get the rejected task count
-     *
-     * @return the rejected task count
-     */
-    default long getRejectedTaskCount() {
-        //default unsupported
-        return -1;
-    }
-
-    /**
      * If allow core thread time out
      *
      * @return if allow core thread time out
@@ -241,6 +248,33 @@ public interface ExecutorAdapter<E extends Executor> extends Executor {
      */
     default void setKeepAliveTime(long time, TimeUnit unit) {
         //default unsupported
+    }
+
+    /**
+     * is shutdown
+     * @return boolean
+     */
+    default boolean isShutdown() {
+        //default unsupported
+        return false;
+    }
+
+    /**
+     * is terminated
+     * @return boolean
+     */
+    default boolean isTerminated() {
+        //default unsupported
+        return false;
+    }
+
+    /**
+     * is terminating
+     * @return boolean
+     */
+    default boolean isTerminating() {
+        //default unsupported
+        return false;
     }
     
     class UnsupportedBlockingQueue extends AbstractQueue<Runnable> implements BlockingQueue<Runnable> {

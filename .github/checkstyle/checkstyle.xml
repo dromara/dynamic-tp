@@ -5,8 +5,18 @@
 
 <module name="Checker">
 
+  <!--排除不需要扫描的路径-->
+  <module name="SuppressionFilter">
+    <property name="file" value=".github/checkstyle/suppressions.xml"/>
+  </module>
+
   <!-- 检查文件是否以一个空行结束 -->
   <module name="NewlineAtEndOfFile"/>
+
+  <module name="Header">
+    <property name="headerFile" value=".github/checkstyle/license-header.txt"/>
+    <property name="fileExtensions" value="java"/>
+  </module>
 
   <!-- 文件长度不超过1500行 -->
   <module name="FileLength">
@@ -78,7 +88,7 @@
     </module>
     <!-- 方法的参数个数不超过5个。 并且不对构造方法进行检查-->
     <module name="ParameterNumber">
-      <property name="max" value="5" />
+      <property name="max" value="6" />
       <property name="ignoreOverriddenMethods" value="true"/>
       <property name="tokens" value="METHOD_DEF" />
     </module>
@@ -109,7 +119,7 @@
     <!-- 检查是否有嵌套代码块 -->
     <module name="AvoidNestedBlocks"/>
     <!-- 检查是否有空代码块 -->
-    <module name="EmptyBlock"/>
+    <!--    <module name="EmptyBlock"/>-->
     <!-- 检查左大括号位置 -->
     <module name="LeftCurly"/>
     <!-- 检查右大括号位置 -->

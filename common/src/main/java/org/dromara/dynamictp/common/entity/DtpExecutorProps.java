@@ -1,10 +1,27 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dromara.dynamictp.common.entity;
 
-import org.dromara.dynamictp.common.em.QueueTypeEnum;
-import org.dromara.dynamictp.common.em.RejectedTypeEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.dromara.dynamictp.common.em.QueueTypeEnum;
+import org.dromara.dynamictp.common.em.RejectedTypeEnum;
 
 import java.util.Set;
 
@@ -83,22 +100,12 @@ public class DtpExecutorProps extends TpExecutorProps {
     private boolean rejectEnhanced = true;
 
     /**
-     * Task execute timeout, unit (ms), just for statistics.
+     * Plugin names.
      */
-    private long runTimeout = 0;
+    private Set<String> pluginNames;
 
     /**
-     * Task queue wait timeout, unit (ms), just for statistics.
-     */
-    private long queueTimeout = 0;
-
-    /**
-     * Task wrapper names.
-     */
-    private Set<String> taskWrapperNames;
-
-    /**
-     * 检查核心参数
+     * check core param is inValid
      *
      * @return boolean return true means params is inValid
      */

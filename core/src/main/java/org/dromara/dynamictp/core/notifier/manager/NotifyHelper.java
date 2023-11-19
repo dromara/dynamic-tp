@@ -1,21 +1,38 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dromara.dynamictp.core.notifier.manager;
 
-import org.dromara.dynamictp.common.ApplicationContextHolder;
-import org.dromara.dynamictp.common.em.NotifyItemEnum;
-import org.dromara.dynamictp.common.entity.DtpExecutorProps;
-import org.dromara.dynamictp.common.entity.NotifyItem;
-import org.dromara.dynamictp.common.entity.NotifyPlatform;
-import org.dromara.dynamictp.common.entity.TpExecutorProps;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.util.StreamUtil;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.thread.DtpExecutor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
+import org.dromara.dynamictp.common.em.NotifyItemEnum;
+import org.dromara.dynamictp.common.entity.DtpExecutorProps;
+import org.dromara.dynamictp.common.entity.NotifyItem;
+import org.dromara.dynamictp.common.entity.NotifyPlatform;
+import org.dromara.dynamictp.common.entity.TpExecutorProps;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
+import org.dromara.dynamictp.common.util.StreamUtil;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -32,7 +49,6 @@ import static org.dromara.dynamictp.common.em.NotifyItemEnum.QUEUE_TIMEOUT;
 import static org.dromara.dynamictp.common.em.NotifyItemEnum.REJECT;
 import static org.dromara.dynamictp.common.em.NotifyItemEnum.RUN_TIMEOUT;
 import static org.dromara.dynamictp.common.entity.NotifyItem.mergeAllNotifyItems;
-import static org.dromara.dynamictp.common.entity.NotifyItem.mergeSimpleNotifyItems;
 
 /**
  * NotifyHelper related
@@ -43,7 +59,7 @@ import static org.dromara.dynamictp.common.entity.NotifyItem.mergeSimpleNotifyIt
 @Slf4j
 public class NotifyHelper {
 
-    private static final List<String> COMMON_ALARM_KEYS = Lists.newArrayList("alarmType", "threshold");
+    private static final List<String> COMMON_ALARM_KEYS = Lists.newArrayList("alarmType", "alarmValue");
 
     private static final Set<String> LIVENESS_ALARM_KEYS = Sets.newHashSet(
             "corePoolSize", "maximumPoolSize", "poolSize", "activeCount");
@@ -148,7 +164,7 @@ public class NotifyHelper {
                                         TpExecutorProps props,
                                         List<NotifyPlatform> platforms) {
         // update notify items
-        val allNotifyItems = mergeSimpleNotifyItems(props.getNotifyItems());
+        val allNotifyItems = mergeAllNotifyItems(props.getNotifyItems());
         refreshNotify(executorWrapper.getThreadPoolName(),
                 props.getPlatformIds(),
                 platforms,

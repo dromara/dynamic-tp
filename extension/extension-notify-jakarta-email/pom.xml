@@ -21,6 +21,7 @@
             <artifactId>spring-context-support</artifactId>
             <version>${spring.version}</version>
             <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -28,6 +29,7 @@
             <artifactId>jakarta.mail</artifactId>
             <version>${jakarta.mail.version}</version>
             <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

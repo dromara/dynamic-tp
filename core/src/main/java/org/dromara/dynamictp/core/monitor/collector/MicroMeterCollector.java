@@ -113,9 +113,8 @@ public class MicroMeterCollector extends AbstractCollector {
         List<Tag> tags = new ArrayList<>(3);
         tags.add(Tag.of(POOL_NAME_TAG, poolStats.getPoolName()));
         tags.add(Tag.of(APP_NAME_TAG, CommonUtil.getInstance().getServiceName()));
-        if (StringUtils.isNotBlank(poolStats.getPoolAliasName())) {
-            tags.add(Tag.of(POOL_ALIAS_TAG, poolStats.getPoolAliasName()));
-        }
+        // https://github.com/dromara/dynamic-tp/issues/359
+        tags.add(Tag.of(POOL_ALIAS_TAG, Optional.ofNullable(poolStats.getPoolAliasName()).orElse(poolStats.getPoolName())));
         return tags;
     }
 }

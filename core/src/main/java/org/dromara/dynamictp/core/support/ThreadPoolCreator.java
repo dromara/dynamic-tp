@@ -17,11 +17,15 @@
 
 package org.dromara.dynamictp.core.support;
 
-import org.dromara.dynamictp.common.em.QueueTypeEnum;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
+import org.dromara.dynamictp.core.executor.ScheduledDtpExecutor;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
+
+import static org.dromara.dynamictp.common.em.QueueTypeEnum.SYNCHRONOUS_QUEUE;
+import static org.dromara.dynamictp.common.em.QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE;
 
 /**
  * Offer a fast dtp creator, use only in simple scenario.
@@ -34,6 +38,12 @@ public class ThreadPoolCreator {
 
     private ThreadPoolCreator() { }
 
+    /**
+     * Create a juc thread pool, use default values.
+     *
+     * @param threadPrefix thread prefix
+     * @return the new thread pool
+     */
     public static ThreadPoolExecutor createCommonFast(String threadPrefix) {
         return ThreadPoolBuilder.newBuilder()
                 .threadFactory(threadPrefix)
@@ -47,6 +57,12 @@ public class ThreadPoolCreator {
                 .buildWithTtl();
     }
 
+    /**
+     * Create a dynamic thread pool, use default values.
+     *
+     * @param poolName thread pool name
+     * @return the new thread pool
+     */
     public static DtpExecutor createDynamicFast(String poolName) {
         return createDynamicFast(poolName, poolName);
     }
@@ -73,22 +89,16 @@ public class ThreadPoolCreator {
         return newFixedThreadPool(threadPrefix, 1, queueCapacity);
     }
 
-    public static ThreadPoolExecutor newFixedThreadPool(String threadPrefix, int poolSize, int queueCapacity) {
+    public static ThreadPoolExecutor newFixedThreadPool(String threadPrefix,
+                                                        int poolSize,
+                                                        int queueCapacity) {
         return ThreadPoolBuilder.newBuilder()
                 .corePoolSize(poolSize)
                 .maximumPoolSize(poolSize)
-                .workQueue(QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE.getName(), queueCapacity, null)
+                .keepAliveTime(0L)
+                .workQueue(VARIABLE_LINKED_BLOCKING_QUEUE.getName(), queueCapacity, null)
                 .threadFactory(threadPrefix)
-                .buildDynamic();
-    }
-
-    public static ExecutorService newCachedThreadPool(String threadPrefix, int maximumPoolSize) {
-        return ThreadPoolBuilder.newBuilder()
-                .corePoolSize(0)
-                .maximumPoolSize(maximumPoolSize)
-                .workQueue(QueueTypeEnum.SYNCHRONOUS_QUEUE.getName(), null, null)
-                .threadFactory(threadPrefix)
-                .buildDynamic();
+                .buildCommon();
     }
 
     public static ThreadPoolExecutor newThreadPool(String threadPrefix, int corePoolSize,
@@ -96,9 +106,17 @@ public class ThreadPoolCreator {
         return ThreadPoolBuilder.newBuilder()
                 .corePoolSize(corePoolSize)
                 .maximumPoolSize(maximumPoolSize)
-                .workQueue(QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE.getName(), queueCapacity, null)
+                .workQueue(VARIABLE_LINKED_BLOCKING_QUEUE.getName(), queueCapacity, null)
                 .threadFactory(threadPrefix)
-                .buildDynamic();
+                .buildCommon();
+    }
+
+    public static ScheduledExecutorService newScheduledThreadPool(String threadPrefix, int corePoolSize) {
+        return (ScheduledDtpExecutor) ThreadPoolBuilder.newBuilder()
+                .corePoolSize(corePoolSize)
+                .threadFactory(threadPrefix)
+                .scheduled(true)
+                .buildCommon();
     }
 
     /**
@@ -118,6 +136,6 @@ public class ThreadPoolCreator {
         return ThreadPoolBuilder.newBuilder()
                 .corePoolSize(poolSize)
                 .maximumPoolSize(poolSize)
-                .buildDynamic();
+                .buildCommon();
     }
 }

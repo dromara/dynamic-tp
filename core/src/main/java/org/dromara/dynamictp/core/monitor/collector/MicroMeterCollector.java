@@ -20,8 +20,8 @@ package org.dromara.dynamictp.core.monitor.collector;
 import cn.hutool.core.bean.BeanUtil;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tag;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.em.CollectorTypeEnum;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 import org.dromara.dynamictp.common.util.CommonUtil;
@@ -113,9 +113,8 @@ public class MicroMeterCollector extends AbstractCollector {
         List<Tag> tags = new ArrayList<>(3);
         tags.add(Tag.of(POOL_NAME_TAG, poolStats.getPoolName()));
         tags.add(Tag.of(APP_NAME_TAG, CommonUtil.getInstance().getServiceName()));
-        if (StringUtils.isNotBlank(poolStats.getPoolAliasName())) {
-            tags.add(Tag.of(POOL_ALIAS_TAG, poolStats.getPoolAliasName()));
-        }
+        // https://github.com/dromara/dynamic-tp/issues/359
+        tags.add(Tag.of(POOL_ALIAS_TAG, Optional.ofNullable(poolStats.getPoolAliasName()).orElse(poolStats.getPoolName())));
         return tags;
     }
 }

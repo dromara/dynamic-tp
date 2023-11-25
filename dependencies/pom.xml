@@ -13,16 +13,22 @@
 
     <properties>
         <revision>1.1.5</revision>
-        <hutool.version>5.8.22</hutool.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <lombok.version>1.18.24</lombok.version>
         <slf4j.version>1.7.36</slf4j.version>
         <logback.version>1.2.10</logback.version>
         <log4j.version>2.17.1</log4j.version>
-        <native-lib-loader.version>2.0.2</native-lib-loader.version>
+
+        <hutool.version>5.8.22</hutool.version>
         <guava.version>31.1-jre</guava.version>
         <jackson-core.version>2.13.4</jackson-core.version>
         <jackson-databind.version>2.13.4</jackson-databind.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <gson.version>2.8.9</gson.version>
+        <fastjson.version>1.2.83</fastjson.version>
+        <ttl.version>2.14.3</ttl.version>
+        <equator.version>1.0.4</equator.version>
+
         <sofa-rpc.version>5.9.1</sofa-rpc.version>
         <brpc.version>2022.2.0</brpc.version>
         <apache-dubbo.version>3.0.7</apache-dubbo.version>
@@ -38,24 +44,23 @@
         <aliyun-rocketmq.version>1.8.8.8.Final</aliyun-rocketmq.version>
         <tars.version>1.7.2</tars.version>
         <skywalking.version>8.11.0</skywalking.version>
+        <opentelemetry.version>1.25.0</opentelemetry.version>
+
         <apollo.version>1.5.0</apollo.version>
         <nacos-api.version>2.0.4</nacos-api.version>
         <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>
         <spring-cloud-tencent.version>1.12.4-2021.0.8</spring-cloud-tencent.version>
         <spring-cloud-huawei.version>1.10.11-2021.0.x</spring-cloud-huawei.version>
         <zookeeper.version>5.2.1</zookeeper.version>
+
         <maven-flatten.version>1.3.0</maven-flatten.version>
-        <jmh.version>1.35</jmh.version>
-        <gson.version>2.8.9</gson.version>
-        <fastjson.version>1.2.83</fastjson.version>
-        <opentelemetry.version>1.25.0</opentelemetry.version>
         <maven-source-plugin.version>2.4</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
-        <maven-flatten.version>1.3.0</maven-flatten.version>
-        <ttl.version>2.14.3</ttl.version>
-        <equator.version>1.0.4</equator.version>
+
         <dropwizard-metrics.version>4.2.20</dropwizard-metrics.version>
+        <jmh.version>1.35</jmh.version>
+        <native-lib-loader.version>2.0.2</native-lib-loader.version>
     </properties>
 
     <dependencyManagement>

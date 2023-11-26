@@ -43,6 +43,7 @@ import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -504,6 +505,12 @@ public class ThreadPoolBuilder {
      * @return the newly created ThreadPoolExecutor instance
      */
     private ThreadPoolExecutor buildCommonExecutor(ThreadPoolBuilder builder) {
+        if (scheduled) {
+            return new ScheduledThreadPoolExecutor(
+                    builder.corePoolSize,
+                    builder.threadFactory,
+                    builder.rejectedExecutionHandler);
+        }
         ThreadPoolExecutor executor = new ThreadPoolExecutor(
                 builder.corePoolSize,
                 builder.maximumPoolSize,

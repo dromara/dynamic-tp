@@ -21,8 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,12 +35,14 @@ import java.util.concurrent.ThreadPoolExecutor;
 @SuppressWarnings("all")
 public class TestController {
 
-    @Autowired
-    @Qualifier("dtpExecutor1")
     private ThreadPoolExecutor dtpExecutor1;
 
-    @Autowired
     private DtpProperties dtpProperties;
+
+    public TestController(ThreadPoolExecutor dtpExecutor1, DtpProperties dtpProperties) {
+        this.dtpExecutor1 = dtpExecutor1;
+        this.dtpProperties = dtpProperties;
+    }
 
     @GetMapping("/index")
     public String index() throws InterruptedException {

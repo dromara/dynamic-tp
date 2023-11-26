@@ -10,26 +10,15 @@
     </parent>
     <artifactId>dynamic-tp-extension-notify-jakarta-email</artifactId>
 
-    <properties>
-        <spring.version>6.0.7</spring.version>
-        <jakarta.mail.version>1.0.0</jakarta.mail.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
-            <version>${spring.version}</version>
-            <optional>true</optional>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.eclipse.angus</groupId>
             <artifactId>jakarta.mail</artifactId>
-            <version>${jakarta.mail.version}</version>
-            <optional>true</optional>
-            <scope>provided</scope>
         </dependency>
 
         <dependency>

@@ -11,10 +11,6 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>dynamic-tp-spring-boot-starter-extension-notify-email-3.x</artifactId>
 
-    <properties>
-        <spring.version>6.0.7</spring.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.dromara.dynamictp</groupId>
@@ -22,10 +18,13 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-            <version>${spring.version}</version>
-            <optional>true</optional>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
     </dependencies>
 

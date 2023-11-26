@@ -10,15 +10,23 @@
     </parent>
     <artifactId>dynamic-tp-extension-notify-email</artifactId>
 
+    <properties>
+        <spring.version>5.3.30</spring.version>
+        <javax.mail.version>1.4</javax.mail.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
+            <version>${spring.version}</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.sun.mail/jakarta.mail -->
         <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>jakarta.mail</artifactId>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${javax.mail.version}</version>
         </dependency>
 
         <dependency>

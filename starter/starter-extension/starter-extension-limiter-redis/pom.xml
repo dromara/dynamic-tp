@@ -15,6 +15,11 @@
             <groupId>org.dromara.dynamictp</groupId>
             <artifactId>dynamic-tp-extension-limiter-redis</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

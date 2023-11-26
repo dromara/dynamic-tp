@@ -18,10 +18,9 @@
 package org.dromara.dynamictp.logging.logback;
 
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.util.ContextInitializer;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.logging.AbstractDtpLogging;
 import org.dromara.dynamictp.logging.LogHelper;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * DtpLogbackLogging related
@@ -40,7 +39,7 @@ public class DtpLogbackLogging extends AbstractDtpLogging {
     public void loadConfiguration() {
         try {
             loggerContext = new LoggerContext();
-            new ContextInitializer(loggerContext).configureByResource(getResourceUrl(LOGBACK_LOCATION));
+//            new ContextInitializer(loggerContext).configureByResource(getResourceUrl(LOGBACK_LOCATION));
         } catch (Exception e) {
             log.error("Cannot initialize dtp logback logging.");
         }

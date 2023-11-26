@@ -17,12 +17,12 @@
 
 package org.dromara.dynamictp.extension.limiter.redis.ratelimiter;
 
-import org.dromara.dynamictp.common.pattern.filter.Invoker;
-import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
-import org.dromara.dynamictp.core.notifier.chain.filter.NotifyFilter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
+import org.dromara.dynamictp.common.pattern.filter.Invoker;
+import org.dromara.dynamictp.core.notifier.chain.filter.NotifyFilter;
+import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
 
 import java.util.List;
 
@@ -59,14 +59,19 @@ public class NotifyRedisRateLimiterFilter implements NotifyFilter {
     }
 
     private boolean check(String notifyName, int limit, long interval) {
-        val res = redisScriptRateLimiter.isAllowed(notifyName, interval, limit);
-        if (CollectionUtils.isEmpty(res)) {
+        try {
+            val res = redisScriptRateLimiter.isAllowed(notifyName, interval, limit);
+            if (CollectionUtils.isEmpty(res)) {
+                return true;
+            }
+            if (res.get(LUA_RES_REMAIN_INDEX) <= 0) {
+                log.debug("DynamicTp notify, trigger redis rate limit, limitKey:{}", res.get(0));
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            log.error("DynamicTp notify, redis rate limit check failed, limitKey:{}", notifyName, e);
             return true;
         }
-        if (res.get(LUA_RES_REMAIN_INDEX) <= 0) {
-            log.debug("DynamicTp notify trigger rate limit, limitKey:{}", res.get(0));
-            return false;
-        }
-        return true;
     }
 }

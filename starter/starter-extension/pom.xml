@@ -15,7 +15,6 @@
     <modules>
         <module>starter-extension-limiter-redis</module>
         <module>starter-extension-notify-email</module>
-        <module>starter-extension-notify-email-3.x</module>
         <module>starter-extension-notify-yunzhijia</module>
     </modules>
 

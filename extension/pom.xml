@@ -15,7 +15,6 @@
         <module>extension-skywalking</module>
         <module>extension-limiter-redis</module>
         <module>extension-notify-email</module>
-        <module>extension-notify-jakarta-email</module>
         <module>extension-opentelemetry</module>
         <module>extension-notify-yunzhijia</module>
     </modules>

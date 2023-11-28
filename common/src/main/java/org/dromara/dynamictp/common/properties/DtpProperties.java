@@ -80,11 +80,6 @@ public class DtpProperties {
     private List<NotifyPlatform> platforms;
 
     /**
-     * Nacos config.
-     */
-    private Nacos nacos;
-
-    /**
      * Apollo config.
      */
     private Apollo apollo;

@@ -34,13 +34,13 @@ import org.springframework.context.annotation.Configuration;
  * @since 1.0.0
  **/
 @Configuration
+@ConditionalOnClass(NacosConfigProperties.class)
 @ConditionalOnBean({DtpBaseBeanConfiguration.class})
 @AutoConfigureAfter({DtpBaseBeanConfiguration.class})
 public class DtpNacosAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean()
-    @ConditionalOnClass(NacosConfigProperties.class)
     public NacosRefresher nacosRefresher() {
         return new NacosRefresher();
     }

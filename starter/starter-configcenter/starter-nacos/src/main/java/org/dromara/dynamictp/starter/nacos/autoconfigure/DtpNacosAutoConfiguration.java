@@ -17,10 +17,12 @@
 
 package org.dromara.dynamictp.starter.nacos.autoconfigure;
 
+import com.alibaba.boot.nacos.config.properties.NacosConfigProperties;
 import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
 import org.dromara.dynamictp.starter.nacos.refresher.NacosRefresher;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,6 +40,7 @@ public class DtpNacosAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean()
+    @ConditionalOnClass(NacosConfigProperties.class)
     public NacosRefresher nacosRefresher() {
         return new NacosRefresher();
     }

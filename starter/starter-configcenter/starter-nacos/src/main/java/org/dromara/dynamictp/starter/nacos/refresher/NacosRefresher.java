@@ -23,7 +23,6 @@ import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.SmartApplicationListener;
 
-
 /**
  * NacosRefresher related
  *

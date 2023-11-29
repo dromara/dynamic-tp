@@ -14,6 +14,7 @@
         <dependency>
             <groupId>com.alibaba.boot</groupId>
             <artifactId>nacos-config-spring-boot-starter</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

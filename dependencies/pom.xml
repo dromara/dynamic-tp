@@ -50,8 +50,11 @@
 
         <apollo.version>1.5.0</apollo.version>
         <nacos-api.version>2.0.4</nacos-api.version>
+
         <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
         <spring-cloud-tencent.version>1.12.4-2022.0.4</spring-cloud-tencent.version>
+        <spring-boot-nacos.version>0.2.12</spring-boot-nacos.version>
+
         <spring-cloud-huawei.version>1.10.11-2021.0.x</spring-cloud-huawei.version>
         <zookeeper.version>5.2.1</zookeeper.version>
 
@@ -280,6 +283,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.alibaba.boot</groupId>
+                <artifactId>nacos-config-spring-boot-starter</artifactId>
+                <version>${spring-boot-nacos.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
                 <version>${spring-cloud-alibaba.version}</version>
@@ -427,12 +436,6 @@
             <dependency>
                 <groupId>org.dromara.dynamictp</groupId>
                 <artifactId>dynamic-tp-extension-notify-email</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.dromara.dynamictp</groupId>
-                <artifactId>dynamic-tp-extension-notify-jakarta-email</artifactId>
                 <version>${revision}</version>
             </dependency>
 

@@ -18,6 +18,7 @@
 package org.dromara.dynamictp.core.executor;
 
 import org.dromara.dynamictp.common.em.JreEnum;
+import org.dromara.dynamictp.core.support.ScheduledThreadPoolExecutorProxy;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -58,7 +59,7 @@ public class ScheduledDtpExecutor extends DtpExecutor implements ScheduledExecut
         if (JreEnum.JAVA_8.isCurrentVersion()) {
             corePoolSize = corePoolSize == 0 ? 1 : corePoolSize;
         }
-        delegate = new ScheduledThreadPoolExecutor(corePoolSize, threadFactory, handler);
+        delegate = new ScheduledThreadPoolExecutorProxy(new ScheduledThreadPoolExecutor(corePoolSize, threadFactory, handler));
     }
 
     @Override
@@ -262,6 +263,11 @@ public class ScheduledDtpExecutor extends DtpExecutor implements ScheduledExecut
     @Override
     public long getCompletedTaskCount() {
         return delegate.getCompletedTaskCount();
+    }
+
+    @Override
+    public ScheduledThreadPoolExecutor getOriginal() {
+        return delegate;
     }
 }
 

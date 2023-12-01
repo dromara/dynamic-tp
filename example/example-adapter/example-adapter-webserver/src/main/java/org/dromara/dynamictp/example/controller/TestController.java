@@ -18,10 +18,13 @@
 package org.dromara.dynamictp.example.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.core.executor.ScheduledDtpExecutor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.annotation.Resource;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author kyao
@@ -32,18 +35,35 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class TestController {
 
     @Resource
-    private ThreadPoolExecutor testExecutor;
+    private ScheduledDtpExecutor testExecutor;
+
+    @Resource
+    private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
 
     @GetMapping("/dtp-example-adapter/testWebserver")
     public String testWebserver() throws InterruptedException {
-        testExecutor.execute(() -> {
+        testExecutor.schedule(() -> {
             try {
                 Thread.sleep((int) (Math.random() * 1000));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             log.info("success");
-        });
+        }, 1, TimeUnit.SECONDS);
+        return "success";
+    }
+
+    @GetMapping("/dtp-example-adapter/testScheduleExecutor")
+    public String testScheduleExecutor() throws InterruptedException {
+        scheduledThreadPoolExecutor.schedule(() -> {
+            try {
+                Thread.sleep((int) (Math.random() * 1000));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            log.info("success");
+        }, 1, TimeUnit.SECONDS);
+        Thread.sleep(2000);
         return "success";
     }
 }

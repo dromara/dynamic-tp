@@ -29,6 +29,7 @@ import org.dromara.dynamictp.core.executor.eager.TaskQueue;
 import org.dromara.dynamictp.core.plugin.DtpInterceptorRegistry;
 import org.dromara.dynamictp.core.support.DynamicTp;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.core.support.ScheduledThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -48,6 +49,8 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGracefulAsync;
@@ -130,7 +133,12 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
             DtpRegistry.registerExecutor(new ExecutorWrapper(poolName, proxy), REGISTER_SOURCE);
             return bean;
         }
-        val proxy = newProxy(poolName, (ThreadPoolExecutor) bean);
+        Executor proxy;
+        if (bean instanceof ScheduledThreadPoolExecutor) {
+            proxy = newScheduledTpProxy(poolName, (ScheduledThreadPoolExecutor) bean);
+        } else {
+            proxy = newProxy(poolName, (ThreadPoolExecutor) bean);
+        }
         DtpRegistry.registerExecutor(new ExecutorWrapper(poolName, proxy), REGISTER_SOURCE);
         return proxy;
     }
@@ -147,6 +155,12 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
 
     private ThreadPoolExecutorProxy newProxy(String name, ThreadPoolExecutor originExecutor) {
         val proxy = new ThreadPoolExecutorProxy(originExecutor);
+        shutdownGracefulAsync(originExecutor, name, 0);
+        return proxy;
+    }
+
+    private ScheduledThreadPoolExecutorProxy newScheduledTpProxy(String name, ScheduledThreadPoolExecutor originExecutor) {
+        val proxy = new ScheduledThreadPoolExecutorProxy(originExecutor);
         shutdownGracefulAsync(originExecutor, name, 0);
         return proxy;
     }

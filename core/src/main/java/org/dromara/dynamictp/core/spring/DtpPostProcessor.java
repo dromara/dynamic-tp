@@ -69,6 +69,19 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
 
     private DefaultListableBeanFactory beanFactory;
 
+    /**
+     * Compatible with lower versions of Spring.
+     *
+     * @param bean the new bean instance
+     * @param beanName the name of the bean
+     * @return the bean instance to use
+     * @throws BeansException
+     */
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        return bean;
+    }
+
     @Override
     public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
         if (!(bean instanceof ThreadPoolExecutor) && !(bean instanceof ThreadPoolTaskExecutor)) {

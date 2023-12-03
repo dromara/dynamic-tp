@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Role;
  * @author yanhom
  * @since 1.0.0
  **/
-@Configuration(proxyBeanMethods = false)
+@Configuration
 @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 public class DtpBaseBeanConfiguration {
     

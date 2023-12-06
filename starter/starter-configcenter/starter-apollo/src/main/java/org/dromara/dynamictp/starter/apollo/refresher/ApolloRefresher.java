@@ -17,47 +17,45 @@
 
 package org.dromara.dynamictp.starter.apollo.refresher;
 
-import com.ctrip.framework.apollo.ConfigFileChangeListener;
-import com.ctrip.framework.apollo.model.ConfigFileChangeEvent;
+import com.ctrip.framework.apollo.ConfigChangeListener;
+import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.ctrip.framework.apollo.spring.config.ConfigPropertySource;
 import com.ctrip.framework.apollo.spring.config.ConfigPropertySourceFactory;
 import com.ctrip.framework.apollo.spring.util.SpringInjector;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;
-import org.dromara.dynamictp.starter.apollo.listener.ApolloConfigChangeListener;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.env.Environment;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * ApolloRefresher related
+ * <p>Listen for configuration file changes</p>
  *
  * @author yanhom
  * @since 1.0.0
  **/
 @Slf4j
-public class ApolloRefresher extends AbstractRefresher implements BeanFactoryPostProcessor, ConfigFileChangeListener {
+public class ApolloRefresher extends AbstractRefresher implements ConfigChangeListener, InitializingBean {
 
     private final ConfigPropertySourceFactory configPropertySourceFactory = SpringInjector
             .getInstance(ConfigPropertySourceFactory.class);
 
     @Override
-    public void onChange(ConfigFileChangeEvent changeEvent) {
+    public void onChange(ConfigChangeEvent changeEvent) {
         refresh(environment);
     }
 
     @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-        ApolloConfigChangeListener apolloConfigChangeListener =
-                new ApolloConfigChangeListener(environment, beanFactory);
-
+    public void afterPropertiesSet() throws Exception {
         List<ConfigPropertySource> configPropertySources = configPropertySourceFactory.getAllConfigPropertySources();
         for (ConfigPropertySource configPropertySource : configPropertySources) {
-            configPropertySource.addChangeListener(apolloConfigChangeListener);
+            if (Arrays.stream(configPropertySource.getPropertyNames())
+                    .anyMatch(propertyName -> propertyName.startsWith("spring.dynamic.tp"))) {
+                configPropertySource.addChangeListener(this);
+            }
         }
     }
 }

@@ -71,13 +71,24 @@ public class DtpAdapterListener implements GenericApplicationListener {
     }
 
     /**
-     * backward compatible spring boot
+     * Compatible with lower versions of spring.
+     *
      * @param sourceType sourceType
      * @return true if support
      */
     @Override
     public boolean supportsSourceType(@Nullable Class<?> sourceType) {
         return true;
+    }
+
+    /**
+     * Compatible with lower versions of spring.
+     *
+     * @return order
+     */
+    @Override
+    public int getOrder() {
+        return LOWEST_PRECEDENCE;
     }
 
     /**

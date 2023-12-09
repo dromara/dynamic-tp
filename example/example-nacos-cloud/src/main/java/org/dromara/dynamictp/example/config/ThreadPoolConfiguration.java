@@ -72,7 +72,7 @@ public class ThreadPoolConfiguration {
                 .corePoolSize(20)
                 .maximumPoolSize(50)
                 .queueCapacity(2048)
-                .ioIntensive(true)
+                .eager(true)
                 .buildDynamic();
     }
 

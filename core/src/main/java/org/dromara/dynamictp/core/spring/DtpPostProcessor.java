@@ -75,7 +75,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
      * @param bean the new bean instance
      * @param beanName the name of the bean
      * @return the bean instance to use
-     * @throws BeansException
+     * @throws BeansException in case of errors
      */
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {

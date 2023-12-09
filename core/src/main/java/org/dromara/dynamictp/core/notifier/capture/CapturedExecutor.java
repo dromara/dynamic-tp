@@ -24,6 +24,7 @@ import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -31,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * CapturedExecutor implements ExecutorAdapter, the goal of this class
- * is to capture DtpExecutor's status when construct {@link BaseNotifyCtx} during {@link AlarmManager#doAlarm}.
+ * is to capture DtpExecutor's status when construct {@link BaseNotifyCtx} during {@link AlarmManager#doTryAlarm}.
  * <p>
  * In other words, this can ensure that the thread pool status when the alarm threshold is triggered is
  * consistent with the content in the {@link AbstractDtpNotifier#buildAlarmContent(NotifyPlatform, NotifyItemEnum)}

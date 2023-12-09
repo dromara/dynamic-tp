@@ -83,6 +83,11 @@ public class DtpLifecycleSupport {
 
     /**
      * Perform a shutdown on the underlying ExecutorService.
+     * @param executor the executor to shut down (maybe {@code null})
+     * @param threadPoolName the name of the thread pool (for logging purposes)
+     * @param waitForTasksToCompleteOnShutdown whether to wait for tasks to complete on shutdown
+     * @param awaitTerminationSeconds the maximum number of seconds to wait
+     *
      * @see ExecutorService#shutdown()
      * @see ExecutorService#shutdownNow()
      */

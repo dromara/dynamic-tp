@@ -196,7 +196,7 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
         // Get the changed keys
         List<FieldInfo> diffFields = EQUATOR.getDiffFields(oldFields, newFields);
         List<String> diffKeys = StreamUtil.fetchProperty(diffFields, FieldInfo::getFieldName);
-        NoticeManager.doNoticeAsync(executorWrapper, oldFields, diffKeys);
+        NoticeManager.tryNoticeAsync(executorWrapper, oldFields, diffKeys);
         log.info("DynamicTp refresh, tpName: [{}], changed keys: {}, corePoolSize: [{}], maxPoolSize: [{}]," +
                         " queueType: [{}], queueCapacity: [{}], keepAliveTime: [{}], rejectedType: [{}]," +
                         " allowsCoreThreadTimeOut: [{}]", executorWrapper.getThreadPoolName(), diffKeys,

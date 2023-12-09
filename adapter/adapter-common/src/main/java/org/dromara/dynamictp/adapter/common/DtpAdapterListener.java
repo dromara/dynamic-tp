@@ -127,7 +127,7 @@ public class DtpAdapterListener implements GenericApplicationListener {
         }
         handlerMap.forEach((k, v) -> {
             val executorWrapper = v.getExecutorWrappers();
-            executorWrapper.forEach((kk, vv) -> AlarmManager.doAlarmAsync(vv, SCHEDULE_NOTIFY_ITEMS));
+            executorWrapper.forEach((kk, vv) -> AlarmManager.tryAlarmAsync(vv, SCHEDULE_NOTIFY_ITEMS));
         });
     }
 }

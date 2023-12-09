@@ -47,7 +47,7 @@ public class RunTimeoutTimerTask extends AbstractTimeoutTimerTask {
         ExecutorAdapter<?> executor = statProvider.getExecutorWrapper().getExecutor();
         val pair = getTaskNameAndTraceId();
         statProvider.incRunTimeoutCount(1);
-        AlarmManager.doAlarmAsync(executorWrapper, RUN_TIMEOUT, runnable);
+        AlarmManager.tryAlarmAsync(executorWrapper, RUN_TIMEOUT, runnable);
         String logMsg = CharSequenceUtil.format("DynamicTp execute, run timeout, " +
                         "tpName: {}, taskName: {}, traceId: {}, runTimeout: {}ms, " +
                         "poolSize: {} (active: {}, core: {}, max: {}, largest: {}), " +

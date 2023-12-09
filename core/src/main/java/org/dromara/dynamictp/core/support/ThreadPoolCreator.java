@@ -18,7 +18,6 @@
 package org.dromara.dynamictp.core.support;
 
 import org.dromara.dynamictp.core.executor.DtpExecutor;
-import org.dromara.dynamictp.core.executor.ScheduledDtpExecutor;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
@@ -40,6 +39,15 @@ public class ThreadPoolCreator {
     /**
      * Create a juc thread pool, use default values.
      *
+     * <p>
+     *     corePoolSize: 1
+     *     maximumPoolSize: Runtime.getRuntime().availableProcessors()
+     *     keepAliveTime: 60s
+     *     workQueue: VARIABLE_LINKED_BLOCKING_QUEUE
+     *     queueCapacity: 1024
+     *     rejectedExecutionHandler: AbortPolicy
+     * </p>
+     *
      * @param threadPrefix thread prefix
      * @return the new thread pool
      */
@@ -49,6 +57,21 @@ public class ThreadPoolCreator {
                 .buildCommon();
     }
 
+    /**
+     * Create a juc thread pool, wrap with ttl, use default values.
+     *
+     * <p>
+     *     corePoolSize: 1
+     *     maximumPoolSize: Runtime.getRuntime().availableProcessors()
+     *     keepAliveTime: 60s
+     *     workQueue: VARIABLE_LINKED_BLOCKING_QUEUE
+     *     queueCapacity: 1024
+     *     rejectedExecutionHandler: AbortPolicy
+     * </p>
+     *
+     * @param threadPrefix thread prefix
+     * @return the new thread pool
+     */
     public static ExecutorService createCommonWithTtl(String threadPrefix) {
         return ThreadPoolBuilder.newBuilder()
                 .dynamic(false)
@@ -59,6 +82,17 @@ public class ThreadPoolCreator {
     /**
      * Create a dynamic thread pool, use default values.
      *
+     * <p>
+     *     corePoolSize: 1
+     *     maximumPoolSize: Runtime.getRuntime().availableProcessors()
+     *     keepAliveTime: 60s
+     *     workQueue: VARIABLE_LINKED_BLOCKING_QUEUE
+     *     queueCapacity: 1024
+     *     rejectedExecutionHandler: AbortPolicy
+     *     threadName: poolName
+     *     threadPrefix: poolName
+     * </p>
+     *
      * @param poolName thread pool name
      * @return the new thread pool
      */
@@ -66,6 +100,24 @@ public class ThreadPoolCreator {
         return createDynamicFast(poolName, poolName);
     }
 
+    /**
+     * Create a dynamic thread pool, use default values.
+     *
+     * <p>
+     *     corePoolSize: 1
+     *     maximumPoolSize: Runtime.getRuntime().availableProcessors()
+     *     keepAliveTime: 60s
+     *     workQueue: VARIABLE_LINKED_BLOCKING_QUEUE
+     *     queueCapacity: 1024
+     *     rejectedExecutionHandler: AbortPolicy
+     *     threadName: poolName
+     *     threadPrefix: threadPrefix
+     * </p>
+     *
+     * @param poolName thread pool name
+     * @param threadPrefix thread prefix
+     * @return the new thread pool
+     */
     public static DtpExecutor createDynamicFast(String poolName, String threadPrefix) {
         return ThreadPoolBuilder.newBuilder()
                 .threadPoolName(poolName)
@@ -73,10 +125,45 @@ public class ThreadPoolCreator {
                 .buildDynamic();
     }
 
+    /**
+     * Create a dynamic thread pool, wrap with ttl, use default values.
+     *
+     * <p>
+     *     corePoolSize: 1
+     *     maximumPoolSize: Runtime.getRuntime().availableProcessors()
+     *     keepAliveTime: 60s
+     *     workQueue: VARIABLE_LINKED_BLOCKING_QUEUE
+     *     queueCapacity: 1024
+     *     rejectedExecutionHandler: AbortPolicy
+     *     threadName: poolName
+     *     threadPrefix: poolName
+     * </p>
+     *
+     * @param poolName thread pool name
+     * @return the new thread pool
+     */
     public static ExecutorService createDynamicWithTtl(String poolName) {
         return createDynamicWithTtl(poolName, poolName);
     }
 
+    /**
+     * Create a dynamic thread pool, wrap with ttl, use default values.
+     *
+     * <p>
+     *     corePoolSize: 1
+     *     maximumPoolSize: Runtime.getRuntime().availableProcessors()
+     *     keepAliveTime: 60s
+     *     workQueue: VARIABLE_LINKED_BLOCKING_QUEUE
+     *     queueCapacity: 1024
+     *     rejectedExecutionHandler: AbortPolicy
+     *     threadName: poolName
+     *     threadPrefix: threadPrefix
+     * </p>
+     *
+     * @param poolName thread pool name
+     * @param threadPrefix thread prefix
+     * @return the new thread pool
+     */
     public static ExecutorService createDynamicWithTtl(String poolName, String threadPrefix) {
         return ThreadPoolBuilder.newBuilder()
                 .threadPoolName(poolName)
@@ -84,10 +171,45 @@ public class ThreadPoolCreator {
                 .buildWithTtl();
     }
 
+    /**
+     * Create a single thread pool with bounded queue capacity.
+     *
+     * <p>
+     *     corePoolSize: 1
+     *     maximumPoolSize: 1
+     *     keepAliveTime: 60s
+     *     workQueue: VARIABLE_LINKED_BLOCKING_QUEUE
+     *     queueCapacity: queueCapacity
+     *     rejectedExecutionHandler: AbortPolicy
+     *     threadPrefix: threadPrefix
+     * </p>
+     *
+     * @param threadPrefix thread prefix
+     * @param queueCapacity queue capacity
+     * @return the new thread pool
+     */
     public static ThreadPoolExecutor newSingleThreadPool(String threadPrefix, int queueCapacity) {
         return newFixedThreadPool(threadPrefix, 1, queueCapacity);
     }
 
+    /**
+     * Create a fixed thread pool with bounded queue capacity.
+     *
+     * <p>
+     *     corePoolSize: poolSize
+     *     maximumPoolSize: poolSize
+     *     keepAliveTime: 60s
+     *     workQueue: VARIABLE_LINKED_BLOCKING_QUEUE
+     *     queueCapacity: queueCapacity
+     *     rejectedExecutionHandler: AbortPolicy
+     *     threadPrefix: threadPrefix
+     * </p>
+     *
+     * @param threadPrefix thread prefix
+     * @param poolSize pool size
+     * @param queueCapacity queue capacity
+     * @return the new thread pool
+     */
     public static ThreadPoolExecutor newFixedThreadPool(String threadPrefix,
                                                         int poolSize,
                                                         int queueCapacity) {
@@ -100,6 +222,25 @@ public class ThreadPoolCreator {
                 .buildCommon();
     }
 
+    /**
+     * Create a memory safe thread pool with bounded queue capacity and bounded pool size.
+     *
+     * <p>
+     *     corePoolSize: corePoolSize
+     *     maximumPoolSize: maximumPoolSize
+     *     keepAliveTime: 60s
+     *     workQueue: VARIABLE_LINKED_BLOCKING_QUEUE
+     *     queueCapacity: queueCapacity
+     *     rejectedExecutionHandler: AbortPolicy
+     *     threadPrefix: threadPrefix
+     * </p>
+     *
+     * @param threadPrefix thread prefix
+     * @param corePoolSize core pool size
+     * @param maximumPoolSize maximum pool size
+     * @param queueCapacity queue capacity
+     * @return the new thread pool
+     */
     public static ThreadPoolExecutor newThreadPool(String threadPrefix, int corePoolSize,
                                                    int maximumPoolSize, int queueCapacity) {
         return ThreadPoolBuilder.newBuilder()
@@ -110,12 +251,27 @@ public class ThreadPoolCreator {
                 .buildCommon();
     }
 
+    /**
+     * Create a scheduled thread pool.
+     *
+     * <p>
+     *     corePoolSize: corePoolSize
+     *     keepAliveTime: 0
+     *     workQueue: DelayedWorkQueue
+     *     rejectedExecutionHandler: AbortPolicy
+     *     threadPrefix: threadPrefix
+     * </p>
+     *
+     * @param threadPrefix thread prefix
+     * @param corePoolSize core pool size
+     * @return the new scheduled thread pool
+     */
     public static ScheduledExecutorService newScheduledThreadPool(String threadPrefix, int corePoolSize) {
-        return (ScheduledDtpExecutor) ThreadPoolBuilder.newBuilder()
+        return ThreadPoolBuilder.newBuilder()
                 .corePoolSize(corePoolSize)
+                .maximumPoolSize(corePoolSize)
                 .threadFactory(threadPrefix)
-                .scheduled(true)
-                .buildCommon();
+                .buildScheduled();
     }
 
     /**

@@ -92,7 +92,8 @@ public final class DynamicTpConst {
 
     public static final String ARR_RIGHT_BRACKET = "]";
 
-    public static final List<NotifyItemEnum> SCHEDULE_NOTIFY_ITEMS = ImmutableList.of(NotifyItemEnum.LIVENESS, NotifyItemEnum.CAPACITY);
+    public static final List<NotifyItemEnum> SCHEDULE_NOTIFY_ITEMS = ImmutableList.of(NotifyItemEnum.LIVENESS,
+            NotifyItemEnum.CAPACITY);
 
     /**
      * unit

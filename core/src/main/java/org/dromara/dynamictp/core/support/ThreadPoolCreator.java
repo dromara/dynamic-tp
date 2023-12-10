@@ -268,6 +268,7 @@ public class ThreadPoolCreator {
      */
     public static ScheduledExecutorService newScheduledThreadPool(String threadPrefix, int corePoolSize) {
         return ThreadPoolBuilder.newBuilder()
+                .dynamic(false)
                 .corePoolSize(corePoolSize)
                 .maximumPoolSize(corePoolSize)
                 .threadFactory(threadPrefix)

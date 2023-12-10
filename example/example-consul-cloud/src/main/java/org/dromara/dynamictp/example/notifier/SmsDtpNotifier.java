@@ -33,8 +33,8 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.UNKNOWN;
  */
 public class SmsDtpNotifier extends AbstractDtpNotifier {
 
-    public SmsDtpNotifier(SmsNotifier smsNotifier) {
-        super(smsNotifier);
+    public SmsDtpNotifier() {
+        super(new SmsNotifier(new SmsClient()));
     }
 
     @Override

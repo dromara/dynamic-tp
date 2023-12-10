@@ -67,6 +67,14 @@ public class DtpMonitor extends OnceApplicationContextEventListener {
         collectMetrics(executorNames);
     }
 
+    private void checkAlarm(Set<String> executorNames) {
+        executorNames.forEach(name -> {
+            ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(name);
+            AlarmManager.tryAlarmAsync(wrapper, SCHEDULE_NOTIFY_ITEMS);
+        });
+        publishAlarmCheckEvent();
+    }
+
     private void collectMetrics(Set<String> executorNames) {
         if (!dtpProperties.isEnabledCollect()) {
             return;
@@ -76,14 +84,6 @@ public class DtpMonitor extends OnceApplicationContextEventListener {
             doCollect(ExecutorConverter.toMetrics(wrapper));
         });
         publishCollectEvent();
-    }
-
-    private void checkAlarm(Set<String> executorNames) {
-        executorNames.forEach(name -> {
-            ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(name);
-            AlarmManager.tryAlarmAsync(wrapper, SCHEDULE_NOTIFY_ITEMS);
-        });
-        publishAlarmCheckEvent();
     }
 
     private void doCollect(ThreadPoolStats threadPoolStats) {

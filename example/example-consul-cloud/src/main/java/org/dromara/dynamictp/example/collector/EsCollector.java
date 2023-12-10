@@ -31,8 +31,8 @@ public class EsCollector extends AbstractCollector {
 
     private final EsClient esClient;
 
-    public EsCollector(EsClient esClient) {
-        this.esClient = esClient;
+    public EsCollector() {
+        this.esClient = new EsClient();
     }
 
     @Override

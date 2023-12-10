@@ -169,16 +169,6 @@ public class DtpProperties {
     }
 
     @Data
-    public static class Nacos {
-
-        private String dataId;
-
-        private String group;
-
-        private String namespace;
-    }
-
-    @Data
     public static class Apollo {
 
         private String namespace;

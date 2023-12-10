@@ -22,7 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author kyao
@@ -35,16 +37,29 @@ public class TestController {
 
     private final ThreadPoolExecutor testExecutor;
 
+    private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
+
     @GetMapping("/dtp-example-adapter/testWebserver")
     public String testWebserver() throws InterruptedException {
-        testExecutor.execute(() -> {
+        try {
+            Thread.sleep((int) (Math.random() * 1000));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return "success";
+    }
+
+    @GetMapping("/dtp-example-adapter/testScheduleExecutor")
+    public String testScheduleExecutor() throws InterruptedException {
+        scheduledThreadPoolExecutor.schedule(() -> {
             try {
                 Thread.sleep((int) (Math.random() * 1000));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             log.info("success");
-        });
+        }, 1, TimeUnit.SECONDS);
+        Thread.sleep(2000);
         return "success";
     }
 }

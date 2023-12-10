@@ -17,18 +17,20 @@
 
 package org.dromara.dynamictp.core.notifier.manager;
 
+import lombok.val;
+import org.dromara.dynamictp.common.em.RejectedTypeEnum;
 import org.dromara.dynamictp.common.entity.TpMainFields;
 import org.dromara.dynamictp.common.pattern.filter.InvokerChain;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
 import org.dromara.dynamictp.core.notifier.context.NoticeCtx;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.support.ThreadPoolCreator;
-import lombok.val;
+import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import static org.dromara.dynamictp.common.em.NotifyItemEnum.CHANGE;
+import static org.dromara.dynamictp.common.em.QueueTypeEnum.LINKED_BLOCKING_QUEUE;
 
 /**
  * NoticeManager related
@@ -38,7 +40,13 @@ import static org.dromara.dynamictp.common.em.NotifyItemEnum.CHANGE;
  */
 public class NoticeManager {
 
-    private static final ExecutorService NOTICE_EXECUTOR = ThreadPoolCreator.createCommonFast("dtp-notify");
+    private static final ExecutorService NOTICE_EXECUTOR = ThreadPoolBuilder.newBuilder()
+            .threadFactory("dtp-notify")
+            .corePoolSize(1)
+            .maximumPoolSize(1)
+            .workQueue(LINKED_BLOCKING_QUEUE.getName(), 100)
+            .rejectedExecutionHandler(RejectedTypeEnum.DISCARD_OLDEST_POLICY.getName())
+            .buildCommon();
 
     private NoticeManager() { }
 
@@ -48,11 +56,11 @@ public class NoticeManager {
         NOTICE_INVOKER_CHAIN = NotifyFilterBuilder.getCommonInvokerChain();
     }
 
-    public static void doNoticeAsync(ExecutorWrapper executor, TpMainFields oldFields, List<String> diffKeys) {
-        NOTICE_EXECUTOR.execute(() -> doNotice(executor, oldFields, diffKeys));
+    public static void tryNoticeAsync(ExecutorWrapper executor, TpMainFields oldFields, List<String> diffKeys) {
+        NOTICE_EXECUTOR.execute(() -> doTryNotice(executor, oldFields, diffKeys));
     }
 
-    public static void doNotice(ExecutorWrapper executor, TpMainFields oldFields, List<String> diffKeys) {
+    public static void doTryNotice(ExecutorWrapper executor, TpMainFields oldFields, List<String> diffKeys) {
         NotifyHelper.getNotifyItem(executor, CHANGE).ifPresent(notifyItem -> {
             val noticeCtx = new NoticeCtx(executor, notifyItem, oldFields, diffKeys);
             NOTICE_INVOKER_CHAIN.proceed(noticeCtx);

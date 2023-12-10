@@ -44,7 +44,7 @@ public class QueueTimeoutTimerTask extends AbstractTimeoutTimerTask {
         ExecutorAdapter<?> executor = statProvider.getExecutorWrapper().getExecutor();
         val pair = getTaskNameAndTraceId();
         statProvider.incQueueTimeoutCount(1);
-        AlarmManager.doAlarmAsync(executorWrapper, QUEUE_TIMEOUT, runnable);
+        AlarmManager.tryAlarmAsync(executorWrapper, QUEUE_TIMEOUT, runnable);
         String logMsg = CharSequenceUtil.format("DynamicTp execute, queue timeout, " +
                         "tpName: {}, taskName: {}, traceId: {}, queueTimeout: {}ms, " +
                         "poolSize: {} (active: {}, core: {}, max: {}, largest: {}), " +

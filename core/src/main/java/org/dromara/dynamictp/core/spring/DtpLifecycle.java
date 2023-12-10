@@ -17,12 +17,12 @@
 
 package org.dromara.dynamictp.core.spring;
 
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.monitor.DtpMonitor;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.notifier.manager.NoticeManager;
 import org.dromara.dynamictp.core.support.DtpLifecycleSupport;
-import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.system.SystemMetricManager;
 import org.springframework.context.SmartLifecycle;
 
@@ -57,6 +57,37 @@ public class DtpLifecycle implements SmartLifecycle {
     @Override
     public boolean isRunning() {
         return this.running.get();
+    }
+
+    /**
+     * Compatible with lower versions of spring.
+     *
+     * @param callback callback
+     */
+    @Override
+    public void stop(Runnable callback) {
+        stop();
+        callback.run();
+    }
+
+    /**
+     * Compatible with lower versions of spring.
+     *
+     * @return isAutoStartup
+     */
+    @Override
+    public boolean isAutoStartup() {
+        return true;
+    }
+
+    /**
+     * Compatible with lower versions of spring.
+     *
+     * @return phase
+     */
+    @Override
+    public int getPhase() {
+        return Integer.MAX_VALUE;
     }
 
     public void shutdownInternal() {

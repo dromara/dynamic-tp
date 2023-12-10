@@ -142,7 +142,7 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
 
         List<FieldInfo> diffFields = EQUATOR.getDiffFields(oldFields, newFields);
         List<String> diffKeys = diffFields.stream().map(FieldInfo::getFieldName).collect(toList());
-        NoticeManager.doNoticeAsync(executorWrapper, oldFields, diffKeys);
+        NoticeManager.tryNoticeAsync(executorWrapper, oldFields, diffKeys);
         log.info("DynamicTp adapter, [{}] refreshed end, changed keys: {}, corePoolSize: [{}], "
                         + "maxPoolSize: [{}], keepAliveTime: [{}]",
                 executorWrapper.getThreadPoolName(), diffKeys,

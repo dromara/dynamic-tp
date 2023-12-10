@@ -43,6 +43,7 @@ import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -122,7 +123,7 @@ public class ThreadPoolBuilder {
      * Whether to wait for scheduled tasks to complete on shutdown,
      * not interrupting running tasks and executing all tasks in the queue.
      */
-    private boolean waitForTasksToCompleteOnShutdown = false;
+    private boolean waitForTasksToCompleteOnShutdown = true;
 
     /**
      * The maximum number of seconds that this executor is supposed to block
@@ -135,7 +136,7 @@ public class ThreadPoolBuilder {
      * If io intensive thread pool.
      * default false, true indicate cpu intensive thread pool.
      */
-    private boolean ioIntensive = false;
+    private boolean eager = false;
 
     /**
      * If ordered thread pool.
@@ -157,6 +158,11 @@ public class ThreadPoolBuilder {
      * If enhance reject.
      */
     private boolean rejectEnhanced = true;
+
+    /**
+     * If enable notify.
+     */
+    private boolean notifyEnabled = true;
 
     /**
      * Task execute timeout, unit (ms), just for statistics.
@@ -182,11 +188,6 @@ public class ThreadPoolBuilder {
      * Notify platform id
      */
     private List<String> platformIds = Lists.newArrayList();
-
-    /**
-     * If enable notify.
-     */
-    private boolean notifyEnabled = true;
 
     private ThreadPoolBuilder() { }
 
@@ -319,8 +320,8 @@ public class ThreadPoolBuilder {
         return this;
     }
 
-    public ThreadPoolBuilder ioIntensive(boolean ioIntensive) {
-        this.ioIntensive = ioIntensive;
+    public ThreadPoolBuilder eager(boolean eager) {
+        this.eager = eager;
         return this;
     }
 
@@ -341,6 +342,11 @@ public class ThreadPoolBuilder {
 
     public ThreadPoolBuilder rejectEnhanced(boolean rejectEnhanced) {
         this.rejectEnhanced = rejectEnhanced;
+        return this;
+    }
+
+    public ThreadPoolBuilder notifyEnabled(boolean notifyEnabled) {
+        this.notifyEnabled = notifyEnabled;
         return this;
     }
 
@@ -378,11 +384,6 @@ public class ThreadPoolBuilder {
         return this;
     }
 
-    public ThreadPoolBuilder notifyEnabled(boolean notifyEnabled) {
-        this.notifyEnabled = notifyEnabled;
-        return this;
-    }
-
     /**
      * Build according to dynamic field.
      *
@@ -412,6 +413,20 @@ public class ThreadPoolBuilder {
      */
     public ThreadPoolExecutor buildCommon() {
         return buildCommonExecutor(this);
+    }
+
+    /**
+     * Build scheduled thread pool executor.
+     *
+     * @return the newly created ScheduledExecutorService instance
+     */
+    public ScheduledExecutorService buildScheduled() {
+        scheduled = true;
+        if (dynamic) {
+            return (ScheduledDtpExecutor) buildDtpExecutor(this);
+        } else {
+            return (ScheduledThreadPoolExecutor) buildCommonExecutor(this);
+        }
     }
 
     /**
@@ -456,7 +471,7 @@ public class ThreadPoolBuilder {
 
     private DtpExecutor createInternal(ThreadPoolBuilder builder) {
         DtpExecutor dtpExecutor;
-        if (ioIntensive) {
+        if (eager) {
             TaskQueue taskQueue = new TaskQueue(builder.queueCapacity);
             dtpExecutor = new EagerDtpExecutor(
                     builder.corePoolSize,

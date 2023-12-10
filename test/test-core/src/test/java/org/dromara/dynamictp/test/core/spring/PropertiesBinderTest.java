@@ -32,6 +32,7 @@ import org.springframework.core.env.AbstractEnvironment;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * PropertiesBinderTest related
@@ -64,7 +65,8 @@ class PropertiesBinderTest {
     }
 
     @Test
-    void testBindDtpPropertiesWithEnvironment() {
+    void testBindDtpPropertiesWithEnvironment() throws InterruptedException {
+        TimeUnit.MILLISECONDS.sleep(1000);
         DtpProperties dtpProperties = DtpProperties.getInstance();
         BinderHelper.bindDtpProperties(environment, dtpProperties);
         String threadPoolName = environment.getProperty("spring.dynamic.tp.executors[0].threadPoolName");

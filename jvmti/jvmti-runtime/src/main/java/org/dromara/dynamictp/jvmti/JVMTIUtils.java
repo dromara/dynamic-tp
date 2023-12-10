@@ -38,7 +38,7 @@ public class JVMTIUtils {
                 libName = "libJniLibrary-arm.so";
             } else if (OSUtils.isArm64()) {
                 libName = "libJniLibrary-aarch64.so";
-            } else if (OSUtils.isX86_64()) {
+            } else if (OSUtils.isX8664()) {
                 libName = "libJniLibrary-x64.so";
             } else {
                 libName = "libJniLibrary-" + OSUtils.arch() + ".so";

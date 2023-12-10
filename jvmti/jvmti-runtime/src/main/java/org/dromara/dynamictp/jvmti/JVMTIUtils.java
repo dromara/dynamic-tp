@@ -31,23 +31,23 @@ public class JVMTIUtils {
 
     static {
         if (OSUtils.isMac()) {
-            libName = "libArthasJniLibrary.dylib";
+            libName = "libJniLibrary.dylib";
         }
         if (OSUtils.isLinux()) {
             if (OSUtils.isArm32()) {
-                libName = "libArthasJniLibrary-arm.so";
+                libName = "libJniLibrary-arm.so";
             } else if (OSUtils.isArm64()) {
-                libName = "libArthasJniLibrary-aarch64.so";
+                libName = "libJniLibrary-aarch64.so";
             } else if (OSUtils.isX86_64()) {
-                libName = "libArthasJniLibrary-x64.so";
+                libName = "libJniLibrary-x64.so";
             } else {
-                libName = "libArthasJniLibrary-" + OSUtils.arch() + ".so";
+                libName = "libJniLibrary-" + OSUtils.arch() + ".so";
             }
         }
         if (OSUtils.isWindows()) {
-            libName = "libArthasJniLibrary-x64.dll";
+            libName = "libJniLibrary-x64.dll";
             if (OSUtils.isX86()) {
-                libName = "libArthasJniLibrary-x86.dll";
+                libName = "libJniLibrary-x86.dll";
             }
         }
     }

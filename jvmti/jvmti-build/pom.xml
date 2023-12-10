@@ -120,7 +120,7 @@
                         <configuration>
                             <javahIncludes>
                                 <javahInclude>
-                                    <className>arthas.VmTool</className>
+                                    <className>org.dromara.dynamictp.jvmti.JVMTI</className>
                                 </javahInclude>
                             </javahIncludes>
                             <javahOS>${os_name}</javahOS>

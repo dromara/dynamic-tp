@@ -17,29 +17,38 @@
 
 package org.dromara.dynamictp.jvmti;
 
-import java.util.Locale;
-
 /**
  * The type JVMTI utils.
+ * <p>
+ * This file is copied from <a href="https://github.com/alibaba/arthas"/>
  *
  * @author dragon-zhang
  * @since 1.1.4
  */
 public class JVMTIUtils {
-    
-    private static final String OPERATING_SYSTEM_NAME = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
-    
+
     private static String libName;
 
     static {
-		if (OPERATING_SYSTEM_NAME.startsWith("mac") || OPERATING_SYSTEM_NAME.startsWith("darwin")) {
+        if (OSUtils.isMac()) {
             libName = "libJniLibrary.dylib";
         }
-        if (OPERATING_SYSTEM_NAME.startsWith("linux")) {
-            libName = "libJniLibrary.so";
+        if (OSUtils.isLinux()) {
+            if (OSUtils.isArm32()) {
+                libName = "libJniLibrary-arm.so";
+            } else if (OSUtils.isArm64()) {
+                libName = "libJniLibrary-aarch64.so";
+            } else if (OSUtils.isX8664()) {
+                libName = "libJniLibrary-x64.so";
+            } else {
+                libName = "libJniLibrary-" + OSUtils.arch() + ".so";
+            }
         }
-        if (OPERATING_SYSTEM_NAME.startsWith("windows")) {
-            libName = "libJniLibrary.dll";
+        if (OSUtils.isWindows()) {
+            libName = "libJniLibrary-x64.dll";
+            if (OSUtils.isX86()) {
+                libName = "libJniLibrary-x86.dll";
+            }
         }
     }
 

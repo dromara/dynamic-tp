@@ -80,11 +80,6 @@ public class DtpProperties {
     private List<NotifyPlatform> platforms;
 
     /**
-     * Nacos config.
-     */
-    private Nacos nacos;
-
-    /**
      * Apollo config.
      */
     private Apollo apollo;
@@ -171,16 +166,6 @@ public class DtpProperties {
     
     public static DtpProperties getInstance() {
         return Holder.INSTANCE;
-    }
-
-    @Data
-    public static class Nacos {
-
-        private String dataId;
-
-        private String group;
-
-        private String namespace;
     }
 
     @Data

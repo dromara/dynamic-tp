@@ -57,7 +57,7 @@ public class TaskRejectAware extends TaskStatAware {
         }
 
         statProvider.incRejectCount(1);
-        AlarmManager.doAlarmAsync(statProvider.getExecutorWrapper(), REJECT, runnable);
+        AlarmManager.tryAlarmAsync(statProvider.getExecutorWrapper(), REJECT, runnable);
         ExecutorAdapter<?> executorAdapter = statProvider.getExecutorWrapper().getExecutor();
         String logMsg = CharSequenceUtil.format("DynamicTp execute, thread pool is exhausted, tpName: {},  traceId: {}, " +
                         "poolSize: {} (active: {}, core: {}, max: {}, largest: {}), " +

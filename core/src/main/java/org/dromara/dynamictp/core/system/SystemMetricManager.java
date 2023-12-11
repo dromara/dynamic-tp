@@ -18,13 +18,12 @@
 package org.dromara.dynamictp.core.system;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.core.executor.NamedThreadFactory;
+import org.dromara.dynamictp.core.support.ThreadPoolCreator;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -38,8 +37,7 @@ public class SystemMetricManager {
 
     private static final SystemMetricPoller METRIC_POLLER;
 
-    private static final ScheduledExecutorService EXECUTOR = new ScheduledThreadPoolExecutor(
-            1, new NamedThreadFactory("system-metric", true));
+    private static final ScheduledExecutorService EXECUTOR = ThreadPoolCreator.newScheduledThreadPool("dtp-system-metric", 1);
 
     static {
         METRIC_POLLER = new SystemMetricPoller();

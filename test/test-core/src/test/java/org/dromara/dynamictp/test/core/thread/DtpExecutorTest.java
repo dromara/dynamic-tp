@@ -55,8 +55,8 @@ import static org.mockito.Mockito.mockStatic;
 public class DtpExecutorTest {
 
     public void mock(MockedStatic<AlarmManager> mockAlarmManager) {
-        mockAlarmManager.when(() -> AlarmManager.doAlarmAsync(any(), any(), any())).then(invocation -> null);
-        mockAlarmManager.when(() -> AlarmManager.doAlarmAsync(any(ExecutorWrapper.class), anyList())).then(invocation -> null);
+        mockAlarmManager.when(() -> AlarmManager.tryAlarmAsync(any(), any(), any())).then(invocation -> null);
+        mockAlarmManager.when(() -> AlarmManager.tryAlarmAsync(any(ExecutorWrapper.class), anyList())).then(invocation -> null);
     }
 
     @RepeatedTest(100)

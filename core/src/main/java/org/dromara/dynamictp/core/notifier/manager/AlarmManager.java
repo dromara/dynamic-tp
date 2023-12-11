@@ -54,7 +54,7 @@ public class AlarmManager {
     private static final ExecutorService ALARM_EXECUTOR = ThreadPoolBuilder.newBuilder()
             .threadFactory("dtp-alarm")
             .corePoolSize(1)
-            .maximumPoolSize(2)
+            .maximumPoolSize(1)
             .workQueue(LINKED_BLOCKING_QUEUE.getName(), 2000)
             .rejectedExecutionHandler(RejectedTypeEnum.DISCARD_OLDEST_POLICY.getName())
             .rejectEnhanced(false)
@@ -78,18 +78,18 @@ public class AlarmManager {
         AlarmCounter.init(poolName, notifyItem.getType());
     }
 
-    public static void doAlarmAsync(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType, Runnable currRunnable) {
+    public static void tryAlarmAsync(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType, Runnable currRunnable) {
         if (currRunnable instanceof DtpRunnable) {
             MDC.put(TRACE_ID, ((DtpRunnable) currRunnable).getTraceId());
         }
-        ALARM_EXECUTOR.execute(() -> doAlarm(executorWrapper, notifyType));
+        ALARM_EXECUTOR.execute(() -> doTryAlarm(executorWrapper, notifyType));
     }
 
-    public static void doAlarmAsync(ExecutorWrapper executorWrapper, List<NotifyItemEnum> notifyTypes) {
-        ALARM_EXECUTOR.execute(() -> notifyTypes.forEach(x -> doAlarm(executorWrapper, x)));
+    public static void tryAlarmAsync(ExecutorWrapper executorWrapper, List<NotifyItemEnum> notifyTypes) {
+        ALARM_EXECUTOR.execute(() -> notifyTypes.forEach(x -> doTryAlarm(executorWrapper, x)));
     }
 
-    public static void doAlarm(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType) {
+    public static void doTryAlarm(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType) {
         AlarmCounter.incAlarmCounter(executorWrapper.getThreadPoolName(), notifyType.getValue());
         NotifyHelper.getNotifyItem(executorWrapper, notifyType).ifPresent(notifyItem -> {
             val alarmCtx = new AlarmCtx(executorWrapper, notifyItem);

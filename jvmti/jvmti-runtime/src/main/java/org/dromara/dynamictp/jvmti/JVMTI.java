@@ -56,7 +56,7 @@ public class JVMTI {
 				System.load(libPath);
 				AVAILABLE.set(true);
 			} catch (Throwable t) {
-				log.error("JVMTI initialization failed, currently only linux and macos are supported!", t);
+				log.error("JVMTI initialization failed!", t);
 			}
 		}
 	}

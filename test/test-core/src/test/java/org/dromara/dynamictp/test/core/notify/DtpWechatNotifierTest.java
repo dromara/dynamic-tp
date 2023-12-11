@@ -55,8 +55,15 @@ public class DtpWechatNotifierTest {
         notifyItem.setReceivers("小红,小明");
         val url = WechatNotifyConst.WECHAT_WEB_HOOK + notifyPlatform.getUrlKey();
         val msgBody = buildMsgBody(notifyPlatform, buildContent(notifyItem, notifyPlatform));
-        HttpResponse response = HttpRequest.post(url).body(msgBody).execute();
-        System.out.println(response.body());
+        try {
+            HttpResponse response = HttpRequest.post(url)
+                    .setReadTimeout(1000)
+                    .setConnectionTimeout(1000)
+                    .body(msgBody).execute();
+            System.out.println(response.body());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     protected String buildMsgBody(NotifyPlatform platform, String content) {

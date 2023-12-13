@@ -26,11 +26,16 @@ import com.ctrip.framework.apollo.model.ConfigFileChangeEvent;
 import com.ctrip.framework.apollo.spring.config.PropertySourcesConstants;
 import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
+import org.dromara.dynamictp.core.handler.ConfigHandler;
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.springframework.beans.factory.InitializingBean;
 
+import java.io.IOException;
 import java.util.List;
+
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAIN_PROPERTIES_PREFIX;
 
 /**
  * ApolloRefresher related
@@ -48,22 +53,24 @@ public class ApolloRefresher extends AbstractRefresher implements ConfigFileChan
     public void onChange(ConfigFileChangeEvent changeEvent) {
         String namespace = changeEvent.getNamespace();
         String newValue = changeEvent.getNewValue();
-        ConfigFileFormat configFileFormat = determineFileFormat(namespace);
-        ConfigFileTypeEnum configFileType = ConfigFileTypeEnum.of(configFileFormat.getValue());
+        ConfigFileTypeEnum configFileType = deduceConfigFileType(namespace);
         refresh(newValue, configFileType);
     }
 
     @Override
     public void afterPropertiesSet() {
-        String namespaces = environment.getProperty(PropertySourcesConstants.APOLLO_BOOTSTRAP_NAMESPACES, ConfigConsts.NAMESPACE_APPLICATION);
+        String namespaces = environment.getProperty(PropertySourcesConstants.APOLLO_BOOTSTRAP_NAMESPACES,
+                ConfigConsts.NAMESPACE_APPLICATION);
         log.debug("Apollo bootstrap namespaces: {}", namespaces);
         List<String> namespaceList = NAMESPACE_SPLITTER.splitToList(namespaces);
 
         for (String namespace : namespaceList) {
             ConfigFileFormat format = determineFileFormat(namespace);
             String actualNamespaceName = trimNamespaceFormat(namespace, format);
-            ConfigFile configFile = ConfigService
-                    .getConfigFile(actualNamespaceName, format);
+            ConfigFile configFile = ConfigService.getConfigFile(actualNamespaceName, format);
+            if (!isDtpNamespace(configFile.getContent(), ConfigFileTypeEnum.of(format.getValue()))) {
+                continue;
+            }
             try {
                 configFile.addChangeListener(this);
                 log.info("DynamicTp refresher, add listener success, namespace: {}", actualNamespaceName);
@@ -80,7 +87,6 @@ public class ApolloRefresher extends AbstractRefresher implements ConfigFileChan
                 return format;
             }
         }
-
         return ConfigFileFormat.Properties;
     }
 
@@ -89,8 +95,21 @@ public class ApolloRefresher extends AbstractRefresher implements ConfigFileChan
         if (!namespaceName.toLowerCase().endsWith(extension)) {
             return namespaceName;
         }
-
         return namespaceName.substring(0, namespaceName.length() - extension.length());
     }
 
+    private ConfigFileTypeEnum deduceConfigFileType(String namespace) {
+        ConfigFileFormat configFileFormat = determineFileFormat(namespace);
+        return ConfigFileTypeEnum.of(configFileFormat.getValue());
+    }
+
+    private boolean isDtpNamespace(String content, ConfigFileTypeEnum configFileType) {
+        val configHandler = ConfigHandler.getInstance();
+        try {
+            val properties = configHandler.parseConfig(content, configFileType);
+            return properties.keySet().stream().anyMatch(key -> key.toString().startsWith(MAIN_PROPERTIES_PREFIX));
+        } catch (IOException e) {
+            return false;
+        }
+    }
 }

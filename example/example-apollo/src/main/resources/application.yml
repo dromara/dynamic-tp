@@ -8,12 +8,6 @@ spring:
     name: dynamic-tp-apollo-demo
   profiles:
     active: dev
-  dynamic:
-    tp:
-      tomcatTp: # tomcat webserver线程池配置
-        corePoolSize: 100
-        maximumPoolSize: 200
-        keepAliveTime: 60
 
 logging:
   level:
@@ -23,8 +17,9 @@ logging:
 apollo:
   bootstrap:
     enabled: true
-    namespaces: dynamic-tp-apollo-demo-dtp.yml, application.properties
-  meta: http://localhost:8080
-  config-service: http://localhost:8080
+    eagerLoad:
+      enabled: true
+    namespaces: dynamic-tp-apollo-demo-dtp.yml,application
+  meta: http://81.68.181.139:8080
 app:
   id: dynamic-tp-apollo-demo

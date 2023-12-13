@@ -65,8 +65,9 @@ public final class YunZhiJiaNotifyConst {
                     "上次报警时间：%s \n" +
                     "报警时间：%s \n" +
                     "接收人：@%s \n" +
-                    "tid：%s \n" +
-                    "报警间隔：%ss \n";
+                    "trace 信息：%s \n" +
+                    "报警间隔：%ss \n" +
+                    "扩展信息：%s \n";
 
     public static final String CHANGE_NOTICE_TEMPLATE =
             "【通知】 动态线程池参数变更 \n" +

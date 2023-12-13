@@ -18,6 +18,8 @@
 package org.dromara.dynamictp.starter.adapter.webserver.tomcat;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.AbstractProtocol;
+import org.apache.coyote.ProtocolHandler;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.aware.RejectHandlerAware;
@@ -48,8 +50,12 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<Executor> {
         TomcatWebServer tomcatWebServer = (TomcatWebServer) webServer;
         Executor originExecutor = tomcatWebServer.getTomcat().getConnector().getProtocolHandler().getExecutor();
         TomcatExecutorProxy proxy = new TomcatExecutorProxy((ThreadPoolExecutor) originExecutor);
-        tomcatWebServer.getTomcat().getConnector().getProtocolHandler().setExecutor(proxy);
-        putAndFinalize(getTpName(), (ExecutorService) originExecutor, new TomcatExecutorAdapter(proxy));
+        ProtocolHandler protocolHandler = tomcatWebServer.getTomcat().getConnector().getProtocolHandler();
+        if (protocolHandler instanceof AbstractProtocol) {
+            // compatible with lower version tomcat
+            ((AbstractProtocol<?>) protocolHandler).setExecutor(proxy);
+            putAndFinalize(getTpName(), (ExecutorService) originExecutor, new TomcatExecutorAdapter(proxy));
+        }
     }
 
     @Override

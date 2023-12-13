@@ -25,6 +25,7 @@ import com.ctrip.framework.apollo.spring.util.SpringInjector;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.core.env.Environment;
 
 import java.util.Arrays;
 import java.util.List;

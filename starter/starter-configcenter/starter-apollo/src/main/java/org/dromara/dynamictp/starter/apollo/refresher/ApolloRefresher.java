@@ -17,26 +17,20 @@
 
 package org.dromara.dynamictp.starter.apollo.refresher;
 
-import com.ctrip.framework.apollo.Config;
-import com.ctrip.framework.apollo.ConfigChangeListener;
+import com.ctrip.framework.apollo.ConfigFile;
+import com.ctrip.framework.apollo.ConfigFileChangeListener;
 import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.core.ConfigConsts;
-import com.ctrip.framework.apollo.model.ConfigChangeEvent;
-import com.ctrip.framework.apollo.spring.config.ConfigPropertySource;
-import com.ctrip.framework.apollo.spring.config.ConfigPropertySourceFactory;
+import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
+import com.ctrip.framework.apollo.model.ConfigFileChangeEvent;
 import com.ctrip.framework.apollo.spring.config.PropertySourcesConstants;
-import com.ctrip.framework.apollo.spring.util.SpringInjector;
 import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.core.env.CompositePropertySource;
-import org.springframework.core.env.ConfigurableEnvironment;
 
-import java.util.Arrays;
 import java.util.List;
-
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAIN_PROPERTIES_PREFIX;
 
 /**
  * ApolloRefresher related
@@ -46,44 +40,57 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAIN_PROPERTI
  * @since 1.0.0
  **/
 @Slf4j
-public class ApolloRefresher extends AbstractRefresher implements ConfigChangeListener, InitializingBean {
+public class ApolloRefresher extends AbstractRefresher implements ConfigFileChangeListener, InitializingBean {
 
     private static final Splitter NAMESPACE_SPLITTER = Splitter.on(",").omitEmptyStrings().trimResults();
 
-    private final ConfigPropertySourceFactory configPropertySourceFactory = SpringInjector
-            .getInstance(ConfigPropertySourceFactory.class);
-
     @Override
-    public void onChange(ConfigChangeEvent changeEvent) {
-        // 状态发生变更就立刻刷新 environment 环境变量
-        refreshEnvironment((ConfigurableEnvironment) environment);
-        refresh(environment);
+    public void onChange(ConfigFileChangeEvent changeEvent) {
+        String namespace = changeEvent.getNamespace();
+        String newValue = changeEvent.getNewValue();
+        ConfigFileFormat configFileFormat = determineFileFormat(namespace);
+        ConfigFileTypeEnum configFileType = ConfigFileTypeEnum.of(configFileFormat.getValue());
+        refresh(newValue, configFileType);
     }
 
     @Override
     public void afterPropertiesSet() {
-        List<ConfigPropertySource> configPropertySources = configPropertySourceFactory.getAllConfigPropertySources();
-        for (ConfigPropertySource configPropertySource : configPropertySources) {
-            if (Arrays.stream(configPropertySource.getPropertyNames())
-                    .anyMatch(propertyName -> propertyName.startsWith(MAIN_PROPERTIES_PREFIX))) {
-                configPropertySource.addChangeListener(this);
-            }
-        }
-    }
-
-    protected void refreshEnvironment(ConfigurableEnvironment environment) {
         String namespaces = environment.getProperty(PropertySourcesConstants.APOLLO_BOOTSTRAP_NAMESPACES, ConfigConsts.NAMESPACE_APPLICATION);
         log.debug("Apollo bootstrap namespaces: {}", namespaces);
         List<String> namespaceList = NAMESPACE_SPLITTER.splitToList(namespaces);
 
-        CompositePropertySource composite = new CompositePropertySource(PropertySourcesConstants.APOLLO_BOOTSTRAP_PROPERTY_SOURCE_NAME);
         for (String namespace : namespaceList) {
-            Config config = ConfigService.getConfig(namespace);
+            ConfigFileFormat format = determineFileFormat(namespace);
+            String actualNamespaceName = trimNamespaceFormat(namespace, format);
+            ConfigFile configFile = ConfigService
+                    .getConfigFile(actualNamespaceName, format);
+            try {
+                configFile.addChangeListener(this);
+                log.info("DynamicTp refresher, add listener success, namespace: {}", actualNamespaceName);
+            } catch (Exception e) {
+                log.error("DynamicTp refresher, add listener error, namespace: {}", actualNamespaceName, e);
+            }
+        }
+    }
 
-            composite.addPropertySource(configPropertySourceFactory.getConfigPropertySource(namespace, config));
+    private ConfigFileFormat determineFileFormat(String namespaceName) {
+        String lowerCase = namespaceName.toLowerCase();
+        for (ConfigFileFormat format : ConfigFileFormat.values()) {
+            if (lowerCase.endsWith("." + format.getValue())) {
+                return format;
+            }
         }
 
-        environment.getPropertySources().addFirst(composite);
+        return ConfigFileFormat.Properties;
+    }
+
+    private String trimNamespaceFormat(String namespaceName, ConfigFileFormat format) {
+        String extension = "." + format.getValue();
+        if (!namespaceName.toLowerCase().endsWith(extension)) {
+            return namespaceName;
+        }
+
+        return namespaceName.substring(0, namespaceName.length() - extension.length());
     }
 
 }

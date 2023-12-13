@@ -23,7 +23,7 @@ logging:
 apollo:
   bootstrap:
     enabled: true
-    namespaces: dynamic-tp-apollo-demo-dtp.yml
+    namespaces: dynamic-tp-apollo-demo-dtp.yml, application.properties
   meta: http://localhost:8080
   config-service: http://localhost:8080
 app:

@@ -1,7 +1,6 @@
 server:
   port: 8888
-  servlet:
-    context-path: "/dynamic-tp"
+
 # 开启 SpringBoot Actuator Endpoint 暴露出DynamicTp指标接口
 # 开启 prometheus 指标采集端点
 management:
@@ -30,7 +29,6 @@ nacos:
     bootstrap:
       enable: true
       log-enable: true
-
 
 logging:
   level:

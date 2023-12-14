@@ -21,6 +21,7 @@ spring:
   redis:
     host: ${redis:localhost}
     port: 6379
+
 management:
   metrics:
     export:
@@ -30,5 +31,3 @@ management:
     web:
       exposure:
         include: '*'   # 测试使用，线上不要用*，按需开启
-  server:
-    port: 9100

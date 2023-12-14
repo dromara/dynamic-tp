@@ -17,58 +17,55 @@
 
 package org.dromara.dynamictp.example.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.DtpRegistry;
-import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
+import org.dromara.dynamictp.example.service.TestService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ThreadPoolExecutor;
-
 /**
- * @author fabian4
+ * @author Redick01
  */
 @Slf4j
 @RestController
-@SuppressWarnings("all")
+@AllArgsConstructor
 public class TestController {
 
-    @Resource
-    private ThreadPoolExecutor dtpExecutor1;
+    private final TestService testService;
 
-    @Resource
-    private DtpProperties dtpProperties;
-
-    @GetMapping("/index")
-    public String index() throws InterruptedException {
-        Thread.sleep((int) (Math.random() * 100));
-        return "index";
+    @GetMapping("/dtp-polaris-example/testJucTp")
+    public String testJuc() {
+        testService.testJucTp();
+        return "testJucTp success";
     }
 
-    @GetMapping("/dtp-polaris-cloud-example/test")
-    public String test() throws InterruptedException {
-        task();
-        return "Success";
+    @GetMapping("/dtp-polaris-example/testSpringTp")
+    public String testSpring() {
+        testService.testSpringTp();
+        return "testSpringTp success";
     }
 
-    public void task() throws InterruptedException {
-        Executor dtpExecutor2 = DtpRegistry.getExecutor("dtpExecutor2");
-        for (int i = 0; i < 100; i++) {
-            Thread.sleep((int) (Math.random() * 100));
-            dtpExecutor1.execute(() -> {
-                log.info("i am a dtp1 task");
-            });
-            dtpExecutor2.execute(NamedRunnable.of(() -> {
-                try {
-                    Thread.sleep((int) (Math.random() * 100));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                log.info("i am a dtp2 task");
-            }, "task-" + i));
-        }
+    @GetMapping("/dtp-polaris-example/testCommonDtp")
+    public String testCommon() {
+        testService.testCommonDtp();
+        return "testCommonDtp success";
+    }
+
+    @GetMapping("/dtp-polaris-example/testEagerDtp")
+    public String testEager() {
+        testService.testEagerDtp();
+        return "testEagerDtp success";
+    }
+
+    @GetMapping("/dtp-polaris-example/testScheduledDtp")
+    public String testScheduled() {
+        testService.testScheduledDtp();
+        return "testScheduledDtp success";
+    }
+
+    @GetMapping("/dtp-polaris-example/testOrderedDtp")
+    public String testOrdered() {
+        testService.testOrderedDtp();
+        return "testOrderedDtp success";
     }
 }

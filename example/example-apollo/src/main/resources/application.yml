@@ -7,10 +7,18 @@ spring:
   profiles:
     active: dev
 
-logging:
-  level:
-    #root: DEBUG
-    com.alibaba.nacos.client.config.impl: WARN
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: '*'
+    httptrace:
+      enabled: false
+    configprops:
+      enabled: false
+    shutdown:
+      enabled: false
 
 apollo:
   bootstrap:

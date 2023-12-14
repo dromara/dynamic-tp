@@ -17,72 +17,55 @@
 
 package org.dromara.dynamictp.example.controller;
 
-import org.dromara.dynamictp.core.DtpRegistry;
-import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
+import org.dromara.dynamictp.example.service.TestService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.annotation.Resource;
-import java.util.UUID;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author Redick01
  */
 @Slf4j
 @RestController
-@SuppressWarnings("all")
+@AllArgsConstructor
 public class TestController {
 
-    @Resource
-    private ThreadPoolExecutor dtpExecutor1;
+    private final TestService testService;
 
-    @GetMapping("/dtp-nacos-cloud-example/test")
-    public String test() throws InterruptedException {
-        task();
-        return "success";
-    }
-    @GetMapping("/dtp12")
-    public String test1() {
-        return "success";
+    @GetMapping("/dtp-nacos-example/testJucTp")
+    public String testJuc() {
+        testService.testJucTp();
+        return "testJucTp success";
     }
 
-    public void task() throws InterruptedException {
-        MDC.put("traceId", UUID.randomUUID().toString());
-        Executor dtpExecutor2 = DtpRegistry.getExecutor("supplierExecutor");
-        for (int i = 0; i < 10; i++) {
-            Thread.sleep(100);
-            dtpExecutor1.execute(() -> {
-                log.info("i am dynamic-tp-test-1 task, mdc: {}", MDC.get("traceId"));
-            });
-            dtpExecutor2.execute(NamedRunnable.of(() -> {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                log.info("i am dynamic-tp-test-2 task, mdc: {}", MDC.get("traceId"));
-            }, "task-" + i));
-        }
+    @GetMapping("/dtp-nacos-example/testSpringTp")
+    public String testSpring() {
+        testService.testSpringTp();
+        return "testSpringTp success";
     }
 
-    @GetMapping("/dtp-nacos-cloud-example/test-notify-run-timeout")
-    public String testNotifyRunTimeout() {
-        MDC.put("traceId", UUID.randomUUID().toString());
-        Executor dtpExecutor2 = DtpRegistry.getExecutor("dtpExecutor2");
-        dtpExecutor2.execute(NamedRunnable.of(() -> {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                log.error("error", e);
-            }
-            log.info("i am dynamic-tp-test-2 task, mdc: {}", MDC.get("traceId"));
-        }, "task-" + 0));
-        return "success";
+    @GetMapping("/dtp-nacos-example/testCommonDtp")
+    public String testCommon() {
+        testService.testCommonDtp();
+        return "testCommonDtp success";
     }
 
+    @GetMapping("/dtp-nacos-example/testEagerDtp")
+    public String testEager() {
+        testService.testEagerDtp();
+        return "testEagerDtp success";
+    }
+
+    @GetMapping("/dtp-nacos-example/testScheduledDtp")
+    public String testScheduled() {
+        testService.testScheduledDtp();
+        return "testScheduledDtp success";
+    }
+
+    @GetMapping("/dtp-nacos-example/testOrderedDtp")
+    public String testOrdered() {
+        testService.testOrderedDtp();
+        return "testOrderedDtp success";
+    }
 }
-

@@ -82,9 +82,10 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements Initia
             handlers.forEach(handler -> {
                 val executor = handler.getExecutor();
                 if (executor instanceof ThreadPoolExecutor) {
-                    String tpName = genTpName(handler.getUrl().getPort());
+                    String port = String.valueOf(handler.getUrl().getPort());
+                    String tpName = genTpName(port);
                     enhanceOriginExecutor(tpName, (ThreadPoolExecutor) executor, EXECUTOR_FIELD, handler);
-                    dataStore.put(EXECUTOR_SERVICE_COMPONENT_KEY, tpName, handler.getExecutor());
+                    dataStore.put(EXECUTOR_SERVICE_COMPONENT_KEY, port, handler.getExecutor());
                 }
             });
         }
@@ -95,7 +96,7 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements Initia
         return TP_PREFIX;
     }
 
-    private String genTpName(int port) {
+    private String genTpName(String port) {
         return TP_PREFIX + "#" + port;
     }
 }

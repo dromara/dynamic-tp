@@ -6,9 +6,9 @@ jobs:
   linux:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK 8
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '8'
           distribution: 'adopt'
@@ -16,7 +16,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}/jvmti/jvmti-build
           mvn package
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: lib
           path: jvmti/jvmti-build/target/classes/lib*
@@ -25,9 +25,9 @@ jobs:
   mac:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK 8
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '8'
           distribution: 'adopt'
@@ -35,7 +35,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}/jvmti/jvmti-build
           mvn package
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: lib
           path: jvmti/jvmti-build/target/classes/lib*
@@ -44,9 +44,9 @@ jobs:
   windows:
     runs-on: windows-2019
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK 8
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '8'
           distribution: 'adopt'
@@ -54,7 +54,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}/jvmti/jvmti-build
           mvn package
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: lib
           path: jvmti/jvmti-build/target/classes/*.dll

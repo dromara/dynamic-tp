@@ -1,7 +1,5 @@
 server:
   port: 8888
-  servlet:
-    context-path: "/dynamic-tp"
 
 spring:
   application:

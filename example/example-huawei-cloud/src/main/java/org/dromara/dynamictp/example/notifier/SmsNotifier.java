@@ -15,43 +15,33 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.example.service;
+package org.dromara.dynamictp.example.notifier;
+
+import org.dromara.dynamictp.common.entity.NotifyPlatform;
+import org.dromara.dynamictp.core.notifier.base.AbstractNotifier;
 
 /**
- * TestService related
+ * SmsNotifier related
  *
  * @author yanhom
  * @since 1.1.0
  */
-public interface TestService {
+public class SmsNotifier extends AbstractNotifier {
 
-    /**
-     * Test juc tp.
-     */
-    void testJucTp();
+    private final SmsClient smsClient;
 
-    /**
-     * Test spring tp.
-     */
-    void testSpringTp();
+    public SmsNotifier(SmsClient smsClient) {
+        this.smsClient = smsClient;
+    }
 
-    /**
-     * Test common dtp.
-     */
-    void testCommonDtp();
+    @Override
+    public String platform() {
+        return "sms";
+    }
 
-    /**
-     * Test eager dtp.
-     */
-    void testEagerDtp();
-
-    /**
-     * Test scheduled dtp.
-     */
-    void testScheduledDtp();
-
-    /**
-     * Test ordered dtp.
-     */
-    void testOrderedDtp();
+    @Override
+    protected void send0(NotifyPlatform platform, String content) {
+        String[] receivers = getReceivers(platform);
+        smsClient.send(platform.getSecret(), receivers, content);
+    }
 }

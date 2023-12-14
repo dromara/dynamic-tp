@@ -15,43 +15,20 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.example.service;
+package org.dromara.dynamictp.example.notifier;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
- * TestService related
+ * SmsClient related
  *
  * @author yanhom
  * @since 1.1.0
  */
-public interface TestService {
+@Slf4j
+public class SmsClient {
 
-    /**
-     * Test juc tp.
-     */
-    void testJucTp();
-
-    /**
-     * Test spring tp.
-     */
-    void testSpringTp();
-
-    /**
-     * Test common dtp.
-     */
-    void testCommonDtp();
-
-    /**
-     * Test eager dtp.
-     */
-    void testEagerDtp();
-
-    /**
-     * Test scheduled dtp.
-     */
-    void testScheduledDtp();
-
-    /**
-     * Test ordered dtp.
-     */
-    void testOrderedDtp();
+    public void send(String secret, String[] receivers, String content) {
+        log.info("send sms, secret: {}, receivers: {}, content: {}", secret, receivers, content);
+    }
 }

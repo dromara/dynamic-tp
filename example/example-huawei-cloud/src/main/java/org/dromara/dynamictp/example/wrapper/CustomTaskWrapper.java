@@ -15,43 +15,43 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.example.service;
+package org.dromara.dynamictp.example.wrapper;
+
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 
 /**
- * TestService related
+ * CustomTaskWrapper related
  *
  * @author yanhom
  * @since 1.1.0
  */
-public interface TestService {
+@Slf4j
+public class CustomTaskWrapper implements TaskWrapper {
 
-    /**
-     * Test juc tp.
-     */
-    void testJucTp();
+    @Override
+    public String name() {
+        return "custom";
+    }
 
-    /**
-     * Test spring tp.
-     */
-    void testSpringTp();
+    @Override
+    public Runnable wrap(Runnable runnable) {
+        return new MyRunnable(runnable);
+    }
 
-    /**
-     * Test common dtp.
-     */
-    void testCommonDtp();
+    public static class MyRunnable implements Runnable {
 
-    /**
-     * Test eager dtp.
-     */
-    void testEagerDtp();
+        private final Runnable runnable;
 
-    /**
-     * Test scheduled dtp.
-     */
-    void testScheduledDtp();
+        public MyRunnable(Runnable runnable) {
+            this.runnable = runnable;
+        }
 
-    /**
-     * Test ordered dtp.
-     */
-    void testOrderedDtp();
+        @Override
+        public void run() {
+            log.info("before run");
+            runnable.run();
+            log.info("after run");
+        }
+    }
 }

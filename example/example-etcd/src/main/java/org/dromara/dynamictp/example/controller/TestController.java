@@ -17,9 +17,9 @@
 
 package org.dromara.dynamictp.example.controller;
 
-import java.util.concurrent.ThreadPoolExecutor;
-import javax.annotation.Resource;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.example.service.TestService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,30 +28,44 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Slf4j
 @RestController
-@SuppressWarnings("all")
+@AllArgsConstructor
 public class TestController {
 
-    @Resource
-    private ThreadPoolExecutor dtpExecutor1;
+    private final TestService testService;
 
-    @Resource
-    private ThreadPoolExecutor commonExecutor;
-
-    @GetMapping("/dtp-zookeeper-example/test")
-    public String test() throws InterruptedException {
-        task();
-        return "success";
+    @GetMapping("/dtp-etcd-example/testJucTp")
+    public String testJuc() {
+        testService.testJucTp();
+        return "testJucTp success";
     }
 
-    public void task() throws InterruptedException {
-        for (int i = 0; i < 100; i++) {
-            Thread.sleep(100);
-            dtpExecutor1.execute(() -> {
-                log.info("i am dynamic-tp-test-1 task");
-            });
-            commonExecutor.execute(() -> {
-                log.info("i am commonExecutor task");
-            });
-        }
+    @GetMapping("/dtp-etcd-example/testSpringTp")
+    public String testSpring() {
+        testService.testSpringTp();
+        return "testSpringTp success";
+    }
+
+    @GetMapping("/dtp-etcd-example/testCommonDtp")
+    public String testCommon() {
+        testService.testCommonDtp();
+        return "testCommonDtp success";
+    }
+
+    @GetMapping("/dtp-etcd-example/testEagerDtp")
+    public String testEager() {
+        testService.testEagerDtp();
+        return "testEagerDtp success";
+    }
+
+    @GetMapping("/dtp-etcd-example/testScheduledDtp")
+    public String testScheduled() {
+        testService.testScheduledDtp();
+        return "testScheduledDtp success";
+    }
+
+    @GetMapping("/dtp-etcd-example/testOrderedDtp")
+    public String testOrdered() {
+        testService.testOrderedDtp();
+        return "testOrderedDtp success";
     }
 }

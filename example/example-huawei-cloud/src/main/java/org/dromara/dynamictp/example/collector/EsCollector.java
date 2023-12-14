@@ -15,43 +15,33 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.example.service;
+package org.dromara.dynamictp.example.collector;
+
+import org.dromara.dynamictp.common.entity.ThreadPoolStats;
+import org.dromara.dynamictp.common.util.JsonUtil;
+import org.dromara.dynamictp.core.monitor.collector.AbstractCollector;
 
 /**
- * TestService related
+ * EsCollector related
  *
  * @author yanhom
  * @since 1.1.0
  */
-public interface TestService {
+public class EsCollector extends AbstractCollector {
 
-    /**
-     * Test juc tp.
-     */
-    void testJucTp();
+    private final EsClient esClient;
 
-    /**
-     * Test spring tp.
-     */
-    void testSpringTp();
+    public EsCollector() {
+        this.esClient = new EsClient();
+    }
 
-    /**
-     * Test common dtp.
-     */
-    void testCommonDtp();
+    @Override
+    public void collect(ThreadPoolStats poolStats) {
+        esClient.save(JsonUtil.toJson(poolStats));
+    }
 
-    /**
-     * Test eager dtp.
-     */
-    void testEagerDtp();
-
-    /**
-     * Test scheduled dtp.
-     */
-    void testScheduledDtp();
-
-    /**
-     * Test ordered dtp.
-     */
-    void testOrderedDtp();
+    @Override
+    public String type() {
+        return "es";
+    }
 }

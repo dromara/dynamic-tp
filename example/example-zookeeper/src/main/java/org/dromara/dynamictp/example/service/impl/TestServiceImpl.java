@@ -25,7 +25,6 @@ import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
 import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
 import org.dromara.dynamictp.core.support.task.runnable.OrderedRunnable;
-import org.dromara.dynamictp.example.feign.DynamicTpFeign;
 import org.dromara.dynamictp.example.service.TestService;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -55,27 +54,27 @@ public class TestServiceImpl implements TestService {
 
     private final OrderedDtpExecutor orderedDtpExecutor;
 
-    private final DynamicTpFeign dynamicTpFeign;
-
     public TestServiceImpl(ThreadPoolExecutor jucThreadPoolExecutor,
                            ThreadPoolTaskExecutor threadPoolTaskExecutor,
                            DtpExecutor eagerDtpExecutor,
                            ScheduledExecutorService scheduledDtpExecutor,
-                           OrderedDtpExecutor orderedDtpExecutor,
-                           DynamicTpFeign dynamicTpFeign) {
+                           OrderedDtpExecutor orderedDtpExecutor) {
         this.jucThreadPoolExecutor = jucThreadPoolExecutor;
         this.threadPoolTaskExecutor = threadPoolTaskExecutor;
         this.eagerDtpExecutor = eagerDtpExecutor;
         this.scheduledDtpExecutor = scheduledDtpExecutor;
         this.orderedDtpExecutor = orderedDtpExecutor;
-        this.dynamicTpFeign = dynamicTpFeign;
     }
 
     @Override
     public void testJucTp() {
         for (int i = 0; i < 10; i++) {
             jucThreadPoolExecutor.execute(() -> {
-                dynamicTpFeign.test();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
                 log.info("i am a jucThreadPoolExecutor's task");
             });
         }
@@ -85,7 +84,11 @@ public class TestServiceImpl implements TestService {
     public void testSpringTp() {
         for (int i = 0; i < 10; i++) {
             threadPoolTaskExecutor.execute(() -> {
-                dynamicTpFeign.test();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
                 log.info("i am a threadPoolTaskExecutor's task");
             });
         }
@@ -96,7 +99,11 @@ public class TestServiceImpl implements TestService {
         Executor dtpExecutor1 = DtpRegistry.getExecutor("dtpExecutor1");
         for (int i = 0; i < 10; i++) {
             dtpExecutor1.execute(NamedRunnable.of(() -> {
-                dynamicTpFeign.test();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
                 log.info("i am a dtpExecutor's task");
             }, "task" + i));
         }
@@ -106,7 +113,11 @@ public class TestServiceImpl implements TestService {
     public void testEagerDtp() {
         for (int i = 0; i < 10; i++) {
             eagerDtpExecutor.execute(() -> {
-                dynamicTpFeign.test();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
                 log.info("i am a eagerDtpExecutor's task");
             });
         }
@@ -115,7 +126,11 @@ public class TestServiceImpl implements TestService {
     @Override
     public void testScheduledDtp() {
         scheduledDtpExecutor.scheduleAtFixedRate(() -> {
-            dynamicTpFeign.test();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
             log.info("i am a scheduledDtpExecutor's task");
         }, 0, 2, TimeUnit.SECONDS);
     }

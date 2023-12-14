@@ -17,13 +17,22 @@
 
 package org.dromara.dynamictp.example.config;
 
-import org.dromara.dynamictp.core.support.DynamicTp;
-import org.dromara.dynamictp.core.support.ThreadPoolCreator;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
+import org.dromara.dynamictp.core.support.DynamicTp;
+import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
+import org.dromara.dynamictp.core.support.ThreadPoolCreator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import static org.dromara.dynamictp.common.em.QueueTypeEnum.MEMORY_SAFE_LINKED_BLOCKING_QUEUE;
+import static org.dromara.dynamictp.common.em.RejectedTypeEnum.ABORT_POLICY;
 
 /**
  * @author Redick01
@@ -36,10 +45,16 @@ public class ThreadPoolConfiguration {
      *
      * @return 线程池实例
      */
-    @DynamicTp("commonExecutor")
+    @DynamicTp("jucThreadPoolExecutor")
     @Bean
-    public ThreadPoolExecutor commonExecutor() {
+    public ThreadPoolExecutor jucThreadPoolExecutor() {
         return (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+    }
+
+    @DynamicTp("threadPoolTaskExecutor")
+    @Bean
+    public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
+        return new ThreadPoolTaskExecutor();
     }
 
     /**
@@ -49,7 +64,65 @@ public class ThreadPoolConfiguration {
      * @return 线程池实例
      */
     @Bean
-    public DtpExecutor dtpExecutor1() {
-        return ThreadPoolCreator.createDynamicFast("dtpExecutor1");
+    public DtpExecutor dtpExecutor0() {
+        return ThreadPoolCreator.createDynamicFast("dtpExecutor0");
+    }
+
+    /**
+     * tips: 建议直接在配置中心配置就行，不用@Bean声明
+     * @return 线程池实例
+     */
+    @Bean
+    public ThreadPoolExecutor dtpExecutor1() {
+        return ThreadPoolBuilder.newBuilder()
+                .threadPoolName("dtpExecutor1")
+                .threadFactory("test-dtp-common")
+                .corePoolSize(10)
+                .maximumPoolSize(15)
+                .keepAliveTime(40)
+                .timeUnit(TimeUnit.SECONDS)
+                .workQueue(MEMORY_SAFE_LINKED_BLOCKING_QUEUE.getName(), 2000)
+                .buildDynamic();
+    }
+
+    /**
+     * 通过{@link ThreadPoolBuilder} 设置详细参数创建动态线程池（推荐方式），
+     * ioIntensive，参考tomcat线程池设计，实现了处理io密集型任务的线程池，具体参数可以看代码注释
+     * <p>
+     * tips: 建议直接在配置中心配置就行，不用@Bean声明
+     * @return 线程池实例
+     */
+    @Bean
+    public DtpExecutor eagerDtpExecutor() {
+        return ThreadPoolBuilder.newBuilder()
+                .threadPoolName("eagerDtpExecutor")
+                .threadFactory("test-eager")
+                .corePoolSize(2)
+                .maximumPoolSize(4)
+                .queueCapacity(2000)
+                .eager(true)
+                .buildDynamic();
+    }
+
+    @Bean
+    public OrderedDtpExecutor orderedDtpExecutor() {
+        return (OrderedDtpExecutor) ThreadPoolBuilder.newBuilder()
+                .threadPoolName("orderedDtpExecutor")
+                .threadFactory("test-ordered")
+                .corePoolSize(4)
+                .maximumPoolSize(4)
+                .queueCapacity(2000)
+                .ordered(true)
+                .buildDynamic();
+    }
+
+    @Bean
+    public ScheduledExecutorService scheduledDtpExecutor() {
+        return ThreadPoolBuilder.newBuilder()
+                .threadPoolName("scheduledDtpExecutor")
+                .corePoolSize(2)
+                .threadFactory("test-scheduled")
+                .rejectedExecutionHandler(ABORT_POLICY.getName())
+                .buildScheduled();
     }
 }

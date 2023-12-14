@@ -50,7 +50,7 @@ public class DtpProperties {
     private boolean enabledBanner = true;
 
     /**
-     * Config file type.
+     * Config file type, for zookeeper and etcd.
      */
     private String configType;
 
@@ -78,11 +78,6 @@ public class DtpProperties {
      * Notify platform configs.
      */
     private List<NotifyPlatform> platforms;
-
-    /**
-     * Apollo config.
-     */
-    private Apollo apollo;
 
     /**
      * Zookeeper config.
@@ -166,12 +161,6 @@ public class DtpProperties {
     
     public static DtpProperties getInstance() {
         return Holder.INSTANCE;
-    }
-
-    @Data
-    public static class Apollo {
-
-        private String namespace;
     }
 
     @Data

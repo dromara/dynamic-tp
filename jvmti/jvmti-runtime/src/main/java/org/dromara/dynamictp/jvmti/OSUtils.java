@@ -21,7 +21,7 @@ import java.io.File;
 import java.util.Locale;
 
 /**
- * This file is copied from <a href="https://github.com/alibaba/arthas"/>
+ * This file is copied from <a href="https://github.com/alibaba/arthas"></a>
  *
  * @author dragon-zhang
  * @since 1.1.6
@@ -46,7 +46,6 @@ public class OSUtils {
         } else {
             platform = PlatformEnum.UNKNOWN;
         }
-
         arch = normalizeArch(OPERATING_SYSTEM_ARCH);
     }
 

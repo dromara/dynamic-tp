@@ -17,61 +17,55 @@
 
 package org.dromara.dynamictp.example.controller;
 
-import org.dromara.dynamictp.core.DtpRegistry;
-import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.example.feign.DynamicTpFeign;
-import org.slf4j.MDC;
+import org.dromara.dynamictp.example.service.TestService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.annotation.Resource;
-import java.util.UUID;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @author Redick01
  */
-@RestController
 @Slf4j
-@SuppressWarnings("all")
+@RestController
+@AllArgsConstructor
 public class TestController {
 
-    @Resource
-    private ThreadPoolExecutor dtpExecutor1;
+    private final TestService testService;
 
-    @Resource
-    private DynamicTpFeign dynamicTpFeign;
-
-    @GetMapping("/index")
-    public String index() throws InterruptedException {
-        Thread.sleep((int) (Math.random() * 100));
-        return "index";
+    @GetMapping("/dtp-consul-example/testJucTp")
+    public String testJuc() {
+        testService.testJucTp();
+        return "testJucTp success";
     }
 
-    @GetMapping("/dtp-consul-example/test")
-    public String test() throws InterruptedException {
-        task();
-        return "success";
+    @GetMapping("/dtp-consul-example/testSpringTp")
+    public String testSpring() {
+        testService.testSpringTp();
+        return "testSpringTp success";
     }
 
-    public void task() throws InterruptedException {
-        Executor dtpExecutor2 = DtpRegistry.getExecutor("dtpExecutor2");
-        MDC.put("traceId", UUID.randomUUID().toString());
-        for (int i = 0; i < 100; i++) {
-            Thread.sleep(100);
-            dtpExecutor1.execute(() -> {
-                log.info("i am dynamic-tp-test-1 task");
-            });
-            dtpExecutor2.execute(NamedRunnable.of(() -> {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                log.info("i am dynamic-tp-test-2 task");
-            }, "task-" + i));
-        }
+    @GetMapping("/dtp-consul-example/testCommonDtp")
+    public String testCommon() {
+        testService.testCommonDtp();
+        return "testCommonDtp success";
+    }
+
+    @GetMapping("/dtp-consul-example/testEagerDtp")
+    public String testEager() {
+        testService.testEagerDtp();
+        return "testEagerDtp success";
+    }
+
+    @GetMapping("/dtp-consul-example/testScheduledDtp")
+    public String testScheduled() {
+        testService.testScheduledDtp();
+        return "testScheduledDtp success";
+    }
+
+    @GetMapping("/dtp-consul-example/testOrderedDtp")
+    public String testOrdered() {
+        testService.testOrderedDtp();
+        return "testOrderedDtp success";
     }
 }

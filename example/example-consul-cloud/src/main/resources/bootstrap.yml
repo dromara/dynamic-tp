@@ -1,16 +1,6 @@
 server:
   port: 9100
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'   # 测试使用，线上不要用*，按需开启
-  prometheus:
-    metrics:
-      export:
-        enabled: true
-
 spring:
   application:
     name: dynamic-tp-cloud-consul-demo
@@ -25,3 +15,15 @@ spring:
         prefixes: config
         format: yaml
         data-key: dynamic-tp-cloud-consul-demo-dtp
+
+# 开启 SpringBoot Actuator Endpoint 暴露出DynamicTp指标接口
+# 开启 prometheus 指标采集端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'   # 测试使用，线上不要用*，按需开启
+  prometheus:
+    metrics:
+      export:
+        enabled: true

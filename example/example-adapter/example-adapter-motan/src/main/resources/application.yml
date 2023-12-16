@@ -30,11 +30,13 @@ spring:
           maximumPoolSize: 200
           keepAliveTime: 60
 
+# 开启 SpringBoot Actuator Endpoint 暴露出DynamicTp指标接口
+# 开启 prometheus 指标采集端点
 management:
   endpoints:
     web:
       exposure:
-        include: '*'
+        include: '*'   # 测试使用，线上不要用*，按需开启
   prometheus:
     metrics:
       export:

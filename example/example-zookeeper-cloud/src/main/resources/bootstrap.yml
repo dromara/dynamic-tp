@@ -13,6 +13,8 @@ spring:
   profiles:
     active: dev
 
+# 开启 SpringBoot Actuator Endpoint 暴露出DynamicTp指标接口
+# 开启 prometheus 指标采集端点
 management:
   endpoints:
     web:

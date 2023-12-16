@@ -19,6 +19,8 @@ spring:
         # 自定义配置，使用文本的key/value配置项作为yaml格式配置
         fileSource: application.yaml
 
+# 开启 SpringBoot Actuator Endpoint 暴露出DynamicTp指标接口
+# 开启 prometheus 指标采集端点
 management:
   endpoints:
     web:

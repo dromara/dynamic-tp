@@ -39,7 +39,7 @@ public class NacosRefresher extends AbstractRefresher implements SmartApplicatio
 
     @Override
     public boolean supportsEventType(Class<? extends ApplicationEvent> eventType) {
-         return NacosConfigEvent.class.isAssignableFrom(eventType);
+        return NacosConfigEvent.class.isAssignableFrom(eventType);
     }
 
     @Override

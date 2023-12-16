@@ -12,6 +12,12 @@ spring:
   application:
     name: dynamic-tp-etcd-demo
 
-logging:
-  level:
-    root: INFO
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'   # 测试使用，线上不要用*，按需开启
+  prometheus:
+    metrics:
+      export:
+        enabled: true

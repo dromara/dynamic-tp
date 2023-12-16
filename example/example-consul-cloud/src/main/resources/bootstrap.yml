@@ -4,15 +4,12 @@ server:
 management:
   endpoints:
     web:
-      base-path: /actuator
       exposure:
-        include: '*'
-    httptrace:
-      enabled: false
-    configprops:
-      enabled: false
-    shutdown:
-      enabled: false
+        include: '*'   # 测试使用，线上不要用*，按需开启
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 spring:
   application:

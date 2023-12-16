@@ -19,15 +19,15 @@ package org.dromara.dynamictp.adapter.dubbo.alibaba;
 
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 import com.alibaba.dubbo.common.store.DataStore;
+import com.alibaba.dubbo.remoting.transport.dispatcher.WrappedChannelHandler;
 import lombok.val;
-import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.jvmti.JVMTI;
 import org.springframework.beans.factory.InitializingBean;
 
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -45,6 +45,8 @@ import static com.alibaba.dubbo.common.Constants.EXECUTOR_SERVICE_COMPONENT_KEY;
 public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements InitializingBean {
 
     private static final String TP_PREFIX = "dubboTp";
+
+    private static final String EXECUTOR_FIELD = "executor";
 
     private final AtomicBoolean registered = new AtomicBoolean(false);
 
@@ -74,13 +76,17 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements Initia
     @Override
     protected void initialize() {
         super.initialize();
-        DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
-        Map<String, Object> executorMap = dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY);
-        if (MapUtils.isNotEmpty(executorMap) && registered.compareAndSet(false, true)) {
-            executorMap.forEach((k, v) -> {
-                val proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) v);
-                executorMap.replace(k, proxy);
-                putAndFinalize(genTpName(k), (ExecutorService) v, proxy);
+        val handlers = JVMTI.getInstances(WrappedChannelHandler.class);
+        if (CollectionUtils.isNotEmpty(handlers) && registered.compareAndSet(false, true)) {
+            DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
+            handlers.forEach(handler -> {
+                val executor = handler.getExecutor();
+                if (executor instanceof ThreadPoolExecutor) {
+                    String port = String.valueOf(handler.getUrl().getPort());
+                    String tpName = genTpName(port);
+                    enhanceOriginExecutor(tpName, (ThreadPoolExecutor) executor, EXECUTOR_FIELD, handler);
+                    dataStore.put(EXECUTOR_SERVICE_COMPONENT_KEY, port, handler.getExecutor());
+                }
             });
         }
     }

@@ -130,7 +130,7 @@ public class ThreadPoolBuilder {
      * on shutdown in order to wait for remaining tasks to complete their execution
      * before the rest of the container continues to shut down.
      */
-    private int awaitTerminationSeconds = 0;
+    private int awaitTerminationSeconds = 3;
 
     /**
      * If io intensive thread pool.
@@ -427,6 +427,16 @@ public class ThreadPoolBuilder {
         } else {
             return (ScheduledThreadPoolExecutor) buildCommonExecutor(this);
         }
+    }
+
+    /**
+     * Build ordered thread pool executor.
+     *
+     * @return the newly created DtpExecutor instance
+     */
+    public OrderedDtpExecutor buildOrdered() {
+        ordered = true;
+        return (OrderedDtpExecutor) buildDtpExecutor(this);
     }
 
     /**

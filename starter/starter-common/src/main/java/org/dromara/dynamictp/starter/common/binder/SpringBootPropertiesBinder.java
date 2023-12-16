@@ -52,7 +52,7 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
         try {
             Class.forName("org.springframework.boot.context.properties.bind.Binder");
             doBindIn2X(properties, dtpProperties);
-        } catch (Exception e) {
+        } catch (ClassNotFoundException e) {
             doBindIn1X(properties, dtpProperties);
         }
     }
@@ -62,7 +62,7 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
         try {
             Class.forName("org.springframework.boot.context.properties.bind.Binder");
             doBindIn2X(environment, dtpProperties);
-        } catch (Exception e) {
+        } catch (ClassNotFoundException e) {
             doBindIn1X(environment, dtpProperties);
         }
     }

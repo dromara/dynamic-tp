@@ -10,9 +10,8 @@ spring:
   dynamic:
     tp:
       enabled: true
-      enabledBanner: true           # 是否开启banner打印，默认true
       enabledCollect: true          # 是否开启监控指标采集，默认false
-      collectorTypes: logging       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+      collectorTypes: micrometer       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
       monitorInterval: 5
       platforms:                    # 通知报警平台配置
         - platform: wechat
@@ -25,35 +24,23 @@ spring:
         - platform: lark
           urlKey: 0d944ae7-b24a-40                 # 替换
           receivers: test1,test2                   # 接受人飞书名称/openid
-        - platform: email
-          receivers: 123456@qq.com,789789@qq.com   # 收件人
       brpcTp:                                      # brpc 线程池配置
         - threadPoolName: rpc#server              # 名称规则：biz_thread_pool_name + "#" + client/server
           corePoolSize: 100
           maximumPoolSize: 200
           keepAliveTime: 60
 
-  # email notify configuration
-  mail:
-    # (optional) email subject, default:ThreadPool Notify
-    title: ThreadPool Notify
-    # mail service address
-    host: smtp.qq.com
-    port: 465
-    # send from
-    username: 123456@qq.com
-    # authorization code eg: rlpadadtcugh4152e
-    password: xxxxxxxxxxxxxxxx
-    default-encoding: UTF-8
-    properties:
-      mail:
-        smtp:
-          socketFactoryClass: javax.net.ssl.SSLSocketFactory
-          ssl:
-            enable: true
-        debug: false
-
 starlight:
   server:
     enable: true
     port: 8777
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  prometheus:
+    metrics:
+      export:
+        enabled: true

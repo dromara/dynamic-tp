@@ -13,7 +13,12 @@ spring:
         node: dtp-group
         config-key: dynamic-tp-zookeeper-demo-json   # json 用到
 
-
-#logging:
-#  level:
-#    root: DEBUG
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'   # 测试使用，线上不要用*，按需开启
+  prometheus:
+    metrics:
+      export:
+        enabled: true

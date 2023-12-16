@@ -18,38 +18,40 @@
 package org.dromara.dynamictp.jvmti;
 
 /**
- * The type JVMTI utils.
- * <p>
- * This file is copied from <a href="https://github.com/alibaba/arthas"/>
+ * The JVMTI util.
+ * This file is copied from <a href="https://github.com/alibaba/arthas">here</a>
  *
  * @author dragon-zhang
  * @since 1.1.4
  */
-public class JVMTIUtils {
+public class JVMTIUtil {
 
     private static String libName;
 
     static {
-        if (OSUtils.isMac()) {
+        if (OSUtil.isMac()) {
             libName = "libJniLibrary.dylib";
         }
-        if (OSUtils.isLinux()) {
-            if (OSUtils.isArm32()) {
+        if (OSUtil.isLinux()) {
+            if (OSUtil.isArm32()) {
                 libName = "libJniLibrary-arm.so";
-            } else if (OSUtils.isArm64()) {
+            } else if (OSUtil.isArm64()) {
                 libName = "libJniLibrary-aarch64.so";
-            } else if (OSUtils.isX8664()) {
+            } else if (OSUtil.isX8664()) {
                 libName = "libJniLibrary-x64.so";
             } else {
-                libName = "libJniLibrary-" + OSUtils.arch() + ".so";
+                libName = "libJniLibrary-" + OSUtil.arch() + ".so";
             }
         }
-        if (OSUtils.isWindows()) {
+        if (OSUtil.isWindows()) {
             libName = "libJniLibrary-x64.dll";
-            if (OSUtils.isX86()) {
+            if (OSUtil.isX86()) {
                 libName = "libJniLibrary-x86.dll";
             }
         }
+    }
+
+    private JVMTIUtil() {
     }
 
     /**

@@ -30,8 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Use JVMTI technology to implement some things that Java code can't do.
- *
- * <p>Note: Only 64-bit CPU architecture is supported now !
+ * Note: Only 64-bit CPU architecture is supported now!
  *
  * @author dragon-zhang
  * @since 1.1.4
@@ -52,13 +51,16 @@ public class JVMTI {
 		} catch (Throwable ignored) {
 			try {
 				File path = new File(JVMTI.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-				String libPath = new File(path, JVMTIUtils.detectLibName()).getAbsolutePath();
+				String libPath = new File(path, JVMTIUtil.detectLibName()).getAbsolutePath();
 				System.load(libPath);
 				AVAILABLE.set(true);
 			} catch (Throwable t) {
 				log.error("JVMTI initialization failed!", t);
 			}
 		}
+	}
+
+	private JVMTI() {
 	}
 
 	/**

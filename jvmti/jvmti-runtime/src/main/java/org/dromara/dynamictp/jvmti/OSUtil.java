@@ -21,12 +21,12 @@ import java.io.File;
 import java.util.Locale;
 
 /**
- * This file is copied from <a href="https://github.com/alibaba/arthas"/>
+ * This file is copied from <a href="https://github.com/alibaba/arthas">here</a>
  *
  * @author dragon-zhang
  * @since 1.1.6
  */
-public class OSUtils {
+public class OSUtil {
 
     private static final String OPERATING_SYSTEM_NAME = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
 
@@ -46,11 +46,10 @@ public class OSUtils {
         } else {
             platform = PlatformEnum.UNKNOWN;
         }
-
         arch = normalizeArch(OPERATING_SYSTEM_ARCH);
     }
 
-    private OSUtils() {
+    private OSUtil() {
     }
 
     public static boolean isWindows() {

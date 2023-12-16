@@ -17,15 +17,15 @@
 
 package org.dromara.dynamictp.adapter.common;
 
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.dromara.dynamictp.common.event.AlarmCheckEvent;
 import org.dromara.dynamictp.common.event.CollectEvent;
 import org.dromara.dynamictp.common.event.RefreshEvent;
 import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.core.handler.CollectorHandler;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.GenericApplicationListener;
 import org.springframework.core.ResolvableType;
@@ -58,12 +58,12 @@ public class DtpAdapterListener implements GenericApplicationListener {
     @Override
     public void onApplicationEvent(@NonNull ApplicationEvent event) {
         try {
-            if (event instanceof RefreshEvent) {
-                doRefresh(((RefreshEvent) event).getDtpProperties());
-            } else if (event instanceof CollectEvent) {
-                doCollect(((CollectEvent) event).getDtpProperties());
-            } else if (event instanceof AlarmCheckEvent) {
-                doAlarmCheck(((AlarmCheckEvent) event).getDtpProperties());
+            if (event instanceof RefreshEvent refreshEvent) {
+                doRefresh(refreshEvent.getDtpProperties());
+            } else if (event instanceof CollectEvent collectEvent) {
+                doCollect(collectEvent.getDtpProperties());
+            } else if (event instanceof AlarmCheckEvent alarmCheckEvent) {
+                doAlarmCheck(alarmCheckEvent.getDtpProperties());
             }
         } catch (Exception e) {
             log.error("DynamicTp adapter, event handle failed.", e);

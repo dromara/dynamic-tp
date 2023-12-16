@@ -81,16 +81,14 @@ public class SofaDtpAdapter extends AbstractDtpAdapter {
         servers.forEach(v -> {
             ThreadPoolExecutor executor = null;
             ServerConfig serverConfig = null;
-            if (v instanceof BoltServer) {
-                BoltServer server = (BoltServer) v;
-                executor = server.getBizThreadPool();
+            if (v instanceof BoltServer boltServer) {
+                executor = boltServer.getBizThreadPool();
                 serverConfig = (ServerConfig) ReflectionUtil.getFieldValue(BoltServer.class,
-                        SERVER_CONFIG_FIELD, server);
-            } else if (v instanceof AbstractHttpServer) {
-                AbstractHttpServer server = (AbstractHttpServer) v;
-                executor = server.getBizThreadPool();
+                        SERVER_CONFIG_FIELD, boltServer);
+            } else if (v instanceof AbstractHttpServer httpServer) {
+                executor = httpServer.getBizThreadPool();
                 serverConfig = (ServerConfig) ReflectionUtil.getFieldValue(AbstractHttpServer.class,
-                        SERVER_CONFIG_FIELD, server);
+                        SERVER_CONFIG_FIELD, httpServer);
             }
             if (Objects.isNull(executor) || Objects.isNull(serverConfig)) {
                 return;

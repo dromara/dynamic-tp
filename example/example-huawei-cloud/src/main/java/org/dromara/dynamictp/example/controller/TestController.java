@@ -17,48 +17,55 @@
 
 package org.dromara.dynamictp.example.controller;
 
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.DtpRegistry;
-import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.dromara.dynamictp.example.service.TestService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
-import java.util.concurrent.Executor;
-
 /**
- * @author windsearcher
+ * @author Redick01
  */
 @Slf4j
 @RestController
-@SuppressWarnings("all")
+@AllArgsConstructor
 public class TestController {
 
+    private final TestService testService;
 
-    @Autowired
-    private DtpProperties dtpProperties;
-
-    @GetMapping("/dtp-huawei-cloud-example/test")
-    public String test() throws InterruptedException {
-        task();
-        return "Success";
+    @GetMapping("/dtp-huiwei-example/testJucTp")
+    public String testJuc() {
+        testService.testJucTp();
+        return "testJucTp success";
     }
 
-    public void task() throws InterruptedException {
-        Executor dtpExecutor3 = DtpRegistry.getExecutor("dtpExecutor3");
-        for (int i = 0; i < 100; i++) {
-            Thread.sleep(100);
+    @GetMapping("/dtp-huiwei-example/testSpringTp")
+    public String testSpring() {
+        testService.testSpringTp();
+        return "testSpringTp success";
+    }
 
-            dtpExecutor3.execute(NamedRunnable.of(() -> {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                log.info("i am dynamic-tp-test-2 task");
-            }, "task-" + i));
-        }
+    @GetMapping("/dtp-huiwei-example/testCommonDtp")
+    public String testCommon() {
+        testService.testCommonDtp();
+        return "testCommonDtp success";
+    }
+
+    @GetMapping("/dtp-huiwei-example/testEagerDtp")
+    public String testEager() {
+        testService.testEagerDtp();
+        return "testEagerDtp success";
+    }
+
+    @GetMapping("/dtp-huiwei-example/testScheduledDtp")
+    public String testScheduled() {
+        testService.testScheduledDtp();
+        return "testScheduledDtp success";
+    }
+
+    @GetMapping("/dtp-huiwei-example/testOrderedDtp")
+    public String testOrdered() {
+        testService.testOrderedDtp();
+        return "testOrderedDtp success";
     }
 }

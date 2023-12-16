@@ -18,7 +18,6 @@ spring:
   dynamic:
     tp:
       enabled: true
-      enabledBanner: true           # 是否开启banner打印，默认true
       enabledCollect: true          # 是否开启监控指标采集，默认false
       collectorTypes: internal_logging       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
       monitorInterval: 5
@@ -30,14 +29,13 @@ spring:
           maximumPoolSize: 16
           #单位秒
           keepAliveTime: 60
-          notifyEnabled: true
-          notifyItems:
-            - type: change
-              enable: true
-            - type: liveness
-              enabled: true
-              threshold: 10
-              interval: 5
-            - type: capacity
-              enable: true
-              threshold: 10
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  prometheus:
+    metrics:
+      export:
+        enabled: true

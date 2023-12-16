@@ -20,7 +20,7 @@ package org.dromara.dynamictp.starter.cloud.zookeeper.refresher;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;
-import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
+import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.SmartApplicationListener;
 import org.springframework.lang.NonNull;
@@ -37,12 +37,12 @@ public class CloudZookeeperRefresher extends AbstractRefresher implements SmartA
 
     @Override
     public boolean supportsEventType(@NonNull Class<? extends ApplicationEvent> eventType) {
-        return RefreshScopeRefreshedEvent.class.isAssignableFrom(eventType);
+        return EnvironmentChangeEvent.class.isAssignableFrom(eventType);
     }
 
     @Override
     public void onApplicationEvent(@NonNull ApplicationEvent event) {
-        if (event instanceof RefreshScopeRefreshedEvent) {
+        if (event instanceof EnvironmentChangeEvent ece && needRefresh(ece.getKeys())) {
             refresh(environment);
         }
     }

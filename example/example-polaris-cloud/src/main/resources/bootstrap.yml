@@ -20,11 +20,11 @@ spring:
             files: [ "config/dynamic-tp.yml" ]
 
 management:
-  metrics:
-    export:
-      prometheus:
-        enabled: true
   endpoints:
     web:
       exposure:
         include: '*'   # 测试使用，线上不要用*，按需开启
+  prometheus:
+    metrics:
+      export:
+        enabled: true

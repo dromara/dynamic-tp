@@ -67,10 +67,9 @@ public class StarlightServerDtpAdapter extends AbstractDtpAdapter {
         super.initialize();
 
         val bean = JVMTI.getInstance(StarlightServer.class);
-        if (!(bean instanceof DefaultStarlightServer)) {
+        if (!(bean instanceof DefaultStarlightServer starlightServer)) {
             return;
         }
-        val starlightServer = (DefaultStarlightServer) bean;
         val uri = (URI) ReflectionUtil.getFieldValue(DefaultStarlightServer.class, URI_FIELD, starlightServer);
         val serverPeer = (ServerPeer) ReflectionUtil.getFieldValue(DefaultStarlightServer.class,
                 SERVER_PEER_FIELD, starlightServer);

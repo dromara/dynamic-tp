@@ -17,9 +17,10 @@
 
 package org.dromara.dynamictp.starter.cloud.huawei.autoconfigure;
 
+import com.huaweicloud.common.configration.bootstrap.ConfigBootstrapProperties;
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
 import org.dromara.dynamictp.starter.cloud.huawei.refresher.CloudHuaweiRefresher;
-import com.huaweicloud.common.configration.bootstrap.ConfigBootstrapProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -40,7 +41,7 @@ public class DtpHuaweiAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean()
     @ConditionalOnProperty(value = "spring.cloud.servicecomb.config.enabled", matchIfMissing = true)
-    public CloudHuaweiRefresher cloudHuaweiRefresher() {
-        return new CloudHuaweiRefresher();
+    public CloudHuaweiRefresher cloudHuaweiRefresher(DtpProperties dtpProperties) {
+        return new CloudHuaweiRefresher(dtpProperties);
     }
 }

@@ -19,6 +19,7 @@ package org.dromara.dynamictp.starter.nacos.refresher;
 
 import com.alibaba.nacos.spring.context.event.config.NacosConfigEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.SmartApplicationListener;
@@ -32,9 +33,13 @@ import org.springframework.context.event.SmartApplicationListener;
 @Slf4j
 public class NacosRefresher extends AbstractRefresher implements SmartApplicationListener {
 
+    public NacosRefresher(DtpProperties dtpProperties) {
+        super(dtpProperties);
+    }
+
     @Override
     public boolean supportsEventType(Class<? extends ApplicationEvent> eventType) {
-         return NacosConfigEvent.class.isAssignableFrom(eventType);
+        return NacosConfigEvent.class.isAssignableFrom(eventType);
     }
 
     @Override

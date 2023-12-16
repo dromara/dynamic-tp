@@ -17,11 +17,13 @@
 
 package org.dromara.dynamictp.starter.zookeeper.autoconfigure;
 
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
 import org.dromara.dynamictp.starter.zookeeper.refresher.ZookeeperRefresher;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -35,7 +37,8 @@ import org.springframework.context.annotation.Configuration;
 public class DtpZkAutoConfiguration {
 
     @Bean
-    public ZookeeperRefresher zookeeperRefresher() {
-        return new ZookeeperRefresher();
+    @ConditionalOnMissingBean()
+    public ZookeeperRefresher zookeeperRefresher(DtpProperties dtpProperties) {
+        return new ZookeeperRefresher(dtpProperties);
     }
 }

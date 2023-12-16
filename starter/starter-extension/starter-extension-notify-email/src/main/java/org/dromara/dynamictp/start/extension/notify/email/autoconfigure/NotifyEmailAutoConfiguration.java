@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.start.extension.notify.email.autoconfigure;
 
-
 import org.dromara.dynamictp.core.notifier.DtpNotifier;
 import org.dromara.dynamictp.extension.notify.email.DtpEmailNotifier;
 import org.dromara.dynamictp.extension.notify.email.EmailNotifier;

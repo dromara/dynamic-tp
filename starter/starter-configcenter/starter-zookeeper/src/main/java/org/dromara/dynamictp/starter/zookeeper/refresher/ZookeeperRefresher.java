@@ -23,6 +23,7 @@ import org.apache.curator.framework.api.CuratorListener;
 import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.framework.state.ConnectionStateListener;
 import org.apache.zookeeper.WatchedEvent;
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.dromara.dynamictp.starter.zookeeper.autoconfigure.ZkConfigEnvironmentProcessor;
 import org.dromara.dynamictp.starter.zookeeper.util.CuratorUtil;
@@ -36,6 +37,10 @@ import org.springframework.core.env.Environment;
  */
 @Slf4j
 public class ZookeeperRefresher extends AbstractRefresher implements EnvironmentAware, InitializingBean {
+
+    public ZookeeperRefresher(DtpProperties dtpProperties) {
+        super(dtpProperties);
+    }
 
     @Override
     public void afterPropertiesSet() {

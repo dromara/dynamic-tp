@@ -17,9 +17,10 @@
 
 package org.dromara.dynamictp.starter.etcd.autoconfigure;
 
+import io.etcd.jetcd.Client;
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
 import org.dromara.dynamictp.starter.etcd.refresher.EtcdRefresher;
-import io.etcd.jetcd.Client;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -38,7 +39,7 @@ public class DtpEtcdAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public EtcdRefresher etcdRefresher() {
-        return new EtcdRefresher();
+    public EtcdRefresher etcdRefresher(DtpProperties dtpProperties) {
+        return new EtcdRefresher(dtpProperties);
     }
 }

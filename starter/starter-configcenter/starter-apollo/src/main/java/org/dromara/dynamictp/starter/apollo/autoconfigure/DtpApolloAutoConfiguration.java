@@ -17,8 +17,9 @@
 
 package org.dromara.dynamictp.starter.apollo.autoconfigure;
 
-import org.dromara.dynamictp.starter.apollo.refresher.ApolloRefresher;
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
+import org.dromara.dynamictp.starter.apollo.refresher.ApolloRefresher;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -44,7 +45,7 @@ public class DtpApolloAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public ApolloRefresher apolloRefresher() {
-        return new ApolloRefresher();
+    public ApolloRefresher apolloRefresher(DtpProperties dtpProperties) {
+        return new ApolloRefresher(dtpProperties);
     }
 }

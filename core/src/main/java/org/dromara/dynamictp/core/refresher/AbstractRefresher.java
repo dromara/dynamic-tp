@@ -19,6 +19,7 @@ package org.dromara.dynamictp.core.refresher;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
@@ -31,10 +32,13 @@ import org.dromara.dynamictp.core.support.BinderHelper;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAIN_PROPERTIES_PREFIX;
 
 /**
  * AbstractRefresher related
@@ -45,10 +49,13 @@ import java.util.Objects;
 @Slf4j
 public abstract class AbstractRefresher implements Refresher, EnvironmentAware {
 
-    @Resource
-    protected DtpProperties dtpProperties;
+    protected final DtpProperties dtpProperties;
 
     protected Environment environment;
+
+    protected AbstractRefresher(DtpProperties dtpProperties) {
+        this.dtpProperties = dtpProperties;
+    }
 
     @Override
     public void setEnvironment(Environment environment) {
@@ -89,6 +96,16 @@ public abstract class AbstractRefresher implements Refresher, EnvironmentAware {
     protected void doRefresh(DtpProperties properties) {
         DtpRegistry.refresh(properties);
         publishEvent(properties);
+    }
+
+    protected boolean needRefresh(Set<String> keys) {
+        if (CollectionUtils.isEmpty(keys)) {
+            return false;
+        }
+        keys = keys.stream()
+                .filter(str -> str.startsWith(MAIN_PROPERTIES_PREFIX))
+                .collect(Collectors.toSet());
+        return CollectionUtils.isNotEmpty(keys);
     }
 
     private void publishEvent(DtpProperties dtpProperties) {

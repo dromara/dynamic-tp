@@ -10,7 +10,6 @@ spring:
   dynamic:
     tp:
       enabled: true
-      enabledBanner: true           # 是否开启banner打印，默认true
       enabledCollect: true          # 是否开启监控指标采集，默认false
       collectorTypes: logging       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
       monitorInterval: 5
@@ -25,30 +24,20 @@ spring:
         - platform: lark
           urlKey: 0d944ae7-b24a-40                 # 替换
           receivers: test1,test2                   # 接受人飞书名称/openid
-        - platform: email
-          receivers: 123456@qq.com,789789@qq.com   # 收件人
       hystrixTp:                                   # hystrix 线程池配置
         - threadPoolName: testThreadPoolKey
           corePoolSize: 100
           maximumPoolSize: 200
           keepAliveTime: 60
 
-  # email notify configuration
-  mail:
-    # (optional) email subject, default:ThreadPool Notify
-    title: ThreadPool Notify
-    # mail service address
-    host: smtp.qq.com
-    port: 465
-    # send from
-    username: 123456@qq.com
-    # authorization code eg: rlpadadtcugh4152e
-    password: xxxxxxxxxxxxxxxx
-    default-encoding: UTF-8
-    properties:
-      mail:
-        smtp:
-          socketFactoryClass: javax.net.ssl.SSLSocketFactory
-          ssl:
-            enable: true
-        debug: false
+# 开启 SpringBoot Actuator Endpoint 暴露出DynamicTp指标接口
+# 开启 prometheus 指标采集端点
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'   # 测试使用，线上不要用*，按需开启

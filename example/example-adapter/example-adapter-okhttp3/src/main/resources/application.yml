@@ -10,7 +10,6 @@ spring:
   dynamic:
     tp:
       enabled: true
-      enabledBanner: true           # 是否开启banner打印，默认true
       enabledCollect: true          # 是否开启监控指标采集，默认false
       collectorTypes: logging       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
       monitorInterval: 5
@@ -38,4 +37,15 @@ spring:
         keepAliveTime: 60
         runTimeout: 20
         queueTimeout: 10
-        taskWrapperNames: ["swTrace"]
+
+# 开启 SpringBoot Actuator Endpoint 暴露出DynamicTp指标接口
+# 开启 prometheus 指标采集端点
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'   # 测试使用，线上不要用*，按需开启

@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.starter.nacos.autoconfigure;
 
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import com.alibaba.boot.nacos.config.properties.NacosConfigProperties;
 import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
 import org.dromara.dynamictp.starter.nacos.refresher.NacosRefresher;
@@ -41,8 +42,8 @@ public class DtpNacosAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean()
-    public NacosRefresher nacosRefresher() {
-        return new NacosRefresher();
+    public NacosRefresher nacosRefresher(DtpProperties dtpProperties) {
+        return new NacosRefresher(dtpProperties);
     }
 
 }

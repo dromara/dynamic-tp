@@ -1,18 +1,6 @@
 server:
   port: 8888
 
-# 开启 SpringBoot Actuator Endpoint 暴露出DynamicTp指标接口
-# 开启 prometheus 指标采集端点
-management:
-  metrics:
-    export:
-      prometheus:
-        enabled: true
-  endpoints:
-    web:
-      exposure:
-        include: '*'   # 测试使用，线上不要用*，按需开启
-
 spring:
   application:
     name: dynamic-tp-nacos-demo
@@ -30,7 +18,14 @@ nacos:
       enable: true
       log-enable: true
 
-logging:
-  level:
-    #root: DEBUG
-    com.alibaba.nacos.client.config.impl: DEBUG
+# 开启 SpringBoot Actuator Endpoint 暴露出DynamicTp指标接口
+# 开启 prometheus 指标采集端点
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'   # 测试使用，线上不要用*，按需开启

@@ -28,6 +28,7 @@ import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.handler.ConfigHandler;
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.springframework.beans.factory.InitializingBean;
@@ -48,6 +49,10 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAIN_PROPERTI
 public class ApolloRefresher extends AbstractRefresher implements ConfigFileChangeListener, InitializingBean {
 
     private static final Splitter NAMESPACE_SPLITTER = Splitter.on(",").omitEmptyStrings().trimResults();
+
+    public ApolloRefresher(DtpProperties dtpProperties) {
+        super(dtpProperties);
+    }
 
     @Override
     public void onChange(ConfigFileChangeEvent changeEvent) {

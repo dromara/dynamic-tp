@@ -42,7 +42,7 @@ public class CloudHuaweiRefresher extends AbstractRefresher implements SmartAppl
 
     @Override
     public void onApplicationEvent(@NonNull ApplicationEvent event) {
-        if (event instanceof EnvironmentChangeEvent ece && needRefresh(ece.getKeys())) {
+        if (needRefresh(((EnvironmentChangeEvent) event).getKeys())) {
             refresh(environment);
         }
     }

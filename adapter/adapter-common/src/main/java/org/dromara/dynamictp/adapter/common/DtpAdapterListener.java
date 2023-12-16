@@ -58,12 +58,12 @@ public class DtpAdapterListener implements GenericApplicationListener {
     @Override
     public void onApplicationEvent(@NonNull ApplicationEvent event) {
         try {
-            if (event instanceof RefreshEvent refreshEvent) {
-                doRefresh(refreshEvent.getDtpProperties());
-            } else if (event instanceof CollectEvent collectEvent) {
-                doCollect(collectEvent.getDtpProperties());
-            } else if (event instanceof AlarmCheckEvent alarmCheckEvent) {
-                doAlarmCheck(alarmCheckEvent.getDtpProperties());
+            if (event instanceof RefreshEvent) {
+                doRefresh(((RefreshEvent) event).getDtpProperties());
+            } else if (event instanceof CollectEvent) {
+                doCollect(((CollectEvent) event).getDtpProperties());
+            } else if (event instanceof AlarmCheckEvent) {
+                doAlarmCheck(((AlarmCheckEvent) event).getDtpProperties());
             }
         } catch (Exception e) {
             log.error("DynamicTp adapter, event handle failed.", e);

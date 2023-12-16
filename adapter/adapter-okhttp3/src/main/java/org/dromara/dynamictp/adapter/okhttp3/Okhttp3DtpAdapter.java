@@ -60,8 +60,8 @@ public class Okhttp3DtpAdapter extends AbstractDtpAdapter {
         }
         beans.forEach((k, v) -> {
             val executor = v.dispatcher().executorService();
-            if (executor instanceof ThreadPoolExecutor threadPoolExecutor) {
-                enhanceOriginExecutor(genTpName(k), threadPoolExecutor, EXECUTOR_SERVICE_FIELD, v.dispatcher());
+            if (executor instanceof ThreadPoolExecutor) {
+                enhanceOriginExecutor(genTpName(k), (ThreadPoolExecutor) executor, EXECUTOR_SERVICE_FIELD, v.dispatcher());
             }
         });
     }

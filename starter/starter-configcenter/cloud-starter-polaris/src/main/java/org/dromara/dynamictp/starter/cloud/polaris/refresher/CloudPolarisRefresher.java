@@ -45,7 +45,7 @@ public class CloudPolarisRefresher extends AbstractRefresher implements SmartApp
 
     @Override
     public void onApplicationEvent(@NonNull ApplicationEvent event) {
-        if (event instanceof EnvironmentChangeEvent ece && needRefresh(ece.getKeys())) {
+        if (needRefresh(((EnvironmentChangeEvent) event).getKeys())) {
             refresh(environment);
         }
     }

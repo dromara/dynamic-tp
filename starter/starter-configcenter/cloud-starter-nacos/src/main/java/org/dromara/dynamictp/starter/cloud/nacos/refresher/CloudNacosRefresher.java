@@ -45,7 +45,7 @@ public class CloudNacosRefresher extends AbstractRefresher implements SmartAppli
 
     @Override
     public void onApplicationEvent(@NonNull ApplicationEvent event) {
-        if (event instanceof EnvironmentChangeEvent ece && needRefresh(ece.getKeys())) {
+        if (needRefresh(((EnvironmentChangeEvent) event).getKeys())) {
             refresh(environment);
         }
     }

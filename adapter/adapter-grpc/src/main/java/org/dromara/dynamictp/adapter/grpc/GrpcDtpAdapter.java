@@ -68,10 +68,10 @@ public class GrpcDtpAdapter extends AbstractDtpAdapter {
             String key = Optional.ofNullable(internalServer)
                     .map(server -> {
                         final SocketAddress address = server.getListenSocketAddress();
-                        if (address instanceof InetSocketAddress inetSocketAddress) {
-                            return String.valueOf(inetSocketAddress.getPort());
-                        } else if (address instanceof InProcessSocketAddress inProcessSocketAddress) {
-                            return inProcessSocketAddress.getName();
+                        if (address instanceof InetSocketAddress) {
+                            return String.valueOf(((InetSocketAddress) address).getPort());
+                        } else if (address instanceof InProcessSocketAddress) {
+                            return ((InProcessSocketAddress) address).getName();
                         }
                         return null;
                     }).orElse(null);
@@ -79,8 +79,8 @@ public class GrpcDtpAdapter extends AbstractDtpAdapter {
                 continue;
             }
             val executor = (Executor) ReflectionUtil.getFieldValue(ServerImpl.class, EXECUTOR_FIELD, serverImpl);
-            if (Objects.nonNull(executor) && executor instanceof ThreadPoolExecutor threadPoolExecutor) {
-                enhanceOriginExecutor(genTpName(key), threadPoolExecutor, EXECUTOR_FIELD, serverImpl);
+            if (Objects.nonNull(executor) && executor instanceof ThreadPoolExecutor) {
+                enhanceOriginExecutor(genTpName(key), (ThreadPoolExecutor) executor, EXECUTOR_FIELD, serverImpl);
             }
         }
     }

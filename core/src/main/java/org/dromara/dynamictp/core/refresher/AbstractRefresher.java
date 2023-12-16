@@ -99,6 +99,9 @@ public abstract class AbstractRefresher implements Refresher, EnvironmentAware {
     }
 
     protected boolean needRefresh(Set<String> keys) {
+        if (CollectionUtils.isEmpty(keys)) {
+            return false;
+        }
         keys = keys.stream()
                 .filter(str -> str.startsWith(MAIN_PROPERTIES_PREFIX))
                 .collect(Collectors.toSet());

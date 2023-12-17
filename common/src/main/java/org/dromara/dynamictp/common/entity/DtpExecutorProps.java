@@ -37,7 +37,7 @@ import java.util.Set;
 public class DtpExecutorProps extends TpExecutorProps {
 
     /**
-     * Executor type, used in create phase, see {@link org.dromara.dynamictp.core.support.ExecutorType}
+     * Executor type, used in create phase, see {@link org.dromara.dynamictp.core.executor.ExecutorType}
      */
     private String executorType;
 
@@ -80,14 +80,14 @@ public class DtpExecutorProps extends TpExecutorProps {
      * Whether to wait for scheduled tasks to complete on shutdown,
      * not interrupting running tasks and executing all tasks in the queue.
      */
-    private boolean waitForTasksToCompleteOnShutdown = false;
+    private boolean waitForTasksToCompleteOnShutdown = true;
 
     /**
      * The maximum number of seconds that this executor is supposed to block
      * on shutdown in order to wait for remaining tasks to complete their execution
      * before the rest of the container continues to shut down.
      */
-    private int awaitTerminationSeconds = 0;
+    private int awaitTerminationSeconds = 3;
 
     /**
      * If pre start all core threads.

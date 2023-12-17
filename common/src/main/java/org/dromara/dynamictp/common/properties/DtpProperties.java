@@ -48,14 +48,9 @@ public class DtpProperties {
     private boolean enabledBanner = true;
 
     /**
-     * Config file type, for zookeeper and etcd.
-     */
-    private String configType;
-
-    /**
      * If enabled metrics collect.
      */
-    private boolean enabledCollect = false;
+    private boolean enabledCollect = true;
 
     /**
      * Metrics collector types, default is logging.
@@ -66,6 +61,11 @@ public class DtpProperties {
      * Metrics log storage path, just for "logging" type.
      */
     private String logPath;
+
+    /**
+     * Config file type, for zookeeper and etcd.
+     */
+    private String configType;
 
     /**
      * Monitor interval, time unit（s）

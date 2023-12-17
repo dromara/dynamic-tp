@@ -97,7 +97,7 @@ public class ThreadPoolBuilder {
     /**
      * Max free memory for MemorySafeLBQ, unit M
      */
-    private int maxFreeMemory = 256;
+    private int maxFreeMemory = 16;
 
     /**
      * RejectedExecutionHandler, see {@link RejectedTypeEnum}
@@ -437,6 +437,16 @@ public class ThreadPoolBuilder {
     public OrderedDtpExecutor buildOrdered() {
         ordered = true;
         return (OrderedDtpExecutor) buildDtpExecutor(this);
+    }
+
+    /**
+     * Build eager thread pool executor.
+     *
+     * @return the newly created EagerDtpExecutor instance
+     */
+    public EagerDtpExecutor buildEager() {
+        eager = true;
+        return (EagerDtpExecutor) buildDtpExecutor(this);
     }
 
     /**

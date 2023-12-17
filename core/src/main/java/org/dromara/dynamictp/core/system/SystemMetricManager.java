@@ -22,7 +22,6 @@ import org.dromara.dynamictp.core.support.ThreadPoolCreator;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
-import java.lang.management.RuntimeMXBean;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -35,13 +34,17 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class SystemMetricManager {
 
-    private static final SystemMetricPoller METRIC_POLLER;
+    private static final CpuMetricsCaptor CPU_METRICS_CAPTOR;
+
+    private static final MemoryMetricsCaptor MEMORY_METRICS_CAPTOR;
 
     private static final ScheduledExecutorService EXECUTOR = ThreadPoolCreator.newScheduledThreadPool("dtp-system-metric", 1);
 
     static {
-        METRIC_POLLER = new SystemMetricPoller();
-        EXECUTOR.scheduleAtFixedRate(METRIC_POLLER, 0, 2, TimeUnit.SECONDS);
+        CPU_METRICS_CAPTOR = new CpuMetricsCaptor();
+        MEMORY_METRICS_CAPTOR = new MemoryMetricsCaptor();
+        EXECUTOR.scheduleAtFixedRate(CPU_METRICS_CAPTOR, 0, 2, TimeUnit.SECONDS);
+        EXECUTOR.scheduleAtFixedRate(MEMORY_METRICS_CAPTOR, 0, 2, TimeUnit.SECONDS);
     }
 
     public static String getSystemMetric() {
@@ -49,48 +52,19 @@ public class SystemMetricManager {
         double systemAvgLoad = osBean.getSystemLoadAverage();
         double systemCpuUsage = OperatingSystemBeanManager.getSystemCpuUsage();
         int cpuCores = osBean.getAvailableProcessors();
-        return String.format("SystemMetric{sAvgLoad=%.2f, sCpuUsage=%.2f, pCpuUsage=%.2f, cpuCores=%d}",
-                systemAvgLoad, systemCpuUsage, getProcessCpuUsage(), cpuCores);
+        return String.format("SystemMetric{sAvgLoad=%.2f, sCpuUsage=%.2f, pCpuUsage=%.2f, cpuCores=%d, oldMemUsage=%.2f}",
+                systemAvgLoad, systemCpuUsage, getProcessCpuUsage(), cpuCores, getLongLivedMemoryUsage());
     }
 
     public static double getProcessCpuUsage() {
-        return METRIC_POLLER.getProcessCpuUsage();
+        return CPU_METRICS_CAPTOR.getProcessCpuUsage();
+    }
+
+    public static double getLongLivedMemoryUsage() {
+        return MEMORY_METRICS_CAPTOR.getLongLivedMemoryUsage();
     }
 
     public static void stop() {
         EXECUTOR.shutdown();
-    }
-
-    private static class SystemMetricPoller implements Runnable {
-
-        private double currProcessCpuUsage = -1;
-
-        private long prevProcessCpuTime = 0;
-
-        private long prevUpTime = 0;
-
-        public double getProcessCpuUsage() {
-            return currProcessCpuUsage;
-        }
-
-        @Override
-        public void run() {
-            try {
-                OperatingSystemMXBean osBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
-                int cpuCores = osBean.getAvailableProcessors();
-
-                long newProcessCpuTime = OperatingSystemBeanManager.getProcessCpuTime();
-                RuntimeMXBean runtimeBean = ManagementFactory.getPlatformMXBean(RuntimeMXBean.class);
-                long newUpTime = runtimeBean.getUptime();
-                long elapsedCpu = TimeUnit.NANOSECONDS.toMillis(newProcessCpuTime - prevProcessCpuTime);
-                long elapsedTime = newUpTime - prevUpTime;
-                double processCpuUsage = (double) elapsedCpu / elapsedTime / cpuCores;
-                prevProcessCpuTime = newProcessCpuTime;
-                prevUpTime = newUpTime;
-                currProcessCpuUsage = processCpuUsage;
-            } catch (Throwable e) {
-                log.error("Get system metrics error.", e);
-            }
-        }
     }
 }

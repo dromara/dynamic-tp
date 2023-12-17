@@ -19,7 +19,6 @@ package org.dromara.dynamictp.common.properties;
 
 import com.google.common.collect.Lists;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.em.CollectorTypeEnum;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
@@ -33,7 +32,6 @@ import java.util.List;
  * @author yanhom
  * @since 1.0.0
  **/
-@Slf4j
 @Data
 public class DtpProperties {
 

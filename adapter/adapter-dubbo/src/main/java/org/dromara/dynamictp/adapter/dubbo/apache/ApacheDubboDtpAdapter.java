@@ -93,7 +93,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
             if (MapUtils.isNotEmpty(executorMap)) {
                 executorMap.forEach((k, v) -> {
                     ThreadPoolExecutor proxy = getProxy((ThreadPoolExecutor) v);
-                    executorMap.replace(k, proxy);
+                    dataStore.put(EXECUTOR_SERVICE_COMPONENT_KEY, k, proxy);
                     putAndFinalize(genTpName(k), (ExecutorService) v, proxy);
                 });
             }

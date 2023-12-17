@@ -20,7 +20,6 @@ package org.dromara.dynamictp.apapter.brpc.client;
 import com.baidu.cloud.starlight.api.rpc.StarlightClient;
 import com.baidu.cloud.starlight.api.rpc.threadpool.ThreadPoolFactory;
 import com.baidu.cloud.starlight.core.rpc.SingleStarlightClient;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
@@ -61,8 +60,7 @@ public class StarlightClientDtpAdapter extends AbstractDtpAdapter {
     protected void initialize() {
         super.initialize();
 
-        List<StarlightClient> starlightClients = Lists.newArrayList();
-        starlightClients.addAll(JVMTI.getInstances(StarlightClient.class));
+        List<StarlightClient> starlightClients = JVMTI.getInstances(StarlightClient.class);
         if (CollectionUtils.isEmpty(starlightClients)) {
             log.warn("Cannot find beans of type StarlightClient.");
             return;

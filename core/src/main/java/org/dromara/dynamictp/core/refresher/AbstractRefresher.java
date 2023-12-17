@@ -98,14 +98,14 @@ public abstract class AbstractRefresher implements Refresher, EnvironmentAware {
         publishEvent(properties);
     }
 
-    protected boolean needRefresh(Set<String> keys) {
-        if (CollectionUtils.isEmpty(keys)) {
+    protected boolean needRefresh(Set<String> changedKeys) {
+        if (CollectionUtils.isEmpty(changedKeys)) {
             return false;
         }
-        keys = keys.stream()
+        changedKeys = changedKeys.stream()
                 .filter(str -> str.startsWith(MAIN_PROPERTIES_PREFIX))
                 .collect(Collectors.toSet());
-        return CollectionUtils.isNotEmpty(keys);
+        return CollectionUtils.isNotEmpty(changedKeys);
     }
 
     private void publishEvent(DtpProperties dtpProperties) {

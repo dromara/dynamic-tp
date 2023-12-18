@@ -34,7 +34,7 @@ import java.nio.file.StandardCopyOption;
  **/
 public class NativeUtil {
 
-    private static final String NATIVE_FOLDER_PATH_PREFIX = "dynamictp/native_";
+    private static final String NATIVE_FOLDER_PATH_PREFIX = "dtp_native_";
 
     private static File temporaryDir;
 

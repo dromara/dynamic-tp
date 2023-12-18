@@ -18,14 +18,14 @@
 package org.dromara.dynamictp.jvmti;
 
 /**
- * The type JVMTI utils.
+ * The type JVMTI util.
  * <p>
  * This file is copied from <a href="https://github.com/alibaba/arthas"></a>
  * <p>
  * @author dragon-zhang
  * @since 1.1.4
  */
-public class JVMTIUtils {
+public class JVMTIUtil {
 
     private static String libName;
 
@@ -50,6 +50,9 @@ public class JVMTIUtils {
                 libName = "libJniLibrary-x86.dll";
             }
         }
+    }
+
+    private JVMTIUtil() {
     }
 
     /**

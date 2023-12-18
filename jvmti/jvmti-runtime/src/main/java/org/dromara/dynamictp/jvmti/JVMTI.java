@@ -19,10 +19,7 @@ package org.dromara.dynamictp.jvmti;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.scijava.nativelib.JniExtractor;
-import org.scijava.nativelib.NativeLoader;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -39,26 +36,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class JVMTI {
 
-	private static final String LIB_NAME = "JniLibrary";
-
 	private static final AtomicBoolean AVAILABLE = new AtomicBoolean(false);
 
 	static {
 		try {
-			final JniExtractor extractor = NativeLoader.getJniExtractor();
-			final String path = extractor.extractJni("", LIB_NAME).getAbsolutePath();
-			System.load(path);
+			NativeUtil.loadLibraryFromJar(JVMTIUtil.detectLibName());
 			AVAILABLE.set(true);
-		} catch (Throwable ignored) {
-			try {
-				File path = new File(JVMTI.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-				String libPath = new File(path, JVMTIUtils.detectLibName()).getAbsolutePath();
-				System.load(libPath);
-				AVAILABLE.set(true);
-			} catch (Throwable t) {
-				log.error("JVMTI initialization failed!", t);
-			}
+		} catch (Throwable t) {
+			log.error("JVMTI initialization failed!", t);
 		}
+	}
+
+	private JVMTI() {
 	}
 
 	/**

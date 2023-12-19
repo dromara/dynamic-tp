@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.jvmti;
 
 /**
- * The JVMTI util.
+ * The type JVMTI util.
  * This file is copied from <a href="https://github.com/alibaba/arthas">here</a>
  *
  * @author dragon-zhang

@@ -13,6 +13,7 @@
 
     <properties>
         <revision>1.1.6.1-3.x</revision>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <maven.compiler.source>17</maven.compiler.source>

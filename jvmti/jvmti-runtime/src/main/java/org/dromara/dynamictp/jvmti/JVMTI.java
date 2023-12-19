@@ -27,8 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Use JVMTI technology to implement some things that Java code can't do.
- *
- * <p>Note: Only 64-bit CPU architecture is supported now !
+ * Note: Only 64-bit CPU architecture is supported now !
  *
  * @author dragon-zhang
  * @since 1.1.4

@@ -21,7 +21,7 @@ import java.io.File;
 import java.util.Locale;
 
 /**
- * This file is copied from <a href="https://github.com/alibaba/arthas"></a>
+ * This file is copied from <a href="https://github.com/alibaba/arthas">here</a>
  *
  * @author dragon-zhang
  * @since 1.1.6

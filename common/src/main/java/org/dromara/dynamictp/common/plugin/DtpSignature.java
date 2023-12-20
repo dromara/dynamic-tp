@@ -15,31 +15,34 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.plugin;
-
-import org.dromara.dynamictp.common.ex.DtpException;
+package org.dromara.dynamictp.common.plugin;
 
 /**
- * PluginException related
+ * The annotation that indicate the method signature.
  *
- * @author yanhom
- * @since 1.0.0
- **/
-public class PluginException extends DtpException {
+ * @author windsearcher.lq
+ * @since 1.1.4
+ */
+public @interface DtpSignature {
 
-    public PluginException() {
-        super();
-    }
+    /**
+     * Target class type.
+     *
+     * @return class type
+     */
+    Class<?> clazz();
 
-    public PluginException(String message) {
-        super(message);
-    }
+    /**
+     * Method name.
+     *
+     * @return method name
+     */
+    String method();
 
-    public PluginException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public PluginException(Throwable cause) {
-        super(cause);
-    }
+    /**
+     * Method argument types.
+     *
+     * @return method argument types
+     */
+    Class<?>[] args();
 }

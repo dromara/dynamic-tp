@@ -15,16 +15,10 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.notifier.base;
+package org.dromara.dynamictp.common.notifier;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
-import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
-import org.dromara.dynamictp.core.notifier.context.DtpNotifyCtxHolder;
-
-import java.util.Optional;
 
 /**
  * AbstractNotifier related
@@ -51,20 +45,4 @@ public abstract class AbstractNotifier implements Notifier {
      * @param content content
      */
     protected abstract void send0(NotifyPlatform platform, String content);
-
-    /**
-     * Get the notify receivers
-     * @param platform platform
-     * @return Receivers
-     */
-    protected String[] getReceivers(NotifyPlatform platform) {
-        BaseNotifyCtx context = DtpNotifyCtxHolder.get();
-        String receivers = Optional.ofNullable(context)
-                .map(BaseNotifyCtx::getNotifyItem)
-                .map(NotifyItem::getReceivers)
-                .orElse(null);
-        receivers = StringUtils.isBlank(receivers) ? platform.getReceivers() : receivers;
-        return receivers.split(",");
-    }
-
 }

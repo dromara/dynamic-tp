@@ -119,6 +119,11 @@ public class DtpExecutor extends ThreadPoolExecutor
     /**
      * for manual builder thread pools only
      */
+    private boolean tryInterrupt = false;
+
+    /**
+     * for manual builder thread pools only
+     */
     private long queueTimeout = 0;
 
     /**
@@ -355,20 +360,28 @@ public class DtpExecutor extends ThreadPoolExecutor
         this.rejectHandlerType = rejectHandlerType;
     }
 
-    public void setRunTimeout(long runTimeout) {
-        this.runTimeout = runTimeout;
-    }
-
-    public void setQueueTimeout(long queueTimeout) {
-        this.queueTimeout = queueTimeout;
-    }
-
     public long getRunTimeout() {
         return runTimeout;
     }
 
+    public void setRunTimeout(long runTimeout) {
+        this.runTimeout = runTimeout;
+    }
+
+    public boolean isTryInterrupt() {
+        return tryInterrupt;
+    }
+
+    public void setTryInterrupt(boolean tryInterrupt) {
+        this.tryInterrupt = tryInterrupt;
+    }
+
     public long getQueueTimeout() {
         return queueTimeout;
+    }
+
+    public void setQueueTimeout(long queueTimeout) {
+        this.queueTimeout = queueTimeout;
     }
 
     public boolean isWaitForTasksToCompleteOnShutdown() {

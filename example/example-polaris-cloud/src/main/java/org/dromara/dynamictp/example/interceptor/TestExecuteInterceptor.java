@@ -18,10 +18,10 @@
 package org.dromara.dynamictp.example.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.core.plugin.DtpInterceptor;
-import org.dromara.dynamictp.core.plugin.DtpIntercepts;
-import org.dromara.dynamictp.core.plugin.DtpInvocation;
-import org.dromara.dynamictp.core.plugin.DtpSignature;
+import org.dromara.dynamictp.common.plugin.DtpInterceptor;
+import org.dromara.dynamictp.common.plugin.DtpIntercepts;
+import org.dromara.dynamictp.common.plugin.DtpInvocation;
+import org.dromara.dynamictp.common.plugin.DtpSignature;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.executor.ScheduledDtpExecutor;
 

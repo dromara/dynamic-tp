@@ -69,7 +69,7 @@ public class NotifyItem {
     private int clusterLimit = 1;
 
     /**
-     * Receivers, split by ,  If NotifyPlatform.receivers have a value, they will be overwritten by the thread pool alarm
+     * Receivers, split by, If NotifyPlatform.receivers have a value, they will be overwritten by the thread pool alarm
      */
     private String receivers;
 

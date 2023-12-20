@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.plugin;
+package org.dromara.dynamictp.common.plugin;
 
 import com.google.common.collect.Maps;
 import net.sf.cglib.proxy.Enhancer;

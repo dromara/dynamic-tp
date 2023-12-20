@@ -26,9 +26,9 @@ import org.dromara.dynamictp.core.notifier.DtpDingNotifier;
 import org.dromara.dynamictp.core.notifier.DtpLarkNotifier;
 import org.dromara.dynamictp.core.notifier.DtpNotifier;
 import org.dromara.dynamictp.core.notifier.DtpWechatNotifier;
-import org.dromara.dynamictp.core.notifier.base.DingNotifier;
-import org.dromara.dynamictp.core.notifier.base.LarkNotifier;
-import org.dromara.dynamictp.core.notifier.base.WechatNotifier;
+import org.dromara.dynamictp.common.notifier.DingNotifier;
+import org.dromara.dynamictp.common.notifier.LarkNotifier;
+import org.dromara.dynamictp.common.notifier.WechatNotifier;
 import org.dromara.dynamictp.core.notifier.context.DtpNotifyCtxHolder;
 import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
 

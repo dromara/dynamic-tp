@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.notifier.base;
+package org.dromara.dynamictp.common.notifier;
 
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +57,7 @@ public class DingNotifier extends AbstractHttpNotifier {
 
         MarkdownReq.At at = new MarkdownReq.At();
 
-        List<String> mobiles = Lists.newArrayList(getReceivers(platform));
+        List<String> mobiles = Lists.newArrayList(platform.getReceivers().split(","));
         at.setAtMobiles(mobiles);
         if (mobiles.contains(ALL) || CollectionUtils.isEmpty(mobiles)) {
             at.setAtAll(true);

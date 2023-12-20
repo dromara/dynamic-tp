@@ -15,42 +15,31 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.plugin;
+package org.dromara.dynamictp.common.notifier;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import org.dromara.dynamictp.common.entity.NotifyPlatform;
 
 /**
- * @author windsearcher.lq
- * @since 1.1.4
+ * Notifier related
+ *
+ * @author yanhom
+ * @since 1.0.8
  */
-public class DtpInvocation {
+public interface Notifier {
 
-    private final Object target;
+    /**
+     * Get the platform name.
+     *
+     * @return platform
+     */
+    String platform();
 
-    private final Method method;
+    /**
+     * Send message.
+     *
+     * @param platform platform
+     * @param content  content
+     */
+    void send(NotifyPlatform platform, String content);
 
-    private final Object[] args;
-
-    public DtpInvocation(Object target, Method method, Object[] args) {
-        this.target = target;
-        this.method = method;
-        this.args = args;
-    }
-
-    public Object getTarget() {
-        return target;
-    }
-
-    public Method getMethod() {
-        return method;
-    }
-
-    public Object[] getArgs() {
-        return args;
-    }
-
-    public Object proceed() throws InvocationTargetException, IllegalAccessException {
-        return method.invoke(target, args);
-    }
 }

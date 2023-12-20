@@ -23,7 +23,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dromara.dynamictp.common.constant.LarkNotifyConst;
 import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
-import org.dromara.dynamictp.core.notifier.base.Notifier;
+import org.dromara.dynamictp.common.notifier.Notifier;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;

@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.example.notifier;
 
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
-import org.dromara.dynamictp.core.notifier.base.AbstractNotifier;
+import org.dromara.dynamictp.common.notifier.AbstractNotifier;
 
 /**
  * SmsNotifier related
@@ -41,7 +41,7 @@ public class SmsNotifier extends AbstractNotifier {
 
     @Override
     protected void send0(NotifyPlatform platform, String content) {
-        String[] receivers = getReceivers(platform);
+        String[] receivers = platform.getReceivers().split(",");
         smsClient.send(platform.getSecret(), receivers, content);
     }
 }

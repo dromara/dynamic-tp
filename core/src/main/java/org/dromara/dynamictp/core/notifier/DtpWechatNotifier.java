@@ -20,7 +20,7 @@ package org.dromara.dynamictp.core.notifier;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.constant.WechatNotifyConst;
 import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
-import org.dromara.dynamictp.core.notifier.base.Notifier;
+import org.dromara.dynamictp.common.notifier.Notifier;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;

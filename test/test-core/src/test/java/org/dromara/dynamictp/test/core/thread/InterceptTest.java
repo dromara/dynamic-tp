@@ -19,7 +19,7 @@ package org.dromara.dynamictp.test.core.thread;
 
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.core.plugin.DtpInterceptorRegistry;
+import org.dromara.dynamictp.common.plugin.DtpInterceptorRegistry;
 import org.junit.Test;
 
 /**

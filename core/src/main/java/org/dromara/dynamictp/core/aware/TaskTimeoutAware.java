@@ -53,6 +53,7 @@ public class TaskTimeoutAware extends TaskStatAware {
         if (Objects.nonNull(props)) {
             statProvider.setRunTimeout(props.getRunTimeout());
             statProvider.setQueueTimeout(props.getQueueTimeout());
+            statProvider.setTryInterrupt(props.isTryInterrupt());
         }
     }
 

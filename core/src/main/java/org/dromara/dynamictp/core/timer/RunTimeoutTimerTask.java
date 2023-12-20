@@ -58,6 +58,9 @@ public class RunTimeoutTimerTask extends AbstractTimeoutTimerTask {
                 statProvider.getExecutorWrapper().getExecutor().getQueueCapacity(), executor.getQueue().size(),
                 executor.getQueue().remainingCapacity(), traceToString(thread.getStackTrace()));
         log.warn(logMsg);
+        if (statProvider.isTryInterrupt()) {
+            thread.interrupt();
+        }
     }
 
     public String traceToString(StackTraceElement[] trace) {

@@ -49,6 +49,11 @@ public class ThreadPoolStatProvider {
     private long runTimeout = 0;
 
     /**
+     * Try interrupt task when timeout.
+     */
+    private boolean tryInterrupt = false;
+
+    /**
      * Task queue wait timeout, unit (ms), just for statistics.
      */
     private long queueTimeout = 0;
@@ -98,6 +103,7 @@ public class ThreadPoolStatProvider {
             val dtpExecutor = (DtpExecutor) executorWrapper.getExecutor();
             provider.setRunTimeout(dtpExecutor.getRunTimeout());
             provider.setQueueTimeout(dtpExecutor.getQueueTimeout());
+            provider.setTryInterrupt(dtpExecutor.isTryInterrupt());
         }
         return provider;
     }
@@ -112,6 +118,14 @@ public class ThreadPoolStatProvider {
 
     public void setRunTimeout(long runTimeout) {
         this.runTimeout = runTimeout;
+    }
+
+    public boolean isTryInterrupt() {
+        return tryInterrupt;
+    }
+
+    public void setTryInterrupt(boolean tryInterrupt) {
+        this.tryInterrupt = tryInterrupt;
     }
 
     public long getQueueTimeout() {

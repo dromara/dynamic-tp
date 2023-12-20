@@ -75,6 +75,8 @@ public final class DynamicTpConst {
 
     public static final String RUN_TIMEOUT = "runTimeout";
 
+    public static final String TRY_INTERRUPT_WHEN_TIMEOUT = "tryInterrupt";
+
     public static final String QUEUE_TIMEOUT = "queueTimeout";
 
     public static final String TASK_WRAPPERS = "taskWrappers";

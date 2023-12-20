@@ -170,6 +170,11 @@ public class ThreadPoolBuilder {
     private long runTimeout = 0;
 
     /**
+     * If try interrupt task when timeout.
+     */
+    private boolean tryInterrupt = false;
+
+    /**
      * Task queue wait timeout, unit (ms), just for statistics.
      */
     private long queueTimeout = 0;
@@ -355,6 +360,11 @@ public class ThreadPoolBuilder {
         return this;
     }
 
+    public ThreadPoolBuilder tryInterrupt(boolean tryInterrupt) {
+        this.tryInterrupt = tryInterrupt;
+        return this;
+    }
+
     public ThreadPoolBuilder queueTimeout(long queueTimeout) {
         this.queueTimeout = queueTimeout;
         return this;
@@ -480,6 +490,7 @@ public class ThreadPoolBuilder {
         dtpExecutor.setPreStartAllCoreThreads(builder.preStartAllCoreThreads);
         dtpExecutor.setRejectEnhanced(builder.rejectEnhanced);
         dtpExecutor.setRunTimeout(builder.runTimeout);
+        dtpExecutor.setTryInterrupt(builder.tryInterrupt);
         dtpExecutor.setQueueTimeout(builder.queueTimeout);
         dtpExecutor.setTaskWrappers(builder.taskWrappers);
         dtpExecutor.setNotifyItems(builder.notifyItems);

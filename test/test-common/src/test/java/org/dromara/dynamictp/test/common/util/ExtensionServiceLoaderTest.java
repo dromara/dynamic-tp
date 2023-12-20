@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.test.common.util;
 
 import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
-import org.dromara.dynamictp.core.plugin.DtpInterceptor;
+import org.dromara.dynamictp.common.plugin.DtpInterceptor;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 

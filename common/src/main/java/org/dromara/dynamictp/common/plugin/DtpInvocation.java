@@ -15,33 +15,42 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.example.notifier;
+package org.dromara.dynamictp.common.plugin;
 
-import org.dromara.dynamictp.common.entity.NotifyPlatform;
-import org.dromara.dynamictp.common.notifier.AbstractNotifier;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
- * SmsNotifier related
- *
- * @author yanhom
- * @since 1.1.0
+ * @author windsearcher.lq
+ * @since 1.1.4
  */
-public class SmsNotifier extends AbstractNotifier {
+public class DtpInvocation {
 
-    private final SmsClient smsClient;
+    private final Object target;
 
-    public SmsNotifier(SmsClient smsClient) {
-        this.smsClient = smsClient;
+    private final Method method;
+
+    private final Object[] args;
+
+    public DtpInvocation(Object target, Method method, Object[] args) {
+        this.target = target;
+        this.method = method;
+        this.args = args;
     }
 
-    @Override
-    public String platform() {
-        return "sms";
+    public Object getTarget() {
+        return target;
     }
 
-    @Override
-    protected void send0(NotifyPlatform platform, String content) {
-        String[] receivers = platform.getReceivers().split(",");
-        smsClient.send(platform.getSecret(), receivers, content);
+    public Method getMethod() {
+        return method;
+    }
+
+    public Object[] getArgs() {
+        return args;
+    }
+
+    public Object proceed() throws InvocationTargetException, IllegalAccessException {
+        return method.invoke(target, args);
     }
 }

@@ -27,7 +27,7 @@ import org.dromara.dynamictp.common.entity.TpMainFields;
 import org.dromara.dynamictp.common.util.CommonUtil;
 import org.dromara.dynamictp.core.notifier.AbstractDtpNotifier;
 import org.dromara.dynamictp.core.notifier.DtpDingNotifier;
-import org.dromara.dynamictp.core.notifier.base.Notifier;
+import org.dromara.dynamictp.common.notifier.Notifier;
 import org.dromara.dynamictp.core.notifier.context.AlarmCtx;
 import org.dromara.dynamictp.core.notifier.context.DtpNotifyCtxHolder;
 import org.dromara.dynamictp.core.notifier.context.NoticeCtx;

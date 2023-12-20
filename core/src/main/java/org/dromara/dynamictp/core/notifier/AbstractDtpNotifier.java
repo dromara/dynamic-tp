@@ -27,16 +27,17 @@ import org.dromara.dynamictp.common.entity.AlarmInfo;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.TpMainFields;
+import org.dromara.dynamictp.common.notifier.Notifier;
 import org.dromara.dynamictp.common.util.CommonUtil;
 import org.dromara.dynamictp.common.util.DateUtil;
 import org.dromara.dynamictp.core.notifier.alarm.AlarmCounter;
-import org.dromara.dynamictp.core.notifier.base.Notifier;
 import org.dromara.dynamictp.core.notifier.context.AlarmCtx;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
 import org.dromara.dynamictp.core.notifier.context.DtpNotifyCtxHolder;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.system.SystemMetricManager;
 import org.slf4j.MDC;
+import org.springframework.beans.BeanUtils;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -74,7 +75,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
             log.debug("Notice content is empty, ignore send notice message.");
             return;
         }
-        notifier.send(notifyPlatform, content);
+        notifier.send(newTargetPlatform(notifyPlatform), content);
     }
 
     @Override
@@ -84,7 +85,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
             log.debug("Alarm content is empty, ignore send alarm message.");
             return;
         }
-        notifier.send(notifyPlatform, content);
+        notifier.send(newTargetPlatform(notifyPlatform), content);
     }
 
     protected String buildAlarmContent(NotifyPlatform platform, NotifyItemEnum notifyItemEnum) {
@@ -177,6 +178,17 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     protected String formatReceivers(String receives) {
         String[] receivers = StringUtils.split(receives, ',');
         return Joiner.on(", @").join(receivers);
+    }
+
+    private NotifyPlatform newTargetPlatform(NotifyPlatform platform) {
+        NotifyPlatform targetPlatform = new NotifyPlatform();
+        BeanUtils.copyProperties(platform, targetPlatform);
+
+        BaseNotifyCtx context = DtpNotifyCtxHolder.get();
+        NotifyItem item = context.getNotifyItem();
+        String receives = StringUtils.isBlank(item.getReceivers()) ? platform.getReceivers() : item.getReceivers();
+        targetPlatform.setReceivers(receives);
+        return targetPlatform;
     }
 
     protected String populatePoolName(ExecutorWrapper executorWrapper) {

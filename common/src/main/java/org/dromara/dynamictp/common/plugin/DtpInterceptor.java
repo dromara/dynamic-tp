@@ -15,34 +15,42 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.plugin;
+package org.dromara.dynamictp.common.plugin;
 
 /**
- * The annotation that indicate the method signature.
- *
  * @author windsearcher.lq
  * @since 1.1.4
  */
-public @interface DtpSignature {
+public interface DtpInterceptor {
 
     /**
-     * Target class type.
+     * Intercept method.
      *
-     * @return class type
+     * @param invocation invocation
+     * @return result
+     * @throws Throwable Throwable
      */
-    Class<?> clazz();
+    Object intercept(DtpInvocation invocation) throws Throwable;
 
     /**
-     * Method name.
+     * Enhance object.
      *
-     * @return method name
+     * @param target target object
+     * @return enhanced object
      */
-    String method();
+    default Object plugin(Object target) {
+        return DtpInterceptorProxyFactory.enhance(target, this);
+    }
 
     /**
-     * Method argument types.
+     * Enhance object.
      *
-     * @return method argument types
+     * @param target target object
+     * @param argumentTypes argument types
+     * @param arguments arguments
+     * @return enhanced object
      */
-    Class<?>[] args();
+    default Object plugin(Object target, Class<?>[] argumentTypes, Object[] arguments) {
+        return DtpInterceptorProxyFactory.enhance(target, argumentTypes, arguments, this);
+    }
 }

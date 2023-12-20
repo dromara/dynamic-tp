@@ -20,7 +20,7 @@ package org.dromara.dynamictp.extension.notify.yunzhijia;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.util.JsonUtil;
-import org.dromara.dynamictp.core.notifier.base.AbstractHttpNotifier;
+import org.dromara.dynamictp.common.notifier.AbstractHttpNotifier;
 
 import java.util.HashMap;
 import java.util.Map;

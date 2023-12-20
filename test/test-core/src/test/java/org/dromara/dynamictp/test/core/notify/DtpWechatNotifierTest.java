@@ -28,7 +28,7 @@ import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.util.DateUtil;
 import org.dromara.dynamictp.common.util.JsonUtil;
-import org.dromara.dynamictp.core.notifier.base.WechatNotifier;
+import org.dromara.dynamictp.common.notifier.WechatNotifier;
 import org.junit.Test;
 
 import java.util.Arrays;

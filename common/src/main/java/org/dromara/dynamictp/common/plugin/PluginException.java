@@ -15,31 +15,31 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.notifier.base;
+package org.dromara.dynamictp.common.plugin;
 
-import org.dromara.dynamictp.common.entity.NotifyPlatform;
+import org.dromara.dynamictp.common.ex.DtpException;
 
 /**
- * Notifier related
+ * PluginException related
  *
  * @author yanhom
- * @since 1.0.8
- */
-public interface Notifier {
+ * @since 1.0.0
+ **/
+public class PluginException extends DtpException {
 
-    /**
-     * Get the platform name.
-     *
-     * @return platform
-     */
-    String platform();
+    public PluginException() {
+        super();
+    }
 
-    /**
-     * Send message.
-     *
-     * @param platform platform
-     * @param content  content
-     */
-    void send(NotifyPlatform platform, String content);
+    public PluginException(String message) {
+        super(message);
+    }
 
+    public PluginException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public PluginException(Throwable cause) {
+        super(cause);
+    }
 }

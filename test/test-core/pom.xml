@@ -18,6 +18,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aspects</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

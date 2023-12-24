@@ -1,0 +1,2 @@
+org.springframework.boot.SpringApplicationRunListener=\
+org.dromara.dynamictp.test.configcenter.apollo.ApolloInitListener

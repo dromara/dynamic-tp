@@ -31,13 +31,13 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * AbstractRedistRateLimiter related
+ * AbstractRedisRateLimiter related
  *
  * @author yanhom
  * @since 1.0.8
  **/
 @SuppressWarnings("all")
-public abstract class AbstractRedistRateLimiter implements RedisRateLimiter<List<Long>> {
+public abstract class AbstractRedisRateLimiter implements RedisRateLimiter<List<Long>> {
 
     private static final String SCRIPT_PATH = "/scripts/";
 
@@ -50,7 +50,7 @@ public abstract class AbstractRedistRateLimiter implements RedisRateLimiter<List
 
     protected static final AtomicInteger COUNTER = new AtomicInteger(0);
 
-    public AbstractRedistRateLimiter(String scriptName) {
+    public AbstractRedisRateLimiter(String scriptName) {
         DefaultRedisScript redisScript = new DefaultRedisScript<>();
         redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource(SCRIPT_PATH + scriptName)));
         redisScript.setResultType(List.class);

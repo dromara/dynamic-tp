@@ -158,15 +158,6 @@ public class ExecutorWrapper {
     }
 
     /**
-     * get ThreadPoolStatProvider
-     *
-     * @return ThreadPoolStatProvider
-     */
-    public ThreadPoolStatProvider getThreadPoolStatProvider() {
-        return this.threadPoolStatProvider;
-    }
-
-    /**
      * whether is DtpExecutor
      *
      * @return boolean

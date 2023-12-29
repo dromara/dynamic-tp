@@ -37,10 +37,7 @@ import org.springframework.context.ApplicationEvent;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
 
 /**
  * ApacheDubboDtpAdapter related
@@ -109,13 +106,13 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
             executorRepository = ExtensionLoader.getExtensionLoader(ExecutorRepository.class).getDefaultExtension();
         }
 
-        val data = (ConcurrentMap<String, ConcurrentMap<Integer, ExecutorService>>) ReflectionUtil.getFieldValue(
+        val data = (ConcurrentMap<String, ConcurrentMap<Object, ExecutorService>>) ReflectionUtil.getFieldValue(
                 DefaultExecutorRepository.class, "data", executorRepository);
         if (Objects.isNull(data)) {
             return;
         }
 
-        Map<Integer, ExecutorService> executorMap = data.get(EXECUTOR_SERVICE_COMPONENT_KEY);
+        Map<Object, ExecutorService> executorMap = data.get(EXECUTOR_SERVICE_COMPONENT_KEY);
         if (MapUtils.isNotEmpty(executorMap)) {
             executorMap.forEach((k, v) -> {
                 ThreadPoolExecutor proxy = getProxy(v);
@@ -124,7 +121,6 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
             });
         }
     }
-
     private ThreadPoolExecutor getProxy(Executor executor) {
         ThreadPoolExecutor proxy;
         if (executor instanceof EagerThreadPoolExecutor) {

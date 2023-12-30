@@ -3,19 +3,17 @@ server:
 
 spring:
   application:
-    name: user-data-proxy
+    name: dynamic-tp-nacos-demo
   profiles:
     active: dev
 
 nacos:
   config:
-    server-addr: ihuman-nacos:8848
-    username: common-user
-    password: cu123456
-    type: YAML
-    data-ids: dynamic-tp-nacos-demo-dev.yml,user-data-proxy-dtp-dev.yml   # 线程池配置文件必须要在此处配置
+    server-addr: 127.0.0.1:8848
+    type: yaml
+    data-ids: dynamic-tp-nacos-demo-dev.yml,dynamic-tp-nacos-demo-dtp-dev.yml   # 线程池配置文件必须要在此处配置
     auto-refresh: true
-    group: COMMON-BIZ
+    group: DEFAULT_GROUP
     bootstrap:
       enable: true
       log-enable: true

@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.test.configcenter.nacos;
 
-import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.ConfigType;
 import com.alibaba.nacos.api.config.listener.AbstractListener;
 import com.alibaba.nacos.api.config.listener.Listener;
@@ -77,9 +76,6 @@ class NacosRefresherTest extends DtpBaseTest {
             }
         };
         listener.receiveConfigInfo(content);
-        NacosConfigReceivedEvent event = new NacosConfigReceivedEvent(mock(ConfigService.class),
-                dataId, groupId, content, ConfigType.YAML.getType());
-        publisher.publishEvent(event);
+        publisher.publishEvent(mock(NacosConfigReceivedEvent.class));
     }
-
 }

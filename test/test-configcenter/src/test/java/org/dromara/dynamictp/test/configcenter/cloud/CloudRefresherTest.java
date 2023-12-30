@@ -22,7 +22,6 @@ import org.dromara.dynamictp.test.configcenter.DtpBaseTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
-import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 
@@ -55,7 +54,7 @@ class CloudRefresherTest extends DtpBaseTest {
         Map<String, Object> tmpMap = Maps.newHashMap();
         tmpMap.put("spring.dynamic.tp.executors[0].threadPoolName", "dtpExecutor1");
         tmpMap.put("spring.dynamic.tp.executors[0].corePoolSize", 10);
-        tmpMap.put("spring.dynamic.tp.executors[0].maxPoolSize", 20);
+        tmpMap.put("spring.dynamic.tp.executors[0].maximumPoolSize", 20);
 
         propertySources.addFirst(new MapPropertySource("DtpCloudRefreshTestPropertySource", tmpMap));
         Set<String> keys = Collections.singleton("spring.dynamic.tp.executors[0].corePoolSize");

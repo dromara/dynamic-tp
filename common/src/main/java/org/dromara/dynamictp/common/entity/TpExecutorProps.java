@@ -82,12 +82,12 @@ public class TpExecutorProps {
     private boolean notifyEnabled = true;
 
     /**
-     * Task execute timeout, unit (ms), just for statistics.
+     * Task execute timeout, unit (ms).
      */
     private long runTimeout = 0;
 
     /**
-     * If try interrupt task when timeout.
+     * If try interrupt thread when run timeout.
      */
     private boolean tryInterrupt = false;
 

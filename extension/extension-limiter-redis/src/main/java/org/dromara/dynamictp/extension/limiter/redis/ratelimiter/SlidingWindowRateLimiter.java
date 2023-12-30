@@ -30,7 +30,7 @@ import java.util.List;
  * @author yanhom
  * @since 1.0.8
  **/
-public class SlidingWindowRateLimiter extends AbstractRedistRateLimiter {
+public class SlidingWindowRateLimiter extends AbstractRedisRateLimiter {
 
     public SlidingWindowRateLimiter(StringRedisTemplate stringRedisTemplate) {
         super(RateLimitEnum.SLIDING_WINDOW.getScriptName(), stringRedisTemplate);

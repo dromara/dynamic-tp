@@ -260,7 +260,7 @@ public class DtpExecutor extends ThreadPoolExecutor
                 Thread.currentThread().interrupt();
             } catch (Exception e) {
                 log.error("DynamicTp execute, thread {} throw exception, traceId {}",
-                        Thread.currentThread(),  MDC.get(TRACE_ID), e);
+                        Thread.currentThread(), MDC.get(TRACE_ID), e);
             }
         }
     }

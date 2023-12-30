@@ -38,10 +38,10 @@ import java.util.concurrent.TimeUnit;
 @ExtendWith(SpringExtension.class)
 @EnableDynamicTp
 @EnableAutoConfiguration
-public class ScheduledDtpExecutorTest {
+class ScheduledDtpExecutorTest {
 
     @Test
-    public void schedule() {
+    void schedule() {
         ScheduledDtpExecutor dtpExecutor12 = (ScheduledDtpExecutor) DtpRegistry.getExecutor("dtpExecutor12");
         System.out.println(dtpExecutor12.getClass());
         dtpExecutor12.scheduleAtFixedRate(() -> {
@@ -51,16 +51,15 @@ public class ScheduledDtpExecutorTest {
         dtpExecutor12.shutdownNow();
     }
 
-
     @Test
-    public void testScheduleJre8Bug() {
+    void testScheduleJre8Bug() {
         ScheduledDtpExecutor dtpExecutor13 = (ScheduledDtpExecutor) DtpRegistry.getExecutor("dtpExecutor13");
         dtpExecutor13.scheduleAtFixedRate(() -> { }, 10, 5, TimeUnit.SECONDS);
         dtpExecutor13.shutdownNow();
     }
 
     @Test
-    public void testSubNotify() {
+    void testSubNotify() {
         ScheduledDtpExecutor dtpExecutor14 = (ScheduledDtpExecutor) DtpRegistry.getExecutor("dtpExecutor14");
         dtpExecutor14.scheduleAtFixedRate(() -> {
             System.out.println("进来了");

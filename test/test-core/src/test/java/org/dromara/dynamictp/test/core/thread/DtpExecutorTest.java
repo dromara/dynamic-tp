@@ -60,7 +60,7 @@ public class DtpExecutorTest {
     }
 
     @RepeatedTest(100)
-    public void testRunTimeout() {
+    void testRunTimeout() {
         Executor dtpExecutor = DtpRegistry.getExecutor("testRunTimeoutDtpExecutor");
         dtpExecutor.execute(() -> {
             try (MockedStatic<AlarmManager> mockAlarmManager = mockStatic(AlarmManager.class)) {
@@ -73,7 +73,7 @@ public class DtpExecutorTest {
     }
 
     @RepeatedTest(100)
-    public void testQueueTimeout() {
+    void testQueueTimeout() {
         Executor dtpExecutor = DtpRegistry.getExecutor("testQueueTimeoutDtpExecutor");
         dtpExecutor.execute(() -> {
             try (MockedStatic<AlarmManager> mockAlarmManager = mockStatic(AlarmManager.class)) {
@@ -86,7 +86,7 @@ public class DtpExecutorTest {
     }
 
     @RepeatedTest(100)
-    public void testRejectedQueueTimeoutCancel() {
+    void testRejectedQueueTimeoutCancel() {
         Executor dtpExecutor = DtpRegistry.getExecutor("testRejectedQueueTimeoutCancelDtpExecutor");
         dtpExecutor.execute(() -> {
             try (MockedStatic<AlarmManager> mockAlarmManager = mockStatic(AlarmManager.class)) {
@@ -102,6 +102,4 @@ public class DtpExecutorTest {
     public static void afterAll() throws InterruptedException {
 //        TimeUnit.SECONDS.sleep(100);
     }
-
-
 }

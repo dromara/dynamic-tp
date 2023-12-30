@@ -30,6 +30,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 
 /**
@@ -50,7 +51,7 @@ public class DtpBaseTest {
     protected ApplicationEventPublisher publisher;
 
     @Autowired
-    protected Environment environment;
+    protected ConfigurableEnvironment environment;
 
     protected static ConfigurableApplicationContext context;
 

@@ -51,7 +51,7 @@ class CloudRefresherTest extends DtpBaseTest {
     }
 
     private void mockEnvironmentChange() {
-        MutablePropertySources propertySources = ((ConfigurableEnvironment) this.environment).getPropertySources();
+        MutablePropertySources propertySources = this.environment.getPropertySources();
         Map<String, Object> tmpMap = Maps.newHashMap();
         tmpMap.put("spring.dynamic.tp.executors[0].threadPoolName", "dtpExecutor1");
         tmpMap.put("spring.dynamic.tp.executors[0].corePoolSize", 10);

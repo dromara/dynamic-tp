@@ -45,16 +45,16 @@ public abstract class AbstractRedisRateLimiter implements RedisRateLimiter<List<
 
     private final RedisScript<List<Long>> script;
 
-    @Resource
     protected StringRedisTemplate stringRedisTemplate;
 
     protected static final AtomicInteger COUNTER = new AtomicInteger(0);
 
-    public AbstractRedisRateLimiter(String scriptName) {
+    public AbstractRedisRateLimiter(String scriptName, StringRedisTemplate stringRedisTemplate) {
         DefaultRedisScript redisScript = new DefaultRedisScript<>();
         redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource(SCRIPT_PATH + scriptName)));
         redisScript.setResultType(List.class);
         this.script = redisScript;
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     @Override

@@ -19,6 +19,7 @@ package org.dromara.dynamictp.extension.limiter.redis.ratelimiter;
 
 import org.dromara.dynamictp.common.util.CommonUtil;
 import org.dromara.dynamictp.extension.limiter.redis.em.RateLimitEnum;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,8 +32,8 @@ import java.util.List;
  **/
 public class SlidingWindowRateLimiter extends AbstractRedisRateLimiter {
 
-    public SlidingWindowRateLimiter() {
-        super(RateLimitEnum.SLIDING_WINDOW.getScriptName());
+    public SlidingWindowRateLimiter(StringRedisTemplate stringRedisTemplate) {
+        super(RateLimitEnum.SLIDING_WINDOW.getScriptName(), stringRedisTemplate);
     }
 
     @Override

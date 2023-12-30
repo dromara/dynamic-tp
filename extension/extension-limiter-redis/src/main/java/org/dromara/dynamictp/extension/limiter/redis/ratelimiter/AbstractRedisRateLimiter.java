@@ -23,7 +23,6 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 
-import javax.annotation.Resource;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +44,7 @@ public abstract class AbstractRedisRateLimiter implements RedisRateLimiter<List<
 
     private final RedisScript<List<Long>> script;
 
-    protected StringRedisTemplate stringRedisTemplate;
+    protected final StringRedisTemplate stringRedisTemplate;
 
     protected static final AtomicInteger COUNTER = new AtomicInteger(0);
 

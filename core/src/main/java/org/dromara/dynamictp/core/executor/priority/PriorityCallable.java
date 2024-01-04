@@ -5,7 +5,7 @@ import java.util.concurrent.Callable;
 /**
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
-public class PriorityCallable<V> implements Priority, Callable<V> {
+public class PriorityCallable<V> implements Priority, Comparable<Object>, Callable<V> {
 
     private final Callable<V> callable;
 
@@ -24,6 +24,11 @@ public class PriorityCallable<V> implements Priority, Callable<V> {
     @Override
     public int getPriority() {
         return this.priority;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return Integer.compare(((PriorityCallable<?>) o).priority, this.priority);
     }
 
 }

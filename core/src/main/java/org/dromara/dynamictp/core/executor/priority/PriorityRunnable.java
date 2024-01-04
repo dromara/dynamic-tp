@@ -4,7 +4,7 @@ package org.dromara.dynamictp.core.executor.priority;
 /**
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
-public class PriorityRunnable implements Priority, Comparable<PriorityRunnable>, Runnable {
+public class PriorityRunnable implements Priority, Comparable<Object>, Runnable {
 
     private final Runnable runnable;
 
@@ -21,8 +21,8 @@ public class PriorityRunnable implements Priority, Comparable<PriorityRunnable>,
     }
 
     @Override
-    public int compareTo(PriorityRunnable o) {
-        return Integer.compare(o.priority, this.priority);
+    public int compareTo(Object o) {
+        return Integer.compare(((PriorityRunnable) o).priority, this.priority);
     }
 
     public static PriorityRunnable of(Runnable runnable, int priority) {

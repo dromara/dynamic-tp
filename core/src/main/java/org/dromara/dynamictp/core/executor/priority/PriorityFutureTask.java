@@ -7,13 +7,12 @@ import java.util.concurrent.FutureTask;
 /**
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
-public class PriorityFutureTask<V> extends FutureTask<V> implements Comparable<PriorityFutureTask<V>> {
+public class PriorityFutureTask<V> extends FutureTask<V> implements Comparable<Object> {
 
     /**
      * The runnable.
      */
-    private final Priority obj;
-
+    private final Comparable<Object> obj;
 
     public PriorityFutureTask(Runnable runnable, V result) {
         super(runnable, result);
@@ -26,9 +25,8 @@ public class PriorityFutureTask<V> extends FutureTask<V> implements Comparable<P
     }
 
     @Override
-    public int compareTo(PriorityFutureTask<V> o) {
-        return Integer.compare(o.obj.getPriority(), this.obj.getPriority());
+    public int compareTo(Object o) {
+        return this.obj.compareTo(((PriorityFutureTask<?>)o).obj);
     }
-
 
 }

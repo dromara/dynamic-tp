@@ -59,12 +59,12 @@ public final class CommonUtil {
 
         // fix #I8SSGQ
         String env = environment.getProperty("spring.profiles.active");
-        if (null == env) {
+        if (StringUtils.isBlank(env)) {
             String[] profiles = environment.getActiveProfiles();
             if (profiles.length < 1) {
                 profiles = environment.getDefaultProfiles();
             }
-            if (profiles.length > 1) {
+            if (profiles.length >= 1) {
                 env = profiles[0];
             }
         }

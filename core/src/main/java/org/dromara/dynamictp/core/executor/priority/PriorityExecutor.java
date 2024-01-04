@@ -3,6 +3,7 @@ package org.dromara.dynamictp.core.executor.priority;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -94,4 +95,10 @@ public class PriorityExecutor extends DtpExecutor {
     protected <T> RunnableFuture<T> newTaskFor(Runnable runnable, T value) {
         return new PriorityFutureTask<>(runnable, value);
     }
+
+    @Override
+    protected <T> RunnableFuture<T> newTaskFor(Callable<T> callable) {
+        return new PriorityFutureTask<>(callable);
+    }
+
 }

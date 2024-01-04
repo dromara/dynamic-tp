@@ -1,33 +1,34 @@
 package org.dromara.dynamictp.core.executor.priority;
 
-import lombok.extern.slf4j.Slf4j;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
 /**
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
-@Slf4j
 public class PriorityFutureTask<V> extends FutureTask<V> implements Comparable<PriorityFutureTask<V>> {
 
     /**
-     * The underlying RunnableFuture
+     * The runnable.
      */
-    private final PriorityRunnable runnable;
+    private final Priority obj;
 
 
     public PriorityFutureTask(Runnable runnable, V result) {
         super(runnable, result);
-        this.runnable = (PriorityRunnable)runnable;
+        this.obj = (PriorityRunnable)runnable;
     }
 
-    @Override
-    public void run() {
-        runnable.run();
+    public PriorityFutureTask(Callable<V> callable) {
+        super(callable);
+        this.obj = (PriorityCallable<V>)callable;
     }
 
     @Override
     public int compareTo(PriorityFutureTask<V> o) {
-        return Integer.compare(o.runnable.getPriority(), this.runnable.getPriority());
+        return Integer.compare(o.obj.getPriority(), this.obj.getPriority());
     }
+
+
 }

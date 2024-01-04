@@ -5,8 +5,25 @@ import java.util.concurrent.Callable;
 /**
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
-public interface PriorityCallable<V> extends Callable<V> {
+public class PriorityCallable<V> implements Priority, Callable<V> {
 
-    int priority();
+    private final Callable<V> callable;
+
+    private final int priority;
+
+    public PriorityCallable(Callable<V> callable, int priority) {
+        this.callable = callable;
+        this.priority = priority;
+    }
+
+    @Override
+    public V call() throws Exception {
+        return callable.call();
+    }
+
+    @Override
+    public int getPriority() {
+        return this.priority;
+    }
 
 }

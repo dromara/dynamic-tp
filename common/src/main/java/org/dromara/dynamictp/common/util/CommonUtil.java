@@ -57,12 +57,18 @@ public final class CommonUtil {
             log.error("get localhost address error.", e);
         }
 
-        String[] profiles = environment.getActiveProfiles();
-        if (profiles.length < 1) {
-            profiles = environment.getDefaultProfiles();
+        // fix #I8SSGQ
+        String env = environment.getProperty("spring.profiles.active");
+        if (StringUtils.isBlank(env)) {
+            String[] profiles = environment.getActiveProfiles();
+            if (profiles.length < 1) {
+                profiles = environment.getDefaultProfiles();
+            }
+            if (profiles.length >= 1) {
+                env = profiles[0];
+            }
         }
-        SERVICE_INSTANCE = new ServiceInstance(address, port, appName, profiles[0]);
-
+        SERVICE_INSTANCE = new ServiceInstance(address, port, appName, env);
     }
 
     public static ServiceInstance getInstance() {

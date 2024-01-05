@@ -28,6 +28,7 @@ import org.dromara.dynamictp.core.executor.ExecutorType;
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
 import org.dromara.dynamictp.core.executor.eager.TaskQueue;
+import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.BinderHelper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
@@ -39,6 +40,7 @@ import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.ALLOW_CORE_THREAD_TIMEOUT;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.AWAIT_TERMINATION_SECONDS;
@@ -123,7 +125,9 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         BlockingQueue<Runnable> taskQueue;
         if (clazz.equals(EagerDtpExecutor.class)) {
             taskQueue = new TaskQueue(props.getQueueCapacity());
-        } else {
+        } else if (clazz.equals(PriorityDtpExecutor.class)) {
+            taskQueue = new PriorityBlockingQueue<>(props.getQueueCapacity());
+        }else {
             taskQueue = buildLbq(props.getQueueType(),
                     props.getQueueCapacity(),
                     props.isFair(),

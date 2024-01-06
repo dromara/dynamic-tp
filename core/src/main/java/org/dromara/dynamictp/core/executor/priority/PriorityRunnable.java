@@ -22,7 +22,7 @@ public class PriorityRunnable implements Comparable<Object>, Runnable {
 
     @Override
     public int compareTo(Object o) {
-        return Integer.compare(((PriorityRunnable) o).priority, this.priority);
+        return Integer.compare(this.priority, ((PriorityRunnable) o).priority);
     }
 
     public static PriorityRunnable of(Runnable runnable, int priority) {

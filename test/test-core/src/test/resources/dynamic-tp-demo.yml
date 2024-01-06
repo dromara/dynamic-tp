@@ -77,7 +77,7 @@ spring:
         - threadPoolName: priorityDtpThreadPoolExecutor
           executorType: priority                     # 线程池类型common、eager：适用于io密集型
           corePoolSize: 1
-          maximumPoolSize: 5
+          maximumPoolSize: 1
           queueCapacity: 5000
           rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
           keepAliveTime: 50
@@ -86,6 +86,6 @@ spring:
           waitForTasksToCompleteOnShutdown: false        # 参考spring线程池设计，优雅关闭线程池
           awaitTerminationSeconds: 5                     # 单位（s）
           preStartAllCoreThreads: false                  # 是否预热所有核心线程，默认false
-          runTimeout: 200                                # 任务执行超时阈值，目前只做告警用，单位（ms）
-          queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
-          taskWrapperNames: ["ttl"]                          # 任务包装器名称，集成TaskWrapper接口
+          runTimeout: 10000                                # 任务执行超时阈值，目前只做告警用，单位（ms）
+          queueTimeout: 10000                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
+#          taskWrapperNames: ["ttl"]                          # 任务包装器名称，集成TaskWrapper接口

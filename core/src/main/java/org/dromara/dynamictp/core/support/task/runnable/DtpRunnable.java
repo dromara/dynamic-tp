@@ -28,14 +28,13 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
  * @author yanhom
  * @since 1.0.4
  */
+@Getter
 public class DtpRunnable implements Runnable {
 
     private final Runnable runnable;
 
-    @Getter
     private final String taskName;
 
-    @Getter
     private final String traceId;
 
     public DtpRunnable(Runnable runnable, String taskName) {

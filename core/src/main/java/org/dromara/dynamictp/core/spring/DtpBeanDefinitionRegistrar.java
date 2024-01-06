@@ -29,8 +29,10 @@ import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
 import org.dromara.dynamictp.core.executor.eager.TaskQueue;
 import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
+import org.dromara.dynamictp.core.executor.priority.PriorityRunnable;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.BinderHelper;
+import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.EnvironmentAware;
@@ -38,6 +40,7 @@ import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -126,7 +129,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         if (clazz.equals(EagerDtpExecutor.class)) {
             taskQueue = new TaskQueue(props.getQueueCapacity());
         } else if (clazz.equals(PriorityDtpExecutor.class)) {
-            taskQueue = new PriorityBlockingQueue<>(props.getQueueCapacity());
+            taskQueue = new PriorityBlockingQueue<>(props.getQueueCapacity(), getRunnableComparator());
         }else {
             taskQueue = buildLbq(props.getQueueType(),
                     props.getQueueCapacity(),
@@ -144,4 +147,19 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
                 RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType())
         };
     }
+
+    private Comparator<Runnable> getRunnableComparator() {
+        return (o1, o2) -> {
+            if (!(o1 instanceof DtpRunnable) || !(o2 instanceof DtpRunnable)) {
+                return 0;
+            }
+            Runnable po1 =  ((DtpRunnable) o1).getRunnable();
+            Runnable po2 =  ((DtpRunnable) o2).getRunnable();
+            if (!(po1 instanceof PriorityRunnable) || !(po2 instanceof PriorityRunnable)) {
+                return 0;
+            }
+            return ((PriorityRunnable) po1).compareTo(po2);
+        };
+    }
+
 }

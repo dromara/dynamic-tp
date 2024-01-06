@@ -27,7 +27,7 @@ public class PriorityCallable<V> implements Comparable<Object>, Callable<V> {
 
     @Override
     public int compareTo(Object o) {
-        return Integer.compare(((PriorityCallable<?>) o).priority, this.priority);
+        return Integer.compare(this.priority, ((PriorityCallable<?>) o).priority);
     }
 
 }

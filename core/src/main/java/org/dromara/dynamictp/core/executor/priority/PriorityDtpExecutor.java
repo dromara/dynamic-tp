@@ -107,11 +107,6 @@ public class PriorityDtpExecutor extends DtpExecutor {
         return new PriorityFutureTask<>(callable);
     }
 
-    @Override
-    public void execute(Runnable command) {
-        this.execute(command, DEFAULT_PRIORITY);
-    }
-
     public void execute(Runnable command, int priority) {
         super.execute(PriorityRunnable.of(command, priority));
     }
@@ -122,7 +117,7 @@ public class PriorityDtpExecutor extends DtpExecutor {
     }
 
     public Future<?> submit(Runnable task, int priority) {
-        return this.submit(PriorityRunnable.of(task, priority));
+        return super.submit(PriorityRunnable.of(task, priority));
     }
 
     @Override
@@ -131,7 +126,7 @@ public class PriorityDtpExecutor extends DtpExecutor {
     }
 
     public <T> Future<T> submit(Runnable task, T result, int priority) {
-        return this.submit(PriorityRunnable.of(task, priority), result);
+        return super.submit(PriorityRunnable.of(task, priority), result);
     }
 
 
@@ -141,7 +136,7 @@ public class PriorityDtpExecutor extends DtpExecutor {
     }
 
     public <T> Future<T> submit(Callable<T> task, int priority) {
-        return this.submit(PriorityCallable.of(task, priority));
+        return super.submit(PriorityCallable.of(task, priority));
     }
 
 }

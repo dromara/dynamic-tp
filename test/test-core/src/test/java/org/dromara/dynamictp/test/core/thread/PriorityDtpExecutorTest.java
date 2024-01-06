@@ -49,6 +49,42 @@ public class PriorityDtpExecutorTest {
         countDownLatch.await();
     }
 
+    @Test
+    void submit() throws InterruptedException {
+        int count = 5;
+        CountDownLatch countDownLatch = new CountDownLatch(count);
+        for (int i = count; i > 0; i--) {
+            priorityDtpExecutor.submit(new TestPriorityRunnable(i, countDownLatch));
+        }
+        countDownLatch.await();
+    }
+
+    @Test
+    void prioritySubmit() throws InterruptedException {
+        int count = 5;
+        CountDownLatch countDownLatch = new CountDownLatch(count);
+        for (int i = count; i > 0; i--) {
+            priorityDtpExecutor.submit(new TestPriorityRunnable(i, countDownLatch), i);
+        }
+        countDownLatch.await();
+    }
+
+    @Test
+    void prioritySubmit1() {
+    }
+
+    @Test
+    void prioritySubmit2() {
+    }
+
+    @Test
+    void prioritySubmit3() {
+    }
+
+    @Test
+    void prioritySubmit4() {
+    }
+
     private static class TestPriorityRunnable implements Runnable {
 
         private final int number;
@@ -64,7 +100,7 @@ public class PriorityDtpExecutorTest {
         public void run() {
             try {
                 log.info("work-{} triggered successfully", number);
-                TimeUnit.MILLISECONDS.sleep(100);
+                TimeUnit.MILLISECONDS.sleep(10);
                 log.info("work-{} completed successfully", number);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -74,27 +110,4 @@ public class PriorityDtpExecutorTest {
         }
     }
 
-    @Test
-    void submit() {
-    }
-
-    @Test
-    void testSubmit() {
-    }
-
-    @Test
-    void testSubmit1() {
-    }
-
-    @Test
-    void testSubmit2() {
-    }
-
-    @Test
-    void testSubmit3() {
-    }
-
-    @Test
-    void testSubmit4() {
-    }
 }

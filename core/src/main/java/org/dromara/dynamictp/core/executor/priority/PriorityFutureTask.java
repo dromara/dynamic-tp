@@ -1,6 +1,8 @@
 package org.dromara.dynamictp.core.executor.priority;
 
 
+import lombok.var;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
@@ -26,6 +28,9 @@ public class PriorityFutureTask<V> extends FutureTask<V> implements Comparable<O
 
     @Override
     public int compareTo(Object o) {
+        if (this.obj == null || o == null) {
+            return 0;
+        }
         return this.obj.compareTo(((PriorityFutureTask<?>)o).obj);
     }
 

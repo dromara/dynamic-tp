@@ -12,7 +12,12 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -70,19 +75,65 @@ public class PriorityDtpExecutorTest {
     }
 
     @Test
-    void prioritySubmit1() {
+    void submitWithResult() throws InterruptedException, ExecutionException {
+        int count = 5;
+        CountDownLatch countDownLatch = new CountDownLatch(count);
+        List<Future<String>> list = new ArrayList<>();
+        for (int i = count; i > 0; i--) {
+            String name = "test-" + i;
+            Future<String> result = priorityDtpExecutor.submit(new TestPriorityRunnable(i, countDownLatch), name);
+            list.add(result);
+        }
+        countDownLatch.await();
+        for (Future<String> future : list) {
+            log.info("result: {}", future.get());
+        }
     }
 
     @Test
-    void prioritySubmit2() {
+    void prioritySubmitWithResult() throws InterruptedException, ExecutionException {
+        int count = 5;
+        CountDownLatch countDownLatch = new CountDownLatch(count);
+        List<Future<String>> list = new ArrayList<>();
+        for (int i = count; i > 0; i--) {
+            String name = "test-" + i;
+            Future<String> result = priorityDtpExecutor.submit(new TestPriorityRunnable(i, countDownLatch), name, i);
+            list.add(result);
+        }
+        countDownLatch.await();
+        for (Future<String> future : list) {
+            log.info("result: {}", future.get());
+        }
     }
 
     @Test
-    void prioritySubmit3() {
+    void prioritySubmit3() throws InterruptedException, ExecutionException {
+        int count = 5;
+        CountDownLatch countDownLatch = new CountDownLatch(count);
+        List<Future<String>> list = new ArrayList<>();
+        for (int i = count; i > 0; i--) {
+            Future<String> result = priorityDtpExecutor.submit(new TestPriorityCallable(i, countDownLatch));
+            list.add(result);
+        }
+        countDownLatch.await();
+        for (Future<String> future : list) {
+            log.info("result: {}", future.get());
+        }
     }
 
     @Test
-    void prioritySubmit4() {
+    void prioritySubmit4() throws InterruptedException, ExecutionException {
+        int count = 5;
+        CountDownLatch countDownLatch = new CountDownLatch(count);
+        List<Future<String>> list = new ArrayList<>();
+        for (int i = count; i > 0; i--) {
+            Future<String> result = priorityDtpExecutor.submit(new TestPriorityCallable(i, countDownLatch), i);
+            list.add(result);
+        }
+        countDownLatch.await();
+        for (Future<String> future : list) {
+            log.info("result: {}", future.get());
+        }
     }
 
     private static class TestPriorityRunnable implements Runnable {
@@ -105,6 +156,32 @@ public class PriorityDtpExecutorTest {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             } finally {
+                countDownLatch.countDown();
+            }
+        }
+    }
+
+    private static class TestPriorityCallable implements Callable<String> {
+
+        private final int number;
+
+        private final CountDownLatch countDownLatch;
+
+        private TestPriorityCallable(int number, CountDownLatch countDownLatch) {
+            this.number = number;
+            this.countDownLatch = countDownLatch;
+        }
+
+        @Override
+        public String call() {
+            try {
+                log.info("work-{} triggered successfully", number);
+                TimeUnit.MILLISECONDS.sleep(10);
+                return "work-" + number;
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } finally {
+                log.info("work-{} completed successfully", number);
                 countDownLatch.countDown();
             }
         }

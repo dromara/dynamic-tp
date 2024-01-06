@@ -88,4 +88,4 @@ spring:
           preStartAllCoreThreads: false                  # 是否预热所有核心线程，默认false
           runTimeout: 10000                                # 任务执行超时阈值，目前只做告警用，单位（ms）
           queueTimeout: 10000                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
-#          taskWrapperNames: ["ttl"]                          # 任务包装器名称，集成TaskWrapper接口
+          taskWrapperNames: ["ttl"]                          # 任务包装器名称，集成TaskWrapper接口

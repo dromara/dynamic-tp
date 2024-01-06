@@ -28,6 +28,7 @@ import org.dromara.dynamictp.core.executor.ExecutorType;
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
 import org.dromara.dynamictp.core.executor.eager.TaskQueue;
+import org.dromara.dynamictp.core.executor.priority.Priority;
 import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
 import org.dromara.dynamictp.core.executor.priority.PriorityFutureTask;
 import org.dromara.dynamictp.core.executor.priority.PriorityRunnable;
@@ -156,10 +157,9 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
             }
             Runnable po1 =  ((DtpRunnable) o1).getRunnable();
             Runnable po2 =  ((DtpRunnable) o2).getRunnable();
-            if (po1 instanceof PriorityRunnable && po2 instanceof PriorityRunnable) {
-                return ((PriorityRunnable) po1).compareTo(po2);
-            } else if (po1 instanceof PriorityFutureTask && po2 instanceof PriorityFutureTask) {
-                return ((PriorityFutureTask<?>) po1).compareTo(po2);
+            // TODO 如果使用了别的Runnable包装器会走不到这里
+            if (po1 instanceof Priority && po2 instanceof Priority) {
+                return Integer.compare(((Priority) po1).getPriority(), ((Priority) po2).getPriority());
             }
             return 0;
         };

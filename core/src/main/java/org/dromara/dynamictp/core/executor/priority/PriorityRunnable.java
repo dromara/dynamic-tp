@@ -6,7 +6,7 @@ import lombok.Getter;
 /**
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
-public class PriorityRunnable implements Comparable<Object>, Runnable {
+public class PriorityRunnable implements Priority, Runnable {
 
     private final Runnable runnable;
 
@@ -21,14 +21,6 @@ public class PriorityRunnable implements Comparable<Object>, Runnable {
     @Override
     public void run() {
         this.runnable.run();
-    }
-
-    @Override
-    public int compareTo(Object o) {
-        if (o instanceof PriorityCallable) {
-            return Integer.compare(this.priority, ((PriorityCallable<?>) o).getPriority());
-        }
-        return Integer.compare(this.priority, ((PriorityRunnable) o).priority);
     }
 
     public static PriorityRunnable of(Runnable runnable, int priority) {

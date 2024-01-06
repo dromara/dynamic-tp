@@ -107,7 +107,7 @@ public class PriorityDtpExecutorTest {
     }
 
     @Test
-    void prioritySubmit3() throws InterruptedException, ExecutionException {
+    void submitCallable() throws InterruptedException, ExecutionException {
         int count = 5;
         CountDownLatch countDownLatch = new CountDownLatch(count);
         List<Future<String>> list = new ArrayList<>();
@@ -122,7 +122,7 @@ public class PriorityDtpExecutorTest {
     }
 
     @Test
-    void prioritySubmit4() throws InterruptedException, ExecutionException {
+    void prioritySubmitCallable() throws InterruptedException, ExecutionException {
         int count = 5;
         CountDownLatch countDownLatch = new CountDownLatch(count);
         List<Future<String>> list = new ArrayList<>();

@@ -15,24 +15,15 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.example;
-
-import org.dromara.dynamictp.core.spring.EnableDynamicTp;
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.openfeign.EnableFeignClients;
+package org.dromara.dynamictp.core.executor.priority;
 
 /**
- * @author Redick01
+ * Priority related
+ *
+ * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
-@EnableDynamicTp
-@EnableFeignClients
-@MapperScan(basePackages = {"org.dromara.dynamictp.example.mapper"})
-@SpringBootApplication
-public class CloudConsulExampleApplication {
+public interface Priority {
 
-    public static void main(String[] args) {
-        SpringApplication.run(CloudConsulExampleApplication.class, args);
-    }
+    int getPriority();
+
 }

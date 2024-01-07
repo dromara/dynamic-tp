@@ -15,24 +15,36 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.example;
+package org.dromara.dynamictp.core.executor.priority;
 
-import org.dromara.dynamictp.core.spring.EnableDynamicTp;
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.openfeign.EnableFeignClients;
+import lombok.Getter;
+
+import java.util.concurrent.Callable;
 
 /**
- * @author Redick01
+ * PriorityCallable related
+ *
+ * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
-@EnableDynamicTp
-@EnableFeignClients
-@MapperScan(basePackages = {"org.dromara.dynamictp.example.mapper"})
-@SpringBootApplication
-public class CloudConsulExampleApplication {
+public class PriorityCallable<V> implements Priority, Callable<V> {
 
-    public static void main(String[] args) {
-        SpringApplication.run(CloudConsulExampleApplication.class, args);
+    private final Callable<V> callable;
+
+    @Getter
+    private final int priority;
+
+    private PriorityCallable(Callable<V> callable, int priority) {
+        this.callable = callable;
+        this.priority = priority;
     }
+
+    public static <T> Callable<T> of(Callable<T> task, int i) {
+        return new PriorityCallable<>(task, i);
+    }
+
+    @Override
+    public V call() throws Exception {
+        return callable.call();
+    }
+
 }

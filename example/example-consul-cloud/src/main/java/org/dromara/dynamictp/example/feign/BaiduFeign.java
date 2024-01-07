@@ -15,24 +15,24 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.example;
+package org.dromara.dynamictp.example.feign;
 
-import org.dromara.dynamictp.core.spring.EnableDynamicTp;
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
- * @author Redick01
- */
-@EnableDynamicTp
-@EnableFeignClients
-@MapperScan(basePackages = {"org.dromara.dynamictp.example.mapper"})
-@SpringBootApplication
-public class CloudConsulExampleApplication {
+ * BaiduFeign related
+ *
+ * @author yanhom
+ * @since 1.0.0
+ **/
+@FeignClient(name = "baiduFeign", url = "https://www.baidu.com")
+public interface BaiduFeign {
 
-    public static void main(String[] args) {
-        SpringApplication.run(CloudConsulExampleApplication.class, args);
-    }
+    /**
+     * test
+     * @return result
+     */
+    @GetMapping(value = "/s")
+    String test();
 }

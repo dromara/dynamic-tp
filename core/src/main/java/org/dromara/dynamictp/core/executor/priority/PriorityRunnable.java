@@ -15,24 +15,34 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.example;
+package org.dromara.dynamictp.core.executor.priority;
 
-import org.dromara.dynamictp.core.spring.EnableDynamicTp;
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.openfeign.EnableFeignClients;
+import lombok.Getter;
 
 /**
- * @author Redick01
+ * PriorityRunnable related
+ *
+ * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
-@EnableDynamicTp
-@EnableFeignClients
-@MapperScan(basePackages = {"org.dromara.dynamictp.example.mapper"})
-@SpringBootApplication
-public class CloudConsulExampleApplication {
+public class PriorityRunnable implements Priority, Runnable {
 
-    public static void main(String[] args) {
-        SpringApplication.run(CloudConsulExampleApplication.class, args);
+    private final Runnable runnable;
+
+    @Getter
+    private final int priority;
+
+    private PriorityRunnable(Runnable runnable, int priority) {
+        this.runnable = runnable;
+        this.priority = priority;
     }
+
+    @Override
+    public void run() {
+        this.runnable.run();
+    }
+
+    public static PriorityRunnable of(Runnable runnable, int priority) {
+        return new PriorityRunnable(runnable, priority);
+    }
+
 }

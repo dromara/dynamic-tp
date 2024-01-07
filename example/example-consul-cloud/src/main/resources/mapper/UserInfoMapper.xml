@@ -1,0 +1,23 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.dromara.dynamictp.example.mapper.UserInfoMapper">
+    <resultMap type="org.dromara.dynamictp.example.domain.UserInfo" id="userInfoResultMap">
+        <id column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="password" property="password"/>
+    </resultMap>
+
+    <select id="selectById" resultMap="userInfoResultMap">
+        select * from user_info where user_id = #{userId}
+    </select>
+
+    <insert id="insert" parameterType="org.dromara.dynamictp.example.domain.UserInfo">
+        insert into user_info (user_id, user_name, password) values
+        (
+        #{userId}, #{userName}, #{password}
+        )
+    </insert>
+
+</mapper>

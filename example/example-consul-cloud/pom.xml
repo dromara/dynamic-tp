@@ -13,6 +13,8 @@
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
+        <mysql.version>8.0.32</mysql.version>
+        <mybatis.version>2.3.2</mybatis.version>
     </properties>
 
     <dependencies>
@@ -74,6 +76,19 @@
         <dependency>
             <groupId>org.dromara.dynamictp</groupId>
             <artifactId>dynamic-tp-extension-skywalking</artifactId>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter -->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>${mybatis.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.version}</version>
         </dependency>
     </dependencies>
 

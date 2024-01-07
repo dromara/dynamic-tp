@@ -93,6 +93,4 @@ public final class CommonUtil {
         }
         return candidateAddress == null ? InetAddress.getLocalHost() : candidateAddress;
     }
-
-
 }

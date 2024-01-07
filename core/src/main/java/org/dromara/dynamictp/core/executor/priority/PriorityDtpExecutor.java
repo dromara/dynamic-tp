@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.dromara.dynamictp.core.executor.priority;
 
 import lombok.extern.slf4j.Slf4j;
@@ -116,7 +117,6 @@ public class PriorityDtpExecutor extends DtpExecutor {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
     }
 
-
     @Override
     protected <T> RunnableFuture<T> newTaskFor(Runnable runnable, T value) {
         return new PriorityFutureTask<>(runnable, value);
@@ -149,7 +149,6 @@ public class PriorityDtpExecutor extends DtpExecutor {
         return super.submit(PriorityRunnable.of(task, priority), result);
     }
 
-
     @Override
     public <T> Future<T> submit(Callable<T> task) {
         return super.submit(PriorityCallable.of(task, DEFAULT_PRIORITY));
@@ -158,7 +157,6 @@ public class PriorityDtpExecutor extends DtpExecutor {
     public <T> Future<T> submit(Callable<T> task, int priority) {
         return super.submit(PriorityCallable.of(task, priority));
     }
-
 
     /**
      * Priority Comparator

@@ -14,41 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.dromara.dynamictp.core.support.task.runnable;
+package org.dromara.dynamictp.core.executor.priority;
 
 import lombok.Getter;
-import org.slf4j.MDC;
 
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
+import java.util.concurrent.Callable;
 
 /**
- * DtpRunnable related
+ * PriorityCallable related
  *
- * @author yanhom
- * @since 1.0.4
+ * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
-@Getter
-public class DtpRunnable implements Runnable {
+public class PriorityCallable<V> implements Priority, Callable<V> {
 
-    private final Runnable originRunnable;
+    private final Callable<V> callable;
 
-    private final Runnable runnable;
+    @Getter
+    private final int priority;
 
-    private final String taskName;
+    private PriorityCallable(Callable<V> callable, int priority) {
+        this.callable = callable;
+        this.priority = priority;
+    }
 
-    private final String traceId;
-
-    public DtpRunnable(Runnable originRunnable, Runnable runnable, String taskName) {
-        this.originRunnable = originRunnable;
-        this.runnable = runnable;
-        this.taskName = taskName;
-        this.traceId = MDC.get(TRACE_ID);
+    public static <T> Callable<T> of(Callable<T> task, int i) {
+        return new PriorityCallable<>(task, i);
     }
 
     @Override
-    public void run() {
-        runnable.run();
+    public V call() throws Exception {
+        return callable.call();
     }
 
 }

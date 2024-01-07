@@ -14,41 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.dromara.dynamictp.core.support.task.runnable;
-
-import lombok.Getter;
-import org.slf4j.MDC;
-
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
+package org.dromara.dynamictp.core.executor.priority;
 
 /**
- * DtpRunnable related
+ * Priority related
  *
- * @author yanhom
- * @since 1.0.4
+ * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
-@Getter
-public class DtpRunnable implements Runnable {
+public interface Priority {
 
-    private final Runnable originRunnable;
-
-    private final Runnable runnable;
-
-    private final String taskName;
-
-    private final String traceId;
-
-    public DtpRunnable(Runnable originRunnable, Runnable runnable, String taskName) {
-        this.originRunnable = originRunnable;
-        this.runnable = runnable;
-        this.taskName = taskName;
-        this.traceId = MDC.get(TRACE_ID);
-    }
-
-    @Override
-    public void run() {
-        runnable.run();
-    }
+    int getPriority();
 
 }

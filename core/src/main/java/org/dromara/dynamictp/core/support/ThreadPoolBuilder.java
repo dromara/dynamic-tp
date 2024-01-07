@@ -334,25 +334,98 @@ public class ThreadPoolBuilder {
         return this;
     }
 
+    /**
+     * @param eager true or false
+     * @return the ThreadPoolBuilder instance
+     * @deprecated use {@link #eager()} instead
+     */
+    @Deprecated
     public ThreadPoolBuilder eager(boolean eager) {
+        checkExecutorType();
         this.eager = eager;
         return this;
     }
 
+    /**
+     * @param ordered true or false
+     * @return the ThreadPoolBuilder instance
+     * @deprecated use {@link #ordered()} instead
+     */
+    @Deprecated
     public ThreadPoolBuilder ordered(boolean ordered) {
+        checkExecutorType();
         this.ordered = ordered;
         return this;
     }
 
+    /**
+     * @param scheduled true or false
+     * @return the ThreadPoolBuilder instance
+     * @deprecated use {@link #scheduled()} instead
+     */
+    @Deprecated
     public ThreadPoolBuilder scheduled(boolean scheduled) {
+        checkExecutorType();
         this.scheduled = scheduled;
         return this;
     }
 
+    /**
+     * @param priority true or false
+     * @return the ThreadPoolBuilder instance
+     * @deprecated use {@link #priority()} instead
+     */
+    @Deprecated
     public ThreadPoolBuilder priority(boolean priority) {
+        checkExecutorType();
         this.priority = priority;
         return this;
     }
+
+    /**
+     * set eager type
+     *
+     * @return the ThreadPoolBuilder instance
+     */
+    public ThreadPoolBuilder eager() {
+        checkExecutorType();
+        this.eager = true;
+        return this;
+    }
+
+    /**
+     * set ordered type
+     *
+     * @return the ThreadPoolBuilder instance
+     */
+    public ThreadPoolBuilder ordered() {
+        checkExecutorType();
+        this.ordered = true;
+        return this;
+    }
+
+    /**
+     * set scheduled type
+     *
+     * @return the ThreadPoolBuilder instance
+     */
+    public ThreadPoolBuilder scheduled() {
+        checkExecutorType();
+        this.scheduled = true;
+        return this;
+    }
+
+    /**
+     * set priority type
+     *
+     * @return the ThreadPoolBuilder instance
+     */
+    public ThreadPoolBuilder priority() {
+        checkExecutorType();
+        this.priority = true;
+        return this;
+    }
+
 
     public ThreadPoolBuilder preStartAllCoreThreads(boolean preStartAllCoreThreads) {
         this.preStartAllCoreThreads = preStartAllCoreThreads;
@@ -602,4 +675,15 @@ public class ThreadPoolBuilder {
         executor.allowCoreThreadTimeOut(builder.allowCoreThreadTimeOut);
         return executor;
     }
+
+    /**
+     * Check executor type.
+     */
+    private void checkExecutorType() {
+        if (eager || ordered || scheduled || priority) {
+            // 抛异常
+            throw new IllegalArgumentException("More than one executor type is defined");
+        }
+    }
+
 }

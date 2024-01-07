@@ -105,7 +105,7 @@ public class ThreadPoolConfiguration {
                 .corePoolSize(2)
                 .maximumPoolSize(4)
                 .queueCapacity(2000)
-                .eager(true)
+                .eager()
                 .buildDynamic();
     }
 

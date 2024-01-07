@@ -34,6 +34,7 @@ import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
 import org.dromara.dynamictp.core.executor.ScheduledDtpExecutor;
 import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
 import org.dromara.dynamictp.core.executor.eager.TaskQueue;
+import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.springframework.util.Assert;
@@ -42,6 +43,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -150,6 +152,12 @@ public class ThreadPoolBuilder {
     private boolean scheduled = false;
 
     /**
+     * If priority thread pool.
+     * default false, true priority thread pool.
+     */
+    private boolean priority = false;
+
+    /**
      * If pre start all core threads.
      */
     private boolean preStartAllCoreThreads = false;
@@ -194,7 +202,8 @@ public class ThreadPoolBuilder {
      */
     private List<String> platformIds = Lists.newArrayList();
 
-    private ThreadPoolBuilder() { }
+    private ThreadPoolBuilder() {
+    }
 
     public static ThreadPoolBuilder newBuilder() {
         return new ThreadPoolBuilder();
@@ -340,6 +349,11 @@ public class ThreadPoolBuilder {
         return this;
     }
 
+    public ThreadPoolBuilder priority(boolean priority) {
+        this.priority = priority;
+        return this;
+    }
+
     public ThreadPoolBuilder preStartAllCoreThreads(boolean preStartAllCoreThreads) {
         this.preStartAllCoreThreads = preStartAllCoreThreads;
         return this;
@@ -460,6 +474,16 @@ public class ThreadPoolBuilder {
     }
 
     /**
+     * Build priority thread pool executor.
+     *
+     * @return the newly created PriorityDtpExecutor instance
+     */
+    public PriorityDtpExecutor buildPriority() {
+        priority = true;
+        return (PriorityDtpExecutor) buildDtpExecutor(this);
+    }
+
+    /**
      * Build thread pool executor and wrapper with ttl
      *
      * @return the newly created ExecutorService instance
@@ -529,6 +553,15 @@ public class ThreadPoolBuilder {
                     builder.keepAliveTime,
                     builder.timeUnit,
                     builder.workQueue,
+                    builder.threadFactory,
+                    builder.rejectedExecutionHandler);
+        } else if (priority) {
+            dtpExecutor = new PriorityDtpExecutor(
+                    builder.corePoolSize,
+                    builder.maximumPoolSize,
+                    builder.keepAliveTime,
+                    builder.timeUnit,
+                    new PriorityBlockingQueue<>(builder.queueCapacity, PriorityDtpExecutor.getRunnableComparator()),
                     builder.threadFactory,
                     builder.rejectedExecutionHandler);
         } else {

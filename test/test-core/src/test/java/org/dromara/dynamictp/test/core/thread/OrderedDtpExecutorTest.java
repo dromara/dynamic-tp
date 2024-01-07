@@ -67,7 +67,6 @@ class OrderedDtpExecutorTest {
             MDC.put("traceId", String.valueOf(i));
             orderedDtpExecutor.execute(new TestOrderedRunnable("TEST"));
         }
-//        new CountDownLatch(1).await();
     }
 
     @Test

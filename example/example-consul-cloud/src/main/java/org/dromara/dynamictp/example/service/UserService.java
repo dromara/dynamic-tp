@@ -15,24 +15,28 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.example;
+package org.dromara.dynamictp.example.service;
 
-import org.dromara.dynamictp.core.spring.EnableDynamicTp;
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.dromara.dynamictp.example.domain.UserInfo;
 
 /**
- * @author Redick01
+ * UserService related
+ *
+ * @author yanhom
+ * @since 1.1.0
  */
-@EnableDynamicTp
-@EnableFeignClients
-@MapperScan(basePackages = {"org.dromara.dynamictp.example.mapper"})
-@SpringBootApplication
-public class CloudConsulExampleApplication {
+public interface UserService {
 
-    public static void main(String[] args) {
-        SpringApplication.run(CloudConsulExampleApplication.class, args);
-    }
+    /**
+     * get
+     * @param userId userId
+     * @return UserInfo
+     */
+    UserInfo getUserInfo(long userId);
+
+    /**
+     * insert
+     * @param userInfo userInfo
+     */
+    void insert(UserInfo userInfo);
 }

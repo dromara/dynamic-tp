@@ -18,7 +18,9 @@ package org.dromara.dynamictp.core.executor.priority;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
+import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
 
+import java.util.Comparator;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -29,6 +31,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * PriorityDtpExecutor related, extending DtpExecutor, implements priority feature
+ *
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
 @Slf4j
@@ -153,6 +157,26 @@ public class PriorityDtpExecutor extends DtpExecutor {
 
     public <T> Future<T> submit(Callable<T> task, int priority) {
         return super.submit(PriorityCallable.of(task, priority));
+    }
+
+
+    /**
+     * Priority Comparator
+     *
+     * @return Comparator
+     */
+    public static Comparator<Runnable> getRunnableComparator() {
+        return (o1, o2) -> {
+            if (!(o1 instanceof DtpRunnable) || !(o2 instanceof DtpRunnable)) {
+                return 0;
+            }
+            Runnable po1 = ((DtpRunnable) o1).getOriginRunnable();
+            Runnable po2 = ((DtpRunnable) o2).getOriginRunnable();
+            if (po1 instanceof Priority && po2 instanceof Priority) {
+                return Integer.compare(((Priority) po1).getPriority(), ((Priority) po2).getPriority());
+            }
+            return 0;
+        };
     }
 
 }

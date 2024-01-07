@@ -21,6 +21,8 @@ import lombok.Getter;
 import java.util.concurrent.Callable;
 
 /**
+ * PriorityCallable related
+ *
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
 public class PriorityCallable<V> implements Priority, Callable<V> {

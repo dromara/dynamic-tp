@@ -20,6 +20,8 @@ package org.dromara.dynamictp.core.executor.priority;
 import lombok.Getter;
 
 /**
+ * PriorityRunnable related
+ *
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
 public class PriorityRunnable implements Priority, Runnable {

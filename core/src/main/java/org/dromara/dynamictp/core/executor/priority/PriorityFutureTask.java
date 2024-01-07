@@ -21,6 +21,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
 /**
+ * PriorityFutureTask related
+ *
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
 public class PriorityFutureTask<V> extends FutureTask<V> implements Priority {

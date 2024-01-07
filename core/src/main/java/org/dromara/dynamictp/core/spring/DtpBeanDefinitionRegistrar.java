@@ -155,9 +155,8 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
             if (!(o1 instanceof DtpRunnable) || !(o2 instanceof DtpRunnable)) {
                 return 0;
             }
-            Runnable po1 =  ((DtpRunnable) o1).getRunnable();
-            Runnable po2 =  ((DtpRunnable) o2).getRunnable();
-            // TODO 如果使用了别的Runnable包装器会走不到这里
+            Runnable po1 =  ((DtpRunnable) o1).getOriginRunnable();
+            Runnable po2 =  ((DtpRunnable) o2).getOriginRunnable();
             if (po1 instanceof Priority && po2 instanceof Priority) {
                 return Integer.compare(((Priority) po1).getPriority(), ((Priority) po2).getPriority());
             }

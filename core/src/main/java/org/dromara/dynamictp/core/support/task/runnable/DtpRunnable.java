@@ -31,13 +31,16 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
 @Getter
 public class DtpRunnable implements Runnable {
 
+    private final Runnable originRunnable;
+
     private final Runnable runnable;
 
     private final String taskName;
 
     private final String traceId;
 
-    public DtpRunnable(Runnable runnable, String taskName) {
+    public DtpRunnable(Runnable originRunnable, Runnable runnable, String taskName) {
+        this.originRunnable = originRunnable;
         this.runnable = runnable;
         this.taskName = taskName;
         this.traceId = MDC.get(TRACE_ID);

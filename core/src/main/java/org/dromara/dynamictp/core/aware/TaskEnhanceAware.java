@@ -35,19 +35,19 @@ public interface TaskEnhanceAware extends DtpAware {
     /**
      * Enhance task
      *
-     * @param command command
+     * @param command      command
      * @param taskWrappers task wrappers
      * @return enhanced task
      */
     default Runnable getEnhancedTask(Runnable command, List<TaskWrapper> taskWrappers) {
+        Runnable wrapRunnable = command;
         if (CollectionUtils.isNotEmpty(taskWrappers)) {
             for (TaskWrapper t : taskWrappers) {
-                command = t.wrap(command);
+                wrapRunnable = t.wrap(wrapRunnable);
             }
         }
-        String taskName = (command instanceof NamedRunnable) ? ((NamedRunnable) command).getName() : null;
-        command = new DtpRunnable(command, taskName);
-        return command;
+        String taskName = (wrapRunnable instanceof NamedRunnable) ? ((NamedRunnable) wrapRunnable).getName() : null;
+        return new DtpRunnable(command, wrapRunnable, taskName);
     }
 
     /**

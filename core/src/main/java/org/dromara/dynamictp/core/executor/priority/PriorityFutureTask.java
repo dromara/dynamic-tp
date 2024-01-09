@@ -24,6 +24,7 @@ import java.util.concurrent.FutureTask;
  * PriorityFutureTask related
  *
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
+ * @since 1.1.7
  */
 public class PriorityFutureTask<V> extends FutureTask<V> implements Priority {
 

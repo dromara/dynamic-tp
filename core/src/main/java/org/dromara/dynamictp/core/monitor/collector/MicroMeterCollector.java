@@ -17,19 +17,19 @@
 
 package org.dromara.dynamictp.core.monitor.collector;
 
-import cn.hutool.core.bean.BeanUtil;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tag;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.em.CollectorTypeEnum;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 import org.dromara.dynamictp.common.util.CommonUtil;
+import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -61,7 +61,7 @@ public class MicroMeterCollector extends AbstractCollector {
         if (Objects.isNull(oldStats)) {
             GAUGE_CACHE.put(threadPoolStats.getPoolName(), threadPoolStats);
         } else {
-            BeanUtil.copyProperties(threadPoolStats, oldStats);
+            BeanUtils.copyProperties(threadPoolStats, oldStats);
         }
         gauge(GAUGE_CACHE.get(threadPoolStats.getPoolName()));
     }

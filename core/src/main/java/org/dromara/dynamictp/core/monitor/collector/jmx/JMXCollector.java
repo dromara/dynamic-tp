@@ -53,8 +53,7 @@ public class JMXCollector extends AbstractCollector {
             try {
                 MBeanServer server = ManagementFactory.getPlatformMBeanServer();
                 ObjectName name = new ObjectName(DTP_METRIC_NAME_PREFIX + ":name=" + threadPoolStats.getPoolName());
-                ThreadPoolStatsJMX stats = new ThreadPoolStatsJMX();
-                stats.setThreadPoolStats(threadPoolStats);
+                ThreadPoolStatsJMX stats = new ThreadPoolStatsJMX(threadPoolStats);
                 server.registerMBean(stats, name);
             } catch (JMException e) {
                 log.error("collect thread pool stats error", e);

@@ -14,38 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.dromara.dynamictp.core.monitor.collector.jmx;
 
-package org.dromara.dynamictp.common.em;
+import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 
-import lombok.Getter;
+import javax.management.MXBean;
+
 
 /**
- * CollectorTypeEnum related
+ * ThreadPoolStatsMXBean related
  *
- * @author yanhom
- * @since 1.0.0
- **/
-@Getter
-public enum CollectorTypeEnum {
+ * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
+ */
+@MXBean
+public interface ThreadPoolStatsMXBean {
 
     /**
-     * Metrics collect type.
+     * get thread pool stats
+     *
+     * @return thread pool stats
      */
-    LOGGING,
+    ThreadPoolStats getThreadPoolStats();
 
     /**
-     * Micrometer collect type.
+     * set thread pool stats
+     *
+     * @param threadPoolStats thread pool stats
      */
-    MICROMETER,
-
-    /**
-     * Logging collect type.
-     */
-    INTERNAL_LOGGING,
-
-    /**
-     * Jmx collect type.
-     */
-    JMX
+    void setThreadPoolStats(ThreadPoolStats threadPoolStats);
 
 }

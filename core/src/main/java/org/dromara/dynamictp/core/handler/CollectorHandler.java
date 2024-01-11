@@ -25,6 +25,7 @@ import org.dromara.dynamictp.core.monitor.collector.InternalLogCollector;
 import org.dromara.dynamictp.core.monitor.collector.LogCollector;
 import org.dromara.dynamictp.core.monitor.collector.MetricsCollector;
 import org.dromara.dynamictp.core.monitor.collector.MicroMeterCollector;
+import org.dromara.dynamictp.core.monitor.collector.jmx.JMXCollector;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -48,9 +49,11 @@ public final class CollectorHandler {
         MetricsCollector microMeterCollector = new MicroMeterCollector();
         LogCollector logCollector = new LogCollector();
         InternalLogCollector internalLogCollector = new InternalLogCollector();
+        JMXCollector jmxCollector = new JMXCollector();
         COLLECTORS.put(microMeterCollector.type(), microMeterCollector);
         COLLECTORS.put(logCollector.type(), logCollector);
         COLLECTORS.put(internalLogCollector.type(), internalLogCollector);
+        COLLECTORS.put(jmxCollector.type(), jmxCollector);
     }
 
     public void collect(ThreadPoolStats poolStats, List<String> types) {

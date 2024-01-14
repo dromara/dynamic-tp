@@ -44,7 +44,7 @@ public enum CollectorTypeEnum {
     INTERNAL_LOGGING,
 
     /**
-     * Jmx collect type.
+     * JMX collect type.
      */
     JMX
 

@@ -18,8 +18,6 @@ package org.dromara.dynamictp.core.monitor.collector.jmx;
 
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 
-import java.beans.ConstructorProperties;
-
 /**
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
@@ -27,7 +25,6 @@ public class ThreadPoolStatsJMX implements ThreadPoolStatsMXBean {
 
     private ThreadPoolStats threadPoolStats;
 
-    @ConstructorProperties({"threadPoolStats"})
     public ThreadPoolStatsJMX(ThreadPoolStats threadPoolStats) {
         this.threadPoolStats = threadPoolStats;
     }

@@ -14,42 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.dromara.dynamictp.core.monitor.collector.jmx;
 
-package org.dromara.dynamictp.common.entity;
-
-import lombok.Data;
-import lombok.experimental.Accessors;
-import org.dromara.dynamictp.common.em.NotifyItemEnum;
-import org.dromara.dynamictp.common.util.DateUtil;
-
-import java.util.concurrent.atomic.AtomicInteger;
+import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 
 /**
- * AlarmInfo related
- *
- * @author yanhom
- * @since 1.0.4
- **/
-@Data
-@Accessors(chain = true)
-public class AlarmInfo {
+ * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
+ */
+public class ThreadPoolStatsJMX implements ThreadPoolStatsMXBean {
 
-    private NotifyItemEnum notifyItem;
+    private ThreadPoolStats threadPoolStats;
 
-    private String lastAlarmTime;
-
-    private final AtomicInteger counter = new AtomicInteger(0);
-
-    public void incCounter() {
-        counter.incrementAndGet();
+    public ThreadPoolStatsJMX(ThreadPoolStats threadPoolStats) {
+        this.threadPoolStats = threadPoolStats;
     }
 
-    public void reset() {
-        lastAlarmTime = DateUtil.now();
-        counter.set(0);
+    @Override
+    public ThreadPoolStats getThreadPoolStats() {
+        return this.threadPoolStats;
     }
 
-    public int getCount() {
-        return counter.get();
+    @Override
+    public void setThreadPoolStats(ThreadPoolStats threadPoolStats) {
+        this.threadPoolStats = threadPoolStats;
     }
 }

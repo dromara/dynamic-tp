@@ -33,7 +33,19 @@ public enum CollectorTypeEnum {
      */
     LOGGING,
 
+    /**
+     * Micrometer collect type.
+     */
     MICROMETER,
 
-    INTERNAL_LOGGING
+    /**
+     * Logging collect type.
+     */
+    INTERNAL_LOGGING,
+
+    /**
+     * JMX collect type.
+     */
+    JMX
+
 }

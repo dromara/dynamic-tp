@@ -34,6 +34,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTIFY_ITEMS;
@@ -51,13 +52,26 @@ public class DtpMonitor extends OnceApplicationContextEventListener {
 
     private final DtpProperties dtpProperties;
 
+    private ScheduledFuture<?> monitorFuture;
+
+    private int monitorInterval;
+
     public DtpMonitor(DtpProperties dtpProperties) {
         this.dtpProperties = dtpProperties;
     }
 
     @Override
-    protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
-        MONITOR_EXECUTOR.scheduleWithFixedDelay(this::run,
+    protected synchronized void onContextRefreshedEvent(ContextRefreshedEvent event) {
+        // if monitorInterval is same as before, do nothing.
+        if (monitorInterval == dtpProperties.getMonitorInterval()) {
+            return;
+        }
+        // cancel old monitor task.
+        if (monitorFuture != null) {
+            monitorFuture.cancel(true);
+        }
+        monitorInterval = dtpProperties.getMonitorInterval();
+        monitorFuture = MONITOR_EXECUTOR.scheduleWithFixedDelay(this::run,
                 0, dtpProperties.getMonitorInterval(), TimeUnit.SECONDS);
     }
 

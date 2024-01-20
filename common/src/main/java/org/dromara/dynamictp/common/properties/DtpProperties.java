@@ -41,6 +41,7 @@ public class DtpProperties {
      * If enabled DynamicTp.
      */
     private boolean enabled = true;
+    private String env="";
 
     /**
      * If print banner.

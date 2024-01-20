@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.common.util;
 
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.entity.ServiceInstance;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,8 @@ import java.util.Enumeration;
 @Slf4j
 public final class CommonUtil {
 
-    private CommonUtil() { }
+    private CommonUtil() {
+    }
 
     private static final ServiceInstance SERVICE_INSTANCE;
 
@@ -57,8 +59,11 @@ public final class CommonUtil {
             log.error("get localhost address error.", e);
         }
 
-        // fix #I8SSGQ
-        String env = environment.getProperty("spring.profiles.active");
+        String env = DtpProperties.getInstance().getEnv();
+        if (StringUtils.isBlank(env)) {
+            // fix #I8SSGQ
+            env = environment.getProperty("spring.profiles.active");
+        }
         if (StringUtils.isBlank(env)) {
             String[] profiles = environment.getActiveProfiles();
             if (profiles.length < 1) {
@@ -68,6 +73,7 @@ public final class CommonUtil {
                 env = profiles[0];
             }
         }
+
         SERVICE_INSTANCE = new ServiceInstance(address, port, appName, env);
     }
 

@@ -41,6 +41,9 @@ public class DtpProperties {
      * If enabled DynamicTp.
      */
     private boolean enabled = true;
+    /**
+     * 用来自定义环境信息。如果没有配置，将使用“spring.profiles.active”
+     */
     private String env="";
 
     /**

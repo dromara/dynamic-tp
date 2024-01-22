@@ -17,9 +17,9 @@
 
 package org.dromara.dynamictp.common.entity;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
 
 /**
  * ThreadPoolStats related
@@ -27,9 +27,8 @@ import lombok.EqualsAndHashCode;
  * @author yanhom
  * @since 1.0.0
  **/
-@EqualsAndHashCode(callSuper = true)
 @Data
-@Builder
+@EqualsAndHashCode(callSuper = true)
 public class ThreadPoolStats extends Metrics {
 
     /**

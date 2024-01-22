@@ -14,42 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.dromara.dynamictp.core.monitor.collector.jmx;
 
-package org.dromara.dynamictp.core.executor.priority;
-
-import java.util.concurrent.Callable;
-import java.util.concurrent.FutureTask;
+import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 
 /**
- * PriorityFutureTask related
- *
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
- * @since 1.1.7
  */
-public class PriorityFutureTask<V> extends FutureTask<V> implements Priority {
+public class ThreadPoolStatsJMX implements ThreadPoolStatsMXBean {
 
-    /**
-     * The runnable.
-     */
-    private final Priority obj;
+    private ThreadPoolStats threadPoolStats;
 
-    private final int priority;
-
-    public PriorityFutureTask(Runnable runnable, V result) {
-        super(runnable, result);
-        this.obj = (PriorityRunnable) runnable;
-        this.priority = this.obj.getPriority();
-    }
-
-    public PriorityFutureTask(Callable<V> callable) {
-        super(callable);
-        this.obj = (PriorityCallable<V>) callable;
-        this.priority = this.obj.getPriority();
+    public ThreadPoolStatsJMX(ThreadPoolStats threadPoolStats) {
+        this.threadPoolStats = threadPoolStats;
     }
 
     @Override
-    public int getPriority() {
-        return this.priority;
+    public ThreadPoolStats getThreadPoolStats() {
+        return this.threadPoolStats;
     }
 
+    @Override
+    public void setThreadPoolStats(ThreadPoolStats threadPoolStats) {
+        this.threadPoolStats = threadPoolStats;
+    }
 }

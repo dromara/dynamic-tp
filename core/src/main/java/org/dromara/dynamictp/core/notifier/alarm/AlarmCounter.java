@@ -44,9 +44,7 @@ public class AlarmCounter {
 
     public static void init(String threadPoolName, String notifyItemType) {
         String key = buildKey(threadPoolName, notifyItemType);
-        val alarmInfo = AlarmInfo.builder()
-                .notifyItem(NotifyItemEnum.of(notifyItemType))
-                .build();
+        val alarmInfo = new AlarmInfo().setNotifyItem(NotifyItemEnum.of(notifyItemType));
         ALARM_INFO_CACHE.putIfAbsent(key, alarmInfo);
     }
 

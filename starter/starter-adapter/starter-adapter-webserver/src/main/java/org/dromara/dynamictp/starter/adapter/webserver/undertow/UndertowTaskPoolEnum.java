@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.starter.adapter.webserver.undertow;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -26,6 +27,7 @@ import lombok.Getter;
  * @since 1.1.3
  */
 @Getter
+@AllArgsConstructor
 public enum UndertowTaskPoolEnum {
 
     /**
@@ -46,14 +48,10 @@ public enum UndertowTaskPoolEnum {
     /**
      * ExecutorServiceTaskPool
      */
-    EXECUTOR_SERVICE_TASK_POOL("ExecutorServiceTaskPool", "delegate"),;
+    EXECUTOR_SERVICE_TASK_POOL("ExecutorServiceTaskPool", "delegate");
 
     private final String className;
 
     private final String internalExecutor;
 
-    UndertowTaskPoolEnum(String className, String internalExecutor) {
-        this.className = className;
-        this.internalExecutor = internalExecutor;
-    }
 }

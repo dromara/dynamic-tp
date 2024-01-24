@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.common.em;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -26,6 +27,7 @@ import lombok.Getter;
  * @since 1.0.0
  **/
 @Getter
+@AllArgsConstructor
 public enum ConfigFileTypeEnum {
 
     /**
@@ -39,10 +41,6 @@ public enum ConfigFileTypeEnum {
     TXT("txt");
 
     private final String value;
-
-    ConfigFileTypeEnum(String value) {
-        this.value = value;
-    }
 
     public static ConfigFileTypeEnum of(String value) {
         for (ConfigFileTypeEnum typeEnum : ConfigFileTypeEnum.values()) {

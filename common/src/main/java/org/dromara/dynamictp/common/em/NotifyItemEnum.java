@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.common.em;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -26,6 +27,7 @@ import lombok.Getter;
  * @since 1.0.0
  **/
 @Getter
+@AllArgsConstructor
 public enum NotifyItemEnum {
 
     /**
@@ -62,11 +64,6 @@ public enum NotifyItemEnum {
     private final String value;
 
     private final String unit;
-
-    NotifyItemEnum(String value, String unit) {
-        this.value = value;
-        this.unit = unit;
-    }
 
     public static NotifyItemEnum of(String value) {
         for (NotifyItemEnum notifyItem : NotifyItemEnum.values()) {

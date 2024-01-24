@@ -15,43 +15,32 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.starter.adapter.webserver.undertow;
+package org.dromara.dynamictp.core.monitor.collector.jmx;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.dromara.dynamictp.common.entity.ThreadPoolStats;
+
+import javax.management.MXBean;
 
 /**
- * UndertowTaskPoolEnum related
+ * ThreadPoolStatsMXBean related
  *
- * @author yanhom
- * @since 1.1.3
+ * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
-@Getter
-@AllArgsConstructor
-public enum UndertowTaskPoolEnum {
+@MXBean
+public interface ThreadPoolStatsMXBean {
 
     /**
-     * EnhancedQueueExecutorTaskPool
+     * get thread pool stats
+     *
+     * @return thread pool stats
      */
-    ENHANCED_QUEUE_EXECUTOR_TASK_POOL("EnhancedQueueExecutorTaskPool", "executor"),
+    ThreadPoolStats getThreadPoolStats();
 
     /**
-     * ThreadPoolExecutorTaskPool
+     * set thread pool stats
+     *
+     * @param threadPoolStats thread pool stats
      */
-    THREAD_POOL_EXECUTOR_TASK_POOL("ThreadPoolExecutorTaskPool", "delegate"),
-
-    /**
-     * ExternalTaskPool
-     */
-    EXTERNAL_TASK_POOL("ExternalTaskPool", "delegate"),
-
-    /**
-     * ExecutorServiceTaskPool
-     */
-    EXECUTOR_SERVICE_TASK_POOL("ExecutorServiceTaskPool", "delegate");
-
-    private final String className;
-
-    private final String internalExecutor;
+    void setThreadPoolStats(ThreadPoolStats threadPoolStats);
 
 }

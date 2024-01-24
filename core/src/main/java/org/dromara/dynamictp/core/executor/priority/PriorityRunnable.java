@@ -23,6 +23,7 @@ import lombok.Getter;
  * PriorityRunnable related
  *
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
+ * @since 1.1.7
  */
 public class PriorityRunnable implements Priority, Runnable {
 

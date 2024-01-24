@@ -15,28 +15,28 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.extension.limiter.redis.em;
+package org.dromara.dynamictp.core.monitor.collector.jmx;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 
 /**
- * RateLimitEnum related
- *
- * @author yanhom
- * @since 1.0.8
- **/
-@Getter
-@AllArgsConstructor
-public enum RateLimitEnum {
+ * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
+ */
+public class ThreadPoolStatsJMX implements ThreadPoolStatsMXBean {
 
-    /**
-     * rate limit
-     */
-    SLIDING_WINDOW("sw_rt", "sliding_window_rate_limiter.lua"),;
+    private ThreadPoolStats threadPoolStats;
 
-    private final String keyName;
+    public ThreadPoolStatsJMX(ThreadPoolStats threadPoolStats) {
+        this.threadPoolStats = threadPoolStats;
+    }
 
-    private final String scriptName;
+    @Override
+    public ThreadPoolStats getThreadPoolStats() {
+        return this.threadPoolStats;
+    }
 
+    @Override
+    public void setThreadPoolStats(ThreadPoolStats threadPoolStats) {
+        this.threadPoolStats = threadPoolStats;
+    }
 }

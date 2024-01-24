@@ -19,11 +19,42 @@ package org.dromara.dynamictp.core.executor.priority;
 
 /**
  * Priority related
+ * <p>The {@link #getPriority()} is optional and represents a priority value as defined in the
+ * {@link Priority} interface. Lower values have higher priority. The default value is
+ * {@code Priority.LOWEST_PRECEDENCE}, indicating the lowest priority (losing to any
+ * other specified priority value).
  *
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
+ * @since 1.1.7
  */
 public interface Priority {
 
+    /**
+     * Useful constant for the highest precedence value.
+     *
+     * @see java.lang.Integer#MIN_VALUE
+     */
+    int HIGHEST_PRECEDENCE = Integer.MIN_VALUE;
+
+    /**
+     * Useful constant for the lowest precedence value.
+     *
+     * @see java.lang.Integer#MAX_VALUE
+     */
+    int LOWEST_PRECEDENCE = Integer.MAX_VALUE;
+
+    /**
+     * Get the priority value of this object.
+     * <p>Higher values are interpreted as lower priority. As a consequence,
+     * the object with the lowest value has the highest priority (somewhat
+     * analogous to Servlet {@code load-on-startup} values).
+     * <p>Same priority values will result in arbitrary sort positions for the
+     * affected objects.
+     *
+     * @return the priority value
+     * @see #HIGHEST_PRECEDENCE
+     * @see #LOWEST_PRECEDENCE
+     */
     int getPriority();
 
 }

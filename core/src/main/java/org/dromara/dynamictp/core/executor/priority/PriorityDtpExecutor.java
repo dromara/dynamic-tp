@@ -35,14 +35,10 @@ import java.util.concurrent.TimeUnit;
  * PriorityDtpExecutor related, extending DtpExecutor, implements priority feature
  *
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
+ * @since 1.1.7
  */
 @Slf4j
 public class PriorityDtpExecutor extends DtpExecutor {
-
-    /**
-     * The default priority.
-     */
-    private static final int DEFAULT_PRIORITY = 0;
 
     public PriorityDtpExecutor(int corePoolSize,
                                int maximumPoolSize,
@@ -133,7 +129,7 @@ public class PriorityDtpExecutor extends DtpExecutor {
 
     @Override
     public Future<?> submit(Runnable task) {
-        return super.submit(PriorityRunnable.of(task, DEFAULT_PRIORITY));
+        return super.submit(PriorityRunnable.of(task, Priority.LOWEST_PRECEDENCE));
     }
 
     public Future<?> submit(Runnable task, int priority) {
@@ -142,7 +138,7 @@ public class PriorityDtpExecutor extends DtpExecutor {
 
     @Override
     public <T> Future<T> submit(Runnable task, T result) {
-        return super.submit(PriorityRunnable.of(task, DEFAULT_PRIORITY), result);
+        return super.submit(PriorityRunnable.of(task, Priority.LOWEST_PRECEDENCE), result);
     }
 
     public <T> Future<T> submit(Runnable task, T result, int priority) {
@@ -151,7 +147,7 @@ public class PriorityDtpExecutor extends DtpExecutor {
 
     @Override
     public <T> Future<T> submit(Callable<T> task) {
-        return super.submit(PriorityCallable.of(task, DEFAULT_PRIORITY));
+        return super.submit(PriorityCallable.of(task, Priority.LOWEST_PRECEDENCE));
     }
 
     public <T> Future<T> submit(Callable<T> task, int priority) {

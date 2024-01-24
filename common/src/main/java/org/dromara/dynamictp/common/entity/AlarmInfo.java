@@ -17,10 +17,10 @@
 
 package org.dromara.dynamictp.common.entity;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.util.DateUtil;
-import lombok.Builder;
-import lombok.Data;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 1.0.4
  **/
 @Data
-@Builder
+@Accessors(chain = true)
 public class AlarmInfo {
 
     private NotifyItemEnum notifyItem;

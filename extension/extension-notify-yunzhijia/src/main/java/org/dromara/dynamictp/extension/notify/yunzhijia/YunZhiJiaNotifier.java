@@ -24,6 +24,7 @@ import org.dromara.dynamictp.common.notifier.AbstractHttpNotifier;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * YunZhiJiaNotifier related
@@ -49,6 +50,7 @@ public class YunZhiJiaNotifier extends AbstractHttpNotifier {
 
     @Override
     protected String buildUrl(NotifyPlatform platform) {
-        return YunZhiJiaNotifyConst.WEB_HOOK + platform.getUrlKey();
+        String webHook = Optional.ofNullable(platform.getWebHook()).orElse(YunZhiJiaNotifyConst.WEB_HOOK);
+        return webHook + platform.getUrlKey();
     }
 }

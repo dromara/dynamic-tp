@@ -30,6 +30,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Optional;
 
 import static org.dromara.dynamictp.common.constant.LarkNotifyConst.SIGN_PARAM;
 import static org.dromara.dynamictp.common.constant.LarkNotifyConst.SIGN_REPLACE;
@@ -93,6 +94,7 @@ public class LarkNotifier extends AbstractHttpNotifier {
 
     @Override
     protected String buildUrl(NotifyPlatform platform) {
-        return LarkNotifyConst.LARK_WEBHOOK + platform.getUrlKey();
+        String webHook = Optional.ofNullable(platform.getWebHook()).orElse(LarkNotifyConst.LARK_WEBHOOK);
+        return webHook + platform.getUrlKey();
     }
 }

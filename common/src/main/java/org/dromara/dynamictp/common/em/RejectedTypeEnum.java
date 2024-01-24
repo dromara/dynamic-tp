@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.common.em;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
  **/
 @Slf4j
 @Getter
+@AllArgsConstructor
 public enum RejectedTypeEnum {
 
     /**
@@ -43,7 +45,4 @@ public enum RejectedTypeEnum {
 
     private final String name;
 
-    RejectedTypeEnum(String name) {
-        this.name = name;
-    }
 }

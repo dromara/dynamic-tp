@@ -17,12 +17,17 @@
 
 package org.dromara.dynamictp.core.aware;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * AwareType Enum
  *
  * @author kyao
  * @since 1.1.4
  */
+@Getter
+@AllArgsConstructor
 public enum AwareTypeEnum {
 
     /**
@@ -44,16 +49,4 @@ public enum AwareTypeEnum {
 
     private final String name;
 
-    AwareTypeEnum(int order, String name) {
-        this.order = order;
-        this.name = name;
-    }
-
-    public int getOrder() {
-        return order;
-    }
-
-    public String getName() {
-        return name;
-    }
 }

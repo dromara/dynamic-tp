@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.core.executor;
 
+import lombok.AllArgsConstructor;
 import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
 import lombok.Getter;
 import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
@@ -28,6 +29,7 @@ import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
  * @since 1.0.4
  **/
 @Getter
+@AllArgsConstructor
 public enum ExecutorType {
 
     /**
@@ -58,11 +60,6 @@ public enum ExecutorType {
     private final String name;
 
     private final Class<?> clazz;
-
-    ExecutorType(String name, Class<?> clazz) {
-        this.name = name;
-        this.clazz = clazz;
-    }
 
     public static Class<?> getClass(String name) {
         for (ExecutorType type : ExecutorType.values()) {

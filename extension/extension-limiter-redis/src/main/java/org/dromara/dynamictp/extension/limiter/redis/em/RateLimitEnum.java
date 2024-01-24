@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.extension.limiter.redis.em;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -26,6 +27,7 @@ import lombok.Getter;
  * @since 1.0.8
  **/
 @Getter
+@AllArgsConstructor
 public enum RateLimitEnum {
 
     /**
@@ -37,16 +39,4 @@ public enum RateLimitEnum {
 
     private final String scriptName;
 
-    RateLimitEnum(final String keyName, final String scriptName) {
-        this.keyName = keyName;
-        this.scriptName = scriptName;
-    }
-
-    public String getKeyName() {
-        return this.keyName;
-    }
-
-    public String getScriptName() {
-        return this.scriptName;
-    }
 }

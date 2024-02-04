@@ -108,17 +108,16 @@ public class EagerDtpExecutor extends DtpExecutor {
                 final TaskQueue queue = (TaskQueue) getQueue();
                 try {
                     if (!queue.force(command, 0, TimeUnit.MILLISECONDS)) {
-                        submittedTaskCount.decrementAndGet();
                         throw new RejectedExecutionException("Queue capacity is full.", rx);
                     }
                 } catch (InterruptedException x) {
-                    submittedTaskCount.decrementAndGet();
                     throw new RejectedExecutionException(x);
                 }
             } else {
-                submittedTaskCount.decrementAndGet();
                 throw rx;
             }
+        } finally {
+            submittedTaskCount.decrementAndGet();
         }
     }
 }

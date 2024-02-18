@@ -78,11 +78,13 @@ public class AlarmManager {
         AlarmCounter.init(poolName, notifyItem.getType());
     }
 
-    public static void tryAlarmAsync(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType, Runnable currRunnable) {
-        if (currRunnable instanceof DtpRunnable) {
-            MDC.put(TRACE_ID, ((DtpRunnable) currRunnable).getTraceId());
+    public static void tryAlarmAsync(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType, Runnable runnable) {
+        preAlarm(runnable);
+        try {
+            ALARM_EXECUTOR.execute(() -> doTryAlarm(executorWrapper, notifyType));
+        } finally {
+            postAlarm(runnable);
         }
-        ALARM_EXECUTOR.execute(() -> doTryAlarm(executorWrapper, notifyType));
     }
 
     public static void tryAlarmAsync(ExecutorWrapper executorWrapper, List<NotifyItemEnum> notifyTypes) {
@@ -114,6 +116,10 @@ public class AlarmManager {
         }
     }
 
+    public static void destroy() {
+        ALARM_EXECUTOR.shutdownNow();
+    }
+
     private static boolean checkLiveness(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
         val executor = executorWrapper.getExecutor();
         int maximumPoolSize = executor.getMaximumPoolSize();
@@ -136,7 +142,15 @@ public class AlarmManager {
         return alarmInfo.getCount() >= notifyItem.getThreshold();
     }
 
-    public static void destroy() {
-        ALARM_EXECUTOR.shutdownNow();
+    private static void preAlarm(Runnable runnable) {
+        if (runnable instanceof DtpRunnable) {
+            MDC.put(TRACE_ID, ((DtpRunnable) runnable).getTraceId());
+        }
+    }
+
+    private static void postAlarm(Runnable runnable) {
+        if (runnable instanceof DtpRunnable) {
+            MDC.remove(TRACE_ID);
+        }
     }
 }

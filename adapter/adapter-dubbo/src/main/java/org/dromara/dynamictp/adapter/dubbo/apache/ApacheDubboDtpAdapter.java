@@ -19,7 +19,9 @@ package org.dromara.dynamictp.adapter.dubbo.apache;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.Version;
 import org.apache.dubbo.common.extension.ExtensionLoader;
 import org.apache.dubbo.common.store.DataStore;
@@ -27,20 +29,26 @@ import org.apache.dubbo.common.threadpool.manager.DefaultExecutorRepository;
 import org.apache.dubbo.common.threadpool.manager.ExecutorRepository;
 import org.apache.dubbo.common.threadpool.support.eager.EagerThreadPoolExecutor;
 import org.apache.dubbo.config.spring.context.event.ServiceBeanExportedEvent;
+import org.apache.dubbo.remoting.transport.dispatcher.WrappedChannelHandler;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.jvmti.JVMTI;
 import org.springframework.context.ApplicationEvent;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
+
+import static org.apache.dubbo.common.constants.CommonConstants.CONSUMER_SIDE;
+import static org.apache.dubbo.common.constants.CommonConstants.SIDE_KEY;
 
 /**
  * ApacheDubboDtpAdapter related
@@ -55,6 +63,8 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
     private static final String TP_PREFIX = "dubboTp";
 
     private static final String EXECUTOR_SERVICE_COMPONENT_KEY = ExecutorService.class.getName();
+
+    private static final String EXECUTOR_FILED_NAME = "executor";
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
@@ -90,12 +100,27 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
                 return;
             }
             Map<String, Object> executorMap = dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY);
-            if (MapUtils.isNotEmpty(executorMap)) {
-                executorMap.forEach((k, v) -> {
-                    ThreadPoolExecutor proxy = getProxy((ThreadPoolExecutor) v);
-                    dataStore.put(EXECUTOR_SERVICE_COMPONENT_KEY, k, proxy);
-                    putAndFinalize(genTpName(k), (ExecutorService) v, proxy);
-                });
+            //获取WrappedChannelHandler实例,有Client消费者和Server提供者两个实例
+            List<WrappedChannelHandler> wrappedChannelHandlerList = JVMTI.getInstances(WrappedChannelHandler.class);
+            if (MapUtils.isNotEmpty(executorMap) && CollectionUtils.isNotEmpty(wrappedChannelHandlerList)) {
+                for (WrappedChannelHandler wrappedChannelHandler : wrappedChannelHandlerList) {
+                    URL url = wrappedChannelHandler.getUrl();
+                    //消费者线程池不做替换,与下方高版本逻辑保持一致
+                    if (CONSUMER_SIDE.equalsIgnoreCase(url.getParameter(SIDE_KEY))) {
+                        continue;
+                    }
+                    executorMap.forEach((k, v) -> {
+                        ThreadPoolExecutor proxy = getProxy((ThreadPoolExecutor) v);
+                        dataStore.put(EXECUTOR_SERVICE_COMPONENT_KEY, k, proxy);
+                        try {
+                            //修改为动态线程池proxy
+                            ReflectionUtil.setFieldValue(EXECUTOR_FILED_NAME, wrappedChannelHandler, proxy);
+                        } catch (IllegalAccessException e) {
+                            log.error("Dynamic tp update dubbo tp failed, port={}", k, e);
+                        }
+                        putAndFinalize(genTpName(k), (ExecutorService) v, proxy);
+                    });
+                }
             }
             return;
         }

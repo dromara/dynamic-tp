@@ -42,13 +42,13 @@ public class RejectedInvocationHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        beforeReject((Runnable) args[0], (Executor) args[1]);
         try {
-            beforeReject((Runnable) args[0], (Executor) args[1]);
-            Object result = method.invoke(target, args);
-            afterReject((Runnable) args[0], (Executor) args[1]);
-            return result;
+            return method.invoke(target, args);
         } catch (InvocationTargetException ex) {
             throw ex.getCause();
+        } finally {
+            afterReject((Runnable) args[0], (Executor) args[1]);
         }
     }
 

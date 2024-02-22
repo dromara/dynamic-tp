@@ -115,10 +115,10 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
                         try {
                             //修改为动态线程池proxy
                             ReflectionUtil.setFieldValue(EXECUTOR_FILED_NAME, wrappedChannelHandler, proxy);
+                            putAndFinalize(genTpName(k), (ExecutorService) v, proxy);
                         } catch (IllegalAccessException e) {
                             log.error("Dynamic tp update dubbo tp failed, port={}", k, e);
                         }
-                        putAndFinalize(genTpName(k), (ExecutorService) v, proxy);
                     });
                 }
             }

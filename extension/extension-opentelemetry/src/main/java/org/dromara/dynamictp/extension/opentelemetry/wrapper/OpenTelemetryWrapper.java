@@ -17,9 +17,13 @@
 
 package org.dromara.dynamictp.extension.opentelemetry.wrapper;
 
+import io.opentelemetry.api.trace.Span;
 import org.dromara.dynamictp.core.support.task.runnable.MdcRunnable;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import io.opentelemetry.context.Context;
+import org.slf4j.MDC;
+
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
 
 /**
  * OpenTelemetryWrapper related
@@ -39,6 +43,8 @@ public class OpenTelemetryWrapper implements TaskWrapper {
     @Override
     public Runnable wrap(Runnable runnable) {
         Context context = Context.current();
+        //把Trace信息传入DynamicTP中
+         MDC.put(TRACE_ID, Span.current().getSpanContext().getTraceId());
         // 被wrap方法包装后，该Executor执行的所有Runnable都会跑在特定的context中
         return MdcRunnable.get(context.wrap(runnable));
     }

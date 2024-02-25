@@ -24,6 +24,8 @@ import org.dromara.dynamictp.common.entity.MarkdownReq;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.util.JsonUtil;
 
+import java.util.Optional;
+
 /**
  * WechatNotifier related
  *
@@ -50,6 +52,7 @@ public class WechatNotifier extends AbstractHttpNotifier {
 
     @Override
     protected String buildUrl(NotifyPlatform platform) {
-        return WechatNotifyConst.WECHAT_WEB_HOOK + platform.getUrlKey();
+        String webHook = Optional.ofNullable(platform.getWebHook()).orElse(WechatNotifyConst.WECHAT_WEB_HOOK);
+        return webHook + platform.getUrlKey();
     }
 }

@@ -34,6 +34,7 @@ import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
 import org.dromara.dynamictp.core.executor.ScheduledDtpExecutor;
 import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
 import org.dromara.dynamictp.core.executor.eager.TaskQueue;
+import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.springframework.util.Assert;
@@ -42,6 +43,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -150,6 +152,12 @@ public class ThreadPoolBuilder {
     private boolean scheduled = false;
 
     /**
+     * If priority thread pool.
+     * default false, true priority thread pool.
+     */
+    private boolean priority = false;
+
+    /**
      * If pre start all core threads.
      */
     private boolean preStartAllCoreThreads = false;
@@ -194,7 +202,8 @@ public class ThreadPoolBuilder {
      */
     private List<String> platformIds = Lists.newArrayList();
 
-    private ThreadPoolBuilder() { }
+    private ThreadPoolBuilder() {
+    }
 
     public static ThreadPoolBuilder newBuilder() {
         return new ThreadPoolBuilder();
@@ -325,20 +334,98 @@ public class ThreadPoolBuilder {
         return this;
     }
 
+    /**
+     * @param eager true or false
+     * @return the ThreadPoolBuilder instance
+     * @deprecated use {@link #eager()} instead
+     */
+    @Deprecated
     public ThreadPoolBuilder eager(boolean eager) {
+        checkExecutorType();
         this.eager = eager;
         return this;
     }
 
+    /**
+     * @param ordered true or false
+     * @return the ThreadPoolBuilder instance
+     * @deprecated use {@link #ordered()} instead
+     */
+    @Deprecated
     public ThreadPoolBuilder ordered(boolean ordered) {
+        checkExecutorType();
         this.ordered = ordered;
         return this;
     }
 
+    /**
+     * @param scheduled true or false
+     * @return the ThreadPoolBuilder instance
+     * @deprecated use {@link #scheduled()} instead
+     */
+    @Deprecated
     public ThreadPoolBuilder scheduled(boolean scheduled) {
+        checkExecutorType();
         this.scheduled = scheduled;
         return this;
     }
+
+    /**
+     * @param priority true or false
+     * @return the ThreadPoolBuilder instance
+     * @deprecated use {@link #priority()} instead
+     */
+    @Deprecated
+    public ThreadPoolBuilder priority(boolean priority) {
+        checkExecutorType();
+        this.priority = priority;
+        return this;
+    }
+
+    /**
+     * set eager type
+     *
+     * @return the ThreadPoolBuilder instance
+     */
+    public ThreadPoolBuilder eager() {
+        checkExecutorType();
+        this.eager = true;
+        return this;
+    }
+
+    /**
+     * set ordered type
+     *
+     * @return the ThreadPoolBuilder instance
+     */
+    public ThreadPoolBuilder ordered() {
+        checkExecutorType();
+        this.ordered = true;
+        return this;
+    }
+
+    /**
+     * set scheduled type
+     *
+     * @return the ThreadPoolBuilder instance
+     */
+    public ThreadPoolBuilder scheduled() {
+        checkExecutorType();
+        this.scheduled = true;
+        return this;
+    }
+
+    /**
+     * set priority type
+     *
+     * @return the ThreadPoolBuilder instance
+     */
+    public ThreadPoolBuilder priority() {
+        checkExecutorType();
+        this.priority = true;
+        return this;
+    }
+
 
     public ThreadPoolBuilder preStartAllCoreThreads(boolean preStartAllCoreThreads) {
         this.preStartAllCoreThreads = preStartAllCoreThreads;
@@ -460,6 +547,16 @@ public class ThreadPoolBuilder {
     }
 
     /**
+     * Build priority thread pool executor.
+     *
+     * @return the newly created PriorityDtpExecutor instance
+     */
+    public PriorityDtpExecutor buildPriority() {
+        priority = true;
+        return (PriorityDtpExecutor) buildDtpExecutor(this);
+    }
+
+    /**
      * Build thread pool executor and wrapper with ttl
      *
      * @return the newly created ExecutorService instance
@@ -531,6 +628,15 @@ public class ThreadPoolBuilder {
                     builder.workQueue,
                     builder.threadFactory,
                     builder.rejectedExecutionHandler);
+        } else if (priority) {
+            dtpExecutor = new PriorityDtpExecutor(
+                    builder.corePoolSize,
+                    builder.maximumPoolSize,
+                    builder.keepAliveTime,
+                    builder.timeUnit,
+                    new PriorityBlockingQueue<>(builder.queueCapacity, PriorityDtpExecutor.getRunnableComparator()),
+                    builder.threadFactory,
+                    builder.rejectedExecutionHandler);
         } else {
             dtpExecutor = new DtpExecutor(
                     builder.corePoolSize,
@@ -569,4 +675,15 @@ public class ThreadPoolBuilder {
         executor.allowCoreThreadTimeOut(builder.allowCoreThreadTimeOut);
         return executor;
     }
+
+    /**
+     * Check executor type.
+     */
+    private void checkExecutorType() {
+        if (eager || ordered || scheduled || priority) {
+            // 抛异常
+            throw new IllegalArgumentException("More than one executor type is defined");
+        }
+    }
+
 }

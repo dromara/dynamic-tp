@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.common.em;
 
+import lombok.AllArgsConstructor;
 import org.dromara.dynamictp.common.ex.DtpException;
 import org.dromara.dynamictp.common.queue.MemorySafeLinkedBlockingQueue;
 import org.dromara.dynamictp.common.queue.VariableLinkedBlockingQueue;
@@ -43,6 +44,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.M_1;
  **/
 @Slf4j
 @Getter
+@AllArgsConstructor
 public enum QueueTypeEnum {
 
     /**
@@ -66,13 +68,9 @@ public enum QueueTypeEnum {
 
     MEMORY_SAFE_LINKED_BLOCKING_QUEUE(9, "MemorySafeLinkedBlockingQueue");
 
-    private final Integer code;
-    private final String name;
+    private final int code;
 
-    QueueTypeEnum(Integer code, String name) {
-        this.code = code;
-        this.name = name;
-    }
+    private final String name;
 
     public static BlockingQueue<Runnable> buildLbq(String name, int capacity) {
         return buildLbq(name, capacity, false, 256);

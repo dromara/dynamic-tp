@@ -43,6 +43,11 @@ public class DtpProperties {
     private boolean enabled = true;
 
     /**
+     * Environment, if not set, will use "spring.profiles.active".
+     */
+    private String env;
+
+    /**
      * If print banner.
      */
     private boolean enabledBanner = true;

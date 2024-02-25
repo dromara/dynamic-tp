@@ -2,6 +2,10 @@ server:
   port: 9100
 
 spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/user
+    username: root
+    password:
   application:
     name: dynamic-tp-cloud-consul-demo
   profiles:
@@ -27,3 +31,6 @@ management:
     web:
       exposure:
         include: '*'   # 测试使用，线上不要用*，按需开启
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml

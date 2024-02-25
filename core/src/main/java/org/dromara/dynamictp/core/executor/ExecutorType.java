@@ -17,8 +17,10 @@
 
 package org.dromara.dynamictp.core.executor;
 
+import lombok.AllArgsConstructor;
 import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
 import lombok.Getter;
+import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
 
 /**
  * ExecutorType related
@@ -27,24 +29,37 @@ import lombok.Getter;
  * @since 1.0.4
  **/
 @Getter
+@AllArgsConstructor
 public enum ExecutorType {
 
     /**
-     * Executor type.
+     * Common executor type.
      */
     COMMON("common", DtpExecutor.class),
+
+    /**
+     * Eager executor type.
+     */
     EAGER("eager", EagerDtpExecutor.class),
+
+    /**
+     * Scheduled executor type.
+     */
     SCHEDULED("scheduled", ScheduledDtpExecutor.class),
-    ORDERED("ordered", OrderedDtpExecutor.class);
+
+    /**
+     * Ordered executor type.
+     */
+    ORDERED("ordered", OrderedDtpExecutor.class),
+
+    /**
+     * Priority executor type.
+     */
+    PRIORITY("priority", PriorityDtpExecutor.class);
 
     private final String name;
 
     private final Class<?> clazz;
-
-    ExecutorType(String name, Class<?> clazz) {
-        this.name = name;
-        this.clazz = clazz;
-    }
 
     public static Class<?> getClass(String name) {
         for (ExecutorType type : ExecutorType.values()) {
@@ -54,4 +69,5 @@ public enum ExecutorType {
         }
         return COMMON.getClazz();
     }
+
 }

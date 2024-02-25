@@ -36,7 +36,8 @@ import java.util.concurrent.TimeUnit;
  **/
 public class ExecutorConverter {
 
-    private ExecutorConverter() { }
+    private ExecutorConverter() {
+    }
 
     public static TpMainFields toMainFields(ExecutorWrapper executorWrapper) {
         TpMainFields mainFields = new TpMainFields();
@@ -82,20 +83,20 @@ public class ExecutorConverter {
     }
 
     private static ThreadPoolStats convertCommon(ExecutorAdapter<?> executor) {
-        return ThreadPoolStats.builder()
-                .corePoolSize(executor.getCorePoolSize())
-                .maximumPoolSize(executor.getMaximumPoolSize())
-                .poolSize(executor.getPoolSize())
-                .activeCount(executor.getActiveCount())
-                .largestPoolSize(executor.getLargestPoolSize())
-                .queueType(executor.getQueueType())
-                .queueCapacity(executor.getQueueCapacity())
-                .queueSize(executor.getQueueSize())
-                .queueRemainingCapacity(executor.getQueueRemainingCapacity())
-                .taskCount(executor.getTaskCount())
-                .completedTaskCount(executor.getCompletedTaskCount())
-                .waitTaskCount(executor.getQueueSize())
-                .rejectHandlerName(executor.getRejectHandlerType())
-                .build();
+        ThreadPoolStats poolStats = new ThreadPoolStats();
+        poolStats.setCorePoolSize(executor.getCorePoolSize());
+        poolStats.setMaximumPoolSize(executor.getMaximumPoolSize());
+        poolStats.setPoolSize(executor.getPoolSize());
+        poolStats.setActiveCount(executor.getActiveCount());
+        poolStats.setLargestPoolSize(executor.getLargestPoolSize());
+        poolStats.setQueueType(executor.getQueueType());
+        poolStats.setQueueCapacity(executor.getQueueCapacity());
+        poolStats.setQueueSize(executor.getQueueSize());
+        poolStats.setQueueRemainingCapacity(executor.getQueueRemainingCapacity());
+        poolStats.setTaskCount(executor.getTaskCount());
+        poolStats.setCompletedTaskCount(executor.getCompletedTaskCount());
+        poolStats.setWaitTaskCount(executor.getQueueSize());
+        poolStats.setRejectHandlerName(executor.getRejectHandlerType());
+        return poolStats;
     }
 }

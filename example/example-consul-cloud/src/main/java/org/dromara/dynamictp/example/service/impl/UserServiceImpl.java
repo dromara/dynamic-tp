@@ -15,24 +15,35 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.example.feign;
+package org.dromara.dynamictp.example.service.impl;
 
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.dromara.dynamictp.example.domain.UserInfo;
+import org.dromara.dynamictp.example.mapper.UserInfoMapper;
+import org.dromara.dynamictp.example.service.UserService;
+import org.springframework.stereotype.Service;
 
 /**
- * DynamicTpFeign related
+ * UserServiceImpl related
  *
  * @author yanhom
- * @since 1.0.0
- **/
-@FeignClient(name = "dynamicTpFeign", url = "https://dynamictp.cn")
-public interface DynamicTpFeign {
+ * @since 1.1.0
+ */
+@Service
+public class UserServiceImpl implements UserService {
 
-    /**
-     * test
-     * @return result
-     */
-    @GetMapping(value = "/guide/use/quick-start.html")
-    String test();
+    private final UserInfoMapper userInfoMapper;
+
+    public UserServiceImpl(UserInfoMapper userInfoMapper) {
+        this.userInfoMapper = userInfoMapper;
+    }
+
+    @Override
+    public UserInfo getUserInfo(long userId) {
+        return userInfoMapper.selectById(userId);
+    }
+
+    @Override
+    public void insert(UserInfo userInfo) {
+        userInfoMapper.insert(userInfo);
+    }
 }

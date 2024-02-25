@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.core.support.task.runnable;
 
+import lombok.Getter;
 import org.slf4j.MDC;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
@@ -27,7 +28,10 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
  * @author yanhom
  * @since 1.0.4
  */
+@Getter
 public class DtpRunnable implements Runnable {
+
+    private final Runnable originRunnable;
 
     private final Runnable runnable;
 
@@ -35,7 +39,8 @@ public class DtpRunnable implements Runnable {
 
     private final String traceId;
 
-    public DtpRunnable(Runnable runnable, String taskName) {
+    public DtpRunnable(Runnable originRunnable, Runnable runnable, String taskName) {
+        this.originRunnable = originRunnable;
         this.runnable = runnable;
         this.taskName = taskName;
         this.traceId = MDC.get(TRACE_ID);
@@ -44,14 +49,6 @@ public class DtpRunnable implements Runnable {
     @Override
     public void run() {
         runnable.run();
-    }
-
-    public String getTaskName() {
-        return taskName;
-    }
-
-    public String getTraceId() {
-        return traceId;
     }
 
 }

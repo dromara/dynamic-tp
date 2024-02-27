@@ -103,7 +103,7 @@ public final class EtcdUtil {
                 if (Objects.isNull(keyValue)) {
                     return resultMap;
                 }
-                resultMap = ConfigHandler.getInstance().parseConfig(keyValue.getValue().toString(Charset.forName(etcd.getCharset())),
+                resultMap = ConfigHandler.INSTANCE.parseConfig(keyValue.getValue().toString(Charset.forName(etcd.getCharset())),
                         ConfigFileTypeEnum.of(configType));
             } else if (ConfigFileTypeEnum.of(configType).equals(ConfigFileTypeEnum.PROPERTIES)) {
                 ByteSequence key = bytesOf(etcd.getKey());
@@ -163,7 +163,7 @@ public final class EtcdUtil {
         Etcd etcd = dtpProperties.getEtcd();
         if (ConfigFileTypeEnum.of(configType).equals(ConfigFileTypeEnum.JSON)) {
             KeyValue keyValue = events.get(0).getKeyValue();
-            resultMap = ConfigHandler.getInstance().parseConfig(keyValue.getValue().toString(Charset.forName(etcd.getCharset())),
+            resultMap = ConfigHandler.INSTANCE.parseConfig(keyValue.getValue().toString(Charset.forName(etcd.getCharset())),
                     ConfigFileTypeEnum.of(configType));
         } else if (ConfigFileTypeEnum.of(configType).equals(ConfigFileTypeEnum.PROPERTIES)) {
             events.forEach(event -> {

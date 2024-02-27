@@ -96,7 +96,7 @@ public class CuratorUtil {
         } else if (JSON.getValue().equalsIgnoreCase(dtpProperties.getConfigType().trim())) {
             nodePath = ZKPaths.makePath(nodePath, dtpProperties.getZookeeper().getConfigKey());
             String value = getVal(nodePath, curatorFramework);
-            result = ConfigHandler.getInstance().parseConfig(value, JSON);
+            result = ConfigHandler.INSTANCE.parseConfig(value, JSON);
         }
 
         return result;

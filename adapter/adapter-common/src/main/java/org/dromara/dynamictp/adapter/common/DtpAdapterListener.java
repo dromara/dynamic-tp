@@ -101,7 +101,7 @@ public class DtpAdapterListener implements GenericApplicationListener {
             return;
         }
         handlerMap.forEach((k, v) -> v.getMultiPoolStats().forEach(ps ->
-                CollectorHandler.getInstance().collect(ps, dtpProperties.getCollectorTypes())));
+                CollectorHandler.INSTANCE.collect(ps, dtpProperties.getCollectorTypes())));
     }
 
     /**

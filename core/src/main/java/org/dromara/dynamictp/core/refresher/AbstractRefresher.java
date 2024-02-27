@@ -71,7 +71,7 @@ public abstract class AbstractRefresher implements Refresher, EnvironmentAware {
         }
 
         try {
-            val configHandler = ConfigHandler.getInstance();
+            val configHandler = ConfigHandler.INSTANCE;
             val properties = configHandler.parseConfig(content, fileType);
             refresh(properties);
         } catch (IOException e) {

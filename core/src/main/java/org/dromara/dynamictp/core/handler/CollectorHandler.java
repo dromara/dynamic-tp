@@ -38,11 +38,12 @@ import java.util.Map;
  * @since 1.0.0
  **/
 @Slf4j
-public final class CollectorHandler {
+public enum CollectorHandler {
+    INSTANCE;
 
     private static final Map<String, MetricsCollector> COLLECTORS = Maps.newHashMap();
 
-    private CollectorHandler() {
+    static {
         List<MetricsCollector> loadedCollectors = ExtensionServiceLoader.get(MetricsCollector.class);
         loadedCollectors.forEach(collector -> COLLECTORS.put(collector.type(), collector));
 
@@ -66,13 +67,5 @@ public final class CollectorHandler {
                 collector.collect(poolStats);
             }
         }
-    }
-
-    public static CollectorHandler getInstance() {
-        return CollectorHandlerHolder.INSTANCE;
-    }
-
-    private static class CollectorHandlerHolder {
-        private static final CollectorHandler INSTANCE = new CollectorHandler();
     }
 }

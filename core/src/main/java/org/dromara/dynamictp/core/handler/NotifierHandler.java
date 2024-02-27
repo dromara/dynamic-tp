@@ -43,11 +43,12 @@ import java.util.Map;
  * @since 1.0.0
  **/
 @Slf4j
-public final class NotifierHandler {
+public enum NotifierHandler {
+    INSTANCE;
 
     private static final Map<String, DtpNotifier> NOTIFIERS = new HashMap<>();
 
-    private NotifierHandler() {
+    static {
         List<DtpNotifier> loadedNotifiers = ExtensionServiceLoader.get(DtpNotifier.class);
         loadedNotifiers.forEach(notifier -> NOTIFIERS.put(notifier.platform(), notifier));
 
@@ -81,13 +82,5 @@ public final class NotifierHandler {
                 }
             });
         }
-    }
-
-    public static NotifierHandler getInstance() {
-        return NotifierHandlerHolder.INSTANCE;
-    }
-
-    private static class NotifierHandlerHolder {
-        private static final NotifierHandler INSTANCE = new NotifierHandler();
     }
 }

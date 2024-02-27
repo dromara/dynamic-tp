@@ -192,7 +192,7 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
         if (StringUtils.isNotBlank(props.getThreadPoolAliasName())) {
             executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());
         }
-        List<TaskWrapper> taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
+        List<TaskWrapper> taskWrappers = TaskWrappers.INSTANCE.getByNames(props.getTaskWrapperNames());
         executorWrapper.setTaskWrappers(taskWrappers);
 
         // update notify items

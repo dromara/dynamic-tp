@@ -37,11 +37,12 @@ import java.util.Map;
  * @author yanhom
  * @since 1.0.0
  **/
-public final class ConfigHandler {
+public enum ConfigHandler {
+    INSTANCE;
 
     private static final List<ConfigParser> PARSERS = Lists.newArrayList();
 
-    private ConfigHandler() {
+    static {
         List<ConfigParser> loadedParses = ExtensionServiceLoader.get(ConfigParser.class);
         if (CollectionUtils.isNotEmpty(loadedParses)) {
             PARSERS.addAll(loadedParses);
@@ -59,13 +60,5 @@ public final class ConfigHandler {
         }
 
         return Collections.emptyMap();
-    }
-
-    public static ConfigHandler getInstance() {
-        return ConfigHandlerHolder.INSTANCE;
-    }
-
-    private static class ConfigHandlerHolder {
-        private static final ConfigHandler INSTANCE = new ConfigHandler();
     }
 }

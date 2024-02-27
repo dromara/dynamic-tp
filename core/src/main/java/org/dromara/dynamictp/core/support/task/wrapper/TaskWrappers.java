@@ -34,11 +34,12 @@ import static java.util.stream.Collectors.toList;
  * @author yanhom
  * @since 1.0.4
  **/
-public class TaskWrappers {
+public enum TaskWrappers {
+    INSTANCE;
 
     private static final List<TaskWrapper> TASK_WRAPPERS = Lists.newArrayList();
 
-    private TaskWrappers() {
+    static {
         List<TaskWrapper> loadedWrappers = ExtensionServiceLoader.get(TaskWrapper.class);
         if (CollectionUtils.isNotEmpty(loadedWrappers)) {
             TASK_WRAPPERS.addAll(loadedWrappers);
@@ -54,13 +55,5 @@ public class TaskWrappers {
         }
 
         return TASK_WRAPPERS.stream().filter(t -> StringUtil.containsIgnoreCase(t.name(), names)).collect(toList());
-    }
-
-    public static TaskWrappers getInstance() {
-        return TaskWrappersHolder.INSTANCE;
-    }
-
-    private static class TaskWrappersHolder {
-        private static final TaskWrappers INSTANCE = new TaskWrappers();
     }
 }

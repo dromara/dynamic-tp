@@ -30,7 +30,9 @@ import java.util.Objects;
  * @since 1.0.5
  **/
 @Slf4j
-public class DtpLoggingInitializer {
+public enum DtpLoggingInitializer {
+
+    INSTANCE;
 
     private static AbstractDtpLogging dtpLogging;
 
@@ -46,14 +48,6 @@ public class DtpLoggingInitializer {
                 log.error("DynamicTp initialize logging failed, please check whether logback or log4j related dependencies exist.");
             }
         }
-    }
-
-    private static class LoggingInstance {
-        private static final DtpLoggingInitializer INSTANCE = new DtpLoggingInitializer();
-    }
-
-    public static DtpLoggingInitializer getInstance() {
-        return LoggingInstance.INSTANCE;
     }
 
     public void loadConfiguration() {

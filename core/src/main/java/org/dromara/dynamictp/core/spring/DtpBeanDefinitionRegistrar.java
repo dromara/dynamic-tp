@@ -114,7 +114,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         propertyValues.put(PLATFORM_IDS, props.getPlatformIds());
         propertyValues.put(NOTIFY_ENABLED, props.isNotifyEnabled());
 
-        val taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
+        val taskWrappers = TaskWrappers.INSTANCE.getByNames(props.getTaskWrapperNames());
         propertyValues.put(TASK_WRAPPERS, taskWrappers);
         propertyValues.put(PLUGIN_NAMES, props.getPluginNames());
         propertyValues.put(AWARE_NAMES, props.getAwareNames());

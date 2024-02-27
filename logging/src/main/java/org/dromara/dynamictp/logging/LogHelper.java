@@ -30,7 +30,7 @@ public final class LogHelper {
     private static Logger monitorLogger;
 
     static {
-        DtpLoggingInitializer.getInstance().loadConfiguration();
+        DtpLoggingInitializer.INSTANCE.loadConfiguration();
     }
 
     private LogHelper() { }

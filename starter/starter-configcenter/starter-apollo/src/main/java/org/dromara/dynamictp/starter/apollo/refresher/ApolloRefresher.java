@@ -109,7 +109,7 @@ public class ApolloRefresher extends AbstractRefresher implements ConfigFileChan
     }
 
     private boolean isDtpNamespace(String content, ConfigFileTypeEnum configFileType) {
-        val configHandler = ConfigHandler.getInstance();
+        val configHandler = ConfigHandler.INSTANCE;
         try {
             val properties = configHandler.parseConfig(content, configFileType);
             return properties.keySet().stream().anyMatch(key -> key.toString().startsWith(MAIN_PROPERTIES_PREFIX));

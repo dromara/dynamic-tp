@@ -58,7 +58,7 @@ public class AlarmManager {
             .workQueue(LINKED_BLOCKING_QUEUE.getName(), 2000)
             .rejectedExecutionHandler(RejectedTypeEnum.DISCARD_OLDEST_POLICY.getName())
             .rejectEnhanced(false)
-            .taskWrappers(TaskWrappers.getInstance().getByNames(Sets.newHashSet("mdc")))
+            .taskWrappers(TaskWrappers.INSTANCE.getByNames(Sets.newHashSet("mdc")))
             .buildDynamic();
 
     private static final InvokerChain<BaseNotifyCtx> ALARM_INVOKER_CHAIN;

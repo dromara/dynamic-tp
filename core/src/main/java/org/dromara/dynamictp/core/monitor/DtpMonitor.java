@@ -102,7 +102,7 @@ public class DtpMonitor extends OnceApplicationContextEventListener {
 
     private void doCollect(ThreadPoolStats threadPoolStats) {
         try {
-            CollectorHandler.getInstance().collect(threadPoolStats, dtpProperties.getCollectorTypes());
+            CollectorHandler.INSTANCE.collect(threadPoolStats, dtpProperties.getCollectorTypes());
         } catch (Exception e) {
             log.error("DynamicTp monitor, metrics collect error.", e);
         }

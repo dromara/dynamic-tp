@@ -45,7 +45,7 @@ public class AlarmInvoker implements Invoker<BaseNotifyCtx> {
 
         try {
             DtpNotifyCtxHolder.set(context);
-            NotifierHandler.getInstance().sendAlarm(NotifyItemEnum.of(notifyItem.getType()));
+            NotifierHandler.INSTANCE.sendAlarm(NotifyItemEnum.of(notifyItem.getType()));
             AlarmCounter.reset(executorWrapper.getThreadPoolName(), notifyItem.getType());
         } finally {
             DtpNotifyCtxHolder.remove();

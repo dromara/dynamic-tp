@@ -32,7 +32,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
-import static org.dromara.dynamictp.common.constant.LarkNotifyConst.SIGN_PARAM;
+import static org.dromara.dynamictp.common.constant.LarkNotifyConst.SIGN_PARAM_PREFIX;
 import static org.dromara.dynamictp.common.constant.LarkNotifyConst.SIGN_REPLACE;
 
 /**
@@ -85,7 +85,7 @@ public class LarkNotifier extends AbstractHttpNotifier {
         try {
             val secondsTimestamp = System.currentTimeMillis() / 1000;
             val sign = genSign(platform.getSecret(), secondsTimestamp);
-            content = content.replace(SIGN_REPLACE, String.format(SIGN_PARAM, secondsTimestamp, sign));
+            content = content.replaceFirst(SIGN_REPLACE, String.format(SIGN_PARAM_PREFIX, secondsTimestamp, sign));
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             log.error("DynamicTp notify, lark generate signature failed...", e);
         }

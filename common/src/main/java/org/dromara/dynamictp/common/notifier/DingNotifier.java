@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.common.notifier;
 
+import cn.hutool.core.net.url.UrlBuilder;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -73,7 +74,7 @@ public class DingNotifier extends AbstractHttpNotifier {
 
     @Override
     protected String buildUrl(NotifyPlatform platform) {
-        String webHook = Optional.ofNullable(platform.getWebHook()).orElse(DingNotifyConst.DING_WEBHOOK);
+        String webHook = Optional.ofNullable(platform.getWebhook()).orElse(DingNotifyConst.DING_WEBHOOK);
         return getTargetUrl(platform.getSecret(), platform.getUrlKey(), webHook);
     }
 
@@ -86,11 +87,16 @@ public class DingNotifier extends AbstractHttpNotifier {
      * @return url
      */
     private String getTargetUrl(String secret, String accessToken, String webHook) {
-        if (StringUtils.isBlank(secret)) {
-            return webHook + accessToken;
+        UrlBuilder builder = UrlBuilder.of(webHook);
+        if (StringUtils.isNotBlank(accessToken) && StringUtils.isBlank(builder.getQuery().get(DingNotifyConst.ACCESS_TOKEN_PARAM))) {
+            builder.addQuery(DingNotifyConst.ACCESS_TOKEN_PARAM, accessToken);
         }
-        long timestamp = System.currentTimeMillis();
-        String sign = DingSignUtil.dingSign(secret, timestamp);
-        return webHook + accessToken + "&timestamp=" + timestamp + "&sign=" + sign;
+        if (StringUtils.isNotBlank(secret)) {
+            long timestamp = System.currentTimeMillis();
+            builder.addQuery(DingNotifyConst.TIMESTAMP_PARAM, timestamp);
+            builder.addQuery(DingNotifyConst.SIGN_PARAM, DingSignUtil.dingSign(secret, timestamp));
+        }
+        return builder.build();
     }
+
 }

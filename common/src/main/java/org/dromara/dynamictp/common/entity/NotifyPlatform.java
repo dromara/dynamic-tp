@@ -53,7 +53,7 @@ public class NotifyPlatform {
     /**
      * webHook, may be null.
      */
-    private String webHook;
+    private String webhook;
 
     /**
      * Receivers, split by ,

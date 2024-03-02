@@ -17,7 +17,9 @@
 
 package org.dromara.dynamictp.common.notifier;
 
+import cn.hutool.core.net.url.UrlBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.constant.WechatNotifyConst;
 import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
 import org.dromara.dynamictp.common.entity.MarkdownReq;
@@ -52,7 +54,14 @@ public class WechatNotifier extends AbstractHttpNotifier {
 
     @Override
     protected String buildUrl(NotifyPlatform platform) {
-        String webHook = Optional.ofNullable(platform.getWebHook()).orElse(WechatNotifyConst.WECHAT_WEB_HOOK);
-        return webHook + platform.getUrlKey();
+        if (StringUtils.isBlank(platform.getUrlKey())) {
+            return platform.getWebhook();
+        }
+        UrlBuilder builder = UrlBuilder.of(Optional.ofNullable(platform.getWebhook()).orElse(WechatNotifyConst.WECHAT_WEB_HOOK));
+        if (StringUtils.isNotBlank(platform.getUrlKey()) && StringUtils.isBlank(builder.getQuery().get(WechatNotifyConst.KEY_PARAM))) {
+            builder.addQuery(WechatNotifyConst.KEY_PARAM, platform.getUrlKey());
+        }
+        return builder.build();
     }
+
 }

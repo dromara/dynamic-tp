@@ -50,7 +50,8 @@ public class YunZhiJiaNotifier extends AbstractHttpNotifier {
 
     @Override
     protected String buildUrl(NotifyPlatform platform) {
-        String webHook = Optional.ofNullable(platform.getWebHook()).orElse(YunZhiJiaNotifyConst.WEB_HOOK);
+        // TODO
+        String webHook = Optional.ofNullable(platform.getWebhook()).orElse(YunZhiJiaNotifyConst.WEB_HOOK);
         return webHook + platform.getUrlKey();
     }
 }

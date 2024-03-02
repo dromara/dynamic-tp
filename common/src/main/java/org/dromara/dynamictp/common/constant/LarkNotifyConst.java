@@ -31,7 +31,7 @@ public class LarkNotifyConst {
     /**
      * lark bot url
      */
-    public static final String LARK_WEBHOOK = "https://open.feishu.cn/open-apis/bot/v2/hook/";
+    public static final String LARK_WEBHOOK = "https://open.feishu.cn/open-apis/bot/v2/hook";
 
     /**
      * lark at format. openid

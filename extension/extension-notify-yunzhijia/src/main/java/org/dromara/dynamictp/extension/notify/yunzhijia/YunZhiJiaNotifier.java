@@ -17,10 +17,12 @@
 
 package org.dromara.dynamictp.extension.notify.yunzhijia;
 
+import cn.hutool.core.net.url.UrlBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
-import org.dromara.dynamictp.common.util.JsonUtil;
 import org.dromara.dynamictp.common.notifier.AbstractHttpNotifier;
+import org.dromara.dynamictp.common.util.JsonUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,8 +52,16 @@ public class YunZhiJiaNotifier extends AbstractHttpNotifier {
 
     @Override
     protected String buildUrl(NotifyPlatform platform) {
-        // TODO
-        String webHook = Optional.ofNullable(platform.getWebhook()).orElse(YunZhiJiaNotifyConst.WEB_HOOK);
-        return webHook + platform.getUrlKey();
+        if (StringUtils.isBlank(platform.getUrlKey())) {
+            return platform.getWebhook();
+        }
+        UrlBuilder builder = UrlBuilder.of(Optional.ofNullable(platform.getWebhook()).orElse(YunZhiJiaNotifyConst.WEB_HOOK));
+        if (StringUtils.isBlank(builder.getQuery().get(YunZhiJiaNotifyConst.YZJ_TYPE_PARAM))) {
+            builder.addQuery(YunZhiJiaNotifyConst.YZJ_TYPE_PARAM, 0);
+        }
+        if (StringUtils.isNotBlank(platform.getUrlKey()) && StringUtils.isBlank(builder.getQuery().get(YunZhiJiaNotifyConst.YZJ_TOKEN_PARAM))) {
+            builder.addQuery(YunZhiJiaNotifyConst.YZJ_TOKEN_PARAM, platform.getUrlKey());
+        }
+        return builder.build();
     }
 }

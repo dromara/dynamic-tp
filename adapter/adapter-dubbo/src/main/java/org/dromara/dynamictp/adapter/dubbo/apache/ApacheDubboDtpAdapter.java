@@ -39,7 +39,6 @@ import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.jvmti.JVMTI;
 import org.springframework.context.ApplicationEvent;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
@@ -64,7 +63,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
 
     private static final String EXECUTOR_SERVICE_COMPONENT_KEY = ExecutorService.class.getName();
 
-    private static final String EXECUTOR_FILED_NAME = "executor";
+    private static final String EXECUTOR_FIELD = "executor";
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
@@ -95,32 +94,27 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
         String currVersion = Version.getVersion();
         if (DubboVersion.compare(DubboVersion.VERSION_2_7_5, currVersion) > 0) {
             // 当前dubbo版本 < 2.7.5
-            DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
-            if (Objects.isNull(dataStore)) {
-                return;
-            }
-            Map<String, Object> executorMap = dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY);
-            //获取WrappedChannelHandler实例,有Client消费者和Server提供者两个实例
-            List<WrappedChannelHandler> wrappedChannelHandlerList = JVMTI.getInstances(WrappedChannelHandler.class);
-            if (MapUtils.isNotEmpty(executorMap) && CollectionUtils.isNotEmpty(wrappedChannelHandlerList)) {
-                for (WrappedChannelHandler wrappedChannelHandler : wrappedChannelHandlerList) {
-                    URL url = wrappedChannelHandler.getUrl();
-                    //消费者线程池不做替换,与下方高版本逻辑保持一致
-                    if (CONSUMER_SIDE.equalsIgnoreCase(url.getParameter(SIDE_KEY))) {
-                        continue;
-                    }
-                    executorMap.forEach((k, v) -> {
-                        ThreadPoolExecutor proxy = getProxy((ThreadPoolExecutor) v);
-                        dataStore.put(EXECUTOR_SERVICE_COMPONENT_KEY, k, proxy);
-                        try {
-                            //修改为动态线程池proxy
-                            ReflectionUtil.setFieldValue(EXECUTOR_FILED_NAME, wrappedChannelHandler, proxy);
-                            putAndFinalize(genTpName(k), (ExecutorService) v, proxy);
-                        } catch (IllegalAccessException e) {
-                            log.error("Dynamic tp update dubbo tp failed, port={}", k, e);
+            val handlers = JVMTI.getInstances(WrappedChannelHandler.class);
+            if (CollectionUtils.isNotEmpty(handlers)) {
+                DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
+                handlers.forEach(handler -> {
+                    //获取WrappedChannelHandler中的原始线程池
+                    val originExecutor = ReflectionUtil.getFieldValue(EXECUTOR_FIELD, handler);
+                    if (originExecutor instanceof ThreadPoolExecutor) {
+                        URL url = handler.getUrl();
+                        //低版本跳过消费者线程池配置
+                        if (!CONSUMER_SIDE.equalsIgnoreCase(url.getParameter(SIDE_KEY))) {
+                            String port = String.valueOf(url.getPort());
+                            String tpName = genTpName(port);
+                            //增强原始线程池,替换为动态线程池代理
+                            enhanceOriginExecutor(tpName, (ThreadPoolExecutor) originExecutor, EXECUTOR_FIELD, handler);
+                            //获取增强后的新动态线程池
+                            Object newExexutor = ReflectionUtil.getFieldValue(EXECUTOR_FIELD, handler);
+                            //替换dataStore中的线程池
+                            dataStore.put(EXECUTOR_SERVICE_COMPONENT_KEY, port, newExexutor);
                         }
-                    });
-                }
+                    }
+                });
             }
             return;
         }

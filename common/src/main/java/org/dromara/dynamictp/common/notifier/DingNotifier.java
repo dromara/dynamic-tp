@@ -74,8 +74,8 @@ public class DingNotifier extends AbstractHttpNotifier {
 
     @Override
     protected String buildUrl(NotifyPlatform platform) {
-        String webHook = Optional.ofNullable(platform.getWebhook()).orElse(DingNotifyConst.DING_WEBHOOK);
-        return getTargetUrl(platform.getSecret(), platform.getUrlKey(), webHook);
+        String webhook = Optional.ofNullable(platform.getWebhook()).orElse(DingNotifyConst.DING_WEBHOOK);
+        return getTargetUrl(platform.getSecret(), platform.getUrlKey(), webhook);
     }
 
     /**
@@ -83,11 +83,11 @@ public class DingNotifier extends AbstractHttpNotifier {
      *
      * @param secret      secret
      * @param accessToken accessToken
-     * @param webHook     webHook
+     * @param webhook     webhook
      * @return url
      */
-    private String getTargetUrl(String secret, String accessToken, String webHook) {
-        UrlBuilder builder = UrlBuilder.of(webHook);
+    private String getTargetUrl(String secret, String accessToken, String webhook) {
+        UrlBuilder builder = UrlBuilder.of(webhook);
         if (StringUtils.isNotBlank(accessToken) && StringUtils.isBlank(builder.getQuery().get(DingNotifyConst.ACCESS_TOKEN_PARAM))) {
             builder.addQuery(DingNotifyConst.ACCESS_TOKEN_PARAM, accessToken);
         }

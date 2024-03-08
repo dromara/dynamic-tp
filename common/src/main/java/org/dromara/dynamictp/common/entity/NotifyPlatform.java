@@ -51,7 +51,7 @@ public class NotifyPlatform {
     private String secret;
 
     /**
-     * webHook, may be null.
+     * webhook, may be null.
      */
     private String webhook;
 

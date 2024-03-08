@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.common.notifier;
 
+import cn.hutool.core.net.url.UrlBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.codec.binary.Base64;
@@ -30,9 +31,11 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
-import static org.dromara.dynamictp.common.constant.LarkNotifyConst.SIGN_PARAM;
+import static org.dromara.dynamictp.common.constant.LarkNotifyConst.SIGN_PARAM_PREFIX;
 import static org.dromara.dynamictp.common.constant.LarkNotifyConst.SIGN_REPLACE;
 
 /**
@@ -85,7 +88,7 @@ public class LarkNotifier extends AbstractHttpNotifier {
         try {
             val secondsTimestamp = System.currentTimeMillis() / 1000;
             val sign = genSign(platform.getSecret(), secondsTimestamp);
-            content = content.replace(SIGN_REPLACE, String.format(SIGN_PARAM, secondsTimestamp, sign));
+            content = content.replaceFirst(SIGN_REPLACE, String.format(SIGN_PARAM_PREFIX, secondsTimestamp, sign));
         } catch (NoSuchAlgorithmException | InvalidKeyException e) {
             log.error("DynamicTp notify, lark generate signature failed...", e);
         }
@@ -94,7 +97,15 @@ public class LarkNotifier extends AbstractHttpNotifier {
 
     @Override
     protected String buildUrl(NotifyPlatform platform) {
-        String webHook = Optional.ofNullable(platform.getWebHook()).orElse(LarkNotifyConst.LARK_WEBHOOK);
-        return webHook + platform.getUrlKey();
+        if (StringUtils.isBlank(platform.getUrlKey())) {
+            return platform.getWebhook();
+        }
+        UrlBuilder builder = UrlBuilder.of(Optional.ofNullable(platform.getWebhook()).orElse(LarkNotifyConst.LARK_WEBHOOK));
+        List<String> segments = builder.getPath().getSegments();
+        if (StringUtils.isNotBlank(platform.getUrlKey()) && !Objects.equals(platform.getUrlKey(), segments.get(segments.size() - 1))) {
+           builder.addPath(platform.getUrlKey());
+        }
+        return builder.build();
     }
+
 }

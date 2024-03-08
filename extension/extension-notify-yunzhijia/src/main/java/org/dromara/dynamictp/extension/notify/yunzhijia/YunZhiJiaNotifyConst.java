@@ -28,7 +28,11 @@ public final class YunZhiJiaNotifyConst {
     private YunZhiJiaNotifyConst() {
     }
 
-    public static final String WEB_HOOK = "https://www.yunzhijia.com/gateway/robot/webhook/send?yzjtype=0&yzjtoken=";
+    public static final String WEB_HOOK = "https://www.yunzhijia.com/gateway/robot/webhook/send";
+
+    public static final String YZJ_TYPE_PARAM = "yzjtype";
+
+    public static final String YZJ_TOKEN_PARAM = "yzjtoken";
 
     public static final String WARNING_COLOR = "warning";
 

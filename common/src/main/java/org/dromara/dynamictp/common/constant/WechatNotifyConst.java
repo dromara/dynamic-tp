@@ -27,7 +27,9 @@ public final class WechatNotifyConst {
 
     private WechatNotifyConst() { }
 
-    public static final String WECHAT_WEB_HOOK = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=";
+    public static final String WECHAT_WEB_HOOK = "https://qyapi.weixin.qq.com/cgi-bin/webhook/send";
+
+    public static final String KEY_PARAM = "key";
 
     public static final String WARNING_COLOR = "warning";
 

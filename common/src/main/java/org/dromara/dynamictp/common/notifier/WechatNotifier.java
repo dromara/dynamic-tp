@@ -58,10 +58,9 @@ public class WechatNotifier extends AbstractHttpNotifier {
             return platform.getWebhook();
         }
         UrlBuilder builder = UrlBuilder.of(Optional.ofNullable(platform.getWebhook()).orElse(WechatNotifyConst.WECHAT_WEB_HOOK));
-        if (StringUtils.isNotBlank(platform.getUrlKey()) && StringUtils.isBlank(builder.getQuery().get(WechatNotifyConst.KEY_PARAM))) {
+        if (StringUtils.isBlank(builder.getQuery().get(WechatNotifyConst.KEY_PARAM))) {
             builder.addQuery(WechatNotifyConst.KEY_PARAM, platform.getUrlKey());
         }
         return builder.build();
     }
-
 }

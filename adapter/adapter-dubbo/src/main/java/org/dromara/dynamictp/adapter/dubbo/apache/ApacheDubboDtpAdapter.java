@@ -95,27 +95,29 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
         if (DubboVersion.compare(DubboVersion.VERSION_2_7_5, currVersion) > 0) {
             // 当前dubbo版本 < 2.7.5
             val handlers = JVMTI.getInstances(WrappedChannelHandler.class);
-            if (CollectionUtils.isNotEmpty(handlers)) {
-                DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
-                handlers.forEach(handler -> {
-                    //获取WrappedChannelHandler中的原始线程池
-                    val originExecutor = ReflectionUtil.getFieldValue(EXECUTOR_FIELD, handler);
-                    if (originExecutor instanceof ThreadPoolExecutor) {
-                        URL url = handler.getUrl();
-                        //低版本跳过消费者线程池配置
-                        if (!CONSUMER_SIDE.equalsIgnoreCase(url.getParameter(SIDE_KEY))) {
-                            String port = String.valueOf(url.getPort());
-                            String tpName = genTpName(port);
-                            //增强原始线程池,替换为动态线程池代理
-                            enhanceOriginExecutor(tpName, (ThreadPoolExecutor) originExecutor, EXECUTOR_FIELD, handler);
-                            //获取增强后的新动态线程池
-                            Object newExexutor = ReflectionUtil.getFieldValue(EXECUTOR_FIELD, handler);
-                            //替换dataStore中的线程池
-                            dataStore.put(EXECUTOR_SERVICE_COMPONENT_KEY, port, newExexutor);
-                        }
-                    }
-                });
+            if (CollectionUtils.isEmpty(handlers)) {
+                return;
             }
+            DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
+            handlers.forEach(handler -> {
+                //获取WrappedChannelHandler中的原始线程池
+                val originExecutor = ReflectionUtil.getFieldValue(EXECUTOR_FIELD, handler);
+                if (!(originExecutor instanceof ExecutorService)) {
+                    return;
+                }
+                URL url = handler.getUrl();
+                //低版本跳过消费者线程池配置
+                if (!CONSUMER_SIDE.equalsIgnoreCase(url.getParameter(SIDE_KEY))) {
+                    String port = String.valueOf(url.getPort());
+                    String tpName = genTpName(port);
+                    //增强原始线程池,替换为动态线程池代理
+                    enhanceOriginExecutor(tpName, (ThreadPoolExecutor) originExecutor, EXECUTOR_FIELD, handler);
+                    //获取增强后的新动态线程池
+                    Object newExexutor = ReflectionUtil.getFieldValue(EXECUTOR_FIELD, handler);
+                    //替换dataStore中的线程池
+                    dataStore.put(EXECUTOR_SERVICE_COMPONENT_KEY, port, newExexutor);
+                }
+            });
             return;
         }
 

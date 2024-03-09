@@ -98,5 +98,4 @@ public class DingNotifier extends AbstractHttpNotifier {
         }
         return builder.build();
     }
-
 }

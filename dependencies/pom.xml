@@ -20,7 +20,7 @@
         <logback.version>1.2.10</logback.version>
         <log4j.version>2.17.1</log4j.version>
 
-        <hutool.version>5.8.22</hutool.version>
+        <hutool.version>5.8.25</hutool.version>
         <guava.version>31.1-jre</guava.version>
         <jackson-core.version>2.13.4</jackson-core.version>
         <jackson-databind.version>2.13.4</jackson-databind.version>

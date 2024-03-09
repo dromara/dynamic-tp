@@ -102,10 +102,9 @@ public class LarkNotifier extends AbstractHttpNotifier {
         }
         UrlBuilder builder = UrlBuilder.of(Optional.ofNullable(platform.getWebhook()).orElse(LarkNotifyConst.LARK_WEBHOOK));
         List<String> segments = builder.getPath().getSegments();
-        if (StringUtils.isNotBlank(platform.getUrlKey()) && !Objects.equals(platform.getUrlKey(), segments.get(segments.size() - 1))) {
+        if (!Objects.equals(platform.getUrlKey(), segments.get(segments.size() - 1))) {
            builder.addPath(platform.getUrlKey());
         }
         return builder.build();
     }
-
 }

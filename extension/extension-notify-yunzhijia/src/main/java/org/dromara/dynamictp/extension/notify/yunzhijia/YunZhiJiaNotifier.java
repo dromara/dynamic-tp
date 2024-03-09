@@ -59,7 +59,7 @@ public class YunZhiJiaNotifier extends AbstractHttpNotifier {
         if (StringUtils.isBlank(builder.getQuery().get(YunZhiJiaNotifyConst.YZJ_TYPE_PARAM))) {
             builder.addQuery(YunZhiJiaNotifyConst.YZJ_TYPE_PARAM, 0);
         }
-        if (StringUtils.isNotBlank(platform.getUrlKey()) && StringUtils.isBlank(builder.getQuery().get(YunZhiJiaNotifyConst.YZJ_TOKEN_PARAM))) {
+        if (StringUtils.isBlank(builder.getQuery().get(YunZhiJiaNotifyConst.YZJ_TOKEN_PARAM))) {
             builder.addQuery(YunZhiJiaNotifyConst.YZJ_TOKEN_PARAM, platform.getUrlKey());
         }
         return builder.build();

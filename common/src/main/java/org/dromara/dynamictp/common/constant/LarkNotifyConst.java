@@ -31,7 +31,7 @@ public class LarkNotifyConst {
     /**
      * lark bot url
      */
-    public static final String LARK_WEBHOOK = "https://open.feishu.cn/open-apis/bot/v2/hook/";
+    public static final String LARK_WEBHOOK = "https://open.feishu.cn/open-apis/bot/v2/hook";
 
     /**
      * lark at format. openid
@@ -56,9 +56,9 @@ public class LarkNotifyConst {
 
     public static final String COMMENT_COLOR = "";
 
-    public static final String SIGN_REPLACE = "{";
+    public static final String SIGN_REPLACE = "\\{";
 
-    public static final String SIGN_PARAM = SIGN_REPLACE + "\"timestamp\": \"%s\",\"sign\": \"%s\",";
+    public static final String SIGN_PARAM_PREFIX = "{\"timestamp\": \"%s\",\"sign\": \"%s\",";
 
     /**
      * lark alarm json str

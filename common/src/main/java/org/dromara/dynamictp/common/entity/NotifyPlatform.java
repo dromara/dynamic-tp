@@ -51,9 +51,9 @@ public class NotifyPlatform {
     private String secret;
 
     /**
-     * webHook, may be null.
+     * webhook, may be null.
      */
-    private String webHook;
+    private String webhook;
 
     /**
      * Receivers, split by ,

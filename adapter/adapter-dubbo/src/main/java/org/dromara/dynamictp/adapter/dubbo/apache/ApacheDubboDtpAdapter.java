@@ -19,7 +19,9 @@ package org.dromara.dynamictp.adapter.dubbo.apache;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.dubbo.common.URL;
 import org.apache.dubbo.common.Version;
 import org.apache.dubbo.common.extension.ExtensionLoader;
 import org.apache.dubbo.common.store.DataStore;
@@ -27,12 +29,14 @@ import org.apache.dubbo.common.threadpool.manager.DefaultExecutorRepository;
 import org.apache.dubbo.common.threadpool.manager.ExecutorRepository;
 import org.apache.dubbo.common.threadpool.support.eager.EagerThreadPoolExecutor;
 import org.apache.dubbo.config.spring.context.event.ServiceBeanExportedEvent;
+import org.apache.dubbo.remoting.transport.dispatcher.WrappedChannelHandler;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.jvmti.JVMTI;
 import org.springframework.context.ApplicationEvent;
 
 import java.util.Map;
@@ -41,6 +45,9 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
+
+import static org.apache.dubbo.common.constants.CommonConstants.CONSUMER_SIDE;
+import static org.apache.dubbo.common.constants.CommonConstants.SIDE_KEY;
 
 /**
  * ApacheDubboDtpAdapter related
@@ -55,6 +62,8 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
     private static final String TP_PREFIX = "dubboTp";
 
     private static final String EXECUTOR_SERVICE_COMPONENT_KEY = ExecutorService.class.getName();
+
+    private static final String EXECUTOR_FIELD = "executor";
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
@@ -85,16 +94,26 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
         String currVersion = Version.getVersion();
         if (DubboVersion.compare(DubboVersion.VERSION_2_7_5, currVersion) > 0) {
             // 当前dubbo版本 < 2.7.5
-            DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
-            if (Objects.isNull(dataStore)) {
-                return;
-            }
-            Map<String, Object> executorMap = dataStore.get(EXECUTOR_SERVICE_COMPONENT_KEY);
-            if (MapUtils.isNotEmpty(executorMap)) {
-                executorMap.forEach((k, v) -> {
-                    ThreadPoolExecutor proxy = getProxy((ThreadPoolExecutor) v);
-                    dataStore.put(EXECUTOR_SERVICE_COMPONENT_KEY, k, proxy);
-                    putAndFinalize(genTpName(k), (ExecutorService) v, proxy);
+            val handlers = JVMTI.getInstances(WrappedChannelHandler.class);
+            if (CollectionUtils.isNotEmpty(handlers)) {
+                DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
+                handlers.forEach(handler -> {
+                    //获取WrappedChannelHandler中的原始线程池
+                    val originExecutor = ReflectionUtil.getFieldValue(EXECUTOR_FIELD, handler);
+                    if (originExecutor instanceof ThreadPoolExecutor) {
+                        URL url = handler.getUrl();
+                        //低版本跳过消费者线程池配置
+                        if (!CONSUMER_SIDE.equalsIgnoreCase(url.getParameter(SIDE_KEY))) {
+                            String port = String.valueOf(url.getPort());
+                            String tpName = genTpName(port);
+                            //增强原始线程池,替换为动态线程池代理
+                            enhanceOriginExecutor(tpName, (ThreadPoolExecutor) originExecutor, EXECUTOR_FIELD, handler);
+                            //获取增强后的新动态线程池
+                            Object newExexutor = ReflectionUtil.getFieldValue(EXECUTOR_FIELD, handler);
+                            //替换dataStore中的线程池
+                            dataStore.put(EXECUTOR_SERVICE_COMPONENT_KEY, port, newExexutor);
+                        }
+                    }
                 });
             }
             return;

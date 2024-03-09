@@ -27,7 +27,13 @@ public final class DingNotifyConst {
 
     private DingNotifyConst() { }
 
-    public static final String DING_WEBHOOK = "https://oapi.dingtalk.com/robot/send?access_token=";
+    public static final String DING_WEBHOOK = "https://oapi.dingtalk.com/robot/send";
+
+    public static final String ACCESS_TOKEN_PARAM = "access_token";
+
+    public static final String TIMESTAMP_PARAM = "timestamp";
+
+    public static final String SIGN_PARAM = "sign";
 
     public static final String WARNING_COLOR = "#EA9F00";
 

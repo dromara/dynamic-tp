@@ -218,7 +218,7 @@ protected void afterExecute(Runnable r, Throwable t);
 
 **JNPF低代码开发平台**
 
-<a href="https://www.jnpfsoft.com/?from=dynamic-tp"><img src="/resources/img/jnpfsoft.png"></a>
+<a href="https://www.jnpfsoft.com/?from=dynamic-tp" style="border-radius: 10px;border: 1px solid #3eaf7c;"><img src="/resources/img/jnpfsoft.png"></a>
 
 ---
 ## 鸣谢

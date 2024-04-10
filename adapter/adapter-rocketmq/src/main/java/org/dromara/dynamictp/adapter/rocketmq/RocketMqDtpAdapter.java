@@ -31,6 +31,7 @@ import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.jvmti.JVMTI;
+import org.springframework.util.ReflectionUtils;
 
 import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -102,6 +103,9 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
             return;
         }
         for (DefaultMQProducer defaultMQProducer : beans) {
+            if(Objects.isNull(ReflectionUtils.findMethod(DefaultMQProducerImpl.class,"getAsyncSenderExecutor"))){
+                continue;
+            }
             val producer = (DefaultMQProducerImpl) ReflectionUtil.getFieldValue(DefaultMQProducer.class,
                     "defaultMQProducerImpl", defaultMQProducer);
             if (Objects.isNull(producer)) {

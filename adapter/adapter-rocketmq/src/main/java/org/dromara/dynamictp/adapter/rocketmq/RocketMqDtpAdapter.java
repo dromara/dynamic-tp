@@ -103,7 +103,7 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
             return;
         }
         for (DefaultMQProducer defaultMQProducer : beans) {
-            if(Objects.isNull(ReflectionUtils.findMethod(DefaultMQProducerImpl.class,"getAsyncSenderExecutor"))){
+            if (Objects.isNull(ReflectionUtils.findMethod(DefaultMQProducerImpl.class, "getAsyncSenderExecutor"))) {
                 continue;
             }
             val producer = (DefaultMQProducerImpl) ReflectionUtil.getFieldValue(DefaultMQProducer.class,

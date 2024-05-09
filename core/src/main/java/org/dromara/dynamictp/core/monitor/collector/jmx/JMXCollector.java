@@ -40,26 +40,15 @@ public class JMXCollector extends AbstractCollector {
 
     public static final String DTP_METRIC_NAME_PREFIX = "dtp.thread.pool";
 
-    /**
-     * thread pool stats map
-     */
-    private static final Map<String, ThreadPoolStats> GAUGE_CACHE = new ConcurrentHashMap<>();
-
     @Override
     public void collect(ThreadPoolStats threadPoolStats) {
-        if (GAUGE_CACHE.containsKey(threadPoolStats.getPoolName())) {
-            ThreadPoolStats poolStats = GAUGE_CACHE.get(threadPoolStats.getPoolName());
-            BeanUtils.copyProperties(threadPoolStats, poolStats);
-        } else {
-            try {
-                MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-                ObjectName name = new ObjectName(DTP_METRIC_NAME_PREFIX + ":name=" + threadPoolStats.getPoolName());
-                ThreadPoolStatsJMX stats = new ThreadPoolStatsJMX(threadPoolStats);
-                server.registerMBean(stats, name);
-            } catch (JMException e) {
-                log.error("collect thread pool stats error", e);
-            }
-            GAUGE_CACHE.put(threadPoolStats.getPoolName(), threadPoolStats);
+        try {
+            MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+            ObjectName name = new ObjectName(DTP_METRIC_NAME_PREFIX + ":name=" + threadPoolStats.getPoolName());
+            ThreadPoolStatsJMX stats = new ThreadPoolStatsJMX(threadPoolStats);
+            server.registerMBean(stats, name);
+        } catch (JMException e) {
+            log.error("collect thread pool stats error", e);
         }
     }
 

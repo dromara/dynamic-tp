@@ -52,6 +52,11 @@ public class ThreadPoolStats extends Metrics {
     private int maximumPoolSize;
 
     /**
+     * 空闲时间 (ms)
+     */
+    private long keepAliveTime;
+
+    /**
      * 队列类型
      */
     private String queueType;

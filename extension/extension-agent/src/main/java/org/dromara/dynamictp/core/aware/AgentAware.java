@@ -17,7 +17,7 @@
 
 package org.dromara.dynamictp.core.aware;
 
-import cn.hutool.core.lang.Pair;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
@@ -25,9 +25,15 @@ import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
+import java.util.stream.Collectors;
+
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.DTP_EXECUTE_ENHANCED;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.FALSE_STR;
 
 /**
  * deal agent wrapper
@@ -50,29 +56,45 @@ public class AgentAware extends TaskStatAware {
      */
     private final Map<Runnable, SoftReference<DtpRunnable>> dtpRunnableCache = new ConcurrentHashMap<>();
 
-    private Pair<Field, DtpRunnable> getDtpRunnable(Class<? extends Runnable> rClass, Runnable r) throws IllegalAccessException {
+    private DtpRunnable determineDtpRunnable(List<Field> conditionalFields, Runnable r) throws IllegalAccessException {
+
+        for (Field field : conditionalFields) {
+            if (Objects.isNull(field)) {
+                continue;
+            }
+
+            field.setAccessible(true);
+            Runnable o = (Runnable) field.get(r);
+            if (o instanceof DtpRunnable) {
+                return (DtpRunnable) o;
+            }
+            // 纵向查找
+            DtpRunnable dtpRunnable = getDtpRunnable(o.getClass(), o);
+            if (dtpRunnable != null) {
+                return dtpRunnable;
+            }
+        }
+        return null;
+    }
+
+    private DtpRunnable getDtpRunnable(Class<? extends Runnable> rClass, Runnable r) throws IllegalAccessException {
         while (Runnable.class.isAssignableFrom(rClass)) {
             Field[] declaredFields = rClass.getDeclaredFields();
             if (ArrayUtil.isNotEmpty(declaredFields)) {
-                Field field = Arrays.stream(declaredFields)
-                        .filter(ele -> Runnable.class == ele.getType())
-                        .findFirst()
-                        .orElse(null);
-                if (field != null) {
-                    field.setAccessible(true);
-                    Runnable o = (Runnable) field.get(r);
-                    if (o instanceof DtpRunnable) {
-                        return new Pair<>(field, (DtpRunnable) o);
+                List<Field> conditionFields = Arrays.stream(declaredFields)
+                        .filter(ele -> Runnable.class.isAssignableFrom(ele.getType()))
+                        .collect(Collectors.toList());
+                if (CollectionUtil.isNotEmpty(conditionFields)) {
+                    DtpRunnable dtpRunnable = determineDtpRunnable(conditionFields, r);
+                    if (Objects.nonNull(dtpRunnable)) {
+                        return dtpRunnable;
                     }
-
-                    // 纵向查找
-                    return getDtpRunnable(o.getClass(), o);
                 }
-                if (!Runnable.class.isAssignableFrom(rClass.getSuperclass())) {
-                    break;
-                }
-                rClass = (Class<? extends Runnable>) rClass.getSuperclass();
             }
+            if (!Runnable.class.isAssignableFrom(rClass.getSuperclass())) {
+                break;
+            }
+            rClass = (Class<? extends Runnable>) rClass.getSuperclass();
         }
         return null;
     }
@@ -82,7 +104,7 @@ public class AgentAware extends TaskStatAware {
             return r;
         }
 
-        Pair<Field, DtpRunnable> dtpRunnable = null;
+        DtpRunnable dtpRunnable = null;
         Class<? extends Runnable> rClass = r.getClass();
         try {
             dtpRunnable = getDtpRunnable(rClass, r);
@@ -97,7 +119,7 @@ public class AgentAware extends TaskStatAware {
             return r;
         }
 
-        return dtpRunnable.getValue();
+        return dtpRunnable;
     }
 
     @Override
@@ -105,6 +127,9 @@ public class AgentAware extends TaskStatAware {
         Runnable runnableWrap = getDtpRunnableInstance(r);
         if (runnableWrap instanceof DtpRunnable) {
             dtpRunnableCache.put(r, new SoftReference<>((DtpRunnable) runnableWrap));
+        } else {
+            // 被封装的wrapper没有找到DtpRunnable对象，那么就关闭某些监控指标，防止内存溢出
+            System.setProperty(DTP_EXECUTE_ENHANCED, FALSE_STR);
         }
         return runnableWrap;
     }

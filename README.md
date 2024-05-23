@@ -84,7 +84,7 @@ protected void afterExecute(Runnable r, Throwable t);
 >
 > 4. 集成常用三方中间件内部线程池管理
 
-**经过多个版本的迭代，目前最新版本 v1.1.6.1 具有以下特性** ✅
+**经过多个版本的迭代，目前最新版本 v1.1.7 具有以下特性** ✅
 
 - **代码零侵入**：我们改变了线程池以往的使用姿势，所有配置均放在配置中心，服务启动时会从配置中心拉取配置生成线程池对象放到 Spring 容器中，使用时直接从 Spring 容器中获取，对业务代码零侵入
 
@@ -194,12 +194,6 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ---
 
-## 友情链接
-
-- [HertzBeat](https://github.com/dromara/hertzbeat) : 易用友好的实时监控告警系统，无需Agent，强大自定义监控能力.
-
----
-
 ## 联系我
 
 看到这儿，**请给项目一个 star**，你的支持是我们前进的动力！
@@ -214,6 +208,19 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ---
 
+## 友情链接
+
+- [HertzBeat](https://github.com/dromara/hertzbeat) : 易用友好的实时监控告警系统，无需Agent，强大自定义监控能力.
+
+---
+
+## 特别赞助
+
+**JNPF低代码开发平台**
+
+<a href="https://www.jnpfsoft.com/?from=dynamic-tp"><img src="/resources/img/jnpfsoft.png"></a>
+
+---
 ## 鸣谢
 
 感谢 JetBrains 对开源项目的支持

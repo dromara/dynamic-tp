@@ -17,20 +17,22 @@
 
 package org.dromara.dynamictp.core.spring;
 
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.dynamictp.common.plugin.DtpInterceptorRegistry;
 import org.dromara.dynamictp.common.util.ConstructorUtil;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
 import org.dromara.dynamictp.core.executor.eager.TaskQueue;
-import org.dromara.dynamictp.common.plugin.DtpInterceptorRegistry;
 import org.dromara.dynamictp.core.support.DynamicTp;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ScheduledThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -41,6 +43,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
+import org.springframework.core.task.TaskDecorator;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.lang.NonNull;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -139,9 +142,11 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
 
     private Object doRegisterAndReturnCommon(Object bean, String poolName) {
         if (bean instanceof ThreadPoolTaskExecutor) {
-            val proxy = newProxy(poolName, ((ThreadPoolTaskExecutor) bean).getThreadPoolExecutor());
+            ThreadPoolTaskExecutor poolTaskExecutor = (ThreadPoolTaskExecutor) bean;
+            val proxy = newProxy(poolName, poolTaskExecutor.getThreadPoolExecutor());
             try {
                 ReflectionUtil.setFieldValue("threadPoolExecutor", bean, proxy);
+                tryWrapTaskDecorator(poolTaskExecutor, proxy);
             } catch (IllegalAccessException ignored) { }
             DtpRegistry.registerExecutor(new ExecutorWrapper(poolName, proxy), REGISTER_SOURCE);
             return bean;
@@ -176,5 +181,24 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
         val proxy = new ScheduledThreadPoolExecutorProxy(originExecutor);
         shutdownGracefulAsync(originExecutor, name, 0);
         return proxy;
+    }
+
+    private void tryWrapTaskDecorator(ThreadPoolTaskExecutor poolTaskExecutor, ThreadPoolExecutorProxy proxy) throws IllegalAccessException {
+        Object taskDecorator = ReflectionUtil.getFieldValue("taskDecorator", poolTaskExecutor);
+        if (Objects.isNull(taskDecorator)) {
+            return;
+        }
+        TaskWrapper taskWrapper = (taskDecorator instanceof TaskWrapper) ? (TaskWrapper) taskDecorator : new TaskWrapper() {
+            @Override
+            public String name() {
+                return taskDecorator.getClass().getName();
+            }
+
+            @Override
+            public Runnable wrap(Runnable runnable) {
+                return ((TaskDecorator) taskDecorator).decorate(runnable);
+            }
+        };
+        ReflectionUtil.setFieldValue("taskWrappers", proxy, Lists.newArrayList(taskWrapper));
     }
 }

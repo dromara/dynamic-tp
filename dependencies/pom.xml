@@ -428,6 +428,12 @@
 
             <dependency>
                 <groupId>org.dromara.dynamictp</groupId>
+                <artifactId>dynamic-tp-extension-agent</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara.dynamictp</groupId>
                 <artifactId>dynamic-tp-extension-notify-email</artifactId>
                 <version>${revision}</version>
             </dependency>

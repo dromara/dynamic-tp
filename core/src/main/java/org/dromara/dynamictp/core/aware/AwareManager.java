@@ -96,7 +96,7 @@ public class AwareManager {
     public static void beforeExecute(Executor executor, Thread t, Runnable r) {
         for (ExecutorAware aware : EXECUTOR_AWARE_LIST) {
             try {
-                aware.beforeExecute(executor, t, r);
+                r = aware.beforeExecuteWrap(executor, t, r);
             } catch (Exception e) {
                 log.error("DynamicTp aware [{}], enhance beforeExecute error.", aware.getName(), e);
             }
@@ -106,7 +106,7 @@ public class AwareManager {
     public static void afterExecute(Executor executor, Runnable r, Throwable t) {
         for (ExecutorAware aware : EXECUTOR_AWARE_LIST) {
             try {
-                aware.afterExecute(executor, r, t);
+                r = aware.afterExecuteWrap(executor, r, t);
             } catch (Exception e) {
                 log.error("DynamicTp aware [{}], enhance afterExecute error.", aware.getName(), e);
             }
@@ -146,7 +146,7 @@ public class AwareManager {
     public static void beforeReject(Runnable r, Executor executor) {
         for (ExecutorAware aware : EXECUTOR_AWARE_LIST) {
             try {
-                aware.beforeReject(r, executor);
+                r = aware.beforeRejectWrap(r, executor);
             } catch (Exception e) {
                 log.error("DynamicTp aware [{}], enhance beforeReject error.", aware.getName(), e);
             }
@@ -156,7 +156,7 @@ public class AwareManager {
     public static void afterReject(Runnable r, Executor executor) {
         for (ExecutorAware aware : EXECUTOR_AWARE_LIST) {
             try {
-                aware.afterReject(r, executor);
+                r = aware.afterRejectWrap(r, executor);
             } catch (Exception e) {
                 log.error("DynamicTp aware [{}], enhance afterReject error.", aware.getName(), e);
             }

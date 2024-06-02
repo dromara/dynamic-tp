@@ -97,6 +97,7 @@ public class ExecutorConverter {
         poolStats.setCompletedTaskCount(executor.getCompletedTaskCount());
         poolStats.setWaitTaskCount(executor.getQueueSize());
         poolStats.setRejectHandlerName(executor.getRejectHandlerType());
+        poolStats.setKeepAliveTime(executor.getKeepAliveTime(TimeUnit.MILLISECONDS));
         return poolStats;
     }
 }

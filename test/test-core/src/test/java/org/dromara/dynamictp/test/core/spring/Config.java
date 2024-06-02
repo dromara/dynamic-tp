@@ -19,6 +19,7 @@ package org.dromara.dynamictp.test.core.spring;
 
 import org.dromara.dynamictp.core.spring.EnableDynamicTp;
 import org.dromara.dynamictp.core.support.DynamicTp;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -48,7 +49,7 @@ public class Config {
      * @see org.springframework.core.PriorityOrdered
      */
     @Bean
-    public DemoService demoService(Executor asyncExecutor) {
+    public DemoService demoService(@Qualifier("commonExecutor") Executor asyncExecutor) {
         return new DemoService(asyncExecutor);
     }
 

@@ -108,7 +108,6 @@ public interface ExecutorAware extends DtpAware {
     }
 
     default Runnable afterExecuteWrap(Executor executor, Runnable r, Throwable t) {
-        // default no Operation
         afterExecute(executor, r, t);
         return r;
     }
@@ -151,7 +150,6 @@ public interface ExecutorAware extends DtpAware {
     }
 
     default Runnable beforeRejectWrap(Runnable r, Executor executor) {
-        // default no Operation
         beforeReject(r, executor);
         return r;
     }
@@ -166,7 +164,6 @@ public interface ExecutorAware extends DtpAware {
     }
 
     default Runnable afterRejectWrap(Runnable r, Executor executor) {
-        // default no Operation
         afterReject(r, executor);
         return r;
     }

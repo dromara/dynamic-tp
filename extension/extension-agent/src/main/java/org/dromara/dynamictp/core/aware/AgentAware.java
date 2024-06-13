@@ -17,9 +17,9 @@
 
 package org.dromara.dynamictp.core.aware;
 
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
 
 import java.lang.ref.SoftReference;
@@ -40,7 +40,14 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.FALSE_STR;
  * @author txbao
  */
 @Slf4j
+@SuppressWarnings("all")
 public class AgentAware extends TaskStatAware {
+
+    /**
+     * dtpRunnableCache  key -> Runnable  value -> DtpRunnable
+     */
+    private final Map<Runnable, SoftReference<DtpRunnable>> dtpRunnableCache = new ConcurrentHashMap<>();
+
     @Override
     public int getOrder() {
         return Integer.MIN_VALUE;
@@ -51,18 +58,11 @@ public class AgentAware extends TaskStatAware {
         return "agent";
     }
 
-    /**
-     * dtpRunnableCache  key -> Runnable  value -> DtpRunnable
-     */
-    private final Map<Runnable, SoftReference<DtpRunnable>> dtpRunnableCache = new ConcurrentHashMap<>();
-
     private DtpRunnable determineDtpRunnable(List<Field> conditionalFields, Runnable r) throws IllegalAccessException {
-
         for (Field field : conditionalFields) {
             if (Objects.isNull(field)) {
                 continue;
             }
-
             field.setAccessible(true);
             Runnable o = (Runnable) field.get(r);
             if (o instanceof DtpRunnable) {
@@ -84,7 +84,7 @@ public class AgentAware extends TaskStatAware {
                 List<Field> conditionFields = Arrays.stream(declaredFields)
                         .filter(ele -> Runnable.class.isAssignableFrom(ele.getType()))
                         .collect(Collectors.toList());
-                if (CollectionUtil.isNotEmpty(conditionFields)) {
+                if (CollectionUtils.isNotEmpty(conditionFields)) {
                     DtpRunnable dtpRunnable = determineDtpRunnable(conditionFields, r);
                     if (Objects.nonNull(dtpRunnable)) {
                         return dtpRunnable;
@@ -103,7 +103,6 @@ public class AgentAware extends TaskStatAware {
         if (r instanceof DtpRunnable) {
             return r;
         }
-
         DtpRunnable dtpRunnable = null;
         Class<? extends Runnable> rClass = r.getClass();
         try {
@@ -111,14 +110,12 @@ public class AgentAware extends TaskStatAware {
         } catch (IllegalAccessException e) {
             log.error("getDtpRunnable Error", e);
         }
-
         if (dtpRunnable == null) {
             if (log.isWarnEnabled()) {
                 log.warn("DynamicTp aware [{}], can not find DtpRunnable.", getName());
             }
             return r;
         }
-
         return dtpRunnable;
     }
 
@@ -145,15 +142,6 @@ public class AgentAware extends TaskStatAware {
 
     @Override
     public Runnable beforeRejectWrap(Runnable r, Executor executor) {
-        SoftReference<DtpRunnable> remove = dtpRunnableCache.remove(r);
-        if (remove != null) {
-            return remove.get();
-        }
-        return getDtpRunnableInstance(r);
-    }
-
-    @Override
-    public Runnable afterRejectWrap(Runnable r, Executor executor) {
         SoftReference<DtpRunnable> remove = dtpRunnableCache.remove(r);
         if (remove != null) {
             return remove.get();

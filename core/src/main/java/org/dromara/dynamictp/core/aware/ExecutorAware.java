@@ -91,6 +91,11 @@ public interface ExecutorAware extends DtpAware {
         // default no Operation
     }
 
+    default Runnable beforeExecuteWrap(Executor executor, Thread t, Runnable r) {
+        beforeExecute(executor, t, r);
+        return r;
+    }
+
     /**
      * enhance afterExecute
      *
@@ -100,6 +105,11 @@ public interface ExecutorAware extends DtpAware {
      */
     default void afterExecute(Executor executor, Runnable r, Throwable t) {
         // default no Operation
+    }
+
+    default Runnable afterExecuteWrap(Executor executor, Runnable r, Throwable t) {
+        afterExecute(executor, r, t);
+        return r;
     }
 
     /**
@@ -139,6 +149,11 @@ public interface ExecutorAware extends DtpAware {
         // default no Operation
     }
 
+    default Runnable beforeRejectWrap(Runnable r, Executor executor) {
+        beforeReject(r, executor);
+        return r;
+    }
+
     /**
      * enhance after reject
      * @param r runnable
@@ -146,5 +161,10 @@ public interface ExecutorAware extends DtpAware {
      */
     default void afterReject(Runnable r, Executor executor) {
         // default no Operation
+    }
+
+    default Runnable afterRejectWrap(Runnable r, Executor executor) {
+        afterReject(r, executor);
+        return r;
     }
 }

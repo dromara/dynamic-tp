@@ -17,6 +17,7 @@
         <module>extension-notify-email</module>
         <module>extension-opentelemetry</module>
         <module>extension-notify-yunzhijia</module>
+        <module>extension-agent</module>
     </modules>
 
     <dependencies>

@@ -18,9 +18,12 @@
 package org.dromara.dynamictp.starter.adapter.webserver.undertow;
 
 import org.dromara.dynamictp.core.aware.AwareManager;
+import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.support.task.runnable.EnhancedRunnable;
+import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.jboss.threads.EnhancedQueueExecutor;
 
+import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
@@ -30,7 +33,9 @@ import java.util.concurrent.RejectedExecutionException;
  * @since 1.1.4
  **/
 @SuppressWarnings("all")
-public class EnhancedQueueExecutorProxy extends EnhancedQueueExecutor {
+public class EnhancedQueueExecutorProxy extends EnhancedQueueExecutor implements TaskEnhanceAware {
+
+    private List<TaskWrapper> taskWrappers;
 
     public EnhancedQueueExecutorProxy(final Builder builder) {
         super(builder);
@@ -49,19 +54,29 @@ public class EnhancedQueueExecutorProxy extends EnhancedQueueExecutor {
 
     @Override
     public void execute(Runnable runnable) {
-        EnhancedRunnable enhanceTask = EnhancedRunnable.of(runnable, this);
-        AwareManager.execute(this, enhanceTask);
+        Runnable enhancedTask = getEnhancedTask(EnhancedRunnable.of(runnable, this));
+        AwareManager.execute(this, enhancedTask);
         try {
-            super.execute(enhanceTask);
+            super.execute(enhancedTask);
         } catch (Throwable e) {
             Throwable[] suppressedExceptions = e.getSuppressed();
             for (Throwable t : suppressedExceptions) {
                 if (t instanceof RejectedExecutionException) {
-                    AwareManager.beforeReject(enhanceTask, this);
+                    AwareManager.beforeReject(enhancedTask, this);
                     return;
                 }
             }
             throw e;
         }
+    }
+
+    @Override
+    public List<TaskWrapper> getTaskWrappers() {
+        return this.taskWrappers;
+    }
+
+    @Override
+    public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
+        this.taskWrappers = taskWrappers;
     }
 }

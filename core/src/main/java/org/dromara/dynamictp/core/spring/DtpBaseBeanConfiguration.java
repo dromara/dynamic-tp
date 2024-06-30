@@ -60,4 +60,11 @@ public class DtpBaseBeanConfiguration {
     public DtpBannerPrinter dtpBannerPrinter() {
         return new DtpBannerPrinter();
     }
+
+
+
+    @Bean
+    public DtpLifecycleSpringAdapter dtpLifecycleSpringAdapter(DtpLifecycle dtpLifecycle) {
+        return new DtpLifecycleSpringAdapter(dtpLifecycle);
+    }
 }

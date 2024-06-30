@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 1.1.3
  **/
 @Slf4j
-public class DtpLifecycle implements SmartLifecycle {
+public class DtpLifecycle implements LifeCycleManagement {
 
     private final AtomicBoolean running = new AtomicBoolean(false);
 

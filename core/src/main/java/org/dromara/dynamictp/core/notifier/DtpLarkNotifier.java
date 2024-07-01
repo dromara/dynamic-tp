@@ -70,7 +70,7 @@ public class DtpLarkNotifier extends AbstractDtpNotifier {
     protected String formatReceivers(String receives) {
         return Arrays.stream(receives.split(","))
                 .map(r -> StringUtils.startsWith(r, LARK_OPENID_PREFIX) ?
-                        String.format(LARK_AT_FORMAT_OPENID, r) : String.format(LARK_AT_FORMAT_USERNAME, r))
+                        String.format(LARK_AT_FORMAT_OPENID, r) : String.format(LARK_AT_FORMAT_USERNAME, r, r))
                 .collect(Collectors.joining(" "));
     }
 }

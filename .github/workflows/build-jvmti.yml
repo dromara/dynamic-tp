@@ -22,6 +22,26 @@ jobs:
           path: jvmti/jvmti-build/target/classes/lib*
           if-no-files-found: error
 
+  linux-aarch64:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: uraimo/run-on-arch-action@v2
+        name: Run commands
+        id: runcmd
+        with:
+          arch: aarch64
+          distro: ubuntu20.04
+          run: |
+            apt update && apt install openjdk-8-jdk g++ -y
+            cd ${{ github.workspace }}/jvmti/jvmti-build
+            mvn package
+      - uses: actions/upload-artifact@v3
+        with:
+          name: lib
+          path: jvmti/jvmti-build/target/classes/lib*
+          if-no-files-found: error
+
   mac:
     runs-on: macos-latest
     steps:

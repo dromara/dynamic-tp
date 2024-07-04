@@ -33,7 +33,7 @@ jobs:
           arch: aarch64
           distro: ubuntu20.04
           run: |
-            apt update && apt install openjdk-8-jdk g++ -y
+            apt update && apt install openjdk-8-jdk g++ -y && apt install maven
             cd ${{ github.workspace }}/jvmti/jvmti-build
             mvn package
       - uses: actions/upload-artifact@v3

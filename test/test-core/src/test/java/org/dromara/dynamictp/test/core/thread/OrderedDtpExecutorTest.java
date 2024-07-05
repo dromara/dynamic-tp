@@ -18,8 +18,6 @@
 package org.dromara.dynamictp.test.core.thread;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
-import org.dromara.dynamictp.core.spring.EnableDynamicTp;
-import org.dromara.dynamictp.core.spring.YamlPropertySourceFactory;
 import org.dromara.dynamictp.core.support.task.Ordered;
 import org.dromara.dynamictp.core.support.task.callable.OrderedCallable;
 import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
@@ -27,6 +25,7 @@ import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.spring.ex.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.MDC;
@@ -46,7 +45,6 @@ import java.util.concurrent.TimeUnit;
 @PropertySource(value = "classpath:/dynamic-tp-nacos-demo-dtp-dev.yml", factory = YamlPropertySourceFactory.class)
 @SpringBootTest(classes = OrderedDtpExecutorTest.class)
 @ExtendWith(SpringExtension.class)
-@EnableDynamicTp
 @EnableAutoConfiguration
 class OrderedDtpExecutorTest {
 

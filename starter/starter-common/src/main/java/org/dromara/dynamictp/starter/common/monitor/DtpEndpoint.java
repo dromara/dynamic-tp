@@ -21,13 +21,13 @@ import cn.hutool.core.io.FileUtil;
 import com.google.common.collect.Lists;
 import lombok.val;
 import org.apache.commons.collections4.MapUtils;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.entity.JvmStats;
 import org.dromara.dynamictp.common.entity.Metrics;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.aware.MetricsAware;
+import org.dromara.dynamictp.spring.ex.ApplicationContextHolder;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 

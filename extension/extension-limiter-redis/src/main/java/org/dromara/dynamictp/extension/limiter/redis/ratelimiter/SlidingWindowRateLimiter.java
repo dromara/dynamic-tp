@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.extension.limiter.redis.ratelimiter;
 
-import org.dromara.dynamictp.common.util.CommonUtil;
 import org.dromara.dynamictp.extension.limiter.redis.em.RateLimitEnum;
 import org.springframework.data.redis.core.StringRedisTemplate;
 

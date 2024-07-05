@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.core.support;
 
 import lombok.val;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
+import org.dromara.dynamictp.common.spring.BeanProviderHelper;
 import org.dromara.dynamictp.common.timer.HashedWheelTimer;
 import org.dromara.dynamictp.common.timer.Timeout;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
@@ -164,7 +164,7 @@ public class ThreadPoolStatProvider {
         if (queueTimeout <= 0) {
             return;
         }
-        HashedWheelTimer timer = ApplicationContextHolder.getBean(HashedWheelTimer.class);
+        HashedWheelTimer timer = BeanProviderHelper.getBean(HashedWheelTimer.class);
         QueueTimeoutTimerTask timerTask = new QueueTimeoutTimerTask(executorWrapper, r);
         queueTimeoutMap.put(r, new SoftReference<>(timer.newTimeout(timerTask, queueTimeout, TimeUnit.MILLISECONDS)));
     }
@@ -179,7 +179,7 @@ public class ThreadPoolStatProvider {
         if (runTimeout <= 0) {
             return;
         }
-        HashedWheelTimer timer = ApplicationContextHolder.getBean(HashedWheelTimer.class);
+        HashedWheelTimer timer = BeanProviderHelper.getBean(HashedWheelTimer.class);
         RunTimeoutTimerTask timerTask = new RunTimeoutTimerTask(executorWrapper, r, t);
         runTimeoutMap.put(r, new SoftReference<>(timer.newTimeout(timerTask, runTimeout, TimeUnit.MILLISECONDS)));
     }

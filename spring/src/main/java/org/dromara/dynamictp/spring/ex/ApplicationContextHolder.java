@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.common.spring;
+package org.dromara.dynamictp.spring.ex;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

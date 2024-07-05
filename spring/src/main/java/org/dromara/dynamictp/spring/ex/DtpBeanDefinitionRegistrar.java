@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.spring;
+package org.dromara.dynamictp.spring.ex;
 
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,6 @@ import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.spring.SpringBeanHelper;
 import org.dromara.dynamictp.core.executor.ExecutorType;
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
@@ -42,23 +41,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.ALLOW_CORE_THREAD_TIMEOUT;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.AWAIT_TERMINATION_SECONDS;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.AWARE_NAMES;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.NOTIFY_ENABLED;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.NOTIFY_ITEMS;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.PLATFORM_IDS;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.PLUGIN_NAMES;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.PRE_START_ALL_CORE_THREADS;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.QUEUE_TIMEOUT;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.REJECT_ENHANCED;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.REJECT_HANDLER_TYPE;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.RUN_TIMEOUT;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.TASK_WRAPPERS;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.THREAD_POOL_ALIAS_NAME;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.THREAD_POOL_NAME;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRY_INTERRUPT_WHEN_TIMEOUT;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.*;
 import static org.dromara.dynamictp.common.em.QueueTypeEnum.buildLbq;
 import static org.dromara.dynamictp.common.entity.NotifyItem.mergeAllNotifyItems;
 

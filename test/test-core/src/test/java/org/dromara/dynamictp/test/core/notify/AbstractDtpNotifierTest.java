@@ -18,13 +18,11 @@
 package org.dromara.dynamictp.test.core.notify;
 
 import com.google.common.collect.Lists;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.ServiceInstance;
 import org.dromara.dynamictp.common.entity.TpMainFields;
-import org.dromara.dynamictp.common.util.CommonUtil;
 import org.dromara.dynamictp.core.notifier.AbstractDtpNotifier;
 import org.dromara.dynamictp.core.notifier.DtpDingNotifier;
 import org.dromara.dynamictp.common.notifier.Notifier;

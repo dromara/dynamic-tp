@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.starter.adapter.sofa.autoconfigure;
 
 import org.dromara.dynamictp.adapter.sofa.SofaDtpAdapter;
-import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
+import org.dromara.dynamictp.spring.ex.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

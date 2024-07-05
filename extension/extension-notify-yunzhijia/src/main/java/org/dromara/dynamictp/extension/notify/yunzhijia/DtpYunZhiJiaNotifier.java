@@ -20,7 +20,6 @@ package org.dromara.dynamictp.extension.notify.yunzhijia;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.core.notifier.AbstractDtpNotifier;
 
 /**

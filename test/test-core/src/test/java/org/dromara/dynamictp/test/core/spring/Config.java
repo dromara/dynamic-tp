@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.test.core.spring;
 
-import org.dromara.dynamictp.core.spring.EnableDynamicTp;
 import org.dromara.dynamictp.core.support.DynamicTp;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -34,7 +33,6 @@ import java.util.concurrent.ThreadPoolExecutor;
  * Date: 2023/4/22
  * Time: 14:27
  */
-@EnableDynamicTp
 @Configuration
 public class Config {
     /**

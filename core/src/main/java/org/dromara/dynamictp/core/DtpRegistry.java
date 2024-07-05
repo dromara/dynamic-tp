@@ -31,7 +31,6 @@ import org.dromara.dynamictp.common.ex.DtpException;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.queue.MemorySafeLinkedBlockingQueue;
 import org.dromara.dynamictp.common.queue.VariableLinkedBlockingQueue;
-import org.dromara.dynamictp.common.spring.OnceApplicationContextEventListener;
 import org.dromara.dynamictp.common.util.StreamUtil;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;

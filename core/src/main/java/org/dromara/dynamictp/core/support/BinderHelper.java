@@ -51,7 +51,7 @@ public class BinderHelper {
         Singleton.INST.single(PropertiesBinder.class, loadedFirstBinder);
         return loadedFirstBinder;
     }
-    
+
     public static void bindDtpProperties(Map<?, Object> properties, DtpProperties dtpProperties) {
         final PropertiesBinder binder = getBinder();
         if (Objects.isNull(binder)) {
@@ -59,7 +59,7 @@ public class BinderHelper {
         }
         binder.bindDtpProperties(properties, dtpProperties);
     }
-    
+
     public static void bindDtpProperties(Environment environment, DtpProperties dtpProperties) {
         final PropertiesBinder binder = getBinder();
         if (Objects.isNull(binder)) {

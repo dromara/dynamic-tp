@@ -15,18 +15,14 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.common.spring;
+package org.dromara.dynamictp.spring.ex;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ApplicationContextEvent;
-import org.springframework.context.event.ContextClosedEvent;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.ContextStartedEvent;
-import org.springframework.context.event.ContextStoppedEvent;
+import org.springframework.context.event.*;
 
 import static org.springframework.util.ObjectUtils.nullSafeEquals;
 

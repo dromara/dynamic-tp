@@ -17,11 +17,11 @@
 
 package org.dromara.dynamictp.core.notifier.manager;
 
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.em.NotifyTypeEnum;
 import org.dromara.dynamictp.common.pattern.filter.Filter;
 import org.dromara.dynamictp.common.pattern.filter.InvokerChain;
 import org.dromara.dynamictp.common.pattern.filter.InvokerChainFactory;
+import org.dromara.dynamictp.common.spring.BeanProviderHelper;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
 import org.dromara.dynamictp.core.notifier.chain.filter.AlarmBaseFilter;
 import org.dromara.dynamictp.core.notifier.chain.filter.NoticeBaseFilter;
@@ -46,7 +46,7 @@ public class NotifyFilterBuilder {
     private NotifyFilterBuilder() { }
 
     public static InvokerChain<BaseNotifyCtx> getAlarmInvokerChain() {
-        val filters = ApplicationContextHolder.getBeansOfType(NotifyFilter.class);
+        val filters = BeanProviderHelper.getBeansOfType(NotifyFilter.class);
         Collection<NotifyFilter> alarmFilters = Lists.newArrayList(filters.values());
         alarmFilters.add(new AlarmBaseFilter());
         alarmFilters = alarmFilters.stream()
@@ -57,7 +57,7 @@ public class NotifyFilterBuilder {
     }
 
     public static InvokerChain<BaseNotifyCtx> getCommonInvokerChain() {
-        val filters = ApplicationContextHolder.getBeansOfType(NotifyFilter.class);
+        val filters = BeanProviderHelper.getBeansOfType(NotifyFilter.class);
         Collection<NotifyFilter> noticeFilters = Lists.newArrayList(filters.values());
         noticeFilters.add(new NoticeBaseFilter());
         noticeFilters = noticeFilters.stream()

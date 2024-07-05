@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.spring;
+package org.dromara.dynamictp.spring.ex;
 
 import com.google.common.collect.Lists;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
-import org.dromara.dynamictp.common.spring.SpringBeanHelper;
+
 import org.dromara.dynamictp.common.timer.HashedWheelTimer;
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;

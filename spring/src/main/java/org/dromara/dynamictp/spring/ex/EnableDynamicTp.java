@@ -15,16 +15,21 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.spring;
+package org.dromara.dynamictp.spring.ex;
 
-import org.springframework.core.task.AsyncTaskExecutor;
+import org.springframework.context.annotation.Import;
+
+import java.lang.annotation.*;
 
 /**
- * SpringExecutor related
+ * EnableDynamicTp related
  *
  * @author yanhom
- * @since 1.1.0
+ * @since 1.0.4
  **/
-public interface SpringExecutor extends AsyncTaskExecutor {
-
+@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Import(DtpConfigurationSelector.class)
+public @interface EnableDynamicTp {
 }

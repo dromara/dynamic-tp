@@ -23,7 +23,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.spring.ex.ApplicationContextHolder;
 import org.springframework.amqp.rabbit.connection.AbstractConnectionFactory;
 
 import java.util.Objects;

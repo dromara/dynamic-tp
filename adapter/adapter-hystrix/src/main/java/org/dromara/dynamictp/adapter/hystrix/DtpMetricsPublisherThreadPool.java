@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.spring.ex.ApplicationContextHolder;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;

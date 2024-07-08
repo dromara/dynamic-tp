@@ -21,7 +21,6 @@ import org.dromara.dynamictp.common.em.NotifyTypeEnum;
 import org.dromara.dynamictp.common.pattern.filter.Filter;
 import org.dromara.dynamictp.common.pattern.filter.InvokerChain;
 import org.dromara.dynamictp.common.pattern.filter.InvokerChainFactory;
-import org.dromara.dynamictp.common.spring.BeanProviderHelper;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
 import org.dromara.dynamictp.core.notifier.chain.filter.AlarmBaseFilter;
 import org.dromara.dynamictp.core.notifier.chain.filter.NoticeBaseFilter;

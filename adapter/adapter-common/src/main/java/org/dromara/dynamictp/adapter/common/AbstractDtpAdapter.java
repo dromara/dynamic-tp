@@ -42,7 +42,6 @@ import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
-import org.dromara.dynamictp.spring.ex.ApplicationContextHolder;
 import org.dromara.dynamictp.spring.ex.OnceApplicationContextEventListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 

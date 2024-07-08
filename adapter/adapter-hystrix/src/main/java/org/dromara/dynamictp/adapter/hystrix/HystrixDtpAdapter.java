@@ -33,7 +33,6 @@ import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.StreamUtil;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.spring.ex.ApplicationContextHolder;
 
 import java.util.List;
 import java.util.Map;

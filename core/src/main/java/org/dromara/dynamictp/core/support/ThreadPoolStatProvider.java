@@ -18,7 +18,6 @@
 package org.dromara.dynamictp.core.support;
 
 import lombok.val;
-import org.dromara.dynamictp.common.spring.BeanProviderHelper;
 import org.dromara.dynamictp.common.timer.HashedWheelTimer;
 import org.dromara.dynamictp.common.timer.Timeout;
 import org.dromara.dynamictp.core.executor.DtpExecutor;

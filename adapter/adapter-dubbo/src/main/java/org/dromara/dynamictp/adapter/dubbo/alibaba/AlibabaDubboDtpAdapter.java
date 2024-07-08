@@ -25,7 +25,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.jvmti.JVMTI;
-import org.dromara.dynamictp.spring.ex.ApplicationContextHolder;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.util.concurrent.ExecutorService;

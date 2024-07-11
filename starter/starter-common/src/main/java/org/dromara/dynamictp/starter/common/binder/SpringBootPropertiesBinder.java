@@ -20,7 +20,8 @@ package org.dromara.dynamictp.starter.common.binder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.spring.PropertiesBinder;
+
+import org.dromara.dynamictp.core.support.PropertiesBinder;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValues;
 import org.springframework.boot.context.properties.bind.Bindable;
@@ -58,12 +59,16 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
     }
 
     @Override
-    public void bindDtpProperties(Environment environment, DtpProperties dtpProperties) {
-        try {
-            Class.forName("org.springframework.boot.context.properties.bind.Binder");
-            doBindIn2X(environment, dtpProperties);
-        } catch (ClassNotFoundException e) {
-            doBindIn1X(environment, dtpProperties);
+    public void bindDtpProperties(Object environment, DtpProperties dtpProperties) {
+        if (environment instanceof Environment) {
+            try {
+                Class.forName("org.springframework.boot.context.properties.bind.Binder");
+                doBindIn2X((Environment) environment, dtpProperties);
+            } catch (ClassNotFoundException e) {
+                doBindIn1X((Environment) environment, dtpProperties);
+            }
+        } else {
+            throw new IllegalArgumentException("Invalid environment type, expected org.springframework.core.env.Environment");
         }
     }
 

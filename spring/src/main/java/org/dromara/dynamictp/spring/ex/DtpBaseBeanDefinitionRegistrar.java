@@ -44,7 +44,7 @@ public class DtpBaseBeanDefinitionRegistrar implements ImportBeanDefinitionRegis
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         registerHashedWheelTimer(registry);
-        SpringBeanHelper.registerIfAbsent(registry, APPLICATION_CONTEXT_HOLDER, ApplicationContextHolder.class);
+        SpringBeanHelper.registerIfAbsent(registry, APPLICATION_CONTEXT_HOLDER, SpringContextHolder.class);
 
         // ApplicationContextHolder and HashedWheelTimer are required in DtpExecutor execute method, so they must be registered first
         SpringBeanHelper.registerIfAbsent(registry, DTP_POST_PROCESSOR, DtpPostProcessor.class,

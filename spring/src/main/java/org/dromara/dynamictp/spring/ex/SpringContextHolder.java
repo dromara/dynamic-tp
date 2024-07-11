@@ -1,19 +1,20 @@
 package org.dromara.dynamictp.spring.ex;
 
 
-import org.dromara.dynamictp.common.spring.ContextHolder;
+
+import org.dromara.dynamictp.common.manager.ContextManager;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.*;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Objects;
 
-@Component
-public class SpringContextHolder implements ContextHolder, ApplicationContextAware {
+public class SpringContextHolder implements ContextManager, ApplicationContextAware, ApplicationListener<ApplicationEvent> {
 
     private static ApplicationContext context;
 
@@ -37,7 +38,6 @@ public class SpringContextHolder implements ContextHolder, ApplicationContextAwa
         return getInstance().getBeansOfType(clazz);
     }
 
-
     public static ApplicationContext getInstance() {
         if (Objects.isNull(context)) {
             throw new NullPointerException("ApplicationContext is null, please check if the spring container is started.");
@@ -45,14 +45,74 @@ public class SpringContextHolder implements ContextHolder, ApplicationContextAwa
         return context;
     }
 
-    public static Environment getEnvironment() {
+    @Override
+    public Environment getEnvironment() {
         return getInstance().getEnvironment();
     }
 
-    @Override
+
     public void publishEvent(Object event) {
         if (event instanceof ApplicationEvent) {
             getInstance().publishEvent((ApplicationEvent) event);
+        }
+    }
+
+    @Override
+    public void onApplicationEvent(ApplicationEvent event) {
+        if (isOriginalEventSource(event) && event instanceof ApplicationContextEvent) {
+            if (event instanceof ContextRefreshedEvent) {
+                onContextRefreshedEvent((ContextRefreshedEvent) event);
+            } else if (event instanceof ContextStartedEvent) {
+                onContextStartedEvent((ContextStartedEvent) event);
+            } else if (event instanceof ContextStoppedEvent) {
+                onContextStoppedEvent((ContextStoppedEvent) event);
+            } else if (event instanceof ContextClosedEvent) {
+                onContextClosedEvent((ContextClosedEvent) event);
+            }
+        }
+    }
+
+    protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
+        // Override to handle ContextRefreshedEvent
+    }
+
+    protected void onContextStartedEvent(ContextStartedEvent event) {
+        // Override to handle ContextStartedEvent
+    }
+
+    protected void onContextStoppedEvent(ContextStoppedEvent event) {
+        // Override to handle ContextStoppedEvent
+    }
+
+    protected void onContextClosedEvent(ContextClosedEvent event) {
+        // Override to handle ContextClosedEvent
+    }
+
+    private boolean isOriginalEventSource(ApplicationEvent event) {
+        return Objects.equals(context, event.getSource());
+    }
+
+    @Override
+    public void onEvent(Object event) {
+        if (event instanceof ApplicationEvent) {
+            onApplicationEvent((ApplicationEvent) event);
+        }
+    }
+
+    @Override
+    public String getEnvironmentProperty(String key) {
+        return getInstance().getEnvironment().getProperty(key);
+    }
+
+    @Override
+    public String getEnvironmentProperty(String key, String defaultValue) {
+        return getInstance().getEnvironment().getProperty(key, defaultValue);
+    }
+
+    @Override
+    public void setContext(Object context) {
+        if (context instanceof ApplicationContext) {
+            setApplicationContext((ApplicationContext) context);
         }
     }
 }

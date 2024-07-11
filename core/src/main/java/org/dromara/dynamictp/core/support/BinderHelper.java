@@ -21,8 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.pattern.singleton.Singleton;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
-import org.dromara.dynamictp.core.spring.PropertiesBinder;
-import org.springframework.core.env.Environment;
 
 import java.util.Map;
 import java.util.Objects;
@@ -45,7 +43,7 @@ public class BinderHelper {
         }
         final PropertiesBinder loadedFirstBinder = ExtensionServiceLoader.getFirst(PropertiesBinder.class);
         if (Objects.isNull(loadedFirstBinder)) {
-            log.error("DynamicTp refresh, no SPI for org.dromara.dynamictp.core.spring.PropertiesBinder.");
+            log.error("DynamicTp refresh, no SPI for org.dromara.dynamictp.spring.ex.PropertiesBinder.");
             return null;
         }
         Singleton.INST.single(PropertiesBinder.class, loadedFirstBinder);
@@ -60,7 +58,7 @@ public class BinderHelper {
         binder.bindDtpProperties(properties, dtpProperties);
     }
 
-    public static void bindDtpProperties(Environment environment, DtpProperties dtpProperties) {
+    public static void bindDtpProperties(Object environment, DtpProperties dtpProperties) {
         final PropertiesBinder binder = getBinder();
         if (Objects.isNull(binder)) {
             return;

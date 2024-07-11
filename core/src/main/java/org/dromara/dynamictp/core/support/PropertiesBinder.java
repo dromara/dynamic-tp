@@ -15,10 +15,9 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.spring;
+package org.dromara.dynamictp.core.support;
 
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.springframework.core.env.Environment;
 
 import java.util.Map;
 
@@ -44,5 +43,5 @@ public interface PropertiesBinder {
      * @param environment  environment
      * @param dtpProperties dtp properties
      */
-    void bindDtpProperties(Environment environment, DtpProperties dtpProperties);
+    void bindDtpProperties(Object environment, DtpProperties dtpProperties);
 }

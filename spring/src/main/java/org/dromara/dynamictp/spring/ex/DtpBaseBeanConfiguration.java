@@ -27,6 +27,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
 
+import java.util.EventListenerProxy;
+
 /**
  * DtpBaseBeanConfiguration related
  *
@@ -60,12 +62,5 @@ public class DtpBaseBeanConfiguration {
     @Bean
     public DtpBannerPrinter dtpBannerPrinter() {
         return new DtpBannerPrinter();
-    }
-
-
-
-    @Bean
-    public DtpLifecycleSpringAdapter dtpLifecycleSpringAdapter(DtpLifecycle dtpLifecycle) {
-        return new DtpLifecycleSpringAdapter(dtpLifecycle);
     }
 }

@@ -30,6 +30,8 @@ import org.dromara.dynamictp.core.notifier.chain.invoker.NoticeInvoker;
 import com.google.common.collect.Lists;
 import lombok.val;
 
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.stream.Collectors;
@@ -45,7 +47,7 @@ public class NotifyFilterBuilder {
     private NotifyFilterBuilder() { }
 
     public static InvokerChain<BaseNotifyCtx> getAlarmInvokerChain() {
-        val filters = BeanProviderHelper.getBeansOfType(NotifyFilter.class);
+        val filters = ContextManagerHelper.getBeansOfType(NotifyFilter.class);
         Collection<NotifyFilter> alarmFilters = Lists.newArrayList(filters.values());
         alarmFilters.add(new AlarmBaseFilter());
         alarmFilters = alarmFilters.stream()
@@ -56,7 +58,7 @@ public class NotifyFilterBuilder {
     }
 
     public static InvokerChain<BaseNotifyCtx> getCommonInvokerChain() {
-        val filters = BeanProviderHelper.getBeansOfType(NotifyFilter.class);
+            val filters = ContextManagerHelper.getBeansOfType(NotifyFilter.class);
         Collection<NotifyFilter> noticeFilters = Lists.newArrayList(filters.values());
         noticeFilters.add(new NoticeBaseFilter());
         noticeFilters = noticeFilters.stream()

@@ -31,6 +31,8 @@ import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.StreamUtil;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
+
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.util.Collection;
@@ -135,7 +137,7 @@ public class NotifyHelper {
     }
 
     public static Map<String, NotifyPlatform> getAllPlatforms() {
-        val dtpProperties = BeanProviderHelper.getBean(DtpProperties.class);
+        val dtpProperties = ContextManagerHelper.getBean(DtpProperties.class);
         if (CollectionUtils.isEmpty(dtpProperties.getPlatforms())) {
             return Collections.emptyMap();
         }
@@ -143,7 +145,7 @@ public class NotifyHelper {
     }
 
     public static void initNotify(DtpExecutor executor) {
-        val dtpProperties = BeanProviderHelper.getBean(DtpProperties.class);
+        val dtpProperties = ContextManagerHelper.getBean(DtpProperties.class);
         val platforms = dtpProperties.getPlatforms();
         if (CollectionUtils.isEmpty(platforms)) {
             executor.setNotifyItems(Lists.newArrayList());

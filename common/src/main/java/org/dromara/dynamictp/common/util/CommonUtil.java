@@ -18,10 +18,10 @@
 package org.dromara.dynamictp.common.util;
 
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.entity.ServiceInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.springframework.core.env.Environment;
 
 import java.net.InetAddress;
@@ -44,7 +44,7 @@ public final class CommonUtil {
     private static final ServiceInstance SERVICE_INSTANCE;
 
     static {
-        Environment environment = ApplicationContextHolder.getEnvironment();
+        Environment environment = (Environment) ContextManagerHelper.getEnvironment();
 
         String appName = environment.getProperty("spring.application.name");
         appName = StringUtils.isNoneBlank(appName) ? appName : "application";

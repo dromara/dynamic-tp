@@ -41,7 +41,6 @@ public class JMXCollector extends AbstractCollector {
     public static final String DTP_METRIC_NAME_PREFIX = "dtp.thread.pool";
 
     /**
-     * thread pool stats map
      * 缓存的作用是将注册到JMX的数据，每次都是同一个对象
      */
     private static final Map<String, ThreadPoolStats> GAUGE_CACHE = new ConcurrentHashMap<>();

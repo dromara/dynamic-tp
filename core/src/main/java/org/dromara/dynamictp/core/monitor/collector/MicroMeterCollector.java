@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.em.CollectorTypeEnum;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 import org.dromara.dynamictp.common.util.CommonUtil;
-import org.springframework.beans.BeanUtils;
+import org.apache.commons.beanutils.BeanUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +61,11 @@ public class MicroMeterCollector extends AbstractCollector {
         if (Objects.isNull(oldStats)) {
             GAUGE_CACHE.put(threadPoolStats.getPoolName(), threadPoolStats);
         } else {
-            BeanUtils.copyProperties(threadPoolStats, oldStats);
+            try {
+                BeanUtils.copyProperties(oldStats, threadPoolStats);
+            } catch (Exception e) {
+                log.error("Error copying properties", e);
+            }
         }
         gauge(GAUGE_CACHE.get(threadPoolStats.getPoolName()));
     }

@@ -27,8 +27,9 @@ import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
-import org.springframework.beans.BeanUtils;
+import org.apache.commons.beanutils.BeanUtils;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -81,7 +82,7 @@ public class ExecutorWrapper {
     /**
      * Aware names
      */
-    private Set<String> awareNames = Sets.newHashSet();
+    private Set<String> awareNames = new HashSet<>();
 
     private ExecutorWrapper() {
     }
@@ -139,7 +140,11 @@ public class ExecutorWrapper {
      */
     public ExecutorWrapper capture() {
         ExecutorWrapper executorWrapper = new ExecutorWrapper();
-        BeanUtils.copyProperties(this, executorWrapper);
+        try {
+            BeanUtils.copyProperties(executorWrapper, this);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to copy properties", e);
+        }
         executorWrapper.executor = new CapturedExecutor(this.getExecutor());
         return executorWrapper;
     }

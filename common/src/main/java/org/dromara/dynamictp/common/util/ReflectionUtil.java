@@ -18,7 +18,9 @@
 package org.dromara.dynamictp.common.util;
 
 import lombok.val;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.util.ReflectionUtils;
+
 
 import java.lang.reflect.Field;
 import java.util.Objects;
@@ -38,11 +40,12 @@ public final class ReflectionUtil {
         if (Objects.isNull(field)) {
             return null;
         }
-        val fieldObj = ReflectionUtils.getField(field, targetObj);
-        if (Objects.isNull(fieldObj)) {
+        try {
+            val fieldObj = FieldUtils.readField(field, targetObj, true);
+            return fieldObj;
+        } catch (IllegalAccessException e) {
             return null;
         }
-        return fieldObj;
     }
 
     public static Object getFieldValue(Class<?> targetClass, String fieldName, Object targetObj) {
@@ -50,37 +53,43 @@ public final class ReflectionUtil {
         if (Objects.isNull(field)) {
             return null;
         }
-        val fieldObj = ReflectionUtils.getField(field, targetObj);
-        if (Objects.isNull(fieldObj)) {
+        try {
+            val fieldObj = FieldUtils.readField(field, targetObj, true);
+            return fieldObj;
+        } catch (IllegalAccessException e) {
             return null;
         }
-        return fieldObj;
     }
 
-    public static void setFieldValue(String fieldName, Object targetObj, Object targetVal)
-            throws IllegalAccessException {
+    public static void setFieldValue(String fieldName, Object targetObj, Object targetVal) {
         val field = getField(targetObj.getClass(), fieldName);
         if (Objects.isNull(field)) {
             return;
         }
-        field.set(targetObj, targetVal);
+        try {
+            FieldUtils.writeField(field, targetObj, targetVal, true);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static void setFieldValue(Class<?> targetClass, String fieldName, Object targetObj, Object targetVal)
-            throws IllegalAccessException {
+    public static void setFieldValue(Class<?> targetClass, String fieldName, Object targetObj, Object targetVal) {
         val field = getField(targetClass, fieldName);
         if (Objects.isNull(field)) {
             return;
         }
-        field.set(targetObj, targetVal);
+        try {
+            FieldUtils.writeField(field, targetObj, targetVal, true);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     public static Field getField(Class<?> targetClass, String fieldName) {
-        Field field = ReflectionUtils.findField(targetClass, fieldName);
+        Field field = FieldUtils.getField(targetClass, fieldName, true);
         if (Objects.isNull(field)) {
             return null;
         }
-        ReflectionUtils.makeAccessible(field);
         return field;
     }
 }

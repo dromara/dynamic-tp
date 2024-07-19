@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.dromara.dynamictp.core.support.BinderHelper;
+import org.dromara.dynamictp.spring.ex.AbstractSpringRefresher;
 import org.dromara.dynamictp.starter.etcd.util.EtcdUtil;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -32,7 +33,7 @@ import java.util.Map;
  * @author Redick01
  */
 @Slf4j
-public class EtcdRefresher extends AbstractRefresher implements InitializingBean, Ordered, DisposableBean {
+public class EtcdRefresher extends AbstractSpringRefresher implements InitializingBean, Ordered, DisposableBean {
 
     public EtcdRefresher(DtpProperties dtpProperties) {
         super(dtpProperties);

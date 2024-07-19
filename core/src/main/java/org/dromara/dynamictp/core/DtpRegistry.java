@@ -21,6 +21,7 @@ import com.github.dadiyang.equator.Equator;
 import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
 import com.google.common.collect.Sets;
+import com.google.common.eventbus.Subscribe;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
@@ -28,6 +29,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.entity.TpMainFields;
 import org.dromara.dynamictp.common.ex.DtpException;
+import org.dromara.dynamictp.common.manager.EventBusManager;
+import org.dromara.dynamictp.common.manager.RefreshedEvent;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.queue.MemorySafeLinkedBlockingQueue;
 import org.dromara.dynamictp.common.queue.VariableLinkedBlockingQueue;
@@ -42,7 +45,7 @@ import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
-import org.springframework.context.event.ContextRefreshedEvent;
+
 
 import java.util.Collections;
 import java.util.List;
@@ -63,7 +66,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.PROPERTIES_CH
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpRegistry extends OnceApplicationContextEventListener {
+public class DtpRegistry {
 
     /**
      * Maintain all automatically registered and manually registered Executors.
@@ -76,9 +79,16 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
     private static final Equator EQUATOR = new GetterBaseEquator();
 
     private static DtpProperties dtpProperties;
+    private static DtpRegistry INSTANCE;
 
     public DtpRegistry(DtpProperties dtpProperties) {
         DtpRegistry.dtpProperties = dtpProperties;
+        INSTANCE = this;
+        EventBusManager.register(this);
+    }
+
+    public static void destroy() {
+        EventBusManager.unregister(INSTANCE);
     }
 
     /**
@@ -326,8 +336,8 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
                 props.getThreadPoolName(), blockingQueue.getClass().getSimpleName());
     }
 
-    @Override
-    protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
+    @Subscribe
+    public void onContextRefreshedEvent(RefreshedEvent event) {
         Set<String> remoteExecutors = Collections.emptySet();
         if (CollectionUtils.isNotEmpty(dtpProperties.getExecutors())) {
             remoteExecutors = dtpProperties.getExecutors().stream()

@@ -28,6 +28,7 @@ import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 
@@ -64,7 +65,7 @@ public class MotanDtpAdapter extends AbstractDtpAdapter {
     protected void initialize() {
         super.initialize();
 
-        val beans = ApplicationContextHolder.getBeansOfType(ServiceConfigBean.class);
+        val beans = ContextManagerHelper.getBeansOfType(ServiceConfigBean.class);
         if (MapUtils.isEmpty(beans)) {
             log.warn("Cannot find beans of type ServiceConfigBean.");
             return;

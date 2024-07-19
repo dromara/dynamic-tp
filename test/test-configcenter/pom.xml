@@ -54,5 +54,12 @@
             <artifactId>spring-cloud-context</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.dromara.dynamictp</groupId>
+            <artifactId>dynamic-tp-spring</artifactId>
+            <version>1.1.8-beta</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>

@@ -25,6 +25,7 @@ import org.dromara.dynamictp.common.entity.JvmStats;
 import org.dromara.dynamictp.common.entity.Metrics;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.aware.MetricsAware;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -50,7 +51,7 @@ public class DtpEndpoint {
             metricsList.add(ExecutorConverter.toMetrics(wrapper));
         });
 
-        val handlerMap = ApplicationContextHolder.getBeansOfType(MetricsAware.class);
+        val handlerMap = ContextManagerHelper.getBeansOfType(MetricsAware.class);
         if (MapUtils.isNotEmpty(handlerMap)) {
             handlerMap.forEach((k, v) -> metricsList.addAll(v.getMultiPoolStats()));
         }

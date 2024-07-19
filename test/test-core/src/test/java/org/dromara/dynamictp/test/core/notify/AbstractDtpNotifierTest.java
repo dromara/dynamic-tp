@@ -77,7 +77,7 @@ public class AbstractDtpNotifierTest {
         when(SpringContextHolder.getInstance()).thenAnswer((Answer<ApplicationContext>) c -> contextMock);
 
         Environment envMock = mock(Environment.class);
-        when(SpringContextHolder.getEnvironment()).thenAnswer((Answer<Environment>) c -> envMock);
+        when(SpringContextHolder.getInstance().getEnvironment()).thenAnswer((Answer<Environment>) c -> envMock);
         when(envMock.getProperty("spring.application.name")).thenReturn("test");
         when(envMock.getProperty("server.port")).thenReturn("8080");
         when(envMock.getActiveProfiles()).thenReturn(new String[]{"dev"});

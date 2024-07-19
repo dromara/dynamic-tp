@@ -11,4 +11,6 @@ public interface ContextManager {
     Object getEnvironment();
     String getEnvironmentProperty(String key);
     String getEnvironmentProperty(String key, String defaultValue);
+    String[] getActiveProfiles();
+    String[] getDefaultProfiles();
 }

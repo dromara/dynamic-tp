@@ -25,6 +25,7 @@ import com.netflix.hystrix.strategy.properties.HystrixProperty;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 
 import java.util.Objects;
@@ -69,7 +70,7 @@ public class DtpMetricsPublisherThreadPool implements HystrixMetricsPublisherThr
     @Override
     public void initialize() {
         metricsPublisherForThreadPool.initialize();
-        HystrixDtpAdapter hystrixTpHandler = ApplicationContextHolder.getBean(HystrixDtpAdapter.class);
+        HystrixDtpAdapter hystrixTpHandler = ContextManagerHelper.getBean(HystrixDtpAdapter.class);
         hystrixTpHandler.cacheMetricsPublisher(threadPoolKey.name(), this);
         hystrixTpHandler.register(threadPoolKey.name(), metrics);
     }

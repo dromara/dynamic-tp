@@ -44,12 +44,9 @@ public final class CommonUtil {
     private static final ServiceInstance SERVICE_INSTANCE;
 
     static {
-        Environment environment = (Environment) ContextManagerHelper.getEnvironment();
+        String appName = ContextManagerHelper.getEnvironmentProperty("spring.application.name", "application");
 
-        String appName = environment.getProperty("spring.application.name");
-        appName = StringUtils.isNoneBlank(appName) ? appName : "application";
-
-        String portStr = environment.getProperty("server.port");
+        String portStr = ContextManagerHelper.getEnvironmentProperty("server.port", "0");
         int port = StringUtils.isNotBlank(portStr) ? Integer.parseInt(portStr) : 0;
 
         String address = null;
@@ -62,12 +59,12 @@ public final class CommonUtil {
         String env = DtpProperties.getInstance().getEnv();
         if (StringUtils.isBlank(env)) {
             // fix #I8SSGQ
-            env = environment.getProperty("spring.profiles.active");
+            env = ContextManagerHelper.getEnvironmentProperty("spring.profiles.active");
         }
         if (StringUtils.isBlank(env)) {
-            String[] profiles = environment.getActiveProfiles();
+            String[] profiles = ContextManagerHelper.getActiveProfiles();
             if (profiles.length < 1) {
-                profiles = environment.getDefaultProfiles();
+                profiles = ContextManagerHelper.getDefaultProfiles();
             }
             if (profiles.length >= 1) {
                 env = profiles[0];

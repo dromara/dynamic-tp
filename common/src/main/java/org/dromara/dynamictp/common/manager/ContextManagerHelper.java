@@ -51,4 +51,12 @@ public class ContextManagerHelper {
         return CONTEXT_MANAGER.getEnvironmentProperty(key, defaultValue);
     }
 
+    public static String[] getActiveProfiles() {
+        return CONTEXT_MANAGER.getActiveProfiles();
+    }
+
+    public static String[] getDefaultProfiles() {
+        return CONTEXT_MANAGER.getDefaultProfiles();
+    }
+
 }

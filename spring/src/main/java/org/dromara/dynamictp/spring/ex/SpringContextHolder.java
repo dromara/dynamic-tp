@@ -3,6 +3,9 @@ package org.dromara.dynamictp.spring.ex;
 
 
 import org.dromara.dynamictp.common.manager.ContextManager;
+import org.dromara.dynamictp.common.manager.EventBusManager;
+import org.dromara.dynamictp.common.manager.RefreshedEvent;
+import org.dromara.dynamictp.core.support.DtpBannerPrinter;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -10,6 +13,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.*;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Objects;
@@ -21,6 +25,7 @@ public class SpringContextHolder implements ContextManager, ApplicationContextAw
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         context = applicationContext;
+        DtpBannerPrinter.printBanner();  // 打印 banner
     }
 
     @Override
@@ -73,7 +78,8 @@ public class SpringContextHolder implements ContextManager, ApplicationContextAw
     }
 
     protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
-        // Override to handle ContextRefreshedEvent
+        RefreshedEvent refreshedEvent = new RefreshedEvent(this);
+        EventBusManager.post(refreshedEvent);
     }
 
     protected void onContextStartedEvent(ContextStartedEvent event) {
@@ -107,6 +113,16 @@ public class SpringContextHolder implements ContextManager, ApplicationContextAw
     @Override
     public String getEnvironmentProperty(String key, String defaultValue) {
         return getInstance().getEnvironment().getProperty(key, defaultValue);
+    }
+
+    @Override
+    public String[] getActiveProfiles() {
+        return getInstance().getEnvironment().getActiveProfiles();
+    }
+
+    @Override
+    public String[] getDefaultProfiles() {
+        return getInstance().getEnvironment().getDefaultProfiles();
     }
 
     @Override

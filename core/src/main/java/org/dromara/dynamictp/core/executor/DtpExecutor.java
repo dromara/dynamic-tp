@@ -54,7 +54,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
  **/
 @Slf4j
 public class DtpExecutor extends ThreadPoolExecutor
-        implements TaskEnhanceAware, ExecutorAdapter<ThreadPoolExecutor>, AsyncTaskExecutor {
+        implements TaskEnhanceAware, ExecutorAdapter<ThreadPoolExecutor>{
 
     /**
      * The name of the thread pool.
@@ -182,8 +182,8 @@ public class DtpExecutor extends ThreadPoolExecutor
     public ThreadPoolExecutor getOriginal() {
         return this;
     }
-    
-    @Override
+
+
     public void execute(Runnable task, long startTimeout) {
         execute(task);
     }

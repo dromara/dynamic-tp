@@ -30,7 +30,6 @@ import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.slf4j.MDC;
-import org.springframework.core.task.AsyncTaskExecutor;
 
 import java.util.List;
 import java.util.Objects;
@@ -53,7 +52,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpExecutor extends ThreadPoolExecutor implements TaskEnhanceAware, ExecutorAdapter<ThreadPoolExecutor>{
+public class DtpExecutor extends ThreadPoolExecutor implements TaskEnhanceAware, ExecutorAdapter<ThreadPoolExecutor> {
 
     /**
      * The name of the thread pool.

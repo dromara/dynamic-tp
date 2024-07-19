@@ -19,7 +19,6 @@ package org.dromara.dynamictp.starter.etcd.refresher;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.dromara.dynamictp.core.support.BinderHelper;
 import org.dromara.dynamictp.spring.ex.AbstractSpringRefresher;
 import org.dromara.dynamictp.starter.etcd.util.EtcdUtil;

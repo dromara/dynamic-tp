@@ -19,7 +19,6 @@ package org.dromara.dynamictp.starter.cloud.nacos.refresher;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.dromara.dynamictp.spring.ex.AbstractSpringRefresher;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.ApplicationEvent;

@@ -21,8 +21,6 @@ import org.dromara.dynamictp.common.constant.DynamicTpConst;
 import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.util.VersionUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.Environment;
 
 /**
  * DtpBannerPrinter related
@@ -31,7 +29,7 @@ import org.springframework.core.env.Environment;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpBannerPrinter{
+public class DtpBannerPrinter {
 
     private static final String NAME = " :: Dynamic Thread Pool :: ";
 

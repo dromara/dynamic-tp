@@ -19,7 +19,6 @@ package org.dromara.dynamictp.common.event;
 
 import org.dromara.dynamictp.common.manager.RefreshedEvent;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.springframework.context.ApplicationEvent;
 
 /**
  * AlarmCheckEvent related

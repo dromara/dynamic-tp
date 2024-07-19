@@ -24,7 +24,6 @@ import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.framework.state.ConnectionStateListener;
 import org.apache.zookeeper.WatchedEvent;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.dromara.dynamictp.spring.ex.AbstractSpringRefresher;
 import org.dromara.dynamictp.starter.zookeeper.autoconfigure.ZkConfigEnvironmentProcessor;
 import org.dromara.dynamictp.starter.zookeeper.util.CuratorUtil;

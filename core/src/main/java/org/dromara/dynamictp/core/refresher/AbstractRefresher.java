@@ -46,9 +46,9 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAIN_PROPERTI
  * @since 1.0.0
  **/
 @Slf4j
-public abstract class AbstractRefresher implements Refresher{
+public abstract class AbstractRefresher implements Refresher {
 
-    public final DtpProperties dtpProperties;
+    protected final DtpProperties dtpProperties;
 
     protected AbstractRefresher(DtpProperties dtpProperties) {
         this.dtpProperties = dtpProperties;

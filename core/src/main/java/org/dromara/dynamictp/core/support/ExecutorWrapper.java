@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.core.support;
 
-import com.google.common.collect.Sets;
 import lombok.Data;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;

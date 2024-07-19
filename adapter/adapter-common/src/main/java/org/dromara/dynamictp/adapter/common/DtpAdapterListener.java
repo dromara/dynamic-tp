@@ -28,11 +28,6 @@ import org.dromara.dynamictp.core.handler.CollectorHandler;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.event.GenericApplicationListener;
-import org.springframework.core.ResolvableType;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.springframework.util.CollectionUtils;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTIFY_ITEMS;
@@ -44,7 +39,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTI
  * @since 1.0.6
  */
 @Slf4j
-public class DtpAdapterListener{
+public class DtpAdapterListener {
 
     @Subscribe
     public void handleRefreshedEvent(RefreshedEvent event) {

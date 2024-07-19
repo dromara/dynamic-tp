@@ -50,7 +50,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTI
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpMonitor{
+public class DtpMonitor {
 
     private static final ScheduledExecutorService MONITOR_EXECUTOR = ThreadPoolCreator.newScheduledThreadPool("dtp-monitor", 1);
     private static DtpMonitor INSTANCE;

@@ -22,8 +22,6 @@ import org.dromara.dynamictp.common.entity.ServiceInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.manager.ContextManagerHelper;
-import org.springframework.core.env.Environment;
-
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;

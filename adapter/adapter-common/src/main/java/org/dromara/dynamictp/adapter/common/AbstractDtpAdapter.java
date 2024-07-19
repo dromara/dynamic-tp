@@ -163,12 +163,8 @@ public abstract class AbstractDtpAdapter extends SpringContextHolder implements 
 
     protected void enhanceOriginExecutor(String tpName, ThreadPoolExecutor executor, String fieldName, Object targetObj) {
         ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executor);
-        try {
-            ReflectionUtil.setFieldValue(fieldName, targetObj, proxy);
-            putAndFinalize(tpName, executor, proxy);
-        } catch (IllegalAccessException e) {
-            log.error("DynamicTp adapter, enhance {} failed.", tpName, e);
-        }
+        ReflectionUtil.setFieldValue(fieldName, targetObj, proxy);
+        putAndFinalize(tpName, executor, proxy);
     }
 
     protected void putAndFinalize(String tpName, ExecutorService origin, Executor targetForWrapper) {

@@ -89,12 +89,8 @@ public class MotanDtpAdapter extends AbstractDtpAdapter {
                 if (Objects.nonNull(executor)) {
                     StandardThreadExecutorProxy proxy = new StandardThreadExecutorProxy(executor);
                     String tpName = TP_PREFIX + "#" + nettyServer.getUrl().getPort();
-                    try {
-                        ReflectionUtil.setFieldValue(EXECUTOR_FIELD, nettyServer, proxy);
-                        putAndFinalize(tpName, executor, proxy);
-                    } catch (IllegalAccessException ex) {
-                        log.error("DynamicTp adapter, enhance {} failed.", tpName, ex);
-                    }
+                    ReflectionUtil.setFieldValue(EXECUTOR_FIELD, nettyServer, proxy);
+                    putAndFinalize(tpName, executor, proxy);
                 }
             });
         });

@@ -15,34 +15,21 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.spring;
+package org.dromara.dynamictp.spring.ex;
 
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.springframework.core.env.Environment;
+import org.springframework.context.annotation.Import;
 
-import java.util.Map;
+import java.lang.annotation.*;
 
 /**
- * PropertiesBinder related
+ * EnableDynamicTp related
  *
  * @author yanhom
- * @since 1.0.3
+ * @since 1.0.4
  **/
-public interface PropertiesBinder {
-
-    /**
-     * bind dtp properties
-     *
-     * @param properties   properties
-     * @param dtpProperties dtp properties
-     */
-    void bindDtpProperties(Map<?, Object> properties, DtpProperties dtpProperties);
-
-    /**
-     * bind dtp properties
-     *
-     * @param environment  environment
-     * @param dtpProperties dtp properties
-     */
-    void bindDtpProperties(Environment environment, DtpProperties dtpProperties);
+@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Import(DtpConfigurationSelector.class)
+public @interface EnableDynamicTp {
 }

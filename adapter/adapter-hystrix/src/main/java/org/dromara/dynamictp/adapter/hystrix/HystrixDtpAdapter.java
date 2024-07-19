@@ -30,8 +30,8 @@ import lombok.val;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.util.StreamUtil;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
@@ -81,7 +81,7 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
             return;
         }
 
-        DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+        DtpProperties dtpProperties = ContextManagerHelper.getBean(DtpProperties.class);
         val prop = StreamUtil.toMap(dtpProperties.getHystrixTp(), TpExecutorProps::getThreadPoolName);
         String tpName = TP_PREFIX + "#" + poolName;
         enhanceOriginExecutor(tpName, threadPoolExecutor, THREAD_POOL_FIELD, metrics);

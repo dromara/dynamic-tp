@@ -17,12 +17,10 @@
 
 package org.dromara.dynamictp.common.parser.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
 import com.google.common.collect.Lists;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
-import org.springframework.core.io.ByteArrayResource;
-
+import org.yaml.snakeyaml.Yaml;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -45,12 +43,17 @@ public class YamlConfigParser extends AbstractConfigParser {
 
     @Override
     public Map<Object, Object> doParse(String content) {
-
         if (StringUtils.isEmpty(content)) {
             return Collections.emptyMap();
         }
-        YamlPropertiesFactoryBean bean = new YamlPropertiesFactoryBean();
-        bean.setResources(new ByteArrayResource(content.getBytes()));
-        return bean.getObject();
+
+        Yaml yaml = new Yaml();
+        Map<Object, Object> loadedYaml = yaml.load(content);
+
+        if (loadedYaml == null) {
+            return Collections.emptyMap();
+        }
+
+        return loadedYaml;
     }
 }

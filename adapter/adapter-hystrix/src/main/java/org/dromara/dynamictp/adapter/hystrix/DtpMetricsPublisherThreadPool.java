@@ -25,7 +25,7 @@ import com.netflix.hystrix.strategy.properties.HystrixProperty;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 
 import java.util.Objects;
@@ -70,7 +70,7 @@ public class DtpMetricsPublisherThreadPool implements HystrixMetricsPublisherThr
     @Override
     public void initialize() {
         metricsPublisherForThreadPool.initialize();
-        HystrixDtpAdapter hystrixTpHandler = ApplicationContextHolder.getBean(HystrixDtpAdapter.class);
+        HystrixDtpAdapter hystrixTpHandler = ContextManagerHelper.getBean(HystrixDtpAdapter.class);
         hystrixTpHandler.cacheMetricsPublisher(threadPoolKey.name(), this);
         hystrixTpHandler.register(threadPoolKey.name(), metrics);
     }
@@ -80,37 +80,33 @@ public class DtpMetricsPublisherThreadPool implements HystrixMetricsPublisherThr
             return;
         }
 
-        try {
-            if (!Objects.equals(threadPoolProperties.coreSize().get(), props.getCorePoolSize())) {
-                val corePoolSize = getProperty(threadPoolKey, "coreSize",
-                        props.getCorePoolSize(), DEFAULT_CORE_SIZE);
-                ReflectionUtil.setFieldValue(HystrixThreadPoolProperties.class,
-                        "corePoolSize", threadPoolProperties, corePoolSize);
-            }
+        if (!Objects.equals(threadPoolProperties.coreSize().get(), props.getCorePoolSize())) {
+            val corePoolSize = getProperty(threadPoolKey, "coreSize",
+                    props.getCorePoolSize(), DEFAULT_CORE_SIZE);
+            ReflectionUtil.setFieldValue(HystrixThreadPoolProperties.class,
+                    "corePoolSize", threadPoolProperties, corePoolSize);
+        }
 
-            if (!Objects.equals(threadPoolProperties.maximumSize().get(), props.getMaximumPoolSize())) {
-                val maxPoolSize = getProperty(threadPoolKey, "maximumSize",
-                        props.getMaximumPoolSize(), DEFAULT_MAXIMUM_SIZE);
-                ReflectionUtil.setFieldValue(HystrixThreadPoolProperties.class,
-                        "maximumPoolSize", threadPoolProperties, maxPoolSize);
-            }
+        if (!Objects.equals(threadPoolProperties.maximumSize().get(), props.getMaximumPoolSize())) {
+            val maxPoolSize = getProperty(threadPoolKey, "maximumSize",
+                    props.getMaximumPoolSize(), DEFAULT_MAXIMUM_SIZE);
+            ReflectionUtil.setFieldValue(HystrixThreadPoolProperties.class,
+                    "maximumPoolSize", threadPoolProperties, maxPoolSize);
+        }
 
-            val keepAliveTimeMinutes = (int) TimeUnit.SECONDS.toMinutes(props.getKeepAliveTime());
-            if (!Objects.equals(threadPoolProperties.keepAliveTimeMinutes().get(), keepAliveTimeMinutes)) {
-                val keepAliveTimeProperty = getProperty(threadPoolKey,
-                        "keepAliveTimeMinutes", keepAliveTimeMinutes, DEFAULT_KEEP_ALIVE_TIME_MINUTES);
-                ReflectionUtil.setFieldValue(HystrixThreadPoolProperties.class,
-                        "keepAliveTime", threadPoolProperties, keepAliveTimeProperty);
-            }
+        val keepAliveTimeMinutes = (int) TimeUnit.SECONDS.toMinutes(props.getKeepAliveTime());
+        if (!Objects.equals(threadPoolProperties.keepAliveTimeMinutes().get(), keepAliveTimeMinutes)) {
+            val keepAliveTimeProperty = getProperty(threadPoolKey,
+                    "keepAliveTimeMinutes", keepAliveTimeMinutes, DEFAULT_KEEP_ALIVE_TIME_MINUTES);
+            ReflectionUtil.setFieldValue(HystrixThreadPoolProperties.class,
+                    "keepAliveTime", threadPoolProperties, keepAliveTimeProperty);
+        }
 
-            if (init.compareAndSet(false, true)) {
-                val allowSetMax = getProperty(threadPoolKey,
-                        "allowMaximumSizeToDivergeFromCoreSize", true, true);
-                ReflectionUtil.setFieldValue(HystrixThreadPoolProperties.class,
-                        "allowMaximumSizeToDivergeFromCoreSize", threadPoolProperties, allowSetMax);
-            }
-        } catch (IllegalAccessException e) {
-            log.error("DynamicTp hystrix adapter, reset hystrix threadPool properties failed.", e);
+        if (init.compareAndSet(false, true)) {
+            val allowSetMax = getProperty(threadPoolKey,
+                    "allowMaximumSizeToDivergeFromCoreSize", true, true);
+            ReflectionUtil.setFieldValue(HystrixThreadPoolProperties.class,
+                    "allowMaximumSizeToDivergeFromCoreSize", threadPoolProperties, allowSetMax);
         }
     }
 

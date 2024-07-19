@@ -18,10 +18,9 @@
 package org.dromara.dynamictp.core.support;
 
 import org.dromara.dynamictp.common.constant.DynamicTpConst;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.util.VersionUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.Environment;
 
 /**
  * DtpBannerPrinter related
@@ -30,7 +29,7 @@ import org.springframework.core.env.Environment;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpBannerPrinter implements EnvironmentAware {
+public class DtpBannerPrinter {
 
     private static final String NAME = " :: Dynamic Thread Pool :: ";
 
@@ -45,10 +44,8 @@ public class DtpBannerPrinter implements EnvironmentAware {
             "         __/ |                              | |    \n" +
             "        |___/                               |_|    ";
 
-    @Override
-    public void setEnvironment(Environment environment) {
-        boolean enable = environment.getProperty(DynamicTpConst.BANNER_ENABLED_PROP,
-                boolean.class, true);
+    public static void printBanner() {
+        boolean enable = Boolean.parseBoolean(ContextManagerHelper.getEnvironmentProperty(DynamicTpConst.BANNER_ENABLED_PROP, "true"));
         if (enable) {
             log.info(BANNER + "\n" + NAME + "\n :: " + VersionUtil.getVersion() + " :: \n" + SITE + "\n");
         }

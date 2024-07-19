@@ -25,18 +25,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
 import org.dromara.dynamictp.common.event.RefreshEvent;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.handler.ConfigHandler;
 import org.dromara.dynamictp.core.support.BinderHelper;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.Environment;
+
 
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.dromara.dynamictp.common.manager.EventBusManager;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAIN_PROPERTIES_PREFIX;
 
@@ -47,24 +46,17 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAIN_PROPERTI
  * @since 1.0.0
  **/
 @Slf4j
-public abstract class AbstractRefresher implements Refresher, EnvironmentAware {
+public abstract class AbstractRefresher implements Refresher {
 
     protected final DtpProperties dtpProperties;
 
-    protected Environment environment;
-
     protected AbstractRefresher(DtpProperties dtpProperties) {
         this.dtpProperties = dtpProperties;
-    }
-
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
+        EventBusManager.register(this);
     }
 
     @Override
     public void refresh(String content, ConfigFileTypeEnum fileType) {
-
         if (StringUtils.isBlank(content) || Objects.isNull(fileType)) {
             log.warn("DynamicTp refresh, empty content or null fileType.");
             return;
@@ -88,7 +80,7 @@ public abstract class AbstractRefresher implements Refresher, EnvironmentAware {
         doRefresh(dtpProperties);
     }
 
-    protected void refresh(Environment environment) {
+    protected void refresh(Object environment) {
         BinderHelper.bindDtpProperties(environment, dtpProperties);
         doRefresh(dtpProperties);
     }
@@ -110,6 +102,6 @@ public abstract class AbstractRefresher implements Refresher, EnvironmentAware {
 
     private void publishEvent(DtpProperties dtpProperties) {
         RefreshEvent event = new RefreshEvent(this, dtpProperties);
-        ApplicationContextHolder.publishEvent(event);
+        EventBusManager.post(event);
     }
 }

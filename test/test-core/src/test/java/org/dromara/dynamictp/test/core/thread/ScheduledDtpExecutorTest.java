@@ -18,9 +18,8 @@
 package org.dromara.dynamictp.test.core.thread;
 
 import org.dromara.dynamictp.core.DtpRegistry;
-import org.dromara.dynamictp.core.spring.EnableDynamicTp;
-import org.dromara.dynamictp.core.spring.YamlPropertySourceFactory;
 import org.dromara.dynamictp.core.executor.ScheduledDtpExecutor;
+import org.dromara.dynamictp.spring.ex.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -36,7 +35,6 @@ import java.util.concurrent.TimeUnit;
 @SpringBootTest(classes = ScheduledDtpExecutorTest.class)
 //让JUnit运行Spring的测试环境,获得Spring环境的上下文的支持
 @ExtendWith(SpringExtension.class)
-@EnableDynamicTp
 @EnableAutoConfiguration
 class ScheduledDtpExecutorTest {
 

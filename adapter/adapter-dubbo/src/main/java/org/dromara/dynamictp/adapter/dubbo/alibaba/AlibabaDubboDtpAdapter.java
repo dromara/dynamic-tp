@@ -23,8 +23,8 @@ import com.alibaba.dubbo.remoting.transport.dispatcher.WrappedChannelHandler;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.jvmti.JVMTI;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -59,7 +59,7 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements Initia
             while (!registered.get()) {
                 try {
                     Thread.sleep(1000);
-                    DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+                    DtpProperties dtpProperties = ContextManagerHelper.getBean(DtpProperties.class);
                     this.initialize();
                     this.refresh(dtpProperties);
                 } catch (Throwable e) { }

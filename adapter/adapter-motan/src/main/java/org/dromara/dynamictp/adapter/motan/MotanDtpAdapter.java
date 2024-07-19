@@ -28,8 +28,8 @@ import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 
 import java.util.List;
@@ -65,7 +65,7 @@ public class MotanDtpAdapter extends AbstractDtpAdapter {
     protected void initialize() {
         super.initialize();
 
-        val beans = ApplicationContextHolder.getBeansOfType(ServiceConfigBean.class);
+        val beans = ContextManagerHelper.getBeansOfType(ServiceConfigBean.class);
         if (MapUtils.isEmpty(beans)) {
             log.warn("Cannot find beans of type ServiceConfigBean.");
             return;
@@ -89,12 +89,8 @@ public class MotanDtpAdapter extends AbstractDtpAdapter {
                 if (Objects.nonNull(executor)) {
                     StandardThreadExecutorProxy proxy = new StandardThreadExecutorProxy(executor);
                     String tpName = TP_PREFIX + "#" + nettyServer.getUrl().getPort();
-                    try {
-                        ReflectionUtil.setFieldValue(EXECUTOR_FIELD, nettyServer, proxy);
-                        putAndFinalize(tpName, executor, proxy);
-                    } catch (IllegalAccessException ex) {
-                        log.error("DynamicTp adapter, enhance {} failed.", tpName, ex);
-                    }
+                    ReflectionUtil.setFieldValue(EXECUTOR_FIELD, nettyServer, proxy);
+                    putAndFinalize(tpName, executor, proxy);
                 }
             });
         });

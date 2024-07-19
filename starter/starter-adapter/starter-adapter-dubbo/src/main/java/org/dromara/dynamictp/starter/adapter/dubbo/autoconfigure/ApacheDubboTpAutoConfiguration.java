@@ -18,8 +18,8 @@
 package org.dromara.dynamictp.starter.adapter.dubbo.autoconfigure;
 
 import org.dromara.dynamictp.adapter.dubbo.apache.ApacheDubboDtpAdapter;
+import org.dromara.dynamictp.spring.ex.DtpBaseBeanConfiguration;
 import org.dromara.dynamictp.starter.adapter.dubbo.autoconfigure.condition.ConditionOnApacheDubboApp;
-import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

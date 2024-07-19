@@ -21,8 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.MapUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.springframework.amqp.rabbit.connection.AbstractConnectionFactory;
 
@@ -58,7 +58,7 @@ public class RabbitMqDtpAdapter extends AbstractDtpAdapter {
     protected void initialize() {
         super.initialize();
 
-        val beans = ApplicationContextHolder.getBeansOfType(AbstractConnectionFactory.class);
+        val beans = ContextManagerHelper.getBeansOfType(AbstractConnectionFactory.class);
         if (MapUtils.isEmpty(beans)) {
             log.warn("Cannot find beans of type AbstractConnectionFactory.");
             return;

@@ -19,8 +19,7 @@ package org.dromara.dynamictp.test.core.thread;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
-import org.dromara.dynamictp.core.spring.EnableDynamicTp;
-import org.dromara.dynamictp.core.spring.YamlPropertySourceFactory;
+import org.dromara.dynamictp.spring.ex.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -41,7 +40,6 @@ import java.util.concurrent.TimeUnit;
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
 @Slf4j
-@EnableDynamicTp
 @EnableAutoConfiguration
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = PriorityDtpExecutorTest.class)

@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.example;
 
-import org.dromara.dynamictp.core.spring.EnableDynamicTp;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,7 +25,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 /**
  * @author Redick01
  */
-@EnableDynamicTp
 @EnableFeignClients
 @MapperScan(basePackages = {"org.dromara.dynamictp.example.mapper"})
 @SpringBootApplication

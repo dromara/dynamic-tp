@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.spring;
+package org.dromara.dynamictp.spring.ex;
 
 import com.google.common.collect.Lists;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
-import org.dromara.dynamictp.common.spring.SpringBeanHelper;
+
 import org.dromara.dynamictp.common.timer.HashedWheelTimer;
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -45,7 +44,7 @@ public class DtpBaseBeanDefinitionRegistrar implements ImportBeanDefinitionRegis
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         registerHashedWheelTimer(registry);
-        SpringBeanHelper.registerIfAbsent(registry, APPLICATION_CONTEXT_HOLDER, ApplicationContextHolder.class);
+        SpringBeanHelper.registerIfAbsent(registry, APPLICATION_CONTEXT_HOLDER, SpringContextHolder.class);
 
         // ApplicationContextHolder and HashedWheelTimer are required in DtpExecutor execute method, so they must be registered first
         SpringBeanHelper.registerIfAbsent(registry, DTP_POST_PROCESSOR, DtpPostProcessor.class,

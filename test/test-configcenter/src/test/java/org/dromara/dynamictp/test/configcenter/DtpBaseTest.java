@@ -17,8 +17,7 @@
 
 package org.dromara.dynamictp.test.configcenter;
 
-import org.dromara.dynamictp.core.spring.EnableDynamicTp;
-import org.dromara.dynamictp.core.spring.YamlPropertySourceFactory;
+import org.dromara.dynamictp.spring.ex.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -29,9 +28,9 @@ import org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAu
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.Environment;
 
 /**
  * DtpBaseTest related
@@ -43,7 +42,7 @@ import org.springframework.core.env.Environment;
 @EnableAutoConfiguration
 @SpringBootTest(classes = {DtpBaseTest.class})
 @PropertySource(value = "classpath:/dynamic-tp-demo-dtp-dev.yml", factory = YamlPropertySourceFactory.class)
-@ComponentScan(basePackages = "org.dromara.dynamictp.test.configcenter")
+@ComponentScan(basePackages = {"org.dromara.dynamictp.test.configcenter", "org.dromara.dynamictp.spring"})
 @AutoConfigureAfter(ConfigurationPropertiesRebinderAutoConfiguration.class)
 public class DtpBaseTest {
 

@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.starter.adapter.motan.autoconfigure;
 
 import org.dromara.dynamictp.adapter.motan.MotanDtpAdapter;
-import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
+import org.dromara.dynamictp.spring.ex.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

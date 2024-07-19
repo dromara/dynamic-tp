@@ -24,7 +24,6 @@ import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.notifier.manager.NoticeManager;
 import org.dromara.dynamictp.core.support.DtpLifecycleSupport;
 import org.dromara.dynamictp.core.system.SystemMetricManager;
-import org.springframework.context.SmartLifecycle;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -35,7 +34,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 1.1.3
  **/
 @Slf4j
-public class DtpLifecycle implements SmartLifecycle {
+public class DtpLifecycle implements LifeCycleManagement {
 
     private final AtomicBoolean running = new AtomicBoolean(false);
 

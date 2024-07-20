@@ -65,7 +65,7 @@ public class MarkdownReq {
 
         private List<String> atMobiles;
 
-        private boolean isAtAll;
+        private Boolean isAtAll;
     }
 }
 

@@ -39,11 +39,11 @@ import java.util.Map;
  * @author yanhom
  * @since 1.1.0
  */
-@PropertySource(value = "classpath:/demo-dtp-dev.yml",
+@PropertySource(value = "classpath:/demo-dtp-dev-demo.yml",
         factory = YamlPropertySourceFactory.class)
-@SpringBootTest(classes = PropertiesBinderTest.class)
+@SpringBootTest(classes = PropertiesGlobalBinderTest.class)
 @EnableAutoConfiguration
-class PropertiesBinderTest {
+class PropertiesGlobalBinderTest {
 
     @Autowired
     private AbstractEnvironment environment;

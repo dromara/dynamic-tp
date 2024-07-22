@@ -35,7 +35,7 @@ import java.util.List;
 @Data
 public class DtpProperties {
 
-    private DtpProperties() { }
+    DtpProperties() { }
 
     /**
      * If enabled DynamicTp.

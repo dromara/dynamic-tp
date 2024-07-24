@@ -30,7 +30,6 @@ import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.entity.TpMainFields;
 import org.dromara.dynamictp.common.ex.DtpException;
 import org.dromara.dynamictp.common.manager.EventBusManager;
-import org.dromara.dynamictp.common.manager.RefreshedEvent;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.queue.MemorySafeLinkedBlockingQueue;
 import org.dromara.dynamictp.common.queue.VariableLinkedBlockingQueue;
@@ -47,11 +46,7 @@ import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
@@ -337,7 +332,7 @@ public class DtpRegistry {
     }
 
     @Subscribe
-    public void onContextRefreshedEvent(RefreshedEvent event) {
+    public void onContextRefreshedEvent(EventObject event) {
         Set<String> remoteExecutors = Collections.emptySet();
         if (CollectionUtils.isNotEmpty(dtpProperties.getExecutors())) {
             remoteExecutors = dtpProperties.getExecutors().stream()

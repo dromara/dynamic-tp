@@ -22,13 +22,14 @@ import org.dromara.dynamictp.common.event.AlarmCheckEvent;
 import org.dromara.dynamictp.common.event.CollectEvent;
 import org.dromara.dynamictp.common.event.RefreshEvent;
 import org.dromara.dynamictp.common.manager.ContextManagerHelper;
-import org.dromara.dynamictp.common.manager.RefreshedEvent;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.handler.CollectorHandler;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.CollectionUtils;
+
+import java.util.EventObject;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTIFY_ITEMS;
 
@@ -42,14 +43,17 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTI
 public class DtpAdapterListener {
 
     @Subscribe
-    public void handleRefreshedEvent(RefreshedEvent event) {
+    public void handleRefreshedEvent(EventObject event) {
         try {
             if (event instanceof RefreshEvent) {
-                doRefresh(event.getDtpProperties());
+                RefreshEvent refreshEvent = (RefreshEvent) event;
+                doRefresh(refreshEvent.getDtpProperties());
             } else if (event instanceof CollectEvent) {
-                doCollect(event.getDtpProperties());
+                CollectEvent collectEvent = (CollectEvent) event;
+                doCollect(collectEvent.getDtpProperties());
             } else if (event instanceof AlarmCheckEvent) {
-                doAlarmCheck(event.getDtpProperties());
+                AlarmCheckEvent alarmCheckEvent = (AlarmCheckEvent) event;
+                doAlarmCheck(alarmCheckEvent.getDtpProperties());
             }
         } catch (Exception e) {
             log.error("DynamicTp adapter, event handle failed.", e);

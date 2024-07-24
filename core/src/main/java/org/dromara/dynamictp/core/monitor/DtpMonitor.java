@@ -25,7 +25,6 @@ import org.dromara.dynamictp.common.event.AlarmCheckEvent;
 import org.dromara.dynamictp.common.event.CollectEvent;
 import org.dromara.dynamictp.common.manager.EventBusManager;
 
-import org.dromara.dynamictp.common.manager.RefreshedEvent;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 
 import org.dromara.dynamictp.core.DtpRegistry;
@@ -36,6 +35,7 @@ import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolCreator;
 
 
+import java.util.EventObject;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -67,7 +67,7 @@ public class DtpMonitor {
     }
 
     @Subscribe
-    public synchronized void onContextRefreshedEvent(RefreshedEvent event) {
+    public synchronized void onContextRefreshedEvent(EventObject event) {
         // if monitorInterval is same as before, do nothing.
         if (monitorInterval == dtpProperties.getMonitorInterval()) {
             return;

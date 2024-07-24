@@ -27,7 +27,7 @@ import java.util.EventObject;
  * @author yanhom
  * @since 1.0.0
  */
-public class RefreshEvent extends EventObject{
+public class RefreshEvent extends EventObject {
 
     private final transient DtpProperties dtpProperties;
 

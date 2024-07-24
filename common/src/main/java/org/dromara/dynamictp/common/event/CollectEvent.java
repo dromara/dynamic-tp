@@ -21,13 +21,14 @@ import org.dromara.dynamictp.common.properties.DtpProperties;
 
 import java.util.EventObject;
 
+
 /**
  * CollectEvent related
  *
  * @author yanhom
  * @since 1.0.0
  */
-public class CollectEvent extends EventObject{
+public class CollectEvent extends EventObject {
 
     private final transient DtpProperties dtpProperties;
 

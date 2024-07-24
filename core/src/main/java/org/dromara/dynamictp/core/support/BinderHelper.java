@@ -43,7 +43,7 @@ public class BinderHelper {
         }
         final PropertiesBinder loadedFirstBinder = ExtensionServiceLoader.getFirst(PropertiesBinder.class);
         if (Objects.isNull(loadedFirstBinder)) {
-            log.error("DynamicTp refresh, no SPI for org.dromara.dynamictp.spring.ex.PropertiesBinder.");
+            log.error("DynamicTp refresh, no SPI for org.dromara.dynamictp.core.support.PropertiesBinder.");
             return null;
         }
         Singleton.INST.single(PropertiesBinder.class, loadedFirstBinder);

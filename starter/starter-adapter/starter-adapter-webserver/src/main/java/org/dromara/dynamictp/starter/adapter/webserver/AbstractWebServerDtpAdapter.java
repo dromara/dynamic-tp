@@ -22,7 +22,7 @@ import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
-import org.dromara.dynamictp.spring.ex.SpringContextHolder;
+import org.dromara.dynamictp.spring.SpringContextHolder;
 import org.springframework.boot.web.context.WebServerApplicationContext;
 import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.boot.web.server.WebServer;

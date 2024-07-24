@@ -30,7 +30,7 @@ import lombok.val;
 import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.handler.ConfigHandler;
-import org.dromara.dynamictp.spring.ex.AbstractSpringRefresher;
+import org.dromara.dynamictp.spring.AbstractSpringRefresher;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.io.IOException;

@@ -17,7 +17,8 @@
 
 package org.dromara.dynamictp.test.configcenter;
 
-import org.dromara.dynamictp.spring.ex.*;
+import org.dromara.dynamictp.spring.EnableDynamicTp;
+import org.dromara.dynamictp.spring.YamlPropertySourceFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -28,7 +29,6 @@ import org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAu
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 

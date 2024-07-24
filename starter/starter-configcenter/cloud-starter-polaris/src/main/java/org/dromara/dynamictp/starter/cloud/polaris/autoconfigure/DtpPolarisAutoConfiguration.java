@@ -19,7 +19,7 @@ package org.dromara.dynamictp.starter.cloud.polaris.autoconfigure;
 
 import com.tencent.cloud.polaris.config.config.PolarisConfigProperties;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.spring.ex.DtpBaseBeanConfiguration;
+import org.dromara.dynamictp.spring.DtpBaseBeanConfiguration;
 import org.dromara.dynamictp.starter.cloud.polaris.refresher.CloudPolarisRefresher;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

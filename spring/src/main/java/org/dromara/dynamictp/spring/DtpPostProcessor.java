@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.spring.ex;
+package org.dromara.dynamictp.spring;
 
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;

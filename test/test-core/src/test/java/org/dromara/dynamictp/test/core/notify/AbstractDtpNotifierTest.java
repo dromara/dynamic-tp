@@ -33,7 +33,7 @@ import org.dromara.dynamictp.core.notifier.context.NoticeCtx;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolCreator;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
-import org.dromara.dynamictp.spring.ex.SpringContextHolder;
+import org.dromara.dynamictp.spring.SpringContextHolder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

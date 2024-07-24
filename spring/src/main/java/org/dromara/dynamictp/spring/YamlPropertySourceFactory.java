@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.spring.ex;
+package org.dromara.dynamictp.spring;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;

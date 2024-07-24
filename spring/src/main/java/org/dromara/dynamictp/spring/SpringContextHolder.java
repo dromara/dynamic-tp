@@ -1,10 +1,9 @@
-package org.dromara.dynamictp.spring.ex;
+package org.dromara.dynamictp.spring;
 
 
 
 import org.dromara.dynamictp.common.manager.ContextManager;
 import org.dromara.dynamictp.common.manager.EventBusManager;
-import org.dromara.dynamictp.common.manager.RefreshedEvent;
 import org.dromara.dynamictp.core.support.DtpBannerPrinter;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -14,6 +13,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.*;
 import org.springframework.core.env.Environment;
 
+import java.util.EventObject;
 import java.util.Map;
 import java.util.Objects;
 
@@ -77,7 +77,7 @@ public class SpringContextHolder implements ContextManager, ApplicationContextAw
     }
 
     protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
-        RefreshedEvent refreshedEvent = new RefreshedEvent(this);
+        EventObject refreshedEvent = new EventObject(this);
         EventBusManager.post(refreshedEvent);
     }
 

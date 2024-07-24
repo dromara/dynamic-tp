@@ -19,7 +19,7 @@ package org.dromara.dynamictp.starter.cloud.consul.refresher;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.spring.ex.AbstractSpringRefresher;
+import org.dromara.dynamictp.spring.AbstractSpringRefresher;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.SmartApplicationListener;

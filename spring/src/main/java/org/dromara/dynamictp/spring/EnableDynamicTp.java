@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.spring.ex;
+package org.dromara.dynamictp.spring;
 
 import org.springframework.context.annotation.Import;
 

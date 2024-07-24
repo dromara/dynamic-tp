@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.starter.adapter.rocketmq.autoconfigure;
 
 import org.dromara.dynamictp.adapter.rocketmq.RocketMqDtpAdapter;
-import org.dromara.dynamictp.spring.ex.DtpBaseBeanConfiguration;
+import org.dromara.dynamictp.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

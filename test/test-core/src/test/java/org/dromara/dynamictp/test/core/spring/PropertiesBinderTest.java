@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.support.BinderHelper;
-import org.dromara.dynamictp.spring.ex.YamlPropertySourceFactory;
+import org.dromara.dynamictp.spring.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

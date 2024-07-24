@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.starter.adapter.dubbo.autoconfigure;
 
 import org.dromara.dynamictp.adapter.dubbo.alibaba.AlibabaDubboDtpAdapter;
-import org.dromara.dynamictp.spring.ex.DtpBaseBeanConfiguration;
+import org.dromara.dynamictp.spring.DtpBaseBeanConfiguration;
 import org.dromara.dynamictp.starter.adapter.dubbo.autoconfigure.condition.ConditionOnAlibabaDubboApp;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

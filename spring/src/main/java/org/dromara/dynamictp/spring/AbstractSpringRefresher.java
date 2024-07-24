@@ -1,4 +1,4 @@
-package org.dromara.dynamictp.spring.ex;
+package org.dromara.dynamictp.spring;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.properties.DtpProperties;

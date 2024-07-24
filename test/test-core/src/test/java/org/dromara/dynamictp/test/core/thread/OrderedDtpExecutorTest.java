@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.spring.ex.YamlPropertySourceFactory;
+import org.dromara.dynamictp.spring.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.MDC;

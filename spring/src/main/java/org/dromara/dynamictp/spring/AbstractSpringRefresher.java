@@ -23,11 +23,6 @@ public abstract class AbstractSpringRefresher extends AbstractRefresher implemen
 
     @Override
     protected void refresh(Object environment) {
-        if (environment instanceof Environment) {
-            BinderHelper.bindDtpProperties((Environment) environment, dtpProperties);
-            doRefresh(dtpProperties);
-        } else {
-            super.refresh(environment);
-        }
+        super.refresh(environment);
     }
 }

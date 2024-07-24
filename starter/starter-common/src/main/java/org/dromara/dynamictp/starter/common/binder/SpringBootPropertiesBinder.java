@@ -60,15 +60,16 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
 
     @Override
     public void bindDtpProperties(Object environment, DtpProperties dtpProperties) {
-        if (environment instanceof Environment) {
-            try {
-                Class.forName("org.springframework.boot.context.properties.bind.Binder");
-                doBindIn2X((Environment) environment, dtpProperties);
-            } catch (ClassNotFoundException e) {
-                doBindIn1X((Environment) environment, dtpProperties);
-            }
-        } else {
+        if (!(environment instanceof Environment)) {
             throw new IllegalArgumentException("Invalid environment type, expected org.springframework.core.env.Environment");
+        }
+
+        Environment env = (Environment) environment;
+        try {
+            Class.forName("org.springframework.boot.context.properties.bind.Binder");
+            doBindIn2X(env, dtpProperties);
+        } catch (ClassNotFoundException e) {
+            doBindIn1X(env, dtpProperties);
         }
     }
 

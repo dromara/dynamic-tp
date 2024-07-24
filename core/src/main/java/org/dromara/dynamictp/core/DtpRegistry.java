@@ -74,16 +74,16 @@ public class DtpRegistry {
     private static final Equator EQUATOR = new GetterBaseEquator();
 
     private static DtpProperties dtpProperties;
-    private static DtpRegistry INSTANCE;
+    private static DtpRegistry instance;
 
     public DtpRegistry(DtpProperties dtpProperties) {
         DtpRegistry.dtpProperties = dtpProperties;
-        INSTANCE = this;
+        instance = this;
         EventBusManager.register(this);
     }
 
     public static void destroy() {
-        EventBusManager.unregister(INSTANCE);
+        EventBusManager.unregister(instance);
     }
 
     /**

@@ -21,6 +21,7 @@ import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.monitor.DtpMonitor;
 import org.dromara.dynamictp.core.spring.DtpLifecycle;
+import org.dromara.dynamictp.core.spring.LifeCycleManagement;
 import org.dromara.dynamictp.core.support.DtpBannerPrinter;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
@@ -61,5 +62,10 @@ public class DtpBaseBeanConfiguration {
     @Bean
     public DtpBannerPrinter dtpBannerPrinter() {
         return new DtpBannerPrinter();
+    }
+
+    @Bean
+    public DtpLifecycleSpringAdapter dtpLifecycleSpringAdapter(LifeCycleManagement lifeCycleManagement) {
+        return new DtpLifecycleSpringAdapter(lifeCycleManagement);
     }
 }

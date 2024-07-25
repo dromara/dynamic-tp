@@ -40,7 +40,7 @@
  * https://creativecommons.org/licenses/publicdomain
  */
 
-package org.dromara.dynamictp.core.spring;
+package org.dromara.dynamictp.core.lifecycle;
 
 public interface LifeCycleManagement {
     void start();

@@ -44,15 +44,93 @@ package org.dromara.dynamictp.common.manager;
 
 import java.util.Map;
 
+/**
+ * Interface for managing context in the application.
+ * Provides methods to access beans, set context, handle events,
+ * and retrieve environment properties and profiles.
+ *
+ * @author vzer200
+ * @since 1.0.0
+ */
 public interface ContextManager {
+
+    /**
+     * Retrieves a bean by its class type.
+     *
+     * @param <T> the type of the bean
+     * @param clazz the class of the bean
+     * @return an instance of the bean, or null if not found
+     */
     <T> T getBean(Class<T> clazz);
+
+    /**
+     * Retrieves a bean by its name and class type.
+     *
+     * @param <T> the type of the bean
+     * @param name the name of the bean
+     * @param clazz the class of the bean
+     * @return an instance of the bean, or null if not found
+     */
     <T> T getBean(String name, Class<T> clazz);
+
+    /**
+     * Retrieves all beans of the specified type.
+     *
+     * @param <T> the type of the beans
+     * @param clazz the class of the beans
+     * @return a map of bean names to bean instances
+     */
     <T> Map<String, T> getBeansOfType(Class<T> clazz);
+
+    /**
+     * Sets the context.
+     *
+     * @param context the context to set
+     */
     void setContext(Object context);
+
+    /**
+     * Handles an event.
+     *
+     * @param event the event to handle
+     */
     void onEvent(Object event);
+
+    /**
+     * Retrieves the environment.
+     *
+     * @return the environment object
+     */
     Object getEnvironment();
+
+    /**
+     * Retrieves an environment property by its key.
+     *
+     * @param key the key of the property
+     * @return the value of the property, or null if not found
+     */
     String getEnvironmentProperty(String key);
+
+    /**
+     * Retrieves an environment property by its key, with a default value.
+     *
+     * @param key the key of the property
+     * @param defaultValue the default value to return if the property is not found
+     * @return the value of the property, or the default value if not found
+     */
     String getEnvironmentProperty(String key, String defaultValue);
+
+    /**
+     * Retrieves the active profiles.
+     *
+     * @return an array of active profile names
+     */
     String[] getActiveProfiles();
+
+    /**
+     * Retrieves the default profiles.
+     *
+     * @return an array of default profile names
+     */
     String[] getDefaultProfiles();
 }

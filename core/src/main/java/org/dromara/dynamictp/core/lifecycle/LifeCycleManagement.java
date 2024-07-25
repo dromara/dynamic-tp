@@ -42,12 +42,56 @@
 
 package org.dromara.dynamictp.core.lifecycle;
 
+/**
+ * Interface for managing the lifecycle of a component.
+ * Provides methods to start, stop, and check the running state of a component,
+ * as well as handling auto startup and shutdown phases.
+ *
+ * @author vzer200
+ * @since 1.0.0
+ */
 public interface LifeCycleManagement {
+
+    /**
+     * Starts the component.
+     */
     void start();
+
+    /**
+     * Stops the component.
+     */
     void stop();
+
+    /**
+     * Checks if the component is running.
+     *
+     * @return true if the component is running, false otherwise
+     */
     boolean isRunning();
+
+    /**
+     * Stops the component with a callback.
+     *
+     * @param callback the callback to execute after stopping
+     */
     void stop(Runnable callback);
+
+    /**
+     * Checks if the component is set to auto startup.
+     *
+     * @return true if the component is set to auto startup, false otherwise
+     */
     boolean isAutoStartup();
+
+    /**
+     * Gets the phase of the component.
+     *
+     * @return the phase of the component
+     */
     int getPhase();
+
+    /**
+     * Performs internal shutdown operations.
+     */
     void shutdownInternal();
 }

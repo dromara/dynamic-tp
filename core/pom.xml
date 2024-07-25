@@ -64,11 +64,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.netflix.governator</groupId>
-            <artifactId>governator</artifactId>
-            <version>1.17.12</version>
-        </dependency>
-        <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
             <version>1.9.4</version>

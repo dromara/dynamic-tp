@@ -21,7 +21,6 @@ import org.dromara.dynamictp.common.properties.DtpProperties;
 
 import java.util.EventObject;
 
-
 /**
  * AlarmCheckEvent related
  *

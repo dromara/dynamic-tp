@@ -41,24 +41,19 @@
  */
 
 package org.dromara.dynamictp.common.manager;
+import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
+
 import java.util.Map;
 import java.util.ServiceLoader;
 
 public class ContextManagerHelper {
 
-    private static final ContextManager CONTEXT_MANAGER;
+    private static final ContextManager CONTEXT_MANAGER = ExtensionServiceLoader.getFirst(ContextManager.class);
 
     static {
-        ContextManager context = null;
-        ServiceLoader<ContextManager> loader = ServiceLoader.load(ContextManager.class);
-        for (ContextManager contextManager : loader) {
-            context = contextManager;
-            break;
-        }
-        if (context == null) {
+        if (CONTEXT_MANAGER == null) {
             throw new IllegalStateException("No ContextManager implementation found");
         }
-        CONTEXT_MANAGER = context;
     }
 
     public static <T> T getBean(Class<T> clazz) {
@@ -100,5 +95,5 @@ public class ContextManagerHelper {
     public static String[] getDefaultProfiles() {
         return CONTEXT_MANAGER.getDefaultProfiles();
     }
-
 }
+

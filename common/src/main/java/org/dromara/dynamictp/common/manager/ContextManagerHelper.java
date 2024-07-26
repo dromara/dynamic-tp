@@ -71,10 +71,6 @@ public class ContextManagerHelper {
         CONTEXT_MANAGER.setContext(context);
     }
 
-    public static void onEvent(Object event) {
-        CONTEXT_MANAGER.onEvent(event);
-    }
-
     public static Object getEnvironment() {
         return CONTEXT_MANAGER.getEnvironment();
     }

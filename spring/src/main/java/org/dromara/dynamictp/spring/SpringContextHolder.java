@@ -43,27 +43,16 @@
 package org.dromara.dynamictp.spring;
 
 
-
 import org.dromara.dynamictp.common.manager.ContextManager;
-import org.dromara.dynamictp.common.manager.EventBusManager;
 import org.dromara.dynamictp.core.support.DtpBannerPrinter;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ApplicationContextEvent;
-import org.springframework.context.event.ContextClosedEvent;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.ContextStartedEvent;
-import org.springframework.context.event.ContextStoppedEvent;
 import org.springframework.core.env.Environment;
-
-import java.util.EventObject;
 import java.util.Map;
 import java.util.Objects;
 
-public class SpringContextHolder implements ContextManager, ApplicationContextAware, ApplicationListener<ApplicationEvent> {
+public class SpringContextHolder implements ContextManager, ApplicationContextAware {
 
     private static ApplicationContext context;
 
@@ -98,56 +87,6 @@ public class SpringContextHolder implements ContextManager, ApplicationContextAw
     @Override
     public Environment getEnvironment() {
         return getInstance().getEnvironment();
-    }
-
-
-    public void publishEvent(Object event) {
-        if (event instanceof ApplicationEvent) {
-            getInstance().publishEvent((ApplicationEvent) event);
-        }
-    }
-
-    @Override
-    public void onApplicationEvent(ApplicationEvent event) {
-        if (isOriginalEventSource(event) && event instanceof ApplicationContextEvent) {
-            if (event instanceof ContextRefreshedEvent) {
-                onContextRefreshedEvent((ContextRefreshedEvent) event);
-            } else if (event instanceof ContextStartedEvent) {
-                onContextStartedEvent((ContextStartedEvent) event);
-            } else if (event instanceof ContextStoppedEvent) {
-                onContextStoppedEvent((ContextStoppedEvent) event);
-            } else if (event instanceof ContextClosedEvent) {
-                onContextClosedEvent((ContextClosedEvent) event);
-            }
-        }
-    }
-
-    protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
-        EventObject refreshedEvent = new EventObject(this);
-        EventBusManager.post(refreshedEvent);
-    }
-
-    protected void onContextStartedEvent(ContextStartedEvent event) {
-        // Override to handle ContextStartedEvent
-    }
-
-    protected void onContextStoppedEvent(ContextStoppedEvent event) {
-        // Override to handle ContextStoppedEvent
-    }
-
-    protected void onContextClosedEvent(ContextClosedEvent event) {
-        // Override to handle ContextClosedEvent
-    }
-
-    private boolean isOriginalEventSource(ApplicationEvent event) {
-        return Objects.equals(context, event.getSource());
-    }
-
-    @Override
-    public void onEvent(Object event) {
-        if (event instanceof ApplicationEvent) {
-            onApplicationEvent((ApplicationEvent) event);
-        }
     }
 
     @Override

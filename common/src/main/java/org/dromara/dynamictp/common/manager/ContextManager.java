@@ -90,13 +90,6 @@ public interface ContextManager {
     void setContext(Object context);
 
     /**
-     * Handles an event.
-     *
-     * @param event the event to handle
-     */
-    void onEvent(Object event);
-
-    /**
      * Retrieves the environment.
      *
      * @return the environment object

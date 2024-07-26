@@ -43,7 +43,7 @@ import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
-import org.dromara.dynamictp.spring.SpringContextHolder;
+import org.dromara.dynamictp.spring.OnceApplicationContextEventListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.Collections;
@@ -67,7 +67,7 @@ import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGra
  * @since 1.0.6
  */
 @Slf4j
-public abstract class AbstractDtpAdapter extends SpringContextHolder implements DtpAdapter {
+public abstract class AbstractDtpAdapter extends OnceApplicationContextEventListener implements DtpAdapter {
 
     private static final Equator EQUATOR = new GetterBaseEquator();
 

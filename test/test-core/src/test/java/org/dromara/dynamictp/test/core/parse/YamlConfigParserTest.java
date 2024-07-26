@@ -46,19 +46,4 @@ class YamlConfigParserTest {
 
         Assertions.assertEquals("dtpExecutor1", result.get("spring.dynamic.tp.executors[0].threadPoolName").toString());
     }
-
-    @Test
-    void testDoParse2() throws FileNotFoundException {
-        File file = ResourceUtils.getFile("classpath:demo-dtp-dev.yml");
-        String content = FileUtil.readString(file, StandardCharsets.UTF_8);
-
-        YamlConfigParser parser = new YamlConfigParser();
-        Map<Object, Object> result = parser.doParse(content);
-
-        // 打印结果以进行调试
-        System.out.println(result);
-
-        // 展平后的键路径
-        Assertions.assertEquals("dtpExecutor1", result.get("spring.dynamic.tp.executors.[0].threadPoolName").toString());
-    }
 }

@@ -57,20 +57,6 @@
             <artifactId>metrics-core</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-            <version>5.0.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-            <version>1.9.4</version>
-            <scope>compile</scope>
-        </dependency>
-
-
     </dependencies>
 
 </project>

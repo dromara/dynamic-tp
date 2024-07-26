@@ -43,7 +43,7 @@ public class LarkNotifyConst {
      * lark at format. username
      * 当配置username时,只能蓝色字体展示@username,被@人无@提醒
      */
-    public static final String LARK_AT_FORMAT_USERNAME = "<at id='%s'>%s</at>";
+    public static final String LARK_AT_FORMAT_USERNAME = "<at id=''>%s</at>";
 
     /**
      * lark openid prefix

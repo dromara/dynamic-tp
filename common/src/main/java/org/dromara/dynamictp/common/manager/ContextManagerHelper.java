@@ -47,9 +47,10 @@ import java.util.Map;
 
 public class ContextManagerHelper {
 
-    private static final ContextManager CONTEXT_MANAGER = ExtensionServiceLoader.getFirst(ContextManager.class);
+    private static final ContextManager CONTEXT_MANAGER;
 
     static {
+        CONTEXT_MANAGER = ExtensionServiceLoader.getFirst(ContextManager.class);
         if (CONTEXT_MANAGER == null) {
             throw new IllegalStateException("No ContextManager implementation found");
         }

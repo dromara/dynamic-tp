@@ -20,7 +20,11 @@ package org.dromara.dynamictp.common.parser.config;
 import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
 import org.yaml.snakeyaml.Yaml;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 /**
  * YamlConfigParser related
@@ -56,6 +60,7 @@ public class YamlConfigParser extends AbstractConfigParser {
         return flattenedMap;
     }
 
+    @SuppressWarnings("unchecked")
     private void flattenMap(Map<Object, Object> result, Map<Object, Object> source, String path) {
         source.forEach((key, value) -> {
             String fullPath = (path != null ? path + "." + key : key.toString());

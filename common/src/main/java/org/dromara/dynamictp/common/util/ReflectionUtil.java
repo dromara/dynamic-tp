@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.common.util;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
@@ -29,6 +30,7 @@ import java.util.Objects;
  * @author yanhom
  * @since 1.0.6
  */
+@Slf4j
 public final class ReflectionUtil {
 
     private ReflectionUtil() { }
@@ -42,6 +44,7 @@ public final class ReflectionUtil {
             val fieldObj = FieldUtils.readField(field, targetObj, true);
             return fieldObj;
         } catch (IllegalAccessException e) {
+            log.error("Failed to read field '{}' from object '{}'", fieldName, targetObj, e);
             return null;
         }
     }
@@ -55,6 +58,7 @@ public final class ReflectionUtil {
             val fieldObj = FieldUtils.readField(field, targetObj, true);
             return fieldObj;
         } catch (IllegalAccessException e) {
+            log.error("Failed to read field '{}' from object '{}'", fieldName, targetObj, e);
             return null;
         }
     }
@@ -67,7 +71,7 @@ public final class ReflectionUtil {
         try {
             FieldUtils.writeField(field, targetObj, targetVal, true);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            log.error("Failed to write value '{}' to field '{}' in object '{}'", targetVal, fieldName, targetObj, e);
         }
     }
 
@@ -79,13 +83,14 @@ public final class ReflectionUtil {
         try {
             FieldUtils.writeField(field, targetObj, targetVal, true);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            log.error("Failed to write value '{}' to field '{}' in object '{}'", targetVal, fieldName, targetObj, e);
         }
     }
 
     public static Field getField(Class<?> targetClass, String fieldName) {
         Field field = FieldUtils.getField(targetClass, fieldName, true);
         if (Objects.isNull(field)) {
+            log.warn("Field '{}' not found in class '{}'", fieldName, targetClass.getName());
             return null;
         }
         return field;

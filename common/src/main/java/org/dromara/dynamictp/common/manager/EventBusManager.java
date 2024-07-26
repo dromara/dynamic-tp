@@ -43,19 +43,33 @@
 package org.dromara.dynamictp.common.manager;
 
 import com.google.common.eventbus.EventBus;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+@Slf4j
 public class EventBusManager {
 
     private static final EventBus EVENT_BUS = new EventBus();
-
+    private static final Set<Object> REGISTERED_OBJECTS = ConcurrentHashMap.newKeySet();
     private EventBusManager() { }
 
-    public static void register(Object object) {
-        EVENT_BUS.register(object);
+    public static synchronized void register(Object object) {
+        if (REGISTERED_OBJECTS.add(object)) {
+            EVENT_BUS.register(object);
+        }
     }
 
-    public static void unregister(Object object) {
-        EVENT_BUS.unregister(object);
+    public static synchronized void unregister(Object object) {
+        if (REGISTERED_OBJECTS.remove(object)) {
+            try {
+                EVENT_BUS.unregister(object);
+            } catch (IllegalArgumentException e) {
+                // log warning or handle the case where the object is not registered
+                log.warn("Attempted to unregister an object that was not registered: {}", object, e);
+            }
+        }
     }
 
     public static void post(Object event) {

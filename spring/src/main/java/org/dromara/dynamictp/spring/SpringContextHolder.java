@@ -43,8 +43,9 @@
 package org.dromara.dynamictp.spring;
 
 
+import org.dromara.dynamictp.common.event.BannerPrintEvent;
 import org.dromara.dynamictp.common.manager.ContextManager;
-import org.dromara.dynamictp.core.support.DtpBannerPrinter;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -59,7 +60,7 @@ public class SpringContextHolder implements ContextManager, ApplicationContextAw
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         context = applicationContext;
-        DtpBannerPrinter.printBanner();  // 打印 banner
+        ContextManagerHelper.publishEvent(new BannerPrintEvent());  // 发布 BannerPrintEvent 事件
     }
 
     @Override

@@ -90,5 +90,9 @@ public class ContextManagerHelper {
     public static String[] getDefaultProfiles() {
         return CONTEXT_MANAGER.getDefaultProfiles();
     }
+
+    public static void publishEvent(Object event) {
+        EventBusManager.post(event);
+    }
 }
 

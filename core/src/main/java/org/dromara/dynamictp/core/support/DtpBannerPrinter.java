@@ -17,8 +17,11 @@
 
 package org.dromara.dynamictp.core.support;
 
+import com.google.common.eventbus.Subscribe;
 import org.dromara.dynamictp.common.constant.DynamicTpConst;
+import org.dromara.dynamictp.common.event.BannerPrintEvent;
 import org.dromara.dynamictp.common.manager.ContextManagerHelper;
+import org.dromara.dynamictp.common.manager.EventBusManager;
 import org.dromara.dynamictp.common.util.VersionUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,9 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 public class DtpBannerPrinter {
 
     private static final String NAME = " :: Dynamic Thread Pool :: ";
-
     private static final String SITE = " :: https://dynamictp.cn ::";
-
     private static final String BANNER = "\n" +
             "|  __ \\                            (_) |__   __|   \n" +
             "| |  | |_   _ _ __   __ _ _ __ ___  _  ___| |_ __  \n" +
@@ -44,6 +45,15 @@ public class DtpBannerPrinter {
             "         __/ |                              | |    \n" +
             "        |___/                               |_|    ";
 
+    public DtpBannerPrinter() {
+        EventBusManager.register(this);
+    }
+
+    @Subscribe
+    public void onBannerPrintEvent(BannerPrintEvent event) {
+        printBanner();
+    }
+
     public static void printBanner() {
         boolean enable = Boolean.parseBoolean(ContextManagerHelper.getEnvironmentProperty(DynamicTpConst.BANNER_ENABLED_PROP, "true"));
         if (enable) {
@@ -51,3 +61,5 @@ public class DtpBannerPrinter {
         }
     }
 }
+
+

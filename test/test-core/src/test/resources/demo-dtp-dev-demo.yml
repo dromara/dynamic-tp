@@ -50,6 +50,16 @@ spring:
         maximumPoolSize: 8
         queueCapacity: 200
         executorType: eager                     # 线程池类型common、eager：适用于io密集型
+        platformIds: [1,2]
+        notifyItems: # 报警项，不配置自动会按默认值（查看源码NotifyItem类）配置（变更通知、容量报警、活性报警、拒绝报警、任务超时报警）
+          - type: change
+            enabled: true
+
+          - type: capacity               # 队列容量使用率，报警项类型，查看源码 NotifyTypeEnum枚举类
+            enabled: true
+            threshold: 80                # 报警阈值，默认70，意思是队列使用率达到70%告警
+            platformIds: [ 2 ]             # 可选配置，本配置优先级 > 所属线程池platformIds > 全局配置platforms
+            interval: 120                # 报警间隔（单位：s），默认120
       executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
         - threadPoolName: dtpExecutor1
           executorType: common                     # 线程池类型common、eager：适用于io密集型

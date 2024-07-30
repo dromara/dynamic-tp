@@ -25,6 +25,7 @@ import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.spring.EnableDynamicTp;
 import org.dromara.dynamictp.spring.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,6 +46,7 @@ import java.util.concurrent.TimeUnit;
 @PropertySource(value = "classpath:/dynamic-tp-nacos-demo-dtp-dev.yml", factory = YamlPropertySourceFactory.class)
 @SpringBootTest(classes = OrderedDtpExecutorTest.class)
 @ExtendWith(SpringExtension.class)
+@EnableDynamicTp
 @EnableAutoConfiguration
 class OrderedDtpExecutorTest {
 

@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.example;
 
+import org.dromara.dynamictp.spring.EnableDynamicTp;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -28,6 +29,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableFeignClients
 @MapperScan(basePackages = {"org.dromara.dynamictp.example.mapper"})
 @SpringBootApplication
+@EnableDynamicTp
 public class CloudConsulExampleApplication {
 
     public static void main(String[] args) {

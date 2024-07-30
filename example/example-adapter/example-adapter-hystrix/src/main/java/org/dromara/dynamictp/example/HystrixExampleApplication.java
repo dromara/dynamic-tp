@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.example;
 
+import org.dromara.dynamictp.spring.EnableDynamicTp;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
@@ -24,6 +25,7 @@ import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 /**
  * @author fabian4
  */
+@EnableDynamicTp
 @EnableHystrix
 @SpringBootApplication
 public class HystrixExampleApplication {

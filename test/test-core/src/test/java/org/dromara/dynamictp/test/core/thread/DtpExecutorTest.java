@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.spring.EnableDynamicTp;
 import org.dromara.dynamictp.spring.YamlPropertySourceFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.RepeatedTest;
@@ -46,6 +47,7 @@ import static org.mockito.Mockito.mockStatic;
  * @since 1.1.0
  */
 @Slf4j
+@EnableDynamicTp
 @EnableAutoConfiguration
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = DtpExecutorTest.class)

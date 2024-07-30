@@ -23,6 +23,12 @@ import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 
+/**
+ *  Abstract class for refreshing properties in a Spring environment.
+ *
+ *  @author vzer200
+ *  @since 1.1.8
+ */
 @Slf4j
 public abstract class AbstractSpringRefresher extends AbstractRefresher implements EnvironmentAware {
 

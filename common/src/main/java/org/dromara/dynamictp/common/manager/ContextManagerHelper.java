@@ -21,6 +21,13 @@ import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
 
 import java.util.Map;
 
+
+/**
+ * Helper class for accessing ContextManager and publishing events.
+ *
+ * @author vzer200
+ * @since 1.1.8
+ */
 public class ContextManagerHelper {
 
     private static final ContextManager CONTEXT_MANAGER;

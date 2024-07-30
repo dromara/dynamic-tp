@@ -24,6 +24,13 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+
+/**
+ * Manages event registration and posting using EventBus.
+ *
+ * @author vzer200
+ * @since 1.1.8
+ */
 @Slf4j
 public class EventBusManager {
 

@@ -28,6 +28,13 @@ import org.springframework.core.env.Environment;
 import java.util.Map;
 import java.util.Objects;
 
+
+/**
+ * Manages the Spring ApplicationContext and provides access to beans and environment properties.
+ *
+ * @author vzer200
+ * @since 1.1.8
+ */
 public class SpringContextHolder implements ContextManager, ApplicationContextAware {
 
     private static ApplicationContext context;

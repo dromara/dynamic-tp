@@ -18,9 +18,9 @@
 package org.dromara.dynamictp.core.support;
 
 import lombok.Data;
-import net.sf.cglib.beans.BeanCopier;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
+import org.dromara.dynamictp.common.util.BeanCopierUtils;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
@@ -139,8 +139,7 @@ public class ExecutorWrapper {
      */
     public ExecutorWrapper capture() {
         ExecutorWrapper executorWrapper = new ExecutorWrapper();
-        BeanCopier copier = BeanCopier.create(ExecutorWrapper.class, ExecutorWrapper.class, false);
-        copier.copy(this, executorWrapper, null);
+        BeanCopierUtils.copyProperties(this, executorWrapper);
         executorWrapper.executor = new CapturedExecutor(this.getExecutor());
         return executorWrapper;
     }

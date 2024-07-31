@@ -18,7 +18,6 @@
 package org.dromara.dynamictp.spring;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.common.manager.EventBusManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
@@ -29,7 +28,6 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.event.ContextStoppedEvent;
 
-import java.util.EventObject;
 import java.util.Objects;
 
 /**
@@ -61,8 +59,7 @@ public abstract class OnceApplicationContextEventListener implements Application
     }
 
     protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
-        EventObject refreshedEvent = new EventObject(this);
-        EventBusManager.post(refreshedEvent);
+        // Override to handle ContextStartedEvent
     }
 
     protected void onContextStartedEvent(ContextStartedEvent event) {

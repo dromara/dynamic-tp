@@ -95,7 +95,7 @@ public class DtpProperties {
     /**
      * ThreadPoolExecutor global configs.
      */
-    private DtpExecutorProps executorsGlobal;
+    private DtpExecutorProps globalExecutorProps;
 
     /**
      * ThreadPoolExecutor configs.

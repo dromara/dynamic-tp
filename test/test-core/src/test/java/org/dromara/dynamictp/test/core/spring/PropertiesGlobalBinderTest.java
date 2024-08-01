@@ -72,7 +72,7 @@ class PropertiesGlobalBinderTest {
         String threadPoolName = environment.getProperty("spring.dynamic.tp.executors[0].threadPoolName");
         Assertions.assertEquals(threadPoolName, dtpProperties.getExecutors().get(0).getThreadPoolName());
 
-        String executorType=environment.getProperty("spring.dynamic.tp.executorsGlobal.executorType");
+        String executorType = environment.getProperty("spring.dynamic.tp.globalExecutorProps.executorType");
         Assertions.assertEquals(executorType, dtpProperties.getExecutors().get(1).getExecutorType());
 
     }

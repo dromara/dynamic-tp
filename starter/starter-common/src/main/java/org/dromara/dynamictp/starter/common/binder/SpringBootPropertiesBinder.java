@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.starter.common.binder;
 
+import cn.hutool.core.util.ReflectUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -37,9 +38,9 @@ import org.springframework.core.env.PropertyResolver;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAIN_PROPERTIES_PREFIX;
 
@@ -55,6 +56,7 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
 
     @Override
     public void bindDtpProperties(Map<?, Object> properties, DtpProperties dtpProperties) {
+        setGlobalExecutor((Map<Object, Object>) properties);
         try {
             Class.forName("org.springframework.boot.context.properties.bind.Binder");
             doBindIn2X(properties, dtpProperties);
@@ -129,35 +131,82 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
      * @param environment
      * @param dtpProperties
      */
-    private static final String globalPrefix = "spring.dynamic.tp.executorsGlobal.";
+    private static final String globalPrefix = "spring.dynamic.tp.globalExecutorProps.";
     private static final String executorsPrefix = "spring.dynamic.tp.executors[";
+    private void setGlobalExecutor(Map<Object, Object> properties) {
+        Map<String, String> globalSettings = new HashMap<String, String>();
+        for (Map.Entry<?, Object> entry : properties.entrySet()) {
+            if (((String) entry.getKey()).startsWith(globalPrefix)) {
+                // 将键值对添加到新的Map中，同时去除前缀
+                globalSettings.put(((String) entry.getKey()).substring(globalPrefix.length()), (String) entry.getValue());
+            }
+        }
+        List<Map<String, String>> executors = new ArrayList<>();
+        Pattern pattern = Pattern.compile("spring\\.dynamic\\.tp\\.executors\\[(\\d+)\\]\\.([\\w\\.]+)");
+        for (Map.Entry<?, Object> entry : properties.entrySet()) {
+            Matcher matcher = pattern.matcher(((String) entry.getKey()));
+            if (matcher.matches()) {
+                int index = Integer.parseInt(matcher.group(1));
+                String key = matcher.group(2);
+                while (executors.size() <= index) {
+                    executors.add(new HashMap<>());
+                }
+                executors.get(index).put(key, (String) entry.getValue());
+            }
+        }
+        executors.forEach(executor ->{
+            mergeSettingsWithoutOverwrite(globalSettings, executor);
+        });
+        String executorsPrefix = "spring.dynamic.tp.executors";
+        for (int i = 0; i < executors.size(); i++) {
+            Map<String, String> executorMap = executors.get(i);
+            for (Map.Entry<String, String> entry : executorMap.entrySet()) {
+                String newKey = executorsPrefix + "[" + i + "]." + entry.getKey();
+                properties.put(newKey, entry.getValue());
+            }
+        }
+    }
+    private static void mergeSettingsWithoutOverwrite(Map<String, String> globalSettings, Map<String, String> object) {
+        for (Map.Entry<String, String> entry : globalSettings.entrySet()) {
+            if (!object.containsKey(entry.getKey())) {
+                object.put(entry.getKey(), entry.getValue());
+            }
+        }
+    }
     private void tryResetWithGlobalConfig(Environment environment, DtpProperties dtpProperties) {
         final int[] i = {0};
         val fields = ReflectionUtil.getAllFields(DtpExecutorProps.class);
+        if(fields == null) {
+            return;
+        }
         dtpProperties.getExecutors().forEach(executor -> {
+            if(executor == null){
+                return;
+            }
             fields.forEach(field -> {
                 String executorFieldVal = environment.getProperty(executorsPrefix + i[0] +"]." + field.getName());
-                if (StringUtils.isNotEmpty(executorFieldVal)) {
-                    return;
-                }
                 String globalFieldVal = environment.getProperty(globalPrefix + field.getName());
                 if(StringUtils.isEmpty(globalFieldVal)) {
                     return;
                 }
-                try {
-                    ReflectionUtil.setGlobalFieldValue(DtpExecutorProps.class,field.getName(),executor,globalFieldVal);
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
+                ReflectUtil.setFieldValue(executor,field,globalFieldVal);
             });
-            Set<String> globalTaskWrapperNames = dtpProperties.getExecutorsGlobal().getTaskWrapperNames();
-            if(executor.getTaskWrapperNames()==null) executor.setTaskWrapperNames(globalTaskWrapperNames);
+            if (dtpProperties.getGlobalExecutorProps() != null) {
+                Set<String> globalTaskWrapperNames = dtpProperties.getGlobalExecutorProps().getTaskWrapperNames();
+                if(executor.getTaskWrapperNames() == null) {
+                    executor.setTaskWrapperNames(globalTaskWrapperNames);
+                }
 
-            List<String> globalPlatformIds = dtpProperties.getExecutorsGlobal().getPlatformIds();
-            if(executor.getPlatformIds()==null) executor.setPlatformIds(globalPlatformIds);
+                List<String> globalPlatformIds = dtpProperties.getGlobalExecutorProps().getPlatformIds();
+                if(executor.getPlatformIds() == null) {
+                    executor.setPlatformIds(globalPlatformIds);
+                }
 
-            List<NotifyItem> globalNotifyItems = dtpProperties.getExecutorsGlobal().getNotifyItems();
-            if(executor.getNotifyItems()==null) executor.setNotifyItems(globalNotifyItems);
+                List<NotifyItem> globalNotifyItems = dtpProperties.getGlobalExecutorProps().getNotifyItems();
+                if(executor.getNotifyItems() == null) {
+                    executor.setNotifyItems(globalNotifyItems);
+                }
+            }
             i[0]++;
         });
     }

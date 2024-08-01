@@ -89,30 +89,11 @@ public final class ReflectionUtil {
     }
 
     public static List<Field> getAllFields(Class<DtpExecutorProps> dtpExecutorPropsClass) {
-        List<Field> fields =new ArrayList<Field>();
+        List<Field> fields = new ArrayList<Field>();
         ReflectionUtils.doWithFields(dtpExecutorPropsClass, field->{
             fields.add(field);
         });
         return fields;
     }
 
-    public static void setGlobalFieldValue(Class<?> targetClass, String fieldName, DtpExecutorProps targetObj, String targetVal)
-            throws IllegalAccessException{
-        val field = getField(targetClass, fieldName);
-        if (Objects.isNull(field)) {
-            return;
-        }
-        if(targetVal=="true"||targetVal=="false"){
-            field.set(targetObj,Boolean.parseBoolean(targetVal));
-            return;
-        }
-        boolean flag=true;
-        for (int i = 0; i < targetVal.length(); i++) {
-            if(!('0'<=targetVal.charAt(i)&&targetVal.charAt(i)<='9')){
-                flag=false;
-            }
-        }
-        if(flag==false) field.set(targetObj, targetVal);
-        else field.set(targetObj,Integer.parseInt(targetVal));
-    }
 }

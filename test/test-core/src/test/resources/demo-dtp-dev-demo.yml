@@ -45,7 +45,7 @@ spring:
           corePoolSize: 200
           maximumPoolSize: 400
           keepAliveTime: 60
-      executorsGlobal:
+      globalExecutorProps:
         corePoolSize: 6
         maximumPoolSize: 8
         queueCapacity: 200

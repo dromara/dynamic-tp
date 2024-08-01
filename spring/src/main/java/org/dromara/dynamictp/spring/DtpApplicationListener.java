@@ -15,20 +15,29 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.example;
+package org.dromara.dynamictp.spring;
 
-import org.dromara.dynamictp.spring.EnableDynamicTp;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.common.event.BannerPrintEvent;
+import org.dromara.dynamictp.common.manager.EventBusManager;
+import org.springframework.context.event.ContextRefreshedEvent;
+
+import java.util.EventObject;
 
 /**
- * @author windsearcher
- */
-@EnableDynamicTp
-@SpringBootApplication
-public class HuaweiCloudExampleApplication {
+ * DtpApplicationListener related
+ *
+ * @author vzer200
+ * @since 1.1.8
+ **/
+@Slf4j
+public class DtpApplicationListener extends OnceApplicationContextEventListener {
 
-    public static void main(String[] args) {
-        SpringApplication.run(HuaweiCloudExampleApplication.class, args);
+    @Override
+    protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
+        EventObject refreshedEvent = new EventObject(this);
+        EventBusManager.post(refreshedEvent);
+        EventBusManager.post(new BannerPrintEvent());
     }
 }
+

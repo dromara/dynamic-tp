@@ -23,6 +23,7 @@ import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.spring.EnableDynamicTp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,6 +38,7 @@ import java.util.concurrent.*;
  * @date 2023年09月15日 09:48
  */
 @Slf4j
+@EnableDynamicTp
 @EnableAutoConfiguration
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = ThreadPoolExecutorProxyTest.class)

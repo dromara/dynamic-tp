@@ -14,45 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-// Copyright (c) 2007-2020 VMware, Inc. or its affiliates.  All rights reserved.
-//
-// This software, the RabbitMQ Java client library, is triple-licensed under the
-// Mozilla Public License 2.0 ("MPL"), the GNU General Public License version 2
-// ("GPL") and the Apache License version 2 ("ASL"). For the MPL, please see
-// LICENSE-MPL-RabbitMQ. For the GPL, please see LICENSE-GPL2.  For the ASL,
-// please see LICENSE-APACHE2.
-//
-// This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND,
-// either express or implied. See the LICENSE file for specific language governing
-// rights and limitations of this software.
-//
-// If you have any questions regarding licensing, please contact us at
-// info@rabbitmq.com.
-
-/*
- * Modifications Copyright 2015-2020 VMware, Inc. or its affiliates. and licenced as per
- * the rest of the RabbitMQ Java client.
- */
-
-/*
- * Written by Doug Lea with assistance from members of JCP JSR-166
- * Expert Group and released to the public domain, as explained at
- * https://creativecommons.org/licenses/publicdomain
- */
 
 package org.dromara.dynamictp.spring;
 
 
-import org.dromara.dynamictp.common.event.BannerPrintEvent;
 import org.dromara.dynamictp.common.manager.ContextManager;
-import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.env.Environment;
+
 import java.util.Map;
 import java.util.Objects;
 
+
+/**
+ * Manages the Spring ApplicationContext and provides access to beans and environment properties.
+ *
+ * @author vzer200
+ * @since 1.1.8
+ */
 public class SpringContextHolder implements ContextManager, ApplicationContextAware {
 
     private static ApplicationContext context;
@@ -60,7 +41,6 @@ public class SpringContextHolder implements ContextManager, ApplicationContextAw
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         context = applicationContext;
-        ContextManagerHelper.publishEvent(new BannerPrintEvent());  // 发布 BannerPrintEvent 事件
     }
 
     @Override

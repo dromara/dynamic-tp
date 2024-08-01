@@ -68,4 +68,9 @@ public class DtpBaseBeanConfiguration {
     public DtpLifecycleSpringAdapter dtpLifecycleSpringAdapter(LifeCycleManagement lifeCycleManagement) {
         return new DtpLifecycleSpringAdapter(lifeCycleManagement);
     }
+
+    @Bean
+    public DtpApplicationListener dtpApplicationListener() {
+        return new DtpApplicationListener();
+    }
 }

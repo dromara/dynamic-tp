@@ -23,7 +23,9 @@ import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.io.ByteArrayResource;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * YamlConfigParser related

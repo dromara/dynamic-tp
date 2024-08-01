@@ -74,6 +74,7 @@ class PropertiesGlobalBinderTest {
 
         String executorType=environment.getProperty("spring.dynamic.tp.executorsGlobal.executorType");
         Assertions.assertEquals(executorType, dtpProperties.getExecutors().get(1).getExecutorType());
+
     }
 
 }

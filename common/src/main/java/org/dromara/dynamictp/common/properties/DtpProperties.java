@@ -35,7 +35,7 @@ import java.util.List;
 @Data
 public class DtpProperties {
 
-    DtpProperties() { }
+    private DtpProperties() { }
 
     /**
      * If enabled DynamicTp.
@@ -91,11 +91,6 @@ public class DtpProperties {
      * Etcd config.
      */
     private Etcd etcd;
-
-    /**
-     * ThreadPoolExecutor global configs.
-     */
-    private DtpExecutorProps globalExecutorProps;
 
     /**
      * ThreadPoolExecutor configs.

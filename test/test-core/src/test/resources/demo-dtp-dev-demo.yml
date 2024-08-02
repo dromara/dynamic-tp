@@ -45,42 +45,22 @@ spring:
           corePoolSize: 200
           maximumPoolSize: 400
           keepAliveTime: 60
-      executorsGlobal:
+      globalExecutorProps:
+        corePoolSize: 6
+        maximumPoolSize: 8
+        queueCapacity: 200
         executorType: eager                     # 线程池类型common、eager：适用于io密集型
+        platformIds: [1,2]
+        notifyItems: # 报警项，不配置自动会按默认值（查看源码NotifyItem类）配置（变更通知、容量报警、活性报警、拒绝报警、任务超时报警）
+          - type: change
+            enabled: true
+
+          - type: capacity               # 队列容量使用率，报警项类型，查看源码 NotifyTypeEnum枚举类
+            enabled: true
+            threshold: 80                # 报警阈值，默认70，意思是队列使用率达到70%告警
+            platformIds: [ 2 ]             # 可选配置，本配置优先级 > 所属线程池platformIds > 全局配置platforms
+            interval: 120                # 报警间隔（单位：s），默认120
       executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
         - threadPoolName: dtpExecutor1
           executorType: common                     # 线程池类型common、eager：适用于io密集型
-          corePoolSize: 6
-          maximumPoolSize: 8
-          queueCapacity: 200
-          queueType: VariableLinkedBlockingQueue   # 任务队列，查看源码QueueTypeEnum枚举类
-          rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
-          keepAliveTime: 50
-          allowCoreThreadTimeOut: false                  # 是否允许核心线程池超时
-          threadNamePrefix: test                         # 线程名前缀
-          waitForTasksToCompleteOnShutdown: false        # 参考spring线程池设计，优雅关闭线程池
-          awaitTerminationSeconds: 5                     # 单位（s）
-          preStartAllCoreThreads: false                  # 是否预热所有核心线程，默认false
-          runTimeout: 200                                # 任务执行超时阈值，目前只做告警用，单位（ms）
-          queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
-          taskWrapperNames: ["ttl"]                          # 任务包装器名称，集成TaskWrapper接口
-          notifyItems:                     # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警、拒绝报警、任务超时报警）
-            - type: capacity               # 报警项类型，查看源码 NotifyTypeEnum枚举类
-              enabled: true
-              threshold: 80                # 报警阈值
-              platforms: [ding,wechat]     # 可选配置，不配置默认拿上层platforms配置的所以平台
-              interval: 120                # 报警间隔（单位：s）
-            - type: change
-              enabled: true
-            - type: liveness
-              enabled: true
-              threshold: 80
-            - type: reject
-              enabled: true
-              threshold: 1
-            - type: run_timeout
-              enabled: true
-              threshold: 1
-            - type: queue_timeout
-              enabled: true
-              threshold: 1
+        - threadPoolName: dtpExecutor2

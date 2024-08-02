@@ -38,11 +38,13 @@ class YamlConfigParserTest {
 
     @Test
     void testDoParse() throws FileNotFoundException {
-        File file = ResourceUtils.getFile("classpath:demo-dtp-dev.yml");
+        File file = ResourceUtils.getFile("classpath:demo-dtp-dev-demo.yml");
         String content = FileUtil.readString(file, StandardCharsets.UTF_8);
 
         YamlConfigParser parser = new YamlConfigParser();
         Map<Object, Object> result = parser.doParse(content);
         Assertions.assertEquals("dtpExecutor1", result.get("spring.dynamic.tp.executors[0].threadPoolName").toString());
+        Assertions.assertEquals("common", result.get("spring.dynamic.tp.executors[0].executorType").toString());
+        Assertions.assertEquals("eager", result.get("spring.dynamic.tp.executors[1].executorType").toString());
     }
 }

@@ -88,9 +88,9 @@ public final class ReflectionUtil {
         return field;
     }
 
-    public static List<Field> getAllFields(Class<DtpExecutorProps> dtpExecutorPropsClass) {
+    public static List<Field> getAllFields(Class<?> targetClass) {
         List<Field> fields = new ArrayList<Field>();
-        ReflectionUtils.doWithFields(dtpExecutorPropsClass, field->{
+        ReflectionUtils.doWithFields(targetClass, field->{
             fields.add(field);
         });
         return fields;

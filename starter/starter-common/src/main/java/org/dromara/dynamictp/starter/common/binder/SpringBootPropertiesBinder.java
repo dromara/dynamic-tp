@@ -53,6 +53,8 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAIN_PROPERTI
 @Slf4j
 @SuppressWarnings("all")
 public class SpringBootPropertiesBinder implements PropertiesBinder {
+    private static final String GLOBAL_PREFIX = "spring.dynamic.tp.globalExecutorProps.";
+    private static final String EXECUTORS_PREFIX = "spring.dynamic.tp.executors[";
 
     @Override
     public void bindDtpProperties(Map<?, Object> properties, DtpProperties dtpProperties) {
@@ -131,14 +133,13 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
      * @param environment
      * @param dtpProperties
      */
-    private static final String globalPrefix = "spring.dynamic.tp.globalExecutorProps.";
-    private static final String executorsPrefix = "spring.dynamic.tp.executors[";
+
     private void setGlobalExecutor(Map<Object, Object> properties) {
         Map<String, String> globalSettings = new HashMap<String, String>();
         for (Map.Entry<?, Object> entry : properties.entrySet()) {
-            if (((String) entry.getKey()).startsWith(globalPrefix)) {
+            if (((String) entry.getKey()).startsWith(GLOBAL_PREFIX)) {
                 // 将键值对添加到新的Map中，同时去除前缀
-                globalSettings.put(((String) entry.getKey()).substring(globalPrefix.length()), (String) entry.getValue());
+                globalSettings.put(((String) entry.getKey()).substring(GLOBAL_PREFIX.length()), (String) entry.getValue());
             }
         }
         List<Map<String, String>> executors = new ArrayList<>();
@@ -184,8 +185,8 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
                 return;
             }
             fields.forEach(field -> {
-                String executorFieldVal = environment.getProperty(executorsPrefix + i[0] +"]." + field.getName());
-                String globalFieldVal = environment.getProperty(globalPrefix + field.getName());
+                String executorFieldVal = environment.getProperty(EXECUTORS_PREFIX + i[0] +"]." + field.getName());
+                String globalFieldVal = environment.getProperty(GLOBAL_PREFIX + field.getName());
                 if(StringUtils.isEmpty(globalFieldVal)) {
                     return;
                 }

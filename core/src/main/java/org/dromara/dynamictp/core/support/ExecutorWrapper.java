@@ -64,6 +64,11 @@ public class ExecutorWrapper {
     private List<NotifyItem> notifyItems;
 
     /**
+     * The actual value to count that decide whether to trigger an alarm.
+     */
+    private int countForNow = 0;
+
+    /**
      * Notify platform ids.
      */
     private List<String> platformIds;
@@ -96,6 +101,7 @@ public class ExecutorWrapper {
         this.threadPoolAliasName = executor.getThreadPoolAliasName();
         this.executor = executor;
         this.notifyItems = executor.getNotifyItems();
+        this.countForNow=executor.getCountForNow();
         this.notifyEnabled = executor.isNotifyEnabled();
         this.platformIds = executor.getPlatformIds();
         this.awareNames = executor.getAwareNames();

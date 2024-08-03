@@ -111,6 +111,8 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("alarmTime", DateUtil.now());
         context.setVariable("trace", getTraceInfo());
         context.setVariable("alarmInterval", notifyItem.getInterval());
+        context.setVariable("op",">");
+        context.setVariable("countToTrigger", notifyItem.getCountToTrigger());
         context.setVariable("highlightVariables", getAlarmKeys(notifyItemEnum));
         context.setVariable("ext", getExtInfo());
         return ((EmailNotifier) notifier).processTemplateContent("alarm", context);
@@ -134,6 +136,8 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("queueType", executor.getQueueType());
         context.setVariable("oldQueueCapacity", oldFields.getQueueCapacity());
         context.setVariable("newQueueCapacity", executor.getQueueCapacity());
+        context.setVariable("op",">");
+        context.setVariable("countForNow",executorWrapper.getCountForNow());
         context.setVariable("oldRejectType", oldFields.getRejectType());
         context.setVariable("newRejectType", executor.getRejectHandlerType());
         context.setVariable("notifyTime", DateUtil.now());

@@ -27,7 +27,7 @@ import org.dromara.dynamictp.core.handler.CollectorHandler;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 
 import java.util.EventObject;
 
@@ -66,7 +66,7 @@ public class DtpAdapterListener {
      */
     protected void doCollect(DtpProperties dtpProperties) {
         val handlerMap = ContextManagerHelper.getBeansOfType(DtpAdapter.class);
-        if (CollectionUtils.isEmpty(handlerMap)) {
+        if (MapUtils.isEmpty(handlerMap)) {
             return;
         }
         handlerMap.forEach((k, v) -> v.getMultiPoolStats().forEach(ps ->
@@ -79,7 +79,7 @@ public class DtpAdapterListener {
      */
     protected void doRefresh(DtpProperties dtpProperties) {
         val handlerMap = ContextManagerHelper.getBeansOfType(DtpAdapter.class);
-        if (CollectionUtils.isEmpty(handlerMap)) {
+        if (MapUtils.isEmpty(handlerMap)) {
             return;
         }
         handlerMap.forEach((k, v) -> v.refresh(dtpProperties));
@@ -91,7 +91,7 @@ public class DtpAdapterListener {
      */
     protected void doAlarmCheck(DtpProperties dtpProperties) {
         val handlerMap = ContextManagerHelper.getBeansOfType(DtpAdapter.class);
-        if (CollectionUtils.isEmpty(handlerMap)) {
+        if (MapUtils.isEmpty(handlerMap)) {
             return;
         }
         handlerMap.forEach((k, v) -> {

@@ -38,9 +38,9 @@ import org.springframework.core.env.PropertyResolver;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAIN_PROPERTIES_PREFIX;
 
@@ -54,17 +54,16 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAIN_PROPERTI
 @SuppressWarnings("all")
 public class SpringBootPropertiesBinder implements PropertiesBinder {
     private static final String GLOBAL_PREFIX = "spring.dynamic.tp.globalExecutorProps.";
-    private static final String EXECUTORS_PREFIX = "spring.dynamic.tp.executors[";
 
     @Override
     public void bindDtpProperties(Map<?, Object> properties, DtpProperties dtpProperties) {
-        setGlobalExecutor((Map<Object, Object>) properties);
         try {
             Class.forName("org.springframework.boot.context.properties.bind.Binder");
             doBindIn2X(properties, dtpProperties);
         } catch (ClassNotFoundException e) {
             doBindIn1X(properties, dtpProperties);
         }
+        tryResetWithGlobalConfig(properties,dtpProperties);
     }
 
     @Override
@@ -133,48 +132,8 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
      * @param environment
      * @param dtpProperties
      */
-
-    private void setGlobalExecutor(Map<Object, Object> properties) {
-        Map<String, String> globalSettings = new HashMap<String, String>();
-        for (Map.Entry<?, Object> entry : properties.entrySet()) {
-            if (((String) entry.getKey()).startsWith(GLOBAL_PREFIX)) {
-                // 将键值对添加到新的Map中，同时去除前缀
-                globalSettings.put(((String) entry.getKey()).substring(GLOBAL_PREFIX.length()), (String) entry.getValue());
-            }
-        }
-        List<Map<String, String>> executors = new ArrayList<>();
-        Pattern pattern = Pattern.compile("spring\\.dynamic\\.tp\\.executors\\[(\\d+)\\]\\.([\\w\\.]+)");
-        for (Map.Entry<?, Object> entry : properties.entrySet()) {
-            Matcher matcher = pattern.matcher(((String) entry.getKey()));
-            if (matcher.matches()) {
-                int index = Integer.parseInt(matcher.group(1));
-                String key = matcher.group(2);
-                while (executors.size() <= index) {
-                    executors.add(new HashMap<>());
-                }
-                executors.get(index).put(key, (String) entry.getValue());
-            }
-        }
-        executors.forEach(executor ->{
-            mergeSettingsWithoutOverwrite(globalSettings, executor);
-        });
-        String executorsPrefix = "spring.dynamic.tp.executors";
-        for (int i = 0; i < executors.size(); i++) {
-            Map<String, String> executorMap = executors.get(i);
-            for (Map.Entry<String, String> entry : executorMap.entrySet()) {
-                String newKey = executorsPrefix + "[" + i + "]." + entry.getKey();
-                properties.put(newKey, entry.getValue());
-            }
-        }
-    }
-    private static void mergeSettingsWithoutOverwrite(Map<String, String> globalSettings, Map<String, String> object) {
-        for (Map.Entry<String, String> entry : globalSettings.entrySet()) {
-            if (!object.containsKey(entry.getKey())) {
-                object.put(entry.getKey(), entry.getValue());
-            }
-        }
-    }
-    private void tryResetWithGlobalConfig(Environment environment, DtpProperties dtpProperties) {
+    
+    private void tryResetWithGlobalConfig(Object environment, DtpProperties dtpProperties) {
         final int[] i = {0};
         val fields = ReflectionUtil.getAllFields(DtpExecutorProps.class);
         if(fields == null) {
@@ -185,8 +144,18 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
                 return;
             }
             fields.forEach(field -> {
-                String executorFieldVal = environment.getProperty(EXECUTORS_PREFIX + i[0] +"]." + field.getName());
-                String globalFieldVal = environment.getProperty(GLOBAL_PREFIX + field.getName());
+                String globalFieldVal = "";
+                if(environment instanceof Environment) {
+                    Environment env = (Environment) environment;
+                    globalFieldVal = env.getProperty(GLOBAL_PREFIX + field.getName());
+                }
+                else if(environment instanceof Map){
+                    Map<?, Object> properties = (Map<?, Object>) environment;
+                    Object globalProperty = properties.get(GLOBAL_PREFIX + field.getName());
+                    if(globalProperty instanceof String){
+                        globalFieldVal = globalProperty.toString();
+                    }
+                }
                 if(StringUtils.isEmpty(globalFieldVal)) {
                     return;
                 }

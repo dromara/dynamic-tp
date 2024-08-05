@@ -55,7 +55,7 @@ class PropertiesGlobalBinderTest {
         properties.put("spring.dynamic.tp.collectorTypes", Lists.newArrayList("LOGGING"));
         properties.put("spring.dynamic.tp.executors[0].threadPoolName", "test_dtp0");
         properties.put("spring.dynamic.tp.executors[1].threadPoolName", "test_dtp1");
-        properties.put("spring.dynamic.tp.executorsGlobal.executorType","eager");
+        properties.put("spring.dynamic.tp.globalExecutorProps.executorType","eager");
 
         DtpProperties dtpProperties = DtpProperties.getInstance();
         BinderHelper.bindDtpProperties(properties, dtpProperties);

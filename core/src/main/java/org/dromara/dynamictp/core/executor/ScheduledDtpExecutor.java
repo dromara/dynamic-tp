@@ -15,8 +15,9 @@
  * limitations under the License.
  */
 
+package org.dromara.dynamictp.core.executor;
+
 import org.dromara.dynamictp.common.em.JreEnum;
-import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.support.ScheduledThreadPoolExecutorProxy;
 
 import java.util.Collection;

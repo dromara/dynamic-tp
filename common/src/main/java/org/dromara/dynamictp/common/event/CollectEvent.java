@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.common.event;
 
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import java.util.EventObject;
+
 
 
 /**
@@ -27,7 +27,7 @@ import java.util.EventObject;
  * @author yanhom
  * @since 1.0.0
  */
-public class CollectEvent extends EventObject {
+public class CollectEvent extends CustomContextRefreshedEvent {
 
     private final transient DtpProperties dtpProperties;
 

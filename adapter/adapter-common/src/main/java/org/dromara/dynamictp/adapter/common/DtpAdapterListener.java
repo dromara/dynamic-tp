@@ -20,6 +20,7 @@ package org.dromara.dynamictp.adapter.common;
 import com.google.common.eventbus.Subscribe;
 import org.dromara.dynamictp.common.event.AlarmCheckEvent;
 import org.dromara.dynamictp.common.event.CollectEvent;
+import org.dromara.dynamictp.common.event.CustomContextRefreshedEvent;
 import org.dromara.dynamictp.common.event.RefreshEvent;
 import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
@@ -29,7 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.MapUtils;
 
-import java.util.EventObject;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTIFY_ITEMS;
 
@@ -43,7 +43,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTI
 public class DtpAdapterListener {
 
     @Subscribe
-    public void handleRefreshedEvent(EventObject event) {
+    public void handleRefreshedEvent(CustomContextRefreshedEvent event) {
         try {
             if (event instanceof RefreshEvent) {
                 RefreshEvent refreshEvent = (RefreshEvent) event;

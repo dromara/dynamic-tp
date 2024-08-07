@@ -45,10 +45,23 @@ public class DtpBannerPrinter {
             "         __/ |                              | |    \n" +
             "        |___/                               |_|    ";
 
-    public DtpBannerPrinter() {
+    private static volatile DtpBannerPrinter instance;
+
+    private DtpBannerPrinter() {
+        log.info("Registering DtpBannerPrinter - instance: {}", this);
         EventBusManager.register(this);
     }
 
+    public static DtpBannerPrinter getInstance() {
+        if (instance == null) {
+            synchronized (DtpBannerPrinter.class) {
+                if (instance == null) {
+                    instance = new DtpBannerPrinter();
+                }
+            }
+        }
+        return instance;
+    }
     @Subscribe
     public void onBannerPrintEvent(CustomContextRefreshedEvent event) {
         printBanner();

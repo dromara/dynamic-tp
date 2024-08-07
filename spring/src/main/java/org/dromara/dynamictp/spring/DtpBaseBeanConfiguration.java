@@ -61,7 +61,7 @@ public class DtpBaseBeanConfiguration {
 
     @Bean
     public DtpBannerPrinter dtpBannerPrinter() {
-        return new DtpBannerPrinter();
+        return DtpBannerPrinter.getInstance();
     }
 
     @Bean

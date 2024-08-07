@@ -18,11 +18,9 @@
 package org.dromara.dynamictp.spring;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.common.event.BannerPrintEvent;
 import org.dromara.dynamictp.common.event.CustomContextRefreshedEvent;
 import org.dromara.dynamictp.common.manager.EventBusManager;
 import org.springframework.context.event.ContextRefreshedEvent;
-
 
 /**
  * DtpApplicationListener related
@@ -37,7 +35,6 @@ public class DtpApplicationListener extends OnceApplicationContextEventListener 
     protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
         CustomContextRefreshedEvent refreshedEvent = new CustomContextRefreshedEvent(this);
         EventBusManager.post(refreshedEvent);
-        EventBusManager.post(new BannerPrintEvent());
     }
 }
 

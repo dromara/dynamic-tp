@@ -19,6 +19,7 @@ package org.dromara.dynamictp.common.event;
 
 import org.dromara.dynamictp.common.properties.DtpProperties;
 
+import java.util.EventObject;
 
 
 /**
@@ -27,7 +28,7 @@ import org.dromara.dynamictp.common.properties.DtpProperties;
  * @author yanhom
  * @since 1.0.0
  */
-public class AlarmCheckEvent extends CustomContextRefreshedEvent {
+public class AlarmCheckEvent extends EventObject {
 
     private final transient DtpProperties dtpProperties;
 

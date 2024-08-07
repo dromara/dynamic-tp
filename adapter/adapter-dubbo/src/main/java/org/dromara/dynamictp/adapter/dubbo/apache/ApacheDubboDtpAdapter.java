@@ -71,6 +71,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
             try {
                 DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
                 initialize();
+                afterInitialize();
                 refresh(dtpProperties);
             } catch (Exception e) {
                 log.error("DynamicTp adapter, {} init failed.", getTpPrefix(), e);

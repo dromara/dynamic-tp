@@ -124,12 +124,7 @@ public class AlarmManager {
         val executor = executorWrapper.getExecutor();
         int maximumPoolSize = executor.getMaximumPoolSize();
         double div = NumberUtil.div(executor.getActiveCount(), maximumPoolSize, 2) * 100;
-        int countForNow=executorWrapper.getCountForNow();
-        if(div>=notifyItem.getThreshold()){
-            countForNow++;
-            executorWrapper.setCountForNow(countForNow);
-        }
-        return countForNow>=notifyItem.getCountToTrigger();
+        return div >= notifyItem.getThreshold();
     }
 
     private static boolean checkCapacity(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
@@ -139,22 +134,12 @@ public class AlarmManager {
             return false;
         }
         double div = NumberUtil.div(executor.getQueueSize(), executor.getQueueCapacity(), 2) * 100;
-        int countForNow=executorWrapper.getCountForNow();
-        if(div>=notifyItem.getThreshold()){
-            countForNow++;
-            executorWrapper.setCountForNow(countForNow);
-        }
-        return countForNow>=notifyItem.getCountToTrigger();
+        return div >= notifyItem.getThreshold();
     }
 
     private static boolean checkWithAlarmInfo(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
         AlarmInfo alarmInfo = AlarmCounter.getAlarmInfo(executorWrapper.getThreadPoolName(), notifyItem.getType());
-        int countForNow=executorWrapper.getCountForNow();
-        if(alarmInfo.getCount() >= notifyItem.getThreshold()){
-            countForNow++;
-            executorWrapper.setCountForNow(countForNow);
-        }
-        return countForNow>=notifyItem.getCountToTrigger();
+        return alarmInfo.getCount() >= notifyItem.getThreshold();
     }
 
     private static void preAlarm(Runnable runnable) {

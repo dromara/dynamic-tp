@@ -45,6 +45,8 @@ spring:
           corePoolSize: 200
           maximumPoolSize: 400
           keepAliveTime: 60
+      globalExecutorProps:
+        executorType: eager
       executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
         - threadPoolName: dtpExecutor1
           executorType: common                     # 线程池类型common、eager：适用于io密集型
@@ -84,3 +86,4 @@ spring:
             - type: queue_timeout
               enabled: true
               threshold: 1
+        - threadPoolName: dtpExecutor2

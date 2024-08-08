@@ -63,14 +63,10 @@ public class TomcatExecutorProxy extends ThreadPoolExecutor implements TaskEnhan
                             new Class[]{RejectedExecutionHandler.class},
                             new RejectedInvocationHandler(handler)));
         } catch (Throwable t) {
-            try {
-                ReflectionUtil.setFieldValue("handler", this, Proxy
-                        .newProxyInstance(handler.getClass().getClassLoader(),
-                                new Class[]{java.util.concurrent.RejectedExecutionHandler.class},
-                                new RejectedInvocationHandler(handler)));
-            } catch (IllegalAccessException ex) {
-                throw new RuntimeException(ex);
-            }
+            ReflectionUtil.setFieldValue("handler", this, Proxy
+                    .newProxyInstance(handler.getClass().getClassLoader(),
+                            new Class[]{java.util.concurrent.RejectedExecutionHandler.class},
+                            new RejectedInvocationHandler(handler)));
         }
         if (executor.getQueue() instanceof TaskQueue) {
             ((TaskQueue) executor.getQueue()).setParent(this);

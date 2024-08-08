@@ -15,34 +15,36 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.spring;
+package org.dromara.dynamictp.spring;
 
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.core.refresher.AbstractRefresher;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.Environment;
 
-import java.util.Map;
-
 /**
- * PropertiesBinder related
+ *  Abstract class for refreshing properties in a Spring environment.
  *
- * @author yanhom
- * @since 1.0.3
- **/
-public interface PropertiesBinder {
+ *  @author vzer200
+ *  @since 1.1.8
+ */
+@Slf4j
+public abstract class AbstractSpringRefresher extends AbstractRefresher implements EnvironmentAware {
 
-    /**
-     * bind dtp properties
-     *
-     * @param properties   properties
-     * @param dtpProperties dtp properties
-     */
-    void bindDtpProperties(Map<?, Object> properties, DtpProperties dtpProperties);
+    protected Environment environment;
 
-    /**
-     * bind dtp properties
-     *
-     * @param environment  environment
-     * @param dtpProperties dtp properties
-     */
-    void bindDtpProperties(Environment environment, DtpProperties dtpProperties);
+    protected AbstractSpringRefresher(DtpProperties dtpProperties) {
+        super(dtpProperties);
+    }
+
+    @Override
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
+
+    @Override
+    protected void refresh(Object environment) {
+        super.refresh(environment);
+    }
 }

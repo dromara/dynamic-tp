@@ -17,11 +17,13 @@
 
 package org.dromara.dynamictp.core.support;
 
+import com.google.common.eventbus.Subscribe;
 import org.dromara.dynamictp.common.constant.DynamicTpConst;
+import org.dromara.dynamictp.common.event.CustomContextRefreshedEvent;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
+import org.dromara.dynamictp.common.manager.EventBusManager;
 import org.dromara.dynamictp.common.util.VersionUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.Environment;
 
 /**
  * DtpBannerPrinter related
@@ -30,12 +32,10 @@ import org.springframework.core.env.Environment;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpBannerPrinter implements EnvironmentAware {
+public class DtpBannerPrinter {
 
     private static final String NAME = " :: Dynamic Thread Pool :: ";
-
     private static final String SITE = " :: https://dynamictp.cn ::";
-
     private static final String BANNER = "\n" +
             "|  __ \\                            (_) |__   __|   \n" +
             "| |  | |_   _ _ __   __ _ _ __ ___  _  ___| |_ __  \n" +
@@ -45,12 +45,34 @@ public class DtpBannerPrinter implements EnvironmentAware {
             "         __/ |                              | |    \n" +
             "        |___/                               |_|    ";
 
-    @Override
-    public void setEnvironment(Environment environment) {
-        boolean enable = environment.getProperty(DynamicTpConst.BANNER_ENABLED_PROP,
-                boolean.class, true);
+    private static volatile DtpBannerPrinter instance;
+
+    private DtpBannerPrinter() {
+        log.info("Registering DtpBannerPrinter - instance: {}", this);
+        EventBusManager.register(this);
+    }
+
+    public static DtpBannerPrinter getInstance() {
+        if (instance == null) {
+            synchronized (DtpBannerPrinter.class) {
+                if (instance == null) {
+                    instance = new DtpBannerPrinter();
+                }
+            }
+        }
+        return instance;
+    }
+    @Subscribe
+    public void onBannerPrintEvent(CustomContextRefreshedEvent event) {
+        printBanner();
+    }
+
+    public static void printBanner() {
+        boolean enable = Boolean.parseBoolean(ContextManagerHelper.getEnvironmentProperty(DynamicTpConst.BANNER_ENABLED_PROP, "true"));
         if (enable) {
             log.info(BANNER + "\n" + NAME + "\n :: " + VersionUtil.getVersion() + " :: \n" + SITE + "\n");
         }
     }
 }
+
+

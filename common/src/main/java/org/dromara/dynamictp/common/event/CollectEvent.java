@@ -18,7 +18,9 @@
 package org.dromara.dynamictp.common.event;
 
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.springframework.context.ApplicationEvent;
+
+import java.util.EventObject;
+
 
 /**
  * CollectEvent related
@@ -26,7 +28,7 @@ import org.springframework.context.ApplicationEvent;
  * @author yanhom
  * @since 1.0.0
  */
-public class CollectEvent extends ApplicationEvent {
+public class CollectEvent extends EventObject {
 
     private final transient DtpProperties dtpProperties;
 

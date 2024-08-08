@@ -31,7 +31,6 @@ import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.jvmti.JVMTI;
-import org.springframework.util.ReflectionUtils;
 
 import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -48,7 +47,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class RocketMqDtpAdapter extends AbstractDtpAdapter {
 
     private static final String TP_PREFIX = "rocketMqTp";
-
     private static final String CONSUME_EXECUTOR_FIELD = "consumeExecutor";
 
     @Override
@@ -69,7 +67,6 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
     }
 
     public void adaptConsumerExecutors() {
-
         val beans = JVMTI.getInstances(DefaultMQPushConsumer.class);
         if (CollectionUtils.isEmpty(beans)) {
             log.warn("Cannot find beans of type DefaultMQPushConsumer.");
@@ -82,7 +79,8 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
                 continue;
             }
             val consumeMessageService = pushConsumer.getConsumeMessageService();
-            ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(CONSUME_EXECUTOR_FIELD, consumeMessageService);
+            ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(consumeMessageService.getClass(),
+                    CONSUME_EXECUTOR_FIELD, consumeMessageService);
             if (Objects.nonNull(executor)) {
                 String tpName = consumer.getConsumerGroup();
                 if (consumeMessageService instanceof ConsumeMessageConcurrentlyService) {
@@ -96,14 +94,14 @@ public class RocketMqDtpAdapter extends AbstractDtpAdapter {
     }
 
     public void adaptProducerExecutors() {
-
         val beans = JVMTI.getInstances(DefaultMQProducer.class);
         if (CollectionUtils.isEmpty(beans)) {
             log.warn("Cannot find beans of type DefaultMQProducer.");
             return;
         }
         for (DefaultMQProducer defaultMQProducer : beans) {
-            if (Objects.isNull(ReflectionUtils.findMethod(DefaultMQProducerImpl.class, "getAsyncSenderExecutor"))) {
+            val method = ReflectionUtil.getField(DefaultMQProducerImpl.class, "getAsyncSenderExecutor");
+            if (Objects.isNull(method)) {
                 continue;
             }
             val producer = (DefaultMQProducerImpl) ReflectionUtil.getFieldValue(DefaultMQProducer.class,

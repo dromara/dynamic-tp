@@ -6,7 +6,7 @@ spring:
       enabledBanner: true           # 是否开启banner打印，默认true
       enabledCollect: true          # 是否开启监控指标采集，默认false
       collectorTypes: micrometer,logging     # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
-      logPath: /home/logs           # 监控日志数据路径，默认 ${user.home}/logs
+      logPath: /home/logs           # 监控日志数据路径，默认 ${user.home}/logs-
       monitorInterval: 5            # 监控时间间隔（报警判断、指标采集），默认5s
       platforms:                    # 通知报警平台配置
         - platform: wechat
@@ -45,6 +45,8 @@ spring:
           corePoolSize: 200
           maximumPoolSize: 400
           keepAliveTime: 60
+      globalExecutorProps:
+        executorType: eager
       executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
         - threadPoolName: dtpExecutor1
           executorType: common                     # 线程池类型common、eager：适用于io密集型
@@ -68,6 +70,8 @@ spring:
               threshold: 80                # 报警阈值
               platforms: [ding,wechat]     # 可选配置，不配置默认拿上层platforms配置的所以平台
               interval: 120                # 报警间隔（单位：s）
+              countToTrigger: 3
+              op: >
             - type: change
               enabled: true
             - type: liveness
@@ -82,3 +86,4 @@ spring:
             - type: queue_timeout
               enabled: true
               threshold: 1
+        - threadPoolName: dtpExecutor2

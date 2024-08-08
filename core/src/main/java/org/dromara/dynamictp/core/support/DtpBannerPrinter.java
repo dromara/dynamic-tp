@@ -19,7 +19,7 @@ package org.dromara.dynamictp.core.support;
 
 import com.google.common.eventbus.Subscribe;
 import org.dromara.dynamictp.common.constant.DynamicTpConst;
-import org.dromara.dynamictp.common.event.BannerPrintEvent;
+import org.dromara.dynamictp.common.event.CustomContextRefreshedEvent;
 import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.manager.EventBusManager;
 import org.dromara.dynamictp.common.util.VersionUtil;
@@ -45,12 +45,25 @@ public class DtpBannerPrinter {
             "         __/ |                              | |    \n" +
             "        |___/                               |_|    ";
 
-    public DtpBannerPrinter() {
+    private static volatile DtpBannerPrinter instance;
+
+    private DtpBannerPrinter() {
+        log.info("Registering DtpBannerPrinter - instance: {}", this);
         EventBusManager.register(this);
     }
 
+    public static DtpBannerPrinter getInstance() {
+        if (instance == null) {
+            synchronized (DtpBannerPrinter.class) {
+                if (instance == null) {
+                    instance = new DtpBannerPrinter();
+                }
+            }
+        }
+        return instance;
+    }
     @Subscribe
-    public void onBannerPrintEvent(BannerPrintEvent event) {
+    public void onBannerPrintEvent(CustomContextRefreshedEvent event) {
         printBanner();
     }
 

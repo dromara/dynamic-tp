@@ -28,7 +28,8 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.event.ContextStoppedEvent;
 
-import java.util.Objects;
+
+import static org.springframework.util.ObjectUtils.nullSafeEquals;
 
 /**
  * The abstract class {@link ApplicationListener} for {@link ApplicationEvent} guarantees just one-time execution
@@ -58,24 +59,45 @@ public abstract class OnceApplicationContextEventListener implements Application
         }
     }
 
+    /**
+     * The subclass overrides this method to handle {@link ContextRefreshedEvent}
+     *
+     * @param event {@link ContextRefreshedEvent}
+     */
     protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
-        // Override to handle ContextStartedEvent
     }
 
+    /**
+     * The subclass overrides this method to handle {@link ContextStartedEvent}
+     *
+     * @param event {@link ContextStartedEvent}
+     */
     protected void onContextStartedEvent(ContextStartedEvent event) {
-        // Override to handle ContextStartedEvent
     }
 
+    /**
+     * The subclass overrides this method to handle {@link ContextStoppedEvent}
+     *
+     * @param event {@link ContextStoppedEvent}
+     */
     protected void onContextStoppedEvent(ContextStoppedEvent event) {
-        // Override to handle ContextStoppedEvent
     }
 
+    /**
+     * The subclass overrides this method to handle {@link ContextClosedEvent}
+     *
+     * @param event {@link ContextClosedEvent}
+     */
     protected void onContextClosedEvent(ContextClosedEvent event) {
-        // Override to handle ContextClosedEvent
     }
 
+    /**
+     * Is original {@link ApplicationContext} as the event source
+     * @param event {@link ApplicationEvent}
+     * @return if original, return <code>true</code>, or <code>false</code>
+     */
     private boolean isOriginalEventSource(ApplicationEvent event) {
-        return Objects.equals(SpringContextHolder.getInstance(), event.getSource());
+        return nullSafeEquals(this.applicationContext, event.getSource());
     }
 
     @Override
@@ -83,3 +105,4 @@ public abstract class OnceApplicationContextEventListener implements Application
         this.applicationContext = applicationContext;
     }
 }
+

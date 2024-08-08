@@ -18,15 +18,16 @@
 package org.dromara.dynamictp.common.event;
 
 
+import java.util.EventObject;
+
 /**
- * Event indicating that the banner should be printed.
- * This event is published by SpringContextHolder when the application context is set.
+ * EventObject related
  *
  * @author vzer200
  * @since 1.1.8
  */
-public class BannerPrintEvent {
-    // This class can be expanded with additional fields if needed
+public class CustomContextRefreshedEvent extends EventObject {
+    public CustomContextRefreshedEvent(Object source) {
+        super(source);
+    }
 }
-
-

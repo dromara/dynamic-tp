@@ -28,7 +28,6 @@
         <fastjson.version>1.2.83</fastjson.version>
         <ttl.version>2.14.3</ttl.version>
         <equator.version>1.0.4</equator.version>
-        <snakeyaml.version>1.29</snakeyaml.version>
 
         <sofa-rpc.version>5.9.1</sofa-rpc.version>
         <brpc.version>2022.2.0</brpc.version>
@@ -316,11 +315,6 @@
                 <groupId>com.github.dadiyang</groupId>
                 <artifactId>equator</artifactId>
                 <version>${equator.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>${snakeyaml.version}</version>
             </dependency>
 
             <!-- https://mvnrepository.com/artifact/io.dropwizard.metrics/metrics-core -->

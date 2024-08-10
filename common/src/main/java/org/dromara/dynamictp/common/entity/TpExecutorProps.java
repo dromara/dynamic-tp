@@ -82,19 +82,14 @@ public class TpExecutorProps {
     private boolean notifyEnabled = true;
 
     /**
-     * Task execute timeout, unit (ms).
-     */
-    private long runTimeout = 0;
-
-    /**
      * If try interrupt thread when run timeout.
      */
     private boolean tryInterrupt = false;
 
     /**
-     * Task queue wait timeout, unit (ms), just for statistics.
+     * Alarm threshold, equal to runTimeout and queueTimeout.
      */
-    private long queueTimeout = 0;
+    private int threshold = 0;
 
     /**
      * Task wrapper names.

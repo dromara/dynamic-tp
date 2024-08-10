@@ -106,9 +106,9 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         propertyValues.put(PRE_START_ALL_CORE_THREADS, props.isPreStartAllCoreThreads());
         propertyValues.put(REJECT_HANDLER_TYPE, props.getRejectedHandlerType());
         propertyValues.put(REJECT_ENHANCED, props.isRejectEnhanced());
-        propertyValues.put(RUN_TIMEOUT, props.getRunTimeout());
+        propertyValues.put(RUN_TIMEOUT, props.getThreshold());
         propertyValues.put(TRY_INTERRUPT_WHEN_TIMEOUT, props.isTryInterrupt());
-        propertyValues.put(QUEUE_TIMEOUT, props.getQueueTimeout());
+        propertyValues.put(QUEUE_TIMEOUT, props.getThreshold());
         val notifyItems = mergeAllNotifyItems(props.getNotifyItems());
         propertyValues.put(NOTIFY_ITEMS, notifyItems);
         propertyValues.put(PLATFORM_IDS, props.getPlatformIds());

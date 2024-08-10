@@ -37,6 +37,7 @@ import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.slf4j.MDC;
 
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
@@ -124,8 +125,14 @@ public class AlarmManager {
         val executor = executorWrapper.getExecutor();
         int maximumPoolSize = executor.getMaximumPoolSize();
         double div = NumberUtil.div(executor.getActiveCount(), maximumPoolSize, 2) * 100;
-        return div >= notifyItem.getThreshold();
+        Queue<Long> counterForNow=executorWrapper.getCounterForNow();
+        if(div>=notifyItem.getThreshold()){
+            checkCounter(counterForNow, notifyItem);
+            executorWrapper.setCounterForNow(counterForNow);
+        }
+        return counterForNow.size()>=notifyItem.getCountToTrigger();
     }
+
 
     private static boolean checkCapacity(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
 
@@ -134,12 +141,37 @@ public class AlarmManager {
             return false;
         }
         double div = NumberUtil.div(executor.getQueueSize(), executor.getQueueCapacity(), 2) * 100;
-        return div >= notifyItem.getThreshold();
+        Queue<Long> counterForNow=executorWrapper.getCounterForNow();
+        if(div>=notifyItem.getThreshold()){
+            checkCounter(counterForNow, notifyItem);
+            executorWrapper.setCounterForNow(counterForNow);
+        }
+        return counterForNow.size()>=notifyItem.getCountToTrigger();
     }
 
     private static boolean checkWithAlarmInfo(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
         AlarmInfo alarmInfo = AlarmCounter.getAlarmInfo(executorWrapper.getThreadPoolName(), notifyItem.getType());
-        return alarmInfo.getCount() >= notifyItem.getThreshold();
+        Queue<Long> counterForNow = executorWrapper.getCounterForNow();
+        if(alarmInfo.getCount() >= notifyItem.getThreshold()){
+            checkCounter(counterForNow, notifyItem);
+            executorWrapper.setCounterForNow(counterForNow);
+        }
+        return counterForNow.size() >= notifyItem.getCountToTrigger();
+    }
+
+    private static void checkCounter(Queue<Long> counterForNow, NotifyItem notifyItem) {
+        long now = System.currentTimeMillis();
+        counterForNow.add(now);
+        while (!counterForNow.isEmpty()) {
+            Long front = counterForNow.element();
+            Long periodByMillis = (long) (notifyItem.getPeriod() * 1000);
+            if(now - front > periodByMillis) {
+                counterForNow.remove();
+            }
+            else {
+                break;
+            }
+        }
     }
 
     private static void preAlarm(Runnable runnable) {

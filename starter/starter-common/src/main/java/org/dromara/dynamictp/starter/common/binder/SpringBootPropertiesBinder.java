@@ -21,10 +21,8 @@ import cn.hutool.core.util.ReflectUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
-import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.spring.PropertiesBinder;
@@ -40,10 +38,11 @@ import org.springframework.core.env.PropertyResolver;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
 
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.EXECUTORS_CONFIG_PREFIX;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.GLOBAL_CONFIG_PREFIX;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAIN_PROPERTIES_PREFIX;
 
 /**
@@ -55,8 +54,6 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAIN_PROPERTI
 @Slf4j
 @SuppressWarnings("all")
 public class SpringBootPropertiesBinder implements PropertiesBinder {
-    private static final String GLOBAL_PREFIX = "spring.dynamic.tp.globalExecutorProps.";
-    private static final String EXECUTORS_PREFIX = "spring.dynamic.tp.executors[";
 
     @Override
     public void bindDtpProperties(Map<?, Object> properties, DtpProperties dtpProperties) {
@@ -77,7 +74,7 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
         } catch (ClassNotFoundException e) {
             doBindIn1X(environment, dtpProperties);
         }
-        tryResetWithGlobalConfig(environment,dtpProperties);
+        tryResetWithGlobalConfig(environment, dtpProperties);
     }
 
     private void doBindIn2X(Map<?, Object> properties, DtpProperties dtpProperties) {
@@ -129,63 +126,69 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
         }
     }
 
-
     /**
      * Assign global environment variable to property
+     *
      * @param environment
      * @param dtpProperties
      */
-    
-    private void tryResetWithGlobalConfig(Object environment, DtpProperties dtpProperties) {
-        final int[] i = {0};
+    private void tryResetWithGlobalConfig(Object source, DtpProperties dtpProperties) {
+        if (Objects.isNull(dtpProperties.getGlobalExecutorProps()) ||
+                CollectionUtils.isEmpty(dtpProperties.getExecutors())) {
+            return;
+        }
         val fields = ReflectionUtil.getAllFields(DtpExecutorProps.class);
         if(CollectionUtils.isEmpty(fields)) {
             return;
         }
+
+        final int[] executorIndex = {0};
         dtpProperties.getExecutors().forEach(executor -> {
             fields.forEach(field -> {
-                String globalFieldVal = "";
-                String executorFieldVal = "";
-                if(environment instanceof Environment) {
-                    Environment env = (Environment) environment;
-                    globalFieldVal = env.getProperty(GLOBAL_PREFIX + field.getName());
-                }
-                else if(environment instanceof Map) {
-                    Map<?, Object> properties = (Map<?, Object>) environment;
-                    Object globalPropertyField = properties.get(GLOBAL_PREFIX + field.getName());
-                    Object executorPropertyField = properties.get(EXECUTORS_PREFIX + i[0] +"]." + field.getName());
-                    if(globalPropertyField instanceof String) {
-                        globalFieldVal = globalPropertyField.toString();
-                        if(ObjectUtils.isNotEmpty(executorPropertyField)) {
-                            executorFieldVal = executorPropertyField.toString();
-                        }
-                    }
-                }
-                if(StringUtils.isEmpty(globalFieldVal)) {
+                Object executorFieldVal = getProperty(EXECUTORS_CONFIG_PREFIX + executorIndex[0] + "]." + field.getName(), source);
+                if (Objects.nonNull(executorFieldVal)) {
                     return;
                 }
-                if (StringUtils.isNotEmpty(executorFieldVal)) {
+                Object globalFieldVal = getProperty(GLOBAL_CONFIG_PREFIX + field.getName(), source);
+                if(Objects.isNull(globalFieldVal)) {
                     return;
                 }
-                ReflectUtil.setFieldValue(executor,field,globalFieldVal);
+                ReflectUtil.setFieldValue(executor, field, globalFieldVal);
             });
-            if (dtpProperties.getGlobalExecutorProps() != null) {
-                Set<String> globalTaskWrapperNames = dtpProperties.getGlobalExecutorProps().getTaskWrapperNames();
-                if(executor.getTaskWrapperNames() == null) {
-                    executor.setTaskWrapperNames(globalTaskWrapperNames);
-                }
 
-                List<String> globalPlatformIds = dtpProperties.getGlobalExecutorProps().getPlatformIds();
-                if(executor.getPlatformIds() == null) {
-                    executor.setPlatformIds(globalPlatformIds);
-                }
-
-                List<NotifyItem> globalNotifyItems = dtpProperties.getGlobalExecutorProps().getNotifyItems();
-                if(executor.getNotifyItems() == null) {
-                    executor.setNotifyItems(globalNotifyItems);
-                }
+            val globalExecutorProps = dtpProperties.getGlobalExecutorProps();
+            if (CollectionUtils.isEmpty(executor.getTaskWrapperNames()) &&
+                    CollectionUtils.isNotEmpty(globalExecutorProps.getTaskWrapperNames())) {
+                executor.setTaskWrapperNames(globalExecutorProps.getTaskWrapperNames());
             }
-            i[0]++;
+            if (CollectionUtils.isEmpty(executor.getPlatformIds()) &&
+                    CollectionUtils.isNotEmpty(globalExecutorProps.getPlatformIds())) {
+                executor.setPlatformIds(globalExecutorProps.getPlatformIds());
+            }
+            if (CollectionUtils.isEmpty(executor.getNotifyItems()) &&
+                    CollectionUtils.isNotEmpty(globalExecutorProps.getNotifyItems())) {
+                executor.setNotifyItems(globalExecutorProps.getNotifyItems());
+            }
+            if (CollectionUtils.isEmpty(executor.getAwareNames()) &&
+                    CollectionUtils.isNotEmpty(globalExecutorProps.getAwareNames())) {
+                executor.setAwareNames(globalExecutorProps.getAwareNames());
+            }
+            if (CollectionUtils.isEmpty(executor.getPluginNames() ) &&
+                    CollectionUtils.isNotEmpty(globalExecutorProps.getPluginNames())) {
+                executor.setPluginNames(globalExecutorProps.getPluginNames());
+            }
+            executorIndex[0]++;
         });
+    }
+
+    private Object getProperty(String key, Object environment) {
+        if (environment instanceof Environment) {
+            Environment env = (Environment) environment;
+            return env.getProperty(key);
+        } else if (environment instanceof Map) {
+            Map<?, Object> properties = (Map<?, Object>) environment;
+            return properties.get(key);
+        }
+        return null;
     }
 }

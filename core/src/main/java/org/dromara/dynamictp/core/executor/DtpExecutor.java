@@ -77,6 +77,11 @@ public class DtpExecutor extends ThreadPoolExecutor
     private List<NotifyItem> notifyItems;
 
     /**
+     * The actual value to count that decide whether to trigger an alarm.
+     */
+    private int countForNow = 0;
+
+    /**
      * Notify platform ids.
      */
     private List<String> platformIds;
@@ -407,5 +412,13 @@ public class DtpExecutor extends ThreadPoolExecutor
      */
     public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
         allowCoreThreadTimeOut(allowCoreThreadTimeOut);
+    }
+
+    public int getCountForNow() {
+        return countForNow;
+    }
+
+    public void setCountForNow(int countForNow) {
+        this.countForNow = countForNow;
     }
 }

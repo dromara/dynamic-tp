@@ -93,6 +93,11 @@ public class DtpProperties {
     private Etcd etcd;
 
     /**
+     * ThreadPoolExecutor global configs.
+     */
+    private DtpExecutorProps globalExecutorProps;
+
+    /**
      * ThreadPoolExecutor configs.
      */
     private List<DtpExecutorProps> executors;

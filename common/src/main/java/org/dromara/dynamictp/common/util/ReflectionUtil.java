@@ -18,9 +18,12 @@
 package org.dromara.dynamictp.common.util;
 
 import lombok.val;
+import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -66,6 +69,7 @@ public final class ReflectionUtil {
         field.set(targetObj, targetVal);
     }
 
+
     public static void setFieldValue(Class<?> targetClass, String fieldName, Object targetObj, Object targetVal)
             throws IllegalAccessException {
         val field = getField(targetClass, fieldName);
@@ -83,4 +87,13 @@ public final class ReflectionUtil {
         ReflectionUtils.makeAccessible(field);
         return field;
     }
+
+    public static List<Field> getAllFields(Class<?> targetClass) {
+        List<Field> fields = new ArrayList<Field>();
+        ReflectionUtils.doWithFields(targetClass, field->{
+            fields.add(field);
+        });
+        return fields;
+    }
+
 }

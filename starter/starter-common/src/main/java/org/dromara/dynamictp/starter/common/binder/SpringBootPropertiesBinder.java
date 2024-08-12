@@ -57,24 +57,31 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
 
     @Override
     public void bindDtpProperties(Map<?, Object> properties, DtpProperties dtpProperties) {
+        beforeBind(properties, dtpProperties);
         try {
             Class.forName("org.springframework.boot.context.properties.bind.Binder");
             doBindIn2X(properties, dtpProperties);
         } catch (ClassNotFoundException e) {
             doBindIn1X(properties, dtpProperties);
         }
-        tryResetWithGlobalConfig(properties, dtpProperties);
+        afterBind(properties, dtpProperties);
     }
 
     @Override
     public void bindDtpProperties(Environment environment, DtpProperties dtpProperties) {
+        beforeBind(environment, dtpProperties);
         try {
             Class.forName("org.springframework.boot.context.properties.bind.Binder");
             doBindIn2X(environment, dtpProperties);
         } catch (ClassNotFoundException e) {
             doBindIn1X(environment, dtpProperties);
         }
-        tryResetWithGlobalConfig(environment, dtpProperties);
+        afterBind(environment, dtpProperties);
+    }
+
+    @Override
+    public void afterBind(Object source, DtpProperties dtpProperties) {
+        tryResetWithGlobalConfig(source, dtpProperties);
     }
 
     private void doBindIn2X(Map<?, Object> properties, DtpProperties dtpProperties) {

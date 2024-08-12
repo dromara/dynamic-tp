@@ -17,13 +17,13 @@
 
 package org.dromara.dynamictp.test.core.thread;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
 import org.dromara.dynamictp.core.spring.EnableDynamicTp;
 import org.dromara.dynamictp.core.spring.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
@@ -45,11 +45,11 @@ import java.util.concurrent.TimeUnit;
 @EnableAutoConfiguration
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = PriorityDtpExecutorTest.class)
-@AllArgsConstructor
 @PropertySource(value = "classpath:/dynamic-tp-demo.yml", factory = YamlPropertySourceFactory.class)
 public class PriorityDtpExecutorTest {
 
-    private final PriorityDtpExecutor priorityDtpExecutor;
+    @Autowired
+    private PriorityDtpExecutor priorityDtpExecutor;
 
     @Test
     void execute() throws InterruptedException {

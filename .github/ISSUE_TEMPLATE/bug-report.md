@@ -1,7 +1,7 @@
 ---
 name: BUG 报告
 about: 'Report a bug'
-title: 'bug'
+title: ''
 labels: 'bug'
 ---
 
@@ -12,6 +12,7 @@ labels: 'bug'
 - Jdk版本：
 - SpringBoot版本：
 - DynamicTp版本：
+- 配置中心类型：
 - 配置中心版本：
 
 ### 问题描述
@@ -19,6 +20,7 @@ labels: 'bug'
 文字描述、截图、粘代码方式
 
 - 配置文件：
+- 引入的依赖：
 - 代码使用步骤：
 - 报错信息：
 - 猜测可能原因：

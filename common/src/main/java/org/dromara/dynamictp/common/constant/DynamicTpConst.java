@@ -48,6 +48,10 @@ public final class DynamicTpConst {
 
     public static final String TRACE_ID = "traceId";
 
+    public static final String GLOBAL_CONFIG_PREFIX = MAIN_PROPERTIES_PREFIX + ".globalExecutorProps.";
+
+    public static final String EXECUTORS_CONFIG_PREFIX = MAIN_PROPERTIES_PREFIX + ".executors[";
+
     /**
      * Dtp executor properties const.
      */

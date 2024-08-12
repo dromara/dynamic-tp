@@ -23,7 +23,10 @@ import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * ScheduledThreadPoolExecutorProxy related
@@ -55,6 +58,33 @@ public class ScheduledThreadPoolExecutorProxy extends ScheduledThreadPoolExecuto
         command = getEnhancedTask(command);
         AwareManager.execute(this, command);
         super.execute(command);
+    }
+
+    @Override
+    public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
+        command = getEnhancedTask(command);
+        AwareManager.execute(this, command);
+        return super.schedule(command, delay, unit);
+    }
+
+    public <V> ScheduledFuture<V> schedule(Runnable command, V result, long delay, TimeUnit unit) {
+        command = getEnhancedTask(command);
+        AwareManager.execute(this, command);
+        return super.schedule(Executors.callable(command, result), delay, unit);
+    }
+
+    @Override
+    public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
+        command = getEnhancedTask(command);
+        AwareManager.execute(this, command);
+        return super.scheduleAtFixedRate(command, initialDelay, period, unit);
+    }
+
+    @Override
+    public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) {
+        command = getEnhancedTask(command);
+        AwareManager.execute(this, command);
+        return super.scheduleWithFixedDelay(command, initialDelay, delay, unit);
     }
 
     @Override

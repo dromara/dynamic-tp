@@ -60,8 +60,9 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements Initia
                 try {
                     Thread.sleep(1000);
                     DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-                    this.initialize();
-                    this.refresh(dtpProperties);
+                    initialize();
+                    afterInitialize();
+                    refresh(dtpProperties);
                 } catch (Throwable e) { }
             }
         });

@@ -55,6 +55,9 @@ class PropertiesBinderTest {
         properties.put("spring.dynamic.tp.enabled", false);
         properties.put("spring.dynamic.tp.collectorTypes", Lists.newArrayList("LOGGING"));
         properties.put("spring.dynamic.tp.executors[0].threadPoolName", "test_dtp");
+        properties.put("spring.dynamic.tp.executors[1].threadPoolName", "test_dtp1");
+        properties.put("spring.dynamic.tp.executors[0].executorType", "common");
+        properties.put("spring.dynamic.tp.globalExecutorProps.executorType","eager");
 
         DtpProperties dtpProperties = DtpProperties.getInstance();
         BinderHelper.bindDtpProperties(properties, dtpProperties);
@@ -62,6 +65,10 @@ class PropertiesBinderTest {
                 dtpProperties.getExecutors().get(0).getThreadPoolName());
         Assertions.assertIterableEquals((List<String>) properties.get("spring.dynamic.tp.collectorTypes"),
                 dtpProperties.getCollectorTypes());
+        Assertions.assertEquals("common",
+                dtpProperties.getExecutors().get(0).getExecutorType());
+        Assertions.assertEquals(properties.get("spring.dynamic.tp.globalExecutorProps.executorType"),
+                dtpProperties.getExecutors().get(1).getExecutorType());
     }
 
     @Test
@@ -71,6 +78,9 @@ class PropertiesBinderTest {
         BinderHelper.bindDtpProperties(environment, dtpProperties);
         String threadPoolName = environment.getProperty("spring.dynamic.tp.executors[0].threadPoolName");
         Assertions.assertEquals(threadPoolName, dtpProperties.getExecutors().get(0).getThreadPoolName());
+        String executorType = environment.getProperty("spring.dynamic.tp.globalExecutorProps.executorType");
+        Assertions.assertEquals(executorType, dtpProperties.getExecutors().get(1).getExecutorType());
+
     }
 
 }

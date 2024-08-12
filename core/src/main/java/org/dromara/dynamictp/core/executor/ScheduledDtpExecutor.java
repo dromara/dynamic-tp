@@ -19,12 +19,12 @@ package org.dromara.dynamictp.core.executor;
 
 import org.dromara.dynamictp.common.em.JreEnum;
 import org.dromara.dynamictp.core.support.ScheduledThreadPoolExecutorProxy;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ScheduledExecutorService;
@@ -33,7 +33,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
 
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
@@ -44,7 +43,7 @@ import static java.util.concurrent.TimeUnit.NANOSECONDS;
  **/
 public class ScheduledDtpExecutor extends DtpExecutor implements ScheduledExecutorService {
 
-    private final ScheduledThreadPoolExecutor delegate;
+    private final ScheduledThreadPoolExecutorProxy delegate;
 
     public ScheduledDtpExecutor(int corePoolSize,
                                 int maximumPoolSize,
@@ -94,7 +93,7 @@ public class ScheduledDtpExecutor extends DtpExecutor implements ScheduledExecut
 
     @Override
     public <T> Future<T> submit(Runnable task, T result) {
-        return schedule(Executors.callable(task, result), 0, NANOSECONDS);
+        return delegate.schedule(task, result, 0, NANOSECONDS);
     }
 
     @Override
@@ -270,5 +269,3 @@ public class ScheduledDtpExecutor extends DtpExecutor implements ScheduledExecut
         return delegate;
     }
 }
-
-

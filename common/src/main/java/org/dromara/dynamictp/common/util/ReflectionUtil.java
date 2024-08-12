@@ -21,6 +21,8 @@ import lombok.val;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -83,4 +85,11 @@ public final class ReflectionUtil {
         ReflectionUtils.makeAccessible(field);
         return field;
     }
+
+    public static List<Field> getAllFields(Class<?> targetClass) {
+        List<Field> fields = new ArrayList<>();
+        ReflectionUtils.doWithFields(targetClass, fields::add);
+        return fields;
+    }
+
 }

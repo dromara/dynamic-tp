@@ -38,13 +38,13 @@ public class EventBusManager {
     private static final Set<Object> REGISTERED_OBJECTS = ConcurrentHashMap.newKeySet();
     private EventBusManager() { }
 
-    public static synchronized void register(Object object) {
+    public static void register(Object object) {
         if (REGISTERED_OBJECTS.add(object)) {
             EVENT_BUS.register(object);
         }
     }
 
-    public static synchronized void unregister(Object object) {
+    public static void unregister(Object object) {
         if (REGISTERED_OBJECTS.remove(object)) {
             try {
                 EVENT_BUS.unregister(object);
@@ -61,6 +61,17 @@ public class EventBusManager {
 
     public static EventBus getInstance() {
         return EVENT_BUS;
+    }
+
+    public static void destroy() {
+        for (Object object : REGISTERED_OBJECTS) {
+            try {
+                EVENT_BUS.unregister(object);
+            } catch (Throwable e) {
+                log.warn("Attempted to unregister an object that was not registered: {}", object, e);
+            }
+        }
+        REGISTERED_OBJECTS.clear();
     }
 }
 

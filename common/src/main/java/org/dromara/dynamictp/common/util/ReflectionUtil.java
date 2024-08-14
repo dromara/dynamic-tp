@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Field;
 import java.util.Objects;
 
@@ -95,4 +96,14 @@ public final class ReflectionUtil {
         }
         return field;
     }
+
+    public static Method findMethod(Class<?> targetClass, String methodName, Class<?>... parameterTypes) {
+        try {
+            return targetClass.getDeclaredMethod(methodName, parameterTypes);
+        } catch (NoSuchMethodException e) {
+            log.warn("Method '{}' with parameters '{}' not found in class '{}'", methodName, parameterTypes, targetClass.getName(), e);
+            return null;
+        }
+    }
 }
+

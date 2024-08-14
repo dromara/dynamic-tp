@@ -22,6 +22,7 @@ import org.dromara.dynamictp.common.event.AlarmCheckEvent;
 import org.dromara.dynamictp.common.event.CollectEvent;
 import org.dromara.dynamictp.common.event.RefreshEvent;
 import org.dromara.dynamictp.common.manager.ContextManagerHelper;
+import org.dromara.dynamictp.common.manager.EventBusManager;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.handler.CollectorHandler;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
@@ -40,6 +41,10 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTI
  */
 @Slf4j
 public class DtpAdapterListener {
+
+    public DtpAdapterListener() {
+        EventBusManager.register(this);
+    }
 
     @Subscribe
     public void handleRefreshedEvent(EventObject event) {

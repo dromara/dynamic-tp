@@ -18,6 +18,7 @@
 package org.dromara.dynamictp.core.lifecycle;
 
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.common.manager.EventBusManager;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.monitor.DtpMonitor;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
@@ -94,5 +95,6 @@ public class DtpLifecycle implements LifeCycleManagement {
         AlarmManager.destroy();
         NoticeManager.destroy();
         SystemMetricManager.stop();
+        EventBusManager.destroy();
     }
 }

@@ -17,6 +17,8 @@
 
 package org.dromara.dynamictp.common.parser.config;
 
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
 import org.yaml.snakeyaml.Yaml;
 
@@ -44,14 +46,14 @@ public class YamlConfigParser extends AbstractConfigParser {
 
     @Override
     public Map<Object, Object> doParse(String content) {
-        if (content == null || content.isEmpty()) {
+        if (StringUtils.isBlank(content)) {
             return Collections.emptyMap();
         }
 
         Yaml yaml = new Yaml();
         Map<Object, Object> loadedYaml = yaml.load(content);
 
-        if (loadedYaml == null) {
+        if (MapUtils.isEmpty(loadedYaml)) {
             return Collections.emptyMap();
         }
 

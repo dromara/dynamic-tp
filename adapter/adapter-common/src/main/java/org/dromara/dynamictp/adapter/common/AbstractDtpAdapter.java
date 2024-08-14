@@ -71,12 +71,10 @@ import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGra
 public abstract class AbstractDtpAdapter extends OnceApplicationContextEventListener implements DtpAdapter {
 
     private static final Equator EQUATOR = new GetterBaseEquator();
-    private static AbstractDtpAdapter instance;
 
     protected final Map<String, ExecutorWrapper> executors = Maps.newHashMap();
 
     public AbstractDtpAdapter() {
-        instance = this;
         EventBusManager.register(this);
     }
 
@@ -221,10 +219,6 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
         if (!Objects.equals(props.getMaximumPoolSize(), executor.getMaximumPoolSize())) {
             executor.setMaximumPoolSize(props.getMaximumPoolSize());
         }
-    }
-
-    public static void destroy() {
-        EventBusManager.unregister(instance);
     }
 }
 

@@ -62,6 +62,7 @@ public class DtpBannerPrinter {
         }
         return instance;
     }
+
     @Subscribe
     public void onBannerPrintEvent(CustomContextRefreshedEvent event) {
         printBanner();

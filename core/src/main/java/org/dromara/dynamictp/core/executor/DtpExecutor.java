@@ -181,11 +181,6 @@ public class DtpExecutor extends ThreadPoolExecutor implements TaskEnhanceAware,
         return this;
     }
 
-
-    public void execute(Runnable task, long startTimeout) {
-        execute(task);
-    }
-
     @Override
     public void execute(Runnable command) {
         command = getEnhancedTask(command);

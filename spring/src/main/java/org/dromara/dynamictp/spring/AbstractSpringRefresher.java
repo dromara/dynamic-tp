@@ -43,8 +43,4 @@ public abstract class AbstractSpringRefresher extends AbstractRefresher implemen
         this.environment = environment;
     }
 
-    @Override
-    protected void refresh(Object environment) {
-        super.refresh(environment);
-    }
 }

@@ -53,7 +53,6 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTI
 public class DtpMonitor {
 
     private static final ScheduledExecutorService MONITOR_EXECUTOR = ThreadPoolCreator.newScheduledThreadPool("dtp-monitor", 1);
-    private static DtpMonitor instance;
     private final DtpProperties dtpProperties;
 
     private ScheduledFuture<?> monitorFuture;
@@ -62,7 +61,6 @@ public class DtpMonitor {
 
     public DtpMonitor(DtpProperties dtpProperties) {
         this.dtpProperties = dtpProperties;
-        instance = this;
         EventBusManager.register(this);
     }
 
@@ -126,6 +124,5 @@ public class DtpMonitor {
 
     public static void destroy() {
         MONITOR_EXECUTOR.shutdownNow();
-        EventBusManager.unregister(instance);
     }
 }

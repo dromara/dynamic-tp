@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.common.event;
 
-
 import java.util.EventObject;
 
 /**

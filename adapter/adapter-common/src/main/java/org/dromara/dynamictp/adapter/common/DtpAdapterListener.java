@@ -28,8 +28,6 @@ import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.MapUtils;
-
-
 import java.util.EventObject;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTIFY_ITEMS;

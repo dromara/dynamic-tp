@@ -47,8 +47,6 @@ import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.dromara.dynamictp.spring.OnceApplicationContextEventListener;
-
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +59,7 @@ import static java.util.stream.Collectors.toList;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
 import static org.dromara.dynamictp.core.notifier.manager.NotifyHelper.updateNotifyInfo;
 import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGracefulAsync;
+
 /**
  * AbstractDtpAdapter related
  *

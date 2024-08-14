@@ -38,6 +38,7 @@ import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.jvmti.JVMTI;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 
 import java.util.Map;
 import java.util.Objects;
@@ -57,7 +58,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.SIDE_KEY;
  */
 @Slf4j
 @SuppressWarnings("all")
-public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
+public class ApacheDubboDtpAdapter extends AbstractDtpAdapter implements ApplicationListener<ApplicationEvent> {
 
     private static final String TP_PREFIX = "dubboTp";
 

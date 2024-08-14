@@ -68,7 +68,7 @@ import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGra
  * @since 1.0.6
  */
 @Slf4j
-public abstract class AbstractDtpAdapter extends OnceApplicationContextEventListener implements DtpAdapter {
+public abstract class AbstractDtpAdapter implements DtpAdapter {
 
     private static final Equator EQUATOR = new GetterBaseEquator();
 

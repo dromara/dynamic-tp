@@ -62,7 +62,7 @@ public class DingNotifier extends AbstractHttpNotifier {
         List<String> mobiles = Lists.newArrayList(platform.getReceivers().split(","));
         at.setAtMobiles(mobiles);
         if (mobiles.contains(ALL) || CollectionUtils.isEmpty(mobiles)) {
-            at.setAtAll(true);
+            at.setIsAtAll(true);
         }
 
         MarkdownReq markdownReq = new MarkdownReq();

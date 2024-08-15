@@ -20,9 +20,10 @@ package org.dromara.dynamictp.common.util;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.reflect.FieldUtils;
-
-import java.lang.reflect.Method;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -42,8 +43,7 @@ public final class ReflectionUtil {
             return null;
         }
         try {
-            val fieldObj = FieldUtils.readField(field, targetObj, true);
-            return fieldObj;
+            return FieldUtils.readField(field, targetObj, true);
         } catch (IllegalAccessException e) {
             log.error("Failed to read field '{}' from object '{}'", fieldName, targetObj, e);
             return null;
@@ -56,8 +56,7 @@ public final class ReflectionUtil {
             return null;
         }
         try {
-            val fieldObj = FieldUtils.readField(field, targetObj, true);
-            return fieldObj;
+            return FieldUtils.readField(field, targetObj, true);
         } catch (IllegalAccessException e) {
             log.error("Failed to read field '{}' from object '{}'", fieldName, targetObj, e);
             return null;
@@ -105,5 +104,8 @@ public final class ReflectionUtil {
             return null;
         }
     }
-}
 
+    public static List<Field> getAllFields(Class<?> targetClass) {
+        return FieldUtils.getAllFieldsList(targetClass);
+    }
+}

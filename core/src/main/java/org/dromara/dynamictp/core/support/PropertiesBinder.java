@@ -44,4 +44,24 @@ public interface PropertiesBinder {
      * @param dtpProperties dtp properties
      */
     void bindDtpProperties(Object environment, DtpProperties dtpProperties);
+
+    /**
+     * before bind
+     *
+     * @param source source
+     * @param dtpProperties dtp properties
+     */
+    default void beforeBind(Object source, DtpProperties dtpProperties) {
+
+    }
+
+    /**
+     * after bind
+     *
+     * @param source source
+     * @param dtpProperties dtp properties
+     */
+    default void afterBind(Object source, DtpProperties dtpProperties) {
+
+    }
 }

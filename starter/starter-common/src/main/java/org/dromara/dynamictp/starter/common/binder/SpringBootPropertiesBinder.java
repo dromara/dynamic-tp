@@ -17,10 +17,14 @@
 
 package org.dromara.dynamictp.starter.common.binder;
 
+import cn.hutool.core.util.ReflectUtil;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-
+import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.PropertiesBinder;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValues;
@@ -35,7 +39,10 @@ import org.springframework.core.env.PropertyResolver;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Objects;
 
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.EXECUTORS_CONFIG_PREFIX;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.GLOBAL_CONFIG_PREFIX;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAIN_PROPERTIES_PREFIX;
 
 /**
@@ -50,12 +57,14 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
 
     @Override
     public void bindDtpProperties(Map<?, Object> properties, DtpProperties dtpProperties) {
+        beforeBind(properties, dtpProperties);
         try {
             Class.forName("org.springframework.boot.context.properties.bind.Binder");
             doBindIn2X(properties, dtpProperties);
         } catch (ClassNotFoundException e) {
             doBindIn1X(properties, dtpProperties);
         }
+        afterBind(properties, dtpProperties);
     }
 
     @Override
@@ -63,14 +72,21 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
         if (!(environment instanceof Environment)) {
             throw new IllegalArgumentException("Invalid environment type, expected org.springframework.core.env.Environment");
         }
-
         Environment env = (Environment) environment;
+
+        beforeBind(env, dtpProperties);
         try {
             Class.forName("org.springframework.boot.context.properties.bind.Binder");
             doBindIn2X(env, dtpProperties);
         } catch (ClassNotFoundException e) {
             doBindIn1X(env, dtpProperties);
         }
+        afterBind(environment, dtpProperties);
+    }
+
+    @Override
+    public void afterBind(Object source, DtpProperties dtpProperties) {
+        tryResetWithGlobalConfig(source, dtpProperties);
     }
 
     private void doBindIn2X(Map<?, Object> properties, DtpProperties dtpProperties) {
@@ -120,5 +136,71 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Assign global environment variable to property
+     *
+     * @param environment
+     * @param dtpProperties
+     */
+    private void tryResetWithGlobalConfig(Object source, DtpProperties dtpProperties) {
+        if (Objects.isNull(dtpProperties.getGlobalExecutorProps()) ||
+                CollectionUtils.isEmpty(dtpProperties.getExecutors())) {
+            return;
+        }
+        val fields = ReflectionUtil.getAllFields(DtpExecutorProps.class);
+        if (CollectionUtils.isEmpty(fields)) {
+            return;
+        }
+
+        final int[] executorIndex = {0};
+        dtpProperties.getExecutors().forEach(executor -> {
+            fields.forEach(field -> {
+                Object executorFieldVal = getProperty(EXECUTORS_CONFIG_PREFIX + executorIndex[0] + "]." + field.getName(), source);
+                if (Objects.nonNull(executorFieldVal)) {
+                    return;
+                }
+                Object globalFieldVal = getProperty(GLOBAL_CONFIG_PREFIX + field.getName(), source);
+                if (Objects.isNull(globalFieldVal)) {
+                    return;
+                }
+                ReflectUtil.setFieldValue(executor, field, globalFieldVal);
+            });
+
+            val globalExecutorProps = dtpProperties.getGlobalExecutorProps();
+            if (CollectionUtils.isEmpty(executor.getTaskWrapperNames()) &&
+                    CollectionUtils.isNotEmpty(globalExecutorProps.getTaskWrapperNames())) {
+                executor.setTaskWrapperNames(globalExecutorProps.getTaskWrapperNames());
+            }
+            if (CollectionUtils.isEmpty(executor.getPlatformIds()) &&
+                    CollectionUtils.isNotEmpty(globalExecutorProps.getPlatformIds())) {
+                executor.setPlatformIds(globalExecutorProps.getPlatformIds());
+            }
+            if (CollectionUtils.isEmpty(executor.getNotifyItems()) &&
+                    CollectionUtils.isNotEmpty(globalExecutorProps.getNotifyItems())) {
+                executor.setNotifyItems(globalExecutorProps.getNotifyItems());
+            }
+            if (CollectionUtils.isEmpty(executor.getAwareNames()) &&
+                    CollectionUtils.isNotEmpty(globalExecutorProps.getAwareNames())) {
+                executor.setAwareNames(globalExecutorProps.getAwareNames());
+            }
+            if (CollectionUtils.isEmpty(executor.getPluginNames()) &&
+                    CollectionUtils.isNotEmpty(globalExecutorProps.getPluginNames())) {
+                executor.setPluginNames(globalExecutorProps.getPluginNames());
+            }
+            executorIndex[0]++;
+        });
+    }
+
+    private Object getProperty(String key, Object environment) {
+        if (environment instanceof Environment) {
+            Environment env = (Environment) environment;
+            return env.getProperty(key);
+        } else if (environment instanceof Map) {
+            Map<?, Object> properties = (Map<?, Object>) environment;
+            return properties.get(key);
+        }
+        return null;
     }
 }

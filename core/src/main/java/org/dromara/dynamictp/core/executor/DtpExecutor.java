@@ -34,7 +34,6 @@ import org.slf4j.MDC;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
@@ -76,11 +75,6 @@ public class DtpExecutor extends ThreadPoolExecutor
      * Notify items, see {@link NotifyItemEnum}.
      */
     private List<NotifyItem> notifyItems;
-
-    /**
-     * The actual value to count that decide whether to trigger an alarm.
-     */
-    private Queue<Long> counterForNow;
 
     /**
      * Notify platform ids.
@@ -413,13 +407,5 @@ public class DtpExecutor extends ThreadPoolExecutor
      */
     public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
         allowCoreThreadTimeOut(allowCoreThreadTimeOut);
-    }
-
-    public Queue<Long> getCounterForNow() {
-        return counterForNow;
-    }
-
-    public void setCounterForNow(Queue<Long> counterForNow) {
-        this.counterForNow = counterForNow;
     }
 }

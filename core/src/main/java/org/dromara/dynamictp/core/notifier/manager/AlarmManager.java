@@ -130,7 +130,7 @@ public class AlarmManager {
             checkCounter(counterForNow, notifyItem);
             executorWrapper.setCounterForNow(counterForNow);
         }
-        return counterForNow.size()>=notifyItem.getCountToTrigger();
+        return counterForNow.size() >= notifyItem.getCountToTrigger();
     }
 
 
@@ -146,7 +146,7 @@ public class AlarmManager {
             checkCounter(counterForNow, notifyItem);
             executorWrapper.setCounterForNow(counterForNow);
         }
-        return counterForNow.size()>=notifyItem.getCountToTrigger();
+        return counterForNow.size() >= notifyItem.getCountToTrigger();
     }
 
     private static boolean checkWithAlarmInfo(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {

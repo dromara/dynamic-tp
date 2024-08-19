@@ -49,7 +49,7 @@ public class EnhancedRunnable implements Runnable {
         if (Objects.isNull(runnable)) {
             return;
         }
-        AwareManager.beforeExecute(executor, Thread.currentThread(), this);
+        AwareManager.beforeExecute(executor, Thread.currentThread(), runnable);
         Throwable t = null;
         try {
             runnable.run();
@@ -57,7 +57,7 @@ public class EnhancedRunnable implements Runnable {
             t = e;
             throw e;
         } finally {
-            AwareManager.afterExecute(executor, this, t);
+            AwareManager.afterExecute(executor, runnable, t);
         }
     }
 }

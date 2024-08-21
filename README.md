@@ -196,12 +196,6 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ---
 
-## 知识星球
-
-![](/resources/img/zsxq.jpg)
-
----
-
 ## 联系我
 
 看到这儿，**请给项目一个 star**，你的支持是我们前进的动力！

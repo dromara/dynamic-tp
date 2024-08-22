@@ -9,12 +9,4 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-adapter-common</artifactId>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.dromara.dynamictp</groupId>
-            <artifactId>dynamic-tp-spring</artifactId>
-        </dependency>
-    </dependencies>
-
 </project>

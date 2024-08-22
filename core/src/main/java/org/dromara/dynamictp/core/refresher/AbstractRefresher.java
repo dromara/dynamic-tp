@@ -52,7 +52,6 @@ public abstract class AbstractRefresher implements Refresher {
 
     protected AbstractRefresher(DtpProperties dtpProperties) {
         this.dtpProperties = dtpProperties;
-        EventBusManager.register(this);
     }
 
     @Override

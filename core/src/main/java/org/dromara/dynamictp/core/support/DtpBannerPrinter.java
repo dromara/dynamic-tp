@@ -48,7 +48,6 @@ public class DtpBannerPrinter {
     private static volatile DtpBannerPrinter instance;
 
     private DtpBannerPrinter() {
-        log.info("Registering DtpBannerPrinter - instance: {}", this);
         EventBusManager.register(this);
     }
 

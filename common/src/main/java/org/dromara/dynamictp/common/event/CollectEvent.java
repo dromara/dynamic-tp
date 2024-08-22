@@ -19,9 +19,6 @@ package org.dromara.dynamictp.common.event;
 
 import org.dromara.dynamictp.common.properties.DtpProperties;
 
-import java.util.EventObject;
-
-
 /**
  * CollectEvent related
  *
@@ -31,6 +28,6 @@ import java.util.EventObject;
 public class CollectEvent extends DtpEvent {
 
     public CollectEvent(Object source, DtpProperties dtpProperties) {
-        super(source, dtpProperties);  
+        super(source, dtpProperties);
     }
 }

@@ -17,20 +17,25 @@
 
 package org.dromara.dynamictp.common.event;
 
+import lombok.Getter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 
 import java.util.EventObject;
 
-
 /**
- * AlarmCheckEvent related
+ * RefreshEvent related
  *
- * @author yanhom
- * @since 1.0.0
+ * @author vzer200
+ * @since 1.1.8
  */
-public class AlarmCheckEvent extends DtpEvent  {
+@Getter
+public abstract class DtpEvent extends EventObject {
 
-    public AlarmCheckEvent(Object source, DtpProperties dtpProperties) {
-        super(source, dtpProperties);  // 调用父类的构造方法
+    private final transient DtpProperties dtpProperties;
+
+    public DtpEvent(Object source, DtpProperties dtpProperties) {
+        super(source);
+        this.dtpProperties = dtpProperties;
     }
+
 }

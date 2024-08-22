@@ -28,16 +28,9 @@ import java.util.EventObject;
  * @author yanhom
  * @since 1.0.0
  */
-public class CollectEvent extends EventObject {
-
-    private final transient DtpProperties dtpProperties;
+public class CollectEvent extends DtpEvent {
 
     public CollectEvent(Object source, DtpProperties dtpProperties) {
-        super(source);
-        this.dtpProperties = dtpProperties;
-    }
-
-    public DtpProperties getDtpProperties() {
-        return dtpProperties;
+        super(source, dtpProperties);  
     }
 }

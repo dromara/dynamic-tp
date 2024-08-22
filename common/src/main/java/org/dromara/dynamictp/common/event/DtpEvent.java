@@ -23,7 +23,7 @@ import org.dromara.dynamictp.common.properties.DtpProperties;
 import java.util.EventObject;
 
 /**
- * RefreshEvent related
+ * DtpEvent related
  *
  * @author vzer200
  * @since 1.1.8

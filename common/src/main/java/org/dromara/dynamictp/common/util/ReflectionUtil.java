@@ -20,6 +20,8 @@ package org.dromara.dynamictp.common.util;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -97,12 +99,11 @@ public final class ReflectionUtil {
     }
 
     public static Method findMethod(Class<?> targetClass, String methodName, Class<?>... parameterTypes) {
-        try {
-            return targetClass.getDeclaredMethod(methodName, parameterTypes);
-        } catch (NoSuchMethodException e) {
-            log.warn("Method '{}' with parameters '{}' not found in class '{}'", methodName, parameterTypes, targetClass.getName(), e);
-            return null;
+        Method method = MethodUtils.getMatchingAccessibleMethod(targetClass, methodName, parameterTypes);
+        if (Objects.isNull(method)) {
+            log.warn("Method '{}' with parameters '{}' not found in class '{}'", methodName, parameterTypes, targetClass.getName());
         }
+        return method;
     }
 
     public static List<Field> getAllFields(Class<?> targetClass) {

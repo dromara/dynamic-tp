@@ -18,6 +18,7 @@
 package org.dromara.dynamictp.test.core.notify;
 
 import com.google.common.collect.Lists;
+import org.dromara.dynamictp.common.notifier.LarkNotifier;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
@@ -27,6 +28,8 @@ import org.dromara.dynamictp.common.util.CommonUtil;
 import org.dromara.dynamictp.core.notifier.AbstractDtpNotifier;
 import org.dromara.dynamictp.core.notifier.DtpDingNotifier;
 import org.dromara.dynamictp.common.notifier.Notifier;
+import org.dromara.dynamictp.core.notifier.DtpLarkNotifier;
+import org.dromara.dynamictp.core.notifier.DtpNotifier;
 import org.dromara.dynamictp.core.notifier.context.AlarmCtx;
 import org.dromara.dynamictp.core.notifier.context.DtpNotifyCtxHolder;
 import org.dromara.dynamictp.core.notifier.context.NoticeCtx;
@@ -117,5 +120,17 @@ public class AbstractDtpNotifierTest {
     @Test
     public void testGetQueueName2() {
         Assert.assertEquals(dtpExecutor.getQueueType(), VARIABLE_LINKED_BLOCKING_QUEUE.getName());
+    }
+
+    @Test
+    public void testLarkSendChangeMsg() {
+        DtpNotifier larkNotifier = new DtpLarkNotifier(new LarkNotifier());
+        NotifyPlatform notifyPlatform = new NotifyPlatform();
+        notifyPlatform.setWebhook("");
+        notifyPlatform.setReceivers("");
+        TpMainFields oldFields = new TpMainFields();
+        List<String> diffs = Lists.newArrayList("corePoolSize");
+        DtpNotifyCtxHolder.set(new NoticeCtx(ExecutorWrapper.of(dtpExecutor), new NotifyItem(), oldFields, diffs));
+        larkNotifier.sendChangeMsg(notifyPlatform, oldFields, diffs);
     }
 }

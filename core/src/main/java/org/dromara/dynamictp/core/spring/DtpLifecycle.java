@@ -84,7 +84,7 @@ public class DtpLifecycle implements SmartLifecycle, DisposableBean {
      */
     @Override
     public int getPhase() {
-        return Integer.MAX_VALUE -1;
+        return Integer.MAX_VALUE;
     }
 
     @Override

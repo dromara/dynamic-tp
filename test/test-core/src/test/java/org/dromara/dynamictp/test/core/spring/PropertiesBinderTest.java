@@ -15,12 +15,15 @@
  * limitations under the License.
  */
 
+
 package org.dromara.dynamictp.test.core.spring;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.dromara.dynamictp.common.em.CollectorTypeEnum;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.support.BinderHelper;
+import org.dromara.dynamictp.spring.EnableDynamicTp;
 import org.dromara.dynamictp.spring.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -30,8 +33,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.AbstractEnvironment;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import sun.misc.Unsafe;
 
 /**
  * PropertiesBinderTest related
@@ -43,31 +48,57 @@ import java.util.Map;
         factory = YamlPropertySourceFactory.class)
 @SpringBootTest(classes = PropertiesBinderTest.class)
 @EnableAutoConfiguration
+@EnableDynamicTp
 class PropertiesBinderTest {
 
     @Autowired
     private AbstractEnvironment environment;
 
     @Test
-    void testBindDtpPropertiesWithMap() {
-        Map<Object, Object> properties  = Maps.newHashMap();
-        properties.put("spring.dynamic.tp.enabled", false);
-        properties.put("spring.dynamic.tp.collectorTypes", Lists.newArrayList("LOGGING"));
-        properties.put("spring.dynamic.tp.executors[0].threadPoolName", "test_dtp");
-        properties.put("spring.dynamic.tp.executors[1].threadPoolName", "test_dtp1");
-        properties.put("spring.dynamic.tp.executors[0].executorType", "common");
-        properties.put("spring.dynamic.tp.globalExecutorProps.executorType","eager");
+    void testBindDtpPropertiesWithMap() throws Exception {
+        try {
+            // 获取Unsafe实例
+            Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
+            theUnsafe.setAccessible(true);
+            Unsafe unsafe = (Unsafe) theUnsafe.get(null);
 
-        DtpProperties dtpProperties = DtpProperties.getInstance();
-        BinderHelper.bindDtpProperties(properties, dtpProperties);
-        Assertions.assertEquals(properties.get("spring.dynamic.tp.executors[0].threadPoolName"),
-                dtpProperties.getExecutors().get(0).getThreadPoolName());
-        Assertions.assertIterableEquals((List<String>) properties.get("spring.dynamic.tp.collectorTypes"),
-                dtpProperties.getCollectorTypes());
-        Assertions.assertEquals("common",
-                dtpProperties.getExecutors().get(0).getExecutorType());
-        Assertions.assertEquals(properties.get("spring.dynamic.tp.globalExecutorProps.executorType"),
-                dtpProperties.getExecutors().get(1).getExecutorType());
+            // 获取DtpProperties类的私有内部类Holder
+            Class<?> holderClass = Class.forName("org.dromara.dynamictp.common.properties.DtpProperties$Holder");
+            Field instanceField = holderClass.getDeclaredField("INSTANCE");
+            instanceField.setAccessible(true);
+            // 创建新的DtpProperties实例
+            DtpProperties newDtpProperties = (DtpProperties) unsafe.allocateInstance(DtpProperties.class);
+            // 手动初始化字段
+            newDtpProperties.setCollectorTypes(Lists.newArrayList(CollectorTypeEnum.MICROMETER.name()));
+            // 使用Unsafe重置单例实例
+            unsafe.putObjectVolatile(holderClass,
+                    unsafe.staticFieldOffset(instanceField), newDtpProperties);
+
+            Map<Object, Object> properties = Maps.newHashMap();
+            properties.put("spring.dynamic.tp.enabled", false);
+            properties.put("spring.dynamic.tp.collectorTypes", Lists.newArrayList("LOGGING"));
+            properties.put("spring.dynamic.tp.executors[0].threadPoolName", "test_dtp");
+            properties.put("spring.dynamic.tp.executors[1].threadPoolName", "test_dtp1");
+            properties.put("spring.dynamic.tp.executors[0].executorType", "common");
+            properties.put("spring.dynamic.tp.globalExecutorProps.executorType", "eager");
+
+            DtpProperties dtpProperties = DtpProperties.getInstance();
+            System.out.println("Collector Types before binding: " + dtpProperties.getCollectorTypes());
+            BinderHelper.bindDtpProperties(properties, dtpProperties);
+            System.out.println("Collector Types after binding: " + dtpProperties.getCollectorTypes());
+
+            Assertions.assertEquals(properties.get("spring.dynamic.tp.executors[0].threadPoolName"),
+                    dtpProperties.getExecutors().get(0).getThreadPoolName());
+            Assertions.assertIterableEquals((List<String>) properties.get("spring.dynamic.tp.collectorTypes"),
+                    dtpProperties.getCollectorTypes());
+            Assertions.assertEquals("common",
+                    dtpProperties.getExecutors().get(0).getExecutorType());
+            Assertions.assertEquals(properties.get("spring.dynamic.tp.globalExecutorProps.executorType"),
+                    dtpProperties.getExecutors().get(1).getExecutorType());
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to reset DtpProperties instance", e);
+        }
     }
 
     @Test

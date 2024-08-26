@@ -28,6 +28,12 @@ import org.mockito.Mockito;
 
 import org.springframework.test.context.junit4.SpringRunner;
 
+/**
+ * AbstractRefresherTest related
+ *
+ * @author vzer200
+ * @since 1.1.8
+ */
 @RunWith(SpringRunner.class)
 public class AbstractRefresherTest {
     private AbstractRefresher refresher;

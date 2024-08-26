@@ -21,6 +21,7 @@ import net.sf.cglib.beans.BeanCopier;
 import org.dromara.dynamictp.common.util.BeanCopierUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -28,7 +29,8 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 /**
  * BeanCopierUtilsTest related
  *
- * @author yanhom
+ * @author vzer200
+ * @since 1.1.8
  */
 public class BeanCopierUtilsTest {
 

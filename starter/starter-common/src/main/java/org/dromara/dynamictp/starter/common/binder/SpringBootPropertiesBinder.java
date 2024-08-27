@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.spring.PropertiesBinder;
+import org.dromara.dynamictp.core.support.PropertiesBinder;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValues;
 import org.springframework.boot.context.properties.bind.Bindable;
@@ -68,13 +68,18 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
     }
 
     @Override
-    public void bindDtpProperties(Environment environment, DtpProperties dtpProperties) {
-        beforeBind(environment, dtpProperties);
+    public void bindDtpProperties(Object environment, DtpProperties dtpProperties) {
+        if (!(environment instanceof Environment)) {
+            throw new IllegalArgumentException("Invalid environment type, expected org.springframework.core.env.Environment");
+        }
+        Environment env = (Environment) environment;
+
+        beforeBind(env, dtpProperties);
         try {
             Class.forName("org.springframework.boot.context.properties.bind.Binder");
-            doBindIn2X(environment, dtpProperties);
+            doBindIn2X(env, dtpProperties);
         } catch (ClassNotFoundException e) {
-            doBindIn1X(environment, dtpProperties);
+            doBindIn1X(env, dtpProperties);
         }
         afterBind(environment, dtpProperties);
     }
@@ -145,7 +150,7 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
             return;
         }
         val fields = ReflectionUtil.getAllFields(DtpExecutorProps.class);
-        if(CollectionUtils.isEmpty(fields)) {
+        if (CollectionUtils.isEmpty(fields)) {
             return;
         }
 
@@ -157,7 +162,7 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
                     return;
                 }
                 Object globalFieldVal = getProperty(GLOBAL_CONFIG_PREFIX + field.getName(), source);
-                if(Objects.isNull(globalFieldVal)) {
+                if (Objects.isNull(globalFieldVal)) {
                     return;
                 }
                 ReflectUtil.setFieldValue(executor, field, globalFieldVal);
@@ -180,7 +185,7 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
                     CollectionUtils.isNotEmpty(globalExecutorProps.getAwareNames())) {
                 executor.setAwareNames(globalExecutorProps.getAwareNames());
             }
-            if (CollectionUtils.isEmpty(executor.getPluginNames() ) &&
+            if (CollectionUtils.isEmpty(executor.getPluginNames()) &&
                     CollectionUtils.isNotEmpty(globalExecutorProps.getPluginNames())) {
                 executor.setPluginNames(globalExecutorProps.getPluginNames());
             }

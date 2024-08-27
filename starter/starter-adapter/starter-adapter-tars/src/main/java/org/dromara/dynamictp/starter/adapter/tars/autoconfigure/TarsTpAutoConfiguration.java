@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.starter.adapter.tars.autoconfigure;
 
 import org.dromara.dynamictp.adapter.tars.TarsDtpAdapter;
-import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
+import org.dromara.dynamictp.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

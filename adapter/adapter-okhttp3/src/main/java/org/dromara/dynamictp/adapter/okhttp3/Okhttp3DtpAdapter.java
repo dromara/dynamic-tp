@@ -23,7 +23,7 @@ import okhttp3.OkHttpClient;
 import org.apache.commons.collections4.MapUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -53,7 +53,7 @@ public class Okhttp3DtpAdapter extends AbstractDtpAdapter {
     @Override
     protected void initialize() {
         super.initialize();
-        val beans = ApplicationContextHolder.getBeansOfType(OkHttpClient.class);
+        val beans = ContextManagerHelper.getBeansOfType(OkHttpClient.class);
         if (MapUtils.isEmpty(beans)) {
             log.warn("Cannot find beans of type OkHttpClient.");
             return;

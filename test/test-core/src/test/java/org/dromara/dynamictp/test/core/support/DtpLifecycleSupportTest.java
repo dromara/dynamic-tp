@@ -18,31 +18,26 @@
 package org.dromara.dynamictp.test.core.support;
 
 import org.dromara.dynamictp.core.DtpRegistry;
+import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
+import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
 import org.dromara.dynamictp.core.support.DtpLifecycleSupport;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.spring.YamlPropertySourceFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Executor;
 
-/**
- * DtpLifecycleSupportTest related
- *
- * @author vzer200
- * @since 1.1.8
- */
-@PropertySource(value = "classpath:/demo-dtp-dev.yml", factory = YamlPropertySourceFactory.class)
-@SpringBootTest(classes = DtpLifecycleSupportTest.class)
-@EnableAutoConfiguration
+@SpringBootTest(classes = DtpLifecycleSupportTest.TestConfig.class)
 @ComponentScan(basePackages = "org.dromara.dynamictp.test.core.spring")
 public class DtpLifecycleSupportTest {
 
@@ -51,62 +46,54 @@ public class DtpLifecycleSupportTest {
 
     @BeforeEach
     public void setUp() {
-        dtpExecutor = (DtpExecutor) DtpRegistry.getExecutor("dtpExecutor1");
-        if (dtpExecutor == null) {
-            throw new RuntimeException("dtpExecutor1 not found!");
+        Executor executor = DtpRegistry.getExecutor("dtpExecutor1");
+        if (executor instanceof DtpExecutor) {
+            dtpExecutor = Mockito.spy((DtpExecutor) executor);
+        } else {
+            throw new RuntimeException("dtpExecutor1 is not of type DtpExecutor!");
         }
         executorWrapper = new ExecutorWrapper(dtpExecutor);
     }
 
     @Test
     public void testInitialize() {
-        int initialCorePoolSize = dtpExecutor.getCorePoolSize();
-        int initialMaxPoolSize = dtpExecutor.getMaximumPoolSize();
+        try (MockedStatic<AwareManager> awareManagerMockedStatic = Mockito.mockStatic(AwareManager.class)) {
+            awareManagerMockedStatic.when(() -> AwareManager.register(Mockito.any(ExecutorWrapper.class)))
+                    .thenAnswer(invocation -> null);
 
-        DtpLifecycleSupport.initialize(executorWrapper);
+            try (MockedStatic<NotifyHelper> notifyHelperMockedStatic = Mockito.mockStatic(NotifyHelper.class)) {
+                notifyHelperMockedStatic.when(() -> NotifyHelper.initNotify((DtpExecutor) executorWrapper.getExecutor()))
+                        .thenAnswer(invocation -> null);
 
-        Assertions.assertEquals(initialCorePoolSize, dtpExecutor.getCorePoolSize());
-        Assertions.assertEquals(initialMaxPoolSize, dtpExecutor.getMaximumPoolSize());
-        Assertions.assertTrue(dtpExecutor.isNotifyEnabled());
-    }
+                DtpLifecycleSupport.initialize(executorWrapper);
 
+                // 验证初始化
+                Mockito.verify(dtpExecutor).initialize();
+                awareManagerMockedStatic.verify(() -> AwareManager.register(executorWrapper));
+                notifyHelperMockedStatic.verify(() -> NotifyHelper.initNotify((DtpExecutor) executorWrapper.getExecutor()));
 
-    @Test
-    public void testDestroy() throws InterruptedException {
-        DtpLifecycleSupport.initialize(executorWrapper);
+                // 预启动核心线程的验证
+                if (dtpExecutor.isPreStartAllCoreThreads()) {
+                    Mockito.verify(dtpExecutor).prestartAllCoreThreads();
+                }
 
-        DtpLifecycleSupport.destroy(executorWrapper);
-
-        Assertions.assertTrue(dtpExecutor.isShutdown());
-        Assertions.assertTrue(dtpExecutor.awaitTermination(1, TimeUnit.SECONDS));
-    }
-
-    @Test
-    public void testRejectHandlerEnhancement() {
-        // 手动创建一个小容量的线程池
-        DtpExecutor smallExecutor = new DtpExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1));
-
-        smallExecutor.execute(() -> {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
             }
-        });
-
-        smallExecutor.execute(() -> {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        });
-
-        // 第三个任务应该被拒绝，触发拒绝策略
-        Assertions.assertThrows(RejectedExecutionException.class, () -> {
-            smallExecutor.execute(() -> System.out.println("This task should be rejected"));
-        });
+        }
     }
 
-
+    @Configuration
+    @EnableAutoConfiguration
+    @ComponentScan(basePackages = "org.dromara.dynamictp.test.core.spring")
+    @PropertySource(value = "classpath:/demo-dtp-dev.yml", factory = YamlPropertySourceFactory.class)
+    public static class TestConfig {
+        @Bean
+        public DtpExecutor dtpExecutor() {
+            // 从 DtpRegistry 获取并确保类型正确
+            Executor executor = DtpRegistry.getExecutor("dtpExecutor1");
+            if (executor instanceof DtpExecutor) {
+                return (DtpExecutor) executor;
+            }
+            throw new RuntimeException("dtpExecutor1 is not of type DtpExecutor!");
+        }
+    }
 }

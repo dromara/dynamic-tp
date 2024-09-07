@@ -20,23 +20,21 @@ package org.dromara.dynamictp.test.core.spring;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.dromara.dynamictp.common.em.CollectorTypeEnum;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.support.BinderHelper;
 import org.dromara.dynamictp.spring.EnableDynamicTp;
 import org.dromara.dynamictp.spring.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.AbstractEnvironment;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
-import sun.misc.Unsafe;
 
 /**
  * PropertiesBinderTest related
@@ -49,6 +47,7 @@ import sun.misc.Unsafe;
 @SpringBootTest(classes = PropertiesBinderTest.class)
 @EnableAutoConfiguration
 @EnableDynamicTp
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) // 使用同一个实例运行所有测试
 class PropertiesBinderTest {
 
     @Autowired
@@ -57,23 +56,6 @@ class PropertiesBinderTest {
     @Test
     void testBindDtpPropertiesWithMap() throws Exception {
         try {
-            // 获取Unsafe实例
-            Field theUnsafe = Unsafe.class.getDeclaredField("theUnsafe");
-            theUnsafe.setAccessible(true);
-            Unsafe unsafe = (Unsafe) theUnsafe.get(null);
-
-            // 获取DtpProperties类的私有内部类Holder
-            Class<?> holderClass = Class.forName("org.dromara.dynamictp.common.properties.DtpProperties$Holder");
-            Field instanceField = holderClass.getDeclaredField("INSTANCE");
-            instanceField.setAccessible(true);
-            // 创建新的DtpProperties实例
-            DtpProperties newDtpProperties = (DtpProperties) unsafe.allocateInstance(DtpProperties.class);
-            // 手动初始化字段
-            newDtpProperties.setCollectorTypes(Lists.newArrayList(CollectorTypeEnum.MICROMETER.name()));
-            // 使用Unsafe重置单例实例
-            unsafe.putObjectVolatile(holderClass,
-                    unsafe.staticFieldOffset(instanceField), newDtpProperties);
-
             Map<Object, Object> properties = Maps.newHashMap();
             properties.put("spring.dynamic.tp.enabled", false);
             properties.put("spring.dynamic.tp.collectorTypes", Lists.newArrayList("LOGGING"));

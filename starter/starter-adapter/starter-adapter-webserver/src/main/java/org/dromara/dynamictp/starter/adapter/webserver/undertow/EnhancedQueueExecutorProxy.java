@@ -54,7 +54,7 @@ public class EnhancedQueueExecutorProxy extends EnhancedQueueExecutor implements
 
     @Override
     public void execute(Runnable runnable) {
-        Runnable enhancedTask = getEnhancedTask(EnhancedRunnable.of(runnable, this));
+        Runnable enhancedTask = EnhancedRunnable.of(getEnhancedTask(runnable), this);
         AwareManager.execute(this, enhancedTask);
         try {
             super.execute(enhancedTask);

@@ -21,7 +21,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.dromara.dynamictp.common.em.QueueTypeEnum;
-import org.dromara.dynamictp.common.em.RejectedTypeEnum;
 
 import java.util.Set;
 
@@ -47,29 +46,9 @@ public class DtpExecutorProps extends TpExecutorProps {
     private String queueType = QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE.getName();
 
     /**
-     * BlockingQueue capacity.
-     */
-    private int queueCapacity = 1024;
-
-    /**
      * If fair strategy, for SynchronousQueue
      */
     private boolean fair = false;
-
-    /**
-     * Max free memory for MemorySafeLBQ, unit M
-     */
-    private int maxFreeMemory = 16;
-
-    /**
-     * RejectedExecutionHandler type, see {@link RejectedTypeEnum}
-     */
-    private String rejectedHandlerType = RejectedTypeEnum.ABORT_POLICY.getName();
-
-    /**
-     * If allow core thread timeout.
-     */
-    private boolean allowCoreThreadTimeOut = false;
 
     /**
      * Thread name prefix.
@@ -103,17 +82,4 @@ public class DtpExecutorProps extends TpExecutorProps {
      * Plugin names.
      */
     private Set<String> pluginNames;
-
-    /**
-     * check core param is inValid
-     *
-     * @return boolean return true means params is inValid
-     */
-    public boolean coreParamIsInValid() {
-        return this.getCorePoolSize() < 0
-                || this.getMaximumPoolSize() <= 0
-                || this.getMaximumPoolSize() < this.getCorePoolSize()
-                || this.getKeepAliveTime() < 0;
-    }
-
 }

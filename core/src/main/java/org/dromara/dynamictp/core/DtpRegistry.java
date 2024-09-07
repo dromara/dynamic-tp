@@ -23,6 +23,7 @@ import com.github.dadiyang.equator.GetterBaseEquator;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import lombok.var;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
@@ -166,18 +167,20 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
             log.debug("DynamicTp refresh, empty thread pool properties.");
             return;
         }
-        dtpProperties.getExecutors().forEach(p -> {
-            if (StringUtils.isBlank(p.getThreadPoolName())) {
-                log.warn("DynamicTp refresh, thread pool name must not be blank, executorProps: {}", p);
-                return;
-            }
-            ExecutorWrapper executorWrapper = EXECUTOR_REGISTRY.get(p.getThreadPoolName());
-            if (Objects.nonNull(executorWrapper)) {
-                refresh(executorWrapper, p);
-                return;
-            }
-            log.warn("DynamicTp refresh, cannot find specified executor, name: {}.", p.getThreadPoolName());
-        });
+        dtpProperties.getExecutors().forEach(DtpRegistry::refresh);
+    }
+
+    public static void refresh(DtpExecutorProps props) {
+        if (Objects.isNull(props) || StringUtils.isBlank(props.getThreadPoolName())) {
+            log.warn("DynamicTp refresh, thread pool name must not be blank, executorProps: {}", props);
+            return;
+        }
+        ExecutorWrapper executorWrapper = EXECUTOR_REGISTRY.get(props.getThreadPoolName());
+        if (Objects.nonNull(executorWrapper)) {
+            refresh(executorWrapper, props);
+            return;
+        }
+        log.warn("DynamicTp refresh, cannot find specified executor, name: {}.", props.getThreadPoolName());
     }
 
     private static void refresh(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
@@ -329,14 +332,21 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
 
     @Override
     protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
+        var executors = dtpProperties.getExecutors();
         Set<String> remoteExecutors = Collections.emptySet();
-        if (CollectionUtils.isNotEmpty(dtpProperties.getExecutors())) {
-            remoteExecutors = dtpProperties.getExecutors().stream()
+        if (CollectionUtils.isNotEmpty(executors)) {
+            remoteExecutors = executors.stream()
                     .map(DtpExecutorProps::getThreadPoolName)
                     .collect(Collectors.toSet());
         }
         val registeredExecutors = Sets.newHashSet(EXECUTOR_REGISTRY.keySet());
         val localExecutors = CollectionUtils.subtract(registeredExecutors, remoteExecutors);
+
+        // refresh just for non-dtp executors
+        executors = executors.stream().filter(e -> !e.isDtp()).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(executors)) {
+            executors.forEach(DtpRegistry::refresh);
+        }
         log.info("DtpRegistry has been initialized, remote executors: {}, local executors: {}",
                 remoteExecutors, localExecutors);
     }

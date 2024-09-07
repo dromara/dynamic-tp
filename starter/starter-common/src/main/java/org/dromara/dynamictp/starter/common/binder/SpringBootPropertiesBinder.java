@@ -145,7 +145,7 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
             return;
         }
         val fields = ReflectionUtil.getAllFields(DtpExecutorProps.class);
-        if(CollectionUtils.isEmpty(fields)) {
+        if (CollectionUtils.isEmpty(fields)) {
             return;
         }
 
@@ -157,7 +157,7 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
                     return;
                 }
                 Object globalFieldVal = getProperty(GLOBAL_CONFIG_PREFIX + field.getName(), source);
-                if(Objects.isNull(globalFieldVal)) {
+                if (Objects.isNull(globalFieldVal)) {
                     return;
                 }
                 ReflectUtil.setFieldValue(executor, field, globalFieldVal);
@@ -180,7 +180,7 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
                     CollectionUtils.isNotEmpty(globalExecutorProps.getAwareNames())) {
                 executor.setAwareNames(globalExecutorProps.getAwareNames());
             }
-            if (CollectionUtils.isEmpty(executor.getPluginNames() ) &&
+            if (CollectionUtils.isEmpty(executor.getPluginNames()) &&
                     CollectionUtils.isNotEmpty(globalExecutorProps.getPluginNames())) {
                 executor.setPluginNames(globalExecutorProps.getPluginNames());
             }

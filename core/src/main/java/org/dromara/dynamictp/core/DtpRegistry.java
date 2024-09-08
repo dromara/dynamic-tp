@@ -23,7 +23,6 @@ import com.github.dadiyang.equator.GetterBaseEquator;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import lombok.var;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
@@ -50,11 +49,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.M_1;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
 
@@ -332,7 +333,7 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
 
     @Override
     protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
-        var executors = dtpProperties.getExecutors();
+        val executors = Optional.ofNullable(dtpProperties.getExecutors()).orElse(Collections.emptyList());
         Set<String> remoteExecutors = Collections.emptySet();
         if (CollectionUtils.isNotEmpty(executors)) {
             remoteExecutors = executors.stream()
@@ -343,9 +344,9 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
         val localExecutors = CollectionUtils.subtract(registeredExecutors, remoteExecutors);
 
         // refresh just for non-dtp executors
-        executors = executors.stream().filter(e -> !e.isDtp()).collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(executors)) {
-            executors.forEach(DtpRegistry::refresh);
+        val nonDtpExecutors = executors.stream().filter(e -> !e.isDtp()).collect(toList());
+        if (CollectionUtils.isNotEmpty(nonDtpExecutors)) {
+            nonDtpExecutors.forEach(DtpRegistry::refresh);
         }
         log.info("DtpRegistry has been initialized, remote executors: {}, local executors: {}",
                 remoteExecutors, localExecutors);

@@ -58,7 +58,7 @@
         <dependency>
             <groupId>org.dromara.dynamictp</groupId>
             <artifactId>dynamic-tp-spring</artifactId>
-            <version>1.1.8-beta</version>
+            <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

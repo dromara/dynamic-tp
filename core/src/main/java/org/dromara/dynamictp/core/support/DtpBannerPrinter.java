@@ -36,6 +36,10 @@ public class DtpBannerPrinter implements EnvironmentAware {
 
     private static final String SITE = " :: https://dynamictp.cn ::";
 
+    private static final String GITHUB_REPO = " :: https://github.com/dromara/dynamic-tp ::";
+
+    private static final String GITEE_REPO = " :: https://gitee.com/dromara/dynamic-tp ::";
+
     private static final String BANNER = "\n" +
             "|  __ \\                            (_) |__   __|   \n" +
             "| |  | |_   _ _ __   __ _ _ __ ___  _  ___| |_ __  \n" +
@@ -47,10 +51,10 @@ public class DtpBannerPrinter implements EnvironmentAware {
 
     @Override
     public void setEnvironment(Environment environment) {
-        boolean enable = environment.getProperty(DynamicTpConst.BANNER_ENABLED_PROP,
-                boolean.class, true);
+        boolean enable = environment.getProperty(DynamicTpConst.BANNER_ENABLED_PROP, boolean.class, true);
         if (enable) {
-            log.info(BANNER + "\n" + NAME + "\n :: " + VersionUtil.getVersion() + " :: \n" + SITE + "\n");
+            log.info(BANNER + "\n" + NAME + "\n :: {} :: \n" + SITE + "\n" + GITHUB_REPO + "\n" + GITEE_REPO,
+                    VersionUtil.getVersion());
         }
     }
 }

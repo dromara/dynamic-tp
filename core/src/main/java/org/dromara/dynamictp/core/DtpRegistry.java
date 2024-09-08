@@ -49,11 +49,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.M_1;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
 
@@ -185,7 +187,7 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
     private static void refresh(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
         if (props.coreParamIsInValid()) {
             log.error("DynamicTp refresh, invalid parameters exist, properties: {}", props);
-            throw new IllegalArgumentException("DynamicTp refresh, invalid parameters exist, properties: " + props);
+            return;
         }
         TpMainFields oldFields = ExecutorConverter.toMainFields(executorWrapper);
         doRefresh(executorWrapper, props);
@@ -331,7 +333,7 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
 
     @Override
     protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
-        List<DtpExecutorProps> executors = dtpProperties.getExecutors();
+        List<DtpExecutorProps> executors = Optional.ofNullable(dtpProperties.getExecutors()).orElse(Collections.emptyList());
         Set<String> remoteExecutors = Collections.emptySet();
         if (CollectionUtils.isNotEmpty(executors)) {
             remoteExecutors = executors.stream()
@@ -342,9 +344,9 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
         val localExecutors = CollectionUtils.subtract(registeredExecutors, remoteExecutors);
 
         // refresh just for non-dtp executors
-        executors = executors.stream().filter(e -> !e.isDtp()).collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(executors)) {
-            executors.forEach(DtpRegistry::refresh);
+        val nonDtpExecutors = executors.stream().filter(e -> !e.isDtp()).collect(toList());
+        if (CollectionUtils.isNotEmpty(nonDtpExecutors)) {
+            nonDtpExecutors.forEach(DtpRegistry::refresh);
         }
         log.info("DtpRegistry has been initialized, remote executors: {}, local executors: {}",
                 remoteExecutors, localExecutors);

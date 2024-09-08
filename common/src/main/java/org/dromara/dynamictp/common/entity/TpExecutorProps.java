@@ -20,6 +20,7 @@ package org.dromara.dynamictp.common.entity;
 import lombok.Data;
 import org.dromara.dynamictp.common.constant.DynamicTpConst;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
+import org.dromara.dynamictp.common.em.RejectedTypeEnum;
 
 import java.util.List;
 import java.util.Set;
@@ -45,6 +46,11 @@ public class TpExecutorProps {
     private String threadPoolAliasName;
 
     /**
+     * If is dtp, if false, will not create dtp executor, default is true.
+     */
+    private boolean dtp = true;
+
+    /**
      * CoreSize of ThreadPool.
      */
     private int corePoolSize = 1;
@@ -65,6 +71,26 @@ public class TpExecutorProps {
      * Timeout unit.
      */
     private TimeUnit unit = TimeUnit.SECONDS;
+
+    /**
+     * BlockingQueue capacity.
+     */
+    private int queueCapacity = 1024;
+
+    /**
+     * Max free memory for MemorySafeLBQ, unit M
+     */
+    private int maxFreeMemory = 16;
+
+    /**
+     * RejectedExecutionHandler type, see {@link RejectedTypeEnum}
+     */
+    private String rejectedHandlerType = RejectedTypeEnum.ABORT_POLICY.getName();
+
+    /**
+     * If allow core thread timeout.
+     */
+    private boolean allowCoreThreadTimeOut = false;
 
     /**
      * Notify items, see {@link NotifyItemEnum}
@@ -105,4 +131,16 @@ public class TpExecutorProps {
      * Aware names.
      */
     private List<String> awareNames;
+
+    /**
+     * check core param is inValid
+     *
+     * @return boolean return true means params is inValid
+     */
+    public boolean coreParamIsInValid() {
+        return this.getCorePoolSize() < 0
+                || this.getMaximumPoolSize() <= 0
+                || this.getMaximumPoolSize() < this.getCorePoolSize()
+                || this.getKeepAliveTime() < 0;
+    }
 }

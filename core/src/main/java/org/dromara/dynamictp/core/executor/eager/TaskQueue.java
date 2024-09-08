@@ -49,16 +49,15 @@ public class TaskQueue extends VariableLinkedBlockingQueue<Runnable> {
         if (executor == null) {
             throw new RejectedExecutionException("The task queue does not have executor.");
         }
-        int currentPoolThreadSize = executor.getPoolSize();
-        if (currentPoolThreadSize == executor.getMaximumPoolSize()) {
+        if (executor.getPoolSize() == executor.getMaximumPoolSize()) {
             return super.offer(runnable);
         }
         // have free worker. put task into queue to let the worker deal with task.
-        if (executor.getSubmittedTaskCount() < currentPoolThreadSize) {
+        if (executor.getSubmittedTaskCount() <= executor.getPoolSize()) {
             return super.offer(runnable);
         }
         // return false to let executor create new worker.
-        if (currentPoolThreadSize < executor.getMaximumPoolSize()) {
+        if (executor.getPoolSize() < executor.getMaximumPoolSize()) {
             return false;
         }
         // currentPoolThreadSize >= max

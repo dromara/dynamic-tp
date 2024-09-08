@@ -17,7 +17,7 @@
 
 package org.dromara.dynamictp.agent;
 
-import org.dromara.dynamictp.core.aware.AgentAware;
+import org.dromara.dynamictp.extension.agent.AgentAware;
 import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;

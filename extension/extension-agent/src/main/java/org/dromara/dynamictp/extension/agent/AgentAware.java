@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.aware;
+package org.dromara.dynamictp.extension.agent;
 
 import cn.hutool.core.util.ArrayUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.dromara.dynamictp.core.aware.TaskStatAware;
 import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
 
 import java.lang.ref.SoftReference;

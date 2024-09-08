@@ -20,7 +20,7 @@
 
 ---
 
-## 使用痛点
+## 痛点
 
 使用线程池 ThreadPoolExecutor 过程中你是否有以下痛点呢？
 
@@ -188,9 +188,11 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ---
 
-## 知识星球
+## 代码托管
 
-![](/resources/img/zsxq.jpg)
+- github: https://github.com/dromara/dynamic-tp
+- gitee: https://gitee.com/dromara/dynamic-tp
+- gitcode: https://gitcode.com/dromara/dynamic-tp
 
 ---
 

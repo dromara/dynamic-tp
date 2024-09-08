@@ -88,6 +88,9 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         }
 
         executors.forEach(e -> {
+            if (!e.isDtp()) {
+                return;
+            }
             Class<?> executorTypeClass = ExecutorType.getClass(e.getExecutorType());
             Map<String, Object> propertyValues = buildPropertyValues(e);
             Object[] args = buildConstructorArgs(executorTypeClass, e);

@@ -86,12 +86,6 @@ public class EagerDtpExecutor extends DtpExecutor {
     }
 
     @Override
-    protected void afterExecute(Runnable r, Throwable t) {
-        submittedTaskCount.decrementAndGet();
-        super.afterExecute(r, t);
-    }
-
-    @Override
     public void execute(Runnable command) {
         if (command == null) {
             throw new NullPointerException();
@@ -120,5 +114,11 @@ public class EagerDtpExecutor extends DtpExecutor {
                 throw rx;
             }
         }
+    }
+
+    @Override
+    protected void afterExecute(Runnable r, Throwable t) {
+        submittedTaskCount.decrementAndGet();
+        super.afterExecute(r, t);
     }
 }

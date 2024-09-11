@@ -24,6 +24,7 @@
         <module>starter-adapter-tars</module>
         <module>starter-adapter-sofa</module>
         <module>starter-adapter-rabbitmq</module>
+        <module>starter-adapter-liteflow</module>
     </modules>
 
     <dependencies>

@@ -30,6 +30,7 @@
         <equator.version>1.0.4</equator.version>
 
         <sofa-rpc.version>5.9.1</sofa-rpc.version>
+        <liteflow.version>2.12.3</liteflow.version>
         <brpc.version>2022.2.0</brpc.version>
         <apache-dubbo.version>3.0.7</apache-dubbo.version>
         <alibaba-dubbo.version>2.6.0</alibaba-dubbo.version>
@@ -224,6 +225,12 @@
                 <groupId>com.alipay.sofa</groupId>
                 <artifactId>sofa-rpc-all</artifactId>
                 <version>${sofa-rpc.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.yomahub</groupId>
+                <artifactId>liteflow-core</artifactId>
+                <version>${liteflow.version}</version>
             </dependency>
 
             <dependency>
@@ -422,6 +429,12 @@
 
             <dependency>
                 <groupId>org.dromara.dynamictp</groupId>
+                <artifactId>dynamic-tp-adapter-liteflow</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara.dynamictp</groupId>
                 <artifactId>dynamic-tp-extension-limiter-redis</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -577,6 +590,11 @@
             <dependency>
                 <groupId>org.dromara.dynamictp</groupId>
                 <artifactId>dynamic-tp-spring-boot-starter-adapter-rabbitmq</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dromara.dynamictp</groupId>
+                <artifactId>dynamic-tp-spring-boot-starter-adapter-liteflow</artifactId>
                 <version>${revision}</version>
             </dependency>
         </dependencies>

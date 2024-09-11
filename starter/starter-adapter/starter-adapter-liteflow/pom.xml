@@ -4,21 +4,21 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.dromara.dynamictp</groupId>
-        <artifactId>dynamic-tp-adapter</artifactId>
+        <artifactId>dynamic-tp-starter-adapter</artifactId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>dynamic-tp-adapter-liteflow</artifactId>
+    <artifactId>dynamic-tp-spring-boot-starter-adapter-liteflow</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>org.dromara.dynamictp</groupId>
-            <artifactId>dynamic-tp-adapter-common</artifactId>
+            <artifactId>dynamic-tp-spring-boot-starter-adapter-common</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.yomahub</groupId>
-            <artifactId>liteflow-core</artifactId>
+            <groupId>org.dromara.dynamictp</groupId>
+            <artifactId>dynamic-tp-adapter-liteflow</artifactId>
         </dependency>
     </dependencies>
 </project>

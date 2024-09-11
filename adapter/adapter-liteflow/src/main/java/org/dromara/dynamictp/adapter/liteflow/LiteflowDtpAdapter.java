@@ -39,7 +39,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @since 1.1.0
  */
 @Slf4j
-@SuppressWarnings("unchecked")
+@SuppressWarnings("all")
 public class LiteflowDtpAdapter extends AbstractDtpAdapter {
 
     private static final String TP_PREFIX = "liteflowTp";
@@ -70,7 +70,13 @@ public class LiteflowDtpAdapter extends AbstractDtpAdapter {
         executorMap.forEach((k, v) -> {
             String key = k.substring(k.lastIndexOf(".") + 1);
             val tpName = TP_PREFIX + "#" + key;
-            ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) v);
+            ThreadPoolExecutor executor;
+            if (v instanceof ThreadPoolExecutor) {
+                executor = (ThreadPoolExecutor) v;
+            } else {
+                executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue("executorService", v);
+            }
+            ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executor);
             newExecutorMap.put(k, proxy);
             executors.put(tpName, new ExecutorWrapper(tpName, proxy));
         });

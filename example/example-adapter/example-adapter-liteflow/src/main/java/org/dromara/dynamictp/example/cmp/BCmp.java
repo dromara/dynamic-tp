@@ -18,6 +18,8 @@
 package org.dromara.dynamictp.example.cmp;
 
 import com.yomahub.liteflow.core.NodeComponent;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.example.ctx.CusCtx;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,12 +28,14 @@ import org.springframework.stereotype.Component;
  * @author yanhom
  * @since 1.1.9
  */
+@Slf4j
 @Component("b")
 public class BCmp extends NodeComponent {
 
     @Override
     public void process() {
-        //do your business
+        CusCtx ctx = this.getFirstContextBean();
+        log.info("b, ctx:{}", ctx);
     }
 }
 

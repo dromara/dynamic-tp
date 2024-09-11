@@ -16,7 +16,7 @@ spring:
       enabledCollect: true          # 是否开启监控指标采集，默认false
       collectorTypes: logging       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
       monitorInterval: 5
-      liteflowTp:                    # 通知报警平台配置
+      liteflowTp:
         - threadPoolName: liteflowTp#LiteFlowDefaultWhenExecutorBuilder
           corePoolSize: 10
           maximumPoolSize: 20

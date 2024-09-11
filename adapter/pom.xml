@@ -23,6 +23,7 @@
         <module>adapter-tars</module>
         <module>adapter-sofa</module>
         <module>adapter-rabbitmq</module>
+        <module>adapter-liteflow</module>
     </modules>
 
     <dependencies>

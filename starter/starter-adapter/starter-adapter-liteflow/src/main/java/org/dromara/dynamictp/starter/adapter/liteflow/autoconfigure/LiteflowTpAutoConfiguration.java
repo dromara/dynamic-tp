@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Configuration;
  * LiteflowTpAutoConfiguration related
  *
  * @author yanhom
- * @since 1.1.0
+ * @since 1.1.9
  */
 @Configuration
 @ConditionalOnClass(name = "com.yomahub.liteflow.core.FlowExecutor")

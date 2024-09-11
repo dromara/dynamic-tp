@@ -25,7 +25,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * LiteflowExampleApplication related
  *
  * @author yanhom
- * @since 1.1.0
+ * @since 1.1.9
  */
 @EnableDynamicTp
 @SpringBootApplication

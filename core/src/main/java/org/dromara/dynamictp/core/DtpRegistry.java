@@ -48,15 +48,12 @@ import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.M_1;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
 
@@ -335,7 +332,7 @@ public class DtpRegistry {
 
     @Subscribe
     public void onContextRefreshedEvent(CustomContextRefreshedEvent event) {
-        var executors = dtpProperties.getExecutors();
+        val executors = Optional.ofNullable(dtpProperties.getExecutors()).orElse(Collections.emptyList());
         Set<String> remoteExecutors = Collections.emptySet();
         if (CollectionUtils.isNotEmpty(executors)) {
             remoteExecutors = executors.stream()
@@ -346,9 +343,9 @@ public class DtpRegistry {
         val localExecutors = CollectionUtils.subtract(registeredExecutors, remoteExecutors);
 
         // refresh just for non-dtp executors
-        executors = executors.stream().filter(e -> !e.isDtp()).collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(executors)) {
-            executors.forEach(DtpRegistry::refresh);
+        val nonDtpExecutors = executors.stream().filter(e -> !e.isDtp()).collect(toList());
+        if (CollectionUtils.isNotEmpty(nonDtpExecutors)) {
+            nonDtpExecutors.forEach(DtpRegistry::refresh);
         }
         log.info("DtpRegistry has been initialized, remote executors: {}, local executors: {}",
                 remoteExecutors, localExecutors);

@@ -35,7 +35,13 @@ import lombok.extern.slf4j.Slf4j;
 public class DtpBannerPrinter {
 
     private static final String NAME = " :: Dynamic Thread Pool :: ";
+
     private static final String SITE = " :: https://dynamictp.cn ::";
+
+    private static final String GITHUB_REPO = " :: https://github.com/dromara/dynamic-tp ::";
+
+    private static final String GITEE_REPO = " :: https://gitee.com/dromara/dynamic-tp ::";
+
     private static final String BANNER = "\n" +
             "|  __ \\                            (_) |__   __|   \n" +
             "| |  | |_   _ _ __   __ _ _ __ ___  _  ___| |_ __  \n" +
@@ -70,7 +76,8 @@ public class DtpBannerPrinter {
     public static void printBanner() {
         boolean enable = Boolean.parseBoolean(ContextManagerHelper.getEnvironmentProperty(DynamicTpConst.BANNER_ENABLED_PROP, "true"));
         if (enable) {
-            log.info(BANNER + "\n" + NAME + "\n :: " + VersionUtil.getVersion() + " :: \n" + SITE + "\n");
+            log.info(BANNER + "\n" + NAME + "\n :: {} :: \n" + SITE + "\n" + GITHUB_REPO + "\n" + GITEE_REPO,
+                    VersionUtil.getVersion());
         }
     }
 }

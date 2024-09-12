@@ -79,7 +79,7 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
                 putAndFinalize(tpName, (ExecutorService) executor, new EnhancedQueueExecutorAdapter(proxy));
             } catch (Throwable t) {
                 log.error("DynamicTp adapter, enhance {} failed, please adjust the order of the two dependencies" +
-                        "(starter-undertow and starter-adapter-webserver) and try again.", tpName, t);
+                        "(spring-boot-starter-undertow and starter-adapter-webserver) and try again.", tpName, t);
                 executors.put(tpName, new ExecutorWrapper(tpName, handler.adapt(executor)));
             }
         } else {

@@ -54,15 +54,15 @@ public class EnhancedQueueExecutorProxy extends EnhancedQueueExecutor implements
 
     @Override
     public void execute(Runnable runnable) {
-        Runnable enhancedTask = EnhancedRunnable.of(getEnhancedTask(runnable), this);
-        AwareManager.execute(this, enhancedTask);
+        Runnable dtpRunnable = getEnhancedTask(runnable);
+        AwareManager.execute(this, dtpRunnable);
         try {
-            super.execute(enhancedTask);
+            super.execute(EnhancedRunnable.of(dtpRunnable, this));
         } catch (Throwable e) {
             Throwable[] suppressedExceptions = e.getSuppressed();
             for (Throwable t : suppressedExceptions) {
                 if (t instanceof RejectedExecutionException) {
-                    AwareManager.beforeReject(enhancedTask, this);
+                    AwareManager.beforeReject(dtpRunnable, this);
                     return;
                 }
             }

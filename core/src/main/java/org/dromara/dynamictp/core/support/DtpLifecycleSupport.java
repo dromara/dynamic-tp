@@ -55,21 +55,19 @@ public class DtpLifecycleSupport {
      * @param executorWrapper executor wrapper
      */
     public static void destroy(ExecutorWrapper executorWrapper) {
+        ExecutorService executorService = null;
         if (executorWrapper.isDtpExecutor()) {
-            destroy((DtpExecutor) executorWrapper.getExecutor());
+            executorService = (DtpExecutor) executorWrapper.getExecutor();
         } else if (executorWrapper.isThreadPoolExecutor()) {
-            internalShutdown(((ThreadPoolExecutorAdapter) executorWrapper.getExecutor()).getOriginal(),
-                    executorWrapper.getThreadPoolName(),
-                    true,
-                    0);
+            executorService = ((ThreadPoolExecutorAdapter) executorWrapper.getExecutor()).getOriginal();
         }
-    }
-
-    public static void destroy(DtpExecutor executor) {
-        internalShutdown(executor,
-                executor.getThreadPoolName(),
-                executor.isWaitForTasksToCompleteOnShutdown(),
-                executor.getAwaitTerminationSeconds());
+        if (Objects.isNull(executorService)) {
+            return;
+        }
+        internalShutdown(executorService,
+                executorWrapper.getThreadPoolName(),
+                executorWrapper.waitForTasksToCompleteOnShutdown,
+                executorWrapper.awaitTerminationSeconds);
     }
 
     public static void shutdownGracefulAsync(ExecutorService executor,

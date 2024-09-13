@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.core.support;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.Data;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
@@ -26,12 +27,15 @@ import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
+import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
+import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.springframework.beans.BeanUtils;
 
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -44,6 +48,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class ExecutorWrapper {
 
     /**
+     * Executor.
+     */
+    private ExecutorAdapter<?> executor;
+
+    /**
      * Thread pool name.
      */
     private String threadPoolName;
@@ -54,9 +63,9 @@ public class ExecutorWrapper {
     private String threadPoolAliasName;
 
     /**
-     * Executor.
+     * Whether to enable notification.
      */
-    private ExecutorAdapter<?> executor;
+    private boolean notifyEnabled = true;
 
     /**
      * Notify items, see {@link NotifyItemEnum}.
@@ -69,19 +78,52 @@ public class ExecutorWrapper {
     private List<String> platformIds;
 
     /**
-     * Whether to enable notification.
+     * Plugin names.
      */
-    private boolean notifyEnabled = true;
+    private Set<String> pluginNames = Sets.newHashSet();
+
+    /**
+     * Aware names.
+     */
+    private Set<String> awareNames = Sets.newHashSet();
+
+    /**
+     * Task wrappers, do sth enhanced.
+     */
+    private List<TaskWrapper> taskWrappers = Lists.newArrayList();
+
+    /**
+     * If pre start all core threads.
+     */
+    private boolean preStartAllCoreThreads;
+
+    /**
+     * RejectHandler type.
+     */
+    private String rejectHandlerType;
+
+    /**
+     * If enhance reject.
+     */
+    private boolean rejectEnhanced = true;
+
+    /**
+     * Whether to wait for scheduled tasks to complete on shutdown,
+     * not interrupting running tasks and executing all tasks in the queue.
+     */
+    protected boolean waitForTasksToCompleteOnShutdown = true;
+
+    /**
+     * The maximum number of seconds that this executor is supposed to block
+     * on shutdown in order to wait for remaining tasks to complete their execution
+     * before the rest of the container continues to shut down.
+     */
+    protected int awaitTerminationSeconds = 3;
 
     /**
      * Thread pool stat provider
      */
     private ThreadPoolStatProvider threadPoolStatProvider;
-
-    /**
-     * Aware names
-     */
-    private Set<String> awareNames = Sets.newHashSet();
 
     private ExecutorWrapper() {
     }
@@ -92,13 +134,13 @@ public class ExecutorWrapper {
      * @param executor the DtpExecutor
      */
     public ExecutorWrapper(DtpExecutor executor) {
-        this.threadPoolName = executor.getThreadPoolName();
-        this.threadPoolAliasName = executor.getThreadPoolAliasName();
         this.executor = executor;
+        this.threadPoolName = executor.getThreadPoolName();
         this.notifyItems = executor.getNotifyItems();
-        this.notifyEnabled = executor.isNotifyEnabled();
         this.platformIds = executor.getPlatformIds();
-        this.awareNames = executor.getAwareNames();
+        this.taskWrappers = executor.getTaskWrappers();
+        this.pluginNames = executor.getPluginNames();
+        this.rejectHandlerType = executor.getRejectHandlerType();
         this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
     }
 
@@ -150,11 +192,20 @@ public class ExecutorWrapper {
     public void initialize() {
         if (isDtpExecutor()) {
             DtpExecutor dtpExecutor = (DtpExecutor) getExecutor();
-            dtpExecutor.initialize();
+            initialize(dtpExecutor);
             AwareManager.register(this);
         } else if (isThreadPoolExecutor()) {
             AwareManager.register(this);
         }
+    }
+
+    public void initialize(DtpExecutor dtpExecutor) {
+        NotifyHelper.initNotify(dtpExecutor);
+        if (preStartAllCoreThreads) {
+            dtpExecutor.prestartAllCoreThreads();
+        }
+        // reset reject handler in initialize phase according to rejectEnhanced
+        setRejectHandler(RejectHandlerGetter.buildRejectedHandler(getRejectHandlerType()));
     }
 
     /**
@@ -181,8 +232,25 @@ public class ExecutorWrapper {
      * @param taskWrappers taskWrappers
      */
     public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
+        this.taskWrappers = taskWrappers;
         if (executor.getOriginal() instanceof TaskEnhanceAware) {
             ((TaskEnhanceAware) executor.getOriginal()).setTaskWrappers(taskWrappers);
         }
+    }
+
+    public void setRejectEnhanced(boolean rejectEnhanced) {
+        this.rejectEnhanced = rejectEnhanced;
+        if (isDtpExecutor()) {
+            ((DtpExecutor) executor).setRejectEnhanced(rejectEnhanced);
+        }
+    }
+
+    public void setRejectHandler(RejectedExecutionHandler handler) {
+        this.rejectHandlerType = handler.getClass().getSimpleName();
+        if (!isRejectEnhanced()) {
+            executor.setRejectedExecutionHandler(handler);
+            return;
+        }
+        executor.setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
     }
 }

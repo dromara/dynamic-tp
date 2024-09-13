@@ -582,18 +582,10 @@ public class ThreadPoolBuilder {
         DtpExecutor dtpExecutor = createInternal(builder);
         dtpExecutor.setThreadPoolName(builder.threadPoolName);
         dtpExecutor.allowCoreThreadTimeOut(builder.allowCoreThreadTimeOut);
-        dtpExecutor.setWaitForTasksToCompleteOnShutdown(builder.waitForTasksToCompleteOnShutdown);
-        dtpExecutor.setAwaitTerminationSeconds(builder.awaitTerminationSeconds);
-        dtpExecutor.setPreStartAllCoreThreads(builder.preStartAllCoreThreads);
         dtpExecutor.setRejectEnhanced(builder.rejectEnhanced);
-        dtpExecutor.setRunTimeout(builder.runTimeout);
-        dtpExecutor.setTryInterrupt(builder.tryInterrupt);
-        dtpExecutor.setQueueTimeout(builder.queueTimeout);
         dtpExecutor.setTaskWrappers(builder.taskWrappers);
         dtpExecutor.setNotifyItems(builder.notifyItems);
         dtpExecutor.setPlatformIds(builder.platformIds);
-        dtpExecutor.setNotifyEnabled(builder.notifyEnabled);
-        dtpExecutor.setRejectHandler(builder.rejectedExecutionHandler);
         return dtpExecutor;
     }
 

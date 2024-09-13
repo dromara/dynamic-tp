@@ -108,6 +108,19 @@ public class TpExecutorProps {
     private boolean notifyEnabled = true;
 
     /**
+     * Whether to wait for scheduled tasks to complete on shutdown,
+     * not interrupting running tasks and executing all tasks in the queue.
+     */
+    private boolean waitForTasksToCompleteOnShutdown = true;
+
+    /**
+     * The maximum number of seconds that this executor is supposed to block
+     * on shutdown in order to wait for remaining tasks to complete their execution
+     * before the rest of the container continues to shut down.
+     */
+    private int awaitTerminationSeconds = 3;
+
+    /**
      * Task execute timeout, unit (ms).
      */
     private long runTimeout = 0;
@@ -130,7 +143,7 @@ public class TpExecutorProps {
     /**
      * Aware names.
      */
-    private List<String> awareNames;
+    private Set<String> awareNames;
 
     /**
      * check core param is inValid

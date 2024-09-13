@@ -185,7 +185,6 @@ public class NotifyHelper {
                 allNotifyItems);
         executor.setNotifyItems(allNotifyItems);
         executor.setPlatformIds(props.getPlatformIds());
-        executor.setNotifyEnabled(props.isNotifyEnabled());
     }
 
     private static void refreshNotify(String poolName,

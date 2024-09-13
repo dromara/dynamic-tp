@@ -225,65 +225,40 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
         }
         // update queue
         updateQueueProps(executor, props);
-
-        if (executorWrapper.isDtpExecutor()) {
-            doRefreshDtp(executorWrapper, props);
-            return;
-        }
-        doRefreshCommon(executorWrapper, props);
+        doRefreshWrapper(executorWrapper, props);
     }
 
-    private static void doRefreshCommon(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
+    private static void doRefreshWrapper(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
 
         if (StringUtils.isNotBlank(props.getThreadPoolAliasName())) {
             executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());
         }
-
         ExecutorAdapter<?> executor = executorWrapper.getExecutor();
         // update reject handler
-        String currentRejectHandlerType = executor.getRejectHandlerType();
-        if (!Objects.equals(currentRejectHandlerType, props.getRejectedHandlerType())) {
+        executorWrapper.setRejectEnhanced(props.isRejectEnhanced());
+        if (!Objects.equals(executor.getRejectHandlerType(), props.getRejectedHandlerType())) {
             val rejectHandler = RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType());
-            executor.setRejectedExecutionHandler(rejectHandler);
+            executorWrapper.setRejectHandler(rejectHandler);
         }
+
+        // update task wrappers
         List<TaskWrapper> taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
         executorWrapper.setTaskWrappers(taskWrappers);
 
+        executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());
+        executorWrapper.setNotifyItems(props.getNotifyItems());
+        executorWrapper.setPlatformIds(props.getPlatformIds());
+        executorWrapper.setNotifyEnabled(props.isNotifyEnabled());
+        executorWrapper.setPreStartAllCoreThreads(props.isPreStartAllCoreThreads());
+        executorWrapper.setWaitForTasksToCompleteOnShutdown(props.isWaitForTasksToCompleteOnShutdown());
+        executorWrapper.setAwaitTerminationSeconds(props.getAwaitTerminationSeconds());
+        executorWrapper.setAwareNames(props.getAwareNames());
+
         // update notify related
         NotifyHelper.updateNotifyInfo(executorWrapper, props, dtpProperties.getPlatforms());
+
         // update aware related
         AwareManager.refresh(executorWrapper, props);
-    }
-
-    private static void doRefreshDtp(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
-
-        DtpExecutor executor = (DtpExecutor) executorWrapper.getExecutor();
-        if (StringUtils.isNotBlank(props.getThreadPoolAliasName())) {
-            executor.setThreadPoolAliasName(props.getThreadPoolAliasName());
-        }
-        // update reject handler
-        executor.setRejectEnhanced(props.isRejectEnhanced());
-        if (!Objects.equals(executor.getRejectHandlerType(), props.getRejectedHandlerType())) {
-            executor.setRejectHandler(RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType()));
-        }
-        executor.setWaitForTasksToCompleteOnShutdown(props.isWaitForTasksToCompleteOnShutdown());
-        executor.setAwaitTerminationSeconds(props.getAwaitTerminationSeconds());
-        executor.setPreStartAllCoreThreads(props.isPreStartAllCoreThreads());
-        List<TaskWrapper> taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
-        executor.setTaskWrappers(taskWrappers);
-
-        // update notify related
-        NotifyHelper.updateNotifyInfo(executor, props, dtpProperties.getPlatforms());
-        // update aware related
-        AwareManager.refresh(executorWrapper, props);
-        updateWrapper(executorWrapper, executor);
-    }
-
-    private static void updateWrapper(ExecutorWrapper executorWrapper, DtpExecutor executor) {
-        executorWrapper.setThreadPoolAliasName(executor.getThreadPoolAliasName());
-        executorWrapper.setNotifyItems(executor.getNotifyItems());
-        executorWrapper.setPlatformIds(executor.getPlatformIds());
-        executorWrapper.setNotifyEnabled(executor.isNotifyEnabled());
     }
 
     /**

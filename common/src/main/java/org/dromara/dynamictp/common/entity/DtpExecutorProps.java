@@ -56,19 +56,6 @@ public class DtpExecutorProps extends TpExecutorProps {
     private String threadNamePrefix = "dtp";
 
     /**
-     * Whether to wait for scheduled tasks to complete on shutdown,
-     * not interrupting running tasks and executing all tasks in the queue.
-     */
-    private boolean waitForTasksToCompleteOnShutdown = true;
-
-    /**
-     * The maximum number of seconds that this executor is supposed to block
-     * on shutdown in order to wait for remaining tasks to complete their execution
-     * before the rest of the container continues to shut down.
-     */
-    private int awaitTerminationSeconds = 3;
-
-    /**
      * If pre start all core threads.
      */
     private boolean preStartAllCoreThreads = false;

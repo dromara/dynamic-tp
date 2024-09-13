@@ -44,8 +44,6 @@ import java.util.concurrent.PriorityBlockingQueue;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.ALLOW_CORE_THREAD_TIMEOUT;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.AWAIT_TERMINATION_SECONDS;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.AWARE_NAMES;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.NOTIFY_ENABLED;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.NOTIFY_ITEMS;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PLATFORM_IDS;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PLUGIN_NAMES;
@@ -55,7 +53,6 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.REJECT_ENHANC
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.REJECT_HANDLER_TYPE;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.RUN_TIMEOUT;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.TASK_WRAPPERS;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.THREAD_POOL_ALIAS_NAME;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.THREAD_POOL_NAME;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRY_INTERRUPT_WHEN_TIMEOUT;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN;
@@ -102,25 +99,12 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
     private Map<String, Object> buildPropertyValues(DtpExecutorProps props) {
         Map<String, Object> propertyValues = Maps.newHashMap();
         propertyValues.put(THREAD_POOL_NAME, props.getThreadPoolName());
-        propertyValues.put(THREAD_POOL_ALIAS_NAME, props.getThreadPoolAliasName());
         propertyValues.put(ALLOW_CORE_THREAD_TIMEOUT, props.isAllowCoreThreadTimeOut());
-        propertyValues.put(WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN, props.isWaitForTasksToCompleteOnShutdown());
-        propertyValues.put(AWAIT_TERMINATION_SECONDS, props.getAwaitTerminationSeconds());
-        propertyValues.put(PRE_START_ALL_CORE_THREADS, props.isPreStartAllCoreThreads());
         propertyValues.put(REJECT_HANDLER_TYPE, props.getRejectedHandlerType());
-        propertyValues.put(REJECT_ENHANCED, props.isRejectEnhanced());
-        propertyValues.put(RUN_TIMEOUT, props.getRunTimeout());
-        propertyValues.put(TRY_INTERRUPT_WHEN_TIMEOUT, props.isTryInterrupt());
-        propertyValues.put(QUEUE_TIMEOUT, props.getQueueTimeout());
-        val notifyItems = mergeAllNotifyItems(props.getNotifyItems());
-        propertyValues.put(NOTIFY_ITEMS, notifyItems);
-        propertyValues.put(PLATFORM_IDS, props.getPlatformIds());
-        propertyValues.put(NOTIFY_ENABLED, props.isNotifyEnabled());
 
         val taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
         propertyValues.put(TASK_WRAPPERS, taskWrappers);
         propertyValues.put(PLUGIN_NAMES, props.getPluginNames());
-        propertyValues.put(AWARE_NAMES, props.getAwareNames());
         return propertyValues;
     }
 

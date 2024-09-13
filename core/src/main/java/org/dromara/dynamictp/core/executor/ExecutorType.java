@@ -18,9 +18,12 @@
 package org.dromara.dynamictp.core.executor;
 
 import lombok.AllArgsConstructor;
-import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
 import lombok.Getter;
+import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
 import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * ExecutorType related
@@ -36,6 +39,16 @@ public enum ExecutorType {
      * Common executor type.
      */
     COMMON("common", DtpExecutor.class),
+
+    /**
+     * Common juc executor type.
+     */
+    COMMON_JUC("common-juc", ThreadPoolExecutor.class),
+
+    /**
+     * Common spring executor type.
+     */
+    COMMON_SPRING("common-spring", ThreadPoolTaskExecutor.class),
 
     /**
      * Eager executor type.

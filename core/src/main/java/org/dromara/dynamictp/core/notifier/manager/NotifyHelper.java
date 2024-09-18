@@ -24,14 +24,12 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
-import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.util.StreamUtil;
-import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.util.Collection;
@@ -110,26 +108,6 @@ public class NotifyHelper {
                 .findFirst();
     }
 
-    public static void fillPlatforms(List<String> platformIds,
-                                     List<NotifyPlatform> platforms,
-                                     List<NotifyItem> notifyItems) {
-        if (CollectionUtils.isEmpty(platforms) || CollectionUtils.isEmpty(notifyItems)) {
-            return;
-        }
-        List<String> globalPlatformIds = StreamUtil.fetchProperty(platforms, NotifyPlatform::getPlatformId);
-        // notifyItem > executor > global
-        notifyItems.forEach(n -> {
-            if (CollectionUtils.isNotEmpty(n.getPlatformIds())) {
-                // intersection of notifyItem and global
-                n.setPlatformIds((List<String>) CollectionUtils.intersection(globalPlatformIds, n.getPlatformIds()));
-            } else if (CollectionUtils.isNotEmpty(platformIds)) {
-                n.setPlatformIds((List<String>) CollectionUtils.intersection(globalPlatformIds, platformIds));
-            } else {
-                n.setPlatformIds(globalPlatformIds);
-            }
-        });
-    }
-
     public static Optional<NotifyPlatform> getPlatform(String platformId) {
         Map<String, NotifyPlatform> platformMap = getAllPlatforms();
         return Optional.ofNullable(platformMap.get(platformId));
@@ -141,23 +119,6 @@ public class NotifyHelper {
             return Collections.emptyMap();
         }
         return StreamUtil.toMap(dtpProperties.getPlatforms(), NotifyPlatform::getPlatformId);
-    }
-
-    public static void initNotify(DtpExecutor executor) {
-        val dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
-        val platforms = dtpProperties.getPlatforms();
-        if (CollectionUtils.isEmpty(platforms)) {
-            executor.setNotifyItems(Lists.newArrayList());
-            executor.setPlatformIds(Lists.newArrayList());
-            log.warn("DynamicTp notify, no notify platforms configured for [{}]", executor.getThreadPoolName());
-            return;
-        }
-        if (CollectionUtils.isEmpty(executor.getNotifyItems())) {
-            log.warn("DynamicTp notify, no notify items configured for [{}]", executor.getThreadPoolName());
-            return;
-        }
-        fillPlatforms(executor.getPlatformIds(), platforms, executor.getNotifyItems());
-        AlarmManager.initAlarm(executor.getThreadPoolName(), executor.getNotifyItems());
     }
 
     public static void updateNotifyInfo(ExecutorWrapper executorWrapper,
@@ -175,18 +136,6 @@ public class NotifyHelper {
         executorWrapper.setNotifyEnabled(props.isNotifyEnabled());
     }
 
-    public static void updateNotifyInfo(DtpExecutor executor, DtpExecutorProps props, List<NotifyPlatform> platforms) {
-        // update notify items
-        val allNotifyItems = mergeAllNotifyItems(props.getNotifyItems());
-        refreshNotify(executor.getThreadPoolName(),
-                props.getPlatformIds(),
-                platforms,
-                executor.getNotifyItems(),
-                allNotifyItems);
-        executor.setNotifyItems(allNotifyItems);
-        executor.setPlatformIds(props.getPlatformIds());
-    }
-
     private static void refreshNotify(String poolName,
                                       List<String> platformIds,
                                       List<NotifyPlatform> platforms,
@@ -200,6 +149,26 @@ public class NotifyHelper {
                 return;
             }
             AlarmManager.initAlarm(poolName, x);
+        });
+    }
+
+    private static void fillPlatforms(List<String> platformIds,
+                                      List<NotifyPlatform> platforms,
+                                      List<NotifyItem> notifyItems) {
+        if (CollectionUtils.isEmpty(platforms) || CollectionUtils.isEmpty(notifyItems)) {
+            return;
+        }
+        List<String> globalPlatformIds = StreamUtil.fetchProperty(platforms, NotifyPlatform::getPlatformId);
+        // notifyItem > executor > global
+        notifyItems.forEach(n -> {
+            if (CollectionUtils.isNotEmpty(n.getPlatformIds())) {
+                // intersection of notifyItem and global
+                n.setPlatformIds((List<String>) CollectionUtils.intersection(globalPlatformIds, n.getPlatformIds()));
+            } else if (CollectionUtils.isNotEmpty(platformIds)) {
+                n.setPlatformIds((List<String>) CollectionUtils.intersection(globalPlatformIds, platformIds));
+            } else {
+                n.setPlatformIds(globalPlatformIds);
+            }
         });
     }
 }

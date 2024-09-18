@@ -27,7 +27,6 @@ import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
-import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.springframework.beans.BeanUtils;
@@ -35,6 +34,7 @@ import org.springframework.beans.BeanUtils;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -190,19 +190,15 @@ public class ExecutorWrapper {
      * Initialize.
      */
     public void initialize() {
-        if (isDtpExecutor()) {
-            DtpExecutor dtpExecutor = (DtpExecutor) getExecutor();
-            initialize(dtpExecutor);
-            AwareManager.register(this);
-        } else if (isThreadPoolExecutor()) {
-            AwareManager.register(this);
+        AwareManager.register(this);
+        if (isThreadPoolExecutor()) {
+            initialize((ThreadPoolExecutor) getExecutor().getOriginal());
         }
     }
 
-    public void initialize(DtpExecutor dtpExecutor) {
-        NotifyHelper.initNotify(dtpExecutor);
+    private void initialize(ThreadPoolExecutor executor) {
         if (preStartAllCoreThreads) {
-            dtpExecutor.prestartAllCoreThreads();
+            executor.prestartAllCoreThreads();
         }
         // reset reject handler in initialize phase according to rejectEnhanced
         setRejectHandler(RejectHandlerGetter.buildRejectedHandler(getRejectHandlerType()));
@@ -214,7 +210,7 @@ public class ExecutorWrapper {
      * @return boolean
      */
     public boolean isDtpExecutor() {
-        return this.executor instanceof DtpExecutor;
+        return this.executor.getOriginal() instanceof DtpExecutor;
     }
 
     /**
@@ -222,8 +218,12 @@ public class ExecutorWrapper {
      *
      * @return boolean
      */
+    public boolean isExecutorService() {
+        return this.executor.getOriginal() instanceof ExecutorService;
+    }
+
     public boolean isThreadPoolExecutor() {
-        return this.executor instanceof ThreadPoolExecutorAdapter;
+        return this.executor.getOriginal() instanceof ThreadPoolExecutor;
     }
 
     /**
@@ -235,13 +235,6 @@ public class ExecutorWrapper {
         this.taskWrappers = taskWrappers;
         if (executor.getOriginal() instanceof TaskEnhanceAware) {
             ((TaskEnhanceAware) executor.getOriginal()).setTaskWrappers(taskWrappers);
-        }
-    }
-
-    public void setRejectEnhanced(boolean rejectEnhanced) {
-        this.rejectEnhanced = rejectEnhanced;
-        if (isDtpExecutor()) {
-            ((DtpExecutor) executor).setRejectEnhanced(rejectEnhanced);
         }
     }
 

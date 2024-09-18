@@ -55,7 +55,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.M_1;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PROPERTIES_CHANGE_SHOW_STYLE;
 
@@ -114,21 +113,6 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
     }
 
     /**
-     * Get DtpExecutor by thread pool name.
-     *
-     * @param name thread pool name
-     * @return the managed DtpExecutor instance
-     */
-    public static DtpExecutor getDtpExecutor(String name) {
-        val executorWrapper = getExecutorWrapper(name);
-        if (!executorWrapper.isDtpExecutor()) {
-            log.error("The specified executor is not a DtpExecutor, name: {}", name);
-            throw new DtpException("The specified executor is not a DtpExecutor, name: " + name);
-        }
-        return (DtpExecutor) executorWrapper.getExecutor();
-    }
-
-    /**
      * Get executor by thread pool name.
      *
      * @param name thread pool name
@@ -156,6 +140,21 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
             throw new DtpException("Cannot find a specified executorWrapper, name: " + name);
         }
         return executorWrapper;
+    }
+
+    /**
+     * Get DtpExecutor by thread pool name.
+     *
+     * @param name thread pool name
+     * @return the managed DtpExecutor instance
+     */
+    public static DtpExecutor getDtpExecutor(String name) {
+        val executorWrapper = getExecutorWrapper(name);
+        if (!executorWrapper.isDtpExecutor()) {
+            log.error("The specified executor is not a DtpExecutor, name: {}", name);
+            throw new DtpException("The specified executor is not a DtpExecutor, name: " + name);
+        }
+        return (DtpExecutor) executorWrapper.getExecutor();
     }
 
     /**
@@ -223,42 +222,8 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
         if (!Objects.equals(executor.allowsCoreThreadTimeOut(), props.isAllowCoreThreadTimeOut())) {
             executor.allowCoreThreadTimeOut(props.isAllowCoreThreadTimeOut());
         }
-        // update queue
         updateQueueProps(executor, props);
         doRefreshWrapper(executorWrapper, props);
-    }
-
-    private static void doRefreshWrapper(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
-
-        if (StringUtils.isNotBlank(props.getThreadPoolAliasName())) {
-            executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());
-        }
-        ExecutorAdapter<?> executor = executorWrapper.getExecutor();
-        // update reject handler
-        executorWrapper.setRejectEnhanced(props.isRejectEnhanced());
-        if (!Objects.equals(executor.getRejectHandlerType(), props.getRejectedHandlerType())) {
-            val rejectHandler = RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType());
-            executorWrapper.setRejectHandler(rejectHandler);
-        }
-
-        // update task wrappers
-        List<TaskWrapper> taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
-        executorWrapper.setTaskWrappers(taskWrappers);
-
-        executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());
-        executorWrapper.setNotifyItems(props.getNotifyItems());
-        executorWrapper.setPlatformIds(props.getPlatformIds());
-        executorWrapper.setNotifyEnabled(props.isNotifyEnabled());
-        executorWrapper.setPreStartAllCoreThreads(props.isPreStartAllCoreThreads());
-        executorWrapper.setWaitForTasksToCompleteOnShutdown(props.isWaitForTasksToCompleteOnShutdown());
-        executorWrapper.setAwaitTerminationSeconds(props.getAwaitTerminationSeconds());
-        executorWrapper.setAwareNames(props.getAwareNames());
-
-        // update notify related
-        NotifyHelper.updateNotifyInfo(executorWrapper, props, dtpProperties.getPlatforms());
-
-        // update aware related
-        AwareManager.refresh(executorWrapper, props);
     }
 
     /**
@@ -306,6 +271,39 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
                 props.getThreadPoolName(), blockingQueue.getClass().getSimpleName());
     }
 
+    private static void doRefreshWrapper(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
+
+        if (StringUtils.isNotBlank(props.getThreadPoolAliasName())) {
+            executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());
+        }
+        ExecutorAdapter<?> executor = executorWrapper.getExecutor();
+        // update reject handler
+        executorWrapper.setRejectEnhanced(props.isRejectEnhanced());
+        if (!Objects.equals(executor.getRejectHandlerType(), props.getRejectedHandlerType())) {
+            val rejectHandler = RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType());
+            executorWrapper.setRejectHandler(rejectHandler);
+        }
+
+        // update task wrappers
+        List<TaskWrapper> taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
+        executorWrapper.setTaskWrappers(taskWrappers);
+
+        executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());
+        executorWrapper.setNotifyItems(props.getNotifyItems());
+        executorWrapper.setPlatformIds(props.getPlatformIds());
+        executorWrapper.setNotifyEnabled(props.isNotifyEnabled());
+        executorWrapper.setPreStartAllCoreThreads(props.isPreStartAllCoreThreads());
+        executorWrapper.setWaitForTasksToCompleteOnShutdown(props.isWaitForTasksToCompleteOnShutdown());
+        executorWrapper.setAwaitTerminationSeconds(props.getAwaitTerminationSeconds());
+        executorWrapper.setAwareNames(props.getAwareNames());
+
+        // update notify related
+        NotifyHelper.updateNotifyInfo(executorWrapper, props, dtpProperties.getPlatforms());
+
+        // update aware related
+        AwareManager.refresh(executorWrapper, props);
+    }
+
     @Override
     protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
         val executors = Optional.ofNullable(dtpProperties.getExecutors()).orElse(Collections.emptyList());
@@ -314,15 +312,10 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
             remoteExecutors = executors.stream()
                     .map(DtpExecutorProps::getThreadPoolName)
                     .collect(Collectors.toSet());
+            executors.forEach(DtpRegistry::refresh);
         }
         val registeredExecutors = Sets.newHashSet(EXECUTOR_REGISTRY.keySet());
         val localExecutors = CollectionUtils.subtract(registeredExecutors, remoteExecutors);
-
-        // refresh just for non-dtp executors
-        val nonDtpExecutors = executors.stream().filter(e -> !e.isDtp()).collect(toList());
-        if (CollectionUtils.isNotEmpty(nonDtpExecutors)) {
-            nonDtpExecutors.forEach(DtpRegistry::refresh);
-        }
         log.info("DtpRegistry has been initialized, remote executors: {}, local executors: {}",
                 remoteExecutors, localExecutors);
     }

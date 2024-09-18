@@ -582,7 +582,6 @@ public class ThreadPoolBuilder {
         DtpExecutor dtpExecutor = createInternal(builder);
         dtpExecutor.setThreadPoolName(builder.threadPoolName);
         dtpExecutor.allowCoreThreadTimeOut(builder.allowCoreThreadTimeOut);
-        dtpExecutor.setRejectEnhanced(builder.rejectEnhanced);
         dtpExecutor.setTaskWrappers(builder.taskWrappers);
         dtpExecutor.setNotifyItems(builder.notifyItems);
         dtpExecutor.setPlatformIds(builder.platformIds);

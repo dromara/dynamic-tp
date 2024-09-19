@@ -230,9 +230,6 @@ public class DtpExecutor extends ThreadPoolExecutor
 
     public void initialize() {
         NotifyHelper.initNotify(this);
-        if (preStartAllCoreThreads) {
-            prestartAllCoreThreads();
-        }
         // reset reject handler in initialize phase according to rejectEnhanced
         setRejectHandler(RejectHandlerGetter.buildRejectedHandler(getRejectHandlerType()));
     }

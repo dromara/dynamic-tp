@@ -69,11 +69,6 @@ public class DtpExecutorProps extends TpExecutorProps {
     private int awaitTerminationSeconds = 3;
 
     /**
-     * If pre start all core threads.
-     */
-    private boolean preStartAllCoreThreads = false;
-
-    /**
      * If enhance reject.
      */
     private boolean rejectEnhanced = true;

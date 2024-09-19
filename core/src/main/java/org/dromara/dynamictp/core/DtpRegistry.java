@@ -246,6 +246,8 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
             val rejectHandler = RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType());
             executor.setRejectedExecutionHandler(rejectHandler);
         }
+        executorWrapper.setPreStartAllCoreThreads(props.isPreStartAllCoreThreads());
+
         List<TaskWrapper> taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
         executorWrapper.setTaskWrappers(taskWrappers);
 
@@ -344,7 +346,7 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
         val localExecutors = CollectionUtils.subtract(registeredExecutors, remoteExecutors);
 
         // refresh just for non-dtp executors
-        val nonDtpExecutors = executors.stream().filter(e -> !e.isDtp()).collect(toList());
+        val nonDtpExecutors = executors.stream().filter(e -> !e.isAutoCreateDtp()).collect(toList());
         if (CollectionUtils.isNotEmpty(nonDtpExecutors)) {
             nonDtpExecutors.forEach(DtpRegistry::refresh);
         }

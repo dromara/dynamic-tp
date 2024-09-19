@@ -74,6 +74,11 @@ public class ExecutorWrapper {
     private boolean notifyEnabled = true;
 
     /**
+     * Whether to pre start all core threads.
+     */
+    private boolean preStartAllCoreThreads;
+
+    /**
      * Thread pool stat provider
      */
     private ThreadPoolStatProvider threadPoolStatProvider;
@@ -99,6 +104,7 @@ public class ExecutorWrapper {
         this.notifyEnabled = executor.isNotifyEnabled();
         this.platformIds = executor.getPlatformIds();
         this.awareNames = executor.getAwareNames();
+        this.preStartAllCoreThreads = executor.isPreStartAllCoreThreads();
         this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
     }
 
@@ -154,6 +160,9 @@ public class ExecutorWrapper {
             AwareManager.register(this);
         } else if (isThreadPoolExecutor()) {
             AwareManager.register(this);
+        }
+        if (preStartAllCoreThreads) {
+            executor.preStartAllCoreThreads();
         }
     }
 

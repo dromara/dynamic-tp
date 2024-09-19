@@ -46,9 +46,9 @@ public class TpExecutorProps {
     private String threadPoolAliasName;
 
     /**
-     * If is dtp, if false, will not create dtp executor, default is true.
+     * If false, will not auto create dtpExecutor, default is true.
      */
-    private boolean dtp = true;
+    private boolean autoCreateDtp = true;
 
     /**
      * CoreSize of ThreadPool.
@@ -91,6 +91,11 @@ public class TpExecutorProps {
      * If allow core thread timeout.
      */
     private boolean allowCoreThreadTimeOut = false;
+
+    /**
+     * If pre start all core threads.
+     */
+    private boolean preStartAllCoreThreads = false;
 
     /**
      * Notify items, see {@link NotifyItemEnum}

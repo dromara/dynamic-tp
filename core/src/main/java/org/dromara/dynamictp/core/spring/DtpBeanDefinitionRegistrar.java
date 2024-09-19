@@ -89,7 +89,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         }
 
         executors.forEach(e -> {
-            if (!e.isDtp()) {
+            if (!e.isAutoCreateDtp()) {
                 return;
             }
             Class<?> executorTypeClass = ExecutorType.getClass(e.getExecutorType());

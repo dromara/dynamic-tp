@@ -18,6 +18,7 @@
 package org.dromara.dynamictp.adapter.motan;
 
 import com.weibo.api.motan.transport.netty.StandardThreadExecutor;
+import org.dromara.dynamictp.common.util.ExecutorUtil;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.RejectHandlerAware;
@@ -42,7 +43,7 @@ public class StandardThreadExecutorProxy extends StandardThreadExecutor implemen
      */
     private List<TaskWrapper> taskWrappers;
 
-    private final String rejectHandlerType;
+    private String rejectHandlerType;
 
     public StandardThreadExecutorProxy(StandardThreadExecutor executor) {
         super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
@@ -70,14 +71,15 @@ public class StandardThreadExecutorProxy extends StandardThreadExecutor implemen
 
     @Override
     protected void beforeExecute(Thread t, Runnable r) {
-        super.beforeExecute(t, r);
         AwareManager.beforeExecute(this, t, r);
+        super.beforeExecute(t, r);
     }
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
         AwareManager.afterExecute(this, r, t);
+        ExecutorUtil.tryExecAfterExecute(r, t);
     }
 
     @Override
@@ -93,5 +95,10 @@ public class StandardThreadExecutorProxy extends StandardThreadExecutor implemen
     @Override
     public String getRejectHandlerType() {
         return rejectHandlerType;
+    }
+
+    @Override
+    public void setRejectHandlerType(String rejectHandlerType) {
+        this.rejectHandlerType = rejectHandlerType;
     }
 }

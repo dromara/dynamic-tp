@@ -31,9 +31,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class NamedThreadFactory implements ThreadFactory {
 
-    private final ThreadGroup group;
+    private String namePrefix;
 
-    private final String namePrefix;
+    private final ThreadGroup group;
 
     /**
      * is daemon thread.
@@ -77,5 +77,9 @@ public class NamedThreadFactory implements ThreadFactory {
 
     public String getNamePrefix() {
         return namePrefix;
+    }
+
+    public void setNamePrefix(String namePrefix) {
+        this.namePrefix = namePrefix;
     }
 }

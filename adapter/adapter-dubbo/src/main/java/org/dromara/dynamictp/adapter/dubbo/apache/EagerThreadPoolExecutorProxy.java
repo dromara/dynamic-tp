@@ -19,6 +19,7 @@ package org.dromara.dynamictp.adapter.dubbo.apache;
 
 import org.apache.dubbo.common.threadpool.support.eager.EagerThreadPoolExecutor;
 import org.apache.dubbo.common.threadpool.support.eager.TaskQueue;
+import org.dromara.dynamictp.common.util.ExecutorUtil;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.RejectHandlerAware;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
@@ -44,7 +45,7 @@ public class EagerThreadPoolExecutorProxy extends EagerThreadPoolExecutor implem
     /**
      * Reject handler type.
      */
-    private final String rejectHandlerType;
+    private String rejectHandlerType;
 
     public EagerThreadPoolExecutorProxy(EagerThreadPoolExecutor executor) {
         super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
@@ -65,14 +66,15 @@ public class EagerThreadPoolExecutorProxy extends EagerThreadPoolExecutor implem
 
     @Override
     protected void beforeExecute(Thread t, Runnable r) {
-        super.beforeExecute(t, r);
         AwareManager.beforeExecute(this, t, r);
+        super.beforeExecute(t, r);
     }
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
         AwareManager.afterExecute(this, r, t);
+        ExecutorUtil.tryExecAfterExecute(r, t);
     }
 
     @Override
@@ -88,5 +90,10 @@ public class EagerThreadPoolExecutorProxy extends EagerThreadPoolExecutor implem
     @Override
     public String getRejectHandlerType() {
         return rejectHandlerType;
+    }
+
+    @Override
+    public void setRejectHandlerType(String rejectHandlerType) {
+        this.rejectHandlerType = rejectHandlerType;
     }
 }

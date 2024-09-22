@@ -17,11 +17,13 @@
 
 package org.dromara.dynamictp.core.support;
 
+import org.dromara.dynamictp.common.util.ExecutorUtil;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.RejectHandlerAware;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
+
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
@@ -45,7 +47,7 @@ public class ScheduledThreadPoolExecutorProxy extends ScheduledThreadPoolExecuto
     /**
      * Reject handler type.
      */
-    private final String rejectHandlerType;
+    private String rejectHandlerType;
 
     public ScheduledThreadPoolExecutorProxy(ScheduledThreadPoolExecutor executor) {
         super(executor.getCorePoolSize(), executor.getThreadFactory());
@@ -89,19 +91,25 @@ public class ScheduledThreadPoolExecutorProxy extends ScheduledThreadPoolExecuto
 
     @Override
     protected void beforeExecute(Thread t, Runnable r) {
-        super.beforeExecute(t, r);
         AwareManager.beforeExecute(this, t, r);
+        super.beforeExecute(t, r);
     }
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
         AwareManager.afterExecute(this, r, t);
+        ExecutorUtil.tryExecAfterExecute(r, t);
     }
 
     @Override
     public String getRejectHandlerType() {
         return rejectHandlerType;
+    }
+
+    @Override
+    public void setRejectHandlerType(String rejectHandlerType) {
+        this.rejectHandlerType = rejectHandlerType;
     }
 
     @Override

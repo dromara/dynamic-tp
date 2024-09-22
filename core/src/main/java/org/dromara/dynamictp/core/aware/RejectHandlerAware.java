@@ -31,4 +31,13 @@ public interface RejectHandlerAware extends DtpAware {
      * @return reject handler type
      */
     String getRejectHandlerType();
+
+    /**
+     * Set reject handler type.
+     *
+     * @param rejectHandlerType reject handler type
+     */
+    default void setRejectHandlerType(String rejectHandlerType) {
+
+    }
 }

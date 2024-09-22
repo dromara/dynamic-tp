@@ -46,9 +46,9 @@ public class TpExecutorProps {
     private String threadPoolAliasName;
 
     /**
-     * If false, will not auto create dtpExecutor, default is true.
+     * Thread name prefix.
      */
-    private boolean autoCreateDtp = true;
+    private String threadNamePrefix = "dtp";
 
     /**
      * CoreSize of ThreadPool.
@@ -86,6 +86,11 @@ public class TpExecutorProps {
      * RejectedExecutionHandler type, see {@link RejectedTypeEnum}
      */
     private String rejectedHandlerType = RejectedTypeEnum.ABORT_POLICY.getName();
+
+    /**
+     * If enhance reject.
+     */
+    private boolean rejectEnhanced = true;
 
     /**
      * If allow core thread timeout.
@@ -126,6 +131,19 @@ public class TpExecutorProps {
      * Task queue wait timeout, unit (ms), just for statistics.
      */
     private long queueTimeout = 0;
+
+    /**
+     * Whether to wait for scheduled tasks to complete on shutdown,
+     * not interrupting running tasks and executing all tasks in the queue.
+     */
+    private boolean waitForTasksToCompleteOnShutdown = true;
+
+    /**
+     * The maximum number of seconds that this executor is supposed to block
+     * on shutdown in order to wait for remaining tasks to complete their execution
+     * before the rest of the container continues to shut down.
+     */
+    private int awaitTerminationSeconds = 3;
 
     /**
      * Task wrapper names.

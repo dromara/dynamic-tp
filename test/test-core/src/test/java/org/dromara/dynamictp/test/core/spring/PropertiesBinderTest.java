@@ -24,6 +24,7 @@ import org.dromara.dynamictp.core.spring.YamlPropertySourceFactory;
 import org.dromara.dynamictp.core.support.BinderHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,6 +44,7 @@ import java.util.Map;
         factory = YamlPropertySourceFactory.class)
 @SpringBootTest(classes = PropertiesBinderTest.class)
 @EnableAutoConfiguration
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class PropertiesBinderTest {
 
     @Autowired
@@ -78,7 +80,36 @@ class PropertiesBinderTest {
         Assertions.assertEquals(threadPoolName, dtpProperties.getExecutors().get(0).getThreadPoolName());
         String executorType = environment.getProperty("spring.dynamic.tp.globalExecutorProps.executorType");
         Assertions.assertEquals(executorType, dtpProperties.getExecutors().get(1).getExecutorType());
+    }
 
+    @Test
+    void testResetDtpWithGlobalConfig() {
+        DtpProperties dtpProperties = DtpProperties.getInstance();
+        BinderHelper.bindDtpProperties(environment, dtpProperties);
+
+        Assertions.assertEquals(1, dtpProperties.getExecutors().get(1).getCorePoolSize());
+        Assertions.assertEquals(18, dtpProperties.getExecutors().get(1).getMaximumPoolSize());
+        Assertions.assertEquals(201, dtpProperties.getExecutors().get(1).getRunTimeout());
+        Assertions.assertEquals(80, dtpProperties.getExecutors().get(0).getNotifyItems().get(0).getThreshold());
+        Assertions.assertEquals(81, dtpProperties.getExecutors().get(1).getNotifyItems().get(0).getThreshold());
+    }
+
+    @Test
+    void testResetAdapterTpWithGlobalConfig() {
+        DtpProperties dtpProperties = DtpProperties.getInstance();
+        BinderHelper.bindDtpProperties(environment, dtpProperties);
+
+        Assertions.assertEquals(400, dtpProperties.getUndertowTp().getMaximumPoolSize());
+        Assertions.assertEquals(201, dtpProperties.getTomcatTp().getRunTimeout());
+        Assertions.assertEquals(101, dtpProperties.getTomcatTp().getQueueTimeout());
+        Assertions.assertIterableEquals(Lists.newArrayList("ttl"), dtpProperties.getTomcatTp().getTaskWrapperNames());
+        Assertions.assertEquals(5, dtpProperties.getTomcatTp().getNotifyItems().size());
+
+        Assertions.assertEquals(201, dtpProperties.getRocketMqTp().get(0).getRunTimeout());
+        Assertions.assertEquals(1, dtpProperties.getRocketMqTp().get(1).getCorePoolSize());
+
+        Assertions.assertEquals(81, dtpProperties.getRocketMqTp().get(0).getNotifyItems().get(0).getThreshold());
+        Assertions.assertEquals(82, dtpProperties.getRocketMqTp().get(1).getNotifyItems().get(0).getThreshold());
     }
 
 }

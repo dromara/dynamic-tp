@@ -50,6 +50,7 @@ public class EnhancedQueueExecutorProxy extends EnhancedQueueExecutor implements
                 .setTerminationTask(executor.getTerminationTask())
                 .setRegisterMBean(true)
                 .setMBeanName(executor.getMBeanName()));
+        allowCoreThreadTimeOut(executor.allowsCoreThreadTimeOut());
     }
 
     @Override

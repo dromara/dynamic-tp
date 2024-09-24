@@ -50,6 +50,7 @@ public class StandardThreadExecutorProxy extends StandardThreadExecutor implemen
                 executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS,
                 executor.getMaxSubmittedTaskCount() - executor.getMaximumPoolSize(),
                 executor.getThreadFactory(), executor.getRejectedExecutionHandler());
+        allowCoreThreadTimeOut(executor.allowsCoreThreadTimeOut());
         RejectedExecutionHandler handler = getRejectedExecutionHandler();
         this.rejectHandlerType = handler.getClass().getSimpleName();
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));

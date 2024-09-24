@@ -76,10 +76,10 @@ public final class DtpPropertiesBinderUtil {
                 String executorFieldKey = EXECUTORS_CONFIG_PREFIX + idx[0] + "]." + field.getName();
                 setBasicField(source, field, executor, executorFieldKey);
             });
-            setListField(dtpProperties, executor, "executors[" + idx[0] + "]");
-            String prefix = MAIN_PROPERTIES_PREFIX + "." + "executors[" + idx[0] + "]";
+            String executorPropKeyPrefix = EXECUTORS_CONFIG_PREFIX + idx[0] + "]";
+            setListField(dtpProperties, executor, executorPropKeyPrefix, source);
             val globalExecutorProps = dtpProperties.getGlobalExecutorProps();
-            if (!contains(prefix + ".pluginNames[0]", dtpProperties) &&
+            if (!contains(executorPropKeyPrefix + ".pluginNames[0]", source) &&
                     CollectionUtils.isNotEmpty(globalExecutorProps.getPluginNames())) {
                 ReflectUtil.setFieldValue(executor, PLUGIN_NAMES, globalExecutorProps.getPluginNames());
             }
@@ -97,7 +97,8 @@ public final class DtpPropertiesBinderUtil {
             }
             if (dtpPropertiesField.getType().isAssignableFrom(TpExecutorProps.class)) {
                 tpExecutorPropFields.forEach(tpField -> setBasicField(source, tpField, dtpPropertiesField.getName(), targetObj));
-                setListField(dtpProperties, targetObj, dtpPropertiesField.getName());
+                String prefix = MAIN_PROPERTIES_PREFIX + "." + dtpPropertiesField.getName();
+                setListField(dtpProperties, targetObj, prefix, source);
             } else if (dtpPropertiesField.getGenericType() instanceof ParameterizedType) {
                 ParameterizedType paramType = (ParameterizedType) dtpPropertiesField.getGenericType();
                 Type[] argTypes = paramType.getActualTypeArguments();
@@ -109,7 +110,8 @@ public final class DtpPropertiesBinderUtil {
                     int[] idx = {0};
                     tpExecutorProps.forEach(tpProp -> {
                         tpExecutorPropFields.forEach(tpField -> setBasicField(source, tpField, dtpPropertiesField.getName(), tpProp, idx));
-                        setListField(dtpProperties, tpProp, dtpPropertiesField.getName() + "[" + idx[0] + "]");
+                        String prefix = MAIN_PROPERTIES_PREFIX + "." + dtpPropertiesField.getName() + "[" + idx[0] + "]";
+                        setListField(dtpProperties, tpProp, prefix, source);
                         idx[0]++;
                     });
                 }
@@ -161,22 +163,21 @@ public final class DtpPropertiesBinderUtil {
         ReflectUtil.setFieldValue(targetObj, tpPropField.getName(), globalFieldVal);
     }
 
-    private static void setListField(DtpProperties dtpProperties, Object fieldVal, String fieldName) {
+    private static void setListField(DtpProperties dtpProperties, Object fieldVal, String prefix, Object source) {
         val globalExecutorProps = dtpProperties.getGlobalExecutorProps();
-        String prefix = MAIN_PROPERTIES_PREFIX + "." + fieldName;
-        if (!contains(prefix + ".taskWrapperNames[0]", dtpProperties) &&
+        if (!contains(prefix + ".taskWrapperNames[0]", source) &&
                 CollectionUtils.isNotEmpty(globalExecutorProps.getTaskWrapperNames())) {
             ReflectUtil.setFieldValue(fieldVal, "taskWrapperNames", globalExecutorProps.getTaskWrapperNames());
         }
-        if (!contains(prefix + ".platformIds[0]", dtpProperties) &&
+        if (!contains(prefix + ".platformIds[0]", source) &&
                 CollectionUtils.isNotEmpty(globalExecutorProps.getPlatformIds())) {
             ReflectUtil.setFieldValue(fieldVal, PLATFORM_IDS, globalExecutorProps.getPlatformIds());
         }
-        if (!contains(prefix + ".notifyItems[0].type", dtpProperties) &&
+        if (!contains(prefix + ".notifyItems[0].type", source) &&
                 CollectionUtils.isNotEmpty(globalExecutorProps.getNotifyItems())) {
             ReflectUtil.setFieldValue(fieldVal, NOTIFY_ITEMS, globalExecutorProps.getNotifyItems());
         }
-        if (!contains(prefix + ".awareNames[0]", dtpProperties) &&
+        if (!contains(prefix + ".awareNames[0]", source) &&
                 CollectionUtils.isNotEmpty(globalExecutorProps.getAwareNames())) {
             ReflectUtil.setFieldValue(fieldVal, AWARE_NAMES, globalExecutorProps.getAwareNames());
         }

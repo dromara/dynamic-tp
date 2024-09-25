@@ -305,7 +305,6 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
             executorWrapper.setPlatformIds(props.getPlatformIds());
             executorWrapper.setNotifyEnabled(props.isNotifyEnabled());
         }
-        executorWrapper.setPreStartAllCoreThreads(props.isPreStartAllCoreThreads());
         executorWrapper.setRejectEnhanced(props.isRejectEnhanced());
         executorWrapper.setWaitForTasksToCompleteOnShutdown(props.isWaitForTasksToCompleteOnShutdown());
         executorWrapper.setAwaitTerminationSeconds(props.getAwaitTerminationSeconds());

@@ -56,6 +56,10 @@ public class TaskWrappers {
         return TASK_WRAPPERS.stream().filter(t -> StringUtil.containsIgnoreCase(t.name(), names)).collect(toList());
     }
 
+    public static void register(TaskWrapper taskWrapper) {
+        TASK_WRAPPERS.add(taskWrapper);
+    }
+
     public static TaskWrappers getInstance() {
         return TaskWrappersHolder.INSTANCE;
     }

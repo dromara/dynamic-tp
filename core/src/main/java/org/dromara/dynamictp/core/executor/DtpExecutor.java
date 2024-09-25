@@ -224,6 +224,9 @@ public class DtpExecutor extends ThreadPoolExecutor
 
     public void initialize() {
         NotifyHelper.initNotify(this);
+        if (preStartAllCoreThreads) {
+            prestartAllCoreThreads();
+        }
         // reset reject handler in initialize phase according to rejectEnhanced
         setRejectHandler(RejectHandlerGetter.buildRejectedHandler(getRejectHandlerType()));
     }
@@ -375,10 +378,5 @@ public class DtpExecutor extends ThreadPoolExecutor
      */
     public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
         allowCoreThreadTimeOut(allowCoreThreadTimeOut);
-    }
-
-    @Override
-    public void preStartAllCoreThreads() {
-        super.prestartAllCoreThreads();
     }
 }

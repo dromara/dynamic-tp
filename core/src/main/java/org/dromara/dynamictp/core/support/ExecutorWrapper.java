@@ -78,11 +78,6 @@ public class ExecutorWrapper {
     private boolean notifyEnabled = true;
 
     /**
-     * Whether to pre start all core threads.
-     */
-    private boolean preStartAllCoreThreads;
-
-    /**
      * If enhance reject.
      */
     private boolean rejectEnhanced = true;
@@ -126,7 +121,6 @@ public class ExecutorWrapper {
         this.notifyEnabled = executor.isNotifyEnabled();
         this.platformIds = executor.getPlatformIds();
         this.awareNames = executor.getAwareNames();
-        this.preStartAllCoreThreads = executor.isPreStartAllCoreThreads();
         this.rejectEnhanced = executor.isRejectEnhanced();
         this.waitForTasksToCompleteOnShutdown = executor.isWaitForTasksToCompleteOnShutdown();
         this.awaitTerminationSeconds = executor.getAwaitTerminationSeconds();
@@ -184,9 +178,6 @@ public class ExecutorWrapper {
             AwareManager.register(this);
         } else if (isThreadPoolExecutor()) {
             AwareManager.register(this);
-        }
-        if (preStartAllCoreThreads) {
-            executor.preStartAllCoreThreads();
         }
     }
 

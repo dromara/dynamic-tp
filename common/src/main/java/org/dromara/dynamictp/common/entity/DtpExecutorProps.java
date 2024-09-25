@@ -51,6 +51,11 @@ public class DtpExecutorProps extends TpExecutorProps {
     private boolean fair = false;
 
     /**
+     * If pre start all core threads.
+     */
+    private boolean preStartAllCoreThreads = false;
+
+    /**
      * Plugin names.
      */
     private Set<String> pluginNames;

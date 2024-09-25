@@ -82,8 +82,10 @@ public class NotifyItem {
             val defaultItems = getAllNotifyItems().stream()
                     .filter(t -> !StringUtil.containsIgnoreCase(t.getType(), configuredTypes))
                     .collect(Collectors.toList());
-            source.addAll(defaultItems);
-            return source;
+            List<NotifyItem> notifyItems = new ArrayList<>(6);
+            notifyItems.addAll(defaultItems);
+            notifyItems.addAll(source);
+            return notifyItems;
         }
     }
 

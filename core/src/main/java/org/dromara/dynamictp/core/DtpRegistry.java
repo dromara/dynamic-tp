@@ -299,10 +299,12 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
     }
 
     private static void updateWrapper(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
-        executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());
-        executorWrapper.setNotifyItems(props.getNotifyItems());
-        executorWrapper.setPlatformIds(props.getPlatformIds());
-        executorWrapper.setNotifyEnabled(props.isNotifyEnabled());
+        if (executorWrapper.isDtpExecutor()) {
+            executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());
+            executorWrapper.setNotifyItems(((DtpExecutor) executorWrapper.getExecutor()).getNotifyItems());
+            executorWrapper.setPlatformIds(props.getPlatformIds());
+            executorWrapper.setNotifyEnabled(props.isNotifyEnabled());
+        }
         executorWrapper.setPreStartAllCoreThreads(props.isPreStartAllCoreThreads());
         executorWrapper.setRejectEnhanced(props.isRejectEnhanced());
         executorWrapper.setWaitForTasksToCompleteOnShutdown(props.isWaitForTasksToCompleteOnShutdown());

@@ -70,19 +70,15 @@ public final class DtpPropertiesBinderUtil {
 
     private static void tryResetCusExecutors(DtpProperties dtpProperties, Object source) {
         val dtpPropsFields = ReflectionUtil.getAllFields(DtpExecutorProps.class);
+        val globalExecutorProps = dtpProperties.getGlobalExecutorProps();
         int[] idx = {0};
         dtpProperties.getExecutors().forEach(executor -> {
             dtpPropsFields.forEach(field -> {
-                String executorFieldKey = EXECUTORS_CONFIG_PREFIX + idx[0] + "]." + field.getName();
-                setBasicField(source, field, executor, executorFieldKey);
+                String propKey = EXECUTORS_CONFIG_PREFIX + idx[0] + "]." + field.getName();
+                setBasicField(source, field, executor, propKey);
             });
-            String executorPropKeyPrefix = EXECUTORS_CONFIG_PREFIX + idx[0] + "]";
-            setListField(dtpProperties, executor, executorPropKeyPrefix, source);
-            val globalExecutorProps = dtpProperties.getGlobalExecutorProps();
-            if (!contains(executorPropKeyPrefix + ".pluginNames[0]", source) &&
-                    CollectionUtils.isNotEmpty(globalExecutorProps.getPluginNames())) {
-                ReflectUtil.setFieldValue(executor, PLUGIN_NAMES, globalExecutorProps.getPluginNames());
-            }
+            String executorFieldNamePrefix = EXECUTORS_CONFIG_PREFIX + idx[0] + "]";
+            setCollectionField(source, globalExecutorProps, executor, executorFieldNamePrefix);
             idx[0]++;
         });
     }
@@ -90,28 +86,30 @@ public final class DtpPropertiesBinderUtil {
     private static void tryResetAdapterExecutors(DtpProperties dtpProperties, Object source) {
         val dtpPropertiesFields = ReflectionUtil.getAllFields(DtpProperties.class);
         val tpExecutorPropFields = ReflectionUtil.getAllFields(TpExecutorProps.class);
+        val globalExecutorProps = dtpProperties.getGlobalExecutorProps();
         dtpPropertiesFields.forEach(dtpPropertiesField -> {
-            val targetObj = ReflectUtil.getFieldValue(dtpProperties, dtpPropertiesField);
-            if (Objects.isNull(targetObj)) {
+            val candidateExecutor = ReflectUtil.getFieldValue(dtpProperties, dtpPropertiesField);
+            if (Objects.isNull(candidateExecutor)) {
                 return;
             }
+            String candidateExecutorFieldName = dtpPropertiesField.getName();
             if (dtpPropertiesField.getType().isAssignableFrom(TpExecutorProps.class)) {
-                tpExecutorPropFields.forEach(tpField -> setBasicField(source, tpField, dtpPropertiesField.getName(), targetObj));
-                String prefix = MAIN_PROPERTIES_PREFIX + "." + dtpPropertiesField.getName();
-                setListField(dtpProperties, targetObj, prefix, source);
+                tpExecutorPropFields.forEach(field -> setBasicField(source, field, candidateExecutorFieldName, candidateExecutor));
+                String executorFieldNamePrefix = MAIN_PROPERTIES_PREFIX + "." + dtpPropertiesField.getName();
+                setCollectionField(source, globalExecutorProps, candidateExecutor, executorFieldNamePrefix);
             } else if (dtpPropertiesField.getGenericType() instanceof ParameterizedType) {
                 ParameterizedType paramType = (ParameterizedType) dtpPropertiesField.getGenericType();
                 Type[] argTypes = paramType.getActualTypeArguments();
                 if (argTypes.length == 1 && argTypes[0].equals(TpExecutorProps.class)) {
-                    List<TpExecutorProps> tpExecutorProps = (List<TpExecutorProps>) targetObj;
-                    if (CollectionUtils.isEmpty(tpExecutorProps)) {
+                    List<TpExecutorProps> executors = (List<TpExecutorProps>) candidateExecutor;
+                    if (CollectionUtils.isEmpty(executors)) {
                         return;
                     }
                     int[] idx = {0};
-                    tpExecutorProps.forEach(tpProp -> {
-                        tpExecutorPropFields.forEach(tpField -> setBasicField(source, tpField, dtpPropertiesField.getName(), tpProp, idx));
-                        String prefix = MAIN_PROPERTIES_PREFIX + "." + dtpPropertiesField.getName() + "[" + idx[0] + "]";
-                        setListField(dtpProperties, tpProp, prefix, source);
+                    executors.forEach(executor -> {
+                        tpExecutorPropFields.forEach(field -> setBasicField(source, field, candidateExecutorFieldName, executor, idx));
+                        String executorFieldNamePrefix = MAIN_PROPERTIES_PREFIX + "." + candidateExecutorFieldName + "[" + idx[0] + "]";
+                        setCollectionField(source, globalExecutorProps, executor, executorFieldNamePrefix);
                         idx[0]++;
                     });
                 }
@@ -141,45 +139,52 @@ public final class DtpPropertiesBinderUtil {
         return false;
     }
 
-    private static void setBasicField(Object source, Field tpPropField, String targetObjName, Object targetObj, int[] idx) {
-        String executorFieldKey = MAIN_PROPERTIES_PREFIX + "." + targetObjName + "[" + idx[0] + "]." + tpPropField.getName();
-        setBasicField(source, tpPropField, targetObj, executorFieldKey);
+    private static void setBasicField(Object source, Field field, String executorFieldName, Object executor, int[] idx) {
+        String propKey = MAIN_PROPERTIES_PREFIX + "." + executorFieldName + "[" + idx[0] + "]." + field.getName();
+        setBasicField(source, field, executor, propKey);
     }
 
-    private static void setBasicField(Object source, Field tpPropField, String targetObjName, Object targetObj) {
-        String executorFieldKey = MAIN_PROPERTIES_PREFIX + "." + targetObjName + "." + tpPropField.getName();
-        setBasicField(source, tpPropField, targetObj, executorFieldKey);
+    private static void setBasicField(Object source, Field field, String executorFieldName, Object executor) {
+        String propKey = MAIN_PROPERTIES_PREFIX + "." + executorFieldName + "." + field.getName();
+        setBasicField(source, field, executor, propKey);
     }
 
-    private static void setBasicField(Object source, Field tpPropField, Object targetObj, String executorFieldKey) {
-        Object executorFieldVal = getProperty(executorFieldKey, source);
-        if (Objects.nonNull(executorFieldVal)) {
+    private static void setBasicField(Object source, Field field, Object executor, String propKey) {
+        Object propVal = getProperty(propKey, source);
+        if (Objects.nonNull(propVal)) {
             return;
         }
-        Object globalFieldVal = getProperty(GLOBAL_CONFIG_PREFIX + tpPropField.getName(), source);
+        Object globalFieldVal = getProperty(GLOBAL_CONFIG_PREFIX + field.getName(), source);
         if (Objects.isNull(globalFieldVal)) {
             return;
         }
-        ReflectUtil.setFieldValue(targetObj, tpPropField.getName(), globalFieldVal);
+        ReflectUtil.setFieldValue(executor, field.getName(), globalFieldVal);
     }
 
-    private static void setListField(DtpProperties dtpProperties, Object fieldVal, String prefix, Object source) {
-        val globalExecutorProps = dtpProperties.getGlobalExecutorProps();
+    private static void setCollectionField(Object source, DtpExecutorProps globalExecutorProps, Object executor, String prefix) {
         if (!contains(prefix + ".taskWrapperNames[0]", source) &&
                 CollectionUtils.isNotEmpty(globalExecutorProps.getTaskWrapperNames())) {
-            ReflectUtil.setFieldValue(fieldVal, "taskWrapperNames", globalExecutorProps.getTaskWrapperNames());
+            ReflectUtil.setFieldValue(executor, "taskWrapperNames", globalExecutorProps.getTaskWrapperNames());
         }
         if (!contains(prefix + ".platformIds[0]", source) &&
                 CollectionUtils.isNotEmpty(globalExecutorProps.getPlatformIds())) {
-            ReflectUtil.setFieldValue(fieldVal, PLATFORM_IDS, globalExecutorProps.getPlatformIds());
+            ReflectUtil.setFieldValue(executor, PLATFORM_IDS, globalExecutorProps.getPlatformIds());
         }
         if (!contains(prefix + ".notifyItems[0].type", source) &&
                 CollectionUtils.isNotEmpty(globalExecutorProps.getNotifyItems())) {
-            ReflectUtil.setFieldValue(fieldVal, NOTIFY_ITEMS, globalExecutorProps.getNotifyItems());
+            ReflectUtil.setFieldValue(executor, NOTIFY_ITEMS, globalExecutorProps.getNotifyItems());
         }
         if (!contains(prefix + ".awareNames[0]", source) &&
                 CollectionUtils.isNotEmpty(globalExecutorProps.getAwareNames())) {
-            ReflectUtil.setFieldValue(fieldVal, AWARE_NAMES, globalExecutorProps.getAwareNames());
+            ReflectUtil.setFieldValue(executor, AWARE_NAMES, globalExecutorProps.getAwareNames());
+        }
+        try {
+            if (!contains(prefix + ".pluginNames[0]", source) &&
+                    CollectionUtils.isNotEmpty(globalExecutorProps.getPluginNames())) {
+                ReflectUtil.setFieldValue(executor, PLUGIN_NAMES, globalExecutorProps.getPluginNames());
+            }
+        } catch (Exception e) {
+            // ignore
         }
     }
 }

@@ -166,6 +166,11 @@ public class DtpProperties {
      * Rabbitmq thread pools.
      */
     private List<TpExecutorProps> rabbitmqTp;
+
+    /**
+     * Liteflow thread pools.
+     */
+    private List<TpExecutorProps> liteflowTp;
     
     public static DtpProperties getInstance() {
         return Holder.INSTANCE;

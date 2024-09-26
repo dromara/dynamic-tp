@@ -25,6 +25,7 @@ import org.dromara.dynamictp.common.util.StringUtil;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -54,6 +55,14 @@ public class TaskWrappers {
         }
 
         return TASK_WRAPPERS.stream().filter(t -> StringUtil.containsIgnoreCase(t.name(), names)).collect(toList());
+    }
+
+    public static void register(TaskWrapper taskWrapper) {
+        Set<String> names = TASK_WRAPPERS.stream().map(TaskWrapper::name).collect(Collectors.toSet());
+        if (names.contains(taskWrapper.name())) {
+            return;
+        }
+        TASK_WRAPPERS.add(taskWrapper);
     }
 
     public static TaskWrappers getInstance() {

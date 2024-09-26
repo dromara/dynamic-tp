@@ -153,7 +153,12 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<Executor> {
         public void allowCoreThreadTimeOut(boolean value) {
             getTomcatExecutor().allowCoreThreadTimeOut(value);
         }
-        
+
+        @Override
+        public void preStartAllCoreThreads() {
+            getTomcatExecutor().prestartAllCoreThreads();
+        }
+
         @Override
         public long getKeepAliveTime(TimeUnit unit) {
             return getTomcatExecutor().getKeepAliveTime(unit);

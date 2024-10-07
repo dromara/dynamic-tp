@@ -19,6 +19,7 @@
         <dependency>
             <groupId>com.yomahub</groupId>
             <artifactId>liteflow-core</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 </project>

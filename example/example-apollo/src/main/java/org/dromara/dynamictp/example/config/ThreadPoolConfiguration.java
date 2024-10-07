@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.example.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
 import org.dromara.dynamictp.core.support.DynamicTp;
@@ -37,6 +38,7 @@ import static org.dromara.dynamictp.common.em.RejectedTypeEnum.CALLER_RUNS_POLIC
 /**
  * @author Redick01
  */
+@Slf4j
 @Configuration
 public class ThreadPoolConfiguration {
 
@@ -59,7 +61,13 @@ public class ThreadPoolConfiguration {
     @DynamicTp("threadPoolTaskExecutor")
     @Bean
     public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
-        return new ThreadPoolTaskExecutor();
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setTaskDecorator(r -> () -> {
+            log.info("before execute");
+            r.run();
+            log.info("after execute");
+        });
+        return executor;
     }
 
     /**

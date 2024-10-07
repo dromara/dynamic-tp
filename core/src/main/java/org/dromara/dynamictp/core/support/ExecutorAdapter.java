@@ -230,6 +230,13 @@ public interface ExecutorAdapter<E extends Executor> extends Executor {
     }
 
     /**
+     * Pre start all core threads
+     */
+    default void preStartAllCoreThreads() {
+        //default unsupported
+    }
+
+    /**
      * Get the keep alive time
      *
      * @param unit the time unit

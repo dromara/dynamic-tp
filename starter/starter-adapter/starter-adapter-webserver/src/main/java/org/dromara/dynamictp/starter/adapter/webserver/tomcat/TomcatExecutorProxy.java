@@ -20,6 +20,7 @@ package org.dromara.dynamictp.starter.adapter.webserver.tomcat;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.threads.TaskQueue;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
+import org.dromara.dynamictp.common.util.ExecutorUtil;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.RejectHandlerAware;
@@ -53,6 +54,7 @@ public class TomcatExecutorProxy extends ThreadPoolExecutor implements TaskEnhan
                 executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS,
                 executor.getQueue(), executor.getThreadFactory());
         setThreadRenewalDelay(executor.getThreadRenewalDelay());
+        allowCoreThreadTimeOut(executor.allowsCoreThreadTimeOut());
         Object handler = getRejectedExecutionHandler(executor);
         this.rejectHandlerType = handler.getClass().getSimpleName();
 
@@ -82,14 +84,15 @@ public class TomcatExecutorProxy extends ThreadPoolExecutor implements TaskEnhan
 
     @Override
     protected void beforeExecute(Thread t, Runnable r) {
-        super.beforeExecute(t, r);
         AwareManager.beforeExecute(this, t, r);
+        super.beforeExecute(t, r);
     }
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
         super.afterExecute(r, t);
         AwareManager.afterExecute(this, r, t);
+        ExecutorUtil.tryExecAfterExecute(r, t);
     }
 
     @Override

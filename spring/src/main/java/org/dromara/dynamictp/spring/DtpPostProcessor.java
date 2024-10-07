@@ -33,6 +33,7 @@ import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ScheduledThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
+import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -146,7 +147,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
             val proxy = newProxy(poolName, poolTaskExecutor.getThreadPoolExecutor());
             try {
                 ReflectionUtil.setFieldValue("threadPoolExecutor", bean, proxy);
-                tryWrapTaskDecorator(poolTaskExecutor, proxy);
+                tryWrapTaskDecorator(poolName, poolTaskExecutor, proxy);
             } catch (IllegalAccessException ignored) { }
             DtpRegistry.registerExecutor(new ExecutorWrapper(poolName, proxy), REGISTER_SOURCE);
             return bean;
@@ -183,7 +184,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
         return proxy;
     }
 
-    private void tryWrapTaskDecorator(ThreadPoolTaskExecutor poolTaskExecutor, ThreadPoolExecutorProxy proxy) throws IllegalAccessException {
+    private void tryWrapTaskDecorator(String poolName, ThreadPoolTaskExecutor poolTaskExecutor, ThreadPoolExecutorProxy proxy) throws IllegalAccessException {
         Object taskDecorator = ReflectionUtil.getFieldValue("taskDecorator", poolTaskExecutor);
         if (Objects.isNull(taskDecorator)) {
             return;
@@ -191,7 +192,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
         TaskWrapper taskWrapper = (taskDecorator instanceof TaskWrapper) ? (TaskWrapper) taskDecorator : new TaskWrapper() {
             @Override
             public String name() {
-                return taskDecorator.getClass().getName();
+                return poolName + "#taskDecorator";
             }
 
             @Override
@@ -200,5 +201,6 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
             }
         };
         ReflectionUtil.setFieldValue("taskWrappers", proxy, Lists.newArrayList(taskWrapper));
+        TaskWrappers.getInstance().register(taskWrapper);
     }
 }

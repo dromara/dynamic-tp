@@ -133,6 +133,11 @@ public class EnhancedQueueExecutorTaskPoolAdapter implements TaskPoolAdapter {
         }
 
         @Override
+        public void preStartAllCoreThreads() {
+            this.executor.prestartAllCoreThreads();
+        }
+
+        @Override
         public long getKeepAliveTime(TimeUnit unit) {
             return this.executor.getKeepAliveTime().getSeconds();
         }

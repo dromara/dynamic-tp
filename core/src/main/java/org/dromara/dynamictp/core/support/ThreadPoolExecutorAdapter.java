@@ -126,7 +126,12 @@ public class ThreadPoolExecutorAdapter implements ExecutorAdapter<ThreadPoolExec
     public void allowCoreThreadTimeOut(boolean value) {
         this.executor.allowCoreThreadTimeOut(value);
     }
-    
+
+    @Override
+    public void preStartAllCoreThreads() {
+        this.executor.prestartAllCoreThreads();
+    }
+
     @Override
     public long getKeepAliveTime(TimeUnit unit) {
         return this.executor.getKeepAliveTime(unit);

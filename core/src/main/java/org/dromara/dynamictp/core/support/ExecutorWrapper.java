@@ -22,16 +22,20 @@ import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.util.BeanCopierUtils;
 import org.dromara.dynamictp.core.aware.AwareManager;
+import org.dromara.dynamictp.core.aware.RejectHandlerAware;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
+import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -74,14 +78,32 @@ public class ExecutorWrapper {
     private boolean notifyEnabled = true;
 
     /**
-     * Thread pool stat provider
+     * If enhance reject.
      */
-    private ThreadPoolStatProvider threadPoolStatProvider;
+    private boolean rejectEnhanced = true;
 
     /**
      * Aware names
      */
     private Set<String> awareNames = new HashSet<>();
+
+    /**
+     * Whether to wait for scheduled tasks to complete on shutdown,
+     * not interrupting running tasks and executing all tasks in the queue.
+     */
+    protected boolean waitForTasksToCompleteOnShutdown = false;
+
+    /**
+     * The maximum number of seconds that this executor is supposed to block
+     * on shutdown in order to wait for remaining tasks to complete their execution
+     * before the rest of the container continues to shut down.
+     */
+    protected int awaitTerminationSeconds = 0;
+
+    /**
+     * Thread pool stat provider
+     */
+    private ThreadPoolStatProvider threadPoolStatProvider;
 
     private ExecutorWrapper() {
     }
@@ -92,13 +114,16 @@ public class ExecutorWrapper {
      * @param executor the DtpExecutor
      */
     public ExecutorWrapper(DtpExecutor executor) {
+        this.executor = executor;
         this.threadPoolName = executor.getThreadPoolName();
         this.threadPoolAliasName = executor.getThreadPoolAliasName();
-        this.executor = executor;
         this.notifyItems = executor.getNotifyItems();
         this.notifyEnabled = executor.isNotifyEnabled();
         this.platformIds = executor.getPlatformIds();
         this.awareNames = executor.getAwareNames();
+        this.rejectEnhanced = executor.isRejectEnhanced();
+        this.waitForTasksToCompleteOnShutdown = executor.isWaitForTasksToCompleteOnShutdown();
+        this.awaitTerminationSeconds = executor.getAwaitTerminationSeconds();
         this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
     }
 
@@ -148,8 +173,7 @@ public class ExecutorWrapper {
      */
     public void initialize() {
         if (isDtpExecutor()) {
-            DtpExecutor dtpExecutor = (DtpExecutor) getExecutor();
-            dtpExecutor.initialize();
+            ((DtpExecutor) getExecutor()).initialize();
             AwareManager.register(this);
         } else if (isThreadPoolExecutor()) {
             AwareManager.register(this);
@@ -163,6 +187,10 @@ public class ExecutorWrapper {
      */
     public boolean isDtpExecutor() {
         return this.executor instanceof DtpExecutor;
+    }
+
+    public boolean isExecutorService() {
+        return this.executor.getOriginal() instanceof ExecutorService;
     }
 
     /**
@@ -182,6 +210,18 @@ public class ExecutorWrapper {
     public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
         if (executor.getOriginal() instanceof TaskEnhanceAware) {
             ((TaskEnhanceAware) executor.getOriginal()).setTaskWrappers(taskWrappers);
+        }
+    }
+
+    public void setRejectHandler(RejectedExecutionHandler handler) {
+        String rejectHandlerType = handler.getClass().getSimpleName();
+        if (executor.getOriginal() instanceof RejectHandlerAware) {
+            ((RejectHandlerAware) executor.getOriginal()).setRejectHandlerType(rejectHandlerType);
+        }
+        if (isRejectEnhanced()) {
+            executor.setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
+        } else {
+            executor.setRejectedExecutionHandler(handler);
         }
     }
 }

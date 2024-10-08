@@ -17,8 +17,9 @@
 
 package org.dromara.dynamictp.common.util;
 
+import com.google.common.base.Preconditions;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.util.Assert;
+
 
 import java.util.Collection;
 import java.util.Collections;
@@ -48,7 +49,7 @@ public final class StreamUtil {
      */
     public static <I, T> List<I> fetchProperty(Collection<T> data,
                                                Function<T, I> mapping) {
-        Assert.notNull(mapping, "mapping function must not be null");
+        Preconditions.checkNotNull(mapping, "mapping function must not be null");
         if (CollectionUtils.isEmpty(data)) {
             return Collections.emptyList();
         }
@@ -65,7 +66,7 @@ public final class StreamUtil {
      * @return a map which key from list data and value is data
      */
     public static <P, O> Map<O, P> toMap(Collection<P> coll, Function<P, O> key) {
-        Assert.notNull(key, "key function must not be null");
+        Preconditions.checkNotNull(key, "key function must not be null");
         if (CollectionUtils.isEmpty(coll)) {
             return Collections.emptyMap();
         }
@@ -87,8 +88,8 @@ public final class StreamUtil {
     public static <O, D, P> Map<O, P> toMap(Collection<D> list,
                                             Function<D, O> key,
                                             Function<D, P> value) {
-        Assert.notNull(key, "Key function must not be null");
-        Assert.notNull(value, "Value function must not be null");
+        Preconditions.checkNotNull(key, "Key function must not be null");
+        Preconditions.checkNotNull(value, "Value function must not be null");
         if (CollectionUtils.isEmpty(list)) {
             return Collections.emptyMap();
         }
@@ -108,7 +109,7 @@ public final class StreamUtil {
     public static <I, D> Map<I, List<D>> toListMap(Collection<I> ids,
                                                    Collection<D> list,
                                                    Function<D, I> key) {
-        Assert.notNull(key, "mapping function must not be null");
+        Preconditions.checkNotNull(key, "mapping function must not be null");
         if (CollectionUtils.isEmpty(ids) || CollectionUtils.isEmpty(list)) {
             return Collections.emptyMap();
         }

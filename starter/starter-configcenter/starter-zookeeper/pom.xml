@@ -27,5 +27,9 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.dromara.dynamictp</groupId>
+            <artifactId>dynamic-tp-spring</artifactId>
+        </dependency>
     </dependencies>
 </project>

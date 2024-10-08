@@ -17,15 +17,16 @@
 
 package org.dromara.dynamictp.common.parser.config;
 
-import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
-import com.google.common.collect.Lists;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
-import org.springframework.core.io.ByteArrayResource;
+import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
+import org.yaml.snakeyaml.Yaml;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.LinkedHashMap;
 
 /**
  * YamlConfigParser related
@@ -35,7 +36,7 @@ import java.util.Map;
  **/
 public class YamlConfigParser extends AbstractConfigParser {
 
-    private static final List<ConfigFileTypeEnum> CONFIG_TYPES = Lists.newArrayList(
+    private static final List<ConfigFileTypeEnum> CONFIG_TYPES = Arrays.asList(
             ConfigFileTypeEnum.YML, ConfigFileTypeEnum.YAML);
 
     @Override
@@ -45,12 +46,36 @@ public class YamlConfigParser extends AbstractConfigParser {
 
     @Override
     public Map<Object, Object> doParse(String content) {
-
-        if (StringUtils.isEmpty(content)) {
+        if (StringUtils.isBlank(content)) {
             return Collections.emptyMap();
         }
-        YamlPropertiesFactoryBean bean = new YamlPropertiesFactoryBean();
-        bean.setResources(new ByteArrayResource(content.getBytes()));
-        return bean.getObject();
+
+        Yaml yaml = new Yaml();
+        Map<Object, Object> loadedYaml = yaml.load(content);
+
+        if (MapUtils.isEmpty(loadedYaml)) {
+            return Collections.emptyMap();
+        }
+
+        Map<Object, Object> flattenedMap = new LinkedHashMap<>();
+        flattenMap(flattenedMap, loadedYaml, null);
+        return flattenedMap;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void flattenMap(Map<Object, Object> result, Map<Object, Object> source, String path) {
+        source.forEach((key, value) -> {
+            String fullPath = (path != null ? path + "." + key : key.toString());
+            if (value instanceof Map) {
+                flattenMap(result, (Map<Object, Object>) value, fullPath);
+            } else if (value instanceof List) {
+                for (int i = 0; i < ((List<?>) value).size(); i++) {
+                    flattenMap(result, Collections.singletonMap("[" + i + "]", ((List<?>) value).get(i)), fullPath);
+                }
+            } else {
+                fullPath = fullPath.replaceAll("\\.\\[", "[");
+                result.put(fullPath, value != null ? value.toString() : null);
+            }
+        });
     }
 }

@@ -30,7 +30,7 @@ import lombok.val;
 import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.handler.ConfigHandler;
-import org.dromara.dynamictp.core.refresher.AbstractRefresher;
+import org.dromara.dynamictp.spring.AbstractSpringRefresher;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.io.IOException;
@@ -46,7 +46,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAIN_PROPERTI
  * @since 1.0.0
  **/
 @Slf4j
-public class ApolloRefresher extends AbstractRefresher implements ConfigFileChangeListener, InitializingBean {
+public class ApolloRefresher extends AbstractSpringRefresher implements ConfigFileChangeListener, InitializingBean {
 
     private static final Splitter NAMESPACE_SPLITTER = Splitter.on(",").omitEmptyStrings().trimResults();
 

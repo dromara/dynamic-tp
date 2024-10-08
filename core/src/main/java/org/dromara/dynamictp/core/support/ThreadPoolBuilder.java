@@ -37,7 +37,7 @@ import org.dromara.dynamictp.core.executor.eager.TaskQueue;
 import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
-import org.springframework.util.Assert;
+import com.google.common.base.Preconditions;
 
 import java.util.List;
 import java.util.Objects;
@@ -578,7 +578,7 @@ public class ThreadPoolBuilder {
      * @return the newly created DtpExecutor instance
      */
     private DtpExecutor buildDtpExecutor(ThreadPoolBuilder builder) {
-        Assert.notNull(builder.threadPoolName, "The thread pool name must not be null.");
+        Preconditions.checkNotNull(builder.threadPoolName, "The thread pool name must not be null.");
         DtpExecutor dtpExecutor = createInternal(builder);
         dtpExecutor.setThreadPoolName(builder.threadPoolName);
         dtpExecutor.allowCoreThreadTimeOut(builder.allowCoreThreadTimeOut);

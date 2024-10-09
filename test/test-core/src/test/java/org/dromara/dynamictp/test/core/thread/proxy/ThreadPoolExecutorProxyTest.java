@@ -138,8 +138,9 @@ public class ThreadPoolExecutorProxyTest {
 
     private TpExecutorProps buildProps() {
         TpExecutorProps props = new TpExecutorProps();
-        props.setRunTimeout(10);
-        props.setQueueTimeout(10);
+//        props.setRunTimeout(10);
+//        props.setQueueTimeout(10);
+        props.setThreshold(10);
         return props;
     }
 }

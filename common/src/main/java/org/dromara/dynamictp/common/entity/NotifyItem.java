@@ -59,6 +59,21 @@ public class NotifyItem {
     private int threshold;
 
     /**
+     * Arithmetic operator.
+     */
+    private char op='>';
+
+    /**
+     * In a period window, if the actual value exceeds this value, an alarm is triggered.
+     */
+    private int countToTrigger = 1;
+
+    /**
+     * The length of period window.
+     */
+    private int period;
+
+    /**
      * Alarm interval, time unit（s）
      */
     private int interval = 120;

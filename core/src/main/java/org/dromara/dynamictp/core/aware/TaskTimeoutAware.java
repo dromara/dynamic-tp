@@ -51,8 +51,8 @@ public class TaskTimeoutAware extends TaskStatAware {
     protected void refresh(TpExecutorProps props, ThreadPoolStatProvider statProvider) {
         super.refresh(props, statProvider);
         if (Objects.nonNull(props)) {
-            statProvider.setRunTimeout(props.getRunTimeout());
-            statProvider.setQueueTimeout(props.getQueueTimeout());
+            statProvider.setRunTimeout(props.getThreshold());
+            statProvider.setQueueTimeout(props.getThreshold());
             statProvider.setTryInterrupt(props.isTryInterrupt());
         }
     }

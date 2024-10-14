@@ -178,6 +178,8 @@ public class ExecutorWrapper {
             AwareManager.register(this);
         } else if (isThreadPoolExecutor()) {
             AwareManager.register(this);
+        } else if (isVirtualThreadExecutor()) {
+            AwareManager.register(this);
         }
     }
 
@@ -201,6 +203,14 @@ public class ExecutorWrapper {
      */
     public boolean isThreadPoolExecutor() {
         return this.executor instanceof ThreadPoolExecutorAdapter;
+    }
+
+    /**
+     * whether is VirtualThreadExecutor
+     * @return boolean
+     */
+    private boolean isVirtualThreadExecutor() {
+        return this.executor instanceof VirtualThreadExecutorAdapter;
     }
 
     /**

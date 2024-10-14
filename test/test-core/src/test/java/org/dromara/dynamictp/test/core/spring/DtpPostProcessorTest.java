@@ -21,6 +21,7 @@ import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.spring.EnableDynamicTp;
 import org.dromara.dynamictp.core.spring.YamlPropertySourceFactory;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.core.support.VirtualThreadExecutorAdapter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -64,4 +65,10 @@ public class DtpPostProcessorTest {
         taskExecutor.execute(() -> System.out.println("enhance taskExecutor success!"));
     }
 
+    @Test
+    void test2() {
+        VirtualThreadExecutorAdapter virtualThreadExecutorAdapter = (VirtualThreadExecutorAdapter) DtpRegistry.getExecutor("VirtualThreadExecutor");
+        virtualThreadExecutorAdapter.getOriginal().execute(() -> System.out.println("VirtualThreadExecutorAdapter1 registered!"));
+        Assertions.assertNotNull(virtualThreadExecutorAdapter);
+    }
 }

@@ -57,7 +57,7 @@ public class AgentAware extends TaskStatAware {
         return "agent";
     }
 
-    private DtpRunnable determineDtpRunnable(List<Field> conditionalFields, Runnable r, List<Class> visitedClass) throws IllegalAccessException {
+    private DtpRunnable determineDtpRunnable(List<Field> conditionalFields, Runnable r, Set<Class> visitedClass) throws IllegalAccessException {
         for (Field field : conditionalFields) {
             if (Objects.isNull(field)) {
                 continue;
@@ -81,7 +81,7 @@ public class AgentAware extends TaskStatAware {
         return null;
     }
 
-    private DtpRunnable getDtpRunnable(Class<? extends Runnable> rClass, Runnable r, List<Class> visitedClass) throws IllegalAccessException {
+    private DtpRunnable getDtpRunnable(Class<? extends Runnable> rClass, Runnable r, Set<Class> visitedClass) throws IllegalAccessException {
         while (Runnable.class.isAssignableFrom(rClass)) {
             Field[] declaredFields = rClass.getDeclaredFields();
             if (ArrayUtil.isNotEmpty(declaredFields)) {
@@ -110,7 +110,7 @@ public class AgentAware extends TaskStatAware {
         DtpRunnable dtpRunnable = null;
         Class<? extends Runnable> rClass = r.getClass();
         try {
-            dtpRunnable = getDtpRunnable(rClass, r, new ArrayList<>());
+            dtpRunnable = getDtpRunnable(rClass, r, new HashSet<>());
         } catch (IllegalAccessException e) {
             log.error("getDtpRunnable Error", e);
         }

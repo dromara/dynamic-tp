@@ -32,6 +32,7 @@ import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.springframework.beans.BeanUtils;
 
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -66,6 +67,11 @@ public class ExecutorWrapper {
      * Notify items, see {@link NotifyItemEnum}.
      */
     private List<NotifyItem> notifyItems;
+
+    /**
+     * The actual value to count that decide whether to trigger an alarm.
+     */
+    private Queue<Long> counterForNow;
 
     /**
      * Notify platform ids.
@@ -118,6 +124,7 @@ public class ExecutorWrapper {
         this.threadPoolName = executor.getThreadPoolName();
         this.threadPoolAliasName = executor.getThreadPoolAliasName();
         this.notifyItems = executor.getNotifyItems();
+        this.counterForNow =executor.getCounterForNow();
         this.notifyEnabled = executor.isNotifyEnabled();
         this.platformIds = executor.getPlatformIds();
         this.awareNames = executor.getAwareNames();

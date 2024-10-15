@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -67,7 +68,7 @@ public class Config {
     }
     @DynamicTp("VirtualThreadExecutor")
     @Bean
-    public VirtualThreadExecutorAdapter virtualThreadExecutor() {
-        return new VirtualThreadExecutorAdapter();
+    public ExecutorService virtualThreadExecutor() {
+        return Executors.newVirtualThreadPerTaskExecutor();
     }
 }

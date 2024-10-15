@@ -33,6 +33,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -67,8 +68,8 @@ public class DtpPostProcessorTest {
 
     @Test
     void test2() {
-        VirtualThreadExecutorAdapter virtualThreadExecutorAdapter = (VirtualThreadExecutorAdapter) DtpRegistry.getExecutor("VirtualThreadExecutor");
-        virtualThreadExecutorAdapter.getOriginal().execute(() -> System.out.println("VirtualThreadExecutorAdapter1 registered!"));
-        Assertions.assertNotNull(virtualThreadExecutorAdapter);
+        Executor virtualThreadExecutor =  DtpRegistry.getExecutor("VirtualThreadExecutor");
+        virtualThreadExecutor.execute(() -> System.out.println("VirtualThreadExecutor registered!"));
+        Assertions.assertNotNull(virtualThreadExecutor);
     }
 }

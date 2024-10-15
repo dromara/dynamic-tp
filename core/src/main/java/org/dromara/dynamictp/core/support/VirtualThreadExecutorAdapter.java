@@ -13,13 +13,18 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @Create 2024/10/14 15:33
  * @Version 1.0
  */
-public class VirtualThreadExecutorAdapter implements ExecutorAdapter<ExecutorService> {
+public class VirtualThreadExecutorAdapter implements ExecutorAdapter<ExecutorService>{
 
     private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
     @Override
     public ExecutorService getOriginal() {
         return this.executor;
+    }
+
+    @Override
+    public void execute(Runnable command) {
+        this.executor.execute(command);
     }
 
     @Override
@@ -50,6 +55,16 @@ public class VirtualThreadExecutorAdapter implements ExecutorAdapter<ExecutorSer
     @Override
     public int getActiveCount() {
         return 0;
+    }
+
+    @Override
+    public boolean isShutdown() {
+        return this.executor.isShutdown();
+    }
+
+    @Override
+    public boolean isTerminated() {
+        return this.executor.isTerminated();
     }
 
 

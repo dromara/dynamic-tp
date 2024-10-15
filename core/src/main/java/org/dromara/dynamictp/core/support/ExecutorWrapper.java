@@ -139,6 +139,8 @@ public class ExecutorWrapper {
             this.executor = new ThreadPoolExecutorAdapter((ThreadPoolExecutor) executor);
         } else if (executor instanceof ExecutorAdapter<?>) {
             this.executor = (ExecutorAdapter<?>) executor;
+        } else if (executor instanceof VirtualThreadExecutorProxy) {
+            this.executor = new VirtualThreadExecutorAdapter();
         } else {
             throw new IllegalArgumentException("unsupported Executor type !");
         }

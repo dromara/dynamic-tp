@@ -18,7 +18,6 @@
 package org.dromara.dynamictp.core.spring;
 
 import com.google.common.collect.Lists;
-import jdk.internal.vm.ThreadContainer;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -29,12 +28,7 @@ import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
 import org.dromara.dynamictp.core.executor.eager.TaskQueue;
-import org.dromara.dynamictp.core.support.DynamicTp;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.support.ScheduledThreadPoolExecutorProxy;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
-import org.dromara.dynamictp.core.support.VirtualThreadExecutorAdapter;
-import org.dromara.dynamictp.core.support.VirtualThreadExecutorProxy;
+import org.dromara.dynamictp.core.support.*;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.springframework.beans.BeansException;
@@ -93,10 +87,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
     @Override
     public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
         if (!(bean instanceof ThreadPoolExecutor) && !(bean instanceof ThreadPoolTaskExecutor) &&
-                !(bean instanceof VirtualThreadExecutorAdapter) && !(bean instanceof ThreadContainer && bean instanceof  ExecutorService))
-//            if (!(bean instanceof ThreadPoolExecutor) && !(bean instanceof ThreadPoolTaskExecutor) &&
-//                    !(bean instanceof VirtualThreadExecutorAdapter))
-            {
+                !(bean.getClass().getName().equals("java.util.concurrent.ThreadPerTaskExecutor"))) {
             return bean;
         }
         if (bean instanceof DtpExecutor) {
@@ -156,15 +147,16 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
             try {
                 ReflectionUtil.setFieldValue("threadPoolExecutor", bean, proxy);
                 tryWrapTaskDecorator(poolName, poolTaskExecutor, proxy);
-            } catch (IllegalAccessException ignored) { }
+            } catch (IllegalAccessException ignored) {
+            }
             DtpRegistry.registerExecutor(new ExecutorWrapper(poolName, proxy), REGISTER_SOURCE);
             return bean;
         }
         Executor proxy;
         if (bean instanceof ScheduledThreadPoolExecutor) {
             proxy = newScheduledTpProxy(poolName, (ScheduledThreadPoolExecutor) bean);
-        } else if (bean instanceof VirtualThreadExecutorAdapter) {
-            proxy = newVirtualThreadProxy(poolName,  ((VirtualThreadExecutorAdapter) bean).getOriginal());
+        } else if (bean.getClass().getName().equals("java.util.concurrent.ThreadPerTaskExecutor")) {
+            proxy = newVirtualThreadProxy(poolName, (ExecutorService) bean);
         } else {
             proxy = newProxy(poolName, (ThreadPoolExecutor) bean);
         }
@@ -195,8 +187,8 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
     }
 
     private VirtualThreadExecutorProxy newVirtualThreadProxy(String name, ExecutorService originExecutor) {
-        val proxy = new VirtualThreadExecutorProxy();
-        shutdownGracefulAsync( originExecutor, name, 0);
+        val proxy = new VirtualThreadExecutorProxy(originExecutor);
+        shutdownGracefulAsync(originExecutor, name, 0);
         return proxy;
     }
 

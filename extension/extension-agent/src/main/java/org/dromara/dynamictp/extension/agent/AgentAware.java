@@ -67,7 +67,7 @@ public class AgentAware extends TaskStatAware {
             if (o instanceof DtpRunnable) {
                 return (DtpRunnable) o;
             }
-            if (CollUtil.contains(visitedClass, o.getClass())) {
+            if (Objects.isNull(o) || CollUtil.contains(visitedClass, o.getClass())) {
                 return null;
             } else {
                 visitedClass.add(o.getClass());
@@ -115,8 +115,8 @@ public class AgentAware extends TaskStatAware {
             log.error("getDtpRunnable Error", e);
         }
         if (dtpRunnable == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("DynamicTp aware [{}], can not find DtpRunnable.", getName());
+            if (log.isDebugEnabled()) {
+                log.debug("DynamicTp aware [{}], can not find DtpRunnable.", getName());
             }
             return r;
         }

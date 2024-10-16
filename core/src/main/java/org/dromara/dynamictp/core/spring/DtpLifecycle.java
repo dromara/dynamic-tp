@@ -24,6 +24,7 @@ import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.notifier.manager.NoticeManager;
 import org.dromara.dynamictp.core.support.DtpLifecycleSupport;
 import org.dromara.dynamictp.core.system.SystemMetricManager;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.SmartLifecycle;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -35,7 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 1.1.3
  **/
 @Slf4j
-public class DtpLifecycle implements SmartLifecycle {
+public class DtpLifecycle implements SmartLifecycle, DisposableBean {
 
     private final AtomicBoolean running = new AtomicBoolean(false);
 
@@ -48,10 +49,6 @@ public class DtpLifecycle implements SmartLifecycle {
 
     @Override
     public void stop() {
-        if (this.running.compareAndSet(true, false)) {
-            shutdownInternal();
-            DtpRegistry.getAllExecutors().forEach((k, v) -> DtpLifecycleSupport.destroy(v));
-        }
     }
 
     @Override
@@ -87,7 +84,15 @@ public class DtpLifecycle implements SmartLifecycle {
      */
     @Override
     public int getPhase() {
-        return Integer.MAX_VALUE;
+        return Integer.MAX_VALUE -1;
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        if (this.running.compareAndSet(true, false)) {
+            shutdownInternal();
+            DtpRegistry.getAllExecutors().forEach((k, v) -> DtpLifecycleSupport.destroy(v));
+        }
     }
 
     public void shutdownInternal() {

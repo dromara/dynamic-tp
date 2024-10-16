@@ -17,8 +17,8 @@
 
 package org.dromara.dynamictp.test.core.spring;
 
-import org.dromara.dynamictp.core.spring.EnableDynamicTp;
 import org.dromara.dynamictp.core.support.DynamicTp;
+import org.dromara.dynamictp.spring.EnableDynamicTp;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

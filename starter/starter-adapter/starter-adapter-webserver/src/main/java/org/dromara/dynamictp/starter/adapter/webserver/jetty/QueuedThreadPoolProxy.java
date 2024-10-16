@@ -39,18 +39,14 @@ public class QueuedThreadPoolProxy extends QueuedThreadPool {
                                  ThreadGroup threadGroup, ThreadFactory threadFactory) {
         super(threadPool.getMaxThreads(), threadPool.getMinThreads(), threadPool.getIdleTimeout(),
                 threadPool.getReservedThreads(), queue, threadGroup, threadFactory);
-        try {
-            Object counts = ReflectionUtil.getFieldValue("_counts", threadPool);
-            ReflectionUtil.setFieldValue("_counts", this, counts);
-            Object tryExecutor = ReflectionUtil.getFieldValue("_tryExecutor", threadPool);
-            if (tryExecutor instanceof ReservedThreadExecutor) {
-                ReservedThreadExecutor rtExecutor = (ReservedThreadExecutor) tryExecutor;
-                if (rtExecutor.getExecutor() == threadPool) {
-                    ReflectionUtil.setFieldValue("_executor", rtExecutor, this);
-                }
+        Object counts = ReflectionUtil.getFieldValue("_counts", threadPool);
+        ReflectionUtil.setFieldValue("_counts", this, counts);
+        Object tryExecutor = ReflectionUtil.getFieldValue("_tryExecutor", threadPool);
+        if (tryExecutor instanceof ReservedThreadExecutor) {
+            ReservedThreadExecutor rtExecutor = (ReservedThreadExecutor) tryExecutor;
+            if (rtExecutor.getExecutor() == threadPool) {
+                ReflectionUtil.setFieldValue("_executor", rtExecutor, this);
             }
-        } catch (IllegalAccessException e) {
-            log.error("DynamicTp enhance origin executor of QueuedThreadPool failed.", e);
         }
     }
 

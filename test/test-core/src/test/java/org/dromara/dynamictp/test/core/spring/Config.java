@@ -19,12 +19,14 @@ package org.dromara.dynamictp.test.core.spring;
 
 import org.dromara.dynamictp.core.spring.EnableDynamicTp;
 import org.dromara.dynamictp.core.support.DynamicTp;
+import org.dromara.dynamictp.core.support.VirtualThreadExecutorAdapter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -63,5 +65,10 @@ public class Config {
     @Bean
     public ThreadPoolTaskExecutor taskExecutor() {
         return new ThreadPoolTaskExecutor();
+    }
+    @DynamicTp("VirtualThreadExecutor")
+    @Bean
+    public ExecutorService virtualThreadExecutor() {
+        return Executors.newVirtualThreadPerTaskExecutor();
     }
 }

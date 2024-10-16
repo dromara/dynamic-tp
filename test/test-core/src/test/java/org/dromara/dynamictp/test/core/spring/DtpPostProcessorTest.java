@@ -21,6 +21,7 @@ import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.spring.EnableDynamicTp;
 import org.dromara.dynamictp.core.spring.YamlPropertySourceFactory;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.core.support.VirtualThreadExecutorAdapter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -64,4 +66,14 @@ public class DtpPostProcessorTest {
         taskExecutor.execute(() -> System.out.println("enhance taskExecutor success!"));
     }
 
+    @Test
+    void test2() {
+        Executor virtualThreadExecutor =  DtpRegistry.getExecutor("VirtualThreadExecutor");
+        virtualThreadExecutor.execute(() -> System.out.println("VirtualThreadExecutor registered!"));
+        Assertions.assertNotNull(virtualThreadExecutor);
+
+//        Executor virtualThreadExecutor2 =  DtpRegistry.getExecutor("VirtualThreadExecutor2");
+//        virtualThreadExecutor.execute(() -> System.out.println("VirtualThreadExecutor2 registered!"));
+//        Assertions.assertNotNull(virtualThreadExecutor2);
+    }
 }

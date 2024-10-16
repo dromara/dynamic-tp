@@ -46,3 +46,5 @@ spring:
           queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
           taskWrapperNames: [ "ttl", "mdc","cta" ]       # 任务包装器名称，继承TaskWrapper接口
           notifyEnabled: false                           # 是否开启报警，默认true
+#        - threadPoolName: VirtualThreadExecutor2
+#          executorType: virtual

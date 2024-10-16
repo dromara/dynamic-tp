@@ -31,6 +31,7 @@ import org.dromara.dynamictp.core.executor.eager.TaskQueue;
 import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.BinderHelper;
+import org.dromara.dynamictp.core.support.VirtualThreadExecutorProxy;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.EnvironmentAware;
@@ -40,6 +41,7 @@ import org.springframework.core.type.AnnotationMetadata;
 
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.ALLOW_CORE_THREAD_TIMEOUT;
@@ -93,10 +95,32 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
                 return;
             }
             Class<?> executorTypeClass = ExecutorType.getClass(e.getExecutorType());
-            Map<String, Object> propertyValues = buildPropertyValues(e);
+            Map<String, Object> propertyValues;
+            if(executorTypeClass.equals(VirtualThreadExecutorProxy.class)) {
+                propertyValues = buildVTPropertyValues(e);
+            }
+            else {
+                propertyValues = buildPropertyValues(e);
+            }
             Object[] args = buildConstructorArgs(executorTypeClass, e);
             SpringBeanHelper.register(registry, e.getThreadPoolName(), executorTypeClass, propertyValues, args);
         });
+    }
+
+    private Map<String, Object> buildVTPropertyValues(DtpExecutorProps props) {
+        Map<String, Object> propertyValues = Maps.newHashMap();
+        propertyValues.put(THREAD_POOL_NAME, props.getThreadPoolName());
+        propertyValues.put(THREAD_POOL_ALIAS_NAME, props.getThreadPoolAliasName());
+        val notifyItems = mergeAllNotifyItems(props.getNotifyItems());
+        propertyValues.put(NOTIFY_ITEMS, notifyItems);
+        propertyValues.put(PLATFORM_IDS, props.getPlatformIds());
+        propertyValues.put(NOTIFY_ENABLED, props.isNotifyEnabled());
+
+        val taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
+        propertyValues.put(TASK_WRAPPERS, taskWrappers);
+        propertyValues.put(PLUGIN_NAMES, props.getPluginNames());
+        propertyValues.put(AWARE_NAMES, props.getAwareNames());
+        return propertyValues;
     }
 
     private Map<String, Object> buildPropertyValues(DtpExecutorProps props) {
@@ -130,6 +154,10 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
             taskQueue = new TaskQueue(props.getQueueCapacity());
         } else if (clazz.equals(PriorityDtpExecutor.class)) {
             taskQueue = new PriorityBlockingQueue<>(props.getQueueCapacity(), PriorityDtpExecutor.getRunnableComparator());
+        } else if (clazz.equals(VirtualThreadExecutorProxy.class)) {
+            return new Object[] {
+                    Executors.newVirtualThreadPerTaskExecutor()
+            };
         } else {
             taskQueue = buildLbq(props.getQueueType(),
                     props.getQueueCapacity(),

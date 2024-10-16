@@ -139,6 +139,8 @@ public class ExecutorWrapper {
             this.executor = new ThreadPoolExecutorAdapter((ThreadPoolExecutor) executor);
         } else if (executor instanceof ExecutorAdapter<?>) {
             this.executor = (ExecutorAdapter<?>) executor;
+        } else if (executor instanceof VirtualThreadExecutorProxy) {
+            this.executor = new VirtualThreadExecutorAdapter();
         } else {
             throw new IllegalArgumentException("unsupported Executor type !");
         }
@@ -178,6 +180,8 @@ public class ExecutorWrapper {
             AwareManager.register(this);
         } else if (isThreadPoolExecutor()) {
             AwareManager.register(this);
+        } else if (isVirtualThreadExecutor()) {
+            AwareManager.register(this);
         }
     }
 
@@ -201,6 +205,14 @@ public class ExecutorWrapper {
      */
     public boolean isThreadPoolExecutor() {
         return this.executor instanceof ThreadPoolExecutorAdapter;
+    }
+
+    /**
+     * whether is VirtualThreadExecutor
+     * @return boolean
+     */
+    public boolean isVirtualThreadExecutor() {
+        return this.executor instanceof VirtualThreadExecutorAdapter;
     }
 
     /**

@@ -1,11 +1,16 @@
 package org.dromara.dynamictp.core.support;
 
+import com.google.common.collect.Sets;
+import org.dromara.dynamictp.common.em.NotifyItemEnum;
+import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
+import org.dromara.dynamictp.core.support.task.runnable.EnhancedRunnable;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -42,6 +47,7 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
     @Override
     public void execute(Runnable command) {
         command = getEnhancedTask(command);
+        EnhancedRunnable.of(command, this);
         AwareManager.execute(this, command);
         THREAD_PER_TASK_EXECUTOR.execute(command);
     }
@@ -87,6 +93,7 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
     public <T> Future<T> submit(Callable<T> callable) {
         FutureTask<T> futureTask = new FutureTask<T>(callable);
         futureTask = (FutureTask<T>) getEnhancedTask(futureTask);
+        EnhancedRunnable.of(futureTask, this);
         AwareManager.execute(this, futureTask);
         return THREAD_PER_TASK_EXECUTOR.submit(callable);
     }
@@ -95,6 +102,7 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
     @Override
     public <T> Future<T> submit(Runnable runnable, T t) {
         runnable = getEnhancedTask(runnable);
+        EnhancedRunnable.of(runnable, this);
         AwareManager.execute(this, runnable);
         return THREAD_PER_TASK_EXECUTOR.submit(runnable, t);
     }
@@ -102,6 +110,7 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
     @Override
     public Future<?> submit(Runnable runnable) {
         runnable = getEnhancedTask(runnable);
+        EnhancedRunnable.of(runnable, this);
         AwareManager.execute(this, runnable);
         return THREAD_PER_TASK_EXECUTOR.submit(runnable);
     }
@@ -125,4 +134,5 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
     public <T> T invokeAny(Collection<? extends Callable<T>> collection, long l, TimeUnit timeUnit) throws InterruptedException, ExecutionException, TimeoutException {
         return THREAD_PER_TASK_EXECUTOR.invokeAny(collection, l, timeUnit);
     }
+
 }

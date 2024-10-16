@@ -71,5 +71,9 @@ public class DtpPostProcessorTest {
         Executor virtualThreadExecutor =  DtpRegistry.getExecutor("VirtualThreadExecutor");
         virtualThreadExecutor.execute(() -> System.out.println("VirtualThreadExecutor registered!"));
         Assertions.assertNotNull(virtualThreadExecutor);
+
+//        Executor virtualThreadExecutor2 =  DtpRegistry.getExecutor("VirtualThreadExecutor2");
+//        virtualThreadExecutor.execute(() -> System.out.println("VirtualThreadExecutor2 registered!"));
+//        Assertions.assertNotNull(virtualThreadExecutor2);
     }
 }

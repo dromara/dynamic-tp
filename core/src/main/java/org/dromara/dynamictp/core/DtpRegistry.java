@@ -194,7 +194,7 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
         TpMainFields oldFields = ExecutorConverter.toMainFields(executorWrapper);
         doRefresh(executorWrapper, props);
         TpMainFields newFields = ExecutorConverter.toMainFields(executorWrapper);
-        if (oldFields.equals(newFields)) {
+        if (oldFields.equals(newFields) && !executorWrapper.isVirtualThreadExecutor()) {
             log.debug("DynamicTp refresh, main properties of [{}] have not changed.",
                     executorWrapper.getThreadPoolName());
             return;
@@ -225,8 +225,10 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
         if (!Objects.equals(executor.allowsCoreThreadTimeOut(), props.isAllowCoreThreadTimeOut())) {
             executor.allowCoreThreadTimeOut(props.isAllowCoreThreadTimeOut());
         }
-        // update queue
-        updateQueueProps(executor, props);
+        if(!executorWrapper.isVirtualThreadExecutor()) {
+            // update queue
+            updateQueueProps(executor, props);
+        }
 
         if (executorWrapper.isDtpExecutor()) {
             doRefreshDtp(executorWrapper, props);
@@ -240,13 +242,14 @@ public class DtpRegistry extends OnceApplicationContextEventListener {
         if (StringUtils.isNotBlank(props.getThreadPoolAliasName())) {
             executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());
         }
-
-        ExecutorAdapter<?> executor = executorWrapper.getExecutor();
-        // update reject handler
-        String currentRejectHandlerType = executor.getRejectHandlerType();
-        if (!Objects.equals(currentRejectHandlerType, props.getRejectedHandlerType())) {
-            val rejectHandler = RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType());
-            executorWrapper.setRejectHandler(rejectHandler);
+        if(!executorWrapper.isVirtualThreadExecutor()) {
+            ExecutorAdapter<?> executor = executorWrapper.getExecutor();
+            // update reject handler
+            String currentRejectHandlerType = executor.getRejectHandlerType();
+            if (!Objects.equals(currentRejectHandlerType, props.getRejectedHandlerType())) {
+                val rejectHandler = RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType());
+                executorWrapper.setRejectHandler(rejectHandler);
+            }
         }
 
         List<TaskWrapper> taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());

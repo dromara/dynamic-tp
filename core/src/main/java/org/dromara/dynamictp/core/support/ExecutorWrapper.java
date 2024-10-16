@@ -211,7 +211,7 @@ public class ExecutorWrapper {
      * whether is VirtualThreadExecutor
      * @return boolean
      */
-    private boolean isVirtualThreadExecutor() {
+    public boolean isVirtualThreadExecutor() {
         return this.executor instanceof VirtualThreadExecutorAdapter;
     }
 

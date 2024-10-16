@@ -34,9 +34,44 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
     private final ExecutorService THREAD_PER_TASK_EXECUTOR;
 
     /**
+     * Notify platform ids.
+     */
+    private List<String> platformIds;
+
+    /**
      * Task wrappers, do sth enhanced.
      */
     private List<TaskWrapper> taskWrappers;
+
+    /**
+     * The name of the thread pool.
+     */
+    protected String threadPoolName;
+
+    /**
+     * Simple Business alias Name of Dynamic ThreadPool. Use for notify.
+     */
+    private String threadPoolAliasName;
+
+    /**
+     * If enable notify.
+     */
+    private boolean notifyEnabled = true;
+
+    /**
+     * Notify items, see {@link NotifyItemEnum}.
+     */
+    private List<NotifyItem> notifyItems;
+
+    /**
+     * Plugin names.
+     */
+    private Set<String> pluginNames = Sets.newHashSet();
+
+    /**
+     * Aware names.
+     */
+    private Set<String> awareNames = Sets.newHashSet();
 
 
     public VirtualThreadExecutorProxy(ExecutorService executor) {
@@ -135,4 +170,58 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
         return THREAD_PER_TASK_EXECUTOR.invokeAny(collection, l, timeUnit);
     }
 
+    public String getThreadPoolName() {
+        return threadPoolName;
+    }
+
+    public void setThreadPoolName(String threadPoolName) {
+        this.threadPoolName = threadPoolName;
+    }
+
+    public String getThreadPoolAliasName() {
+        return threadPoolAliasName;
+    }
+
+    public void setThreadPoolAliasName(String threadPoolAliasName) {
+        this.threadPoolAliasName = threadPoolAliasName;
+    }
+
+    public boolean isNotifyEnabled() {
+        return notifyEnabled;
+    }
+
+    public void setNotifyEnabled(boolean notifyEnabled) {
+        this.notifyEnabled = notifyEnabled;
+    }
+    public Set<String> getPluginNames() {
+        return pluginNames;
+    }
+
+    public void setPluginNames(Set<String> pluginNames) {
+        this.pluginNames = pluginNames;
+    }
+
+    public Set<String> getAwareNames() {
+        return awareNames;
+    }
+
+    public void setAwareNames(Set<String> awareNames) {
+        this.awareNames = awareNames;
+    }
+
+    public List<String> getPlatformIds() {
+        return platformIds;
+    }
+
+    public void setPlatformIds(List<String> platformIds) {
+        this.platformIds = platformIds;
+    }
+
+    public List<NotifyItem> getNotifyItems() {
+        return notifyItems;
+    }
+
+    public void setNotifyItems(List<NotifyItem> notifyItems) {
+        this.notifyItems = notifyItems;
+    }
 }

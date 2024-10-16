@@ -92,3 +92,5 @@ spring:
           keepAliveTime: 50
           allowCoreThreadTimeOut: false
           threadNamePrefix: test
+        - threadPoolName: VirtualThreadExecutor1
+          executorType: virtual

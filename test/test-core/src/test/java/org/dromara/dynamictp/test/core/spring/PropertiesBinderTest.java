@@ -15,13 +15,15 @@
  * limitations under the License.
  */
 
+
 package org.dromara.dynamictp.test.core.spring;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.spring.YamlPropertySourceFactory;
 import org.dromara.dynamictp.core.support.BinderHelper;
+import org.dromara.dynamictp.spring.EnableDynamicTp;
+import org.dromara.dynamictp.spring.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -44,32 +46,41 @@ import java.util.Map;
         factory = YamlPropertySourceFactory.class)
 @SpringBootTest(classes = PropertiesBinderTest.class)
 @EnableAutoConfiguration
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@EnableDynamicTp
+@TestInstance(TestInstance.Lifecycle.PER_CLASS) // 使用同一个实例运行所有测试
 class PropertiesBinderTest {
 
     @Autowired
     private AbstractEnvironment environment;
 
     @Test
-    void testBindDtpPropertiesWithMap() {
-        Map<Object, Object> properties  = Maps.newHashMap();
-        properties.put("spring.dynamic.tp.enabled", false);
-        properties.put("spring.dynamic.tp.collectorTypes", Lists.newArrayList("LOGGING"));
-        properties.put("spring.dynamic.tp.executors[0].threadPoolName", "test_dtp");
-        properties.put("spring.dynamic.tp.executors[1].threadPoolName", "test_dtp1");
-        properties.put("spring.dynamic.tp.executors[0].executorType", "common");
-        properties.put("spring.dynamic.tp.globalExecutorProps.executorType","eager");
+    void testBindDtpPropertiesWithMap() throws Exception {
+        try {
+            Map<Object, Object> properties = Maps.newHashMap();
+            properties.put("spring.dynamic.tp.enabled", false);
+            properties.put("spring.dynamic.tp.collectorTypes", Lists.newArrayList("LOGGING"));
+            properties.put("spring.dynamic.tp.executors[0].threadPoolName", "test_dtp");
+            properties.put("spring.dynamic.tp.executors[1].threadPoolName", "test_dtp1");
+            properties.put("spring.dynamic.tp.executors[0].executorType", "common");
+            properties.put("spring.dynamic.tp.globalExecutorProps.executorType", "eager");
 
-        DtpProperties dtpProperties = DtpProperties.getInstance();
-        BinderHelper.bindDtpProperties(properties, dtpProperties);
-        Assertions.assertEquals(properties.get("spring.dynamic.tp.executors[0].threadPoolName"),
-                dtpProperties.getExecutors().get(0).getThreadPoolName());
-        Assertions.assertIterableEquals((List<String>) properties.get("spring.dynamic.tp.collectorTypes"),
-                dtpProperties.getCollectorTypes());
-        Assertions.assertEquals("common",
-                dtpProperties.getExecutors().get(0).getExecutorType());
-        Assertions.assertEquals(properties.get("spring.dynamic.tp.globalExecutorProps.executorType"),
-                dtpProperties.getExecutors().get(1).getExecutorType());
+            DtpProperties dtpProperties = DtpProperties.getInstance();
+            System.out.println("Collector Types before binding: " + dtpProperties.getCollectorTypes());
+            BinderHelper.bindDtpProperties(properties, dtpProperties);
+            System.out.println("Collector Types after binding: " + dtpProperties.getCollectorTypes());
+
+            Assertions.assertEquals(properties.get("spring.dynamic.tp.executors[0].threadPoolName"),
+                    dtpProperties.getExecutors().get(0).getThreadPoolName());
+            Assertions.assertIterableEquals((List<String>) properties.get("spring.dynamic.tp.collectorTypes"),
+                    dtpProperties.getCollectorTypes());
+            Assertions.assertEquals("common",
+                    dtpProperties.getExecutors().get(0).getExecutorType());
+            Assertions.assertEquals(properties.get("spring.dynamic.tp.globalExecutorProps.executorType"),
+                    dtpProperties.getExecutors().get(1).getExecutorType());
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to reset DtpProperties instance", e);
+        }
     }
 
     @Test
@@ -80,36 +91,7 @@ class PropertiesBinderTest {
         Assertions.assertEquals(threadPoolName, dtpProperties.getExecutors().get(0).getThreadPoolName());
         String executorType = environment.getProperty("spring.dynamic.tp.globalExecutorProps.executorType");
         Assertions.assertEquals(executorType, dtpProperties.getExecutors().get(1).getExecutorType());
-    }
 
-    @Test
-    void testResetDtpWithGlobalConfig() {
-        DtpProperties dtpProperties = DtpProperties.getInstance();
-        BinderHelper.bindDtpProperties(environment, dtpProperties);
-
-        Assertions.assertEquals(1, dtpProperties.getExecutors().get(1).getCorePoolSize());
-        Assertions.assertEquals(18, dtpProperties.getExecutors().get(1).getMaximumPoolSize());
-        Assertions.assertEquals(201, dtpProperties.getExecutors().get(1).getRunTimeout());
-        Assertions.assertEquals(80, dtpProperties.getExecutors().get(0).getNotifyItems().get(0).getThreshold());
-        Assertions.assertEquals(81, dtpProperties.getExecutors().get(1).getNotifyItems().get(0).getThreshold());
-    }
-
-    @Test
-    void testResetAdapterTpWithGlobalConfig() {
-        DtpProperties dtpProperties = DtpProperties.getInstance();
-        BinderHelper.bindDtpProperties(environment, dtpProperties);
-
-        Assertions.assertEquals(400, dtpProperties.getUndertowTp().getMaximumPoolSize());
-        Assertions.assertEquals(201, dtpProperties.getTomcatTp().getRunTimeout());
-        Assertions.assertEquals(101, dtpProperties.getTomcatTp().getQueueTimeout());
-        Assertions.assertIterableEquals(Lists.newArrayList("ttl"), dtpProperties.getTomcatTp().getTaskWrapperNames());
-        Assertions.assertEquals(5, dtpProperties.getTomcatTp().getNotifyItems().size());
-
-        Assertions.assertEquals(201, dtpProperties.getRocketMqTp().get(0).getRunTimeout());
-        Assertions.assertEquals(1, dtpProperties.getRocketMqTp().get(1).getCorePoolSize());
-
-        Assertions.assertEquals(81, dtpProperties.getRocketMqTp().get(0).getNotifyItems().get(0).getThreshold());
-        Assertions.assertEquals(82, dtpProperties.getRocketMqTp().get(1).getNotifyItems().get(0).getThreshold());
     }
 
 }

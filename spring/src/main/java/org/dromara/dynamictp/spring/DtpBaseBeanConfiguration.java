@@ -15,16 +15,19 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.spring;
+package org.dromara.dynamictp.spring;
 
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.monitor.DtpMonitor;
+import org.dromara.dynamictp.core.lifecycle.DtpLifecycle;
+import org.dromara.dynamictp.core.lifecycle.LifeCycleManagement;
 import org.dromara.dynamictp.core.support.DtpBannerPrinter;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
+
 
 /**
  * DtpBaseBeanConfiguration related
@@ -58,6 +61,16 @@ public class DtpBaseBeanConfiguration {
 
     @Bean
     public DtpBannerPrinter dtpBannerPrinter() {
-        return new DtpBannerPrinter();
+        return DtpBannerPrinter.getInstance();
+    }
+
+    @Bean
+    public DtpLifecycleSpringAdapter dtpLifecycleSpringAdapter(LifeCycleManagement lifeCycleManagement) {
+        return new DtpLifecycleSpringAdapter(lifeCycleManagement);
+    }
+
+    @Bean
+    public DtpApplicationListener dtpApplicationListener() {
+        return new DtpApplicationListener();
     }
 }

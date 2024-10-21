@@ -44,7 +44,7 @@ public final class CollectorHandler {
 
     private CollectorHandler() {
         List<MetricsCollector> loadedCollectors = ExtensionServiceLoader.get(MetricsCollector.class);
-        loadedCollectors.forEach(collector -> COLLECTORS.put(collector.type(), collector));
+        loadedCollectors.forEach(collector -> COLLECTORS.put(collector.type().toLowerCase(), collector));
 
         MetricsCollector microMeterCollector = new MicroMeterCollector();
         LogCollector logCollector = new LogCollector();

@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.extension.agent;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ArrayUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -26,9 +27,11 @@ import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
@@ -59,7 +62,7 @@ public class AgentAware extends TaskStatAware {
         return "agent";
     }
 
-    private DtpRunnable determineDtpRunnable(List<Field> conditionalFields, Runnable r) throws IllegalAccessException {
+    private DtpRunnable determineDtpRunnable(List<Field> conditionalFields, Runnable r, Set<Class> visitedClass) throws IllegalAccessException {
         for (Field field : conditionalFields) {
             if (Objects.isNull(field)) {
                 continue;
@@ -69,8 +72,13 @@ public class AgentAware extends TaskStatAware {
             if (o instanceof DtpRunnable) {
                 return (DtpRunnable) o;
             }
+            if (Objects.isNull(o) || CollUtil.contains(visitedClass, o.getClass())) {
+                return null;
+            } else {
+                visitedClass.add(o.getClass());
+            }
             // 纵向查找
-            DtpRunnable dtpRunnable = getDtpRunnable(o.getClass(), o);
+            DtpRunnable dtpRunnable = getDtpRunnable(o.getClass(), o, visitedClass);
             if (dtpRunnable != null) {
                 return dtpRunnable;
             }
@@ -78,7 +86,7 @@ public class AgentAware extends TaskStatAware {
         return null;
     }
 
-    private DtpRunnable getDtpRunnable(Class<? extends Runnable> rClass, Runnable r) throws IllegalAccessException {
+    private DtpRunnable getDtpRunnable(Class<? extends Runnable> rClass, Runnable r, Set<Class> visitedClass) throws IllegalAccessException {
         while (Runnable.class.isAssignableFrom(rClass)) {
             Field[] declaredFields = rClass.getDeclaredFields();
             if (ArrayUtil.isNotEmpty(declaredFields)) {
@@ -86,7 +94,7 @@ public class AgentAware extends TaskStatAware {
                         .filter(ele -> Runnable.class.isAssignableFrom(ele.getType()))
                         .collect(Collectors.toList());
                 if (CollectionUtils.isNotEmpty(conditionFields)) {
-                    DtpRunnable dtpRunnable = determineDtpRunnable(conditionFields, r);
+                    DtpRunnable dtpRunnable = determineDtpRunnable(conditionFields, r, visitedClass);
                     if (Objects.nonNull(dtpRunnable)) {
                         return dtpRunnable;
                     }
@@ -107,13 +115,13 @@ public class AgentAware extends TaskStatAware {
         DtpRunnable dtpRunnable = null;
         Class<? extends Runnable> rClass = r.getClass();
         try {
-            dtpRunnable = getDtpRunnable(rClass, r);
+            dtpRunnable = getDtpRunnable(rClass, r, new HashSet<>());
         } catch (IllegalAccessException e) {
             log.error("getDtpRunnable Error", e);
         }
         if (dtpRunnable == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("DynamicTp aware [{}], can not find DtpRunnable.", getName());
+            if (log.isDebugEnabled()) {
+                log.debug("DynamicTp aware [{}], can not find DtpRunnable.", getName());
             }
             return r;
         }

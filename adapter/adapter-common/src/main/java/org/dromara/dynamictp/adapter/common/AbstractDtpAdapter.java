@@ -22,6 +22,7 @@ import com.github.dadiyang.equator.FieldInfo;
 import com.github.dadiyang.equator.GetterBaseEquator;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.eventbus.Subscribe;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
@@ -31,9 +32,10 @@ import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.entity.TpMainFields;
+import org.dromara.dynamictp.common.event.CustomContextRefreshedEvent;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
+import org.dromara.dynamictp.common.manager.EventBusManager;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
-import org.dromara.dynamictp.common.spring.OnceApplicationContextEventListener;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.common.util.StreamUtil;
 import org.dromara.dynamictp.core.aware.AwareManager;
@@ -44,7 +46,6 @@ import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
-import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.Collections;
 import java.util.List;
@@ -67,16 +68,20 @@ import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGra
  * @since 1.0.6
  */
 @Slf4j
-public abstract class AbstractDtpAdapter extends OnceApplicationContextEventListener implements DtpAdapter {
+public abstract class AbstractDtpAdapter implements DtpAdapter {
 
     private static final Equator EQUATOR = new GetterBaseEquator();
 
     protected final Map<String, ExecutorWrapper> executors = Maps.newHashMap();
 
-    @Override
-    protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
+    public AbstractDtpAdapter() {
+        EventBusManager.register(this);
+    }
+
+    @Subscribe
+    public synchronized void onContextRefreshedEvent(CustomContextRefreshedEvent event) {
         try {
-            DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+            DtpProperties dtpProperties = ContextManagerHelper.getBean(DtpProperties.class);
             initialize();
             afterInitialize();
             refresh(dtpProperties);
@@ -163,12 +168,8 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
 
     protected void enhanceOriginExecutor(String tpName, ThreadPoolExecutor executor, String fieldName, Object targetObj) {
         ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executor);
-        try {
-            ReflectionUtil.setFieldValue(fieldName, targetObj, proxy);
-            putAndFinalize(tpName, executor, proxy);
-        } catch (IllegalAccessException e) {
-            log.error("DynamicTp adapter, enhance {} failed.", tpName, e);
-        }
+        ReflectionUtil.setFieldValue(fieldName, targetObj, proxy);
+        putAndFinalize(tpName, executor, proxy);
     }
 
     protected void putAndFinalize(String tpName, ExecutorService origin, Executor targetForWrapper) {
@@ -220,3 +221,4 @@ public abstract class AbstractDtpAdapter extends OnceApplicationContextEventList
         }
     }
 }
+

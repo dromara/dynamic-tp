@@ -18,15 +18,15 @@
 package org.dromara.dynamictp.example;
 
 import com.alibaba.dubbo.config.spring.context.annotation.EnableDubbo;
-import org.dromara.dynamictp.core.spring.EnableDynamicTp;
+import org.dromara.dynamictp.spring.EnableDynamicTp;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * @author dragon-zhang
  */
-@EnableDubbo
 @EnableDynamicTp
+@EnableDubbo
 @SpringBootApplication
 public class DubboExampleApplication {
     public static void main(String[] args) {

@@ -13,7 +13,7 @@
     <url>https://github.com/yanhom1314/dynamic-tp</url>
 
     <properties>
-        <revision>1.1.8.1</revision>
+        <revision>1.1.9</revision>
 
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
@@ -48,6 +48,7 @@
         <module>jvmti</module>
         <module>test</module>
         <module>dependencies</module>
+        <module>spring</module>
     </modules>
 
     <dependencies>

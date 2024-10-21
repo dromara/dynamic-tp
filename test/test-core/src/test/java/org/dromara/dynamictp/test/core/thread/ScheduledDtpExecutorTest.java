@@ -18,9 +18,9 @@
 package org.dromara.dynamictp.test.core.thread;
 
 import org.dromara.dynamictp.core.DtpRegistry;
-import org.dromara.dynamictp.core.spring.EnableDynamicTp;
-import org.dromara.dynamictp.core.spring.YamlPropertySourceFactory;
 import org.dromara.dynamictp.core.executor.ScheduledDtpExecutor;
+import org.dromara.dynamictp.spring.EnableDynamicTp;
+import org.dromara.dynamictp.spring.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;

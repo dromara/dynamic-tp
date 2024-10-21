@@ -17,10 +17,10 @@
 
 package org.dromara.dynamictp.core.support;
 
-import com.google.common.collect.Sets;
 import lombok.Data;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
+import org.dromara.dynamictp.common.util.BeanCopierUtils;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.RejectHandlerAware;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
@@ -29,8 +29,8 @@ import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
-import org.springframework.beans.BeanUtils;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -78,11 +78,6 @@ public class ExecutorWrapper {
     private boolean notifyEnabled = true;
 
     /**
-     * Whether to pre start all core threads.
-     */
-    private boolean preStartAllCoreThreads;
-
-    /**
      * If enhance reject.
      */
     private boolean rejectEnhanced = true;
@@ -90,7 +85,7 @@ public class ExecutorWrapper {
     /**
      * Aware names
      */
-    private Set<String> awareNames = Sets.newHashSet();
+    private Set<String> awareNames = new HashSet<>();
 
     /**
      * Whether to wait for scheduled tasks to complete on shutdown,
@@ -126,7 +121,6 @@ public class ExecutorWrapper {
         this.notifyEnabled = executor.isNotifyEnabled();
         this.platformIds = executor.getPlatformIds();
         this.awareNames = executor.getAwareNames();
-        this.preStartAllCoreThreads = executor.isPreStartAllCoreThreads();
         this.rejectEnhanced = executor.isRejectEnhanced();
         this.waitForTasksToCompleteOnShutdown = executor.isWaitForTasksToCompleteOnShutdown();
         this.awaitTerminationSeconds = executor.getAwaitTerminationSeconds();
@@ -170,11 +164,10 @@ public class ExecutorWrapper {
      */
     public ExecutorWrapper capture() {
         ExecutorWrapper executorWrapper = new ExecutorWrapper();
-        BeanUtils.copyProperties(this, executorWrapper);
+        BeanCopierUtils.copyProperties(this, executorWrapper);
         executorWrapper.executor = new CapturedExecutor(this.getExecutor());
         return executorWrapper;
     }
-
     /**
      * Initialize.
      */
@@ -184,9 +177,6 @@ public class ExecutorWrapper {
             AwareManager.register(this);
         } else if (isThreadPoolExecutor()) {
             AwareManager.register(this);
-        }
-        if (preStartAllCoreThreads) {
-            executor.preStartAllCoreThreads();
         }
     }
 

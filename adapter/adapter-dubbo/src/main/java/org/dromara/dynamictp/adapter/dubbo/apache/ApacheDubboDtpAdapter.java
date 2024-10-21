@@ -32,12 +32,13 @@ import org.apache.dubbo.config.spring.context.event.ServiceBeanExportedEvent;
 import org.apache.dubbo.remoting.transport.dispatcher.WrappedChannelHandler;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.jvmti.JVMTI;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 
 import java.util.Map;
 import java.util.Objects;
@@ -57,7 +58,7 @@ import static org.apache.dubbo.common.constants.CommonConstants.SIDE_KEY;
  */
 @Slf4j
 @SuppressWarnings("all")
-public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
+public class ApacheDubboDtpAdapter extends AbstractDtpAdapter implements ApplicationListener<ApplicationEvent> {
 
     private static final String TP_PREFIX = "dubboTp";
 
@@ -69,7 +70,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof ServiceBeanExportedEvent) {
             try {
-                DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+                DtpProperties dtpProperties = ContextManagerHelper.getBean(DtpProperties.class);
                 initialize();
                 afterInitialize();
                 refresh(dtpProperties);

@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
 import java.util.Objects;
-import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
@@ -51,8 +50,10 @@ public final class ExecutorUtil {
         }
         if (r instanceof FutureTask) {
             try {
-                Future<?> future = (Future<?>) r;
-                future.get();
+                FutureTask<?> future = (FutureTask<?>) r;
+                if (future.isDone()) {
+                    future.get();
+                }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } catch (Exception e) {

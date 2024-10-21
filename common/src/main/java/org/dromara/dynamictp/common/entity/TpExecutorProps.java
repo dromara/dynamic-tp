@@ -98,11 +98,6 @@ public class TpExecutorProps {
     private boolean allowCoreThreadTimeOut = false;
 
     /**
-     * If pre start all core threads.
-     */
-    private boolean preStartAllCoreThreads = false;
-
-    /**
      * Notify items, see {@link NotifyItemEnum}
      */
     private List<NotifyItem> notifyItems;

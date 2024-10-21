@@ -28,7 +28,6 @@ import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
-import org.dromara.dynamictp.core.spring.SpringExecutor;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 
@@ -48,8 +47,7 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpExecutor extends ThreadPoolExecutor
-        implements SpringExecutor, TaskEnhanceAware, ExecutorAdapter<ThreadPoolExecutor> {
+public class DtpExecutor extends ThreadPoolExecutor implements TaskEnhanceAware, ExecutorAdapter<ThreadPoolExecutor> {
 
     /**
      * The name of the thread pool.
@@ -177,11 +175,6 @@ public class DtpExecutor extends ThreadPoolExecutor
     public ThreadPoolExecutor getOriginal() {
         return this;
     }
-    
-    @Override
-    public void execute(Runnable task, long startTimeout) {
-        execute(task);
-    }
 
     @Override
     public void execute(Runnable command) {
@@ -224,6 +217,9 @@ public class DtpExecutor extends ThreadPoolExecutor
 
     public void initialize() {
         NotifyHelper.initNotify(this);
+        if (preStartAllCoreThreads) {
+            prestartAllCoreThreads();
+        }
         // reset reject handler in initialize phase according to rejectEnhanced
         setRejectHandler(RejectHandlerGetter.buildRejectedHandler(getRejectHandlerType()));
     }
@@ -375,10 +371,5 @@ public class DtpExecutor extends ThreadPoolExecutor
      */
     public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
         allowCoreThreadTimeOut(allowCoreThreadTimeOut);
-    }
-
-    @Override
-    public void preStartAllCoreThreads() {
-        super.prestartAllCoreThreads();
     }
 }

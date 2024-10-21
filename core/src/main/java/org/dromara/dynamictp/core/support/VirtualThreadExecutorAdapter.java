@@ -18,7 +18,7 @@ public class VirtualThreadExecutorAdapter implements ExecutorAdapter<ExecutorSer
     private final ExecutorService executor;
 
     public VirtualThreadExecutorAdapter(Executor executor) {
-        this.executor = ((VirtualThreadExecutorProxy) executor).getThreadPerTaskExecutor();
+        this.executor = (ExecutorService) executor;
     }
 
     @Override

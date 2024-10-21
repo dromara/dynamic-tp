@@ -26,13 +26,11 @@ import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
 import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
 import org.dromara.dynamictp.core.support.task.runnable.OrderedRunnable;
 import org.dromara.dynamictp.example.service.TestService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * TestServiceImpl related
@@ -54,17 +52,25 @@ public class TestServiceImpl implements TestService {
 
     private final OrderedDtpExecutor orderedDtpExecutor;
 
+    private final ExecutorService VirtualThreadExecutor;
+
     public TestServiceImpl(ThreadPoolExecutor jucThreadPoolExecutor,
                            ThreadPoolTaskExecutor threadPoolTaskExecutor,
                            DtpExecutor eagerDtpExecutor,
                            ScheduledExecutorService scheduledDtpExecutor,
-                           OrderedDtpExecutor orderedDtpExecutor) {
+                           OrderedDtpExecutor orderedDtpExecutor,
+                           @Qualifier("VirtualThreadExecutor1") ExecutorService virtualThreadExecutor) {
         this.jucThreadPoolExecutor = jucThreadPoolExecutor;
         this.threadPoolTaskExecutor = threadPoolTaskExecutor;
         this.eagerDtpExecutor = eagerDtpExecutor;
         this.scheduledDtpExecutor = scheduledDtpExecutor;
         this.orderedDtpExecutor = orderedDtpExecutor;
+        this.VirtualThreadExecutor = virtualThreadExecutor;
     }
+
+//    public TestServiceImpl(@Qualifier("VirtualThreadExecutor1") ExecutorService virtualThreadExecutor) {
+//        this.VirtualThreadExecutor = virtualThreadExecutor;
+//    }
 
     @Override
     public void testJucTp() {
@@ -139,6 +145,16 @@ public class TestServiceImpl implements TestService {
     public void testOrderedDtp() {
         for (int i = 0; i < 10; i++) {
             orderedDtpExecutor.execute(new TestOrderedRunnable(new UserInfo(i, "dtp" + i)));
+        }
+    }
+
+    @Override
+    public void testVTExecutor() {
+        for (int i = 0; i < 10; i++) {
+            int finalI = i;
+            VirtualThreadExecutor.execute(()->{
+                log.info("i am a VTExecutor's {} task", finalI);
+            });
         }
     }
 

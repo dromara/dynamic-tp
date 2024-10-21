@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -63,11 +62,11 @@ public class ThreadPoolConfiguration {
         return new ThreadPoolTaskExecutor();
     }
 
-    @DynamicTp("VirtualThreadExecutor")
-    @Bean
-    public ExecutorService virtualThreadExecutor() {
-        return Executors.newVirtualThreadPerTaskExecutor();
-    }
+//    @DynamicTp("VirtualThreadExecutor")
+//    @Bean
+//    public ExecutorService virtualThreadExecutor() {
+//        return Executors.newVirtualThreadPerTaskExecutor();
+//    }
 
     /**
      * 通过{@link ThreadPoolCreator} 快速创建一些简单配置的线程池，使用默认参数

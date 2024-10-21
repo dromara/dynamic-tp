@@ -1,20 +1,25 @@
 package org.dromara.dynamictp.core.support;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * ClassName: VirtualThreadExecutorAdapter
  * Package: org.dromara.dynamictp.core.support
  * Description:
- *     Adapter for virtual thread executor
+ * Adapter for virtual thread executor
+ *
  * @Author CYC
  * @Create 2024/10/14 15:33
  * @Version 1.0
  */
-public class VirtualThreadExecutorAdapter implements ExecutorAdapter<ExecutorService>{
+public class VirtualThreadExecutorAdapter implements ExecutorAdapter<ExecutorService> {
 
-    private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
+    private final ExecutorService executor;
+
+    public VirtualThreadExecutorAdapter(Executor executor) {
+        this.executor = ((VirtualThreadExecutorProxy) executor).getThreadPerTaskExecutor();
+    }
 
     @Override
     public ExecutorService getOriginal() {

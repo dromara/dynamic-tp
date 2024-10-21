@@ -140,7 +140,7 @@ public class ExecutorWrapper {
         } else if (executor instanceof ExecutorAdapter<?>) {
             this.executor = (ExecutorAdapter<?>) executor;
         } else if (executor instanceof VirtualThreadExecutorProxy) {
-            this.executor = new VirtualThreadExecutorAdapter();
+            this.executor = new VirtualThreadExecutorAdapter(executor);
         } else {
             throw new IllegalArgumentException("unsupported Executor type !");
         }
@@ -209,6 +209,7 @@ public class ExecutorWrapper {
 
     /**
      * whether is VirtualThreadExecutor
+     *
      * @return boolean
      */
     public boolean isVirtualThreadExecutor() {

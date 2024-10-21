@@ -192,7 +192,6 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
 
     private VirtualThreadExecutorProxy newVirtualThreadProxy(String name, ExecutorService originExecutor) {
         val proxy = new VirtualThreadExecutorProxy(originExecutor);
-        shutdownGracefulAsync(originExecutor, name, 0);
         return proxy;
     }
 

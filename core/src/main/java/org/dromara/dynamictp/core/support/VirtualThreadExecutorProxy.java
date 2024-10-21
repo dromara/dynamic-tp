@@ -1,8 +1,5 @@
 package org.dromara.dynamictp.core.support;
 
-import com.google.common.collect.Sets;
-import org.dromara.dynamictp.common.em.NotifyItemEnum;
-import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.support.task.runnable.EnhancedRunnable;
@@ -52,6 +49,9 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
         THREAD_PER_TASK_EXECUTOR.execute(command);
     }
 
+    public ExecutorService getThreadPerTaskExecutor() {
+        return THREAD_PER_TASK_EXECUTOR;
+    }
 
     @Override
     public List<TaskWrapper> getTaskWrappers() {

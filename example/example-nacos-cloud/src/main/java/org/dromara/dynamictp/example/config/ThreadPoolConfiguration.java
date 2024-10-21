@@ -22,12 +22,15 @@ import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
 import org.dromara.dynamictp.core.support.DynamicTp;
 import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
 import org.dromara.dynamictp.core.support.ThreadPoolCreator;
-import org.dromara.dynamictp.core.support.VirtualThreadExecutorAdapter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import static org.dromara.dynamictp.common.em.QueueTypeEnum.MEMORY_SAFE_LINKED_BLOCKING_QUEUE;
 import static org.dromara.dynamictp.common.em.RejectedTypeEnum.CALLER_RUNS_POLICY;
@@ -62,8 +65,8 @@ public class ThreadPoolConfiguration {
 
     @DynamicTp("VirtualThreadExecutor")
     @Bean
-    public VirtualThreadExecutorAdapter virtualThreadExecutor() {
-        return new VirtualThreadExecutorAdapter();
+    public ExecutorService virtualThreadExecutor() {
+        return Executors.newVirtualThreadPerTaskExecutor();
     }
 
     /**

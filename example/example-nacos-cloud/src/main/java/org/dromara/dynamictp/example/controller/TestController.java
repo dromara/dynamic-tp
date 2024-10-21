@@ -68,4 +68,9 @@ public class TestController {
         testService.testOrderedDtp();
         return "testOrderedDtp success";
     }
+    @GetMapping("/dtp-nacos-example/testVTExecutor")
+    public String testVirtual() {
+        testService.testVTExecutor();
+        return "testVTExecutor success";
+    }
 }

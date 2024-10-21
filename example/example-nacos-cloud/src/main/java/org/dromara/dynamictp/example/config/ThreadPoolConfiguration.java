@@ -62,6 +62,12 @@ public class ThreadPoolConfiguration {
         return new ThreadPoolTaskExecutor();
     }
 
+//    @DynamicTp("VirtualThreadExecutor")
+//    @Bean
+//    public ExecutorService virtualThreadExecutor() {
+//        return Executors.newVirtualThreadPerTaskExecutor();
+//    }
+
     /**
      * 通过{@link ThreadPoolCreator} 快速创建一些简单配置的线程池，使用默认参数
      * tips: 建议直接在配置中心配置就行，不用@Bean声明

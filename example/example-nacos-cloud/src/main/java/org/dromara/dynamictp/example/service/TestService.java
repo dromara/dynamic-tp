@@ -54,4 +54,9 @@ public interface TestService {
      * Test ordered dtp.
      */
     void testOrderedDtp();
+
+    /**
+     * Test VTExecutor.
+     */
+    void testVTExecutor();
 }

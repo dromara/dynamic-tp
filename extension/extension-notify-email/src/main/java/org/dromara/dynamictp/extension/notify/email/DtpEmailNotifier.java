@@ -26,7 +26,7 @@ import org.dromara.dynamictp.common.entity.AlarmInfo;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.TpMainFields;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.util.CommonUtil;
 import org.dromara.dynamictp.common.util.DateUtil;
 import org.dromara.dynamictp.core.notifier.AbstractDtpNotifier;
@@ -54,7 +54,7 @@ import static org.dromara.dynamictp.core.notifier.manager.NotifyHelper.getAlarmK
 public class DtpEmailNotifier extends AbstractDtpNotifier {
 
     public DtpEmailNotifier() {
-        super(ApplicationContextHolder.getBean(EmailNotifier.class));
+        super(ContextManagerHelper.getBean(EmailNotifier.class));
     }
 
     @Override

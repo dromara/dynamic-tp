@@ -43,6 +43,7 @@ class YamlConfigParserTest {
 
         YamlConfigParser parser = new YamlConfigParser();
         Map<Object, Object> result = parser.doParse(content);
+
         Assertions.assertEquals("dtpExecutor1", result.get("spring.dynamic.tp.executors[0].threadPoolName").toString());
     }
 }

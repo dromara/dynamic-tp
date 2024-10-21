@@ -363,6 +363,12 @@
 
             <dependency>
                 <groupId>org.dromara.dynamictp</groupId>
+                <artifactId>dynamic-tp-spring</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara.dynamictp</groupId>
                 <artifactId>dynamic-tp-adapter-common</artifactId>
                 <version>${revision}</version>
             </dependency>

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.spring;
+package org.dromara.dynamictp.spring;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.context.EnvironmentAware;

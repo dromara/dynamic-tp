@@ -15,25 +15,32 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.spring;
+package org.dromara.dynamictp.spring;
 
-import org.springframework.context.annotation.Import;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.core.refresher.AbstractRefresher;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.Environment;
 
 /**
- * EnableDynamicTp related
+ *  Abstract class for refreshing properties in a Spring environment.
  *
- * @author yanhom
- * @since 1.0.4
- **/
-@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Import(DtpConfigurationSelector.class)
-public @interface EnableDynamicTp {
+ *  @author vzer200
+ *  @since 1.1.8
+ */
+@Slf4j
+public abstract class AbstractSpringRefresher extends AbstractRefresher implements EnvironmentAware {
+
+    protected Environment environment;
+
+    protected AbstractSpringRefresher(DtpProperties dtpProperties) {
+        super(dtpProperties);
+    }
+
+    @Override
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
+
 }

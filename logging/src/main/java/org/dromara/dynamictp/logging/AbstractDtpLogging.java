@@ -17,10 +17,10 @@
 
 package org.dromara.dynamictp.logging;
 
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,7 +44,7 @@ public abstract class AbstractDtpLogging {
 
     static {
         try {
-            DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+            DtpProperties dtpProperties = ContextManagerHelper.getBean(DtpProperties.class);
             String logPath = dtpProperties.getLogPath();
             if (StringUtils.isBlank(logPath)) {
                 String userHome = System.getProperty("user.home");
@@ -53,7 +53,7 @@ public abstract class AbstractDtpLogging {
                 System.setProperty(LOGGING_PATH, logPath);
             }
 
-            String appName = ApplicationContextHolder.getEnvironment().getProperty("spring.application.name");
+            String appName = ContextManagerHelper.getEnvironmentProperty("spring.application.name");
             appName = StringUtils.isNotBlank(appName) ? appName : "application";
             System.setProperty(APP_NAME, appName);
         } catch (Exception e) {

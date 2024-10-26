@@ -15,32 +15,32 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.spring;
+package org.dromara.dynamictp.spring.initializer;
 
-import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.refresher.AbstractRefresher;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.Environment;
+import org.dromara.dynamictp.core.support.init.DtpInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
+
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.APP_NAME_KEY;
 
 /**
- *  Abstract class for refreshing properties in a Spring environment.
+ * SpringDtpInitializer related
  *
- *  @author vzer200
- * @since 1.2.0
+ * @author yanhom
+ * @since 1.1.0
  */
-@Slf4j
-public abstract class AbstractSpringRefresher extends AbstractRefresher implements EnvironmentAware {
+public class SpringDtpInitializer implements DtpInitializer {
 
-    protected Environment environment;
+    private static final String SPRING_APP_NAME_KEY = "spring.application.name";
 
-    protected AbstractSpringRefresher(DtpProperties dtpProperties) {
-        super(dtpProperties);
+    @Override
+    public String getName() {
+        return "SpringDtpInitializer";
     }
 
     @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
+    public void init(Object... args) {
+        ConfigurableApplicationContext c = (ConfigurableApplicationContext) args[0];
+        String appName = c.getEnvironment().getProperty(SPRING_APP_NAME_KEY, "application");
+        System.setProperty(APP_NAME_KEY, appName);
     }
-
 }

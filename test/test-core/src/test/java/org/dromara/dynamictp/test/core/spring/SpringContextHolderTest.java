@@ -17,7 +17,7 @@
 
 package org.dromara.dynamictp.test.core.spring;
 
-import org.dromara.dynamictp.spring.SpringContextHolder;
+import org.dromara.dynamictp.spring.holder.SpringContextHolder;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.springframework.context.ApplicationContext;

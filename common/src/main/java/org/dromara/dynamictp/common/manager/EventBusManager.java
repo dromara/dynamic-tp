@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-
 package org.dromara.dynamictp.common.manager;
 
 import com.google.common.eventbus.EventBus;
@@ -24,18 +23,19 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-
 /**
  * Manages event registration and posting using EventBus.
  *
  * @author vzer200
- * @since 1.1.8
+ * @since 1.2.0
  */
 @Slf4j
 public class EventBusManager {
 
     private static final EventBus EVENT_BUS = new EventBus();
+
     private static final Set<Object> REGISTERED_OBJECTS = ConcurrentHashMap.newKeySet();
+
     private EventBusManager() { }
 
     public static void register(Object object) {
@@ -67,7 +67,7 @@ public class EventBusManager {
         for (Object object : REGISTERED_OBJECTS) {
             try {
                 EVENT_BUS.unregister(object);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 log.warn("Attempted to unregister an object that was not registered: {}", object, e);
             }
         }

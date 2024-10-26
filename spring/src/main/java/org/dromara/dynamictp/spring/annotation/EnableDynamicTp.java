@@ -15,26 +15,25 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.spring;
+package org.dromara.dynamictp.spring.annotation;
 
-import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.common.event.CustomContextRefreshedEvent;
-import org.dromara.dynamictp.common.manager.EventBusManager;
-import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.annotation.Import;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * DtpApplicationListener related
+ * EnableDynamicTp related
  *
- * @author vzer200
- * @since 1.1.8
+ * @author yanhom
+ * @since 1.0.4
  **/
-@Slf4j
-public class DtpApplicationListener extends OnceApplicationContextEventListener {
-
-    @Override
-    protected void onContextRefreshedEvent(ContextRefreshedEvent event) {
-        CustomContextRefreshedEvent refreshedEvent = new CustomContextRefreshedEvent(this);
-        EventBusManager.post(refreshedEvent);
-    }
+@Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Import(DtpConfigurationSelector.class)
+public @interface EnableDynamicTp {
 }
-

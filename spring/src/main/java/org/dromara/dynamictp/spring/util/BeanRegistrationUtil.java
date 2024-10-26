@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.spring;
+package org.dromara.dynamictp.spring.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -35,9 +35,9 @@ import java.util.Map;
  * @since 1.0.4
  **/
 @Slf4j
-public final class SpringBeanHelper {
+public final class BeanRegistrationUtil {
 
-    private SpringBeanHelper() { }
+    private BeanRegistrationUtil() { }
 
     public static void register(BeanDefinitionRegistry registry,
                                 String beanName,

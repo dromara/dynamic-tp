@@ -28,6 +28,6 @@ import org.dromara.dynamictp.common.properties.DtpProperties;
 public class AlarmCheckEvent extends DtpEvent  {
 
     public AlarmCheckEvent(Object source, DtpProperties dtpProperties) {
-        super(source, dtpProperties);  // 调用父类的构造方法
+        super(source, dtpProperties);
     }
 }

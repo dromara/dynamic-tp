@@ -31,6 +31,6 @@ public class DtpApplicationContextInitializer implements ApplicationContextIniti
 
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
-        DtpInitializerExecutor.init();
+        DtpInitializerExecutor.init(applicationContext);
     }
 }

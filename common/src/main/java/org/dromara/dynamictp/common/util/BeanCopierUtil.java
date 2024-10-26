@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.common.util;
 
+import lombok.experimental.UtilityClass;
 import net.sf.cglib.beans.BeanCopier;
 
 import java.util.Map;
@@ -28,7 +29,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author vzer200
  * @since 1.1.8
  */
-public class BeanCopierUtils {
+@UtilityClass
+public class BeanCopierUtil {
+
     private static final Map<String, BeanCopier> BEAN_COPIER_CACHE = new ConcurrentHashMap<>();
 
     public static BeanCopier getBeanCopier(Class<?> sourceClass, Class<?> targetClass) {

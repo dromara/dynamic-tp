@@ -15,8 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.spring;
-
+package org.dromara.dynamictp.spring.holder;
 
 import org.dromara.dynamictp.common.manager.ContextManager;
 import org.springframework.beans.BeansException;
@@ -27,12 +26,11 @@ import org.springframework.core.env.Environment;
 import java.util.Map;
 import java.util.Objects;
 
-
 /**
  * Manages the Spring ApplicationContext and provides access to beans and environment properties.
  *
  * @author vzer200
- * @since 1.1.8
+ * @since 1.2.0
  */
 public class SpringContextHolder implements ContextManager, ApplicationContextAware {
 

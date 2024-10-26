@@ -20,7 +20,6 @@ package org.dromara.dynamictp.common.util;
 import com.google.common.base.Preconditions;
 import org.apache.commons.collections4.CollectionUtils;
 
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;

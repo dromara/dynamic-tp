@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.spring;
+package org.dromara.dynamictp.spring.annotation;
 
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +31,7 @@ import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.BinderHelper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
+import org.dromara.dynamictp.spring.util.BeanRegistrationUtil;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
@@ -94,7 +95,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
             Class<?> executorTypeClass = ExecutorType.getClass(e.getExecutorType());
             Map<String, Object> propertyValues = buildPropertyValues(e);
             Object[] args = buildConstructorArgs(executorTypeClass, e);
-            SpringBeanHelper.register(registry, e.getThreadPoolName(), executorTypeClass, propertyValues, args);
+            BeanRegistrationUtil.register(registry, e.getThreadPoolName(), executorTypeClass, propertyValues, args);
         });
     }
 

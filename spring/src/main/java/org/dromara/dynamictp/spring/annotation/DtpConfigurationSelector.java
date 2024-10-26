@@ -15,9 +15,10 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.spring;
+package org.dromara.dynamictp.spring.annotation;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.dromara.dynamictp.spring.DtpBaseBeanConfiguration;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.DeferredImportSelector;
 import org.springframework.core.Ordered;

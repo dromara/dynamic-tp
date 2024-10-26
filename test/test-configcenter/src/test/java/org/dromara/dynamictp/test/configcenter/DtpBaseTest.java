@@ -17,8 +17,8 @@
 
 package org.dromara.dynamictp.test.configcenter;
 
-import org.dromara.dynamictp.spring.EnableDynamicTp;
-import org.dromara.dynamictp.spring.YamlPropertySourceFactory;
+import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
+import org.dromara.dynamictp.spring.support.YamlPropertySourceFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;

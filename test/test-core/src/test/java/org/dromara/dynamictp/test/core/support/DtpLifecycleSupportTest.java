@@ -23,7 +23,7 @@ import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
 import org.dromara.dynamictp.core.support.DtpLifecycleSupport;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.spring.YamlPropertySourceFactory;
+import org.dromara.dynamictp.spring.support.YamlPropertySourceFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;

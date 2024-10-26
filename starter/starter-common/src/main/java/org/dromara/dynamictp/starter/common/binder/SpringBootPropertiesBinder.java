@@ -65,7 +65,6 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
             throw new IllegalArgumentException("Invalid environment type, expected org.springframework.core.env.Environment");
         }
         Environment env = (Environment) environment;
-
         beforeBind(env, dtpProperties);
         try {
             Class.forName("org.springframework.boot.context.properties.bind.Binder");

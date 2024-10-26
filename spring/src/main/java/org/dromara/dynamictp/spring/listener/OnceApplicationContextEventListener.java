@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.spring;
+package org.dromara.dynamictp.spring.listener;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;

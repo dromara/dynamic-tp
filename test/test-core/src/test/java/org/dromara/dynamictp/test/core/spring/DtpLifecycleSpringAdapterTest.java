@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.test.core.spring;
 
 import org.dromara.dynamictp.core.lifecycle.LifeCycleManagement;
-import org.dromara.dynamictp.spring.DtpLifecycleSpringAdapter;
+import org.dromara.dynamictp.spring.lifecycle.DtpLifecycleSpringAdapter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

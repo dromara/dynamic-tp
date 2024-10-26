@@ -26,7 +26,7 @@ import java.util.EventObject;
  * DtpEvent related
  *
  * @author vzer200
- * @since 1.1.8
+ * @since 1.2.0
  */
 @Getter
 public abstract class DtpEvent extends EventObject {

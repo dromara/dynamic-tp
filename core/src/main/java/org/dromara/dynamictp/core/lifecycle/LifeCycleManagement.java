@@ -23,7 +23,7 @@ package org.dromara.dynamictp.core.lifecycle;
  * as well as handling auto startup and shutdown phases.
  *
  * @author vzer200
- * @since 1.1.8
+ * @since 1.2.0
  */
 public interface LifeCycleManagement {
 

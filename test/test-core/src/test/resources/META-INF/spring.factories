@@ -1,4 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.dromara.dynamictp.spring.DtpBaseBeanConfiguration,\
-org.dromara.dynamictp.spring.DtpBaseBeanDefinitionRegistrar,\
-org.dromara.dynamictp.spring.DtpBeanDefinitionRegistrar
+org.dromara.dynamictp.spring.annotation.DtpBaseBeanDefinitionRegistrar,\
+org.dromara.dynamictp.spring.annotation.DtpBeanDefinitionRegistrar

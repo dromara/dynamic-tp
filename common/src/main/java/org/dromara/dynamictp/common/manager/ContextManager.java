@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-
 package org.dromara.dynamictp.common.manager;
 
 import java.util.Map;
@@ -26,7 +25,7 @@ import java.util.Map;
  * and retrieve environment properties and profiles.
  *
  * @author vzer200
- * @since 1.1.8
+ * @since 1.2.0
  */
 public interface ContextManager {
 

@@ -52,6 +52,8 @@ public final class DynamicTpConst {
 
     public static final String EXECUTORS_CONFIG_PREFIX = MAIN_PROPERTIES_PREFIX + ".executors[";
 
+    public static final String APP_NAME_KEY = "APP.NAME";
+
     /**
      * Dtp executor properties const.
      */

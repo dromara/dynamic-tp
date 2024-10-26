@@ -15,18 +15,17 @@
  * limitations under the License.
  */
 
-
 package org.dromara.dynamictp.common.manager;
+
 import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
 
 import java.util.Map;
-
 
 /**
  * Helper class for accessing ContextManager and publishing events.
  *
  * @author vzer200
- * @since 1.1.8
+ * @since 1.2.0
  */
 public class ContextManagerHelper {
 

@@ -23,9 +23,10 @@ import java.util.EventObject;
  * EventObject related
  *
  * @author vzer200
- * @since 1.1.8
+ * @since 1.2.0
  */
 public class CustomContextRefreshedEvent extends EventObject {
+
     public CustomContextRefreshedEvent(Object source) {
         super(source);
     }

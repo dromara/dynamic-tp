@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.spring;
+package org.dromara.dynamictp.spring.lifecycle;
 
 import org.dromara.dynamictp.core.lifecycle.LifeCycleManagement;
 import org.springframework.context.SmartLifecycle;
@@ -24,10 +24,12 @@ import org.springframework.context.SmartLifecycle;
  * Adapts LifeCycleManagement to Spring's SmartLifecycle interface.
  *
  * @author vzer200
- * @since 1.1.8
+ * @since 1.2.0
  */
 public class DtpLifecycleSpringAdapter implements SmartLifecycle {
+
     private final LifeCycleManagement lifeCycleManagement;
+
     private boolean isRunning = false;
 
     public DtpLifecycleSpringAdapter(LifeCycleManagement lifeCycleManagement) {

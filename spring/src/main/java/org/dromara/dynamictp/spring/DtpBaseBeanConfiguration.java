@@ -23,11 +23,12 @@ import org.dromara.dynamictp.core.monitor.DtpMonitor;
 import org.dromara.dynamictp.core.lifecycle.DtpLifecycle;
 import org.dromara.dynamictp.core.lifecycle.LifeCycleManagement;
 import org.dromara.dynamictp.core.support.DtpBannerPrinter;
+import org.dromara.dynamictp.spring.lifecycle.DtpLifecycleSpringAdapter;
+import org.dromara.dynamictp.spring.listener.DtpApplicationListener;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
-
 
 /**
  * DtpBaseBeanConfiguration related

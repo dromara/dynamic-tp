@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.test.common.util;
 
 import net.sf.cglib.beans.BeanCopier;
-import org.dromara.dynamictp.common.util.BeanCopierUtils;
+import org.dromara.dynamictp.common.util.BeanCopierUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * @author vzer200
  * @since 1.1.8
  */
-public class BeanCopierUtilsTest {
+public class BeanCopierUtilTest {
 
     private SourceClass source;
     private TargetClass target;
@@ -50,7 +50,7 @@ public class BeanCopierUtilsTest {
     @Test
     public void testCopyProperties() {
         // 使用BeanCopierUtils复制属性
-        BeanCopierUtils.copyProperties(source, target);
+        BeanCopierUtil.copyProperties(source, target);
 
         // 验证目标对象的属性值是否正确复制
         assertEquals(source.getId(), target.getId());
@@ -63,7 +63,7 @@ public class BeanCopierUtilsTest {
         // 测试当源对象中有空值时的情况
         source.setName(null);
 
-        BeanCopierUtils.copyProperties(source, target);
+        BeanCopierUtil.copyProperties(source, target);
 
         assertEquals(source.getId(), target.getId());
         assertNull(target.getName()); // 名称为空时应正确复制
@@ -73,8 +73,8 @@ public class BeanCopierUtilsTest {
     @Test
     public void testBeanCopierCache() {
         // 测试BeanCopier缓存机制是否有效
-        BeanCopier firstCopier = BeanCopierUtils.getBeanCopier(SourceClass.class, TargetClass.class);
-        BeanCopier secondCopier = BeanCopierUtils.getBeanCopier(SourceClass.class, TargetClass.class);
+        BeanCopier firstCopier = BeanCopierUtil.getBeanCopier(SourceClass.class, TargetClass.class);
+        BeanCopier secondCopier = BeanCopierUtil.getBeanCopier(SourceClass.class, TargetClass.class);
 
         assertSame(firstCopier, secondCopier); // 同样的source和target类应返回同一个BeanCopier实例
     }

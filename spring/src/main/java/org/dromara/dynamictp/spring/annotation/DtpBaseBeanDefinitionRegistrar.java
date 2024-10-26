@@ -15,12 +15,15 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.spring;
+package org.dromara.dynamictp.spring.annotation;
 
 import com.google.common.collect.Lists;
 
 import org.dromara.dynamictp.common.timer.HashedWheelTimer;
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
+import org.dromara.dynamictp.spring.DtpPostProcessor;
+import org.dromara.dynamictp.spring.holder.SpringContextHolder;
+import org.dromara.dynamictp.spring.util.BeanRegistrationUtil;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
@@ -44,10 +47,10 @@ public class DtpBaseBeanDefinitionRegistrar implements ImportBeanDefinitionRegis
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         registerHashedWheelTimer(registry);
-        SpringBeanHelper.registerIfAbsent(registry, APPLICATION_CONTEXT_HOLDER, SpringContextHolder.class);
+        BeanRegistrationUtil.registerIfAbsent(registry, APPLICATION_CONTEXT_HOLDER, SpringContextHolder.class);
 
         // ApplicationContextHolder and HashedWheelTimer are required in DtpExecutor execute method, so they must be registered first
-        SpringBeanHelper.registerIfAbsent(registry, DTP_POST_PROCESSOR, DtpPostProcessor.class,
+        BeanRegistrationUtil.registerIfAbsent(registry, DTP_POST_PROCESSOR, DtpPostProcessor.class,
                 null, Lists.newArrayList(APPLICATION_CONTEXT_HOLDER, HASHED_WHEEL_TIMER));
     }
 
@@ -57,6 +60,6 @@ public class DtpBaseBeanDefinitionRegistrar implements ImportBeanDefinitionRegis
                 10,
                 TimeUnit.MILLISECONDS
         };
-        SpringBeanHelper.registerIfAbsent(registry, HASHED_WHEEL_TIMER, HashedWheelTimer.class, constructorArgs);
+        BeanRegistrationUtil.registerIfAbsent(registry, HASHED_WHEEL_TIMER, HashedWheelTimer.class, constructorArgs);
     }
 }

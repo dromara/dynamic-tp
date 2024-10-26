@@ -58,7 +58,7 @@ public class NotifyFilterBuilder {
     }
 
     public static InvokerChain<BaseNotifyCtx> getCommonInvokerChain() {
-            val filters = ContextManagerHelper.getBeansOfType(NotifyFilter.class);
+        val filters = ContextManagerHelper.getBeansOfType(NotifyFilter.class);
         Collection<NotifyFilter> noticeFilters = Lists.newArrayList(filters.values());
         noticeFilters.add(new NoticeBaseFilter());
         noticeFilters = noticeFilters.stream()

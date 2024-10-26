@@ -15,24 +15,26 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.common.spring;
+package org.dromara.dynamictp.spring;
 
+
+import org.dromara.dynamictp.common.manager.ContextManager;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.core.env.Environment;
 
 import java.util.Map;
 import java.util.Objects;
 
+
 /**
- * ApplicationContextHolder related
+ * Manages the Spring ApplicationContext and provides access to beans and environment properties.
  *
- * @author yanhom
- * @since 1.0.0
- **/
-public class ApplicationContextHolder implements ApplicationContextAware {
+ * @author vzer200
+ * @since 1.1.8
+ */
+public class SpringContextHolder implements ContextManager, ApplicationContextAware {
 
     private static ApplicationContext context;
 
@@ -41,15 +43,18 @@ public class ApplicationContextHolder implements ApplicationContextAware {
         context = applicationContext;
     }
 
-    public static <T> T getBean(Class<T> clazz) {
+    @Override
+    public <T> T getBean(Class<T> clazz) {
         return getInstance().getBean(clazz);
     }
 
-    public static <T> T getBean(String name, Class<T> clazz) {
+    @Override
+    public <T> T getBean(String name, Class<T> clazz) {
         return getInstance().getBean(name, clazz);
     }
 
-    public static <T> Map<String, T> getBeansOfType(Class<T> clazz) {
+    @Override
+    public <T> Map<String, T> getBeansOfType(Class<T> clazz) {
         return getInstance().getBeansOfType(clazz);
     }
 
@@ -60,12 +65,35 @@ public class ApplicationContextHolder implements ApplicationContextAware {
         return context;
     }
 
-    public static Environment getEnvironment() {
+    @Override
+    public Environment getEnvironment() {
         return getInstance().getEnvironment();
     }
 
-    public static void publishEvent(ApplicationEvent event) {
-        getInstance().publishEvent(event);
+    @Override
+    public String getEnvironmentProperty(String key) {
+        return getInstance().getEnvironment().getProperty(key);
     }
 
+    @Override
+    public String getEnvironmentProperty(String key, String defaultValue) {
+        return getInstance().getEnvironment().getProperty(key, defaultValue);
+    }
+
+    @Override
+    public String[] getActiveProfiles() {
+        return getInstance().getEnvironment().getActiveProfiles();
+    }
+
+    @Override
+    public String[] getDefaultProfiles() {
+        return getInstance().getEnvironment().getDefaultProfiles();
+    }
+
+    @Override
+    public void setContext(Object context) {
+        if (context instanceof ApplicationContext) {
+            setApplicationContext((ApplicationContext) context);
+        }
+    }
 }

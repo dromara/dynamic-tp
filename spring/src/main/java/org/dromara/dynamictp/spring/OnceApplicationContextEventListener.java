@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.common.spring;
+package org.dromara.dynamictp.spring;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
@@ -27,6 +27,7 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.context.event.ContextStoppedEvent;
+
 
 import static org.springframework.util.ObjectUtils.nullSafeEquals;
 
@@ -104,5 +105,4 @@ public abstract class OnceApplicationContextEventListener implements Application
         this.applicationContext = applicationContext;
     }
 }
-
 

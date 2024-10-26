@@ -15,16 +15,18 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.spring;
+package org.dromara.dynamictp.common.event;
 
-import org.springframework.core.task.AsyncTaskExecutor;
+import java.util.EventObject;
 
 /**
- * SpringExecutor related
+ * EventObject related
  *
- * @author yanhom
- * @since 1.1.0
- **/
-public interface SpringExecutor extends AsyncTaskExecutor {
-
+ * @author vzer200
+ * @since 1.1.8
+ */
+public class CustomContextRefreshedEvent extends EventObject {
+    public CustomContextRefreshedEvent(Object source) {
+        super(source);
+    }
 }

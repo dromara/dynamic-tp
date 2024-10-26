@@ -95,11 +95,7 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
                 }
                 ExecutionStrategy.Producer producer = (ExecutionStrategy.Producer) ReflectionUtil.getFieldValue(PRODUCER_FIELD, eatWhatYouKill);
                 SelectorProducerProxy selectorProducerProxy = new SelectorProducerProxy(producer, threadPool);
-                try {
-                    ReflectionUtil.setFieldValue(PRODUCER_FIELD, eatWhatYouKill, selectorProducerProxy);
-                } catch (IllegalAccessException e) {
-                    log.error("DynamicTp enhance jetty origin executor failed.", e);
-                }
+                ReflectionUtil.setFieldValue(PRODUCER_FIELD, eatWhatYouKill, selectorProducerProxy);
             }
         }
     }

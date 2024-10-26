@@ -80,11 +80,7 @@ public class LiteflowDtpAdapter extends AbstractDtpAdapter {
             newExecutorMap.put(k, proxy);
             executors.put(tpName, new ExecutorWrapper(tpName, proxy));
         });
-        try {
-            ReflectionUtil.setFieldValue(EXECUTOR_MAP_FIELD, executorHelper, newExecutorMap);
-            executorMap.forEach((k, v) -> shutdownOriginalExecutor(v));
-        } catch (IllegalAccessException e) {
-            log.error("DynamicTp adapter, enhance {} failed.", getTpPrefix(), e);
-        }
+        ReflectionUtil.setFieldValue(EXECUTOR_MAP_FIELD, executorHelper, newExecutorMap);
+        executorMap.forEach((k, v) -> shutdownOriginalExecutor(v));
     }
 }

@@ -55,11 +55,7 @@ public class StandardThreadExecutorProxy extends StandardThreadExecutor implemen
         this.rejectHandlerType = handler.getClass().getSimpleName();
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(handler));
         if (EXECUTOR_QUEUE.equals(executor.getQueue().getClass().getSimpleName())) {
-            try {
-                ReflectionUtil.setFieldValue("threadPoolExecutor", executor.getQueue(), this);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
+            ReflectionUtil.setFieldValue("threadPoolExecutor", executor.getQueue(), this);
         }
     }
 

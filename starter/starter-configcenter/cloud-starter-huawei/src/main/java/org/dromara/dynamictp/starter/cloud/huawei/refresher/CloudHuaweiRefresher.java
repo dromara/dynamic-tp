@@ -19,7 +19,7 @@ package org.dromara.dynamictp.starter.cloud.huawei.refresher;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.refresher.AbstractRefresher;
+import org.dromara.dynamictp.spring.AbstractSpringRefresher;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.SmartApplicationListener;
@@ -29,7 +29,7 @@ import org.springframework.lang.NonNull;
  * @author windsearcher
  */
 @Slf4j
-public class CloudHuaweiRefresher extends AbstractRefresher implements SmartApplicationListener {
+public class CloudHuaweiRefresher extends AbstractSpringRefresher implements SmartApplicationListener {
 
     public CloudHuaweiRefresher(DtpProperties dtpProperties) {
         super(dtpProperties);

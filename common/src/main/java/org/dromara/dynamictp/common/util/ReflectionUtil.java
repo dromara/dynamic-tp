@@ -17,11 +17,14 @@
 
 package org.dromara.dynamictp.common.util;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.util.ReflectionUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.lang.reflect.Method;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -31,6 +34,7 @@ import java.util.Objects;
  * @author yanhom
  * @since 1.0.6
  */
+@Slf4j
 public final class ReflectionUtil {
 
     private ReflectionUtil() { }
@@ -40,11 +44,12 @@ public final class ReflectionUtil {
         if (Objects.isNull(field)) {
             return null;
         }
-        val fieldObj = ReflectionUtils.getField(field, targetObj);
-        if (Objects.isNull(fieldObj)) {
+        try {
+            return FieldUtils.readField(field, targetObj, true);
+        } catch (IllegalAccessException e) {
+            log.error("Failed to read field '{}' from object '{}'", fieldName, targetObj, e);
             return null;
         }
-        return fieldObj;
     }
 
     public static Object getFieldValue(Class<?> targetClass, String fieldName, Object targetObj) {
@@ -52,44 +57,56 @@ public final class ReflectionUtil {
         if (Objects.isNull(field)) {
             return null;
         }
-        val fieldObj = ReflectionUtils.getField(field, targetObj);
-        if (Objects.isNull(fieldObj)) {
+        try {
+            return FieldUtils.readField(field, targetObj, true);
+        } catch (IllegalAccessException e) {
+            log.error("Failed to read field '{}' from object '{}'", fieldName, targetObj, e);
             return null;
         }
-        return fieldObj;
     }
 
-    public static void setFieldValue(String fieldName, Object targetObj, Object targetVal)
-            throws IllegalAccessException {
+    public static void setFieldValue(String fieldName, Object targetObj, Object targetVal) {
         val field = getField(targetObj.getClass(), fieldName);
         if (Objects.isNull(field)) {
             return;
         }
-        field.set(targetObj, targetVal);
+        try {
+            FieldUtils.writeField(field, targetObj, targetVal, true);
+        } catch (IllegalAccessException e) {
+            log.error("Failed to write value '{}' to field '{}' in object '{}'", targetVal, fieldName, targetObj, e);
+        }
     }
 
-    public static void setFieldValue(Class<?> targetClass, String fieldName, Object targetObj, Object targetVal)
-            throws IllegalAccessException {
+    public static void setFieldValue(Class<?> targetClass, String fieldName, Object targetObj, Object targetVal) {
         val field = getField(targetClass, fieldName);
         if (Objects.isNull(field)) {
             return;
         }
-        field.set(targetObj, targetVal);
+        try {
+            FieldUtils.writeField(field, targetObj, targetVal, true);
+        } catch (IllegalAccessException e) {
+            log.error("Failed to write value '{}' to field '{}' in object '{}'", targetVal, fieldName, targetObj, e);
+        }
     }
 
     public static Field getField(Class<?> targetClass, String fieldName) {
-        Field field = ReflectionUtils.findField(targetClass, fieldName);
+        Field field = FieldUtils.getField(targetClass, fieldName, true);
         if (Objects.isNull(field)) {
+            log.warn("Field '{}' not found in class '{}'", fieldName, targetClass.getName());
             return null;
         }
-        ReflectionUtils.makeAccessible(field);
         return field;
     }
 
-    public static List<Field> getAllFields(Class<?> targetClass) {
-        List<Field> fields = new ArrayList<>();
-        ReflectionUtils.doWithFields(targetClass, fields::add);
-        return fields;
+    public static Method findMethod(Class<?> targetClass, String methodName, Class<?>... parameterTypes) {
+        Method method = MethodUtils.getMatchingAccessibleMethod(targetClass, methodName, parameterTypes);
+        if (Objects.isNull(method)) {
+            log.warn("Method '{}' with parameters '{}' not found in class '{}'", methodName, parameterTypes, targetClass.getName());
+        }
+        return method;
     }
 
+    public static List<Field> getAllFields(Class<?> targetClass) {
+        return FieldUtils.getAllFieldsList(targetClass);
+    }
 }

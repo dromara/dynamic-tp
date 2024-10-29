@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.core.monitor;
 
-
 import com.google.common.eventbus.Subscribe;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
@@ -34,7 +33,6 @@ import org.dromara.dynamictp.core.handler.CollectorHandler;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolCreator;
-
 
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
@@ -53,6 +51,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTI
 public class DtpMonitor {
 
     private static final ScheduledExecutorService MONITOR_EXECUTOR = ThreadPoolCreator.newScheduledThreadPool("dtp-monitor", 1);
+
     private final DtpProperties dtpProperties;
 
     private ScheduledFuture<?> monitorFuture;

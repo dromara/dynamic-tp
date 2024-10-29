@@ -54,6 +54,10 @@ public final class DynamicTpConst {
 
     public static final String APP_NAME_KEY = "APP.NAME";
 
+    public static final String APP_PORT_KEY = "APP.PORT";
+
+    public static final String APP_ENV_KEY = "APP.ENV";
+
     /**
      * Dtp executor properties const.
      */

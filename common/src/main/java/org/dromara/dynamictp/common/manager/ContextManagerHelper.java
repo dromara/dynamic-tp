@@ -50,10 +50,6 @@ public class ContextManagerHelper {
         return CONTEXT_MANAGER.getBeansOfType(clazz);
     }
 
-    public static void setContext(Object context) {
-        CONTEXT_MANAGER.setContext(context);
-    }
-
     public static Object getEnvironment() {
         return CONTEXT_MANAGER.getEnvironment();
     }
@@ -72,10 +68,6 @@ public class ContextManagerHelper {
 
     public static String[] getDefaultProfiles() {
         return CONTEXT_MANAGER.getDefaultProfiles();
-    }
-
-    public static void publishEvent(Object event) {
-        EventBusManager.post(event);
     }
 }
 

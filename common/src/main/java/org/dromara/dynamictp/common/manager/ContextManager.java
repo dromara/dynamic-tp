@@ -58,13 +58,6 @@ public interface ContextManager {
     <T> Map<String, T> getBeansOfType(Class<T> clazz);
 
     /**
-     * Sets the context.
-     *
-     * @param context the context to set
-     */
-    void setContext(Object context);
-
-    /**
      * Retrieves the environment.
      *
      * @return the environment object

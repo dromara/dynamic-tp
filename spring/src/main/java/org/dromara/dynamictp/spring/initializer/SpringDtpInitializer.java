@@ -20,7 +20,9 @@ package org.dromara.dynamictp.spring.initializer;
 import org.dromara.dynamictp.core.support.init.DtpInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.APP_ENV_KEY;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.APP_NAME_KEY;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.APP_PORT_KEY;
 
 /**
  * SpringDtpInitializer related
@@ -41,6 +43,10 @@ public class SpringDtpInitializer implements DtpInitializer {
     public void init(Object... args) {
         ConfigurableApplicationContext c = (ConfigurableApplicationContext) args[0];
         String appName = c.getEnvironment().getProperty(SPRING_APP_NAME_KEY, "application");
+        String appPort = c.getEnvironment().getProperty("server.port", "0");
+        String appEnv = c.getEnvironment().getProperty("spring.profiles.active", "unknown");
         System.setProperty(APP_NAME_KEY, appName);
+        System.setProperty(APP_PORT_KEY, appPort);
+        System.setProperty(APP_ENV_KEY, appEnv);
     }
 }

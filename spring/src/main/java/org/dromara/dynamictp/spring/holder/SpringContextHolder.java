@@ -87,11 +87,4 @@ public class SpringContextHolder implements ContextManager, ApplicationContextAw
     public String[] getDefaultProfiles() {
         return getInstance().getEnvironment().getDefaultProfiles();
     }
-
-    @Override
-    public void setContext(Object context) {
-        if (context instanceof ApplicationContext) {
-            setApplicationContext((ApplicationContext) context);
-        }
-    }
 }

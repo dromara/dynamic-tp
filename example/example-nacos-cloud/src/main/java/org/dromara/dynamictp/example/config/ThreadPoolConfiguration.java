@@ -26,10 +26,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static org.dromara.dynamictp.common.em.QueueTypeEnum.MEMORY_SAFE_LINKED_BLOCKING_QUEUE;
 import static org.dromara.dynamictp.common.em.RejectedTypeEnum.CALLER_RUNS_POLICY;
@@ -62,11 +59,16 @@ public class ThreadPoolConfiguration {
         return new ThreadPoolTaskExecutor();
     }
 
-//    @DynamicTp("VirtualThreadExecutor")
-//    @Bean
-//    public ExecutorService virtualThreadExecutor() {
-//        return Executors.newVirtualThreadPerTaskExecutor();
-//    }
+    /**
+     * 通过{@link DynamicTp} 注解定义虚拟线程执行器
+     *
+     * @return 虚拟线程执行器实例
+     */
+    @DynamicTp("VirtualThreadExecutor")
+    @Bean
+    public ExecutorService virtualThreadExecutor() {
+        return Executors.newVirtualThreadPerTaskExecutor();
+    }
 
     /**
      * 通过{@link ThreadPoolCreator} 快速创建一些简单配置的线程池，使用默认参数

@@ -13,6 +13,7 @@
     <url>https://github.com/yanhom1314/dynamic-tp</url>
 
     <properties>
+
         <revision>1.1.9-3.x</revision>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>

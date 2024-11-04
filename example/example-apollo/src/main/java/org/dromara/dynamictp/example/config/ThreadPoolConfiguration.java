@@ -145,6 +145,7 @@ public class ThreadPoolConfiguration {
         return ThreadPoolBuilder.newBuilder()
                 .threadPoolName("scheduledDtpExecutor")
                 .corePoolSize(2)
+                .dynamic(true)
                 .threadFactory("test-scheduled")
                 .rejectedExecutionHandler(CALLER_RUNS_POLICY.getName())
                 .buildScheduled();

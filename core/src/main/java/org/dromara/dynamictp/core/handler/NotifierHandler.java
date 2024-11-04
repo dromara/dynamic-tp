@@ -49,7 +49,7 @@ public final class NotifierHandler {
 
     private NotifierHandler() {
         List<DtpNotifier> loadedNotifiers = ExtensionServiceLoader.get(DtpNotifier.class);
-        loadedNotifiers.forEach(notifier -> NOTIFIERS.put(notifier.platform(), notifier));
+        loadedNotifiers.forEach(notifier -> NOTIFIERS.put(notifier.platform().toLowerCase(), notifier));
 
         DtpNotifier dingNotifier = new DtpDingNotifier(new DingNotifier());
         DtpNotifier wechatNotifier = new DtpWechatNotifier(new WechatNotifier());

@@ -9,9 +9,7 @@ import java.util.concurrent.ExecutorService;
  * Description:
  * Adapter for virtual thread executor
  *
- * @Author CYC
- * @Create 2024/10/14 15:33
- * @Version 1.0
+ * @author CYC
  */
 public class VirtualThreadExecutorAdapter implements ExecutorAdapter<ExecutorService> {
 

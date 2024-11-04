@@ -91,7 +91,8 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
     @Override
     public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
         if (!(bean instanceof ThreadPoolExecutor) && !(bean instanceof ThreadPoolTaskExecutor) &&
-                !(bean.getClass().getName().equals("java.util.concurrent.ThreadPerTaskExecutor"))) {
+                !(bean.getClass().getName().equals("java.util.concurrent.ThreadPerTaskExecutor")) &&
+                !(bean instanceof VirtualThreadExecutorProxy)) {
             return bean;
         }
         if (bean instanceof DtpExecutor) {
@@ -124,6 +125,9 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
             } else {
                 BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanName);
                 if (!(beanDefinition instanceof AnnotatedBeanDefinition)) {
+                    if(beanDefinition.getBeanClassName().equals("org.dromara.dynamictp.core.support.VirtualThreadExecutorProxy")) {
+                        return doRegisterAndReturnCommon(bean, beanName);
+                    }
                     return bean;
                 }
                 AnnotatedBeanDefinition annotatedBeanDefinition = (AnnotatedBeanDefinition) beanDefinition;
@@ -159,7 +163,8 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
         Executor proxy;
         if (bean instanceof ScheduledThreadPoolExecutor) {
             proxy = newScheduledTpProxy(poolName, (ScheduledThreadPoolExecutor) bean);
-        } else if (bean.getClass().getName().equals("java.util.concurrent.ThreadPerTaskExecutor")) {
+        } else if (bean.getClass().getName().equals("java.util.concurrent.ThreadPerTaskExecutor")
+                || bean instanceof VirtualThreadExecutorProxy) {
             proxy = newVirtualThreadProxy(poolName, (ExecutorService) bean);
         } else {
             proxy = newProxy(poolName, (ThreadPoolExecutor) bean);

@@ -52,7 +52,7 @@ public class TestServiceImpl implements TestService {
 
     private final OrderedDtpExecutor orderedDtpExecutor;
 
-    private final ExecutorService VirtualThreadExecutor;
+    private final ExecutorService virtualThreadExecutor;
 
     public TestServiceImpl(ThreadPoolExecutor jucThreadPoolExecutor,
                            ThreadPoolTaskExecutor threadPoolTaskExecutor,
@@ -65,7 +65,7 @@ public class TestServiceImpl implements TestService {
         this.eagerDtpExecutor = eagerDtpExecutor;
         this.scheduledDtpExecutor = scheduledDtpExecutor;
         this.orderedDtpExecutor = orderedDtpExecutor;
-        this.VirtualThreadExecutor = virtualThreadExecutor;
+        this.virtualThreadExecutor = virtualThreadExecutor;
     }
 
 //    public TestServiceImpl(@Qualifier("VirtualThreadExecutor1") ExecutorService virtualThreadExecutor) {
@@ -152,8 +152,15 @@ public class TestServiceImpl implements TestService {
     public void testVTExecutor() {
         for (int i = 0; i < 10; i++) {
             int finalI = i;
-            VirtualThreadExecutor.execute(()->{
+            virtualThreadExecutor.execute(() -> {
                 log.info("i am a VTExecutor's {} task", finalI);
+                try {
+                    Thread.sleep(30000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                System.out.println("i am a VTExecutor's task");
+
             });
         }
     }
@@ -161,7 +168,6 @@ public class TestServiceImpl implements TestService {
     public static class TestOrderedRunnable implements OrderedRunnable {
 
         private final UserInfo userInfo;
-
         public TestOrderedRunnable(UserInfo userInfo) {
             this.userInfo = userInfo;
         }

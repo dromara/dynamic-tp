@@ -22,6 +22,7 @@ import io.micrometer.core.instrument.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.em.CollectorTypeEnum;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
+import org.dromara.dynamictp.common.entity.VTExecutorStats;
 import org.dromara.dynamictp.common.util.CommonUtil;
 import org.springframework.beans.BeanUtils;
 
@@ -50,20 +51,37 @@ public class MicroMeterCollector extends AbstractCollector {
 
     public static final String POOL_ALIAS_TAG = DTP_METRIC_NAME_PREFIX + ".alias";
 
+    public static final String VTE_METRIC_NAME_PREFIX = "virtual.thread.executor";
+
+    public static final String VTE_NAME_TAG = VTE_METRIC_NAME_PREFIX + ".name";
+
+    public static final String VTE_ALIAS_TAG = VTE_METRIC_NAME_PREFIX + ".alias";
+
     public static final String APP_NAME_TAG = "app.name";
 
-    private static final Map<String, ThreadPoolStats> GAUGE_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, org.dromara.dynamictp.common.entity.Metrics> GAUGE_CACHE = new ConcurrentHashMap<>();
 
     @Override
     public void collect(ThreadPoolStats threadPoolStats) {
         // metrics must be held with a strong reference, even though it is never referenced within this class
-        ThreadPoolStats oldStats = GAUGE_CACHE.get(threadPoolStats.getPoolName());
+        ThreadPoolStats oldStats = (ThreadPoolStats) GAUGE_CACHE.get(threadPoolStats.getPoolName());
         if (Objects.isNull(oldStats)) {
             GAUGE_CACHE.put(threadPoolStats.getPoolName(), threadPoolStats);
         } else {
             BeanUtils.copyProperties(threadPoolStats, oldStats);
         }
-        gauge(GAUGE_CACHE.get(threadPoolStats.getPoolName()));
+        gauge((ThreadPoolStats) GAUGE_CACHE.get(threadPoolStats.getPoolName()));
+    }
+
+    @Override
+    public void collect(VTExecutorStats vtTaskStats) {
+        VTExecutorStats oldStats = (VTExecutorStats) GAUGE_CACHE.get(vtTaskStats.getName());
+        if (Objects.isNull(oldStats)) {
+            GAUGE_CACHE.put(vtTaskStats.getName(), vtTaskStats);
+        } else {
+            BeanUtils.copyProperties(vtTaskStats, oldStats);
+        }
+        gauge((VTExecutorStats) GAUGE_CACHE.get(vtTaskStats.getName()));
     }
 
     @Override
@@ -105,6 +123,19 @@ public class MicroMeterCollector extends AbstractCollector {
         Metrics.gauge(metricName("completed.task.time.tp999"), tags, poolStats, ThreadPoolStats::getTp999);
     }
 
+    private void gauge(VTExecutorStats vtExecutorStats) {
+        Iterable<Tag> tags = getTags(vtExecutorStats);
+
+        Metrics.gauge(metricName("virtual.thread.executor.id"), tags, vtExecutorStats, VTExecutorStats::getId);
+        Metrics.gauge(metricName("virtual.thread.executor.task.count"), tags, vtExecutorStats, VTExecutorStats::getTasksCount);
+
+        vtExecutorStats.getTasks().forEach(vtTaskStats -> {
+            Metrics.gauge(metricName("task.id"), tags, vtTaskStats, VTExecutorStats.VTTaskStats::getId);
+
+        });
+
+    }
+
     private static String metricName(String name) {
         return String.join(".", DTP_METRIC_NAME_PREFIX, name);
     }
@@ -115,6 +146,14 @@ public class MicroMeterCollector extends AbstractCollector {
         tags.add(Tag.of(APP_NAME_TAG, CommonUtil.getInstance().getServiceName()));
         // https://github.com/dromara/dynamic-tp/issues/359
         tags.add(Tag.of(POOL_ALIAS_TAG, Optional.ofNullable(poolStats.getPoolAliasName()).orElse(poolStats.getPoolName())));
+        return tags;
+    }
+
+    private Iterable<Tag> getTags(VTExecutorStats vtExecutorStats) {
+        ArrayList<Tag> tags = new ArrayList<>(3);
+        tags.add(Tag.of(VTE_NAME_TAG, vtExecutorStats.getName()));
+        tags.add(Tag.of(APP_NAME_TAG, CommonUtil.getInstance().getServiceName()));
+        tags.add(Tag.of(VTE_ALIAS_TAG, Optional.ofNullable(vtExecutorStats.getAliasName()).orElse(vtExecutorStats.getName())));
         return tags;
     }
 }

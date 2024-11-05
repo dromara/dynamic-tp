@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.core.monitor.collector;
 
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
-import org.dromara.dynamictp.common.entity.VTTaskStats;
+import org.dromara.dynamictp.common.entity.VTExecutorStats;
 
 /**
  * MetricsCollector related
@@ -35,10 +35,10 @@ public interface MetricsCollector {
     void collect(ThreadPoolStats poolStats);
 
     /**
-     *
+     * Collect virtual thread key metrics.
      * @param vtTaskStats
      */
-    void collect(VTTaskStats vtTaskStats);
+    void collect(VTExecutorStats vtTaskStats);
 
     /**
      * Collector type.

@@ -20,7 +20,7 @@ package org.dromara.dynamictp.core.converter;
 import lombok.val;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 import org.dromara.dynamictp.common.entity.TpMainFields;
-import org.dromara.dynamictp.common.entity.VTTaskStats;
+import org.dromara.dynamictp.common.entity.VTExecutorStats;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.monitor.PerformanceProvider;
 import org.dromara.dynamictp.core.support.ExecutorAdapter;
@@ -83,8 +83,10 @@ public class ExecutorConverter {
         return poolStats;
     }
 
-    public static VTTaskStats toVTTaskMetrics(ExecutorWrapper wrapper) {
-        return null;
+    public static VTExecutorStats toVTTaskMetrics(ExecutorWrapper wrapper) {
+        VTExecutorStats vtTaskStats = new VTExecutorStats();
+
+        return vtTaskStats;
     }
 
     private static ThreadPoolStats convertCommon(ExecutorAdapter<?> executor) {

@@ -20,7 +20,7 @@ package org.dromara.dynamictp.core.handler;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
-import org.dromara.dynamictp.common.entity.VTTaskStats;
+import org.dromara.dynamictp.common.entity.VTExecutorStats;
 import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
 import org.dromara.dynamictp.core.monitor.collector.InternalLogCollector;
 import org.dromara.dynamictp.core.monitor.collector.LogCollector;
@@ -45,7 +45,7 @@ public final class CollectorHandler {
 
     private CollectorHandler() {
         List<MetricsCollector> loadedCollectors = ExtensionServiceLoader.get(MetricsCollector.class);
-        loadedCollectors.forEach(collector -> COLLECTORS.put(collector.type().toLowerCase(), collector));
+        loadedCollectors.forEach(collector -> COLLECTORS.put(collector.type(), collector));
 
         MetricsCollector microMeterCollector = new MicroMeterCollector();
         LogCollector logCollector = new LogCollector();
@@ -69,7 +69,7 @@ public final class CollectorHandler {
         }
     }
 
-    public void collectVTtask(VTTaskStats vtTaskStats, List<String> types) {
+    public void collectVTtask(VTExecutorStats vtTaskStats, List<String> types) {
         if (vtTaskStats == null || CollectionUtils.isEmpty(types)) {
             return;
         }

@@ -461,6 +461,54 @@
       "name": "spring.dynamic.tp.zookeeper.zk-connect-str",
       "type": "java.lang.String",
       "sourceType": "org.dromara.dynamictp.common.properties.DtpProperties$Zookeeper"
+    },
+    {
+      "name": "spring.dynamic.tp.env",
+      "type": "java.lang.String",
+      "description": "Environment, if not set, will use \"spring.profiles.active\".",
+      "sourceType": "org.dromara.dynamictp.common.properties.DtpProperties"
+    },
+    {
+      "name": "spring.dynamic.tp.global-executor-props",
+      "type": "org.dromara.dynamictp.common.entity.DtpExecutorProps",
+      "description": "ThreadPoolExecutor global configs.",
+      "sourceType": "org.dromara.dynamictp.common.properties.DtpProperties"
+    },
+    {
+      "name": "spring.dynamic.tp.global-executor-props.executor-type",
+      "type": "java.lang.String",
+      "description": "ThreadPoolExecutor type, see {@link ExecutorType}",
+      "sourceType": "org.dromara.dynamictp.common.entity.DtpExecutorProps"
+    },
+    {
+      "name": "spring.dynamic.tp.global-executor-props.queue-type",
+      "type": "java.lang.String",
+      "description": "ThreadPoolExecutor queue type, see {@link QueueTypeEnum}",
+      "sourceType": "org.dromara.dynamictp.common.entity.DtpExecutorProps"
+    },
+    {
+      "name": "spring.dynamic.tp.global-executor-props.fair",
+      "type": "java.lang.Boolean",
+      "description": "ThreadPoolExecutor fair.",
+      "sourceType": "org.dromara.dynamictp.common.entity.DtpExecutorProps"
+    },
+    {
+      "name": "spring.dynamic.tp.global-executor-props.pre-start-all-core-threads",
+      "type": "java.lang.Boolean",
+      "description": "ThreadPoolExecutor pre start all core threads.",
+      "sourceType": "org.dromara.dynamictp.common.entity.DtpExecutorProps"
+    },
+    {
+      "name": "spring.dynamic.tp.global-executor-props.plugin-names",
+      "type": "java.util.Set<java.lang.String>",
+      "description": "ThreadPoolExecutor plugin names.",
+      "sourceType": "org.dromara.dynamictp.common.entity.DtpExecutorProps"
+    },
+    {
+      "name": "spring.dynamic.tp.global-executor-props.auto-create",
+      "type": "java.lang.Boolean",
+      "description": "ThreadPoolExecutor auto create.",
+      "sourceType": "org.dromara.dynamictp.common.entity.DtpExecutorProps"
     }
   ],
   "hints": []

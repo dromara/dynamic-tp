@@ -53,17 +53,28 @@ public class DtpLifecycleSpringAdapter implements SmartLifecycle {
         return isRunning;
     }
 
+    @Override
     public void stop(Runnable callback) {
-        lifeCycleManagement.stop();
+        lifeCycleManagement.stop(callback);
         callback.run();
         isRunning = false;
     }
 
+    /**
+     * Compatible with lower versions of spring.
+     *
+     * @return isAutoStartup
+     */
     @Override
     public boolean isAutoStartup() {
         return lifeCycleManagement.isAutoStartup();
     }
 
+    /**
+     * Compatible with lower versions of spring.
+     *
+     * @return phase
+     */
     @Override
     public int getPhase() {
         return lifeCycleManagement.getPhase();

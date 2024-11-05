@@ -59,37 +59,23 @@ public class DtpLifecycle implements LifeCycleManagement {
         return this.running.get();
     }
 
-    /**
-     * Compatible with lower versions of spring.
-     *
-     * @param callback callback
-     */
     @Override
     public void stop(Runnable callback) {
         stop();
         callback.run();
     }
 
-    /**
-     * Compatible with lower versions of spring.
-     *
-     * @return isAutoStartup
-     */
     @Override
     public boolean isAutoStartup() {
         return true;
     }
 
-    /**
-     * Compatible with lower versions of spring.
-     *
-     * @return phase
-     */
     @Override
     public int getPhase() {
         return Integer.MAX_VALUE;
     }
 
+    @Override
     public void shutdownInternal() {
         DtpMonitor.destroy();
         AlarmManager.destroy();

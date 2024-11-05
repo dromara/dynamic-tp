@@ -56,7 +56,6 @@ public class DtpLifecycleSpringAdapter implements SmartLifecycle {
     @Override
     public void stop(Runnable callback) {
         lifeCycleManagement.stop(callback);
-        callback.run();
         isRunning = false;
     }
 

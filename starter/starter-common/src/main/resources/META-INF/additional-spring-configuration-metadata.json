@@ -484,18 +484,21 @@
       "name": "spring.dynamic.tp.global-executor-props.queue-type",
       "type": "java.lang.String",
       "description": "ThreadPoolExecutor queue type, see {@link QueueTypeEnum}",
+      "defaultValue": "VariableLinkedBlockingQueue",
       "sourceType": "org.dromara.dynamictp.common.entity.DtpExecutorProps"
     },
     {
       "name": "spring.dynamic.tp.global-executor-props.fair",
       "type": "java.lang.Boolean",
       "description": "ThreadPoolExecutor fair.",
+      "defaultValue": false,
       "sourceType": "org.dromara.dynamictp.common.entity.DtpExecutorProps"
     },
     {
       "name": "spring.dynamic.tp.global-executor-props.pre-start-all-core-threads",
       "type": "java.lang.Boolean",
       "description": "ThreadPoolExecutor pre start all core threads.",
+      "defaultValue": false,
       "sourceType": "org.dromara.dynamictp.common.entity.DtpExecutorProps"
     },
     {
@@ -508,6 +511,7 @@
       "name": "spring.dynamic.tp.global-executor-props.auto-create",
       "type": "java.lang.Boolean",
       "description": "ThreadPoolExecutor auto create.",
+      "defaultValue": true,
       "sourceType": "org.dromara.dynamictp.common.entity.DtpExecutorProps"
     }
   ],

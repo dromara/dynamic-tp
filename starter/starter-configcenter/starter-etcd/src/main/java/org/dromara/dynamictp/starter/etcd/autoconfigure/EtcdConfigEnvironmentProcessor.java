@@ -20,7 +20,7 @@ package org.dromara.dynamictp.starter.etcd.autoconfigure;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.support.BinderHelper;
+import org.dromara.dynamictp.core.support.binder.BinderHelper;
 import org.dromara.dynamictp.starter.etcd.util.EtcdUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;

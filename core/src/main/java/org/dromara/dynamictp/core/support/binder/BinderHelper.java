@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.support;
+package org.dromara.dynamictp.core.support.binder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.pattern.singleton.Singleton;
@@ -43,7 +43,7 @@ public class BinderHelper {
         }
         final PropertiesBinder loadedFirstBinder = ExtensionServiceLoader.getFirst(PropertiesBinder.class);
         if (Objects.isNull(loadedFirstBinder)) {
-            log.error("DynamicTp refresh, no SPI for org.dromara.dynamictp.core.support.PropertiesBinder.");
+            log.error("DynamicTp refresh, no SPI for org.dromara.dynamictp.core.support.binder.PropertiesBinder.");
             return null;
         }
         Singleton.INST.single(PropertiesBinder.class, loadedFirstBinder);

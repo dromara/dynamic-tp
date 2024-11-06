@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.core.executor;
 
 import org.dromara.dynamictp.common.em.JreEnum;
-import org.dromara.dynamictp.core.support.ScheduledThreadPoolExecutorProxy;
+import org.dromara.dynamictp.core.support.proxy.ScheduledThreadPoolExecutorProxy;
 
 import java.util.Collection;
 import java.util.List;

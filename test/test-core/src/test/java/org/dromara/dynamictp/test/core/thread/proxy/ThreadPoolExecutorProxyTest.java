@@ -22,7 +22,7 @@ import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

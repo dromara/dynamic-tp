@@ -27,7 +27,7 @@ import org.dromara.dynamictp.common.event.RefreshEvent;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.handler.ConfigHandler;
-import org.dromara.dynamictp.core.support.BinderHelper;
+import org.dromara.dynamictp.core.support.binder.BinderHelper;
 
 
 import java.io.IOException;

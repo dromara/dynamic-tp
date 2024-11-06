@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.support;
+package org.dromara.dynamictp.core.support.proxy;
 
 import org.dromara.dynamictp.common.util.ExecutorUtil;
 import org.dromara.dynamictp.core.aware.AwareManager;
@@ -25,19 +25,16 @@ import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * ScheduledThreadPoolExecutorProxy related
- * The schedule method does not support queue timeout monitoring
+ * ThreadPoolExecutor Proxy
  *
  * @author kyao
- * @since 1.1.5
+ * @since 1.1.4
  */
-public class ScheduledThreadPoolExecutorProxy extends ScheduledThreadPoolExecutor implements TaskEnhanceAware, RejectHandlerAware {
+public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskEnhanceAware, RejectHandlerAware {
 
     /**
      * Task wrappers, do sth enhanced.
@@ -49,39 +46,21 @@ public class ScheduledThreadPoolExecutorProxy extends ScheduledThreadPoolExecuto
      */
     private String rejectHandlerType;
 
-    public ScheduledThreadPoolExecutorProxy(ScheduledThreadPoolExecutor executor) {
-        super(executor.getCorePoolSize(), executor.getThreadFactory());
-        this.rejectHandlerType = executor.getRejectedExecutionHandler().getClass().getSimpleName();
+    public ThreadPoolExecutorProxy(ThreadPoolExecutor executor) {
+        super(executor.getCorePoolSize(), executor.getMaximumPoolSize(),
+                executor.getKeepAliveTime(TimeUnit.MILLISECONDS), TimeUnit.MILLISECONDS,
+                executor.getQueue(), executor.getThreadFactory(),
+                executor.getRejectedExecutionHandler());
+        allowCoreThreadTimeOut(executor.allowsCoreThreadTimeOut());
+        this.rejectHandlerType = getRejectedExecutionHandler().getClass().getSimpleName();
         setRejectedExecutionHandler(RejectHandlerGetter.getProxy(getRejectedExecutionHandler()));
     }
 
     @Override
     public void execute(Runnable command) {
         command = getEnhancedTask(command);
+        AwareManager.execute(this, command);
         super.execute(command);
-    }
-
-    @Override
-    public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
-        command = getEnhancedTask(command);
-        return super.schedule(command, delay, unit);
-    }
-
-    public <V> ScheduledFuture<V> schedule(Runnable command, V result, long delay, TimeUnit unit) {
-        command = getEnhancedTask(command);
-        return super.schedule(Executors.callable(command, result), delay, unit);
-    }
-
-    @Override
-    public ScheduledFuture<?> scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) {
-        command = getEnhancedTask(command);
-        return super.scheduleAtFixedRate(command, initialDelay, period, unit);
-    }
-
-    @Override
-    public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) {
-        command = getEnhancedTask(command);
-        return super.scheduleWithFixedDelay(command, initialDelay, delay, unit);
     }
 
     @Override
@@ -98,16 +77,6 @@ public class ScheduledThreadPoolExecutorProxy extends ScheduledThreadPoolExecuto
     }
 
     @Override
-    public String getRejectHandlerType() {
-        return rejectHandlerType;
-    }
-
-    @Override
-    public void setRejectHandlerType(String rejectHandlerType) {
-        this.rejectHandlerType = rejectHandlerType;
-    }
-
-    @Override
     public List<TaskWrapper> getTaskWrappers() {
         return taskWrappers;
     }
@@ -115,5 +84,15 @@ public class ScheduledThreadPoolExecutorProxy extends ScheduledThreadPoolExecuto
     @Override
     public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
         this.taskWrappers = taskWrappers;
+    }
+
+    @Override
+    public String getRejectHandlerType() {
+        return rejectHandlerType;
+    }
+
+    @Override
+    public void setRejectHandlerType(String rejectHandlerType) {
+        this.rejectHandlerType = rejectHandlerType;
     }
 }

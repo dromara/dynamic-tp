@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.DtpPropertiesBinderUtil;
-import org.dromara.dynamictp.core.support.PropertiesBinder;
+import org.dromara.dynamictp.core.support.binder.PropertiesBinder;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValues;
 import org.springframework.boot.context.properties.bind.Bindable;

@@ -21,7 +21,7 @@ package org.dromara.dynamictp.test.core.spring;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.support.BinderHelper;
+import org.dromara.dynamictp.core.support.binder.BinderHelper;
 import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
 import org.dromara.dynamictp.spring.support.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Assertions;

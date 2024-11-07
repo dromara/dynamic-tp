@@ -83,10 +83,30 @@ public class ExecutorConverter {
         return poolStats;
     }
 
-    public static VTExecutorStats toVTTaskMetrics(ExecutorWrapper wrapper) {
-        VTExecutorStats vtTaskStats = new VTExecutorStats();
+    public static VTExecutorStats toVTExecutorMetrics(ExecutorWrapper wrapper) {
+        ExecutorAdapter<?> executor = wrapper.getExecutor();
+        if (executor == null) {
+            return null;
+        }
+        ThreadPoolStatProvider provider = wrapper.getThreadPoolStatProvider();
+        PerformanceProvider performanceProvider = provider.getPerformanceProvider();
+        val performanceSnapshot = performanceProvider.getSnapshotAndReset();
+        VTExecutorStats executorStats = convertCommonVT(executor);
+        executorStats.setExecutorName(wrapper.getThreadPoolName());
+        executorStats.setExecutorAliasName(wrapper.getThreadPoolAliasName());
+        executorStats.setDynamic(executor instanceof DtpExecutor);
 
-        return vtTaskStats;
+        executorStats.setTps(performanceSnapshot.getTps());
+        executorStats.setAvg(performanceSnapshot.getAvg());
+        executorStats.setMaxRt(performanceSnapshot.getMaxRt());
+        executorStats.setMinRt(performanceSnapshot.getMinRt());
+        executorStats.setTp50(performanceSnapshot.getTp50());
+        executorStats.setTp75(performanceSnapshot.getTp75());
+        executorStats.setTp90(performanceSnapshot.getTp90());
+        executorStats.setTp95(performanceSnapshot.getTp95());
+        executorStats.setTp99(performanceSnapshot.getTp99());
+        executorStats.setTp999(performanceSnapshot.getTp999());
+        return executorStats;
     }
 
     private static ThreadPoolStats convertCommon(ExecutorAdapter<?> executor) {
@@ -106,5 +126,12 @@ public class ExecutorConverter {
         poolStats.setRejectHandlerName(executor.getRejectHandlerType());
         poolStats.setKeepAliveTime(executor.getKeepAliveTime(TimeUnit.MILLISECONDS));
         return poolStats;
+    }
+
+    private static VTExecutorStats convertCommonVT(ExecutorAdapter<?> executor) {
+        VTExecutorStats executorStats = new VTExecutorStats();
+        executorStats.setActiveCount(executor.getActiveCount());
+        executorStats.setTaskCount(executor.getTaskCount());
+        return executorStats;
     }
 }

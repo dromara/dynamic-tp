@@ -3,40 +3,10 @@ package org.dromara.dynamictp.common.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.List;
-
 /**
- * ClassName: VTTaskStats
+ * ClassName: VTExecutorStats
  * Package: org.dromara.dynamictp.common.entity
  * Description:
- * Wanted performance is like:
- * "virtual_threads": [
- * {
- * "id": 1,
- * "name": "VirtualThread-1",
- * "state": "RUNNABLE",
- * "stack_trace": [
- * {
- * "class": "java.base/java.lang.Thread",
- * "method": "lambda$main$0",
- * "file": "Main.java",
- * "line": 10
- * }
- * ]
- * },
- * {
- * "id": 2,
- * "name": "VirtualThread-2",
- * "state": "BLOCKED",
- * "stack_trace": [
- * {
- * "class": "java.base/java.net.SocketInputStream",
- * "method": "socketRead0",
- * "file": "SocketInputStream.java",
- * "line": 61
- * }
- * ]
- * }
  *
  * @author CYC
  * @create 2024/11/4 16:52
@@ -46,82 +16,83 @@ import java.util.List;
 public class VTExecutorStats extends Metrics {
 
     /**
-     * 虚拟线程执行器的id
+     * 虚拟线程执行器名字
      */
-    private int id;
+    private String executorName;
 
     /**
-     * 虚拟线程执行器的名称
+     * 虚拟线程执行器别名
      */
-    private String name;
+    private String executorAliasName;
 
     /**
-     * 虚拟线程执行器的别名
+     * 正在执行任务的活跃线程大致总数
      */
-    private String aliasName;
+    private int activeCount;
 
     /**
-     * 虚拟线程执行器所承载的任务
+     * 大致任务总数
      */
-    private List<VTTaskStats> tasks;
+    private long taskCount;
 
-    public int getTasksCount() {
-        return tasks.size();
-    }
+    /**
+     * 执行超时任务数量
+     */
+    private long runTimeoutCount;
 
-    @Data
-    public class VTTaskStats {
+    /**
+     * 是否为DtpExecutor
+     */
+    private boolean dynamic;
 
-        /**
-         * 虚拟线程的id
-         */
-        private int id;
+    /**
+     * tps
+     */
+    private double tps;
 
-        /**
-         * 虚拟线程的名称
-         */
-        private String name;
+    /**
+     * 最大任务耗时
+     */
+    private long maxRt;
 
-        /**
-         * 虚拟线程的状态
-         */
-        private String state;
+    /**
+     * 最小任务耗时
+     */
+    private long minRt;
 
-        /**
-         * 虚拟线程所承载任务的所有堆栈信息
-         */
-        private List<String> stack;
+    /**
+     * 任务平均耗时(单位:ms)
+     */
+    private double avg;
 
-        /**
-         * 虚拟线程所承载任务的理想的堆栈信息
-         */
-        private StackForGood stackForGood;
+    /**
+     * 满足50%的任务执行所需的最低耗时
+     */
+    private double tp50;
 
-        /**
-         * 虚拟线程的任务数
-         */
-        private int taskCount;
+    /**
+     * 满足75%的任务执行所需的最低耗时
+     */
+    private double tp75;
 
-        @Data
-        private class StackForGood {
-            /**
-             * Wanted stack trace is like:
-             * "stack_trace": [
-             * {
-             * "class": "java.base/java.net.SocketInputStream",
-             * "method": "socketRead0",
-             * "file": "SocketInputStream.java",
-             * "line": 61
-             * }
-             * ]
-             */
-            private String clazz;
+    /**
+     * 满足90%的任务执行所需的最低耗时
+     */
+    private double tp90;
 
-            private String method;
+    /**
+     * 满足95%的任务执行所需的最低耗时
+     */
+    private double tp95;
 
-            private String file;
+    /**
+     * 满足99%的任务执行所需的最低耗时
+     */
+    private double tp99;
 
-            private String line;
-        }
-    }
+    /**
+     * 满足99.9%的任务执行所需的最低耗时
+     */
+    private double tp999;
+
 }

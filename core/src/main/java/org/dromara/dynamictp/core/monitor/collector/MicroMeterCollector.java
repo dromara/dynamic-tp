@@ -26,11 +26,7 @@ import org.dromara.dynamictp.common.entity.VTExecutorStats;
 import org.dromara.dynamictp.common.util.CommonUtil;
 import org.springframework.beans.BeanUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -74,14 +70,14 @@ public class MicroMeterCollector extends AbstractCollector {
     }
 
     @Override
-    public void collect(VTExecutorStats vtTaskStats) {
-        VTExecutorStats oldStats = (VTExecutorStats) GAUGE_CACHE.get(vtTaskStats.getName());
+    public void collect(VTExecutorStats vtExecutorStats) {
+        VTExecutorStats oldStats = (VTExecutorStats) GAUGE_CACHE.get(vtExecutorStats.getExecutorName());
         if (Objects.isNull(oldStats)) {
-            GAUGE_CACHE.put(vtTaskStats.getName(), vtTaskStats);
+            GAUGE_CACHE.put(vtExecutorStats.getExecutorName(), vtExecutorStats);
         } else {
-            BeanUtils.copyProperties(vtTaskStats, oldStats);
+            BeanUtils.copyProperties(vtExecutorStats, oldStats);
         }
-        gauge((VTExecutorStats) GAUGE_CACHE.get(vtTaskStats.getName()));
+        gauge((VTExecutorStats) GAUGE_CACHE.get(vtExecutorStats.getExecutorName()));
     }
 
     @Override
@@ -124,16 +120,23 @@ public class MicroMeterCollector extends AbstractCollector {
     }
 
     private void gauge(VTExecutorStats vtExecutorStats) {
+
         Iterable<Tag> tags = getTags(vtExecutorStats);
 
-        Metrics.gauge(metricName("virtual.thread.executor.id"), tags, vtExecutorStats, VTExecutorStats::getId);
-        Metrics.gauge(metricName("virtual.thread.executor.task.count"), tags, vtExecutorStats, VTExecutorStats::getTasksCount);
+        Metrics.gauge(metricName("active.count"), tags, vtExecutorStats, VTExecutorStats::getActiveCount);
+        Metrics.gauge(metricName("task.count"), tags, vtExecutorStats, VTExecutorStats::getTaskCount);
+        Metrics.gauge(metricName("run.timeout.count"), tags, vtExecutorStats, VTExecutorStats::getRunTimeoutCount);
 
-        vtExecutorStats.getTasks().forEach(vtTaskStats -> {
-            Metrics.gauge(metricName("task.id"), tags, vtTaskStats, VTExecutorStats.VTTaskStats::getId);
-
-        });
-
+        Metrics.gauge(metricName("tps"), tags, vtExecutorStats, VTExecutorStats::getTps);
+        Metrics.gauge(metricName("completed.task.time.avg"), tags, vtExecutorStats, VTExecutorStats::getAvg);
+        Metrics.gauge(metricName("completed.task.time.max"), tags, vtExecutorStats, VTExecutorStats::getMaxRt);
+        Metrics.gauge(metricName("completed.task.time.min"), tags, vtExecutorStats, VTExecutorStats::getMinRt);
+        Metrics.gauge(metricName("completed.task.time.tp50"), tags, vtExecutorStats, VTExecutorStats::getTp50);
+        Metrics.gauge(metricName("completed.task.time.tp75"), tags, vtExecutorStats, VTExecutorStats::getTp75);
+        Metrics.gauge(metricName("completed.task.time.tp90"), tags, vtExecutorStats, VTExecutorStats::getTp90);
+        Metrics.gauge(metricName("completed.task.time.tp95"), tags, vtExecutorStats, VTExecutorStats::getTp95);
+        Metrics.gauge(metricName("completed.task.time.tp99"), tags, vtExecutorStats, VTExecutorStats::getTp99);
+        Metrics.gauge(metricName("completed.task.time.tp999"), tags, vtExecutorStats, VTExecutorStats::getTp999);
     }
 
     private static String metricName(String name) {
@@ -151,9 +154,9 @@ public class MicroMeterCollector extends AbstractCollector {
 
     private Iterable<Tag> getTags(VTExecutorStats vtExecutorStats) {
         ArrayList<Tag> tags = new ArrayList<>(3);
-        tags.add(Tag.of(VTE_NAME_TAG, vtExecutorStats.getName()));
+        tags.add(Tag.of(VTE_NAME_TAG, vtExecutorStats.getExecutorName()));
         tags.add(Tag.of(APP_NAME_TAG, CommonUtil.getInstance().getServiceName()));
-        tags.add(Tag.of(VTE_ALIAS_TAG, Optional.ofNullable(vtExecutorStats.getAliasName()).orElse(vtExecutorStats.getName())));
+        tags.add(Tag.of(VTE_ALIAS_TAG, Optional.ofNullable(vtExecutorStats.getExecutorAliasName()).orElse(vtExecutorStats.getExecutorName())));
         return tags;
     }
 }

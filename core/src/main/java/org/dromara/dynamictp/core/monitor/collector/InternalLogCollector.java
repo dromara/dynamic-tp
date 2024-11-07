@@ -19,6 +19,7 @@ package org.dromara.dynamictp.core.monitor.collector;
 
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 import org.dromara.dynamictp.common.em.CollectorTypeEnum;
+import org.dromara.dynamictp.common.entity.VTExecutorStats;
 import org.dromara.dynamictp.common.util.JsonUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,6 +32,11 @@ public class InternalLogCollector extends AbstractCollector {
     @Override
     public void collect(ThreadPoolStats poolStats) {
         log.info("dynamic.tp metrics: {}", JsonUtil.toJson(poolStats));
+    }
+
+    @Override
+    public void collect(VTExecutorStats vtTaskStats) {
+        log.info("dynamic.vt metrics: {}", JsonUtil.toJson(vtTaskStats));
     }
 
     @Override

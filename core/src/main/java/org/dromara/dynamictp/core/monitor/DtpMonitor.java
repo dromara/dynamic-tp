@@ -97,7 +97,7 @@ public class DtpMonitor extends OnceApplicationContextEventListener {
         executorNames.forEach(x -> {
             ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(x);
             if(wrapper.isVirtualThreadExecutor()) {
-                doCollectVTTask(ExecutorConverter.toVTTaskMetrics(wrapper));
+                doCollectVTTask(ExecutorConverter.toVTExecutorMetrics(wrapper));
             } else {
                 doCollect(ExecutorConverter.toMetrics(wrapper));
             }

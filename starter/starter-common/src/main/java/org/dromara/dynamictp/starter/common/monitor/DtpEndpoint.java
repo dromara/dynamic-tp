@@ -49,7 +49,7 @@ public class DtpEndpoint {
         DtpRegistry.getAllExecutorNames().forEach(x -> {
             ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(x);
             if(wrapper.isVirtualThreadExecutor()) {
-                metricsList.add(ExecutorConverter.toVTTaskMetrics(wrapper));
+                metricsList.add(ExecutorConverter.toVTExecutorMetrics(wrapper));
             } else {
                 metricsList.add(ExecutorConverter.toMetrics(wrapper));
             }

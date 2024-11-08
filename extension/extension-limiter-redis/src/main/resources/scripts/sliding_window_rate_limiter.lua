@@ -1,9 +1,9 @@
 local key = KEYS[1]
-local member = KEYS[2]
 
 local window_size = tonumber(ARGV[1])
 local limit = tonumber(ARGV[2])
 local timestamp = tonumber(ARGV[3])
+local member = ARGV[4]
 
 local accepted = 0
 local exists_key = redis.call('exists', key)

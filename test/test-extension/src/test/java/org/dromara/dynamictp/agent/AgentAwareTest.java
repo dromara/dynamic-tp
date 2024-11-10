@@ -17,13 +17,13 @@
 
 package org.dromara.dynamictp.agent;
 
+import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
-import org.dromara.dynamictp.extension.agent.AgentAware;
 import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
+import org.dromara.dynamictp.extension.agent.AgentAware;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -36,7 +36,7 @@ public class AgentAwareTest {
 
     @Test
     public void testDirectOnlyOneDtpRunnable() throws InvocationTargetException, IllegalAccessException {
-        Method getDtpRunnableInstance = ReflectionUtils.findMethod(AgentAware.class, "getDtpRunnableInstance", Runnable.class);
+        Method getDtpRunnableInstance = ReflectionUtil.findMethod(AgentAware.class, "getDtpRunnableInstance", Runnable.class);
         Assertions.assertNotNull(getDtpRunnableInstance);
 
         getDtpRunnableInstance.setAccessible(true);
@@ -44,7 +44,6 @@ public class AgentAwareTest {
         Runnable runnable = () -> {
 
         };
-
 
         MyAgentWrapper myAgentWrapper = new MyAgentWrapper(runnable, new Object());
         Object result = getDtpRunnableInstance.invoke(new AgentAware(), myAgentWrapper);
@@ -64,7 +63,7 @@ public class AgentAwareTest {
         DtpRunnable dtpRunnable = new DtpRunnable(runnable, runnable, "test");
         MyAgentWrapperTwoRunnable myAgentWrapper = new MyAgentWrapperTwoRunnable(dtpRunnable, runnable, "test");
 
-        Method getDtpRunnableInstance = ReflectionUtils.findMethod(AgentAware.class, "getDtpRunnableInstance", Runnable.class);
+        Method getDtpRunnableInstance = ReflectionUtil.findMethod(AgentAware.class, "getDtpRunnableInstance", Runnable.class);
         Assertions.assertNotNull(getDtpRunnableInstance);
         getDtpRunnableInstance.setAccessible(true);
 
@@ -85,7 +84,7 @@ public class AgentAwareTest {
         MyAgentWrapper myAgentWrapper = new MyAgentWrapper(dtpRunnable, new Object());
 
         MyAgentTwoPathRunnableWrapper twoPathRunnableWrapper = new MyAgentTwoPathRunnableWrapper(myAgentWrapper, new Object());
-        Method getDtpRunnableInstance = ReflectionUtils.findMethod(AgentAware.class, "getDtpRunnableInstance", Runnable.class);
+        Method getDtpRunnableInstance = ReflectionUtil.findMethod(AgentAware.class, "getDtpRunnableInstance", Runnable.class);
         Assertions.assertNotNull(getDtpRunnableInstance);
         getDtpRunnableInstance.setAccessible(true);
 
@@ -102,7 +101,7 @@ public class AgentAwareTest {
         MyAgentWrapper myAgentWrapper = new MyAgentWrapper(dtpRunnable, new Object());
         MyAgentWrapperChild myAgentWrapperChild = new MyAgentWrapperChild(myAgentWrapper, new Object());
 
-        Method getDtpRunnableInstance = ReflectionUtils.findMethod(AgentAware.class, "getDtpRunnableInstance", Runnable.class);
+        Method getDtpRunnableInstance = ReflectionUtil.findMethod(AgentAware.class, "getDtpRunnableInstance", Runnable.class);
         Assertions.assertNotNull(getDtpRunnableInstance);
         getDtpRunnableInstance.setAccessible(true);
 
@@ -123,7 +122,7 @@ public class AgentAwareTest {
         MyAgentTwoPathRunnableChildWrapper myAgentTwoPathRunnableChildWrapper = new MyAgentTwoPathRunnableChildWrapper(myAgentWrapperChild,
                 myAgentWrapper, new Object());
 
-        Method getDtpRunnableInstance = ReflectionUtils.findMethod(AgentAware.class, "getDtpRunnableInstance", Runnable.class);
+        Method getDtpRunnableInstance = ReflectionUtil.findMethod(AgentAware.class, "getDtpRunnableInstance", Runnable.class);
         Assertions.assertNotNull(getDtpRunnableInstance);
         getDtpRunnableInstance.setAccessible(true);
         Object result = getDtpRunnableInstance.invoke(new AgentAware(), myAgentTwoPathRunnableChildWrapper);
@@ -137,7 +136,7 @@ public class AgentAwareTest {
         Runnable runnable = () -> System.out.println("test");
         DtpRunnable dtpRunnable = new DtpRunnable(runnable, runnable, "test");
         MyAgentNestWrapper myAgentNestWrapper = new MyAgentNestWrapper(dtpRunnable);
-        Method getDtpRunnableInstance = ReflectionUtils.findMethod(AgentAware.class, "getDtpRunnableInstance", Runnable.class);
+        Method getDtpRunnableInstance = ReflectionUtil.findMethod(AgentAware.class, "getDtpRunnableInstance", Runnable.class);
         getDtpRunnableInstance.setAccessible(true);
         Object result = getDtpRunnableInstance.invoke(new AgentAware(), myAgentNestWrapper);
         Assertions.assertTrue(dtpRunnable == dtpRunnable);
@@ -152,7 +151,7 @@ public class AgentAwareTest {
 
         MyAgentContainNestWrapper myAgentContainNestWrapper = new MyAgentContainNestWrapper(myAgentNestWrapper);
 
-        Method getDtpRunnableInstance = ReflectionUtils.findMethod(AgentAware.class, "getDtpRunnableInstance", Runnable.class);
+        Method getDtpRunnableInstance = ReflectionUtil.findMethod(AgentAware.class, "getDtpRunnableInstance", Runnable.class);
         getDtpRunnableInstance.setAccessible(true);
         Object result = getDtpRunnableInstance.invoke(new AgentAware(), myAgentContainNestWrapper);
         Assertions.assertTrue(dtpRunnable == dtpRunnable);

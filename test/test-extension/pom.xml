@@ -3,13 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.dromara.dynamictp</groupId>
-        <artifactId>dynamic-tp-all</artifactId>
+        <artifactId>dynamic-tp-test</artifactId>
         <version>${revision}</version>
-        <relativePath>../../pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>dynamic-tp-test-extension</artifactId>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>test-extension</name>
 

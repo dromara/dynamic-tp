@@ -15,26 +15,28 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.agent;
+package org.dromara.dynamictp.test.extension.agent;
 
-public class MyAgentWrapper implements Runnable {
+import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
 
-    private Runnable runnable;
+public class MyAgentNestWrapper implements Runnable {
 
-    private Object busiObj;
+    private MyAgentNestWrapper myAgentNestWrapper = this;
 
-    public MyAgentWrapper(Runnable runnable, Object busiObj) {
-        this.runnable = runnable;
-        this.busiObj = busiObj;
+    private DtpRunnable dtpRunnable;
+
+    public MyAgentNestWrapper(DtpRunnable dtpRunnable) {
+        this.dtpRunnable = dtpRunnable;
     }
 
     @Override
     public void run() {
         System.out.println("before");
         try {
-            runnable.run();
+            dtpRunnable.run();
         } finally {
             System.out.println("finally");
         }
     }
 }
+

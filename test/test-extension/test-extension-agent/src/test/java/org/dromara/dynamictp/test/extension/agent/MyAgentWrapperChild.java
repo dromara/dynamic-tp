@@ -15,21 +15,15 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.agent;
+package org.dromara.dynamictp.test.extension.agent;
 
-public class MyAgentContainNestWrapper implements Runnable {
-
-    private MyAgentNestWrapper agentNestWrapper;
-
-    public MyAgentContainNestWrapper(MyAgentNestWrapper agentNestWrapper) {
-        this.agentNestWrapper = agentNestWrapper;
+public class MyAgentWrapperChild extends MyAgentWrapper {
+    public MyAgentWrapperChild(MyAgentWrapper runnable, Object busiObj) {
+        super(runnable, busiObj);
     }
 
     @Override
     public void run() {
-        System.out.println("before");
-        agentNestWrapper.run();
-        System.out.println("after");
+        System.out.println("MyAgentWrapperChild");
     }
 }
-

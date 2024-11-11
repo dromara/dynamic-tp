@@ -15,15 +15,14 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.agent;
+package org.dromara.dynamictp.test.extension.agent;
 
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
 import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
 import org.dromara.dynamictp.extension.agent.AgentAware;
-import org.junit.Assert;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -176,6 +175,6 @@ public class AgentAwareTest {
         }, 1, 1, TimeUnit.SECONDS);
 
         downLatch.await();
-        Assert.assertEquals(3, count.get());
+        Assertions.assertEquals(3, count.get());
     }
 }

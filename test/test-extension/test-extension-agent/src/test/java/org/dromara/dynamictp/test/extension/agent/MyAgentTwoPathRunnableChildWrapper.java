@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.agent;
+package org.dromara.dynamictp.test.extension.agent;
 
 public class MyAgentTwoPathRunnableChildWrapper implements Runnable {
 

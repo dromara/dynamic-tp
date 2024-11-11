@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.test.extension;
+package org.dromara.dynamictp.test.extension.limiter.redis;
 
 import lombok.val;
 import org.dromara.dynamictp.extension.limiter.redis.ratelimiter.RedisRateLimiter;
-import org.dromara.dynamictp.spring.EnableDynamicTp;
+import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -47,7 +47,6 @@ class RedisRateLimiterTest {
             System.out.println(res);
         }
     }
-
 }
 
 

@@ -3,17 +3,17 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.dromara.dynamictp</groupId>
-        <artifactId>dynamic-tp-test</artifactId>
+        <artifactId>dynamic-tp-test-extension</artifactId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>dynamic-tp-test-extension</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>dynamic-tp-test-extension-agent</artifactId>
 
-    <modules>
-        <module>test-extension-agent</module>
-        <module>test-extension-limiter-redis</module>
-    </modules>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.dromara.dynamictp</groupId>
+            <artifactId>dynamic-tp-extension-agent</artifactId>
+        </dependency>
+    </dependencies>
 </project>

@@ -15,28 +15,29 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.agent;
+package org.dromara.dynamictp.test.extension.agent;
 
-import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
+import lombok.extern.slf4j.Slf4j;
 
-public class MyAgentNestWrapper implements Runnable {
+@Slf4j
+public class MyAgentWrapper implements Runnable {
 
-    private MyAgentNestWrapper myAgentNestWrapper = this;
+    private Runnable runnable;
 
-    private DtpRunnable dtpRunnable;
+    private Object busiObj;
 
-    public MyAgentNestWrapper(DtpRunnable dtpRunnable) {
-        this.dtpRunnable = dtpRunnable;
+    public MyAgentWrapper(Runnable runnable, Object busiObj) {
+        this.runnable = runnable;
+        this.busiObj = busiObj;
     }
 
     @Override
     public void run() {
         System.out.println("before");
         try {
-            dtpRunnable.run();
+            runnable.run();
         } finally {
             System.out.println("finally");
         }
     }
 }
-

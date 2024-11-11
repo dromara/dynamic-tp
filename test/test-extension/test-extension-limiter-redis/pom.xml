@@ -6,11 +6,11 @@
     <parent>
         <groupId>org.dromara.dynamictp</groupId>
         <artifactId>dynamic-tp-test-extension</artifactId>
-        <version>1.1.9.1</version>
+        <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>test-extension-limiter-redis</artifactId>
+    <artifactId>dynamic-tp-test-extension-limiter-redis</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -23,6 +23,7 @@
             <groupId>org.dromara.dynamictp</groupId>
             <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aspects</artifactId>

@@ -15,27 +15,30 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.agent;
+package org.dromara.dynamictp.test.extension.agent;
 
-public class MyAgentTwoPathRunnableWrapper implements Runnable {
+public class MyAgentWrapperTwoRunnable implements Runnable {
 
-    private final MyAgentWrapper myAgentWrapper;
+    private Runnable r1;
 
-    private final Object busiObj;
+    private Runnable r2;
 
-    public MyAgentTwoPathRunnableWrapper(MyAgentWrapper myAgentWrapper, Object busiObj) {
-        this.myAgentWrapper = myAgentWrapper;
+    private Object busiObj;
+
+    public MyAgentWrapperTwoRunnable(Runnable r1, Runnable r2, Object busiObj) {
+        this.r1 = r1;
+        this.r2 = r2;
         this.busiObj = busiObj;
     }
-
 
     @Override
     public void run() {
         System.out.println("before");
         try {
-            myAgentWrapper.run();
+            r1.run();
+            r2.run();
         } finally {
-            System.out.println("finally");
+            System.out.println("after");
         }
     }
 }

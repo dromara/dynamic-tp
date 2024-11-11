@@ -53,9 +53,15 @@ public class SlidingWindowRateLimiter extends AbstractRedisRateLimiter {
     @Override
     public String[] getArgs(String key, long windowSize, int limit) {
         String memberKey = CommonUtil.getInstance().getIp() + ":" + COUNTER.incrementAndGet();
-        return new String[]{doubleToString(windowSize), doubleToString(limit), doubleToString(Instant.now().getEpochSecond()), memberKey};
+        return new String[]{
+                doubleToString(windowSize),
+                doubleToString(limit),
+                doubleToString(Instant.now().getEpochSecond()),
+                memberKey
+        };
     }
 
+    @Override
     public boolean check(String name, long interval, int limit) {
         try {
             val res = isAllowed(name, interval, limit);
@@ -76,5 +82,4 @@ public class SlidingWindowRateLimiter extends AbstractRedisRateLimiter {
     private String doubleToString(final double param) {
         return String.valueOf(param);
     }
-
 }

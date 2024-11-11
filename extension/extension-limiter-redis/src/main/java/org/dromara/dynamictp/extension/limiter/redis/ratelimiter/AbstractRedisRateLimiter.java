@@ -23,7 +23,6 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 
-import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -61,22 +60,12 @@ public abstract class AbstractRedisRateLimiter implements RedisRateLimiter<List<
         return script;
     }
 
-    @Override
-    public List<String> getKeys(final String key) {
-        String cacheKey = PREFIX + ":" + key;
-        return Collections.singletonList(cacheKey);
-    }
-
-    @Override
-    public List<Long> isAllowed(String key, long windowSize, int limit) {
+    public List<Object> isAllowed(String key, long windowSize, int limit) {
         RedisScript<?> script = this.getScript();
         List<String> keys = this.getKeys(key);
-
+        String[] values = this.getArgs(key, windowSize, limit);
         return Collections.unmodifiableList((List) Objects.requireNonNull(stringRedisTemplate.execute(script, keys,
-                doubleToString(windowSize), doubleToString(limit), doubleToString(Instant.now().getEpochSecond()))));
+                values)));
     }
 
-    private String doubleToString(final double param) {
-        return String.valueOf(param);
-    }
 }

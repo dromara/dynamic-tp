@@ -33,7 +33,7 @@ public abstract class DtpEvent extends EventObject {
 
     private final transient DtpProperties dtpProperties;
 
-    public DtpEvent(Object source, DtpProperties dtpProperties) {
+    protected DtpEvent(Object source, DtpProperties dtpProperties) {
         super(source);
         this.dtpProperties = dtpProperties;
     }

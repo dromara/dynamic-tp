@@ -7,28 +7,27 @@ spring:
   profiles:
     active: dev
 
-  dynamic:
-    tp:
-      enabled: true
-      enabledCollect: true          # 是否开启监控指标采集，默认false
-      collectorTypes: micrometer       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
-      monitorInterval: 5
-      platforms:                    # 通知报警平台配置
-        - platform: wechat
-          urlKey: 3a7500-1287-4bd-a798-c5c3d8b69c  # 替换
-          receivers: test1,test2                   # 接受人企微名称
-        - platform: ding
-          urlKey: f80dad441fcd655438f4a08dcd6a     # 替换
-          secret: SECb5441fa6f375d5b9d21           # 替换，非sign模式可以没有此值
-          receivers: 15810119805                   # 钉钉账号手机号
-        - platform: lark
-          urlKey: 0d944ae7-b24a-40                 # 替换
-          receivers: test1,test2                   # 接受人飞书名称/openid
-      brpcTp:                                      # brpc 线程池配置
-        - threadPoolName: rpc#server              # 名称规则：biz_thread_pool_name + "#" + client/server
-          corePoolSize: 100
-          maximumPoolSize: 200
-          keepAliveTime: 60
+dynamictp:
+  enabled: true
+  enabledCollect: true          # 是否开启监控指标采集，默认false
+  collectorTypes: micrometer       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+  monitorInterval: 5
+  platforms:                    # 通知报警平台配置
+    - platform: wechat
+      urlKey: 3a7500-1287-4bd-a798-c5c3d8b69c  # 替换
+      receivers: test1,test2                   # 接受人企微名称
+    - platform: ding
+      urlKey: f80dad441fcd655438f4a08dcd6a     # 替换
+      secret: SECb5441fa6f375d5b9d21           # 替换，非sign模式可以没有此值
+      receivers: 15810119805                   # 钉钉账号手机号
+    - platform: lark
+      urlKey: 0d944ae7-b24a-40                 # 替换
+      receivers: test1,test2                   # 接受人飞书名称/openid
+  brpcTp:                                      # brpc 线程池配置
+    - threadPoolName: rpc#server              # 名称规则：biz_thread_pool_name + "#" + client/server
+      corePoolSize: 100
+      maximumPoolSize: 200
+      keepAliveTime: 60
 
 starlight:
   server:

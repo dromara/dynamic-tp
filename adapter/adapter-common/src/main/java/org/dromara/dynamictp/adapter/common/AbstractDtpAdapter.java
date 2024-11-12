@@ -74,7 +74,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter {
 
     protected final Map<String, ExecutorWrapper> executors = Maps.newHashMap();
 
-    public AbstractDtpAdapter() {
+    protected AbstractDtpAdapter() {
         EventBusManager.register(this);
     }
 

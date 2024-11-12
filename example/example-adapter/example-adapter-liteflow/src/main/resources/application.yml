@@ -10,17 +10,16 @@ spring:
   profiles:
     active: dev
 
-  dynamic:
-    tp:
-      enabled: true
-      enabledCollect: true          # 是否开启监控指标采集，默认false
-      collectorTypes: logging       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
-      monitorInterval: 5
-      liteflowTp:
-        - threadPoolName: liteflowTp#LiteFlowDefaultWhenExecutorBuilder
-          corePoolSize: 10
-          maximumPoolSize: 20
-          keepAliveTime: 60
+dynamictp:
+  enabled: true
+  enabledCollect: true          # 是否开启监控指标采集，默认false
+  collectorTypes: logging       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+  monitorInterval: 5
+  liteflowTp:
+    - threadPoolName: liteflowTp#LiteFlowDefaultWhenExecutorBuilder
+      corePoolSize: 10
+      maximumPoolSize: 20
+      keepAliveTime: 60
 
 # 开启 SpringBoot Actuator Endpoint 暴露出DynamicTp指标接口
 # 开启 prometheus 指标采集端点

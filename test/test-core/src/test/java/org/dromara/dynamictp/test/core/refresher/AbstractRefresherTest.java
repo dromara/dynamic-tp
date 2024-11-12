@@ -62,11 +62,10 @@ public class AbstractRefresherTest {
     }
 
     private void mockConfigChange() {
-        String content = "spring:\n" +
-                "  dynamic:\n" +
-                "    tp:\n" +
-                "      enabled: true\n" +
-                "      env: newEnvValue";
+        String content =
+                "dynamictp:\n" +
+                "  enabled: true\n" +
+                "  env: newEnvValue";
 
         refresher.refresh(content, ConfigFileTypeEnum.YAML);
     }

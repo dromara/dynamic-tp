@@ -1,84 +1,82 @@
 # 动态线程池配置文件，建议单独开一个文件放到配置中心，字段详解看readme介绍
-spring:
-  dynamic:
-    tp:
-      enabled: true
-      enabledBanner: true           # 是否开启banner打印，默认true
-      enabledCollect: true          # 是否开启监控指标采集，默认false
-      collectorTypes: micrometer,logging     # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
-      logPath: /home/logs           # 监控日志数据路径，默认 ${user.home}/logs
-      monitorInterval: 5         # 监控时间间隔（报警判断、指标采集），默认5s
-      platforms:                 # 通知报警平台配置
-        - platform: wechat
-          urlKey: 3a7500-1287-4bd-a798-c5c3d8b69c  # 替换
-          receivers: test1,test2                   # 接受人企微名称
-        - platform: ding
-          urlKey: f80dad441fcd655438f4a08dcd6a     # 替换
-          secret: SECb5441fa6f375d5b9d21           # 替换，非sign模式可以没有此值
-          receivers: 15810119805                   # 钉钉账号手机号
-        - platform: lark
-          urlKey: 0d944ae7-b24a-40                 # 替换
-          receivers: test1,test2                   # 接受人飞书名称/openid
-      tomcatTp:                                    # tomcat web server线程池配置
-        corePoolSize: 100
-        maximumPoolSize: 400
-        keepAliveTime: 60
-      jettyTp:                                     # jetty web server线程池配置
-        corePoolSize: 100
-        maximumPoolSize: 400
-      undertowTp:                                  # undertow web server线程池配置
-        corePoolSize: 100
-        maximumPoolSize: 400
-        keepAliveTime: 60
-      hystrixTp:                                   # hystrix 线程池配置
-        - threadPoolName: hystrix1
-          corePoolSize: 100
-          maximumPoolSize: 400
-          keepAliveTime: 60
-      dubboTp:                                     # dubbo 线程池配置
-        - threadPoolName: dubboTp#20880
-          corePoolSize: 100
-          maximumPoolSize: 400
-          keepAliveTime: 60
-      rocketMqTp:                                  # rocketmq 线程池配置
-        - threadPoolName: group1#topic1
-          corePoolSize: 200
-          maximumPoolSize: 400
-          keepAliveTime: 60
-      executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
-        - threadPoolName: dtpExecutor1
-          executorType: common                     # 线程池类型common、eager：适用于io密集型
-          corePoolSize: 6
-          maximumPoolSize: 8
-          queueCapacity: 200
-          queueType: VariableLinkedBlockingQueue   # 任务队列，查看源码QueueTypeEnum枚举类
-          rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
-          keepAliveTime: 50
-          allowCoreThreadTimeOut: false                  # 是否允许核心线程池超时
-          threadNamePrefix: test                         # 线程名前缀
-          waitForTasksToCompleteOnShutdown: false        # 参考spring线程池设计，优雅关闭线程池
-          awaitTerminationSeconds: 5                     # 单位（s）
-          preStartAllCoreThreads: false                  # 是否预热所有核心线程，默认false
-          runTimeout: 200                                # 任务执行超时阈值，目前只做告警用，单位（ms）
-          queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
-          taskWrapperNames: ["ttl"]                          # 任务包装器名称，集成TaskWrapper接口
-          notifyItems:                     # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警、拒绝报警、任务超时报警）
-            - type: capacity               # 报警项类型，查看源码 NotifyTypeEnum枚举类
-              enabled: true
-              threshold: 80                # 报警阈值
-              platforms: [ding,wechat]     # 可选配置，不配置默认拿上层platforms配置的所以平台
-              interval: 120                # 报警间隔（单位：s）
-            - type: change
-              enabled: true
-            - type: liveness
-              enabled: true
-              threshold: 80
-            - type: reject
-              enabled: true
-              threshold: 1
-            - type: run_timeout
-              enabled: true
-              threshold: 1
-            - type: queue_timeout
-              enabled: true
-              threshold: 1
+dynamictp:
+  enabled: true
+  enabledBanner: true           # 是否开启banner打印，默认true
+  enabledCollect: true          # 是否开启监控指标采集，默认false
+  collectorTypes: micrometer,logging     # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+  logPath: /home/logs           # 监控日志数据路径，默认 ${user.home}/logs
+  monitorInterval: 5         # 监控时间间隔（报警判断、指标采集），默认5s
+  platforms:                 # 通知报警平台配置
+    - platform: wechat
+      urlKey: 3a7500-1287-4bd-a798-c5c3d8b69c  # 替换
+      receivers: test1,test2                   # 接受人企微名称
+    - platform: ding
+      urlKey: f80dad441fcd655438f4a08dcd6a     # 替换
+      secret: SECb5441fa6f375d5b9d21           # 替换，非sign模式可以没有此值
+      receivers: 15810119805                   # 钉钉账号手机号
+    - platform: lark
+      urlKey: 0d944ae7-b24a-40                 # 替换
+      receivers: test1,test2                   # 接受人飞书名称/openid
+  tomcatTp:                                    # tomcat web server线程池配置
+    corePoolSize: 100
+    maximumPoolSize: 400
+    keepAliveTime: 60
+  jettyTp:                                     # jetty web server线程池配置
+    corePoolSize: 100
+    maximumPoolSize: 400
+  undertowTp:                                  # undertow web server线程池配置
+    corePoolSize: 100
+    maximumPoolSize: 400
+    keepAliveTime: 60
+  hystrixTp:                                   # hystrix 线程池配置
+    - threadPoolName: hystrix1
+      corePoolSize: 100
+      maximumPoolSize: 400
+      keepAliveTime: 60
+  dubboTp:                                     # dubbo 线程池配置
+    - threadPoolName: dubboTp#20880
+      corePoolSize: 100
+      maximumPoolSize: 400
+      keepAliveTime: 60
+  rocketMqTp:                                  # rocketmq 线程池配置
+    - threadPoolName: group1#topic1
+      corePoolSize: 200
+      maximumPoolSize: 400
+      keepAliveTime: 60
+  executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
+    - threadPoolName: dtpExecutor1
+      executorType: common                     # 线程池类型common、eager：适用于io密集型
+      corePoolSize: 6
+      maximumPoolSize: 8
+      queueCapacity: 200
+      queueType: VariableLinkedBlockingQueue   # 任务队列，查看源码QueueTypeEnum枚举类
+      rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
+      keepAliveTime: 50
+      allowCoreThreadTimeOut: false                  # 是否允许核心线程池超时
+      threadNamePrefix: test                         # 线程名前缀
+      waitForTasksToCompleteOnShutdown: false        # 参考spring线程池设计，优雅关闭线程池
+      awaitTerminationSeconds: 5                     # 单位（s）
+      preStartAllCoreThreads: false                  # 是否预热所有核心线程，默认false
+      runTimeout: 200                                # 任务执行超时阈值，目前只做告警用，单位（ms）
+      queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
+      taskWrapperNames: ["ttl"]                          # 任务包装器名称，集成TaskWrapper接口
+      notifyItems:                     # 报警项，不配置自动会按默认值配置（变更通知、容量报警、活性报警、拒绝报警、任务超时报警）
+        - type: capacity               # 报警项类型，查看源码 NotifyTypeEnum枚举类
+          enabled: true
+          threshold: 80                # 报警阈值
+          platforms: [ding,wechat]     # 可选配置，不配置默认拿上层platforms配置的所以平台
+          interval: 120                # 报警间隔（单位：s）
+        - type: change
+          enabled: true
+        - type: liveness
+          enabled: true
+          threshold: 80
+        - type: reject
+          enabled: true
+          threshold: 1
+        - type: run_timeout
+          enabled: true
+          threshold: 1
+        - type: queue_timeout
+          enabled: true
+          threshold: 1

@@ -2,15 +2,15 @@ server:
   port: 8888
 
 spring:
-  dynamic:
-    tp:
-      config-type: properties
-      etcd:
-        endpoints: http://127.0.0.1:2379
-        auth-enable: false
-        key: /config/dynamic-tp-etcd-demo
   application:
     name: dynamic-tp-etcd-demo
+
+dynamictp:
+  config-type: properties
+  etcd:
+    endpoints: http://127.0.0.1:2379
+    auth-enable: false
+    key: /config/dynamic-tp-etcd-demo
 
 # 开启 SpringBoot Actuator Endpoint 暴露出DynamicTp指标接口
 # 开启 prometheus 指标采集端点

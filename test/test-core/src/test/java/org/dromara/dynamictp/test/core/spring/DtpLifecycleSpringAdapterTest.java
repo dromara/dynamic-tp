@@ -26,9 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.ApplicationContext;
 
 /**
  * DtpLifecycleSpringAdapterTest related
@@ -37,7 +37,7 @@ import org.springframework.context.ApplicationContext;
  * @since 1.1.8
  */
 @SpringBootTest(classes = DtpLifecycleSpringAdapterTest.TestConfig.class)
-public class DtpLifecycleSpringAdapterTest {
+class DtpLifecycleSpringAdapterTest {
 
     @Autowired
     private ApplicationContext applicationContext;

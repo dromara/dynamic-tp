@@ -43,7 +43,7 @@ public class JsonConfigParserTest {
 
         JsonConfigParser parser = new JsonConfigParser();
         Map<Object, Object> result = parser.doParse(content);
-        Assertions.assertEquals("dtpExecutor1", result.get("spring.dynamic.tp.executors[0].threadPoolName").toString());
+        Assertions.assertEquals("dtpExecutor1", result.get("dynamictp.executors[0].threadPoolName").toString());
     }
 
 }

@@ -20,11 +20,13 @@ package org.dromara.dynamictp.test.core.spring;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.monitor.DtpMonitor;
 import org.dromara.dynamictp.core.support.DtpBannerPrinter;
-import org.dromara.dynamictp.spring.*;
+import org.dromara.dynamictp.spring.DtpBaseBeanConfiguration;
+import org.dromara.dynamictp.spring.DtpPostProcessor;
 import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
 import org.dromara.dynamictp.spring.holder.SpringContextHolder;
 import org.dromara.dynamictp.spring.support.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +44,10 @@ import org.springframework.context.annotation.PropertySource;
 @SpringBootTest(classes = DtpBaseBeanConfigurationTest.class)
 public class DtpBaseBeanConfigurationTest {
 
+    @Nested
     @SpringBootTest(classes = DtpBaseBeanConfigurationTest.class)
     @EnableDynamicTp
-    public static class EnableDynamicTpAnnotationTest {
+    class EnableDynamicTpAnnotationTest {
 
         @Autowired
         private ApplicationContext applicationContext;
@@ -61,8 +64,9 @@ public class DtpBaseBeanConfigurationTest {
 
     }
 
+    @Nested
     @SpringBootTest(classes = DtpBaseBeanConfigurationTest.class)
-    public static class DisableDynamicTpAnnotationTest {
+    class DisableDynamicTpAnnotationTest {
 
         @Autowired
         private ApplicationContext applicationContext;

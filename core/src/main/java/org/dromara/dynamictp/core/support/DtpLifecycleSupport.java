@@ -18,7 +18,6 @@
 package org.dromara.dynamictp.core.support;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -28,8 +27,7 @@ import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
- * DtpLifecycleSupport which mainly implements Spring bean's lifecycle management,
- * mimics spring internal thread pool {@link ThreadPoolTaskExecutor}.
+ * DtpLifecycleSupport which mainly implements ThreadPoolExecutor's lifecycle management.
  *
  * @author yanhom
  * @since 1.0.3

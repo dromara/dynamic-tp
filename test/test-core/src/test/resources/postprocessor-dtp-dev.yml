@@ -20,29 +20,29 @@ management:
   health:
     defaults:
       enabled: true
-spring:
-  dynamic:
-    tp:
-      enabled: true
-      enabledCollect: true                    # 是否开启监控指标采集，默认false
-      collectorTypes: micrometer              # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
-      monitorInterval: 5                      # 监控时间间隔（报警检测、指标采集），默认5s
-      executors: # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
-        - threadPoolName: asyncExecutor
-          threadPoolAliasName: 异步线程池            # 线程池别名
-          executorType: common                     # 线程池类型common、eager：适用于io密集型
-          corePoolSize: 3
-          maximumPoolSize: 10
-          queueCapacity: 100
-          queueType: VariableLinkedBlockingQueue   # 任务队列，查看源码QueueTypeEnum枚举类
-          rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
-          keepAliveTime: 50
-          allowCoreThreadTimeOut: false                  # 是否允许核心线程池超时
-          threadNamePrefix: AsyncThread-                 # 线程名前缀
-          waitForTasksToCompleteOnShutdown: false        # 参考spring线程池设计，优雅关闭线程池
-          awaitTerminationSeconds: 5                     # 单位（s）
-          preStartAllCoreThreads: false                  # 是否预热所有核心线程，默认false
-          runTimeout: 200                                # 任务执行超时阈值，目前只做告警用，单位（ms）
-          queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
-          taskWrapperNames: [ "ttl", "mdc","cta" ]       # 任务包装器名称，继承TaskWrapper接口
-          notifyEnabled: false                           # 是否开启报警，默认true
+
+
+dynamictp:
+  enabled: true
+  enabledCollect: true                    # 是否开启监控指标采集，默认false
+  collectorTypes: micrometer              # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+  monitorInterval: 5                      # 监控时间间隔（报警检测、指标采集），默认5s
+  executors: # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量
+    - threadPoolName: asyncExecutor
+      threadPoolAliasName: 异步线程池            # 线程池别名
+      executorType: common                     # 线程池类型common、eager：适用于io密集型
+      corePoolSize: 3
+      maximumPoolSize: 10
+      queueCapacity: 100
+      queueType: VariableLinkedBlockingQueue   # 任务队列，查看源码QueueTypeEnum枚举类
+      rejectedHandlerType: CallerRunsPolicy    # 拒绝策略，查看RejectedTypeEnum枚举类
+      keepAliveTime: 50
+      allowCoreThreadTimeOut: false                  # 是否允许核心线程池超时
+      threadNamePrefix: AsyncThread-                 # 线程名前缀
+      waitForTasksToCompleteOnShutdown: false        # 参考spring线程池设计，优雅关闭线程池
+      awaitTerminationSeconds: 5                     # 单位（s）
+      preStartAllCoreThreads: false                  # 是否预热所有核心线程，默认false
+      runTimeout: 200                                # 任务执行超时阈值，目前只做告警用，单位（ms）
+      queueTimeout: 100                              # 任务在队列等待超时阈值，目前只做告警用，单位（ms）
+      taskWrapperNames: [ "ttl", "mdc","cta" ]       # 任务包装器名称，继承TaskWrapper接口
+      notifyEnabled: false                           # 是否开启报警，默认true

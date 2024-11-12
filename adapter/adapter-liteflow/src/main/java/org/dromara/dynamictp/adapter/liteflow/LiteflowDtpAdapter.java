@@ -26,7 +26,7 @@ import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -80,11 +80,7 @@ public class LiteflowDtpAdapter extends AbstractDtpAdapter {
             newExecutorMap.put(k, proxy);
             executors.put(tpName, new ExecutorWrapper(tpName, proxy));
         });
-        try {
-            ReflectionUtil.setFieldValue(EXECUTOR_MAP_FIELD, executorHelper, newExecutorMap);
-            executorMap.forEach((k, v) -> shutdownOriginalExecutor(v));
-        } catch (IllegalAccessException e) {
-            log.error("DynamicTp adapter, enhance {} failed.", getTpPrefix(), e);
-        }
+        ReflectionUtil.setFieldValue(EXECUTOR_MAP_FIELD, executorHelper, newExecutorMap);
+        executorMap.forEach((k, v) -> shutdownOriginalExecutor(v));
     }
 }

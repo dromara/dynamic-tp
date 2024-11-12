@@ -15,20 +15,19 @@ spring:
     #password: rabbit
     #addresses: 111111
 
-  dynamic:
-    tp:
-      enabled: true
-      enabledCollect: true          # 是否开启监控指标采集，默认false
-      collectorTypes: internal_logging       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
-      monitorInterval: 5
-      rabbitmqTp: # rabbitmq 线程池配置 配置自行修改
-        - threadPoolName: rabbitConnectionFactoryTp
-          threadPoolAliasName: rabbit线程池
-          threadNamePrefix: rabbitExecutor
-          corePoolSize: 8
-          maximumPoolSize: 16
-          #单位秒
-          keepAliveTime: 60
+dynamictp:
+  enabled: true
+  enabledCollect: true          # 是否开启监控指标采集，默认false
+  collectorTypes: internal_logging       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+  monitorInterval: 5
+  rabbitmqTp: # rabbitmq 线程池配置 配置自行修改
+    - threadPoolName: rabbitConnectionFactoryTp
+      threadPoolAliasName: rabbit线程池
+      threadNamePrefix: rabbitExecutor
+      corePoolSize: 8
+      maximumPoolSize: 16
+      #单位秒
+      keepAliveTime: 60
 
 # 开启 SpringBoot Actuator Endpoint 暴露出DynamicTp指标接口
 # 开启 prometheus 指标采集端点

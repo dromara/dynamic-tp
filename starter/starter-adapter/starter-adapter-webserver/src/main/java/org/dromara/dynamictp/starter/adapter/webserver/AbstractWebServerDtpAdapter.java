@@ -19,9 +19,10 @@ package org.dromara.dynamictp.starter.adapter.webserver;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
+import org.dromara.dynamictp.spring.holder.SpringContextHolder;
 import org.springframework.boot.web.context.WebServerApplicationContext;
 import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.boot.web.server.WebServer;
@@ -37,8 +38,7 @@ import java.util.concurrent.Executor;
  * @author yanhom
  * @author dragon-zhang
  * @since 1.0.0
- */
-@Slf4j
+ */@Slf4j
 public abstract class AbstractWebServerDtpAdapter<A extends Executor> extends AbstractDtpAdapter
         implements ApplicationListener<ApplicationEvent> {
 
@@ -46,7 +46,7 @@ public abstract class AbstractWebServerDtpAdapter<A extends Executor> extends Ab
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof WebServerInitializedEvent) {
             try {
-                DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+                DtpProperties dtpProperties = ContextManagerHelper.getBean(DtpProperties.class);
                 initialize();
                 afterInitialize();
                 refresh(dtpProperties);
@@ -60,7 +60,7 @@ public abstract class AbstractWebServerDtpAdapter<A extends Executor> extends Ab
     protected void initialize() {
         super.initialize();
         if (executors.get(getTpName()) == null) {
-            ApplicationContext applicationContext = ApplicationContextHolder.getInstance();
+            ApplicationContext applicationContext = SpringContextHolder.getInstance();
             WebServer webServer = ((WebServerApplicationContext) applicationContext).getWebServer();
             doEnhance(webServer);
             log.info("DynamicTp adapter, web server {} executor init end, executor: {}",

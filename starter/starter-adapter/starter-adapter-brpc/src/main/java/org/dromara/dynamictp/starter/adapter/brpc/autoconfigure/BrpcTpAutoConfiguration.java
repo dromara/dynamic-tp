@@ -19,7 +19,7 @@ package org.dromara.dynamictp.starter.adapter.brpc.autoconfigure;
 
 import org.dromara.dynamictp.apapter.brpc.client.StarlightClientDtpAdapter;
 import org.dromara.dynamictp.apapter.brpc.server.StarlightServerDtpAdapter;
-import org.dromara.dynamictp.core.spring.DtpBaseBeanConfiguration;
+import org.dromara.dynamictp.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;

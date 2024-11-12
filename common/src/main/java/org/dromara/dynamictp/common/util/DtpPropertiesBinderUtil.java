@@ -20,10 +20,11 @@ package org.dromara.dynamictp.common.util;
 import cn.hutool.core.util.ReflectUtil;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.springframework.core.env.Environment;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -118,25 +119,21 @@ public final class DtpPropertiesBinderUtil {
     }
 
     private static Object getProperty(String key, Object environment) {
-        if (environment instanceof Environment) {
-            Environment env = (Environment) environment;
-            return env.getProperty(key);
-        } else if (environment instanceof Map) {
+        if (environment instanceof Map) {
             Map<?, Object> properties = (Map<?, Object>) environment;
             return properties.get(key);
+        } else {
+            return ContextManagerHelper.getEnvironmentProperty(key);
         }
-        return null;
     }
 
     private static boolean contains(String key, Object environment) {
-        if (environment instanceof Environment) {
-            Environment env = (Environment) environment;
-            return env.containsProperty(key);
-        } else if (environment instanceof Map) {
+        if (environment instanceof Map) {
             Map<?, Object> properties = (Map<?, Object>) environment;
             return properties.containsKey(key);
+        } else {
+            return StringUtils.isNotBlank(ContextManagerHelper.getEnvironmentProperty(key));
         }
-        return false;
     }
 
     private static void setBasicField(Object source, Field field, String executorFieldName, Object executor, int[] idx) {

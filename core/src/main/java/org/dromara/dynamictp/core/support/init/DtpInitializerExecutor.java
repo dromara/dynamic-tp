@@ -34,7 +34,7 @@ public class DtpInitializerExecutor {
 
     private static final AtomicBoolean INITIALIZED = new AtomicBoolean(false);
 
-    public static void init() {
+    public static void init(Object... args) {
         if (!INITIALIZED.compareAndSet(false, true)) {
             return;
         }
@@ -43,6 +43,6 @@ public class DtpInitializerExecutor {
             return;
         }
         loadedInitializers.sort(Comparator.comparingInt(DtpInitializer::getOrder));
-        loadedInitializers.forEach(DtpInitializer::init);
+        loadedInitializers.forEach(i -> i.init(args));
     }
 }

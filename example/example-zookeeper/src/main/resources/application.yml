@@ -4,14 +4,14 @@ server:
 spring:
   application:
     name: dynamic-tp-zookeeper-demo
-  dynamic:
-    tp:
-      config-type: json               # zookeeper支持properties / json 配置
-      zookeeper:
-        zk-connect-str: 127.0.0.1:2181
-        root-node: /configserver/dev
-        node: dtp-group
-        config-key: dynamic-tp-zookeeper-demo-json   # json 用到
+
+dynamictp:
+  config-type: json                               # zookeeper支持properties / json 配置
+  zookeeper:
+    zk-connect-str: 127.0.0.1:2181
+    root-node: /configserver/dev
+    node: dtp-group
+    config-key: dynamic-tp-zookeeper-demo-json    # json 用到
 
 # 开启 SpringBoot Actuator Endpoint 暴露出DynamicTp指标接口
 # 开启 prometheus 指标采集端点

@@ -17,21 +17,19 @@
 
 package org.dromara.dynamictp.adapter.common;
 
+import com.google.common.eventbus.Subscribe;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.collections4.MapUtils;
 import org.dromara.dynamictp.common.event.AlarmCheckEvent;
 import org.dromara.dynamictp.common.event.CollectEvent;
 import org.dromara.dynamictp.common.event.RefreshEvent;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
+import org.dromara.dynamictp.common.manager.EventBusManager;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.core.handler.CollectorHandler;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.event.GenericApplicationListener;
-import org.springframework.core.ResolvableType;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
-import org.springframework.util.CollectionUtils;
+import java.util.EventObject;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTIFY_ITEMS;
 
@@ -42,28 +40,24 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTI
  * @since 1.0.6
  */
 @Slf4j
-public class DtpAdapterListener implements GenericApplicationListener {
+public class DtpAdapterListener {
 
-    @Override
-    public boolean supportsEventType(ResolvableType resolvableType) {
-        Class<?> type = resolvableType.getRawClass();
-        if (type != null) {
-            return RefreshEvent.class.isAssignableFrom(type)
-                    || CollectEvent.class.isAssignableFrom(type)
-                    || AlarmCheckEvent.class.isAssignableFrom(type);
-        }
-        return false;
+    public DtpAdapterListener() {
+        EventBusManager.register(this);
     }
 
-    @Override
-    public void onApplicationEvent(@NonNull ApplicationEvent event) {
+    @Subscribe
+    public void handleDtpEvent(EventObject event) {
         try {
             if (event instanceof RefreshEvent) {
-                doRefresh(((RefreshEvent) event).getDtpProperties());
+                RefreshEvent refreshEvent = (RefreshEvent) event;
+                doRefresh(refreshEvent.getDtpProperties());
             } else if (event instanceof CollectEvent) {
-                doCollect(((CollectEvent) event).getDtpProperties());
+                CollectEvent collectEvent = (CollectEvent) event;
+                doCollect(collectEvent.getDtpProperties());
             } else if (event instanceof AlarmCheckEvent) {
-                doAlarmCheck(((AlarmCheckEvent) event).getDtpProperties());
+                AlarmCheckEvent alarmCheckEvent = (AlarmCheckEvent) event;
+                doAlarmCheck(alarmCheckEvent.getDtpProperties());
             }
         } catch (Exception e) {
             log.error("DynamicTp adapter, event handle failed.", e);
@@ -71,33 +65,12 @@ public class DtpAdapterListener implements GenericApplicationListener {
     }
 
     /**
-     * Compatible with lower versions of spring.
-     *
-     * @param sourceType sourceType
-     * @return true if support
-     */
-    @Override
-    public boolean supportsSourceType(@Nullable Class<?> sourceType) {
-        return true;
-    }
-
-    /**
-     * Compatible with lower versions of spring.
-     *
-     * @return order
-     */
-    @Override
-    public int getOrder() {
-        return LOWEST_PRECEDENCE;
-    }
-
-    /**
      * Do collect thread pool stats.
      * @param dtpProperties dtpProperties
      */
     protected void doCollect(DtpProperties dtpProperties) {
-        val handlerMap = ApplicationContextHolder.getBeansOfType(DtpAdapter.class);
-        if (CollectionUtils.isEmpty(handlerMap)) {
+        val handlerMap = ContextManagerHelper.getBeansOfType(DtpAdapter.class);
+        if (MapUtils.isEmpty(handlerMap)) {
             return;
         }
         handlerMap.forEach((k, v) -> v.getMultiPoolStats().forEach(ps ->
@@ -109,8 +82,8 @@ public class DtpAdapterListener implements GenericApplicationListener {
      * @param dtpProperties dtpProperties
      */
     protected void doRefresh(DtpProperties dtpProperties) {
-        val handlerMap = ApplicationContextHolder.getBeansOfType(DtpAdapter.class);
-        if (CollectionUtils.isEmpty(handlerMap)) {
+        val handlerMap = ContextManagerHelper.getBeansOfType(DtpAdapter.class);
+        if (MapUtils.isEmpty(handlerMap)) {
             return;
         }
         handlerMap.forEach((k, v) -> v.refresh(dtpProperties));
@@ -121,8 +94,8 @@ public class DtpAdapterListener implements GenericApplicationListener {
      * @param dtpProperties dtpProperties
      */
     protected void doAlarmCheck(DtpProperties dtpProperties) {
-        val handlerMap = ApplicationContextHolder.getBeansOfType(DtpAdapter.class);
-        if (CollectionUtils.isEmpty(handlerMap)) {
+        val handlerMap = ContextManagerHelper.getBeansOfType(DtpAdapter.class);
+        if (MapUtils.isEmpty(handlerMap)) {
             return;
         }
         handlerMap.forEach((k, v) -> {

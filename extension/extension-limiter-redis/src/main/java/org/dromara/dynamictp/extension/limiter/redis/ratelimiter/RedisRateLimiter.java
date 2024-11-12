@@ -46,12 +46,23 @@ public interface RedisRateLimiter<T> {
     List<String> getKeys(String key);
 
     /**
-     * If allowed.
+     * Get args.
      *
      * @param key the key
      * @param windowSize the window size
      * @param limit the limit
+     * @return the args
+     */
+    String[] getArgs(String key, long windowSize, int limit);
+
+    /**
+     * check.
+     *
+     * @param name the key
+     * @param interval the interval
+     * @param limit the limit
      * @return the result
      */
-    T isAllowed(String key, long windowSize, int limit);
+    boolean check(String name, long interval, int limit);
+
 }

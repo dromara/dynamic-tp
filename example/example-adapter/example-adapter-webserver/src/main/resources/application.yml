@@ -27,45 +27,44 @@ spring:
             enable: true
         debug: false
 
-  dynamic:
-    tp:
-      enabled: true
-      enabledCollect: true          # 是否开启监控指标采集，默认false
-      collectorTypes: logging,micrometer       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
-      monitorInterval: 5
-      platforms:                    # 通知报警平台配置
-        - platform: wechat
-          urlKey: 32d7bf40-1353-4859              # 替换
-          receivers: test1,test2                   # 接受人企微名称
-        - platform: ding
-          urlKey: a05f38f61fdc748df55957c        # 替换
-          secret: SEC0e93872f969493536           # 替换，非sign模式可以没有此值
-          receivers: 15810119805                   # 钉钉账号手机号
-        - platform: lark
-          urlKey: 0d944ae7-b24a-40                 # 替换
-          receivers: test1,test2                   # 接受人飞书名称/openid
-        - platform: email
-          receivers: 123456@qq.com,789789@qq.com   # 收件人
-      tomcatTp:                                    # tomcat webserver 线程池配置
-        corePoolSize: 100
-        maximumPoolSize: 200
-        keepAliveTime: 60
-        runTimeout: 200
-        queueTimeout: 100
+dynamictp:
+  enabled: true
+  enabledCollect: true          # 是否开启监控指标采集，默认false
+  collectorTypes: logging,micrometer       # 监控数据采集器类型（logging | micrometer | internal_logging），默认micrometer
+  monitorInterval: 5
+  platforms:                    # 通知报警平台配置
+    - platform: wechat
+      urlKey: 32d7bf40-1353-4859              # 替换
+      receivers: test1,test2                   # 接受人企微名称
+    - platform: ding
+      urlKey: a05f38f61fdc748df55957c        # 替换
+      secret: SEC0e93872f969493536           # 替换，非sign模式可以没有此值
+      receivers: 15810119805                   # 钉钉账号手机号
+    - platform: lark
+      urlKey: 0d944ae7-b24a-40                 # 替换
+      receivers: test1,test2                   # 接受人飞书名称/openid
+    - platform: email
+      receivers: 123456@qq.com,789789@qq.com   # 收件人
+  tomcatTp:                                    # tomcat webserver 线程池配置
+    corePoolSize: 100
+    maximumPoolSize: 200
+    keepAliveTime: 60
+    runTimeout: 200
+    queueTimeout: 100
 
-      jettyTp:                                    # jetty webserver 线程池配置
-        corePoolSize: 100
-        maximumPoolSize: 200
-        keepAliveTime: 60
-        runTimeout: 200
-        queueTimeout: 1000
+  jettyTp:                                    # jetty webserver 线程池配置
+    corePoolSize: 100
+    maximumPoolSize: 200
+    keepAliveTime: 60
+    runTimeout: 200
+    queueTimeout: 1000
 
-      undertowTp: # undertow webserver 线程池配置
-        corePoolSize: 100
-        maximumPoolSize: 200
-        keepAliveTime: 60
-        runTimeout: 20
-        queueTimeout: 10
+  undertowTp: # undertow webserver 线程池配置
+    corePoolSize: 100
+    maximumPoolSize: 200
+    keepAliveTime: 60
+    runTimeout: 20
+    queueTimeout: 10
 
 # 开启 SpringBoot Actuator Endpoint 暴露出DynamicTp指标接口
 # 开启 prometheus 指标采集端点

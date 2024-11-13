@@ -17,18 +17,21 @@
 
 package org.dromara.dynamictp.common.util;
 
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
-import org.dromara.dynamictp.common.entity.ServiceInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.env.Environment;
+import org.dromara.dynamictp.common.entity.ServiceInstance;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
+import org.dromara.dynamictp.common.properties.DtpProperties;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
+
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.APP_ENV_KEY;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.APP_NAME_KEY;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.APP_PORT_KEY;
 
 /**
  * CommonUtil related
@@ -44,14 +47,6 @@ public final class CommonUtil {
     private static final ServiceInstance SERVICE_INSTANCE;
 
     static {
-        Environment environment = ApplicationContextHolder.getEnvironment();
-
-        String appName = environment.getProperty("spring.application.name");
-        appName = StringUtils.isNoneBlank(appName) ? appName : "application";
-
-        String portStr = environment.getProperty("server.port");
-        int port = StringUtils.isNotBlank(portStr) ? Integer.parseInt(portStr) : 0;
-
         String address = null;
         try {
             address = getLocalHostExactAddress().getHostAddress();
@@ -62,18 +57,21 @@ public final class CommonUtil {
         String env = DtpProperties.getInstance().getEnv();
         if (StringUtils.isBlank(env)) {
             // fix #I8SSGQ
-            env = environment.getProperty("spring.profiles.active");
+            env = ContextManagerHelper.getEnvironmentProperty(APP_ENV_KEY);
         }
         if (StringUtils.isBlank(env)) {
-            String[] profiles = environment.getActiveProfiles();
+            String[] profiles = ContextManagerHelper.getActiveProfiles();
             if (profiles.length < 1) {
-                profiles = environment.getDefaultProfiles();
+                profiles = ContextManagerHelper.getDefaultProfiles();
             }
             if (profiles.length >= 1) {
                 env = profiles[0];
             }
         }
 
+        String appName = ContextManagerHelper.getEnvironmentProperty(APP_NAME_KEY);
+        String portStr = ContextManagerHelper.getEnvironmentProperty(APP_PORT_KEY);
+        int port = StringUtils.isNotBlank(portStr) ? Integer.parseInt(portStr) : 0;
         SERVICE_INSTANCE = new ServiceInstance(address, port, appName, env);
     }
 

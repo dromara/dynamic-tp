@@ -27,7 +27,7 @@ import org.dromara.dynamictp.core.monitor.collector.LogCollector;
 import org.dromara.dynamictp.core.monitor.collector.MetricsCollector;
 import org.dromara.dynamictp.core.monitor.collector.MicroMeterCollector;
 import org.dromara.dynamictp.core.monitor.collector.jmx.JMXCollector;
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;

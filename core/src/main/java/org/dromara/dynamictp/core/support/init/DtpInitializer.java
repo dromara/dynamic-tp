@@ -43,6 +43,8 @@ public interface DtpInitializer {
 
     /**
      * Init.
+     *
+     * @param args args
      */
-    void init();
+    void init(Object... args);
 }

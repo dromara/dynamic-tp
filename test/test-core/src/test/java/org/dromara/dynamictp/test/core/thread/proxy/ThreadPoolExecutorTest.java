@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.test.core.thread.proxy;
 
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -41,6 +41,16 @@ class NacosRefresherTest extends DtpBaseTest {
 
     @Test
     void testRefresh() throws InterruptedException {
+
+        // 打印所有bean名称
+        String[] beanNames = context.getBeanDefinitionNames();
+        System.out.println("所有bean名称：");
+        for (String beanName : beanNames) {
+            System.out.println(beanName);
+        }
+
+        assert context.containsBean("dtpExecutor1") : "dtpExecutor1 bean not found!";
+
         int corePoolSize = context.getBean("dtpExecutor1", ThreadPoolExecutor.class).getCorePoolSize();
         System.out.println(corePoolSize);
         Assertions.assertEquals(6, corePoolSize);
@@ -55,11 +65,10 @@ class NacosRefresherTest extends DtpBaseTest {
         String dataId = "dynamic-tp-demo-dtp-dev.yml";
         String groupId = "DEFAULT_GROUP";
         String type = ConfigType.YAML.getType();
-        String content = "spring:\n" +
-                "  dynamic:\n" +
-                "    tp:\n" +
+        String content =
+                "dynamictp:\n" +
                 "      enabled: true                               # 是否启用 dynamictp，默认true\n" +
-                "      executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量\n" +
+                "      executors:                                  # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量\n" +
                 "        - threadPoolName: dtpExecutor1\n" +
                 "          threadPoolAliasName: 测试线程池        # 线程池别名\n" +
                 "          executorType: common                 # 线程池类型 common、eager、ordered、scheduled，默认 common\n" +

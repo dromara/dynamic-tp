@@ -18,8 +18,6 @@
 package org.dromara.dynamictp.test.core.thread;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
-import org.dromara.dynamictp.core.spring.EnableDynamicTp;
-import org.dromara.dynamictp.core.spring.YamlPropertySourceFactory;
 import org.dromara.dynamictp.core.support.task.Ordered;
 import org.dromara.dynamictp.core.support.task.callable.OrderedCallable;
 import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
@@ -27,6 +25,8 @@ import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
+import org.dromara.dynamictp.spring.support.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.MDC;

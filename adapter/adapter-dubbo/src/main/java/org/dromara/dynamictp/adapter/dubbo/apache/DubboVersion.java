@@ -34,6 +34,10 @@ public class DubboVersion {
 
     public static final String VERSION_3_0_3 = "3.0.3";
 
+    public static final String VERSION_3_0_9 = "3.0.9";
+
+    public static final String VERSION_3_1_8 = "3.1.8";
+
     /**
      * Compare versions
      * @return the value {@code 0} if {@code version1 == version2};

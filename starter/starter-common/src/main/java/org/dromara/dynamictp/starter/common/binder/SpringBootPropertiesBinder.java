@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.DtpPropertiesBinderUtil;
-import org.dromara.dynamictp.core.spring.PropertiesBinder;
+import org.dromara.dynamictp.core.support.binder.PropertiesBinder;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValues;
 import org.springframework.boot.context.properties.bind.Bindable;
@@ -60,13 +60,17 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
     }
 
     @Override
-    public void bindDtpProperties(Environment environment, DtpProperties dtpProperties) {
-        beforeBind(environment, dtpProperties);
+    public void bindDtpProperties(Object environment, DtpProperties dtpProperties) {
+        if (!(environment instanceof Environment)) {
+            throw new IllegalArgumentException("Invalid environment type, expected org.springframework.core.env.Environment");
+        }
+        Environment env = (Environment) environment;
+        beforeBind(env, dtpProperties);
         try {
             Class.forName("org.springframework.boot.context.properties.bind.Binder");
-            doBindIn2X(environment, dtpProperties);
+            doBindIn2X(env, dtpProperties);
         } catch (ClassNotFoundException e) {
-            doBindIn1X(environment, dtpProperties);
+            doBindIn1X(env, dtpProperties);
         }
         afterBind(environment, dtpProperties);
     }
@@ -124,5 +128,5 @@ public class SpringBootPropertiesBinder implements PropertiesBinder {
             throw new RuntimeException(e);
         }
     }
-}
 
+}

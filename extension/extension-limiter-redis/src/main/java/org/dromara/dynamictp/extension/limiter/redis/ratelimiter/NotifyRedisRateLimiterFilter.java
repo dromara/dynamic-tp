@@ -18,12 +18,11 @@
 package org.dromara.dynamictp.extension.limiter.redis.ratelimiter;
 
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.pattern.filter.Invoker;
 import org.dromara.dynamictp.core.notifier.chain.filter.NotifyFilter;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -35,13 +34,8 @@ import java.util.List;
 @Slf4j
 public class NotifyRedisRateLimiterFilter implements NotifyFilter {
 
-    public static final int LUA_RES_REMAIN_INDEX = 2;
-
-    private final RedisRateLimiter<List<Long>> redisScriptRateLimiter;
-
-    public NotifyRedisRateLimiterFilter(RedisRateLimiter<List<Long>> redisScriptRateLimiter) {
-        this.redisScriptRateLimiter = redisScriptRateLimiter;
-    }
+    @Resource
+    private RedisRateLimiter<List<Long>> redisScriptRateLimiter;
 
     @Override
     public int getOrder() {
@@ -51,27 +45,11 @@ public class NotifyRedisRateLimiterFilter implements NotifyFilter {
     @Override
     public void doFilter(BaseNotifyCtx context, Invoker<BaseNotifyCtx> nextFilter) {
         String notifyName = context.getExecutorWrapper().getThreadPoolName() + ":" + context.getNotifyItemEnum().getValue();
-        boolean checkResult = check(notifyName, context.getNotifyItem().getClusterLimit(),
-                context.getNotifyItem().getInterval());
+        int interval = context.getNotifyItem().getInterval();
+        int limit = context.getNotifyItem().getClusterLimit();
+        boolean checkResult = redisScriptRateLimiter.check(notifyName, interval, limit);
         if (checkResult) {
             nextFilter.invoke(context);
-        }
-    }
-
-    private boolean check(String notifyName, int limit, long interval) {
-        try {
-            val res = redisScriptRateLimiter.isAllowed(notifyName, interval, limit);
-            if (CollectionUtils.isEmpty(res)) {
-                return true;
-            }
-            if (res.get(LUA_RES_REMAIN_INDEX) <= 0) {
-                log.debug("DynamicTp notify, trigger redis rate limit, limitKey:{}", res.get(0));
-                return false;
-            }
-            return true;
-        } catch (Exception e) {
-            log.error("DynamicTp notify, redis rate limit check failed, limitKey:{}", notifyName, e);
-            return true;
         }
     }
 }

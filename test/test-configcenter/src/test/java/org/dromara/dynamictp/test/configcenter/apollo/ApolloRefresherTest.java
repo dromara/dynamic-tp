@@ -52,9 +52,8 @@ class ApolloRefresherTest extends DtpBaseTest {
     private void mockConfigChange() {
         YamlConfigFile configFile = (YamlConfigFile) ConfigService.getConfigFile("dynamic-tp-demo-dtp-dev", ConfigFileFormat.YML);
         Properties newProperties = new Properties();
-        String content = "spring:\n" +
-                "  dynamic:\n" +
-                "    tp:\n" +
+        String content =
+                "dynamictp:\n" +
                 "      enabled: true                               # 是否启用 dynamictp，默认true\n" +
                 "      executors:                                   # 动态线程池配置，都有默认值，采用默认值的可以不配置该项，减少配置量\n" +
                 "        - threadPoolName: dtpExecutor1\n" +

@@ -28,6 +28,7 @@ import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.TpMainFields;
 import org.dromara.dynamictp.common.notifier.Notifier;
+import org.dromara.dynamictp.common.util.BeanCopierUtil;
 import org.dromara.dynamictp.common.util.CommonUtil;
 import org.dromara.dynamictp.common.util.DateUtil;
 import org.dromara.dynamictp.core.notifier.alarm.AlarmCounter;
@@ -37,7 +38,6 @@ import org.dromara.dynamictp.core.notifier.context.DtpNotifyCtxHolder;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.system.SystemMetricManager;
 import org.slf4j.MDC;
-import org.springframework.beans.BeanUtils;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -182,7 +182,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
     private NotifyPlatform newTargetPlatform(NotifyPlatform platform) {
         NotifyPlatform targetPlatform = new NotifyPlatform();
-        BeanUtils.copyProperties(platform, targetPlatform);
+        BeanCopierUtil.copyProperties(platform, targetPlatform);
 
         BaseNotifyCtx context = DtpNotifyCtxHolder.get();
         NotifyItem item = context.getNotifyItem();

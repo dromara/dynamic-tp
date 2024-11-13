@@ -19,7 +19,7 @@ package org.dromara.dynamictp.starter.zookeeper.autoconfigure;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.support.BinderHelper;
+import org.dromara.dynamictp.core.support.binder.BinderHelper;
 import org.dromara.dynamictp.starter.zookeeper.util.CuratorUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;

@@ -32,12 +32,13 @@ import org.apache.dubbo.config.spring.context.event.ServiceBeanExportedEvent;
 import org.apache.dubbo.remoting.transport.dispatcher.WrappedChannelHandler;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.jvmti.JVMTI;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 
 import java.util.Map;
 import java.util.Objects;
@@ -57,11 +58,13 @@ import static org.apache.dubbo.common.constants.CommonConstants.SIDE_KEY;
  */
 @Slf4j
 @SuppressWarnings("all")
-public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
+public class ApacheDubboDtpAdapter extends AbstractDtpAdapter implements ApplicationListener<ApplicationEvent> {
 
     private static final String TP_PREFIX = "dubboTp";
 
     private static final String EXECUTOR_SERVICE_COMPONENT_KEY = ExecutorService.class.getName();
+
+    private static final String INTERNAL_EXECUTOR_SERVICE_COMPONENT_KEY = "INTERNAL_SERVICE_EXECUTOR";
 
     private static final String EXECUTOR_FIELD = "executor";
 
@@ -69,7 +72,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof ServiceBeanExportedEvent) {
             try {
-                DtpProperties dtpProperties = ApplicationContextHolder.getBean(DtpProperties.class);
+                DtpProperties dtpProperties = ContextManagerHelper.getBean(DtpProperties.class);
                 initialize();
                 afterInitialize();
                 refresh(dtpProperties);
@@ -132,12 +135,14 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter {
         }
 
         val data = (ConcurrentMap<String, ConcurrentMap<Object, ExecutorService>>) ReflectionUtil.getFieldValue(
-                DefaultExecutorRepository.class, "data", executorRepository);
+            DefaultExecutorRepository.class, "data", executorRepository);
         if (Objects.isNull(data)) {
             return;
         }
 
-        Map<Object, ExecutorService> executorMap = data.get(EXECUTOR_SERVICE_COMPONENT_KEY);
+        //3.0.9 <= 当前dubbo版本 < 3.1.8时，执行线程池使用的是INTERNAL_SERVICE_EXECUTOR
+        boolean isUseInternalExecutorVersion = DubboVersion.compare(currVersion, DubboVersion.VERSION_3_0_9) >= 0 && DubboVersion.compare(currVersion, DubboVersion.VERSION_3_1_8) < 0;
+        Map<Object, ExecutorService> executorMap = isUseInternalExecutorVersion ? data.get(INTERNAL_EXECUTOR_SERVICE_COMPONENT_KEY) : data.get(EXECUTOR_SERVICE_COMPONENT_KEY);
         if (MapUtils.isNotEmpty(executorMap)) {
             executorMap.forEach((k, v) -> {
                 ThreadPoolExecutor proxy = getProxy(v);

@@ -17,21 +17,23 @@
 
 package org.dromara.dynamictp.core.monitor;
 
+import com.google.common.eventbus.Subscribe;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 import org.dromara.dynamictp.common.entity.VTExecutorStats;
 import org.dromara.dynamictp.common.event.AlarmCheckEvent;
 import org.dromara.dynamictp.common.event.CollectEvent;
+import org.dromara.dynamictp.common.event.CustomContextRefreshedEvent;
+import org.dromara.dynamictp.common.manager.EventBusManager;
+
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.spring.ApplicationContextHolder;
-import org.dromara.dynamictp.common.spring.OnceApplicationContextEventListener;
+
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.core.handler.CollectorHandler;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolCreator;
-import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
@@ -47,7 +49,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTI
  * @since 1.0.0
  **/
 @Slf4j
-public class DtpMonitor extends OnceApplicationContextEventListener {
+public class DtpMonitor {
 
     private static final ScheduledExecutorService MONITOR_EXECUTOR = ThreadPoolCreator.newScheduledThreadPool("dtp-monitor", 1);
 
@@ -59,10 +61,11 @@ public class DtpMonitor extends OnceApplicationContextEventListener {
 
     public DtpMonitor(DtpProperties dtpProperties) {
         this.dtpProperties = dtpProperties;
+        EventBusManager.register(this);
     }
 
-    @Override
-    protected synchronized void onContextRefreshedEvent(ContextRefreshedEvent event) {
+    @Subscribe
+    public synchronized void onContextRefreshedEvent(CustomContextRefreshedEvent event) {
         // if monitorInterval is same as before, do nothing.
         if (monitorInterval == dtpProperties.getMonitorInterval()) {
             return;
@@ -123,12 +126,12 @@ public class DtpMonitor extends OnceApplicationContextEventListener {
 
     private void publishCollectEvent() {
         CollectEvent event = new CollectEvent(this, dtpProperties);
-        ApplicationContextHolder.publishEvent(event);
+        EventBusManager.post(event);
     }
 
     private void publishAlarmCheckEvent() {
         AlarmCheckEvent event = new AlarmCheckEvent(this, dtpProperties);
-        ApplicationContextHolder.publishEvent(event);
+        EventBusManager.post(event);
     }
 
     public static void destroy() {

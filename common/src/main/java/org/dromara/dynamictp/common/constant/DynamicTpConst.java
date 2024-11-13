@@ -32,7 +32,7 @@ public final class DynamicTpConst {
 
     private DynamicTpConst() { }
 
-    public static final String MAIN_PROPERTIES_PREFIX = "spring.dynamic.tp";
+    public static final String MAIN_PROPERTIES_PREFIX = "dynamictp";
 
     public static final String DTP_ENABLED_PROP = MAIN_PROPERTIES_PREFIX + ".enabled";
 
@@ -51,6 +51,12 @@ public final class DynamicTpConst {
     public static final String GLOBAL_CONFIG_PREFIX = MAIN_PROPERTIES_PREFIX + ".globalExecutorProps.";
 
     public static final String EXECUTORS_CONFIG_PREFIX = MAIN_PROPERTIES_PREFIX + ".executors[";
+
+    public static final String APP_NAME_KEY = "APP.NAME";
+
+    public static final String APP_PORT_KEY = "APP.PORT";
+
+    public static final String APP_ENV_KEY = "APP.ENV";
 
     /**
      * Dtp executor properties const.

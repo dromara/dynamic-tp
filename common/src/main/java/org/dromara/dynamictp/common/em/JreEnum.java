@@ -92,7 +92,7 @@ public enum JreEnum {
             int majorVersion = (int) MethodUtils.invokeMethod(javaRunTimeVersion, "major");
             return JreEnum.valueOf("JAVA_" + majorVersion);
         } catch (Exception e) {
-            log.debug("can't determine current JRE version", e);
+            log.warn("can't determine current JRE version", e);
         }
         return JAVA_8;
     }

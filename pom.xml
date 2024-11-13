@@ -49,6 +49,7 @@
         <module>jvmti</module>
         <module>test</module>
         <module>dependencies</module>
+        <module>spring</module>
     </modules>
 
     <dependencies>

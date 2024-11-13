@@ -43,7 +43,7 @@ public class DtpProperties {
     private boolean enabled = true;
 
     /**
-     * Environment, if not set, will use "spring.profiles.active".
+     * Environment, if not set, will use "APP.ENV".
      */
     private String env;
 

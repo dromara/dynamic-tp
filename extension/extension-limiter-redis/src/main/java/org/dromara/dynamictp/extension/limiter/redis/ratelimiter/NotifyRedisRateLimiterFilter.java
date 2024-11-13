@@ -22,7 +22,6 @@ import org.dromara.dynamictp.common.pattern.filter.Invoker;
 import org.dromara.dynamictp.core.notifier.chain.filter.NotifyFilter;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -34,8 +33,11 @@ import java.util.List;
 @Slf4j
 public class NotifyRedisRateLimiterFilter implements NotifyFilter {
 
-    @Resource
-    private RedisRateLimiter<List<Long>> redisScriptRateLimiter;
+    private final RedisRateLimiter<List<Long>> redisScriptRateLimiter;
+
+    public NotifyRedisRateLimiterFilter(RedisRateLimiter<List<Long>> redisScriptRateLimiter) {
+        this.redisScriptRateLimiter = redisScriptRateLimiter;
+    }
 
     @Override
     public int getOrder() {

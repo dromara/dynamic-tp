@@ -29,7 +29,6 @@ import org.dromara.dynamictp.common.manager.EventBusManager;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.handler.CollectorHandler;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
-
 import java.util.EventObject;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTIFY_ITEMS;

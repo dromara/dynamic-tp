@@ -23,11 +23,11 @@ import lombok.val;
 import org.apache.commons.collections4.MapUtils;
 import org.dromara.dynamictp.common.entity.JvmStats;
 import org.dromara.dynamictp.common.entity.Metrics;
-import org.dromara.dynamictp.core.DtpRegistry;
-import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.common.manager.ContextManagerHelper;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.aware.MetricsAware;
+import org.dromara.dynamictp.core.converter.ExecutorConverter;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
@@ -48,7 +48,7 @@ public class DtpEndpoint {
         List<Metrics> metricsList = Lists.newArrayList();
         DtpRegistry.getAllExecutorNames().forEach(x -> {
             ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(x);
-            if(wrapper.isVirtualThreadExecutor()) {
+            if (wrapper.isVirtualThreadExecutor()) {
                 metricsList.add(ExecutorConverter.toVTExecutorMetrics(wrapper));
             } else {
                 metricsList.add(ExecutorConverter.toMetrics(wrapper));

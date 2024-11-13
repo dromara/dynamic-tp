@@ -159,8 +159,6 @@ public class TestServiceImpl implements TestService {
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
-                System.out.println("i am a VTExecutor's task");
-
             });
         }
     }

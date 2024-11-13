@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dromara.dynamictp.core.support.proxy;
 
 import com.google.common.collect.Sets;
@@ -31,7 +48,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorService {
 
-    private final ExecutorService THREAD_PER_TASK_EXECUTOR;
+    private final ExecutorService threadPerTaskExecutor;
 
     /**
      * Notify platform ids.
@@ -76,7 +93,7 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
 
     public VirtualThreadExecutorProxy(ExecutorService executor) {
         super();
-        THREAD_PER_TASK_EXECUTOR = executor;
+        threadPerTaskExecutor = executor;
     }
 
     @Override
@@ -84,11 +101,11 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
         command = getEnhancedTask(command);
         EnhancedRunnable.of(command, this);
         AwareManager.execute(this, command);
-        THREAD_PER_TASK_EXECUTOR.execute(command);
+        threadPerTaskExecutor.execute(command);
     }
 
     public ExecutorService getThreadPerTaskExecutor() {
-        return THREAD_PER_TASK_EXECUTOR;
+        return threadPerTaskExecutor;
     }
 
     @Override
@@ -104,27 +121,27 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
 
     @Override
     public void shutdown() {
-        THREAD_PER_TASK_EXECUTOR.shutdown();
+        threadPerTaskExecutor.shutdown();
     }
 
     @Override
     public List<Runnable> shutdownNow() {
-        return THREAD_PER_TASK_EXECUTOR.shutdownNow();
+        return threadPerTaskExecutor.shutdownNow();
     }
 
     @Override
     public boolean isShutdown() {
-        return THREAD_PER_TASK_EXECUTOR.isShutdown();
+        return threadPerTaskExecutor.isShutdown();
     }
 
     @Override
     public boolean isTerminated() {
-        return THREAD_PER_TASK_EXECUTOR.isTerminated();
+        return threadPerTaskExecutor.isTerminated();
     }
 
     @Override
     public boolean awaitTermination(long l, TimeUnit timeUnit) throws InterruptedException {
-        return THREAD_PER_TASK_EXECUTOR.awaitTermination(l, timeUnit);
+        return threadPerTaskExecutor.awaitTermination(l, timeUnit);
     }
 
     @Override
@@ -133,7 +150,7 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
         futureTask = (FutureTask<T>) getEnhancedTask(futureTask);
         EnhancedRunnable.of(futureTask, this);
         AwareManager.execute(this, futureTask);
-        return THREAD_PER_TASK_EXECUTOR.submit(callable);
+        return threadPerTaskExecutor.submit(callable);
     }
 
 
@@ -142,7 +159,7 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
         runnable = getEnhancedTask(runnable);
         EnhancedRunnable.of(runnable, this);
         AwareManager.execute(this, runnable);
-        return THREAD_PER_TASK_EXECUTOR.submit(runnable, t);
+        return threadPerTaskExecutor.submit(runnable, t);
     }
 
     @Override
@@ -150,27 +167,27 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
         runnable = getEnhancedTask(runnable);
         EnhancedRunnable.of(runnable, this);
         AwareManager.execute(this, runnable);
-        return THREAD_PER_TASK_EXECUTOR.submit(runnable);
+        return threadPerTaskExecutor.submit(runnable);
     }
 
     @Override
     public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> collection) throws InterruptedException {
-        return THREAD_PER_TASK_EXECUTOR.invokeAll(collection);
+        return threadPerTaskExecutor.invokeAll(collection);
     }
 
     @Override
     public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> collection, long l, TimeUnit timeUnit) throws InterruptedException {
-        return THREAD_PER_TASK_EXECUTOR.invokeAll(collection, l, timeUnit);
+        return threadPerTaskExecutor.invokeAll(collection, l, timeUnit);
     }
 
     @Override
     public <T> T invokeAny(Collection<? extends Callable<T>> collection) throws InterruptedException, ExecutionException {
-        return THREAD_PER_TASK_EXECUTOR.invokeAny(collection);
+        return threadPerTaskExecutor.invokeAny(collection);
     }
 
     @Override
     public <T> T invokeAny(Collection<? extends Callable<T>> collection, long l, TimeUnit timeUnit) throws InterruptedException, ExecutionException, TimeoutException {
-        return THREAD_PER_TASK_EXECUTOR.invokeAny(collection, l, timeUnit);
+        return threadPerTaskExecutor.invokeAny(collection, l, timeUnit);
     }
 
     public String getThreadPoolName() {
@@ -196,6 +213,7 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
     public void setNotifyEnabled(boolean notifyEnabled) {
         this.notifyEnabled = notifyEnabled;
     }
+
     public Set<String> getPluginNames() {
         return pluginNames;
     }

@@ -25,9 +25,7 @@ import org.dromara.dynamictp.common.event.AlarmCheckEvent;
 import org.dromara.dynamictp.common.event.CollectEvent;
 import org.dromara.dynamictp.common.event.CustomContextRefreshedEvent;
 import org.dromara.dynamictp.common.manager.EventBusManager;
-
 import org.dromara.dynamictp.common.properties.DtpProperties;
-
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.core.handler.CollectorHandler;
@@ -99,7 +97,7 @@ public class DtpMonitor {
         }
         executorNames.forEach(x -> {
             ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(x);
-            if(wrapper.isVirtualThreadExecutor()) {
+            if (wrapper.isVirtualThreadExecutor()) {
                 doCollectVTExecutor(ExecutorConverter.toVTExecutorMetrics(wrapper));
             } else {
                 doCollect(ExecutorConverter.toMetrics(wrapper));

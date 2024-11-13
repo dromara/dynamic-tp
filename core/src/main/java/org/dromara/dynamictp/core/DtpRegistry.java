@@ -227,7 +227,7 @@ public class DtpRegistry {
         if (!Objects.equals(executor.allowsCoreThreadTimeOut(), props.isAllowCoreThreadTimeOut())) {
             executor.allowCoreThreadTimeOut(props.isAllowCoreThreadTimeOut());
         }
-        if(!executorWrapper.isVirtualThreadExecutor()) {
+        if (!executorWrapper.isVirtualThreadExecutor()) {
             // update queue
             updateQueueProps(executor, props);
         }
@@ -244,7 +244,7 @@ public class DtpRegistry {
         if (StringUtils.isNotBlank(props.getThreadPoolAliasName())) {
             executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());
         }
-        if(!executorWrapper.isVirtualThreadExecutor()) {
+        if (!executorWrapper.isVirtualThreadExecutor()) {
             ExecutorAdapter<?> executor = executorWrapper.getExecutor();
             // update reject handler
             String currentRejectHandlerType = executor.getRejectHandlerType();

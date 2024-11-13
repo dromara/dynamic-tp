@@ -34,20 +34,5 @@
             <artifactId>spring-boot-starter-jetty</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.dromara.dynamictp</groupId>
-            <artifactId>dynamic-tp-adapter-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dromara.dynamictp</groupId>
-            <artifactId>dynamic-tp-spring</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.dromara.dynamictp</groupId>
-            <artifactId>dynamic-tp-spring</artifactId>
-            <version>1.1.9-3.x</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 </project>

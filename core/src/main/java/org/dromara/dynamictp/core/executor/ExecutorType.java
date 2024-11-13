@@ -21,7 +21,7 @@ import lombok.AllArgsConstructor;
 import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
 import lombok.Getter;
 import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
-import org.dromara.dynamictp.core.support.VirtualThreadExecutorProxy;
+import org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy;
 
 /**
  * ExecutorType related

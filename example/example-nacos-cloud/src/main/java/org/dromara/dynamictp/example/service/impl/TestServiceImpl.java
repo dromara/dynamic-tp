@@ -59,7 +59,7 @@ public class TestServiceImpl implements TestService {
                            DtpExecutor eagerDtpExecutor,
                            ScheduledExecutorService scheduledDtpExecutor,
                            OrderedDtpExecutor orderedDtpExecutor,
-                           @Qualifier("VirtualThreadExecutor1") ExecutorService virtualThreadExecutor) {
+                           @Qualifier("virtualThreadExecutor1") ExecutorService virtualThreadExecutor) {
         this.jucThreadPoolExecutor = jucThreadPoolExecutor;
         this.threadPoolTaskExecutor = threadPoolTaskExecutor;
         this.eagerDtpExecutor = eagerDtpExecutor;
@@ -67,10 +67,6 @@ public class TestServiceImpl implements TestService {
         this.orderedDtpExecutor = orderedDtpExecutor;
         this.virtualThreadExecutor = virtualThreadExecutor;
     }
-
-//    public TestServiceImpl(@Qualifier("VirtualThreadExecutor1") ExecutorService virtualThreadExecutor) {
-//        this.VirtualThreadExecutor = virtualThreadExecutor;
-//    }
 
     @Override
     public void testJucTp() {

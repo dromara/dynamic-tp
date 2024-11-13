@@ -1,4 +1,4 @@
-package org.dromara.dynamictp.core.support;
+package org.dromara.dynamictp.core.support.proxy;
 
 import com.google.common.collect.Sets;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;

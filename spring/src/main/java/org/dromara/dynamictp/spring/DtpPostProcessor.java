@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.spring;
+package org.dromara.dynamictp.spring;
 
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +30,9 @@ import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
 import org.dromara.dynamictp.core.executor.eager.TaskQueue;
 import org.dromara.dynamictp.core.support.DynamicTp;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.support.ScheduledThreadPoolExecutorProxy;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorProxy;
-import org.dromara.dynamictp.core.support.VirtualThreadExecutorProxy;
+import org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy;
+import org.dromara.dynamictp.core.support.proxy.ScheduledThreadPoolExecutorProxy;
+import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.springframework.beans.BeansException;
@@ -125,7 +125,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
             } else {
                 BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanName);
                 if (!(beanDefinition instanceof AnnotatedBeanDefinition)) {
-                    if(beanDefinition.getBeanClassName().equals("org.dromara.dynamictp.core.support.VirtualThreadExecutorProxy")) {
+                    if(beanDefinition.getBeanClassName().equals("org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy")) {
                         return doRegisterAndReturnCommon(bean, beanName);
                     }
                     return bean;

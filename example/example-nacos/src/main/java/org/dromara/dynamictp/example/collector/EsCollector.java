@@ -42,8 +42,8 @@ public class EsCollector extends AbstractCollector {
     }
 
     @Override
-    public void collect(VTExecutorStats vtTaskStats) {
-        esClient.save(JsonUtil.toJson(vtTaskStats));
+    public void collect(VTExecutorStats vtExecutorStats) {
+        esClient.save(JsonUtil.toJson(vtExecutorStats));
     }
 
     @Override

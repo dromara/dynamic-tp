@@ -36,9 +36,9 @@ public interface MetricsCollector {
 
     /**
      * Collect virtual thread key metrics.
-     * @param vtTaskStats
+     * @param vtExecutorStats
      */
-    void collect(VTExecutorStats vtTaskStats);
+    void collect(VTExecutorStats vtExecutorStats);
 
     /**
      * Collector type.

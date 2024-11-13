@@ -44,8 +44,8 @@ public class LogCollector extends AbstractCollector {
     }
 
     @Override
-    public void collect(VTExecutorStats vtTaskStats) {
-        String metrics = JsonUtil.toJson(vtTaskStats);
+    public void collect(VTExecutorStats vtExecutorStats) {
+        String metrics = JsonUtil.toJson(vtExecutorStats);
         if (LogHelper.getMonitorLogger() == null) {
             log.error("Cannot find monitor logger...");
             return;

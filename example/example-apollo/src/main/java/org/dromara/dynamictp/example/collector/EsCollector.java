@@ -18,6 +18,7 @@
 package org.dromara.dynamictp.example.collector;
 
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
+import org.dromara.dynamictp.common.entity.VTExecutorStats;
 import org.dromara.dynamictp.common.util.JsonUtil;
 import org.dromara.dynamictp.core.monitor.collector.AbstractCollector;
 
@@ -40,6 +41,10 @@ public class EsCollector extends AbstractCollector {
         esClient.save(JsonUtil.toJson(poolStats));
     }
 
+    @Override
+    public void collect(VTExecutorStats vtExecutorStats) {
+        esClient.save(JsonUtil.toJson(vtExecutorStats));
+    }
     @Override
     public String type() {
         return "es";

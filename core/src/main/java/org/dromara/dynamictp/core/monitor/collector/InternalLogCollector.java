@@ -35,8 +35,8 @@ public class InternalLogCollector extends AbstractCollector {
     }
 
     @Override
-    public void collect(VTExecutorStats vtTaskStats) {
-        log.info("dynamic.vt metrics: {}", JsonUtil.toJson(vtTaskStats));
+    public void collect(VTExecutorStats vtExecutorStats) {
+        log.info("dynamic.vt metrics: {}", JsonUtil.toJson(vtExecutorStats));
     }
 
     @Override

@@ -97,7 +97,7 @@ public class DtpMonitor extends OnceApplicationContextEventListener {
         executorNames.forEach(x -> {
             ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(x);
             if(wrapper.isVirtualThreadExecutor()) {
-                doCollectVTTask(ExecutorConverter.toVTExecutorMetrics(wrapper));
+                doCollectVTExecutor(ExecutorConverter.toVTExecutorMetrics(wrapper));
             } else {
                 doCollect(ExecutorConverter.toMetrics(wrapper));
             }
@@ -105,11 +105,11 @@ public class DtpMonitor extends OnceApplicationContextEventListener {
         publishCollectEvent();
     }
 
-    private void doCollectVTTask(VTExecutorStats vtTaskStats) {
+    private void doCollectVTExecutor(VTExecutorStats vtExecutorStats) {
         try {
-            CollectorHandler.getInstance().collectVTtask(vtTaskStats, dtpProperties.getCollectorTypes());
+            CollectorHandler.getInstance().collectVTExecutor(vtExecutorStats, dtpProperties.getCollectorTypes());
         } catch (Exception e) {
-            log.error("DynamicTp monitor, VTTask collect error.", e);
+            log.error("DynamicTp monitor, VTExecutor collect error.", e);
         }
     }
 

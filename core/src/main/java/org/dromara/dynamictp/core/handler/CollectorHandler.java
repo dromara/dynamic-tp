@@ -69,14 +69,14 @@ public final class CollectorHandler {
         }
     }
 
-    public void collectVTtask(VTExecutorStats vtTaskStats, List<String> types) {
-        if (vtTaskStats == null || CollectionUtils.isEmpty(types)) {
+    public void collectVTExecutor(VTExecutorStats vtExecutorStats, List<String> types) {
+        if (vtExecutorStats == null || CollectionUtils.isEmpty(types)) {
             return;
         }
         for (String collectorType : types) {
             MetricsCollector collector = COLLECTORS.get(collectorType.toLowerCase());
             if (collector != null) {
-                collector.collect(vtTaskStats);
+                collector.collect(vtExecutorStats);
             }
         }
     }

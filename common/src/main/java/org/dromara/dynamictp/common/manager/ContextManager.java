@@ -73,6 +73,15 @@ public interface ContextManager {
     String getEnvironmentProperty(String key);
 
     /**
+     * Retrieves an environment property by its key in the specified environment.
+     *
+     * @param key the key of the property
+     * @param environment the specified environment object
+     * @return the value of the property, or null if not found
+     */
+    String getEnvironmentProperty(String key, Object environment);
+
+    /**
      * Retrieves an environment property by its key, with a default value.
      *
      * @param key the key of the property

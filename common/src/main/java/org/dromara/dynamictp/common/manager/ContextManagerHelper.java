@@ -58,6 +58,10 @@ public class ContextManagerHelper {
         return CONTEXT_MANAGER.getEnvironmentProperty(key);
     }
 
+    public static String getEnvironmentProperty(String key, Object environment) {
+        return CONTEXT_MANAGER.getEnvironmentProperty(key, environment);
+    }
+
     public static String getEnvironmentProperty(String key, String defaultValue) {
         return CONTEXT_MANAGER.getEnvironmentProperty(key, defaultValue);
     }

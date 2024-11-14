@@ -123,7 +123,7 @@ public final class DtpPropertiesBinderUtil {
             Map<?, Object> properties = (Map<?, Object>) environment;
             return properties.get(key);
         } else {
-            return ContextManagerHelper.getEnvironmentProperty(key);
+            return ContextManagerHelper.getEnvironmentProperty(key, environment);
         }
     }
 
@@ -132,7 +132,7 @@ public final class DtpPropertiesBinderUtil {
             Map<?, Object> properties = (Map<?, Object>) environment;
             return properties.containsKey(key);
         } else {
-            return StringUtils.isNotBlank(ContextManagerHelper.getEnvironmentProperty(key));
+            return StringUtils.isNotBlank(ContextManagerHelper.getEnvironmentProperty(key, environment));
         }
     }
 

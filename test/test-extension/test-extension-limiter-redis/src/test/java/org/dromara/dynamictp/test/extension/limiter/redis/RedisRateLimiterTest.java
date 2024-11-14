@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.test.extension.limiter.redis;
 
+import jakarta.annotation.Resource;
 import lombok.val;
 import org.dromara.dynamictp.extension.limiter.redis.ratelimiter.RedisRateLimiter;
 import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
@@ -26,7 +27,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 

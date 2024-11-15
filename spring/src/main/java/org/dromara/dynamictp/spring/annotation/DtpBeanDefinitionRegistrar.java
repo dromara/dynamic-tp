@@ -23,6 +23,7 @@ import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.util.VersionUtil;
 import org.dromara.dynamictp.core.executor.ExecutorType;
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
@@ -44,7 +45,23 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
 
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.*;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.ALLOW_CORE_THREAD_TIMEOUT;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.AWAIT_TERMINATION_SECONDS;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.AWARE_NAMES;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.NOTIFY_ENABLED;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.NOTIFY_ITEMS;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.PLATFORM_IDS;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.PLUGIN_NAMES;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.PRE_START_ALL_CORE_THREADS;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.QUEUE_TIMEOUT;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.REJECT_ENHANCED;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.REJECT_HANDLER_TYPE;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.RUN_TIMEOUT;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.TASK_WRAPPERS;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.THREAD_POOL_ALIAS_NAME;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.THREAD_POOL_NAME;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRY_INTERRUPT_WHEN_TIMEOUT;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN;
 import static org.dromara.dynamictp.common.em.QueueTypeEnum.buildLbq;
 import static org.dromara.dynamictp.common.entity.NotifyItem.mergeAllNotifyItems;
 
@@ -56,6 +73,8 @@ import static org.dromara.dynamictp.common.entity.NotifyItem.mergeAllNotifyItems
  **/
 @Slf4j
 public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
+
+    private static final String JDK_VERSION_21 = "21";
 
     private Environment environment;
 
@@ -80,45 +99,34 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
             }
             Class<?> executorTypeClass = ExecutorType.getClass(e.getExecutorType());
             Map<String, Object> propertyValues;
-            if (executorTypeClass.equals(VirtualThreadExecutorProxy.class)) {
-                propertyValues = buildVTPropertyValues(e);
-            } else {
-                propertyValues = buildPropertyValues(e);
+            propertyValues = buildPropertyValues(e);
+            Object[] args;
+            try {
+                args = buildConstructorArgs(executorTypeClass, e);
+            } catch (UnsupportedOperationException exception) {
+                return;
             }
-            Object[] args = buildConstructorArgs(executorTypeClass, e);
             BeanRegistrationUtil.register(registry, e.getThreadPoolName(), executorTypeClass, propertyValues, args);
         });
-    }
-
-    private Map<String, Object> buildVTPropertyValues(DtpExecutorProps props) {
-        Map<String, Object> propertyValues = Maps.newHashMap();
-        propertyValues.put(THREAD_POOL_NAME, props.getThreadPoolName());
-        propertyValues.put(THREAD_POOL_ALIAS_NAME, props.getThreadPoolAliasName());
-        val notifyItems = mergeAllNotifyItems(props.getNotifyItems());
-        propertyValues.put(NOTIFY_ITEMS, notifyItems);
-        propertyValues.put(PLATFORM_IDS, props.getPlatformIds());
-        propertyValues.put(NOTIFY_ENABLED, props.isNotifyEnabled());
-
-        val taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
-        propertyValues.put(TASK_WRAPPERS, taskWrappers);
-        propertyValues.put(PLUGIN_NAMES, props.getPluginNames());
-        propertyValues.put(AWARE_NAMES, props.getAwareNames());
-        return propertyValues;
     }
 
     private Map<String, Object> buildPropertyValues(DtpExecutorProps props) {
         Map<String, Object> propertyValues = Maps.newHashMap();
         propertyValues.put(THREAD_POOL_NAME, props.getThreadPoolName());
         propertyValues.put(THREAD_POOL_ALIAS_NAME, props.getThreadPoolAliasName());
-        propertyValues.put(ALLOW_CORE_THREAD_TIMEOUT, props.isAllowCoreThreadTimeOut());
-        propertyValues.put(WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN, props.isWaitForTasksToCompleteOnShutdown());
-        propertyValues.put(AWAIT_TERMINATION_SECONDS, props.getAwaitTerminationSeconds());
-        propertyValues.put(PRE_START_ALL_CORE_THREADS, props.isPreStartAllCoreThreads());
-        propertyValues.put(REJECT_HANDLER_TYPE, props.getRejectedHandlerType());
-        propertyValues.put(REJECT_ENHANCED, props.isRejectEnhanced());
-        propertyValues.put(RUN_TIMEOUT, props.getRunTimeout());
-        propertyValues.put(TRY_INTERRUPT_WHEN_TIMEOUT, props.isTryInterrupt());
-        propertyValues.put(QUEUE_TIMEOUT, props.getQueueTimeout());
+
+        if (!ExecutorType.getClass(props.getExecutorType()).equals(VirtualThreadExecutorProxy.class)) {
+            propertyValues.put(ALLOW_CORE_THREAD_TIMEOUT, props.isAllowCoreThreadTimeOut());
+            propertyValues.put(WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN, props.isWaitForTasksToCompleteOnShutdown());
+            propertyValues.put(AWAIT_TERMINATION_SECONDS, props.getAwaitTerminationSeconds());
+            propertyValues.put(PRE_START_ALL_CORE_THREADS, props.isPreStartAllCoreThreads());
+            propertyValues.put(REJECT_HANDLER_TYPE, props.getRejectedHandlerType());
+            propertyValues.put(REJECT_ENHANCED, props.isRejectEnhanced());
+            propertyValues.put(RUN_TIMEOUT, props.getRunTimeout());
+            propertyValues.put(TRY_INTERRUPT_WHEN_TIMEOUT, props.isTryInterrupt());
+            propertyValues.put(QUEUE_TIMEOUT, props.getQueueTimeout());
+        }
+
         val notifyItems = mergeAllNotifyItems(props.getNotifyItems());
         propertyValues.put(NOTIFY_ITEMS, notifyItems);
         propertyValues.put(PLATFORM_IDS, props.getPlatformIds());
@@ -131,13 +139,17 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         return propertyValues;
     }
 
-    private Object[] buildConstructorArgs(Class<?> clazz, DtpExecutorProps props) {
+    private Object[] buildConstructorArgs(Class<?> clazz, DtpExecutorProps props) throws UnsupportedOperationException {
         BlockingQueue<Runnable> taskQueue;
         if (clazz.equals(EagerDtpExecutor.class)) {
             taskQueue = new TaskQueue(props.getQueueCapacity());
         } else if (clazz.equals(PriorityDtpExecutor.class)) {
             taskQueue = new PriorityBlockingQueue<>(props.getQueueCapacity(), PriorityDtpExecutor.getRunnableComparator());
         } else if (clazz.equals(VirtualThreadExecutorProxy.class)) {
+            if (!VersionUtil.getVersion().equals(JDK_VERSION_21)) {
+                log.warn("DynamicTp virtual thread executor {} register warn: update your JDK version or don't use virtual thread executor!", props.getThreadPoolName());
+                throw new UnsupportedOperationException();
+            }
             return new Object[]{
                     Executors.newVirtualThreadPerTaskExecutor()
             };

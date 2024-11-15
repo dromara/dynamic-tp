@@ -78,7 +78,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
     /**
      * Compatible with lower versions of Spring.
      *
-     * @param bean     the new bean instance
+     * @param bean the new bean instance
      * @param beanName the name of the bean
      * @return the bean instance to use
      * @throws BeansException in case of errors
@@ -163,9 +163,10 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
         Executor proxy;
         if (bean instanceof ScheduledThreadPoolExecutor) {
             proxy = newScheduledTpProxy(poolName, (ScheduledThreadPoolExecutor) bean);
-        } else if (bean.getClass().getName().equals("java.util.concurrent.ThreadPerTaskExecutor")
-                || bean instanceof VirtualThreadExecutorProxy) {
+        } else if (bean.getClass().getName().equals("java.util.concurrent.ThreadPerTaskExecutor")) {
             proxy = newVirtualThreadProxy(poolName, (ExecutorService) bean);
+        } else if (bean instanceof VirtualThreadExecutorProxy) {
+            proxy = (Executor) bean;
         } else {
             proxy = newProxy(poolName, (ThreadPoolExecutor) bean);
         }
@@ -196,8 +197,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
     }
 
     private VirtualThreadExecutorProxy newVirtualThreadProxy(String name, ExecutorService originExecutor) {
-        val proxy = new VirtualThreadExecutorProxy(originExecutor);
-        return proxy;
+        return new VirtualThreadExecutorProxy(originExecutor);
     }
 
     private void tryWrapTaskDecorator(String poolName, ThreadPoolTaskExecutor poolTaskExecutor, ThreadPoolExecutorProxy proxy) throws IllegalAccessException {

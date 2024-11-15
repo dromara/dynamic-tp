@@ -65,11 +65,14 @@ public class ExecutorConverter {
         ThreadPoolStats poolStats = convertCommon(executor);
         poolStats.setPoolName(wrapper.getThreadPoolName());
         poolStats.setPoolAliasName(wrapper.getThreadPoolAliasName());
-        poolStats.setRunTimeoutCount(provider.getRunTimeoutCount());
-        poolStats.setQueueTimeoutCount(provider.getQueueTimeoutCount());
-        poolStats.setRejectCount(provider.getRejectedTaskCount());
-        poolStats.setDynamic(executor instanceof DtpExecutor);
 
+        if (!wrapper.isVirtualThreadExecutor()) {
+            poolStats.setRunTimeoutCount(provider.getRunTimeoutCount());
+            poolStats.setQueueTimeoutCount(provider.getQueueTimeoutCount());
+            poolStats.setRejectCount(provider.getRejectedTaskCount());
+        }
+
+        poolStats.setDynamic(executor instanceof DtpExecutor);
         poolStats.setTps(performanceSnapshot.getTps());
         poolStats.setAvg(performanceSnapshot.getAvg());
         poolStats.setMaxRt(performanceSnapshot.getMaxRt());
@@ -81,32 +84,6 @@ public class ExecutorConverter {
         poolStats.setTp99(performanceSnapshot.getTp99());
         poolStats.setTp999(performanceSnapshot.getTp999());
         return poolStats;
-    }
-
-    public static VTExecutorStats toVTExecutorMetrics(ExecutorWrapper wrapper) {
-        ExecutorAdapter<?> executor = wrapper.getExecutor();
-        if (executor == null) {
-            return null;
-        }
-        ThreadPoolStatProvider provider = wrapper.getThreadPoolStatProvider();
-        PerformanceProvider performanceProvider = provider.getPerformanceProvider();
-        val performanceSnapshot = performanceProvider.getSnapshotAndReset();
-        VTExecutorStats executorStats = convertCommonVT(executor);
-        executorStats.setExecutorName(wrapper.getThreadPoolName());
-        executorStats.setExecutorAliasName(wrapper.getThreadPoolAliasName());
-        executorStats.setDynamic(executor instanceof DtpExecutor);
-
-        executorStats.setTps(performanceSnapshot.getTps());
-        executorStats.setAvg(performanceSnapshot.getAvg());
-        executorStats.setMaxRt(performanceSnapshot.getMaxRt());
-        executorStats.setMinRt(performanceSnapshot.getMinRt());
-        executorStats.setTp50(performanceSnapshot.getTp50());
-        executorStats.setTp75(performanceSnapshot.getTp75());
-        executorStats.setTp90(performanceSnapshot.getTp90());
-        executorStats.setTp95(performanceSnapshot.getTp95());
-        executorStats.setTp99(performanceSnapshot.getTp99());
-        executorStats.setTp999(performanceSnapshot.getTp999());
-        return executorStats;
     }
 
     private static ThreadPoolStats convertCommon(ExecutorAdapter<?> executor) {

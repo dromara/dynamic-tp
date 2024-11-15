@@ -68,7 +68,7 @@ public class ThreadPoolConfiguration {
      *
      * @return 虚拟线程执行器实例
      */
-    @DynamicTp("VirtualThreadExecutor")
+    @DynamicTp("virtualThreadExecutor")
     @Bean
     public ExecutorService virtualThreadExecutor() {
         return Executors.newVirtualThreadPerTaskExecutor();

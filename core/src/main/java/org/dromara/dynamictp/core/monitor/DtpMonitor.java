@@ -97,11 +97,7 @@ public class DtpMonitor {
         }
         executorNames.forEach(x -> {
             ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(x);
-            if (wrapper.isVirtualThreadExecutor()) {
-                doCollectVTExecutor(ExecutorConverter.toVTExecutorMetrics(wrapper));
-            } else {
-                doCollect(ExecutorConverter.toMetrics(wrapper));
-            }
+            doCollect(ExecutorConverter.toMetrics(wrapper));
         });
         publishCollectEvent();
     }

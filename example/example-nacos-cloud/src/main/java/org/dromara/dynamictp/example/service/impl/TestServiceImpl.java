@@ -63,7 +63,7 @@ public class TestServiceImpl implements TestService {
                            DtpExecutor eagerDtpExecutor,
                            ScheduledExecutorService scheduledDtpExecutor,
                            OrderedDtpExecutor orderedDtpExecutor,
-                           @Qualifier("virtualThreadExecutor1") ExecutorService virtualThreadExecutor) {
+                           @Qualifier("virtualThreadExecutor") ExecutorService virtualThreadExecutor) {
         this.jucThreadPoolExecutor = jucThreadPoolExecutor;
         this.threadPoolTaskExecutor = threadPoolTaskExecutor;
         this.eagerDtpExecutor = eagerDtpExecutor;

@@ -48,11 +48,7 @@ public class DtpEndpoint {
         List<Metrics> metricsList = Lists.newArrayList();
         DtpRegistry.getAllExecutorNames().forEach(x -> {
             ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(x);
-            if (wrapper.isVirtualThreadExecutor()) {
-                metricsList.add(ExecutorConverter.toVTExecutorMetrics(wrapper));
-            } else {
-                metricsList.add(ExecutorConverter.toMetrics(wrapper));
-            }
+            metricsList.add(ExecutorConverter.toMetrics(wrapper));
         });
 
         val handlerMap = ContextManagerHelper.getBeansOfType(MetricsAware.class);

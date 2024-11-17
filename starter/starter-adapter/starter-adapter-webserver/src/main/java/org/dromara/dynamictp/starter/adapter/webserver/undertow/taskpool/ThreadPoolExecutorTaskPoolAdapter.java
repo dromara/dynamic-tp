@@ -18,8 +18,8 @@
 package org.dromara.dynamictp.starter.adapter.webserver.undertow.taskpool;
 
 import org.dromara.dynamictp.starter.adapter.webserver.undertow.UndertowTaskPoolEnum;
-import org.dromara.dynamictp.core.support.ExecutorAdapter;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorAdapter;
+import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
+import org.dromara.dynamictp.core.support.adapter.ThreadPoolExecutorAdapter;
 
 import java.util.concurrent.ThreadPoolExecutor;
 

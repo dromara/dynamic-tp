@@ -41,7 +41,7 @@ import org.dromara.dynamictp.common.util.StreamUtil;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.core.notifier.manager.NoticeManager;
-import org.dromara.dynamictp.core.support.ExecutorAdapter;
+import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;

@@ -17,7 +17,7 @@
 
 package org.dromara.dynamictp.starter.adapter.webserver.undertow.taskpool;
 
-import org.dromara.dynamictp.core.support.ExecutorAdapter;
+import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 import org.dromara.dynamictp.starter.adapter.webserver.undertow.UndertowTaskPoolEnum;
 import org.jboss.threads.EnhancedQueueExecutor;
 

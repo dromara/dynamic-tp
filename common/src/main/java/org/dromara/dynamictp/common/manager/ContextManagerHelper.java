@@ -17,61 +17,56 @@
 
 package org.dromara.dynamictp.common.manager;
 
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
 
 import java.util.Map;
 
 /**
- * Helper class for accessing ContextManager and publishing events.
+ * Helper class for accessing ContextManager.
  *
  * @author vzer200
  * @since 1.2.0
  */
+@Slf4j
 public class ContextManagerHelper {
 
-    private static final ContextManager CONTEXT_MANAGER;
+    private static ContextManager contextManager;
 
     static {
-        CONTEXT_MANAGER = ExtensionServiceLoader.getFirst(ContextManager.class);
-        if (CONTEXT_MANAGER == null) {
+        contextManager = ExtensionServiceLoader.getFirst(ContextManager.class);
+        if (contextManager == null) {
+            contextManager = new NullContextManager();
             throw new IllegalStateException("No ContextManager implementation found");
         }
     }
 
     public static <T> T getBean(Class<T> clazz) {
-        return CONTEXT_MANAGER.getBean(clazz);
+        return contextManager.getBean(clazz);
     }
 
     public static <T> T getBean(String name, Class<T> clazz) {
-        return CONTEXT_MANAGER.getBean(name, clazz);
+        return contextManager.getBean(name, clazz);
     }
 
     public static <T> Map<String, T> getBeansOfType(Class<T> clazz) {
-        return CONTEXT_MANAGER.getBeansOfType(clazz);
+        return contextManager.getBeansOfType(clazz);
     }
 
     public static Object getEnvironment() {
-        return CONTEXT_MANAGER.getEnvironment();
+        return contextManager.getEnvironment();
     }
 
     public static String getEnvironmentProperty(String key) {
-        return CONTEXT_MANAGER.getEnvironmentProperty(key);
+        return contextManager.getEnvironmentProperty(key);
     }
 
     public static String getEnvironmentProperty(String key, Object environment) {
-        return CONTEXT_MANAGER.getEnvironmentProperty(key, environment);
+        return contextManager.getEnvironmentProperty(key, environment);
     }
 
     public static String getEnvironmentProperty(String key, String defaultValue) {
-        return CONTEXT_MANAGER.getEnvironmentProperty(key, defaultValue);
-    }
-
-    public static String[] getActiveProfiles() {
-        return CONTEXT_MANAGER.getActiveProfiles();
-    }
-
-    public static String[] getDefaultProfiles() {
-        return CONTEXT_MANAGER.getDefaultProfiles();
+        return contextManager.getEnvironmentProperty(key, defaultValue);
     }
 }
 

@@ -23,7 +23,7 @@ import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
 import java.util.Map;
 
 /**
- * Helper class for accessing ContextManager and publishing events.
+ * Helper class for accessing ContextManager.
  *
  * @author vzer200
  * @since 1.2.0
@@ -67,14 +67,6 @@ public class ContextManagerHelper {
 
     public static String getEnvironmentProperty(String key, String defaultValue) {
         return contextManager.getEnvironmentProperty(key, defaultValue);
-    }
-
-    public static String[] getActiveProfiles() {
-        return contextManager.getActiveProfiles();
-    }
-
-    public static String[] getDefaultProfiles() {
-        return contextManager.getDefaultProfiles();
     }
 }
 

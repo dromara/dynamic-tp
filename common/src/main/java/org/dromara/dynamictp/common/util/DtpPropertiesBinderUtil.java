@@ -45,7 +45,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.PLUGIN_NAMES;
  * DtpPropertiesBinderUtil related
  *
  * @author yanhom
- * @since 1.1.0
+ * @since 1.1.9
  */
 @SuppressWarnings("unchecked")
 public final class DtpPropertiesBinderUtil {

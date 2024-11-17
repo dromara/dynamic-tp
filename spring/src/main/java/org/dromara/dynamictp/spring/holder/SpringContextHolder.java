@@ -86,14 +86,4 @@ public class SpringContextHolder implements ContextManager, ApplicationContextAw
     public String getEnvironmentProperty(String key, String defaultValue) {
         return getInstance().getEnvironment().getProperty(key, defaultValue);
     }
-
-    @Override
-    public String[] getActiveProfiles() {
-        return getInstance().getEnvironment().getActiveProfiles();
-    }
-
-    @Override
-    public String[] getDefaultProfiles() {
-        return getInstance().getEnvironment().getDefaultProfiles();
-    }
 }

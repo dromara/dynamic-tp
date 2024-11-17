@@ -23,7 +23,7 @@ import java.util.Map;
  * NullContextManager related
  *
  * @author yanhom
- * @since 1.1.0
+ * @since 1.2.0
  */
 public class NullContextManager implements ContextManager {
 
@@ -59,16 +59,6 @@ public class NullContextManager implements ContextManager {
 
     @Override
     public String getEnvironmentProperty(String key, String defaultValue) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String[] getActiveProfiles() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String[] getDefaultProfiles() {
         throw new UnsupportedOperationException();
     }
 }

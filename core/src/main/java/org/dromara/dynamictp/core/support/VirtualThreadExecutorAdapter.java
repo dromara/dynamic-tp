@@ -16,6 +16,8 @@
  */
 package org.dromara.dynamictp.core.support;
 
+import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 

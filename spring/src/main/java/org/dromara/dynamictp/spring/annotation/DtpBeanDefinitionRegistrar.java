@@ -21,6 +21,7 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
+import org.dromara.dynamictp.common.em.JreEnum;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.VersionUtil;
@@ -74,7 +75,7 @@ import static org.dromara.dynamictp.common.entity.NotifyItem.mergeAllNotifyItems
 @Slf4j
 public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
 
-    private static final Integer JDK_VERSION_21 = 21;
+    private static final Integer JDK_VERSION_21_OFFSET = 21 - 8;
 
     private Environment environment;
 
@@ -146,12 +147,8 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         } else if (clazz.equals(PriorityDtpExecutor.class)) {
             taskQueue = new PriorityBlockingQueue<>(props.getQueueCapacity(), PriorityDtpExecutor.getRunnableComparator());
         } else if (clazz.equals(VirtualThreadExecutorProxy.class)) {
-            int jdkVersion = -1;
-            try {
-                jdkVersion = Integer.parseInt(VersionUtil.getVersion());
-            } catch (NumberFormatException ignored) {
-            }
-            if (jdkVersion < JDK_VERSION_21) {
+            int jdkVersion = JreEnum.currentVersion().ordinal();
+            if (jdkVersion < JDK_VERSION_21_OFFSET) {
                 log.warn("DynamicTp virtual thread executor {} register warn: update your JDK version or don't use virtual thread executor!", props.getThreadPoolName());
                 throw new UnsupportedOperationException();
             }

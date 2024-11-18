@@ -21,7 +21,7 @@ import cn.hutool.core.text.CharSequenceUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
-import org.dromara.dynamictp.core.support.ExecutorAdapter;
+import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import static org.dromara.dynamictp.common.em.NotifyItemEnum.QUEUE_TIMEOUT;

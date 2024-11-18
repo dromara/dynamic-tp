@@ -56,19 +56,8 @@ public final class CommonUtil {
 
         String env = DtpProperties.getInstance().getEnv();
         if (StringUtils.isBlank(env)) {
-            // fix #I8SSGQ
             env = ContextManagerHelper.getEnvironmentProperty(APP_ENV_KEY);
         }
-        if (StringUtils.isBlank(env)) {
-            String[] profiles = ContextManagerHelper.getActiveProfiles();
-            if (profiles.length < 1) {
-                profiles = ContextManagerHelper.getDefaultProfiles();
-            }
-            if (profiles.length >= 1) {
-                env = profiles[0];
-            }
-        }
-
         String appName = ContextManagerHelper.getEnvironmentProperty(APP_NAME_KEY);
         String portStr = ContextManagerHelper.getEnvironmentProperty(APP_PORT_KEY);
         int port = StringUtils.isNotBlank(portStr) ? Integer.parseInt(portStr) : 0;

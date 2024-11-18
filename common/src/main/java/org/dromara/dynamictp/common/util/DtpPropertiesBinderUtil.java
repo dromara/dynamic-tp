@@ -45,7 +45,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.PLUGIN_NAMES;
  * DtpPropertiesBinderUtil related
  *
  * @author yanhom
- * @since 1.1.0
+ * @since 1.1.9
  */
 @SuppressWarnings("unchecked")
 public final class DtpPropertiesBinderUtil {
@@ -123,16 +123,7 @@ public final class DtpPropertiesBinderUtil {
             Map<?, Object> properties = (Map<?, Object>) environment;
             return properties.get(key);
         } else {
-            return ContextManagerHelper.getEnvironmentProperty(key);
-        }
-    }
-
-    private static boolean contains(String key, Object environment) {
-        if (environment instanceof Map) {
-            Map<?, Object> properties = (Map<?, Object>) environment;
-            return properties.containsKey(key);
-        } else {
-            return StringUtils.isNotBlank(ContextManagerHelper.getEnvironmentProperty(key));
+            return ContextManagerHelper.getEnvironmentProperty(key, environment);
         }
     }
 
@@ -159,29 +150,42 @@ public final class DtpPropertiesBinderUtil {
     }
 
     private static void setCollectionField(Object source, DtpExecutorProps globalExecutorProps, Object executor, String prefix) {
-        if (!contains(prefix + ".taskWrapperNames[0]", source) &&
+        if (isNotContains(prefix + ".taskWrapperNames[0]", source) &&
                 CollectionUtils.isNotEmpty(globalExecutorProps.getTaskWrapperNames())) {
             ReflectUtil.setFieldValue(executor, "taskWrapperNames", globalExecutorProps.getTaskWrapperNames());
         }
-        if (!contains(prefix + ".platformIds[0]", source) &&
+        if (isNotContains(prefix + ".platformIds[0]", source) &&
                 CollectionUtils.isNotEmpty(globalExecutorProps.getPlatformIds())) {
             ReflectUtil.setFieldValue(executor, PLATFORM_IDS, globalExecutorProps.getPlatformIds());
         }
-        if (!contains(prefix + ".notifyItems[0].type", source) &&
+        if (isNotContains(prefix + ".notifyItems[0].type", source) &&
                 CollectionUtils.isNotEmpty(globalExecutorProps.getNotifyItems())) {
             ReflectUtil.setFieldValue(executor, NOTIFY_ITEMS, globalExecutorProps.getNotifyItems());
         }
-        if (!contains(prefix + ".awareNames[0]", source) &&
+        if (isNotContains(prefix + ".awareNames[0]", source) &&
                 CollectionUtils.isNotEmpty(globalExecutorProps.getAwareNames())) {
             ReflectUtil.setFieldValue(executor, AWARE_NAMES, globalExecutorProps.getAwareNames());
         }
         try {
-            if (!contains(prefix + ".pluginNames[0]", source) &&
+            if (isNotContains(prefix + ".pluginNames[0]", source) &&
                     CollectionUtils.isNotEmpty(globalExecutorProps.getPluginNames())) {
                 ReflectUtil.setFieldValue(executor, PLUGIN_NAMES, globalExecutorProps.getPluginNames());
             }
         } catch (Exception e) {
             // ignore
+        }
+    }
+
+    private static boolean isNotContains(String key, Object environment) {
+        return !contains(key, environment);
+    }
+
+    private static boolean contains(String key, Object environment) {
+        if (environment instanceof Map) {
+            Map<?, Object> properties = (Map<?, Object>) environment;
+            return properties.containsKey(key);
+        } else {
+            return StringUtils.isNotBlank(ContextManagerHelper.getEnvironmentProperty(key, environment));
         }
     }
 }

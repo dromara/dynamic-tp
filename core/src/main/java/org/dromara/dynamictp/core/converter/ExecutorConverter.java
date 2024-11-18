@@ -22,7 +22,7 @@ import org.dromara.dynamictp.common.entity.ExecutorStats;
 import org.dromara.dynamictp.common.entity.TpMainFields;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.monitor.PerformanceProvider;
-import org.dromara.dynamictp.core.support.ExecutorAdapter;
+import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
 

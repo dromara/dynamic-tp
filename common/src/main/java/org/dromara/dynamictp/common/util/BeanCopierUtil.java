@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * BeanCopierUtils related
  *
  * @author vzer200
- * @since 1.1.8
+ * @since 1.2.0
  */
 @UtilityClass
 public class BeanCopierUtil {

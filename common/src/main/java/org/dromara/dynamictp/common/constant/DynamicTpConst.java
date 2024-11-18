@@ -44,8 +44,6 @@ public final class DynamicTpConst {
 
     public static final String UNKNOWN = "---";
 
-    public static final String VALUE = "value";
-
     public static final String TRACE_ID = "traceId";
 
     public static final String GLOBAL_CONFIG_PREFIX = MAIN_PROPERTIES_PREFIX + ".globalExecutorProps.";

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.core.support;
+package org.dromara.dynamictp.core.support.adapter;
 
 import java.util.AbstractQueue;
 import java.util.Collection;

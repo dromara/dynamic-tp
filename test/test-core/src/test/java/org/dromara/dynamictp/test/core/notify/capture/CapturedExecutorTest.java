@@ -18,10 +18,10 @@
 package org.dromara.dynamictp.test.core.notify.capture;
 
 import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
-import org.dromara.dynamictp.core.support.ExecutorAdapter;
+import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
 import org.dromara.dynamictp.core.support.ThreadPoolCreator;
-import org.dromara.dynamictp.core.support.ThreadPoolExecutorAdapter;
+import org.dromara.dynamictp.core.support.adapter.ThreadPoolExecutorAdapter;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;

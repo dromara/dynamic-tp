@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * Interface for managing context in the application.
  * Provides methods to access beans, set context, handle events,
- * and retrieve environment properties and profiles.
+ * and retrieve environment properties.
  *
  * @author vzer200
  * @since 1.2.0
@@ -73,6 +73,15 @@ public interface ContextManager {
     String getEnvironmentProperty(String key);
 
     /**
+     * Retrieves an environment property by its key in the specified environment.
+     *
+     * @param key the key of the property
+     * @param environment the specified environment object
+     * @return the value of the property, or null if not found
+     */
+    String getEnvironmentProperty(String key, Object environment);
+
+    /**
      * Retrieves an environment property by its key, with a default value.
      *
      * @param key the key of the property
@@ -80,18 +89,4 @@ public interface ContextManager {
      * @return the value of the property, or the default value if not found
      */
     String getEnvironmentProperty(String key, String defaultValue);
-
-    /**
-     * Retrieves the active profiles.
-     *
-     * @return an array of active profile names
-     */
-    String[] getActiveProfiles();
-
-    /**
-     * Retrieves the default profiles.
-     *
-     * @return an array of default profile names
-     */
-    String[] getDefaultProfiles();
 }

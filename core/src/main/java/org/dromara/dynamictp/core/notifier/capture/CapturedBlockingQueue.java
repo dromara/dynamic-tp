@@ -17,7 +17,7 @@
 
 package org.dromara.dynamictp.core.notifier.capture;
 
-import org.dromara.dynamictp.core.support.ExecutorAdapter;
+import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 
 import java.util.AbstractQueue;
 import java.util.Collection;

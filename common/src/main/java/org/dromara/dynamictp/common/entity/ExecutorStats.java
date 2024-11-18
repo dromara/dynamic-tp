@@ -29,17 +29,34 @@ import lombok.EqualsAndHashCode;
  **/
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ThreadPoolStats extends Metrics {
+public class ExecutorStats extends Metrics {
+
+    /**
+     * 执行器名字
+     */
+    private String executorName;
+
+    /**
+     * 执行器别名
+     */
+    private String executorAliasName;
 
     /**
      * 线程池名字
      */
+    @Deprecated
     private String poolName;
 
     /**
      * 线程池别名
      */
+    @Deprecated
     private String poolAliasName;
+
+    /**
+     * 是否为虚拟线程执行器
+     */
+    private boolean isVirtualExecutor;
 
     /**
      * 核心线程数

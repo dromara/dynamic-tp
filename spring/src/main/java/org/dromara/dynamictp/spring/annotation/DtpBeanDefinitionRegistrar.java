@@ -74,7 +74,7 @@ import static org.dromara.dynamictp.common.entity.NotifyItem.mergeAllNotifyItems
 @Slf4j
 public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
 
-    private static final String JDK_VERSION_21 = "21";
+    private static final Integer JDK_VERSION_21 = 21;
 
     private Environment environment;
 
@@ -146,7 +146,12 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         } else if (clazz.equals(PriorityDtpExecutor.class)) {
             taskQueue = new PriorityBlockingQueue<>(props.getQueueCapacity(), PriorityDtpExecutor.getRunnableComparator());
         } else if (clazz.equals(VirtualThreadExecutorProxy.class)) {
-            if (!VersionUtil.getVersion().equals(JDK_VERSION_21)) {
+            int jdkVersion = -1;
+            try {
+                jdkVersion = Integer.parseInt(VersionUtil.getVersion());
+            } catch (NumberFormatException ignored) {
+            }
+            if (jdkVersion < JDK_VERSION_21) {
                 log.warn("DynamicTp virtual thread executor {} register warn: update your JDK version or don't use virtual thread executor!", props.getThreadPoolName());
                 throw new UnsupportedOperationException();
             }

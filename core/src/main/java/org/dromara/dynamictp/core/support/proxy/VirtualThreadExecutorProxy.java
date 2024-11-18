@@ -99,9 +99,9 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
     @Override
     public void execute(Runnable command) {
         command = getEnhancedTask(command);
-        EnhancedRunnable.of(command, this);
-        AwareManager.execute(this, command);
-        threadPerTaskExecutor.execute(command);
+        EnhancedRunnable enhanceTask = EnhancedRunnable.of(command, this);
+        AwareManager.execute(this, enhanceTask);
+        threadPerTaskExecutor.execute(enhanceTask);
     }
 
     public ExecutorService getThreadPerTaskExecutor() {

@@ -227,10 +227,8 @@ public class DtpRegistry {
         if (!Objects.equals(executor.allowsCoreThreadTimeOut(), props.isAllowCoreThreadTimeOut())) {
             executor.allowCoreThreadTimeOut(props.isAllowCoreThreadTimeOut());
         }
-        if (!executorWrapper.isVirtualThreadExecutor()) {
-            // update queue
-            updateQueueProps(executor, props);
-        }
+        // update queue
+        updateQueueProps(executor, props);
 
         if (executorWrapper.isDtpExecutor()) {
             doRefreshDtp(executorWrapper, props);

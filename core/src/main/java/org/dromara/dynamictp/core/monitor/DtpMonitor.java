@@ -19,8 +19,7 @@ package org.dromara.dynamictp.core.monitor;
 
 import com.google.common.eventbus.Subscribe;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.common.entity.ThreadPoolStats;
-import org.dromara.dynamictp.common.entity.VTExecutorStats;
+import org.dromara.dynamictp.common.entity.ExecutorStats;
 import org.dromara.dynamictp.common.event.AlarmCheckEvent;
 import org.dromara.dynamictp.common.event.CollectEvent;
 import org.dromara.dynamictp.common.event.CustomContextRefreshedEvent;
@@ -102,15 +101,8 @@ public class DtpMonitor {
         publishCollectEvent();
     }
 
-    private void doCollectVTExecutor(VTExecutorStats vtExecutorStats) {
-        try {
-            CollectorHandler.getInstance().collectVTExecutor(vtExecutorStats, dtpProperties.getCollectorTypes());
-        } catch (Exception e) {
-            log.error("DynamicTp monitor, VTExecutor collect error.", e);
-        }
-    }
 
-    private void doCollect(ThreadPoolStats threadPoolStats) {
+    private void doCollect(ExecutorStats threadPoolStats) {
         try {
             CollectorHandler.getInstance().collect(threadPoolStats, dtpProperties.getCollectorTypes());
         } catch (Exception e) {

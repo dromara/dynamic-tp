@@ -178,9 +178,7 @@ public class ExecutorWrapper {
         if (isDtpExecutor()) {
             ((DtpExecutor) getExecutor()).initialize();
             AwareManager.register(this);
-        } else if (isThreadPoolExecutor()) {
-            AwareManager.register(this);
-        } else if (isVirtualThreadExecutor()) {
+        } else if (isThreadPoolExecutor() || isVirtualThreadExecutor()) {
             AwareManager.register(this);
         }
     }

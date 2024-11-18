@@ -28,6 +28,7 @@ import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
+import org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy;
 import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.adapter.ThreadPoolExecutorAdapter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
@@ -141,6 +142,8 @@ public class ExecutorWrapper {
             this.executor = new ThreadPoolExecutorAdapter((ThreadPoolExecutor) executor);
         } else if (executor instanceof ExecutorAdapter<?>) {
             this.executor = (ExecutorAdapter<?>) executor;
+        } else if (executor instanceof VirtualThreadExecutorProxy) {
+            this.executor = new VirtualThreadExecutorAdapter(((VirtualThreadExecutorProxy) executor).getThreadPerTaskExecutor());
         } else {
             throw new IllegalArgumentException("unsupported Executor type !");
         }
@@ -177,7 +180,7 @@ public class ExecutorWrapper {
         if (isDtpExecutor()) {
             ((DtpExecutor) getExecutor()).initialize();
             AwareManager.register(this);
-        } else if (isThreadPoolExecutor()) {
+        } else if (isThreadPoolExecutor() || isVirtualThreadExecutor()) {
             AwareManager.register(this);
         }
     }
@@ -202,6 +205,15 @@ public class ExecutorWrapper {
      */
     public boolean isThreadPoolExecutor() {
         return this.executor instanceof ThreadPoolExecutorAdapter;
+    }
+
+    /**
+     * whether is VirtualThreadExecutor
+     *
+     * @return boolean
+     */
+    public boolean isVirtualThreadExecutor() {
+        return this.executor instanceof VirtualThreadExecutorAdapter;
     }
 
     /**

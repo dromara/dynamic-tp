@@ -18,7 +18,7 @@
 package org.dromara.dynamictp.core.converter;
 
 import lombok.val;
-import org.dromara.dynamictp.common.entity.ThreadPoolStats;
+import org.dromara.dynamictp.common.entity.ExecutorStats;
 import org.dromara.dynamictp.common.entity.TpMainFields;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.monitor.PerformanceProvider;
@@ -53,7 +53,7 @@ public class ExecutorConverter {
         return mainFields;
     }
 
-    public static ThreadPoolStats toMetrics(ExecutorWrapper wrapper) {
+    public static ExecutorStats toMetrics(ExecutorWrapper wrapper) {
         ExecutorAdapter<?> executor = wrapper.getExecutor();
         if (executor == null) {
             return null;
@@ -61,29 +61,35 @@ public class ExecutorConverter {
         ThreadPoolStatProvider provider = wrapper.getThreadPoolStatProvider();
         PerformanceProvider performanceProvider = provider.getPerformanceProvider();
         val performanceSnapshot = performanceProvider.getSnapshotAndReset();
-        ThreadPoolStats poolStats = convertCommon(executor);
-        poolStats.setPoolName(wrapper.getThreadPoolName());
-        poolStats.setPoolAliasName(wrapper.getThreadPoolAliasName());
-        poolStats.setRunTimeoutCount(provider.getRunTimeoutCount());
-        poolStats.setQueueTimeoutCount(provider.getQueueTimeoutCount());
-        poolStats.setRejectCount(provider.getRejectedTaskCount());
-        poolStats.setDynamic(executor instanceof DtpExecutor);
+        ExecutorStats executorStats = convertCommon(executor);
+        executorStats.setPoolName(wrapper.getThreadPoolName());
+        executorStats.setPoolAliasName(wrapper.getThreadPoolAliasName());
 
-        poolStats.setTps(performanceSnapshot.getTps());
-        poolStats.setAvg(performanceSnapshot.getAvg());
-        poolStats.setMaxRt(performanceSnapshot.getMaxRt());
-        poolStats.setMinRt(performanceSnapshot.getMinRt());
-        poolStats.setTp50(performanceSnapshot.getTp50());
-        poolStats.setTp75(performanceSnapshot.getTp75());
-        poolStats.setTp90(performanceSnapshot.getTp90());
-        poolStats.setTp95(performanceSnapshot.getTp95());
-        poolStats.setTp99(performanceSnapshot.getTp99());
-        poolStats.setTp999(performanceSnapshot.getTp999());
-        return poolStats;
+        if (!wrapper.isVirtualThreadExecutor()) {
+            executorStats.setRunTimeoutCount(provider.getRunTimeoutCount());
+            executorStats.setQueueTimeoutCount(provider.getQueueTimeoutCount());
+            executorStats.setRejectCount(provider.getRejectedTaskCount());
+            executorStats.setVirtualExecutor(false);
+        } else {
+            executorStats.setVirtualExecutor(true);
+        }
+
+        executorStats.setDynamic(executor instanceof DtpExecutor);
+        executorStats.setTps(performanceSnapshot.getTps());
+        executorStats.setAvg(performanceSnapshot.getAvg());
+        executorStats.setMaxRt(performanceSnapshot.getMaxRt());
+        executorStats.setMinRt(performanceSnapshot.getMinRt());
+        executorStats.setTp50(performanceSnapshot.getTp50());
+        executorStats.setTp75(performanceSnapshot.getTp75());
+        executorStats.setTp90(performanceSnapshot.getTp90());
+        executorStats.setTp95(performanceSnapshot.getTp95());
+        executorStats.setTp99(performanceSnapshot.getTp99());
+        executorStats.setTp999(performanceSnapshot.getTp999());
+        return executorStats;
     }
 
-    private static ThreadPoolStats convertCommon(ExecutorAdapter<?> executor) {
-        ThreadPoolStats poolStats = new ThreadPoolStats();
+    private static ExecutorStats convertCommon(ExecutorAdapter<?> executor) {
+        ExecutorStats poolStats = new ExecutorStats();
         poolStats.setCorePoolSize(executor.getCorePoolSize());
         poolStats.setMaximumPoolSize(executor.getMaximumPoolSize());
         poolStats.setPoolSize(executor.getPoolSize());

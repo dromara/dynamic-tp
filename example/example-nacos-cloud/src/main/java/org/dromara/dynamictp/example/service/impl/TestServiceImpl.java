@@ -26,10 +26,12 @@ import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
 import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
 import org.dromara.dynamictp.core.support.task.runnable.OrderedRunnable;
 import org.dromara.dynamictp.example.service.TestService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -54,16 +56,20 @@ public class TestServiceImpl implements TestService {
 
     private final OrderedDtpExecutor orderedDtpExecutor;
 
+    private final ExecutorService virtualThreadExecutor;
+
     public TestServiceImpl(ThreadPoolExecutor jucThreadPoolExecutor,
                            ThreadPoolTaskExecutor threadPoolTaskExecutor,
                            DtpExecutor eagerDtpExecutor,
                            ScheduledExecutorService scheduledDtpExecutor,
-                           OrderedDtpExecutor orderedDtpExecutor) {
+                           OrderedDtpExecutor orderedDtpExecutor,
+                           @Qualifier("virtualThreadExecutor") ExecutorService virtualThreadExecutor) {
         this.jucThreadPoolExecutor = jucThreadPoolExecutor;
         this.threadPoolTaskExecutor = threadPoolTaskExecutor;
         this.eagerDtpExecutor = eagerDtpExecutor;
         this.scheduledDtpExecutor = scheduledDtpExecutor;
         this.orderedDtpExecutor = orderedDtpExecutor;
+        this.virtualThreadExecutor = virtualThreadExecutor;
     }
 
     @Override
@@ -142,10 +148,24 @@ public class TestServiceImpl implements TestService {
         }
     }
 
+    @Override
+    public void testVTExecutor() {
+        for (int i = 0; i < 10; i++) {
+            int finalI = i;
+            virtualThreadExecutor.execute(() -> {
+                log.info("i am a VTExecutor's {} task", finalI);
+                try {
+                    Thread.sleep(30000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+    }
+
     public static class TestOrderedRunnable implements OrderedRunnable {
 
         private final UserInfo userInfo;
-
         public TestOrderedRunnable(UserInfo userInfo) {
             this.userInfo = userInfo;
         }

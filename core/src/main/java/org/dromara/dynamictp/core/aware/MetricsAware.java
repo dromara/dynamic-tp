@@ -17,7 +17,7 @@
 
 package org.dromara.dynamictp.core.aware;
 
-import org.dromara.dynamictp.common.entity.ThreadPoolStats;
+import org.dromara.dynamictp.common.entity.ExecutorStats;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +35,7 @@ public interface MetricsAware extends DtpAware {
      *
      * @return the thread pool stats
      */
-    default ThreadPoolStats getPoolStats() {
+    default ExecutorStats getPoolStats() {
         return null;
     }
 
@@ -44,7 +44,7 @@ public interface MetricsAware extends DtpAware {
      *
      * @return thead pools stats
      */
-    default List<ThreadPoolStats> getMultiPoolStats() {
+    default List<ExecutorStats> getMultiPoolStats() {
         return Collections.emptyList();
     }
 }

@@ -39,7 +39,7 @@ public class InstrumentedQueuedThreadPoolProxyTest {
         Iterable<Tag> tags = new ArrayList<>();
         InstrumentedQueuedThreadPool executor = new InstrumentedQueuedThreadPool(meterRegistry, tags);
         BlockingQueue<Runnable> queue = (BlockingQueue<Runnable>) ReflectionUtil.getFieldValue("_jobs", executor);
-        InstrumentedQueuedThreadPoolProxy proxy = new InstrumentedQueuedThreadPoolProxy(executor,meterRegistry,tags, queue);
+        InstrumentedQueuedThreadPoolProxy proxy = new InstrumentedQueuedThreadPoolProxy(executor, meterRegistry, tags, queue);
 
         Assert.assertEquals(executor.getMaxThreads(), proxy.getMaxThreads());
         Assert.assertEquals(executor.getIdleTimeout(), proxy.getIdleTimeout());

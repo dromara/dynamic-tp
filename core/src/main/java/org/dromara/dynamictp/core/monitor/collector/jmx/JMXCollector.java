@@ -19,7 +19,8 @@ package org.dromara.dynamictp.core.monitor.collector.jmx;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.em.CollectorTypeEnum;
-import org.dromara.dynamictp.common.entity.ThreadPoolStats;
+import org.dromara.dynamictp.common.entity.Metrics;
+import org.dromara.dynamictp.common.entity.ExecutorStats;
 import org.dromara.dynamictp.common.util.BeanCopierUtil;
 import org.dromara.dynamictp.core.monitor.collector.AbstractCollector;
 
@@ -43,12 +44,12 @@ public class JMXCollector extends AbstractCollector {
     /**
      * 缓存的作用是将注册到JMX的数据，每次都是同一个对象
      */
-    private static final Map<String, ThreadPoolStats> GAUGE_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, Metrics> GAUGE_CACHE = new ConcurrentHashMap<>();
 
     @Override
-    public void collect(ThreadPoolStats threadPoolStats) {
+    public void collect(ExecutorStats threadPoolStats) {
         if (GAUGE_CACHE.containsKey(threadPoolStats.getPoolName())) {
-            ThreadPoolStats poolStats = GAUGE_CACHE.get(threadPoolStats.getPoolName());
+            ExecutorStats poolStats = (ExecutorStats) GAUGE_CACHE.get(threadPoolStats.getPoolName());
             BeanCopierUtil.copyProperties(threadPoolStats, poolStats);
         } else {
             try {

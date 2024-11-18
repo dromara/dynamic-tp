@@ -29,16 +29,28 @@ import lombok.EqualsAndHashCode;
  **/
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ThreadPoolStats extends Metrics {
+public class ExecutorStats extends Metrics {
+
+    /**
+     * 执行器名字
+     */
+    private String executorName;
+
+    /**
+     * 执行器别名
+     */
+    private String executorAliasName;
 
     /**
      * 线程池名字
      */
+    @Deprecated
     private String poolName;
 
     /**
      * 线程池别名
      */
+    @Deprecated
     private String poolAliasName;
 
     /**
@@ -50,6 +62,31 @@ public class ThreadPoolStats extends Metrics {
      * 最大线程数
      */
     private int maximumPoolSize;
+
+    /**
+     * 正在执行任务的活跃线程大致总数
+     */
+    private int activeCount;
+
+    /**
+     * 大致任务总数
+     */
+    private long taskCount;
+
+    /**
+     * 执行超时任务数量
+     */
+    private long runTimeoutCount;
+
+    /**
+     * 是否为DtpExecutor
+     */
+    private boolean dynamic;
+
+    /**
+     * 是否为虚拟线程执行器
+     */
+    private boolean isVirtualExecutor;
 
     /**
      * 空闲时间 (ms)
@@ -82,16 +119,6 @@ public class ThreadPoolStats extends Metrics {
     private int queueRemainingCapacity;
 
     /**
-     * 正在执行任务的活跃线程大致总数
-     */
-    private int activeCount;
-
-    /**
-     * 大致任务总数
-     */
-    private long taskCount;
-
-    /**
      * 已执行完成的大致任务总数
      */
     private long completedTaskCount;
@@ -120,16 +147,6 @@ public class ThreadPoolStats extends Metrics {
      * 拒绝策略名称
      */
     private String rejectHandlerName;
-
-    /**
-     * 是否DtpExecutor线程池
-     */
-    private boolean dynamic;
-
-    /**
-     * 执行超时任务数量
-     */
-    private long runTimeoutCount;
 
     /**
      * 在队列等待超时任务数量
@@ -185,4 +202,5 @@ public class ThreadPoolStats extends Metrics {
      * 满足99.9%的任务执行所需的最低耗时
      */
     private double tp999;
+
 }

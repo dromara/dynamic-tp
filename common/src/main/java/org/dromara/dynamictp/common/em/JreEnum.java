@@ -53,7 +53,11 @@ public enum JreEnum {
 
     JAVA_18,
 
-    JAVA_19;
+    JAVA_19,
+
+    JAVA_20,
+
+    JAVA_21;
 
     private static final JreEnum VERSION = getJre();
 

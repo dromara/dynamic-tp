@@ -24,7 +24,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.em.JreEnum;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.common.util.VersionUtil;
 import org.dromara.dynamictp.core.executor.ExecutorType;
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;

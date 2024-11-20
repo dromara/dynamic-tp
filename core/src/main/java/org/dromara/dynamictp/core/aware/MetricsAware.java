@@ -44,7 +44,7 @@ public interface MetricsAware extends DtpAware {
      *
      * @return thead pools stats
      */
-    default List<ExecutorStats> getMultiPoolStats() {
+    default List<ExecutorStats> getMultiExecutorStats() {
         return Collections.emptyList();
     }
 }

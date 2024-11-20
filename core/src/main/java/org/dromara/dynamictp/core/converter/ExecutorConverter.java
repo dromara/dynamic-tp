@@ -62,17 +62,13 @@ public class ExecutorConverter {
         PerformanceProvider performanceProvider = provider.getPerformanceProvider();
         val performanceSnapshot = performanceProvider.getSnapshotAndReset();
         ExecutorStats executorStats = convertCommon(executor);
-        executorStats.setPoolName(wrapper.getThreadPoolName());
-        executorStats.setPoolAliasName(wrapper.getThreadPoolAliasName());
+        executorStats.setExecutorName(wrapper.getThreadPoolName());
+        executorStats.setExecutorAliasName(wrapper.getThreadPoolAliasName());
+        executorStats.setRunTimeoutCount(provider.getRunTimeoutCount());
+        executorStats.setQueueTimeoutCount(provider.getQueueTimeoutCount());
+        executorStats.setRejectCount(provider.getRejectedTaskCount());
 
-        if (!wrapper.isVirtualThreadExecutor()) {
-            executorStats.setRunTimeoutCount(provider.getRunTimeoutCount());
-            executorStats.setQueueTimeoutCount(provider.getQueueTimeoutCount());
-            executorStats.setRejectCount(provider.getRejectedTaskCount());
-            executorStats.setVirtualExecutor(false);
-        } else {
-            executorStats.setVirtualExecutor(true);
-        }
+        executorStats.setVirtualExecutor(wrapper.isVirtualThreadExecutor());
 
         executorStats.setDynamic(executor instanceof DtpExecutor);
         executorStats.setTps(performanceSnapshot.getTps());

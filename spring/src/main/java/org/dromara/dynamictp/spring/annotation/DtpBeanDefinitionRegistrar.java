@@ -116,17 +116,15 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         propertyValues.put(THREAD_POOL_NAME, props.getThreadPoolName());
         propertyValues.put(THREAD_POOL_ALIAS_NAME, props.getThreadPoolAliasName());
 
-        if (!ExecutorType.getClass(props.getExecutorType()).equals(VirtualThreadExecutorProxy.class)) {
-            propertyValues.put(ALLOW_CORE_THREAD_TIMEOUT, props.isAllowCoreThreadTimeOut());
-            propertyValues.put(WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN, props.isWaitForTasksToCompleteOnShutdown());
-            propertyValues.put(AWAIT_TERMINATION_SECONDS, props.getAwaitTerminationSeconds());
-            propertyValues.put(PRE_START_ALL_CORE_THREADS, props.isPreStartAllCoreThreads());
-            propertyValues.put(REJECT_HANDLER_TYPE, props.getRejectedHandlerType());
-            propertyValues.put(REJECT_ENHANCED, props.isRejectEnhanced());
-            propertyValues.put(RUN_TIMEOUT, props.getRunTimeout());
-            propertyValues.put(TRY_INTERRUPT_WHEN_TIMEOUT, props.isTryInterrupt());
-            propertyValues.put(QUEUE_TIMEOUT, props.getQueueTimeout());
-        }
+        propertyValues.put(ALLOW_CORE_THREAD_TIMEOUT, props.isAllowCoreThreadTimeOut());
+        propertyValues.put(WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN, props.isWaitForTasksToCompleteOnShutdown());
+        propertyValues.put(AWAIT_TERMINATION_SECONDS, props.getAwaitTerminationSeconds());
+        propertyValues.put(PRE_START_ALL_CORE_THREADS, props.isPreStartAllCoreThreads());
+        propertyValues.put(REJECT_HANDLER_TYPE, props.getRejectedHandlerType());
+        propertyValues.put(REJECT_ENHANCED, props.isRejectEnhanced());
+        propertyValues.put(RUN_TIMEOUT, props.getRunTimeout());
+        propertyValues.put(TRY_INTERRUPT_WHEN_TIMEOUT, props.isTryInterrupt());
+        propertyValues.put(QUEUE_TIMEOUT, props.getQueueTimeout());
 
         val notifyItems = mergeAllNotifyItems(props.getNotifyItems());
         propertyValues.put(NOTIFY_ITEMS, notifyItems);

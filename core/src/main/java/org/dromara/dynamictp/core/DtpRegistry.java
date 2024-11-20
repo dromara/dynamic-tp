@@ -242,14 +242,12 @@ public class DtpRegistry {
         if (StringUtils.isNotBlank(props.getThreadPoolAliasName())) {
             executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());
         }
-        if (!executorWrapper.isVirtualThreadExecutor()) {
-            ExecutorAdapter<?> executor = executorWrapper.getExecutor();
-            // update reject handler
-            String currentRejectHandlerType = executor.getRejectHandlerType();
-            if (!Objects.equals(currentRejectHandlerType, props.getRejectedHandlerType())) {
-                val rejectHandler = RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType());
-                executorWrapper.setRejectHandler(rejectHandler);
-            }
+        ExecutorAdapter<?> executor = executorWrapper.getExecutor();
+        // update reject handler
+        String currentRejectHandlerType = executor.getRejectHandlerType();
+        if (!Objects.equals(currentRejectHandlerType, props.getRejectedHandlerType())) {
+            val rejectHandler = RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType());
+            executorWrapper.setRejectHandler(rejectHandler);
         }
 
         List<TaskWrapper> taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());

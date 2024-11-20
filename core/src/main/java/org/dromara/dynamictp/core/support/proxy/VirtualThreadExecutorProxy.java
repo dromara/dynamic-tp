@@ -28,13 +28,7 @@ import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 /**
  * ClassName: VirtualThreadExecutorProxy
@@ -146,10 +140,10 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
 
     @Override
     public <T> Future<T> submit(Callable<T> callable) {
-        FutureTask<T> futureTask = new FutureTask<T>(callable);
+         FutureTask<T> futureTask = new FutureTask<T>(callable);
         futureTask = (FutureTask<T>) getEnhancedTask(futureTask);
-        EnhancedRunnable.of(futureTask, this);
-        AwareManager.execute(this, futureTask);
+        EnhancedRunnable enhancedRunnable = EnhancedRunnable.of(futureTask, this);
+        AwareManager.execute(this, enhancedRunnable);
         return threadPerTaskExecutor.submit(callable);
     }
 
@@ -157,17 +151,17 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
     @Override
     public <T> Future<T> submit(Runnable runnable, T t) {
         runnable = getEnhancedTask(runnable);
-        EnhancedRunnable.of(runnable, this);
-        AwareManager.execute(this, runnable);
+        EnhancedRunnable enhancedRunnable = EnhancedRunnable.of(runnable, this);
+        AwareManager.execute(this, enhancedRunnable);
         return threadPerTaskExecutor.submit(runnable, t);
     }
 
     @Override
     public Future<?> submit(Runnable runnable) {
         runnable = getEnhancedTask(runnable);
-        EnhancedRunnable.of(runnable, this);
-        AwareManager.execute(this, runnable);
-        return threadPerTaskExecutor.submit(runnable);
+        EnhancedRunnable enhancedRunnable = EnhancedRunnable.of(runnable, this);
+        AwareManager.execute(this, enhancedRunnable);
+        return threadPerTaskExecutor.submit(enhancedRunnable);
     }
 
     @Override

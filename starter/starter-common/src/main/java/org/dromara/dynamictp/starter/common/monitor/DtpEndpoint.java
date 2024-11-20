@@ -53,7 +53,7 @@ public class DtpEndpoint {
 
         val handlerMap = ContextManagerHelper.getBeansOfType(MetricsAware.class);
         if (MapUtils.isNotEmpty(handlerMap)) {
-            handlerMap.forEach((k, v) -> metricsList.addAll(v.getMultiPoolStats()));
+            handlerMap.forEach((k, v) -> metricsList.addAll(v.getMultiExecutorStats()));
         }
         JvmStats jvmStats = new JvmStats();
         Runtime runtime = Runtime.getRuntime();

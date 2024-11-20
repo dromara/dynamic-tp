@@ -58,18 +58,18 @@ public class MicroMeterCollector extends AbstractCollector {
 
     public static final String APP_NAME_TAG = "app.name";
 
-    private static final Map<String, org.dromara.dynamictp.common.entity.Metrics> GAUGE_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, ExecutorStats> GAUGE_CACHE = new ConcurrentHashMap<>();
 
     @Override
     public void collect(ExecutorStats executorStats) {
         // metrics must be held with a strong reference, even though it is never referenced within this class
-        ExecutorStats oldStats = (ExecutorStats) GAUGE_CACHE.get(executorStats.getPoolName());
+        ExecutorStats oldStats = (ExecutorStats) GAUGE_CACHE.get(executorStats.getExecutorName());
         if (Objects.isNull(oldStats)) {
-            GAUGE_CACHE.put(executorStats.getPoolName(), executorStats);
+            GAUGE_CACHE.put(executorStats.getExecutorName(), executorStats);
         } else {
             BeanCopierUtil.copyProperties(executorStats, oldStats);
         }
-        gauge((ExecutorStats) GAUGE_CACHE.get(executorStats.getPoolName()));
+        gauge((ExecutorStats) GAUGE_CACHE.get(executorStats.getExecutorName()));
     }
 
     @Override
@@ -120,9 +120,9 @@ public class MicroMeterCollector extends AbstractCollector {
 
     private Iterable<Tag> getTags(ExecutorStats executorStats) {
         List<Tag> tags = new ArrayList<>(3);
-        tags.add(Tag.of(executorStats.isVirtualExecutor() ? VTE_NAME_TAG : POOL_NAME_TAG, executorStats.getPoolName()));
+        tags.add(Tag.of(executorStats.isVirtualExecutor() ? VTE_NAME_TAG : POOL_NAME_TAG, executorStats.getExecutorName()));
         tags.add(Tag.of(APP_NAME_TAG, CommonUtil.getInstance().getServiceName()));
-        tags.add(Tag.of(executorStats.isVirtualExecutor() ? VTE_ALIAS_TAG : POOL_ALIAS_TAG, Optional.ofNullable(executorStats.getExecutorAliasName()).orElse(executorStats.getPoolName())));
+        tags.add(Tag.of(executorStats.isVirtualExecutor() ? VTE_ALIAS_TAG : POOL_ALIAS_TAG, Optional.ofNullable(executorStats.getExecutorAliasName()).orElse(executorStats.getExecutorName())));
         return tags;
     }
 }

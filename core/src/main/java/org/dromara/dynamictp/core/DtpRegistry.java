@@ -196,7 +196,7 @@ public class DtpRegistry {
         TpMainFields oldFields = ExecutorConverter.toMainFields(executorWrapper);
         doRefresh(executorWrapper, props);
         TpMainFields newFields = ExecutorConverter.toMainFields(executorWrapper);
-        if (oldFields.equals(newFields) && !executorWrapper.isVirtualThreadExecutor()) {
+        if (oldFields.equals(newFields)) {
             log.debug("DynamicTp refresh, main properties of [{}] have not changed.",
                     executorWrapper.getThreadPoolName());
             return;

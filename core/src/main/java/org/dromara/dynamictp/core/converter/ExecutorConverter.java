@@ -64,8 +64,6 @@ public class ExecutorConverter {
         ExecutorStats executorStats = convertCommon(executor);
         executorStats.setExecutorName(wrapper.getThreadPoolName());
         executorStats.setExecutorAliasName(wrapper.getThreadPoolAliasName());
-        executorStats.setPoolName(wrapper.getThreadPoolName());
-        executorStats.setPoolAliasName(wrapper.getThreadPoolAliasName());
         executorStats.setRunTimeoutCount(provider.getRunTimeoutCount());
         executorStats.setQueueTimeoutCount(provider.getQueueTimeoutCount());
         executorStats.setRejectCount(provider.getRejectedTaskCount());

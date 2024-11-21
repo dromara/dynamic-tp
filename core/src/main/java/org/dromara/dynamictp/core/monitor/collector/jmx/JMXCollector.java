@@ -48,19 +48,19 @@ public class JMXCollector extends AbstractCollector {
 
     @Override
     public void collect(ExecutorStats threadPoolStats) {
-        if (GAUGE_CACHE.containsKey(threadPoolStats.getPoolName())) {
-            ExecutorStats poolStats = (ExecutorStats) GAUGE_CACHE.get(threadPoolStats.getPoolName());
+        if (GAUGE_CACHE.containsKey(threadPoolStats.getExecutorName())) {
+            ExecutorStats poolStats = (ExecutorStats) GAUGE_CACHE.get(threadPoolStats.getExecutorName());
             BeanCopierUtil.copyProperties(threadPoolStats, poolStats);
         } else {
             try {
                 MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-                ObjectName name = new ObjectName(DTP_METRIC_NAME_PREFIX + ":name=" + threadPoolStats.getPoolName());
+                ObjectName name = new ObjectName(DTP_METRIC_NAME_PREFIX + ":name=" + threadPoolStats.getExecutorName());
                 ThreadPoolStatsJMX stats = new ThreadPoolStatsJMX(threadPoolStats);
                 server.registerMBean(stats, name);
             } catch (JMException e) {
                 log.error("collect thread pool stats error", e);
             }
-            GAUGE_CACHE.put(threadPoolStats.getPoolName(), threadPoolStats);
+            GAUGE_CACHE.put(threadPoolStats.getExecutorName(), threadPoolStats);
         }
     }
 

@@ -125,7 +125,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
             } else {
                 BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanName);
                 if (!(beanDefinition instanceof AnnotatedBeanDefinition)) {
-                    if (beanDefinition.getBeanClassName().equals("org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy")) {
+                    if (VirtualThreadExecutorProxy.class.getName().equals("org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy")) {
                         return doRegisterAndReturnCommon(bean, beanName);
                     }
                     return bean;

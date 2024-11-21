@@ -42,18 +42,6 @@ public class ExecutorStats extends Metrics {
     private String executorAliasName;
 
     /**
-     * 线程池名字
-     */
-    @Deprecated
-    private String poolName;
-
-    /**
-     * 线程池别名
-     */
-    @Deprecated
-    private String poolAliasName;
-
-    /**
      * 核心线程数
      */
     private int corePoolSize;

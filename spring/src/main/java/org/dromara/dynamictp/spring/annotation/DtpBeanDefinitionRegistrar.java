@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.ThreadFactory;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.ALLOW_CORE_THREAD_TIMEOUT;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.AWAIT_TERMINATION_SECONDS;
@@ -74,7 +75,9 @@ import static org.dromara.dynamictp.common.entity.NotifyItem.mergeAllNotifyItems
 @Slf4j
 public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
 
-    private static final Integer JDK_VERSION_21_OFFSET = 21 - 8;
+    private static final Integer JRE_VERSION_21 = 21;
+
+    private static final String VIRTUAL_THREAD_EXECUTOR_TYPE = "virtual";
 
     private Environment environment;
 
@@ -104,6 +107,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
             try {
                 args = buildConstructorArgs(executorTypeClass, e);
             } catch (UnsupportedOperationException exception) {
+                log.warn("DynamicTp virtual thread executor {} register warn: update your JDK version or don't use virtual thread executor!", e.getThreadPoolName());
                 return;
             }
             BeanRegistrationUtil.register(registry, e.getThreadPoolName(), executorTypeClass, propertyValues, args);
@@ -115,15 +119,17 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         propertyValues.put(THREAD_POOL_NAME, props.getThreadPoolName());
         propertyValues.put(THREAD_POOL_ALIAS_NAME, props.getThreadPoolAliasName());
 
-        propertyValues.put(ALLOW_CORE_THREAD_TIMEOUT, props.isAllowCoreThreadTimeOut());
-        propertyValues.put(WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN, props.isWaitForTasksToCompleteOnShutdown());
-        propertyValues.put(AWAIT_TERMINATION_SECONDS, props.getAwaitTerminationSeconds());
-        propertyValues.put(PRE_START_ALL_CORE_THREADS, props.isPreStartAllCoreThreads());
-        propertyValues.put(REJECT_HANDLER_TYPE, props.getRejectedHandlerType());
-        propertyValues.put(REJECT_ENHANCED, props.isRejectEnhanced());
-        propertyValues.put(RUN_TIMEOUT, props.getRunTimeout());
-        propertyValues.put(TRY_INTERRUPT_WHEN_TIMEOUT, props.isTryInterrupt());
-        propertyValues.put(QUEUE_TIMEOUT, props.getQueueTimeout());
+        if (!props.getExecutorType().equals(VIRTUAL_THREAD_EXECUTOR_TYPE)) {
+            propertyValues.put(ALLOW_CORE_THREAD_TIMEOUT, props.isAllowCoreThreadTimeOut());
+            propertyValues.put(WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN, props.isWaitForTasksToCompleteOnShutdown());
+            propertyValues.put(AWAIT_TERMINATION_SECONDS, props.getAwaitTerminationSeconds());
+            propertyValues.put(PRE_START_ALL_CORE_THREADS, props.isPreStartAllCoreThreads());
+            propertyValues.put(REJECT_HANDLER_TYPE, props.getRejectedHandlerType());
+            propertyValues.put(REJECT_ENHANCED, props.isRejectEnhanced());
+            propertyValues.put(RUN_TIMEOUT, props.getRunTimeout());
+            propertyValues.put(TRY_INTERRUPT_WHEN_TIMEOUT, props.isTryInterrupt());
+            propertyValues.put(QUEUE_TIMEOUT, props.getQueueTimeout());
+        }
 
         val notifyItems = mergeAllNotifyItems(props.getNotifyItems());
         propertyValues.put(NOTIFY_ITEMS, notifyItems);
@@ -144,13 +150,13 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         } else if (clazz.equals(PriorityDtpExecutor.class)) {
             taskQueue = new PriorityBlockingQueue<>(props.getQueueCapacity(), PriorityDtpExecutor.getRunnableComparator());
         } else if (clazz.equals(VirtualThreadExecutorProxy.class)) {
-            int jdkVersion = JreEnum.currentVersion().ordinal();
-            if (jdkVersion < JDK_VERSION_21_OFFSET) {
-                log.warn("DynamicTp virtual thread executor {} register warn: update your JDK version or don't use virtual thread executor!", props.getThreadPoolName());
+            int jreVersion = JreEnum.currentIntVersion();
+            if (jreVersion < JRE_VERSION_21) {
                 throw new UnsupportedOperationException();
             }
+            ThreadFactory factory = Thread.ofVirtual().name(props.getThreadPoolName()).factory();
             return new Object[]{
-                    Executors.newVirtualThreadPerTaskExecutor()
+                    Executors.newThreadPerTaskExecutor(factory)
             };
         } else {
             taskQueue = buildLbq(props.getQueueType(),

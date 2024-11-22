@@ -104,8 +104,8 @@ public enum JreEnum {
      * @param targetVersion 目标版本
      * @return 是否大于
      */
-    public boolean greaterThan(JreEnum targetVersion) {
-        return this.ordinal() > targetVersion.ordinal();
+    public static boolean greaterThan(JreEnum targetVersion) {
+        return getJre().ordinal() > targetVersion.ordinal();
     }
 
     /**
@@ -114,8 +114,8 @@ public enum JreEnum {
      * @param targetVersion 目标版本
      * @return 是否小于
      */
-    public boolean lessThan(JreEnum targetVersion) {
-        return this.ordinal() < targetVersion.ordinal();
+    public static boolean lessThan(JreEnum targetVersion) {
+        return getJre().ordinal() < targetVersion.ordinal();
     }
 
 }

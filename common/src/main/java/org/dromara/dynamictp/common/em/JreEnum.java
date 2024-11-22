@@ -23,6 +23,7 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 
 /**
  * JRE version
+ *
  * @author kamtohung
  */
 @Slf4j
@@ -95,6 +96,26 @@ public enum JreEnum {
             log.warn("can't determine current JRE version", e);
         }
         return JAVA_8;
+    }
+
+    /**
+     * 判断当前版本是否大于某个版本
+     *
+     * @param targetVersion 目标版本
+     * @return 是否大于
+     */
+    public boolean greaterThan(JreEnum targetVersion) {
+        return this.ordinal() > targetVersion.ordinal();
+    }
+
+    /**
+     * 判断当前版本是否小于某个版本
+     *
+     * @param targetVersion 目标版本
+     * @return 是否小于
+     */
+    public boolean lessThan(JreEnum targetVersion) {
+        return this.ordinal() < targetVersion.ordinal();
     }
 
 }

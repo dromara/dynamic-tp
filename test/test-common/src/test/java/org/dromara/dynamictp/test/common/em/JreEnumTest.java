@@ -42,4 +42,16 @@ class JreEnumTest {
         Assertions.assertEquals(JreEnum.JAVA_11, JreEnum.currentVersion());
     }
 
+    @Test
+    @EnabledOnJre(value = JRE.JAVA_11)
+    void testJRE11GreaterThan() {
+        Assertions.assertTrue(JreEnum.JAVA_11.greaterThan(JreEnum.JAVA_8));
+    }
+
+    @Test
+    @EnabledOnJre(value = JRE.JAVA_8)
+    void testJRE8LessThan() {
+        Assertions.assertTrue(JreEnum.JAVA_8.lessThan(JreEnum.JAVA_11));
+    }
+
 }

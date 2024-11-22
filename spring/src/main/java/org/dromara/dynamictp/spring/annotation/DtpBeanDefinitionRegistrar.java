@@ -75,10 +75,6 @@ import static org.dromara.dynamictp.common.entity.NotifyItem.mergeAllNotifyItems
 @Slf4j
 public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
 
-    private static final Integer JRE_VERSION_21 = 21;
-
-    private static final String VIRTUAL_THREAD_EXECUTOR_TYPE = "virtual";
-
     private Environment environment;
 
     @Override
@@ -119,7 +115,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         propertyValues.put(THREAD_POOL_NAME, props.getThreadPoolName());
         propertyValues.put(THREAD_POOL_ALIAS_NAME, props.getThreadPoolAliasName());
 
-        if (!props.getExecutorType().equals(VIRTUAL_THREAD_EXECUTOR_TYPE)) {
+        if (!props.getExecutorType().equals(ExecutorType.VIRTUAL.getName())) {
             propertyValues.put(ALLOW_CORE_THREAD_TIMEOUT, props.isAllowCoreThreadTimeOut());
             propertyValues.put(WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN, props.isWaitForTasksToCompleteOnShutdown());
             propertyValues.put(AWAIT_TERMINATION_SECONDS, props.getAwaitTerminationSeconds());
@@ -150,8 +146,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         } else if (clazz.equals(PriorityDtpExecutor.class)) {
             taskQueue = new PriorityBlockingQueue<>(props.getQueueCapacity(), PriorityDtpExecutor.getRunnableComparator());
         } else if (clazz.equals(VirtualThreadExecutorProxy.class)) {
-            int jreVersion = JreEnum.currentIntVersion();
-            if (jreVersion < JRE_VERSION_21) {
+            if (JreEnum.lessThan(JreEnum.JAVA_21)) {
                 throw new UnsupportedOperationException();
             }
             ThreadFactory factory = Thread.ofVirtual().name(props.getThreadPoolName()).factory();

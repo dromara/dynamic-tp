@@ -128,8 +128,4 @@ public final class DynamicTpConst {
 
     public static final String FALSE_STR = "false";
 
-    /**
-     *  jre
-     */
-    private static final Integer JRE_VERSION_21 = 21;
 }

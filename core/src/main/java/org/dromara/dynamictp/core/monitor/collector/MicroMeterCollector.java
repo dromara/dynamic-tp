@@ -50,12 +50,6 @@ public class MicroMeterCollector extends AbstractCollector {
 
     public static final String POOL_ALIAS_TAG = DTP_METRIC_NAME_PREFIX + ".alias";
 
-    public static final String VTE_METRIC_NAME_PREFIX = "virtual.thread.executor";
-
-    public static final String VTE_NAME_TAG = VTE_METRIC_NAME_PREFIX + ".name";
-
-    public static final String VTE_ALIAS_TAG = VTE_METRIC_NAME_PREFIX + ".alias";
-
     public static final String APP_NAME_TAG = "app.name";
 
     private static final Map<String, ExecutorStats> GAUGE_CACHE = new ConcurrentHashMap<>();
@@ -81,22 +75,20 @@ public class MicroMeterCollector extends AbstractCollector {
 
         Iterable<Tag> tags = getTags(executorStats);
 
-        if (!executorStats.isVirtualExecutor()) {
-            Metrics.gauge(metricName("core.size"), tags, executorStats, ExecutorStats::getCorePoolSize);
-            Metrics.gauge(metricName("maximum.size"), tags, executorStats, ExecutorStats::getMaximumPoolSize);
-            Metrics.gauge(metricName("current.size"), tags, executorStats, ExecutorStats::getPoolSize);
-            Metrics.gauge(metricName("largest.size"), tags, executorStats, ExecutorStats::getLargestPoolSize);
+        Metrics.gauge(metricName("core.size"), tags, executorStats, ExecutorStats::getCorePoolSize);
+        Metrics.gauge(metricName("maximum.size"), tags, executorStats, ExecutorStats::getMaximumPoolSize);
+        Metrics.gauge(metricName("current.size"), tags, executorStats, ExecutorStats::getPoolSize);
+        Metrics.gauge(metricName("largest.size"), tags, executorStats, ExecutorStats::getLargestPoolSize);
 
-            Metrics.gauge(metricName("completed.task.count"), tags, executorStats, ExecutorStats::getCompletedTaskCount);
-            Metrics.gauge(metricName("wait.task.count"), tags, executorStats, ExecutorStats::getWaitTaskCount);
+        Metrics.gauge(metricName("completed.task.count"), tags, executorStats, ExecutorStats::getCompletedTaskCount);
+        Metrics.gauge(metricName("wait.task.count"), tags, executorStats, ExecutorStats::getWaitTaskCount);
 
-            Metrics.gauge(metricName("queue.size"), tags, executorStats, ExecutorStats::getQueueSize);
-            Metrics.gauge(metricName("queue.capacity"), tags, executorStats, ExecutorStats::getQueueCapacity);
-            Metrics.gauge(metricName("queue.remaining.capacity"), tags, executorStats, ExecutorStats::getQueueRemainingCapacity);
+        Metrics.gauge(metricName("queue.size"), tags, executorStats, ExecutorStats::getQueueSize);
+        Metrics.gauge(metricName("queue.capacity"), tags, executorStats, ExecutorStats::getQueueCapacity);
+        Metrics.gauge(metricName("queue.remaining.capacity"), tags, executorStats, ExecutorStats::getQueueRemainingCapacity);
 
-            Metrics.gauge(metricName("reject.count"), tags, executorStats, ExecutorStats::getRejectCount);
-            Metrics.gauge(metricName("queue.timeout.count"), tags, executorStats, ExecutorStats::getQueueTimeoutCount);
-        }
+        Metrics.gauge(metricName("reject.count"), tags, executorStats, ExecutorStats::getRejectCount);
+        Metrics.gauge(metricName("queue.timeout.count"), tags, executorStats, ExecutorStats::getQueueTimeoutCount);
 
         Metrics.gauge(metricName("active.count"), tags, executorStats, ExecutorStats::getActiveCount);
         Metrics.gauge(metricName("task.count"), tags, executorStats, ExecutorStats::getTaskCount);
@@ -120,9 +112,9 @@ public class MicroMeterCollector extends AbstractCollector {
 
     private Iterable<Tag> getTags(ExecutorStats executorStats) {
         List<Tag> tags = new ArrayList<>(3);
-        tags.add(Tag.of(executorStats.isVirtualExecutor() ? VTE_NAME_TAG : POOL_NAME_TAG, executorStats.getExecutorName()));
+        tags.add(Tag.of(POOL_NAME_TAG, executorStats.getExecutorName()));
         tags.add(Tag.of(APP_NAME_TAG, CommonUtil.getInstance().getServiceName()));
-        tags.add(Tag.of(executorStats.isVirtualExecutor() ? VTE_ALIAS_TAG : POOL_ALIAS_TAG, Optional.ofNullable(executorStats.getExecutorAliasName()).orElse(executorStats.getExecutorName())));
+        tags.add(Tag.of(POOL_ALIAS_TAG, Optional.ofNullable(executorStats.getExecutorAliasName()).orElse(executorStats.getExecutorName())));
         return tags;
     }
 }

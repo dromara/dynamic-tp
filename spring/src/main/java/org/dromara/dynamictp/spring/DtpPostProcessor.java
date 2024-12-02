@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.dynamictp.common.constant.DynamicTpConst;
 import org.dromara.dynamictp.common.plugin.DtpInterceptorRegistry;
 import org.dromara.dynamictp.common.util.ConstructorUtil;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
@@ -91,7 +92,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
     @Override
     public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
         if (!(bean instanceof ThreadPoolExecutor) && !(bean instanceof ThreadPoolTaskExecutor) &&
-                !(bean.getClass().getName().equals("java.util.concurrent.ThreadPerTaskExecutor")) &&
+                !(bean.getClass().getName().equals(DynamicTpConst.THREAD_PER_TASK_EXECUTOR)) &&
                 !(bean instanceof VirtualThreadExecutorProxy)) {
             return bean;
         }

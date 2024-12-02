@@ -57,13 +57,13 @@ public class MicroMeterCollector extends AbstractCollector {
     @Override
     public void collect(ExecutorStats executorStats) {
         // metrics must be held with a strong reference, even though it is never referenced within this class
-        ExecutorStats oldStats = (ExecutorStats) GAUGE_CACHE.get(executorStats.getExecutorName());
+        ExecutorStats oldStats = GAUGE_CACHE.get(executorStats.getExecutorName());
         if (Objects.isNull(oldStats)) {
             GAUGE_CACHE.put(executorStats.getExecutorName(), executorStats);
         } else {
             BeanCopierUtil.copyProperties(executorStats, oldStats);
         }
-        gauge((ExecutorStats) GAUGE_CACHE.get(executorStats.getExecutorName()));
+        gauge(GAUGE_CACHE.get(executorStats.getExecutorName()));
     }
 
     @Override

@@ -85,21 +85,21 @@ public class ExecutorConverter {
     }
 
     private static ExecutorStats convertCommon(ExecutorAdapter<?> executor) {
-        ExecutorStats poolStats = new ExecutorStats();
-        poolStats.setCorePoolSize(executor.getCorePoolSize());
-        poolStats.setMaximumPoolSize(executor.getMaximumPoolSize());
-        poolStats.setPoolSize(executor.getPoolSize());
-        poolStats.setActiveCount(executor.getActiveCount());
-        poolStats.setLargestPoolSize(executor.getLargestPoolSize());
-        poolStats.setQueueType(executor.getQueueType());
-        poolStats.setQueueCapacity(executor.getQueueCapacity());
-        poolStats.setQueueSize(executor.getQueueSize());
-        poolStats.setQueueRemainingCapacity(executor.getQueueRemainingCapacity());
-        poolStats.setTaskCount(executor.getTaskCount());
-        poolStats.setCompletedTaskCount(executor.getCompletedTaskCount());
-        poolStats.setWaitTaskCount(executor.getQueueSize());
-        poolStats.setRejectHandlerName(executor.getRejectHandlerType());
-        poolStats.setKeepAliveTime(executor.getKeepAliveTime(TimeUnit.MILLISECONDS));
-        return poolStats;
+        ExecutorStats executorStats = new ExecutorStats();
+        executorStats.setCorePoolSize(executor.getCorePoolSize());
+        executorStats.setMaximumPoolSize(executor.getMaximumPoolSize());
+        executorStats.setPoolSize(executor.getPoolSize());
+        executorStats.setActiveCount(executor.getActiveCount());
+        executorStats.setLargestPoolSize(executor.getLargestPoolSize());
+        executorStats.setQueueType(executor.getQueueType());
+        executorStats.setQueueCapacity(executor.getQueueCapacity());
+        executorStats.setQueueSize(executor.getQueueSize());
+        executorStats.setQueueRemainingCapacity(executor.getQueueRemainingCapacity());
+        executorStats.setTaskCount(executor.getTaskCount());
+        executorStats.setCompletedTaskCount(executor.getCompletedTaskCount());
+        executorStats.setWaitTaskCount(executor.getQueueSize());
+        executorStats.setRejectHandlerName(executor.getRejectHandlerType());
+        executorStats.setKeepAliveTime(executor.getKeepAliveTime(TimeUnit.MILLISECONDS));
+        return executorStats;
     }
 }

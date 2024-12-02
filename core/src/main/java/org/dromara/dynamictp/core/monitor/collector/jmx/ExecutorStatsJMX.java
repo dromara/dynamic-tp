@@ -22,11 +22,11 @@ import org.dromara.dynamictp.common.entity.ExecutorStats;
 /**
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
-public class ThreadPoolStatsJMX implements ThreadPoolStatsMXBean {
+public class ExecutorStatsJMX implements ExecutorStatsMXBean {
 
     private ExecutorStats executorStats;
 
-    public ThreadPoolStatsJMX(ExecutorStats executorStats) {
+    public ExecutorStatsJMX(ExecutorStats executorStats) {
         this.executorStats = executorStats;
     }
 

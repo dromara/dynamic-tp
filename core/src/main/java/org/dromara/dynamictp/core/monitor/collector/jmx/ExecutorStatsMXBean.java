@@ -22,22 +22,22 @@ import org.dromara.dynamictp.common.entity.ExecutorStats;
 import javax.management.MXBean;
 
 /**
- * ThreadPoolStatsMXBean related
+ * ExecutorStatsMXBean related
  *
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
 @MXBean
-public interface ThreadPoolStatsMXBean {
+public interface ExecutorStatsMXBean {
 
     /**
-     * get thread pool stats
+     * get executor stats
      *
      * @return thread pool stats
      */
     ExecutorStats getExecutorStats();
 
     /**
-     * set thread pool stats
+     * set executor stats
      *
      * @param executorStats thread pool stats
      */

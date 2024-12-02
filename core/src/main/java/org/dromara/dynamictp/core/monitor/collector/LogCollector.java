@@ -33,8 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 public class LogCollector extends AbstractCollector {
 
     @Override
-    public void collect(ExecutorStats threadPoolStats) {
-        String metrics = JsonUtil.toJson(threadPoolStats);
+    public void collect(ExecutorStats executorStats) {
+        String metrics = JsonUtil.toJson(executorStats);
         if (LogHelper.getMonitorLogger() == null) {
             log.error("Cannot find monitor logger...");
             return;

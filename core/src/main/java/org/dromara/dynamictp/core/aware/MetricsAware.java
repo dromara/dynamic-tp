@@ -31,18 +31,18 @@ import java.util.List;
 public interface MetricsAware extends DtpAware {
 
     /**
-     * Get thread pool stats.
+     * Get executors stats.
      *
-     * @return the thread pool stats
+     * @return the executors stats
      */
-    default ExecutorStats getPoolStats() {
+    default ExecutorStats getExecutorStats() {
         return null;
     }
 
     /**
-     * Get multi thread pool stats.
+     * Get multi executors stats.
      *
-     * @return thead pools stats
+     * @return executors stats
      */
     default List<ExecutorStats> getMultiExecutorStats() {
         return Collections.emptyList();

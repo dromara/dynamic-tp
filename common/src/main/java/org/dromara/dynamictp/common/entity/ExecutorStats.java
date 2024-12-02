@@ -22,7 +22,7 @@ import lombok.EqualsAndHashCode;
 
 
 /**
- * ThreadPoolStats related
+ * ExecutorStats related
  *
  * @author yanhom
  * @since 1.0.0

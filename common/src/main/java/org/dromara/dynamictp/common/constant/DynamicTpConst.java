@@ -127,4 +127,9 @@ public final class DynamicTpConst {
     public static final String TRUE_STR = "true";
 
     public static final String FALSE_STR = "false";
+
+    /**
+     *  jre
+     */
+    public static final String THREAD_PER_TASK_EXECUTOR = "java.util.concurrent.ThreadPerTaskExecutor";
 }

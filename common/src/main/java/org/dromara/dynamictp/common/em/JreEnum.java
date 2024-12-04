@@ -54,11 +54,17 @@ public enum JreEnum {
 
     JAVA_18,
 
-    JAVA_19;
+    JAVA_19,
+
+    JAVA_20,
+
+    JAVA_21;
 
     private static final JreEnum VERSION = getJre();
 
     public static final String DEFAULT_JAVA_VERSION = "1.8";
+
+    private static final int JRE_VERSION_OFFSET = 8;
 
     /**
      * get current JRE version
@@ -67,6 +73,14 @@ public enum JreEnum {
      */
     public static JreEnum currentVersion() {
         return VERSION;
+    }
+
+    /**
+     * get current JRE integer version
+     * @return JRE integer version
+     */
+    public static int currentIntVersion() {
+        return JreEnum.currentVersion().ordinal() + JRE_VERSION_OFFSET;
     }
 
     /**

@@ -73,7 +73,7 @@ public class DtpAdapterListener {
         if (MapUtils.isEmpty(handlerMap)) {
             return;
         }
-        handlerMap.forEach((k, v) -> v.getMultiPoolStats().forEach(ps ->
+        handlerMap.forEach((k, v) -> v.getMultiExecutorStats().forEach(ps ->
                 CollectorHandler.getInstance().collect(ps, dtpProperties.getCollectorTypes())));
     }
 

@@ -29,7 +29,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
-import org.dromara.dynamictp.common.entity.ThreadPoolStats;
+import org.dromara.dynamictp.common.entity.ExecutorStats;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.entity.TpMainFields;
 import org.dromara.dynamictp.common.event.CustomContextRefreshedEvent;
@@ -104,20 +104,20 @@ public abstract class AbstractDtpAdapter implements DtpAdapter {
     }
 
     /**
-     * Get multi thread pool stats.
+     * Get multi executor stats.
      *
-     * @return thead pools stats
+     * @return Executors stats
      */
     @Override
-    public List<ThreadPoolStats> getMultiPoolStats() {
+    public List<ExecutorStats> getMultiExecutorStats() {
         val executorWrappers = getExecutorWrappers();
         if (MapUtils.isEmpty(executorWrappers)) {
             return Collections.emptyList();
         }
 
-        List<ThreadPoolStats> threadPoolStats = Lists.newArrayList();
-        executorWrappers.forEach((k, v) -> threadPoolStats.add(ExecutorConverter.toMetrics(v)));
-        return threadPoolStats;
+        List<ExecutorStats> executorStats = Lists.newArrayList();
+        executorWrappers.forEach((k, v) -> executorStats.add(ExecutorConverter.toMetrics(v)));
+        return executorStats;
     }
 
     public void refresh(List<TpExecutorProps> propsList, List<NotifyPlatform> platforms) {

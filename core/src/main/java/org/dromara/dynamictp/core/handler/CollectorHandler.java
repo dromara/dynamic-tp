@@ -19,7 +19,7 @@ package org.dromara.dynamictp.core.handler;
 
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.common.entity.ThreadPoolStats;
+import org.dromara.dynamictp.common.entity.ExecutorStats;
 import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
 import org.dromara.dynamictp.core.monitor.collector.InternalLogCollector;
 import org.dromara.dynamictp.core.monitor.collector.LogCollector;
@@ -56,14 +56,14 @@ public final class CollectorHandler {
         COLLECTORS.put(jmxCollector.type(), jmxCollector);
     }
 
-    public void collect(ThreadPoolStats poolStats, List<String> types) {
-        if (poolStats == null || CollectionUtils.isEmpty(types)) {
+    public void collect(ExecutorStats executorStats, List<String> types) {
+        if (executorStats == null || CollectionUtils.isEmpty(types)) {
             return;
         }
         for (String collectorType : types) {
             MetricsCollector collector = COLLECTORS.get(collectorType.toLowerCase());
             if (collector != null) {
-                collector.collect(poolStats);
+                collector.collect(executorStats);
             }
         }
     }

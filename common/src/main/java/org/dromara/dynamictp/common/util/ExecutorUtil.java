@@ -51,7 +51,7 @@ public final class ExecutorUtil {
         if (r instanceof FutureTask) {
             try {
                 FutureTask<?> future = (FutureTask<?>) r;
-                if (future.isDone()) {
+                if (future.isDone() && !future.isCancelled()) {
                     future.get();
                 }
             } catch (InterruptedException e) {

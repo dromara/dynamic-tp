@@ -24,8 +24,9 @@ import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.monitor.PerformanceProvider;
 import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
+import org.dromara.dynamictp.core.support.ExecutorStatProvider;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -58,7 +59,7 @@ public class ExecutorConverter {
         if (executor == null) {
             return null;
         }
-        ThreadPoolStatProvider provider = wrapper.getThreadPoolStatProvider();
+        ExecutorStatProvider provider = wrapper.getExecutorStatProvider();
         PerformanceProvider performanceProvider = provider.getPerformanceProvider();
         val performanceSnapshot = performanceProvider.getSnapshotAndReset();
         ExecutorStats executorStats = convertCommon(executor);
@@ -68,7 +69,8 @@ public class ExecutorConverter {
         executorStats.setQueueTimeoutCount(provider.getQueueTimeoutCount());
         executorStats.setRejectCount(provider.getRejectedTaskCount());
 
-        executorStats.setVirtualExecutor(wrapper.isVirtualThreadExecutor());
+        executorStats.setVirtualThreadExecutor(wrapper.isVirtualThreadExecutor());
+        toVirtualThreadMetrics(executorStats);
 
         executorStats.setDynamic(executor instanceof DtpExecutor);
         executorStats.setTps(performanceSnapshot.getTps());
@@ -82,6 +84,15 @@ public class ExecutorConverter {
         executorStats.setTp99(performanceSnapshot.getTp99());
         executorStats.setTp999(performanceSnapshot.getTp999());
         return executorStats;
+    }
+
+    private static void toVirtualThreadMetrics(ExecutorStats executorStats) {
+        if (!executorStats.isVirtualThreadExecutor()) {
+            return;
+        }
+        Map<String, Object> vteStats = PerformanceProvider.getVTEStats(executorStats.getExecutorName());
+        executorStats.getExtMap().put("maxPinnedTime", ((Double) vteStats.getOrDefault("maxPinnedTime", 0)));
+        executorStats.getExtMap().put("totalPinnedTime", (Double) vteStats.getOrDefault("totalPinnedTime", 0));
     }
 
     private static ExecutorStats convertCommon(ExecutorAdapter<?> executor) {

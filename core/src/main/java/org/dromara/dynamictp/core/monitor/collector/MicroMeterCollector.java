@@ -52,7 +52,7 @@ public class MicroMeterCollector extends AbstractCollector {
 
     public static final String APP_NAME_TAG = "app.name";
 
-    private static final Map<String, ExecutorStats> GAUGE_CACHE = new ConcurrentHashMap<>();
+    public static final Map<String, ExecutorStats> GAUGE_CACHE = new ConcurrentHashMap<>();
 
     @Override
     public void collect(ExecutorStats executorStats) {
@@ -74,6 +74,11 @@ public class MicroMeterCollector extends AbstractCollector {
     public void gauge(ExecutorStats executorStats) {
 
         Iterable<Tag> tags = getTags(executorStats);
+
+        if (executorStats.isVirtualThreadExecutor()) {
+            Metrics.gauge(metricName("maximum.pinned.time"), tags, executorStats, ExecutorStats::getMaxPinnedTime);
+            Metrics.gauge(metricName("total.pinned.time"), tags, executorStats, ExecutorStats::getTotalPinnedTime);
+        }
 
         Metrics.gauge(metricName("core.size"), tags, executorStats, ExecutorStats::getCorePoolSize);
         Metrics.gauge(metricName("maximum.size"), tags, executorStats, ExecutorStats::getMaximumPoolSize);

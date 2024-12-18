@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.dynamictp.core.support;
+package org.dromara.dynamictp.core.support.adapter;
 
 import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 

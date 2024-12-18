@@ -93,7 +93,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         ExecutorWrapper executorWrapper = context.getExecutorWrapper();
         val executor = executorWrapper.getExecutor();
         NotifyItem notifyItem = context.getNotifyItem();
-        val statProvider = executorWrapper.getThreadPoolStatProvider();
+        val statProvider = executorWrapper.getExecutorStatProvider();
         val alarmValue = notifyItem.getThreshold() + notifyItemEnum.getUnit() + " / "
                 + AlarmCounter.calcCurrentValue(executorWrapper, notifyItemEnum) + notifyItemEnum.getUnit();
         String content = String.format(
@@ -202,9 +202,9 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     protected String populateAlarmItem(NotifyItemEnum notifyType, ExecutorWrapper executorWrapper) {
         String suffix = StringUtils.EMPTY;
         if (notifyType == NotifyItemEnum.RUN_TIMEOUT) {
-            suffix = " (" + executorWrapper.getThreadPoolStatProvider().getRunTimeout() + "ms)";
+            suffix = " (" + executorWrapper.getExecutorStatProvider().getRunTimeout() + "ms)";
         } else if (notifyType == NotifyItemEnum.QUEUE_TIMEOUT) {
-            suffix = " (" + executorWrapper.getThreadPoolStatProvider().getQueueTimeout() + "ms)";
+            suffix = " (" + executorWrapper.getExecutorStatProvider().getQueueTimeout() + "ms)";
         }
         return notifyType.getValue() + suffix;
     }

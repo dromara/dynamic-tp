@@ -43,7 +43,7 @@ public class RunTimeoutTimerTask extends AbstractTimeoutTimerTask {
 
     @Override
     protected void doRun() {
-        val statProvider = executorWrapper.getThreadPoolStatProvider();
+        val statProvider = executorWrapper.getExecutorStatProvider();
         ExecutorAdapter<?> executor = statProvider.getExecutorWrapper().getExecutor();
         val pair = getTaskNameAndTraceId();
         statProvider.incRunTimeoutCount(1);

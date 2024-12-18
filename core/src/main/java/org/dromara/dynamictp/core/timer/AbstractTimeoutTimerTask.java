@@ -46,7 +46,7 @@ public abstract class AbstractTimeoutTimerTask implements TimerTask {
 
     @Override
     public void run(Timeout timeout) throws Exception {
-        val statProvider = executorWrapper.getThreadPoolStatProvider();
+        val statProvider = executorWrapper.getExecutorStatProvider();
         if (Objects.isNull(statProvider)) {
             return;
         }

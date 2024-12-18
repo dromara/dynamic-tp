@@ -20,6 +20,12 @@ package org.dromara.dynamictp.common.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAX_PINNED_TIME;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.TOTAL_PINNED_TIME;
+
 
 /**
  * ExecutorStats related
@@ -74,7 +80,12 @@ public class ExecutorStats extends Metrics {
     /**
      * 是否为虚拟线程执行器
      */
-    private boolean isVirtualExecutor;
+    private boolean isVirtualThreadExecutor;
+
+    /**
+     * 拓展字段
+     */
+    private Map<String, Double> extMap = new ConcurrentHashMap<>(2);
 
     /**
      * 空闲时间 (ms)
@@ -190,5 +201,13 @@ public class ExecutorStats extends Metrics {
      * 满足99.9%的任务执行所需的最低耗时
      */
     private double tp999;
+
+    public double getMaxPinnedTime() {
+        return extMap.get(MAX_PINNED_TIME);
+    }
+
+    public double getTotalPinnedTime() {
+        return extMap.get(TOTAL_PINNED_TIME);
+    }
 
 }

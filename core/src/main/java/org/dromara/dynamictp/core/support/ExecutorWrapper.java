@@ -28,6 +28,7 @@ import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
+import org.dromara.dynamictp.core.support.adapter.VirtualThreadExecutorAdapter;
 import org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy;
 import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.adapter.ThreadPoolExecutorAdapter;
@@ -104,9 +105,9 @@ public class ExecutorWrapper {
     protected int awaitTerminationSeconds = 0;
 
     /**
-     * Thread pool stat provider
+     * Executor stat provider
      */
-    private ThreadPoolStatProvider threadPoolStatProvider;
+    private ExecutorStatProvider executorStatProvider;
 
     private ExecutorWrapper() {
     }
@@ -127,7 +128,7 @@ public class ExecutorWrapper {
         this.rejectEnhanced = executor.isRejectEnhanced();
         this.waitForTasksToCompleteOnShutdown = executor.isWaitForTasksToCompleteOnShutdown();
         this.awaitTerminationSeconds = executor.getAwaitTerminationSeconds();
-        this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
+        this.executorStatProvider = ExecutorStatProvider.of(this);
     }
 
     /**
@@ -149,7 +150,7 @@ public class ExecutorWrapper {
         }
         this.notifyItems = NotifyItem.getAllNotifyItems();
         AlarmManager.initAlarm(threadPoolName, notifyItems);
-        this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
+        this.executorStatProvider = ExecutorStatProvider.of(this);
     }
 
     /**

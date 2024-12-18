@@ -29,6 +29,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 @PropertySource(value = "classpath:/dynamic-tp-nacos-demo-dtp-dev.yml", factory = YamlPropertySourceFactory.class)
@@ -65,6 +66,16 @@ class ScheduledDtpExecutorTest {
             System.out.println("进来了");
         }, 10, 5, TimeUnit.SECONDS);
         dtpExecutor14.shutdownNow();
+    }
+
+    @Test
+    void testScheduleCancel() {
+        ScheduledDtpExecutor dtpExecutor12 = (ScheduledDtpExecutor) DtpRegistry.getExecutor("dtpExecutor12");
+        ScheduledFuture<?> scheduledFuture = dtpExecutor12.scheduleWithFixedDelay(() -> {
+            System.out.println(Thread.currentThread().getName() + "进来了," +
+                    "当前时间是 ");
+        }, 0, 1000, TimeUnit.MILLISECONDS);
+        scheduledFuture.cancel(false);
     }
 
 }

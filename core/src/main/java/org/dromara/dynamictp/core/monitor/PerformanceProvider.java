@@ -36,7 +36,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.*;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAX_PINNED_TIME;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.PINNED_DURATION;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.PINNED_EVENT;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.TOTAL_PINNED_TIME;
 import static org.dromara.dynamictp.common.util.StringUtil.formatStackTrace;
 
 

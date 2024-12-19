@@ -20,26 +20,32 @@ package org.dromara.dynamictp.common.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAX_PINNED_TIME;
+import static org.dromara.dynamictp.common.constant.DynamicTpConst.TOTAL_PINNED_TIME;
+
 
 /**
- * ThreadPoolStats related
+ * ExecutorStats related
  *
  * @author yanhom
  * @since 1.0.0
  **/
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ThreadPoolStats extends Metrics {
+public class ExecutorStats extends Metrics {
 
     /**
-     * 线程池名字
+     * 执行器名字
      */
-    private String poolName;
+    private String executorName;
 
     /**
-     * 线程池别名
+     * 执行器别名
      */
-    private String poolAliasName;
+    private String executorAliasName;
 
     /**
      * 核心线程数
@@ -50,6 +56,36 @@ public class ThreadPoolStats extends Metrics {
      * 最大线程数
      */
     private int maximumPoolSize;
+
+    /**
+     * 正在执行任务的活跃线程大致总数
+     */
+    private int activeCount;
+
+    /**
+     * 大致任务总数
+     */
+    private long taskCount;
+
+    /**
+     * 执行超时任务数量
+     */
+    private long runTimeoutCount;
+
+    /**
+     * 是否为DtpExecutor
+     */
+    private boolean dynamic;
+
+    /**
+     * 是否为虚拟线程执行器
+     */
+    private boolean isVirtualThreadExecutor;
+
+    /**
+     * 拓展字段
+     */
+    private Map<String, Double> extMap = new ConcurrentHashMap<>(2);
 
     /**
      * 空闲时间 (ms)
@@ -82,16 +118,6 @@ public class ThreadPoolStats extends Metrics {
     private int queueRemainingCapacity;
 
     /**
-     * 正在执行任务的活跃线程大致总数
-     */
-    private int activeCount;
-
-    /**
-     * 大致任务总数
-     */
-    private long taskCount;
-
-    /**
      * 已执行完成的大致任务总数
      */
     private long completedTaskCount;
@@ -120,16 +146,6 @@ public class ThreadPoolStats extends Metrics {
      * 拒绝策略名称
      */
     private String rejectHandlerName;
-
-    /**
-     * 是否DtpExecutor线程池
-     */
-    private boolean dynamic;
-
-    /**
-     * 执行超时任务数量
-     */
-    private long runTimeoutCount;
 
     /**
      * 在队列等待超时任务数量
@@ -185,4 +201,13 @@ public class ThreadPoolStats extends Metrics {
      * 满足99.9%的任务执行所需的最低耗时
      */
     private double tp999;
+
+    public double getMaxPinnedTime() {
+        return extMap.get(MAX_PINNED_TIME);
+    }
+
+    public double getTotalPinnedTime() {
+        return extMap.get(TOTAL_PINNED_TIME);
+    }
+
 }

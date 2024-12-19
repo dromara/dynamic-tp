@@ -18,14 +18,15 @@
 package org.dromara.dynamictp.core.converter;
 
 import lombok.val;
-import org.dromara.dynamictp.common.entity.ThreadPoolStats;
+import org.dromara.dynamictp.common.entity.ExecutorStats;
 import org.dromara.dynamictp.common.entity.TpMainFields;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.monitor.PerformanceProvider;
 import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
+import org.dromara.dynamictp.core.support.ExecutorStatProvider;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -53,51 +54,63 @@ public class ExecutorConverter {
         return mainFields;
     }
 
-    public static ThreadPoolStats toMetrics(ExecutorWrapper wrapper) {
+    public static ExecutorStats toMetrics(ExecutorWrapper wrapper) {
         ExecutorAdapter<?> executor = wrapper.getExecutor();
         if (executor == null) {
             return null;
         }
-        ThreadPoolStatProvider provider = wrapper.getThreadPoolStatProvider();
+        ExecutorStatProvider provider = wrapper.getExecutorStatProvider();
         PerformanceProvider performanceProvider = provider.getPerformanceProvider();
         val performanceSnapshot = performanceProvider.getSnapshotAndReset();
-        ThreadPoolStats poolStats = convertCommon(executor);
-        poolStats.setPoolName(wrapper.getThreadPoolName());
-        poolStats.setPoolAliasName(wrapper.getThreadPoolAliasName());
-        poolStats.setRunTimeoutCount(provider.getRunTimeoutCount());
-        poolStats.setQueueTimeoutCount(provider.getQueueTimeoutCount());
-        poolStats.setRejectCount(provider.getRejectedTaskCount());
-        poolStats.setDynamic(executor instanceof DtpExecutor);
+        ExecutorStats executorStats = convertCommon(executor);
+        executorStats.setExecutorName(wrapper.getThreadPoolName());
+        executorStats.setExecutorAliasName(wrapper.getThreadPoolAliasName());
+        executorStats.setRunTimeoutCount(provider.getRunTimeoutCount());
+        executorStats.setQueueTimeoutCount(provider.getQueueTimeoutCount());
+        executorStats.setRejectCount(provider.getRejectedTaskCount());
 
-        poolStats.setTps(performanceSnapshot.getTps());
-        poolStats.setAvg(performanceSnapshot.getAvg());
-        poolStats.setMaxRt(performanceSnapshot.getMaxRt());
-        poolStats.setMinRt(performanceSnapshot.getMinRt());
-        poolStats.setTp50(performanceSnapshot.getTp50());
-        poolStats.setTp75(performanceSnapshot.getTp75());
-        poolStats.setTp90(performanceSnapshot.getTp90());
-        poolStats.setTp95(performanceSnapshot.getTp95());
-        poolStats.setTp99(performanceSnapshot.getTp99());
-        poolStats.setTp999(performanceSnapshot.getTp999());
-        return poolStats;
+        executorStats.setVirtualThreadExecutor(wrapper.isVirtualThreadExecutor());
+        toVirtualThreadMetrics(executorStats);
+
+        executorStats.setDynamic(executor instanceof DtpExecutor);
+        executorStats.setTps(performanceSnapshot.getTps());
+        executorStats.setAvg(performanceSnapshot.getAvg());
+        executorStats.setMaxRt(performanceSnapshot.getMaxRt());
+        executorStats.setMinRt(performanceSnapshot.getMinRt());
+        executorStats.setTp50(performanceSnapshot.getTp50());
+        executorStats.setTp75(performanceSnapshot.getTp75());
+        executorStats.setTp90(performanceSnapshot.getTp90());
+        executorStats.setTp95(performanceSnapshot.getTp95());
+        executorStats.setTp99(performanceSnapshot.getTp99());
+        executorStats.setTp999(performanceSnapshot.getTp999());
+        return executorStats;
     }
 
-    private static ThreadPoolStats convertCommon(ExecutorAdapter<?> executor) {
-        ThreadPoolStats poolStats = new ThreadPoolStats();
-        poolStats.setCorePoolSize(executor.getCorePoolSize());
-        poolStats.setMaximumPoolSize(executor.getMaximumPoolSize());
-        poolStats.setPoolSize(executor.getPoolSize());
-        poolStats.setActiveCount(executor.getActiveCount());
-        poolStats.setLargestPoolSize(executor.getLargestPoolSize());
-        poolStats.setQueueType(executor.getQueueType());
-        poolStats.setQueueCapacity(executor.getQueueCapacity());
-        poolStats.setQueueSize(executor.getQueueSize());
-        poolStats.setQueueRemainingCapacity(executor.getQueueRemainingCapacity());
-        poolStats.setTaskCount(executor.getTaskCount());
-        poolStats.setCompletedTaskCount(executor.getCompletedTaskCount());
-        poolStats.setWaitTaskCount(executor.getQueueSize());
-        poolStats.setRejectHandlerName(executor.getRejectHandlerType());
-        poolStats.setKeepAliveTime(executor.getKeepAliveTime(TimeUnit.MILLISECONDS));
-        return poolStats;
+    private static void toVirtualThreadMetrics(ExecutorStats executorStats) {
+        if (!executorStats.isVirtualThreadExecutor()) {
+            return;
+        }
+        Map<String, Object> vteStats = PerformanceProvider.getVTEStats(executorStats.getExecutorName());
+        executorStats.getExtMap().put("maxPinnedTime", ((Double) vteStats.getOrDefault("maxPinnedTime", 0)));
+        executorStats.getExtMap().put("totalPinnedTime", (Double) vteStats.getOrDefault("totalPinnedTime", 0));
+    }
+
+    private static ExecutorStats convertCommon(ExecutorAdapter<?> executor) {
+        ExecutorStats executorStats = new ExecutorStats();
+        executorStats.setCorePoolSize(executor.getCorePoolSize());
+        executorStats.setMaximumPoolSize(executor.getMaximumPoolSize());
+        executorStats.setPoolSize(executor.getPoolSize());
+        executorStats.setActiveCount(executor.getActiveCount());
+        executorStats.setLargestPoolSize(executor.getLargestPoolSize());
+        executorStats.setQueueType(executor.getQueueType());
+        executorStats.setQueueCapacity(executor.getQueueCapacity());
+        executorStats.setQueueSize(executor.getQueueSize());
+        executorStats.setQueueRemainingCapacity(executor.getQueueRemainingCapacity());
+        executorStats.setTaskCount(executor.getTaskCount());
+        executorStats.setCompletedTaskCount(executor.getCompletedTaskCount());
+        executorStats.setWaitTaskCount(executor.getQueueSize());
+        executorStats.setRejectHandlerName(executor.getRejectHandlerType());
+        executorStats.setKeepAliveTime(executor.getKeepAliveTime(TimeUnit.MILLISECONDS));
+        return executorStats;
     }
 }

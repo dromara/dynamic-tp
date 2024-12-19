@@ -127,4 +127,17 @@ public final class DynamicTpConst {
     public static final String TRUE_STR = "true";
 
     public static final String FALSE_STR = "false";
+
+    /**
+     *  jre 21
+     */
+    public static final String THREAD_PER_TASK_EXECUTOR = "java.util.concurrent.ThreadPerTaskExecutor";
+
+    public static final String PINNED_EVENT = "jdk.VirtualThreadPinned";
+
+    public static final String MAX_PINNED_TIME = "maxPinnedTime";
+
+    public static final String TOTAL_PINNED_TIME = "totalPinnedTime";
+
+    public static final String PINNED_DURATION = "pinnedDuration";
 }

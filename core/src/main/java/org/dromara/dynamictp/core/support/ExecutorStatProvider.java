@@ -39,7 +39,7 @@ import java.util.concurrent.atomic.LongAdder;
  * @author hanli
  * @since 1.1.4
  */
-public class ThreadPoolStatProvider {
+public class ExecutorStatProvider {
 
     private final ExecutorWrapper executorWrapper;
 
@@ -93,12 +93,12 @@ public class ThreadPoolStatProvider {
      */
     private final PerformanceProvider performanceProvider = new PerformanceProvider();
 
-    private ThreadPoolStatProvider(ExecutorWrapper executorWrapper) {
+    private ExecutorStatProvider(ExecutorWrapper executorWrapper) {
         this.executorWrapper = executorWrapper;
     }
 
-    public static ThreadPoolStatProvider of(ExecutorWrapper executorWrapper) {
-        val provider = new ThreadPoolStatProvider(executorWrapper);
+    public static ExecutorStatProvider of(ExecutorWrapper executorWrapper) {
+        val provider = new ExecutorStatProvider(executorWrapper);
         if (executorWrapper.isDtpExecutor()) {
             val dtpExecutor = (DtpExecutor) executorWrapper.getExecutor();
             provider.setRunTimeout(dtpExecutor.getRunTimeout());

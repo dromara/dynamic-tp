@@ -19,7 +19,8 @@ package org.dromara.dynamictp.core.monitor.collector.jmx;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.em.CollectorTypeEnum;
-import org.dromara.dynamictp.common.entity.ThreadPoolStats;
+import org.dromara.dynamictp.common.entity.Metrics;
+import org.dromara.dynamictp.common.entity.ExecutorStats;
 import org.dromara.dynamictp.common.util.BeanCopierUtil;
 import org.dromara.dynamictp.core.monitor.collector.AbstractCollector;
 
@@ -43,23 +44,23 @@ public class JMXCollector extends AbstractCollector {
     /**
      * 缓存的作用是将注册到JMX的数据，每次都是同一个对象
      */
-    private static final Map<String, ThreadPoolStats> GAUGE_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, Metrics> GAUGE_CACHE = new ConcurrentHashMap<>();
 
     @Override
-    public void collect(ThreadPoolStats threadPoolStats) {
-        if (GAUGE_CACHE.containsKey(threadPoolStats.getPoolName())) {
-            ThreadPoolStats poolStats = GAUGE_CACHE.get(threadPoolStats.getPoolName());
-            BeanCopierUtil.copyProperties(threadPoolStats, poolStats);
+    public void collect(ExecutorStats executorStats) {
+        if (GAUGE_CACHE.containsKey(executorStats.getExecutorName())) {
+            ExecutorStats poolStats = (ExecutorStats) GAUGE_CACHE.get(executorStats.getExecutorName());
+            BeanCopierUtil.copyProperties(executorStats, poolStats);
         } else {
             try {
                 MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-                ObjectName name = new ObjectName(DTP_METRIC_NAME_PREFIX + ":name=" + threadPoolStats.getPoolName());
-                ThreadPoolStatsJMX stats = new ThreadPoolStatsJMX(threadPoolStats);
+                ObjectName name = new ObjectName(DTP_METRIC_NAME_PREFIX + ":name=" + executorStats.getExecutorName());
+                ExecutorStatsJMX stats = new ExecutorStatsJMX(executorStats);
                 server.registerMBean(stats, name);
             } catch (JMException e) {
                 log.error("collect thread pool stats error", e);
             }
-            GAUGE_CACHE.put(threadPoolStats.getPoolName(), threadPoolStats);
+            GAUGE_CACHE.put(executorStats.getExecutorName(), executorStats);
         }
     }
 

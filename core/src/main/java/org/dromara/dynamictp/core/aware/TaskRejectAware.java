@@ -21,7 +21,7 @@ import cn.hutool.core.text.CharSequenceUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
-import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
+import org.dromara.dynamictp.core.support.ExecutorStatProvider;
 import org.slf4j.MDC;
 
 import java.util.Objects;
@@ -51,7 +51,7 @@ public class TaskRejectAware extends TaskStatAware {
 
     @Override
     public void beforeReject(Runnable runnable, Executor executor) {
-        ThreadPoolStatProvider statProvider = statProviders.get(executor);
+        ExecutorStatProvider statProvider = statProviders.get(executor);
         if (Objects.isNull(statProvider)) {
             return;
         }

@@ -242,7 +242,6 @@ public class DtpRegistry {
         if (StringUtils.isNotBlank(props.getThreadPoolAliasName())) {
             executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());
         }
-
         ExecutorAdapter<?> executor = executorWrapper.getExecutor();
         // update reject handler
         String currentRejectHandlerType = executor.getRejectHandlerType();

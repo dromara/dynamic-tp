@@ -17,26 +17,30 @@
 
 package org.dromara.dynamictp.core.monitor.collector.jmx;
 
-import org.dromara.dynamictp.common.entity.ThreadPoolStats;
+import org.dromara.dynamictp.common.entity.ExecutorStats;
+
+import javax.management.MXBean;
 
 /**
+ * ExecutorStatsMXBean related
+ *
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
-public class ThreadPoolStatsJMX implements ThreadPoolStatsMXBean {
+@MXBean
+public interface ExecutorStatsMXBean {
 
-    private ThreadPoolStats threadPoolStats;
+    /**
+     * get executor stats
+     *
+     * @return thread pool stats
+     */
+    ExecutorStats getExecutorStats();
 
-    public ThreadPoolStatsJMX(ThreadPoolStats threadPoolStats) {
-        this.threadPoolStats = threadPoolStats;
-    }
+    /**
+     * set executor stats
+     *
+     * @param executorStats thread pool stats
+     */
+    void setExecutorStats(ExecutorStats executorStats);
 
-    @Override
-    public ThreadPoolStats getThreadPoolStats() {
-        return this.threadPoolStats;
-    }
-
-    @Override
-    public void setThreadPoolStats(ThreadPoolStats threadPoolStats) {
-        this.threadPoolStats = threadPoolStats;
-    }
 }

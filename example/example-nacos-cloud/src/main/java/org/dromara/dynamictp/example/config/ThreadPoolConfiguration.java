@@ -26,6 +26,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -60,6 +61,17 @@ public class ThreadPoolConfiguration {
     @Bean
     public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
         return new ThreadPoolTaskExecutor();
+    }
+
+    /**
+     * 通过{@link DynamicTp} 注解定义虚拟线程执行器
+     *
+     * @return 虚拟线程执行器实例
+     */
+    @DynamicTp("virtualThreadExecutor")
+    @Bean
+    public ExecutorService virtualThreadExecutor() {
+        return Executors.newVirtualThreadPerTaskExecutor();
     }
 
     /**

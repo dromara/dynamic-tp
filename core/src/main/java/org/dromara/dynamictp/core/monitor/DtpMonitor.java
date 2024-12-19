@@ -19,14 +19,12 @@ package org.dromara.dynamictp.core.monitor;
 
 import com.google.common.eventbus.Subscribe;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.common.entity.ThreadPoolStats;
+import org.dromara.dynamictp.common.entity.ExecutorStats;
 import org.dromara.dynamictp.common.event.AlarmCheckEvent;
 import org.dromara.dynamictp.common.event.CollectEvent;
 import org.dromara.dynamictp.common.event.CustomContextRefreshedEvent;
 import org.dromara.dynamictp.common.manager.EventBusManager;
-
 import org.dromara.dynamictp.common.properties.DtpProperties;
-
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.core.handler.CollectorHandler;
@@ -103,9 +101,10 @@ public class DtpMonitor {
         publishCollectEvent();
     }
 
-    private void doCollect(ThreadPoolStats threadPoolStats) {
+
+    private void doCollect(ExecutorStats executorStats) {
         try {
-            CollectorHandler.getInstance().collect(threadPoolStats, dtpProperties.getCollectorTypes());
+            CollectorHandler.getInstance().collect(executorStats, dtpProperties.getCollectorTypes());
         } catch (Exception e) {
             log.error("DynamicTp monitor, metrics collect error.", e);
         }

@@ -19,7 +19,7 @@ package org.dromara.dynamictp.core.aware;
 
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
+import org.dromara.dynamictp.core.support.ExecutorStatProvider;
 
 import java.util.Map;
 import java.util.Objects;
@@ -34,11 +34,11 @@ import java.util.concurrent.Executor;
  */
 public abstract class TaskStatAware implements ExecutorAware {
 
-    protected final Map<Executor, ThreadPoolStatProvider> statProviders = new ConcurrentHashMap<>();
+    protected final Map<Executor, ExecutorStatProvider> statProviders = new ConcurrentHashMap<>();
 
     @Override
     public void register(ExecutorWrapper wrapper) {
-        ThreadPoolStatProvider statProvider = wrapper.getThreadPoolStatProvider();
+        ExecutorStatProvider statProvider = wrapper.getExecutorStatProvider();
         statProviders.put(wrapper.getExecutor(), statProvider);
         statProviders.put(wrapper.getExecutor().getOriginal(), statProvider);
     }
@@ -48,7 +48,7 @@ public abstract class TaskStatAware implements ExecutorAware {
         if (Objects.isNull(statProviders.get(wrapper.getExecutor()))) {
             register(wrapper);
         }
-        ThreadPoolStatProvider statProvider = wrapper.getThreadPoolStatProvider();
+        ExecutorStatProvider statProvider = wrapper.getExecutorStatProvider();
         refresh(props, statProvider);
     }
 
@@ -58,5 +58,5 @@ public abstract class TaskStatAware implements ExecutorAware {
         statProviders.remove(wrapper.getExecutor().getOriginal());
     }
 
-    protected void refresh(TpExecutorProps props, ThreadPoolStatProvider statProvider) { }
+    protected void refresh(TpExecutorProps props, ExecutorStatProvider statProvider) { }
 }

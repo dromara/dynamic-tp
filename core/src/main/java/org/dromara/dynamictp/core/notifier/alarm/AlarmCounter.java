@@ -85,6 +85,7 @@ public class AlarmCounter {
             case REJECT:
             case RUN_TIMEOUT:
             case QUEUE_TIMEOUT:
+            case PIN_TIMEOUT:
                 return Integer.parseInt(getCount(wrapper.getThreadPoolName(), itemEnum.getValue()));
             default:
                 return 0;

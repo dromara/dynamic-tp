@@ -54,4 +54,13 @@ public interface DtpNotifier {
      * @param notifyItemEnum notify item enum
      */
     void sendAlarmMsg(NotifyPlatform notifyPlatform, NotifyItemEnum notifyItemEnum);
+
+    /**
+     * Send common alarm message.
+     *
+     * @param notifyPlatform notify platform
+     * @param notifyItemEnum notify item enum
+     * @param content common content
+     */
+    void sendCommonAlarmMsg(NotifyPlatform notifyPlatform, NotifyItemEnum notifyItemEnum, String... content);
 }

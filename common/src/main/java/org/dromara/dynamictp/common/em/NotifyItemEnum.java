@@ -59,7 +59,12 @@ public enum NotifyItemEnum {
     /**
      * Task queue wait timeout alarm.
      */
-    QUEUE_TIMEOUT("queue_timeout", "");
+    QUEUE_TIMEOUT("queue_timeout", ""),
+
+    /**
+     * Pin timeout alarm.
+     */
+    PIN_TIMEOUT("pin_timeout", "");
 
     private final String value;
 

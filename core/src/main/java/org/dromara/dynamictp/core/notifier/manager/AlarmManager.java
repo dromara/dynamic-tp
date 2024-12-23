@@ -91,10 +91,18 @@ public class AlarmManager {
         ALARM_EXECUTOR.execute(() -> notifyTypes.forEach(x -> doTryAlarm(executorWrapper, x)));
     }
 
+    public static void tryCommonAlarmAsync(ExecutorWrapper executorWrapper, List<NotifyItemEnum> notifyTypes, String... content) {
+        ALARM_EXECUTOR.execute(() -> notifyTypes.forEach(x -> doTryAlarm(executorWrapper, x, true, content)));
+    }
+
     public static void doTryAlarm(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType) {
+        doTryAlarm(executorWrapper, notifyType, false, "");
+    }
+
+    public static void doTryAlarm(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType, boolean isCommonNotify, String... content) {
         AlarmCounter.incAlarmCounter(executorWrapper.getThreadPoolName(), notifyType.getValue());
         NotifyHelper.getNotifyItem(executorWrapper, notifyType).ifPresent(notifyItem -> {
-            val alarmCtx = new AlarmCtx(executorWrapper, notifyItem);
+            val alarmCtx = new AlarmCtx(executorWrapper, notifyItem, isCommonNotify, content);
             ALARM_INVOKER_CHAIN.proceed(alarmCtx);
         });
     }
@@ -109,6 +117,7 @@ public class AlarmManager {
             case REJECT:
             case RUN_TIMEOUT:
             case QUEUE_TIMEOUT:
+            case PIN_TIMEOUT:
                 return checkWithAlarmInfo(executor, notifyItem);
             default:
                 log.error("Unsupported alarm type [{}]", notifyType);

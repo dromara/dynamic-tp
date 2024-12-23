@@ -35,11 +35,21 @@ public class BaseNotifyCtx {
 
     private NotifyItem notifyItem;
 
+    private boolean isCommonNotify;
+
+    private String[] content;
+
     public BaseNotifyCtx() { }
 
     public BaseNotifyCtx(ExecutorWrapper wrapper, NotifyItem notifyItem) {
+         this(wrapper, notifyItem, false, "");
+    }
+
+    public BaseNotifyCtx(ExecutorWrapper wrapper, NotifyItem notifyItem, boolean isCommonNotify, String... content) {
         this.executorWrapper = wrapper.capture();
         this.notifyItem = notifyItem;
+        this.isCommonNotify = isCommonNotify;
+        this.content = content;
     }
 
     public NotifyItemEnum getNotifyItemEnum() {

@@ -90,7 +90,7 @@ public class ExecutorConverter {
         if (!executorStats.isVirtualThreadExecutor()) {
             return;
         }
-        Map<String, Object> vteStats = PerformanceProvider.getVTEStats(executorStats.getExecutorName());
+        Map<String, Object> vteStats = PerformanceProvider.getVteStat(executorStats.getExecutorName());
         executorStats.getExtMap().put("maxPinnedTime", ((Double) vteStats.getOrDefault("maxPinnedTime", 0)));
         executorStats.getExtMap().put("totalPinnedTime", (Double) vteStats.getOrDefault("totalPinnedTime", 0));
     }

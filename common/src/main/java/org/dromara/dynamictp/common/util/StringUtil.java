@@ -68,7 +68,7 @@ public final class StringUtil {
         return str.toString().toLowerCase().contains(testStr.toString().toLowerCase());
     }
 
-    public static String formatStackTrace(RecordedStackTrace stackTrace, int maxDepth) {
+    public static String formatJfrStackTrace(RecordedStackTrace stackTrace, int maxDepth) {
         if (stackTrace == null) {
             return "\t<not available>";
         }

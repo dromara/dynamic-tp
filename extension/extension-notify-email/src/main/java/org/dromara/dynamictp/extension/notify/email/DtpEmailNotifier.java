@@ -73,6 +73,11 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
     }
 
     @Override
+    protected String[] getCommonAlarmTemplate(int length) {
+        return null;
+    }
+
+    @Override
     protected Pair<String, String> getColors() {
         return null;
     }

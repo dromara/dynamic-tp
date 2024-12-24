@@ -53,6 +53,11 @@ public class SmsDtpNotifier extends AbstractDtpNotifier {
     }
 
     @Override
+    protected String[] getCommonAlarmTemplate(int num) {
+        return new String[]{SmsNotifyConst.SMS_ALARM_TEMPLATE_PREFIX, SmsNotifyConst.SMS_ALARM_COMMON_TEMPLATE.repeat(Math.max(0, num)), SmsNotifyConst.SMS_ALARM_TEMPLATE_SUFFIX};
+    }
+
+    @Override
     protected Pair<String, String> getColors() {
         return null;
     }

@@ -53,6 +53,11 @@ public class DtpDingNotifier extends AbstractDtpNotifier {
     }
 
     @Override
+    protected String[] getCommonAlarmTemplate(int num) {
+        return new String[]{DingNotifyConst.DING_ALARM_TEMPLATE_PREFIX, DingNotifyConst.DING_ALARM_COMMON_TEMPLATE.repeat(Math.max(0, num)), DingNotifyConst.DING_ALARM_TEMPLATE_SUFFIX};
+    }
+
+    @Override
     protected Pair<String, String> getColors() {
         return new ImmutablePair<>(DingNotifyConst.WARNING_COLOR, DingNotifyConst.CONTENT_COLOR);
     }

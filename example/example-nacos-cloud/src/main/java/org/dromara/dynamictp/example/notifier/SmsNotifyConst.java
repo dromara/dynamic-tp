@@ -27,13 +27,26 @@ public class SmsNotifyConst {
 
     private SmsNotifyConst() { }
 
-    public static final String SMS_ALARM_TEMPLATE =
+    public static final String SMS_ALARM_TEMPLATE_PREFIX =
             "服务名称：%s \n" +
                     "实例信息：%s \n" +
                     "环境：%s \n" +
                     "线程池名称：%s \n" +
                     "报警项：%s \n" +
-                    "报警阈值 / 当前值：%s \n" +
+                    "报警阈值 / 当前值：%s \n";
+
+    public static final String SMS_ALARM_COMMON_TEMPLATE = "%s \n";
+
+    public static final String SMS_ALARM_TEMPLATE_SUFFIX =
+            "上次报警时间：%s \n" +
+                    "报警时间：%s \n" +
+                    "接收人：@%s \n" +
+                    "trace 信息：%s \n" +
+                    "报警间隔：%ss \n" +
+                    "扩展信息：%s \n";
+
+    public static final String SMS_ALARM_TEMPLATE =
+            SMS_ALARM_TEMPLATE_PREFIX +
                     "核心线程数：%s \n" +
                     "最大线程数：%s \n" +
                     "当前线程数：%s \n" +
@@ -50,12 +63,7 @@ public class SmsNotifyConst {
                     "总拒绝任务数量：%s \n" +
                     "总执行超时任务数量：%s \n" +
                     "总等待超时任务数量：%s \n" +
-                    "上次报警时间：%s \n" +
-                    "报警时间：%s \n" +
-                    "接收人：@%s \n" +
-                    "trace 信息：%s \n" +
-                    "报警间隔：%ss \n" +
-                    "扩展信息：%s \n";
+                    SMS_ALARM_TEMPLATE_SUFFIX;
 
     public static final String SMS_NOTICE_TEMPLATE =
             "服务名称：%s \n" +

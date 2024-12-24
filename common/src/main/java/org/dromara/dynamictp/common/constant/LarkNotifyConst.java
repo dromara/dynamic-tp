@@ -60,6 +60,15 @@ public class LarkNotifyConst {
 
     public static final String SIGN_PARAM_PREFIX = "{\"timestamp\": \"%s\",\"sign\": \"%s\",";
 
+    public static final String LARK_ALARM_JSON_STR_PREFIX =
+            "{\"msg_type\":\"interactive\",\"card\":{\"config\":{\"wide_screen_mode\":true},\"header\":{\"template\":\"red\",\"title\":{\"tag\":\"plain_text\",\"content\":\"【报警】 动态线程池告警\"}},\"elements\":[{\"tag\":\"div\",\"fields\":[{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"**服务名称：**\\n%s\"}},{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"**实例信息：**\\n%s\"}}]},{\"tag\":\"div\",\"fields\":[{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"**环境：**\\n%s\"}},{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"**线程池名称：**\\n%s\"}}]},{\"tag\":\"div\",\"fields\":[{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"alarmType **报警项：**\\n%s\"}},{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"alarmValue **报警阈值 / 当前值：**\\n%s\"}}]},{\"tag\":\"hr\"},";
+
+    public static final String LARK_ALARM_JSON_COMMON_STR =
+            "{\"tag\":\"div\",\"fields\":[{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"%s\"}}]},";
+
+    public static final String LARK_ALARM_JSON_STR_SUFFIX =
+            "{\"tag\":\"hr\"},{\"tag\":\"div\",\"fields\":[{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"**上次报警时间：**\\n %s\"}},{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"**报警时间：**\\n %s\"}}]},{\"tag\":\"div\",\"fields\":[{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"**接收人：**\\n %s\"}},{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"**trace 信息：**\\n %s\"}}]},{\"tag\":\"div\",\"fields\":[{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"**报警间隔：**\\n %ss\"}},{\"is_short\":true,\"text\":{\"tag\":\"lark_md\",\"content\":\"**扩展信息：**\\n %s\"}}]}]}}";
+
     /**
      * lark alarm json str
      */

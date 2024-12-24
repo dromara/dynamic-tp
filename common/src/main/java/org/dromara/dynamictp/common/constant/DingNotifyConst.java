@@ -41,14 +41,28 @@ public final class DingNotifyConst {
 
     public static final String DING_NOTICE_TITLE = "动态线程池通知";
 
-    public static final String DING_ALARM_TEMPLATE =
+    public static final String DING_ALARM_TEMPLATE_PREFIX =
             "<font color=#EA9F00>【报警】 </font> 动态线程池运行告警 \n\n" +
             "<font color=#664B4B size=2>服务名称：%s</font> \n\n " +
             "<font color=#664B4B size=2>实例信息：%s</font> \n\n " +
             "<font color=#664B4B size=2>环境：%s</font> \n\n " +
             "<font color=#664B4B size=2>线程池名称：%s</font> \n\n " +
             "<font color=alarmType size=2>报警项：%s</font> \n\n " +
-            "<font color=alarmValue size=2>报警阈值 / 当前值：%s</font> \n\n " +
+            "<font color=alarmValue size=2>报警阈值 / 当前值：%s</font> \n\n ";
+
+    public static final String DING_ALARM_COMMON_TEMPLATE =
+            "<font color=#664B4B size=2>%s</font> \n\n ";
+
+    public static final String DING_ALARM_TEMPLATE_SUFFIX =
+            "<font color=#664B4B size=2>上次报警时间：%s</font> \n\n" +
+            "<font color=#664B4B size=2>报警时间：%s</font> \n\n" +
+            "<font color=#664B4B size=2>接收人：@%s</font> \n\n" +
+            "<font color=#664B4B size=2>trace 信息：%s</font> \n\n" +
+            "<font color=#22B838 size=2>报警间隔：%ss</font> \n\n" +
+            "<font color=#664B4B size=2>扩展信息：%s</font> \n\n";
+
+    public static final String DING_ALARM_TEMPLATE =
+            DING_ALARM_TEMPLATE_PREFIX +
             "<font color=corePoolSize size=2>核心线程数：%d</font> \n\n " +
             "<font color=maximumPoolSize size=2>最大线程数：%d</font> \n\n " +
             "<font color=poolSize size=2>当前线程数：%d</font> \n\n " +
@@ -65,12 +79,7 @@ public final class DingNotifyConst {
             "<font color=rejectCount size=2>总拒绝任务数量：%s</font> \n\n " +
             "<font color=runTimeoutCount size=2>总执行超时任务数量：%s</font> \n\n " +
             "<font color=queueTimeoutCount size=2>总等待超时任务数量：%s</font> \n\n " +
-            "<font color=#664B4B size=2>上次报警时间：%s</font> \n\n" +
-            "<font color=#664B4B size=2>报警时间：%s</font> \n\n" +
-            "<font color=#664B4B size=2>接收人：@%s</font> \n\n" +
-            "<font color=#664B4B size=2>trace 信息：%s</font> \n\n" +
-            "<font color=#22B838 size=2>报警间隔：%ss</font> \n\n" +
-            "<font color=#664B4B size=2>扩展信息：%s</font> \n\n";
+            DING_ALARM_TEMPLATE_SUFFIX;
 
     public static final String DING_CHANGE_NOTICE_TEMPLATE =
             "<font color=#5AB030>【通知】</font> 动态线程池参数变更 \n\n " +

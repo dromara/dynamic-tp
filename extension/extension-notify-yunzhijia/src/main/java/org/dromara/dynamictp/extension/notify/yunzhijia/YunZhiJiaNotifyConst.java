@@ -42,14 +42,25 @@ public final class YunZhiJiaNotifyConst {
 
     public static final String PLATFORM_NAME = "YUNZHIJIA";
 
-    public static final String ALARM_TEMPLATE =
+    public static final String ALARM_TEMPLATE_PREFIX =
             "【报警】 动态线程池告警 \n" +
                     "服务名称：%s \n" +
                     "实例信息：%s \n" +
                     "环境：%s \n" +
                     "线程池名称：%s \n" +
                     "报警类型：%s \n" +
-                    "报警阈值：%s \n" +
+                    "报警阈值：%s \n";
+
+    public static final String ALARM_COMMON_TEMPLATE = "%s \n";
+    public static final String ALARM_TEMPLATE_SUFFIX =
+            "上次报警时间：%s \n" +
+            "报警时间：%s \n" +
+            "接收人：@%s \n" +
+            "trace 信息：%s \n" +
+            "报警间隔：%ss \n" +
+            "扩展信息：%s \n";
+    public static final String ALARM_TEMPLATE =
+            ALARM_TEMPLATE_PREFIX +
                     "核心线程数：%s \n" +
                     "最大线程数：%s \n" +
                     "当前线程数：%s \n" +
@@ -66,12 +77,7 @@ public final class YunZhiJiaNotifyConst {
                     "拒绝任务数量：%s \n" +
                     "执行超时任务数量：%s \n" +
                     "等待超时任务数量：%s \n" +
-                    "上次报警时间：%s \n" +
-                    "报警时间：%s \n" +
-                    "接收人：@%s \n" +
-                    "trace 信息：%s \n" +
-                    "报警间隔：%ss \n" +
-                    "扩展信息：%s \n";
+                    ALARM_TEMPLATE_SUFFIX;
 
     public static final String CHANGE_NOTICE_TEMPLATE =
             "【通知】 动态线程池参数变更 \n" +

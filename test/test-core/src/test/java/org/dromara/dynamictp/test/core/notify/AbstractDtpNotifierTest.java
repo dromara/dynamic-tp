@@ -118,6 +118,17 @@ public class AbstractDtpNotifierTest {
     }
 
     @Test
+    public void testSendCommonAlarmMsg() {
+        AbstractDtpNotifier notifier = new DtpDingNotifier(this.notifier);
+        NotifyPlatform notifyPlatform = new NotifyPlatform();
+        NotifyItemEnum notifyItemEnum = NotifyItemEnum.LIVENESS;
+        DtpNotifyCtxHolder.set(new AlarmCtx(ExecutorWrapper.of(dtpExecutor), new NotifyItem()));
+        notifier.sendCommonAlarmMsg(notifyPlatform, notifyItemEnum, "arg1", "arg2", "arg3");
+
+        Mockito.verify(this.notifier, Mockito.times(1)).send(any(), anyString());
+    }
+
+    @Test
     public void testGetQueueName2() {
         Assert.assertEquals(dtpExecutor.getQueueType(), VARIABLE_LINKED_BLOCKING_QUEUE.getName());
     }

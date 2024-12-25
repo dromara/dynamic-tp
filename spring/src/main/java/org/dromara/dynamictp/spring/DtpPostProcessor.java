@@ -57,7 +57,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGracefulAsync;
@@ -198,7 +200,11 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
     }
 
     private VirtualThreadExecutorProxy newVirtualThreadProxy(String name, ExecutorService originExecutor) {
-        return new VirtualThreadExecutorProxy(originExecutor);
+        ThreadFactory factory = Thread.ofVirtual().name(name).factory();
+        ExecutorService executor = Executors.newThreadPerTaskExecutor(factory);
+        val proxy = new VirtualThreadExecutorProxy(executor);
+        shutdownGracefulAsync(originExecutor, name, 0);
+        return proxy;
     }
 
     private void tryWrapTaskDecorator(String poolName, ThreadPoolTaskExecutor poolTaskExecutor, ThreadPoolExecutorProxy proxy) throws IllegalAccessException {

@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
@@ -63,7 +64,7 @@ public class TestServiceImpl implements TestService {
                            DtpExecutor eagerDtpExecutor,
                            ScheduledExecutorService scheduledDtpExecutor,
                            OrderedDtpExecutor orderedDtpExecutor,
-                           @Qualifier("virtualThreadExecutor") ExecutorService virtualThreadExecutor) {
+                           @Qualifier("virtualThreadExecutor1") ExecutorService virtualThreadExecutor) {
         this.jucThreadPoolExecutor = jucThreadPoolExecutor;
         this.threadPoolTaskExecutor = threadPoolTaskExecutor;
         this.eagerDtpExecutor = eagerDtpExecutor;
@@ -153,11 +154,20 @@ public class TestServiceImpl implements TestService {
         for (int i = 0; i < 10; i++) {
             int finalI = i;
             virtualThreadExecutor.execute(() -> {
-                log.info("i am a VTExecutor's {} task", finalI);
-                try {
-                    Thread.sleep(30000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+//                log.info("i am a VTExecutor's {} task", finalI);
+//                try {
+//                    Thread.sleep(30000);
+//                } catch (InterruptedException e) {
+//                    throw new RuntimeException(e);
+//                }
+                synchronized (this) {
+                    log.info("i am a VTExecutor's {} task", finalI);
+                    log.info("Causing thread pinning for example purposes");
+                    try {
+                        Thread.sleep(Duration.ofMillis(4000));
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             });
         }

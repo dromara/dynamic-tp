@@ -141,14 +141,21 @@ public class ExecutorWrapper {
         this.threadPoolName = threadPoolName;
         if (executor instanceof ThreadPoolExecutor) {
             this.executor = new ThreadPoolExecutorAdapter((ThreadPoolExecutor) executor);
+            this.notifyItems = NotifyItem.getAllNotifyItems();
         } else if (executor instanceof ExecutorAdapter<?>) {
             this.executor = (ExecutorAdapter<?>) executor;
+            this.notifyItems = NotifyItem.getAllNotifyItems();
         } else if (executor instanceof VirtualThreadExecutorProxy) {
-            this.executor = new VirtualThreadExecutorAdapter(((VirtualThreadExecutorProxy) executor).getThreadPerTaskExecutor());
+            this.executor = new VirtualThreadExecutorAdapter(executor);
+            this.threadPoolAliasName = ((VirtualThreadExecutorProxy) executor).getThreadPoolAliasName();
+            this.notifyItems = ((VirtualThreadExecutorProxy) executor).getNotifyItems();
+            this.notifyEnabled = ((VirtualThreadExecutorProxy) executor).isNotifyEnabled();
+            this.platformIds = ((VirtualThreadExecutorProxy) executor).getPlatformIds();
+            this.awareNames = ((VirtualThreadExecutorProxy) executor).getAwareNames();
+            this.executorStatProvider = ExecutorStatProvider.of(this);
         } else {
             throw new IllegalArgumentException("unsupported Executor type !");
         }
-        this.notifyItems = NotifyItem.getAllNotifyItems();
         AlarmManager.initAlarm(threadPoolName, notifyItems);
         this.executorStatProvider = ExecutorStatProvider.of(this);
     }
@@ -181,7 +188,10 @@ public class ExecutorWrapper {
         if (isDtpExecutor()) {
             ((DtpExecutor) getExecutor()).initialize();
             AwareManager.register(this);
-        } else if (isThreadPoolExecutor() || isVirtualThreadExecutor()) {
+        } else if (isVirtualThreadExecutor()) {
+            ((VirtualThreadExecutorProxy) getExecutor().getOriginal()).initialize();
+            AwareManager.register(this);
+        } else if (isThreadPoolExecutor()) {
             AwareManager.register(this);
         }
     }
@@ -214,7 +224,8 @@ public class ExecutorWrapper {
      * @return boolean
      */
     public boolean isVirtualThreadExecutor() {
-        return this.executor instanceof VirtualThreadExecutorAdapter;
+        return this.executor instanceof VirtualThreadExecutorAdapter
+                || this.executor.getOriginal() instanceof VirtualThreadExecutorAdapter;
     }
 
     /**

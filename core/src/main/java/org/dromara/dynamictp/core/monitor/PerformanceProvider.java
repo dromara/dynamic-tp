@@ -25,18 +25,17 @@ import jdk.jfr.consumer.RecordingStream;
 import lombok.Getter;
 import lombok.val;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
-import org.dromara.dynamictp.common.util.BeanCopierUtil;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.metric.MMAPCounter;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy;
 
 import java.io.Closeable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -63,10 +62,11 @@ public class PerformanceProvider implements Closeable {
 
     private final MMAPCounter mmapCounter = new MMAPCounter();
 
-    private static final Map<String, Map<String, Object>> VTE_STATS_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, Map<String, Number>> VTE_STATS_CACHE = new ConcurrentHashMap<>();
 
     private static final int DEFAULT_STACK_TRACE_MAX_DEPTH = 15;
 
+    private static final Timer TIMER =  new SimpleMeterRegistry().timer(PINNED_EVENT);
     private static final RecordingStream RECORDING_STREAM = createRecordingStream();
 
     public void completeTask(long rt) {
@@ -110,29 +110,22 @@ public class PerformanceProvider implements Closeable {
         }
         Duration duration = event.getDuration();
         String stackTrace = formatJfrStackTrace(event.getStackTrace(), DEFAULT_STACK_TRACE_MAX_DEPTH);
+        TIMER.record(duration);
 
-        Timer timer =  new SimpleMeterRegistry().timer(PINNED_EVENT);
-        timer.record(duration);
-
-        ConcurrentHashMap<String, Object> vtExecutorStat = new ConcurrentHashMap<>(4);
-        double maxPinnedTime = timer.max(TimeUnit.MILLISECONDS);
-        double totalPinnedTime = timer.totalTime(TimeUnit.MILLISECONDS);
+        ConcurrentHashMap<String, Number> vtExecutorStat = new ConcurrentHashMap<>(3);
+        double maxPinnedTime = TIMER.max(TimeUnit.MILLISECONDS);
+        double totalPinnedTime = TIMER.totalTime(TimeUnit.MILLISECONDS);
         long durationPinnedTime = duration.toMillis();
         vtExecutorStat.put(MAX_PINNED_TIME, maxPinnedTime);
         vtExecutorStat.put(TOTAL_PINNED_TIME, totalPinnedTime);
         vtExecutorStat.put(PINNED_DURATION, durationPinnedTime);
-        vtExecutorStat.put("stackTrace", stackTrace);
 
         String[] pinContent = populatePinContent(maxPinnedTime, totalPinnedTime, durationPinnedTime, stackTrace);
         ExecutorWrapper executorWrapper = DtpRegistry.getExecutorWrapper(executorName);
+        ((VirtualThreadExecutorProxy) executorWrapper.getExecutor().getOriginal()).setCurPinDuration(duration.toSeconds());
         AlarmManager.tryCommonAlarmAsync(executorWrapper, ImmutableList.of(NotifyItemEnum.PIN_TIMEOUT), pinContent);
 
-        Map<String, Object> oldStats = VTE_STATS_CACHE.get(executorName);
-        if (Objects.isNull(oldStats)) {
-            VTE_STATS_CACHE.put(executorName, vtExecutorStat);
-        } else {
-            BeanCopierUtil.copyProperties(vtExecutorStat, oldStats);
-        }
+        VTE_STATS_CACHE.put(executorName, vtExecutorStat);
     }
 
     private static String[] populatePinContent(double maxPinnedTime, double totalPinnedTime, long durationPinnedTime, String stackTrace) {
@@ -140,12 +133,12 @@ public class PerformanceProvider implements Closeable {
                 "maxPinnedTime: " + maxPinnedTime + "ms",
                 "totalPinnedTime: " + totalPinnedTime + "ms",
                 "durationPinnedTime: " + durationPinnedTime + "ms",
-                "stackTrace: " + stackTrace
+                "stackTrace: \n" + stackTrace
         };
     }
 
-    public static Map<String, Object> getVteStat(String executorName) {
-        VTE_STATS_CACHE.putIfAbsent(executorName, new ConcurrentHashMap<>(4));
+    public static Map<String, Number> getVteStat(String executorName) {
+        VTE_STATS_CACHE.putIfAbsent(executorName, new ConcurrentHashMap<>(3));
         return VTE_STATS_CACHE.get(executorName);
     }
 

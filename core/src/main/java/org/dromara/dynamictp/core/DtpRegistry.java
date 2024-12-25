@@ -44,6 +44,7 @@ import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 
@@ -304,9 +305,13 @@ public class DtpRegistry {
     }
 
     private static void updateWrapper(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
-        if (executorWrapper.isDtpExecutor()) {
+        if (executorWrapper.isDtpExecutor() || executorWrapper.isVirtualThreadExecutor()) {
             executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());
-            executorWrapper.setNotifyItems(((DtpExecutor) executorWrapper.getExecutor()).getNotifyItems());
+            if (executorWrapper.isDtpExecutor()) {
+                executorWrapper.setNotifyItems(((DtpExecutor) executorWrapper.getExecutor()).getNotifyItems());
+            } else {
+                executorWrapper.setNotifyItems(((VirtualThreadExecutorProxy) executorWrapper.getExecutor()).getNotifyItems());
+            }
             executorWrapper.setPlatformIds(props.getPlatformIds());
             executorWrapper.setNotifyEnabled(props.isNotifyEnabled());
         }

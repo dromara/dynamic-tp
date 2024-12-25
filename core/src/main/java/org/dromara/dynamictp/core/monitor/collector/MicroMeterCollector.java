@@ -75,11 +75,6 @@ public class MicroMeterCollector extends AbstractCollector {
 
         Iterable<Tag> tags = getTags(executorStats);
 
-        if (executorStats.isVirtualThreadExecutor()) {
-            Metrics.gauge(metricName("maximum.pinned.time"), tags, executorStats, ExecutorStats::getMaxPinnedTime);
-            Metrics.gauge(metricName("total.pinned.time"), tags, executorStats, ExecutorStats::getTotalPinnedTime);
-        }
-
         Metrics.gauge(metricName("core.size"), tags, executorStats, ExecutorStats::getCorePoolSize);
         Metrics.gauge(metricName("maximum.size"), tags, executorStats, ExecutorStats::getMaximumPoolSize);
         Metrics.gauge(metricName("current.size"), tags, executorStats, ExecutorStats::getPoolSize);

@@ -111,6 +111,7 @@ public class NotifyItem {
         notifyItems.add(rejectNotify);
         notifyItems.add(runTimeoutNotify);
         notifyItems.add(queueTimeoutNotify);
+        notifyItems.add(pinTimeoutNotify);
 
         return notifyItems;
     }

@@ -23,9 +23,6 @@ import lombok.EqualsAndHashCode;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.MAX_PINNED_TIME;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.TOTAL_PINNED_TIME;
-
 
 /**
  * ExecutorStats related
@@ -201,13 +198,5 @@ public class ExecutorStats extends Metrics {
      * 满足99.9%的任务执行所需的最低耗时
      */
     private double tp999;
-
-    public double getMaxPinnedTime() {
-        return extMap.get(MAX_PINNED_TIME);
-    }
-
-    public double getTotalPinnedTime() {
-        return extMap.get(TOTAL_PINNED_TIME);
-    }
 
 }

@@ -34,6 +34,7 @@ import org.dromara.dynamictp.core.executor.DtpExecutor;
 
 import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -44,11 +45,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.dromara.dynamictp.common.em.NotifyItemEnum.CAPACITY;
-import static org.dromara.dynamictp.common.em.NotifyItemEnum.LIVENESS;
-import static org.dromara.dynamictp.common.em.NotifyItemEnum.QUEUE_TIMEOUT;
-import static org.dromara.dynamictp.common.em.NotifyItemEnum.REJECT;
-import static org.dromara.dynamictp.common.em.NotifyItemEnum.RUN_TIMEOUT;
+import static org.dromara.dynamictp.common.em.NotifyItemEnum.*;
 import static org.dromara.dynamictp.common.entity.NotifyItem.mergeAllNotifyItems;
 
 /**
@@ -74,6 +71,8 @@ public class NotifyHelper {
 
     private static final Set<String> QUEUE_TIMEOUT_ALARM_KEYS = Sets.newHashSet("queueTimeoutCount");
 
+    private static final Set<String> PIN_TIMEOUT_ALARM_KEYS = Sets.newHashSet("pinTimeoutCount");
+
     private static final Set<String> ALL_ALARM_KEYS;
 
     private static final Map<String, Set<String>> ALARM_KEYS = Maps.newHashMap();
@@ -84,6 +83,7 @@ public class NotifyHelper {
         ALARM_KEYS.put(REJECT.name(), REJECT_ALARM_KEYS);
         ALARM_KEYS.put(RUN_TIMEOUT.name(), RUN_TIMEOUT_ALARM_KEYS);
         ALARM_KEYS.put(QUEUE_TIMEOUT.name(), QUEUE_TIMEOUT_ALARM_KEYS);
+        ALARM_KEYS.put(PIN_TIMEOUT.name(), PIN_TIMEOUT_ALARM_KEYS);
 
         ALL_ALARM_KEYS = ALARM_KEYS.values().stream().flatMap(Collection::stream).collect(Collectors.toSet());
         ALL_ALARM_KEYS.addAll(COMMON_ALARM_KEYS);
@@ -145,6 +145,23 @@ public class NotifyHelper {
     }
 
     public static void initNotify(DtpExecutor executor) {
+        val dtpProperties = ContextManagerHelper.getBean(DtpProperties.class);
+        val platforms = dtpProperties.getPlatforms();
+        if (CollectionUtils.isEmpty(platforms)) {
+            executor.setNotifyItems(Lists.newArrayList());
+            executor.setPlatformIds(Lists.newArrayList());
+            log.warn("DynamicTp notify, no notify platforms configured for [{}]", executor.getThreadPoolName());
+            return;
+        }
+        if (CollectionUtils.isEmpty(executor.getNotifyItems())) {
+            log.warn("DynamicTp notify, no notify items configured for [{}]", executor.getThreadPoolName());
+            return;
+        }
+        fillPlatforms(executor.getPlatformIds(), platforms, executor.getNotifyItems());
+        AlarmManager.initAlarm(executor.getThreadPoolName(), executor.getNotifyItems());
+    }
+
+    public static void initNotify(VirtualThreadExecutorProxy executor) {
         val dtpProperties = ContextManagerHelper.getBean(DtpProperties.class);
         val platforms = dtpProperties.getPlatforms();
         if (CollectionUtils.isEmpty(platforms)) {

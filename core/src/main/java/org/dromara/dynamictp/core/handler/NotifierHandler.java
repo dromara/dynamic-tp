@@ -76,7 +76,7 @@ public final class NotifierHandler {
     public void sendAlarm(NotifyItemEnum notifyItemEnum) {
         BaseNotifyCtx notifyCtx = DtpNotifyCtxHolder.get();
         if (notifyCtx.isToLog()) {
-            log.warn("DynamicTp alarm, [" + notifyCtx.getExecutorWrapper().getThreadPoolName() + "]: \n" + Arrays.toString(notifyCtx.getContent()));
+            log.warn("DynamicTp alarm, executor [" + notifyCtx.getExecutorWrapper().getThreadPoolName() + "]: \n" + Arrays.toString(notifyCtx.getContent()));
         }
         NotifyItem notifyItem = notifyCtx.getNotifyItem();
         for (String platformId : notifyItem.getPlatformIds()) {

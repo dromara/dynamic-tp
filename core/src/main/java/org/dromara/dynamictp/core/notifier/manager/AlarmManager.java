@@ -98,7 +98,7 @@ public class AlarmManager {
     }
 
     public static void doTryAlarm(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType) {
-//        doTryAlarm(executorWrapper, notifyType, false, "");
+        doTryAlarm(executorWrapper, notifyType, false, "");
     }
 
     public static void doTryAlarm(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType, boolean isCommonNotify, String... content) {

@@ -37,18 +37,21 @@ public class BaseNotifyCtx {
 
     private boolean isCommonNotify;
 
+    private boolean isToLog;
+
     private String[] content;
 
     public BaseNotifyCtx() { }
 
     public BaseNotifyCtx(ExecutorWrapper wrapper, NotifyItem notifyItem) {
-         this(wrapper, notifyItem, false, "");
+         this(wrapper, notifyItem, false, false, "");
     }
 
-    public BaseNotifyCtx(ExecutorWrapper wrapper, NotifyItem notifyItem, boolean isCommonNotify, String... content) {
+    public BaseNotifyCtx(ExecutorWrapper wrapper, NotifyItem notifyItem, boolean isCommonNotify, boolean isToLog, String... content) {
         this.executorWrapper = wrapper.capture();
         this.notifyItem = notifyItem;
         this.isCommonNotify = isCommonNotify;
+        this.isToLog = isToLog;
         this.content = content;
     }
 

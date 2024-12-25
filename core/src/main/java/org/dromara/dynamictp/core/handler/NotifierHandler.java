@@ -33,6 +33,7 @@ import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
 import org.dromara.dynamictp.core.notifier.context.DtpNotifyCtxHolder;
 import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,9 @@ public final class NotifierHandler {
 
     public void sendAlarm(NotifyItemEnum notifyItemEnum) {
         BaseNotifyCtx notifyCtx = DtpNotifyCtxHolder.get();
+        if (notifyCtx.isToLog()) {
+            log.warn("DynamicTp alarm, [" + notifyCtx.getExecutorWrapper().getThreadPoolName() + "]: \n" + Arrays.toString(notifyCtx.getContent()));
+        }
         NotifyItem notifyItem = notifyCtx.getNotifyItem();
         for (String platformId : notifyItem.getPlatformIds()) {
             NotifyHelper.getPlatform(platformId).ifPresent(p -> {
@@ -82,7 +86,9 @@ public final class NotifierHandler {
                     if (notifyCtx.isCommonNotify()) {
                         notifier.sendCommonAlarmMsg(p, notifyItemEnum, notifyCtx.getContent());
                     } else {
-                        notifier.sendAlarmMsg(p, notifyItemEnum);
+                        if (!notifyCtx.getExecutorWrapper().isVirtualThreadExecutor()) {
+                            notifier.sendAlarmMsg(p, notifyItemEnum);
+                        }
                     }
                 }
             });

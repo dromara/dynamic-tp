@@ -123,7 +123,7 @@ public class PerformanceProvider implements Closeable {
         String[] pinContent = populatePinContent(maxPinnedTime, totalPinnedTime, durationPinnedTime, stackTrace);
         ExecutorWrapper executorWrapper = DtpRegistry.getExecutorWrapper(executorName);
         ((VirtualThreadExecutorProxy) executorWrapper.getExecutor().getOriginal()).setCurPinDuration(duration.toSeconds());
-        AlarmManager.tryCommonAlarmAsync(executorWrapper, ImmutableList.of(NotifyItemEnum.PIN_TIMEOUT), pinContent);
+        AlarmManager.tryCommonAlarmAsync(executorWrapper, ImmutableList.of(NotifyItemEnum.PIN_TIMEOUT), true, pinContent);
 
         VTE_STATS_CACHE.put(executorName, vtExecutorStat);
     }

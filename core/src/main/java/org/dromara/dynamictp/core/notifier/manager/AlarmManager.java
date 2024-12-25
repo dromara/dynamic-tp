@@ -93,18 +93,18 @@ public class AlarmManager {
         ALARM_EXECUTOR.execute(() -> notifyTypes.forEach(x -> doTryAlarm(executorWrapper, x)));
     }
 
-    public static void tryCommonAlarmAsync(ExecutorWrapper executorWrapper, List<NotifyItemEnum> notifyTypes, String... content) {
-        ALARM_EXECUTOR.execute(() -> notifyTypes.forEach(x -> doTryAlarm(executorWrapper, x, true, content)));
+    public static void tryCommonAlarmAsync(ExecutorWrapper executorWrapper, List<NotifyItemEnum> notifyTypes, boolean isToLog, String... content) {
+        ALARM_EXECUTOR.execute(() -> notifyTypes.forEach(x -> doTryAlarm(executorWrapper, x, true, isToLog, content)));
     }
 
     public static void doTryAlarm(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType) {
-        doTryAlarm(executorWrapper, notifyType, false, "");
+        doTryAlarm(executorWrapper, notifyType, false, false, "");
     }
 
-    public static void doTryAlarm(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType, boolean isCommonNotify, String... content) {
+    public static void doTryAlarm(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType, boolean isCommonNotify, boolean isToLog, String... content) {
         AlarmCounter.incAlarmCounter(executorWrapper.getThreadPoolName(), notifyType.getValue());
         NotifyHelper.getNotifyItem(executorWrapper, notifyType).ifPresent(notifyItem -> {
-            val alarmCtx = new AlarmCtx(executorWrapper, notifyItem, isCommonNotify, content);
+            val alarmCtx = new AlarmCtx(executorWrapper, notifyItem, isCommonNotify, isToLog, content);
             ALARM_INVOKER_CHAIN.proceed(alarmCtx);
         });
     }

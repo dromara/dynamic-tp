@@ -99,7 +99,7 @@ public final class ReflectionUtil {
     }
 
     public static Method findMethod(Class<?> targetClass, String methodName, Class<?>... parameterTypes) {
-        Method method = MethodUtils.getMatchingAccessibleMethod(targetClass, methodName, parameterTypes);
+        Method method = MethodUtils.getMatchingMethod(targetClass, methodName, parameterTypes);
         if (Objects.isNull(method)) {
             log.warn("Method '{}' with parameters '{}' not found in class '{}'", methodName, parameterTypes, targetClass.getName());
         }

@@ -82,7 +82,7 @@ public class ExecutorStats extends Metrics {
     /**
      * 拓展字段
      */
-    private Map<String, Double> extMap = new ConcurrentHashMap<>(2);
+    private final Map<String, Double> extMap = new ConcurrentHashMap<>(2);
 
     /**
      * 空闲时间 (ms)

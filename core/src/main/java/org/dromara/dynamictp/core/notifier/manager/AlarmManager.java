@@ -156,7 +156,8 @@ public class AlarmManager {
     }
 
     private static boolean checkPinTimeout(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
-        return ((VirtualThreadExecutorProxy) ((VirtualThreadExecutorAdapter) executorWrapper.getExecutor().getOriginal()).getOriginal()).getCurPinDuration() >= notifyItem.getThreshold();
+        return ((VirtualThreadExecutorProxy) ((VirtualThreadExecutorAdapter) executorWrapper.getExecutor().getOriginal())
+                .getOriginal()).getCurPinDuration() >= notifyItem.getThreshold();
     }
 
     private static boolean checkWithAlarmInfo(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {

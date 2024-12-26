@@ -310,7 +310,7 @@ public class DtpRegistry {
             if (executorWrapper.isDtpExecutor()) {
                 executorWrapper.setNotifyItems(((DtpExecutor) executorWrapper.getExecutor()).getNotifyItems());
             } else {
-                executorWrapper.setNotifyItems(((VirtualThreadExecutorProxy) executorWrapper.getExecutor()).getNotifyItems());
+                executorWrapper.setNotifyItems(((VirtualThreadExecutorProxy) executorWrapper.getExecutor().getOriginal()).getNotifyItems());
             }
             executorWrapper.setPlatformIds(props.getPlatformIds());
             executorWrapper.setNotifyEnabled(props.isNotifyEnabled());

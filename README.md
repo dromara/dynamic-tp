@@ -10,8 +10,8 @@
   <a href="https://gitee.com/dromara/dynamic-tp/members"><img src="https://gitee.com/dromara/dynamic-tp/badge/fork.svg"></a>
   <a href="https://github.com/dromara/dynamic-tp"><img src="https://img.shields.io/github/stars/dromara/dynamic-tp?style=flat-square&logo=github"></a>
   <a href="https://github.com/dromara/dynamic-tp/network/members"><img src="https://img.shields.io/github/forks/dromara/dynamic-tp?style=flat-square&logo=GitHub"></a>
+  <a href='https://gitcode.com/dromara/dynamic-tp'><img src='https://gitcode.com/dromara/dynamic-tp/star/badge.svg' alt='fork'></a>
   <a href="https://github.com/dromara/dynamic-tp/blob/master/LICENSE"><img src="https://img.shields.io/github/license/dromara/dynamic-tp.svg?style=flat-square"></a>
-  <a target="_blank" href="/resources/img/contact.jpg"><img src='resources/img/wechat.jpg' alt='备注加群'></a>
 </p>
 
 <p align="center">

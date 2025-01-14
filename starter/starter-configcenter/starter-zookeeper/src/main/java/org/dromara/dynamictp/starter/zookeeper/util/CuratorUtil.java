@@ -17,6 +17,8 @@
 
 package org.dromara.dynamictp.starter.zookeeper.util;
 
+import cn.hutool.core.text.CharSequenceUtil;
+import cn.hutool.core.util.StrUtil;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.handler.ConfigHandler;
 import com.google.common.collect.Maps;
@@ -59,12 +61,14 @@ public class CuratorUtil {
     public static CuratorFramework getCuratorFramework(DtpProperties dtpProperties) {
         if (curatorFramework == null) {
             DtpProperties.Zookeeper zookeeper = dtpProperties.getZookeeper();
-            curatorFramework = CuratorFrameworkFactory
+            CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory
                     .builder()
-                    .authorization(zookeeper.getScheme(), zookeeper.getAuth().getBytes())
                     .connectString(zookeeper.getZkConnectStr())
-                    .retryPolicy(new ExponentialBackoffRetry(1000, 3))
-                    .build();
+                    .retryPolicy(new ExponentialBackoffRetry(1000, 3));
+            if (CharSequenceUtil.isAllNotBlank(zookeeper.getScheme(), zookeeper.getAuth())){
+                builder .authorization(zookeeper.getScheme(), zookeeper.getAuth().getBytes());
+            }
+            curatorFramework = builder.build();
             final ConnectionStateListener connectionStateListener = (client, newState) -> {
                 if (newState == ConnectionState.CONNECTED) {
                     COUNT_DOWN_LATCH.countDown();

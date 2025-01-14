@@ -18,9 +18,6 @@
 package org.dromara.dynamictp.starter.zookeeper.util;
 
 import cn.hutool.core.text.CharSequenceUtil;
-import cn.hutool.core.util.StrUtil;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.handler.ConfigHandler;
 import com.google.common.collect.Maps;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +30,8 @@ import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.framework.state.ConnectionStateListener;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.utils.ZKPaths;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.core.handler.ConfigHandler;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;

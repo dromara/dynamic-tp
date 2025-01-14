@@ -188,6 +188,10 @@ public class DtpProperties {
         private String node;
 
         private String configKey;
+
+        private String scheme;
+
+        private String auth;
     }
 
     /**

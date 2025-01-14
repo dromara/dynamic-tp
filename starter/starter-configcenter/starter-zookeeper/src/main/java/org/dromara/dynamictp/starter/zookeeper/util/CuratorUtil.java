@@ -59,8 +59,12 @@ public class CuratorUtil {
     public static CuratorFramework getCuratorFramework(DtpProperties dtpProperties) {
         if (curatorFramework == null) {
             DtpProperties.Zookeeper zookeeper = dtpProperties.getZookeeper();
-            curatorFramework = CuratorFrameworkFactory.newClient(zookeeper.getZkConnectStr(),
-                    new ExponentialBackoffRetry(1000, 3));
+            curatorFramework = CuratorFrameworkFactory
+                    .builder()
+                    .authorization(zookeeper.getScheme(), zookeeper.getAuth().getBytes())
+                    .connectString(zookeeper.getZkConnectStr())
+                    .retryPolicy(new ExponentialBackoffRetry(1000, 3))
+                    .build();
             final ConnectionStateListener connectionStateListener = (client, newState) -> {
                 if (newState == ConnectionState.CONNECTED) {
                     COUNT_DOWN_LATCH.countDown();

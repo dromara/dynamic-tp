@@ -209,6 +209,8 @@ public class DtpProperties {
         private String authority = "ssl";
 
         private String key;
+
+        private long timeout = 30000L;
     }
     
     private static class Holder {

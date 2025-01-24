@@ -5,11 +5,10 @@ import org.dromara.dynamictp.common.util.ReflectionUtil;
 import java.util.concurrent.Executor;
 
 /**
+ * ChannelExecutorFetcher
+ *
  * @author Assassinxc
- * @title: ChannelExecutorFetcher
- * @projectName dynamic-tp
- * @description:
- * @date 2025/1/24 17:31
+ * @since 1.1.9.1
  */
 public class ChannelExecutorFetcher {
     public static Executor getManagedChannelImplExecutor(ManagedChannel channel) {

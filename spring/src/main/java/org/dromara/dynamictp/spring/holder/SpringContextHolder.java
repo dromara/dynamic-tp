@@ -70,7 +70,7 @@ public class SpringContextHolder implements ContextManager, ApplicationContextAw
 
     @Override
     public String getEnvironmentProperty(String key) {
-        return getInstance().getEnvironment().getProperty(key);
+        return getEnvironment().getProperty(key);
     }
 
     @Override
@@ -84,6 +84,6 @@ public class SpringContextHolder implements ContextManager, ApplicationContextAw
 
     @Override
     public String getEnvironmentProperty(String key, String defaultValue) {
-        return getInstance().getEnvironment().getProperty(key, defaultValue);
+        return getEnvironment().getProperty(key, defaultValue);
     }
 }

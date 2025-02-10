@@ -16,7 +16,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}/jvmti/jvmti-build
           mvn package
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v3
         with:
           name: lib
           path: jvmti/jvmti-build/target/classes/lib*
@@ -35,7 +35,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}/jvmti/jvmti-build
           mvn package
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v3
         with:
           name: lib
           path: jvmti/jvmti-build/target/classes/lib*
@@ -54,7 +54,7 @@ jobs:
         run: |
           cd ${{ github.workspace }}/jvmti/jvmti-build
           mvn package
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v3
         with:
           name: lib
           path: jvmti/jvmti-build/target/classes/*.dll

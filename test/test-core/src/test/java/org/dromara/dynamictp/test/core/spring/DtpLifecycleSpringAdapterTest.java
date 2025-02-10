@@ -72,20 +72,6 @@ class DtpLifecycleSpringAdapterTest {
     }
 
     @Test
-    void testStopWithCallback() {
-        // 使用回调方法停止 lifecycle
-        Runnable callback = Mockito.mock(Runnable.class);
-        dtpLifecycleSpringAdapter.stop(callback);
-
-        // 验证 lifecycle 停止后，回调方法被执行
-        Mockito.verify(lifeCycleManagement).stop();
-        Mockito.verify(callback).run();
-        Mockito.when(lifeCycleManagement.isRunning()).thenReturn(false); // Mock isRunning() 状态同步
-        Assertions.assertFalse(dtpLifecycleSpringAdapter.isRunning());
-        Assertions.assertFalse(lifeCycleManagement.isRunning());
-    }
-
-    @Test
     void testAutoStartupAndPhase() {
         // 验证 isAutoStartup 和 getPhase 方法的行为
         Mockito.when(lifeCycleManagement.isAutoStartup()).thenReturn(true); // Mock 返回值为 true

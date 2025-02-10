@@ -39,6 +39,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Redick01
@@ -97,7 +98,7 @@ public final class EtcdUtil {
                 KeyValue keyValue = client(etcd)
                         .getKVClient()
                         .get(bytesOf(etcd.getKey()))
-                        .get()
+                        .get(etcd.getTimeout(), TimeUnit.MILLISECONDS)
                         .getKvs()
                         .get(0);
                 if (Objects.isNull(keyValue)) {
@@ -111,7 +112,7 @@ public final class EtcdUtil {
                 GetResponse response = client(etcd)
                         .getKVClient()
                         .get(key, getOption)
-                        .get();
+                        .get(etcd.getTimeout(), TimeUnit.MILLISECONDS);
                 List<KeyValue> keyValues = response.getKvs();
                 Map<Object, Object> finalResultMap = resultMap;
                 keyValues.forEach(keyValue -> {

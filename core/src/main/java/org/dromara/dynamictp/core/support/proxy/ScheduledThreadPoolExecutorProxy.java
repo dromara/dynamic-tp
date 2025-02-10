@@ -52,7 +52,7 @@ public class ScheduledThreadPoolExecutorProxy extends ScheduledThreadPoolExecuto
     public ScheduledThreadPoolExecutorProxy(ScheduledThreadPoolExecutor executor) {
         super(executor.getCorePoolSize(), executor.getThreadFactory());
         this.rejectHandlerType = executor.getRejectedExecutionHandler().getClass().getSimpleName();
-        setRejectedExecutionHandler(RejectHandlerGetter.getProxy(getRejectedExecutionHandler()));
+        setRejectedExecutionHandler(RejectHandlerGetter.getProxy(executor.getRejectedExecutionHandler()));
     }
 
     @Override

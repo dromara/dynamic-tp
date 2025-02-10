@@ -29,7 +29,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.APP_PORT_KEY;
  * SpringDtpInitializer related
  *
  * @author yanhom
- * @since 1.1.0
+ * @since 1.2.0
  */
 public class SpringDtpInitializer implements DtpInitializer {
 

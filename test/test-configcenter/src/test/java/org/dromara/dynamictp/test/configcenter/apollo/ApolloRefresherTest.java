@@ -40,12 +40,12 @@ class ApolloRefresherTest extends DtpBaseTest {
     @Test
     void testRefresh() throws InterruptedException {
         int corePoolSize = context.getBean("dtpExecutor1", ThreadPoolExecutor.class).getCorePoolSize();
-        System.out.println(corePoolSize);
+        System.out.println("apollo refresher, corePoolSize before refresh: " + corePoolSize);
         Assertions.assertEquals(6, corePoolSize);
         mockConfigChange();
         Thread.sleep(6000L);
         corePoolSize = context.getBean("dtpExecutor1", ThreadPoolExecutor.class).getCorePoolSize();
-        System.out.println(corePoolSize);
+        System.out.println("apollo refresher, corePoolSize after refresh: " + corePoolSize);
         Assertions.assertEquals(10, corePoolSize);
     }
 

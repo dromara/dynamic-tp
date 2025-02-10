@@ -20,6 +20,8 @@ package org.dromara.dynamictp.spring.lifecycle;
 import org.dromara.dynamictp.core.lifecycle.LifeCycleManagement;
 import org.springframework.context.SmartLifecycle;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Adapts LifeCycleManagement to Spring's SmartLifecycle interface.
  *
@@ -30,7 +32,7 @@ public class DtpLifecycleSpringAdapter implements SmartLifecycle {
 
     private final LifeCycleManagement lifeCycleManagement;
 
-    private boolean isRunning = false;
+    private final AtomicBoolean running = new AtomicBoolean(false);
 
     public DtpLifecycleSpringAdapter(LifeCycleManagement lifeCycleManagement) {
         this.lifeCycleManagement = lifeCycleManagement;
@@ -38,25 +40,28 @@ public class DtpLifecycleSpringAdapter implements SmartLifecycle {
 
     @Override
     public void start() {
-        lifeCycleManagement.start();
-        isRunning = true;
+        if (this.running.compareAndSet(false, true)) {
+            lifeCycleManagement.start();
+        }
     }
 
     @Override
     public void stop() {
-        lifeCycleManagement.stop();
-        isRunning = false;
+        if (this.running.compareAndSet(true, false)) {
+            lifeCycleManagement.stop();
+        }
     }
 
     @Override
     public boolean isRunning() {
-        return isRunning;
+        return this.running.get();
     }
 
     @Override
     public void stop(Runnable callback) {
-        lifeCycleManagement.stop(callback);
-        isRunning = false;
+        if (this.running.compareAndSet(true, false)) {
+            lifeCycleManagement.stop(callback);
+        }
     }
 
     /**

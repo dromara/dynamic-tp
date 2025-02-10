@@ -52,12 +52,12 @@ class NacosRefresherTest extends DtpBaseTest {
         assert context.containsBean("dtpExecutor1") : "dtpExecutor1 bean not found!";
 
         int corePoolSize = context.getBean("dtpExecutor1", ThreadPoolExecutor.class).getCorePoolSize();
-        System.out.println(corePoolSize);
+        System.out.println("nacos refresher, corePoolSize before refresh: " + corePoolSize);
         Assertions.assertEquals(6, corePoolSize);
         mockConfigChange();
         Thread.sleep(2000L);
         corePoolSize = context.getBean("dtpExecutor1", ThreadPoolExecutor.class).getCorePoolSize();
-        System.out.println(corePoolSize);
+        System.out.println("nacos refresher, corePoolSize after refresh: " + corePoolSize);
         Assertions.assertEquals(10, corePoolSize);
     }
 

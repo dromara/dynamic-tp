@@ -9,6 +9,4 @@
     </parent>
     <artifactId>dynamic-tp-extension-agent</artifactId>
 
-    <dependencies>
-    </dependencies>
 </project>

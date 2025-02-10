@@ -23,10 +23,11 @@ import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.LinkedHashMap;
 
 /**
  * YamlConfigParser related
@@ -68,8 +69,8 @@ public class YamlConfigParser extends AbstractConfigParser {
             String fullPath = (path != null ? path + "." + key : key.toString());
             if (value instanceof Map) {
                 flattenMap(result, (Map<Object, Object>) value, fullPath);
-            } else if (value instanceof List) {
-                for (int i = 0; i < ((List<?>) value).size(); i++) {
+            } else if (value instanceof Collection) {
+                for (int i = 0; i < ((Collection<?>) value).size(); i++) {
                     flattenMap(result, Collections.singletonMap("[" + i + "]", ((List<?>) value).get(i)), fullPath);
                 }
             } else {

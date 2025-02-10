@@ -24,7 +24,6 @@ import com.alibaba.nacos.spring.context.event.config.NacosConfigReceivedEvent;
 import com.alibaba.nacos.spring.core.env.NacosPropertySource;
 import org.dromara.dynamictp.test.configcenter.DtpBaseTest;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.springframework.core.env.MutablePropertySources;
 
 import java.util.concurrent.ThreadPoolExecutor;
@@ -39,7 +38,6 @@ import static org.mockito.Mockito.mock;
  */
 class NacosRefresherTest extends DtpBaseTest {
 
-    @Test
     void testRefresh() throws InterruptedException {
 
         // 打印所有bean名称

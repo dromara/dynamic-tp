@@ -39,13 +39,14 @@ import java.util.concurrent.ThreadPoolExecutor;
 class CloudRefresherTest extends DtpBaseTest {
 
     @Test
-    void testCloudRefresh() {
+    void testCloudRefresh() throws InterruptedException {
         int corePoolSize = context.getBean("dtpExecutor1", ThreadPoolExecutor.class).getCorePoolSize();
-        System.out.println(corePoolSize);
+        System.out.println("corePoolSize before refresh: " + corePoolSize);
         Assertions.assertEquals(6, corePoolSize);
         mockEnvironmentChange();
+        Thread.sleep(2000L);
         corePoolSize = context.getBean("dtpExecutor1", ThreadPoolExecutor.class).getCorePoolSize();
-        System.out.println(corePoolSize);
+        System.out.println("corePoolSize after refresh: " + corePoolSize);
         Assertions.assertEquals(10, corePoolSize);
     }
 

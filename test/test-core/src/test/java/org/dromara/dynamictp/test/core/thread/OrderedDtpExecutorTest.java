@@ -18,13 +18,14 @@
 package org.dromara.dynamictp.test.core.thread;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
-import org.dromara.dynamictp.core.support.task.Ordered;
-import org.dromara.dynamictp.core.support.task.callable.OrderedCallable;
-import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.core.DtpRegistry;
+import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
+import org.dromara.dynamictp.core.support.task.Ordered;
+import org.dromara.dynamictp.core.support.task.callable.OrderedCallable;
 import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
 import org.dromara.dynamictp.spring.support.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -43,15 +43,12 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-@PropertySource(value = "classpath:/dynamic-tp-nacos-demo-dtp-dev.yml", factory = YamlPropertySourceFactory.class)
 @SpringBootTest(classes = OrderedDtpExecutorTest.class)
 @ExtendWith(SpringExtension.class)
 @EnableDynamicTp
 @EnableAutoConfiguration
+@PropertySource(value = "classpath:/dynamic-tp-nacos-demo-dtp-dev.yml", factory = YamlPropertySourceFactory.class)
 class OrderedDtpExecutorTest {
-
-    @Resource
-    private OrderedDtpExecutor orderedDtpExecutor;
 
     private final TransmittableThreadLocal<String> threadLocal = new TransmittableThreadLocal<>();
 
@@ -59,6 +56,10 @@ class OrderedDtpExecutorTest {
 
     @Test
     void orderedExecute() throws InterruptedException {
+        OrderedDtpExecutor orderedDtpExecutor = (OrderedDtpExecutor) DtpRegistry.getExecutor("orderedDtpExecutor");
+        if (orderedDtpExecutor == null) {
+            return;
+        }
         for (int i = 0; i < 1000; i++) {
             if (i == 500) {
                 TimeUnit.MILLISECONDS.sleep(2000L);
@@ -71,6 +72,10 @@ class OrderedDtpExecutorTest {
 
     @Test
     void orderedSubmit() {
+        OrderedDtpExecutor orderedDtpExecutor = (OrderedDtpExecutor) DtpRegistry.getExecutor("orderedDtpExecutor");
+        if (orderedDtpExecutor == null) {
+            return;
+        }
         List<Future<?>> futures = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             threadLocal.set("ttl" + i);

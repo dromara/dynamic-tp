@@ -183,6 +183,11 @@ public abstract class AbstractDtpAdapter implements DtpAdapter {
         }
     }
 
+    protected void enhanceOriginExecutorByOfferingProxy(String tpName, ThreadPoolExecutorProxy proxy, String fieldName, Object targetObj) {
+        ReflectionUtil.setFieldValue(fieldName, targetObj, proxy);
+        executors.put(tpName, new ExecutorWrapper(tpName, proxy));
+    }
+
     protected void putAndFinalize(String tpName, ExecutorService origin, Executor targetForWrapper) {
         executors.put(tpName, new ExecutorWrapper(tpName, targetForWrapper));
         shutdownOriginalExecutor(origin);

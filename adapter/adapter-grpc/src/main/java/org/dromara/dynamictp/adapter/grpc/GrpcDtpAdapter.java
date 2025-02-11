@@ -17,9 +17,7 @@
 
 package org.dromara.dynamictp.adapter.grpc;
 
-import io.grpc.ManagedChannel;
 import io.grpc.inprocess.InProcessSocketAddress;
-import io.grpc.internal.ChannelExecutorFetcher;
 import io.grpc.internal.InternalServer;
 import io.grpc.internal.ServerImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -33,14 +31,9 @@ import org.dromara.dynamictp.jvmti.JVMTI;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -71,7 +64,6 @@ public class GrpcDtpAdapter extends AbstractDtpAdapter {
             log.warn("Cannot find beans of type ServerImpl.");
             return;
         }
-        Map<Integer, List<Executor>> proxiedMap = new HashMap<>();
         for (val serverImpl : beans) {
             val internalServer = (InternalServer) ReflectionUtil.getFieldValue(ServerImpl.class, SERVER_FIELD, serverImpl);
             String key = Optional.ofNullable(internalServer)
@@ -89,25 +81,10 @@ public class GrpcDtpAdapter extends AbstractDtpAdapter {
             }
             val executor = (Executor) ReflectionUtil.getFieldValue(ServerImpl.class, EXECUTOR_FIELD, serverImpl);
             if (Objects.nonNull(executor) && executor instanceof ThreadPoolExecutor) {
-                enhanceOriginExecutorByOfferingProxy(genTpName(key),
-                        new ThreadPoolExecutorProxy((ThreadPoolExecutor) executor), EXECUTOR_FIELD, serverImpl);
-                proxiedMap.computeIfAbsent(executor.hashCode(), k -> new ArrayList<>()).add(executor);
-            }
-        }
-        if (!proxiedMap.isEmpty()) {
-            val clientBeans = JVMTI.getInstances(ManagedChannel.class);
-            if (!clientBeans.isEmpty()) {
-                for (val channelImpl : clientBeans) {
-                    val executor = ChannelExecutorFetcher.getManagedChannelImplExecutor(channelImpl);
-                    if (Objects.nonNull(executor) && executor instanceof ThreadPoolExecutor && proxiedMap.containsKey(executor.hashCode())) {
-                        proxiedMap.get(executor.hashCode()).removeIf(proxiedExecutor -> Objects.equals(executor, proxiedExecutor));
-                    }
-                }
-            }
-            for (List<Executor> executorList : proxiedMap.values()) {
-                for (Executor executor : executorList) {
-                    shutdownOriginalExecutor((ExecutorService) executor);
-                }
+                String tpName = genTpName(key);
+                val proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) executor);
+                // don't shutdown the origin executor, because it's a shared executor, and may be used by other components
+                enhanceOriginExecutorWithoutFinalize(tpName, proxy, EXECUTOR_FIELD, serverImpl);
             }
         }
     }

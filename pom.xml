@@ -9,7 +9,9 @@
     <packaging>pom</packaging>
 
     <name>DynamicTp Project</name>
-    <description>🔥🔥🔥轻量级动态线程池，内置监控告警功能，基于主流配置中心（已支持Nacos、Apollo、Zookeeper、Consul、Etcd、Polaris，可通过SPI自定义实现）</description>
+    <description>
+        🔥🔥🔥轻量级动态线程池，内置监控告警功能，基于主流配置中心（已支持Nacos、Apollo、Zookeeper、Consul、Etcd、Polaris，可通过SPI自定义实现）
+    </description>
     <url>https://github.com/yanhom1314/dynamic-tp</url>
 
     <properties>
@@ -270,6 +272,21 @@
                     <classesDirectory/>
                     <outputDirectory/>
                     <testClassesDirectory/>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Implementation-Title>${project.artifactId}</Implementation-Title>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                            <Build-Time>${maven.build.timestamp}</Build-Time>
+                            <Built-By>yanhom</Built-By>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
 

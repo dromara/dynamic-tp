@@ -42,8 +42,8 @@ import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.dromara.dynamictp.core.notifier.manager.NoticeManager;
 import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
-import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 
@@ -115,6 +115,18 @@ public class DtpRegistry {
     public static void registerExecutor(ExecutorWrapper wrapper, String source) {
         log.info("DynamicTp register executor: {}, source: {}", ExecutorConverter.toMainFields(wrapper), source);
         EXECUTOR_REGISTRY.putIfAbsent(wrapper.getThreadPoolName(), wrapper);
+    }
+
+    /**
+     * Unregister a executor.
+     *
+     * @param name thread pool name
+     * @return the managed DtpExecutor instance
+     */
+    public static ExecutorWrapper unregisterExecutor(String name) {
+        ExecutorWrapper executorWrapper = getExecutorWrapper(name);
+        log.info("DynamicTp unregister executor: {}", executorWrapper);
+        return EXECUTOR_REGISTRY.remove(name);
     }
 
     /**

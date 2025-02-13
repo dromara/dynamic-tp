@@ -24,7 +24,6 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
 import java.util.List;
 import java.util.Objects;
 
@@ -65,27 +64,31 @@ public final class ReflectionUtil {
         }
     }
 
-    public static void setFieldValue(String fieldName, Object targetObj, Object targetVal) {
-        val field = getField(targetObj.getClass(), fieldName);
+    public static boolean setFieldValue(String fieldName, Object targetObj, Object targetVal) {
+        return setFieldValue(targetObj.getClass(), fieldName, targetObj, targetVal);
+    }
+
+    public static boolean setFieldValue(Class<?> targetClass, String fieldName, Object targetObj, Object targetVal) {
+        val field = getField(targetClass, fieldName);
         if (Objects.isNull(field)) {
-            return;
+            return false;
         }
         try {
             FieldUtils.writeField(field, targetObj, targetVal, true);
+            return true;
         } catch (IllegalAccessException e) {
             log.error("Failed to write value '{}' to field '{}' in object '{}'", targetVal, fieldName, targetObj, e);
+            return false;
         }
     }
 
-    public static void setFieldValue(Class<?> targetClass, String fieldName, Object targetObj, Object targetVal) {
-        val field = getField(targetClass, fieldName);
-        if (Objects.isNull(field)) {
-            return;
-        }
+    public static boolean setFieldValue(Field field, Object targetObj, Object targetVal) {
         try {
             FieldUtils.writeField(field, targetObj, targetVal, true);
+            return true;
         } catch (IllegalAccessException e) {
-            log.error("Failed to write value '{}' to field '{}' in object '{}'", targetVal, fieldName, targetObj, e);
+            log.error("Failed to write value '{}' to field '{}' in object '{}'", targetVal, field.getName(), targetObj, e);
+            return false;
         }
     }
 
@@ -99,9 +102,10 @@ public final class ReflectionUtil {
     }
 
     public static Method findMethod(Class<?> targetClass, String methodName, Class<?>... parameterTypes) {
-        Method method = MethodUtils.getMatchingAccessibleMethod(targetClass, methodName, parameterTypes);
+        Method method = MethodUtils.getMatchingMethod(targetClass, methodName, parameterTypes);
         if (Objects.isNull(method)) {
             log.warn("Method '{}' with parameters '{}' not found in class '{}'", methodName, parameterTypes, targetClass.getName());
+            return null;
         }
         return method;
     }

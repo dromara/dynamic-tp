@@ -29,7 +29,6 @@ import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.handler.ConfigHandler;
 import org.dromara.dynamictp.core.support.binder.BinderHelper;
 
-
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;

@@ -12,7 +12,8 @@
     <url>https://github.com/yanhom1314/dynamic-tp</url>
 
     <properties>
-        <revision>1.1.9.1-3.x</revision>
+        <revision>1.2.0-x</revision>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <maven.compiler.source>17</maven.compiler.source>
@@ -37,7 +38,7 @@
         <apache-dubbo.version>3.0.7</apache-dubbo.version>
         <alibaba-dubbo.version>2.6.0</alibaba-dubbo.version>
         <alibaba-dubbo-starter.version>2.0.0</alibaba-dubbo-starter.version>
-        <grpc-starter.version>2.13.1.RELEASE</grpc-starter.version>
+        <grpc-starter.version>2.15.0.RELEASE</grpc-starter.version>
         <hystrix.version>1.5.18</hystrix.version>
         <motan.version>1.2.0</motan.version>
         <okhttp.version>3.14.9</okhttp.version>
@@ -65,6 +66,7 @@
         <maven-javadoc-plugin.version>3.6.2</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
+        <central-publishing-maven-plugin.version>0.6.0</central-publishing-maven-plugin.version>
 
         <dropwizard-metrics.version>4.2.20</dropwizard-metrics.version>
         <jakarta-mail.version>2.1.0</jakarta-mail.version>
@@ -112,7 +114,7 @@
 
             <dependency>
                 <groupId>net.devh</groupId>
-                <artifactId>grpc-server-spring-boot-starter</artifactId>
+                <artifactId>grpc-spring-boot-starter</artifactId>
                 <version>${grpc-starter.version}</version>
             </dependency>
 
@@ -661,6 +663,7 @@
                 <version>${maven-source-plugin.version}</version>
                 <executions>
                     <execution>
+                        <id>attach-sources</id>
                         <phase>package</phase>
                         <goals>
                             <goal>jar-no-fork</goal>
@@ -674,6 +677,7 @@
                 <version>${maven-javadoc-plugin.version}</version>
                 <executions>
                     <execution>
+                        <id>attach-javadocs</id>
                         <phase>package</phase>
                         <goals>
                             <goal>jar</goal>
@@ -697,6 +701,17 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>${central-publishing-maven-plugin.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>ossrh</publishingServerId>
+                    <autoPublish>false</autoPublish>
+                </configuration>
             </plugin>
 
             <plugin>

@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.spring.initializer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.core.support.init.DtpInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -28,11 +29,15 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.APP_PORT_KEY;
  * SpringDtpInitializer related
  *
  * @author yanhom
- * @since 1.1.0
+ * @since 1.2.0
  */
 public class SpringDtpInitializer implements DtpInitializer {
 
     private static final String SPRING_APP_NAME_KEY = "spring.application.name";
+
+    private static final String SERVER_PORT = "server.port";
+
+    private static final String ACTIVE_PROFILES = "spring.profiles.active";
 
     @Override
     public String getName() {
@@ -43,8 +48,21 @@ public class SpringDtpInitializer implements DtpInitializer {
     public void init(Object... args) {
         ConfigurableApplicationContext c = (ConfigurableApplicationContext) args[0];
         String appName = c.getEnvironment().getProperty(SPRING_APP_NAME_KEY, "application");
-        String appPort = c.getEnvironment().getProperty("server.port", "0");
-        String appEnv = c.getEnvironment().getProperty("spring.profiles.active", "unknown");
+        String appPort = c.getEnvironment().getProperty(SERVER_PORT, "0");
+        String appEnv = c.getEnvironment().getProperty(ACTIVE_PROFILES);
+        if (StringUtils.isBlank(appEnv)) {
+            // fix #I8SSGQ
+            String[] profiles = c.getEnvironment().getActiveProfiles();
+            if (profiles.length < 1) {
+                profiles = c.getEnvironment().getDefaultProfiles();
+            }
+            if (profiles.length >= 1) {
+                appEnv = profiles[0];
+            }
+        }
+        if (StringUtils.isBlank(appEnv)) {
+            appEnv = "unknown";
+        }
         System.setProperty(APP_NAME_KEY, appName);
         System.setProperty(APP_PORT_KEY, appPort);
         System.setProperty(APP_ENV_KEY, appEnv);

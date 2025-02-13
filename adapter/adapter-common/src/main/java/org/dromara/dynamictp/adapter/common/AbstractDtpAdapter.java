@@ -41,12 +41,13 @@ import org.dromara.dynamictp.common.util.StreamUtil;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.core.notifier.manager.NoticeManager;
-import org.dromara.dynamictp.core.support.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -168,8 +169,23 @@ public abstract class AbstractDtpAdapter implements DtpAdapter {
 
     protected void enhanceOriginExecutor(String tpName, ThreadPoolExecutor executor, String fieldName, Object targetObj) {
         ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executor);
+        boolean r = ReflectionUtil.setFieldValue(fieldName, targetObj, proxy);
+        if (r) {
+            putAndFinalize(tpName, executor, proxy);
+        }
+    }
+
+    protected void enhanceOriginExecutor(String tpName, ThreadPoolExecutor executor, Field field, Object targetObj) {
+        ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executor);
+        boolean r = ReflectionUtil.setFieldValue(field, targetObj, proxy);
+        if (r) {
+            putAndFinalize(tpName, executor, proxy);
+        }
+    }
+
+    protected void enhanceOriginExecutorWithoutFinalize(String tpName, ThreadPoolExecutorProxy proxy, String fieldName, Object targetObj) {
         ReflectionUtil.setFieldValue(fieldName, targetObj, proxy);
-        putAndFinalize(tpName, executor, proxy);
+        executors.put(tpName, new ExecutorWrapper(tpName, proxy));
     }
 
     protected void putAndFinalize(String tpName, ExecutorService origin, Executor targetForWrapper) {

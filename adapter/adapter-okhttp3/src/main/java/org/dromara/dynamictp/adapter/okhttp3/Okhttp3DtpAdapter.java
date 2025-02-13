@@ -21,10 +21,14 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import okhttp3.OkHttpClient;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.manager.ContextManagerHelper;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
 
+import java.lang.reflect.Field;
+import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -39,6 +43,8 @@ public class Okhttp3DtpAdapter extends AbstractDtpAdapter {
     private static final String TP_PREFIX = "okhttp3Tp";
 
     private static final String EXECUTOR_SERVICE_FIELD = "executorService";
+
+    private static final String EXECUTOR_SERVICE_FIELD_ALTERNATIVE = "executorServiceOrNull";
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
@@ -59,10 +65,17 @@ public class Okhttp3DtpAdapter extends AbstractDtpAdapter {
             return;
         }
         beans.forEach((k, v) -> {
-            val executor = v.dispatcher().executorService();
-            if (executor instanceof ThreadPoolExecutor) {
-                enhanceOriginExecutor(genTpName(k), (ThreadPoolExecutor) executor, EXECUTOR_SERVICE_FIELD, v.dispatcher());
+            val dispatcher = v.dispatcher();
+            val executor = dispatcher.executorService();
+            if (!(executor instanceof ThreadPoolExecutor)) {
+                return;
             }
+
+            Field field = FieldUtils.getField(dispatcher.getClass(), EXECUTOR_SERVICE_FIELD, true);
+            if (Objects.isNull(field)) {
+                field = ReflectionUtil.getField(dispatcher.getClass(), EXECUTOR_SERVICE_FIELD_ALTERNATIVE);
+            }
+            enhanceOriginExecutor(genTpName(k), (ThreadPoolExecutor) executor, field, dispatcher);
         });
     }
 

@@ -20,7 +20,6 @@ package org.dromara.dynamictp.common.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 /**
  * ThreadPoolStats related
  *

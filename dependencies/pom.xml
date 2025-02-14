@@ -12,7 +12,7 @@
     <url>https://github.com/yanhom1314/dynamic-tp</url>
 
     <properties>
-        <revision>1.2.0-alpha</revision>
+        <revision>1.2.0</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <lombok.version>1.18.24</lombok.version>
@@ -35,7 +35,7 @@
         <apache-dubbo.version>3.0.7</apache-dubbo.version>
         <alibaba-dubbo.version>2.6.0</alibaba-dubbo.version>
         <alibaba-dubbo-starter.version>2.0.0</alibaba-dubbo-starter.version>
-        <grpc-starter.version>2.13.1.RELEASE</grpc-starter.version>
+        <grpc-starter.version>2.15.0.RELEASE</grpc-starter.version>
         <hystrix.version>1.5.18</hystrix.version>
         <motan.version>1.2.0</motan.version>
         <okhttp.version>3.14.9</okhttp.version>
@@ -59,7 +59,7 @@
         <maven-source-plugin.version>2.4</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
-        <central-publishing-maven-plugin.version>0.7.0</central-publishing-maven-plugin.version>
+        <central-publishing-maven-plugin.version>0.6.0</central-publishing-maven-plugin.version>
 
         <dropwizard-metrics.version>4.2.20</dropwizard-metrics.version>
         <jmh.version>1.35</jmh.version>
@@ -106,7 +106,7 @@
 
             <dependency>
                 <groupId>net.devh</groupId>
-                <artifactId>grpc-server-spring-boot-starter</artifactId>
+                <artifactId>grpc-spring-boot-starter</artifactId>
                 <version>${grpc-starter.version}</version>
             </dependency>
 
@@ -636,6 +636,17 @@
         <url>https://github.com/yanhom1314/dynamic-tp/issues</url>
     </issueManagement>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
     <build>
         <plugins>
             <plugin>
@@ -647,6 +658,7 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <id>attach-sources</id>
                         <phase>package</phase>
                         <goals>
                             <goal>jar-no-fork</goal>
@@ -661,7 +673,8 @@
                 <version>${maven-javadoc-plugin.version}</version>
                 <executions>
                     <execution>
-                        <id>package</id>
+                        <id>attach-javadocs</id>
+                        <phase>package</phase>
                         <goals>
                             <goal>jar</goal>
                         </goals>

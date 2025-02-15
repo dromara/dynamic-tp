@@ -13,7 +13,6 @@
 
     <properties>
         <revision>1.2.0-x</revision>
-
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <maven.compiler.source>17</maven.compiler.source>
@@ -686,6 +685,9 @@
                 </executions>
                 <configuration>
                     <failOnError>false</failOnError>
+                    <additionalOptions>
+                        <additionalOption>-Xdoclint:none</additionalOption>
+                    </additionalOptions>
                 </configuration>
             </plugin>
 

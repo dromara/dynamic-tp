@@ -42,15 +42,14 @@ import java.util.concurrent.TimeUnit;
 class ScheduledDtpExecutorTest {
 
     @Test
-    void schedule() throws InterruptedException {
+    void schedule() {
         ScheduledDtpExecutor dtpExecutor12 = (ScheduledDtpExecutor) DtpRegistry.getExecutor("dtpExecutor12");
         System.out.println(dtpExecutor12.getClass());
         dtpExecutor12.scheduleAtFixedRate(() -> {
             System.out.println(Thread.currentThread().getName() + "进来了," +
                     "当前时间是 " + LocalDateTime.now());
         }, 10, 5, TimeUnit.SECONDS);
-//        dtpExecutor12.shutdownNow();
-        TimeUnit.SECONDS.sleep(10000);
+        dtpExecutor12.shutdownNow();
     }
 
     @Test

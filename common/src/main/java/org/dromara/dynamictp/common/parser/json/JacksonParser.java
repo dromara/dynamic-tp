@@ -28,6 +28,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.common.ex.DtpException;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -44,7 +45,11 @@ import java.time.format.DateTimeFormatter;
 public class JacksonParser extends AbstractJsonParser {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
     private static final String PACKAGE_NAME = "com.fasterxml.jackson.databind.ObjectMapper";
+
+    private static final String JAVA_TIME_MODULE_CLASS_NAME = "com.fasterxml.jackson.datatype.jsr310.JavaTimeModule";
+
     private volatile ObjectMapper mapper;
 
     @Override
@@ -79,7 +84,11 @@ public class JacksonParser extends AbstractJsonParser {
     }
 
     protected ObjectMapper createMapper() {
-        // 只提供最简单的方案
+        try {
+            Class.forName(JAVA_TIME_MODULE_CLASS_NAME);
+        } catch (ClassNotFoundException e) {
+            throw new DtpException("Please add jackson-datatype-jsr310 dependency");
+        }
         JavaTimeModule javaTimeModule = new JavaTimeModule();
         javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));

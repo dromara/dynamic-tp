@@ -17,21 +17,28 @@
 
 package org.dromara.dynamictp.common.parser.json;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  *
  * @author topsuder
  * @since 1.1.3
  */
+@Slf4j
 public abstract class AbstractJsonParser implements JsonParser {
 
     @Override
     public boolean supports() {
-        try {
-            Class.forName(getMapperClassName());
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
+        String[] mapperClassNames = getMapperClassNames();
+        for (String mapperClassName : mapperClassNames) {
+            try {
+                Class.forName(mapperClassName);
+            } catch (ClassNotFoundException e) {
+                log.warn("the current parser is {}, Can not find class: {}", this.getClass().getSimpleName(), mapperClassName);
+                return false;
+            }
         }
+        return true;
     }
 
     /**
@@ -39,5 +46,5 @@ public abstract class AbstractJsonParser implements JsonParser {
      *
      * @return mapper class name
      */
-    protected abstract String getMapperClassName();
+    protected abstract String[] getMapperClassNames();
 }

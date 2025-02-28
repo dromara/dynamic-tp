@@ -30,6 +30,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
+import java.util.Objects;
 import java.util.concurrent.Executor;
 
 /**
@@ -51,7 +52,7 @@ public abstract class AbstractWebServerDtpAdapter<A extends Executor> extends Ab
                 afterInitialize();
                 refresh(dtpProperties);
             } catch (Exception e) {
-                log.error("Init web server thread pool failed.", e);
+                log.error("DynamicTp adapter, {} init failed.", getTpName(), e);
             }
         }
     }
@@ -59,11 +60,14 @@ public abstract class AbstractWebServerDtpAdapter<A extends Executor> extends Ab
     @Override
     protected void initialize() {
         super.initialize();
-        if (executors.get(getTpName()) == null) {
-            ApplicationContext applicationContext = SpringContextHolder.getInstance();
-            WebServer webServer = ((WebServerApplicationContext) applicationContext).getWebServer();
-            doEnhance(webServer);
-            log.info("DynamicTp adapter, web server {} executor init end, executor: {}",
+        if (Objects.nonNull(executors.get(getTpName()))) {
+            return;
+        }
+        ApplicationContext applicationContext = SpringContextHolder.getInstance();
+        WebServer webServer = ((WebServerApplicationContext) applicationContext).getWebServer();
+        doEnhance(webServer);
+        if (Objects.nonNull(executors.get(getTpName()))) {
+            log.info("DynamicTp adapter, {} init end, executor: {}",
                     getTpName(), ExecutorConverter.toMainFields(executors.get(getTpName())));
         }
     }

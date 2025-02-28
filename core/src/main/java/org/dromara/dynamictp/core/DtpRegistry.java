@@ -221,10 +221,6 @@ public class DtpRegistry {
 
     private static void doRefresh(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
         ExecutorAdapter<?> executor = executorWrapper.getExecutor();
-        if (executorWrapper.isVirtualThreadExecutor()) {
-            doRefreshCommon(executorWrapper, props);
-            return;
-        }
         doRefreshPoolSize(executor, props);
         if (!Objects.equals(executor.getKeepAliveTime(props.getUnit()), props.getKeepAliveTime())) {
             executor.setKeepAliveTime(props.getKeepAliveTime(), props.getUnit());

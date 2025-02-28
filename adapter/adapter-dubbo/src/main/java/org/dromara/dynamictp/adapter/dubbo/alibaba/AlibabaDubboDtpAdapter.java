@@ -52,8 +52,9 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements Initia
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        //从ApplicationReadyEvent改为ContextRefreshedEvent后，
-        //启动时无法dubbo获取线程池，这里直接每隔1s轮循，直至成功初始化线程池
+
+        // 从ApplicationReadyEvent改为ContextRefreshedEvent后，
+        // 启动时无法dubbo获取线程池，这里直接每隔1s轮循，直至成功初始化线程池
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             while (!registered.get()) {

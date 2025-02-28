@@ -57,6 +57,11 @@ public class DtpWechatNotifier extends AbstractDtpNotifier {
     }
 
     @Override
+    protected String[] getCommonAlarmTemplate(int num) {
+        return new String[]{WechatNotifyConst.WECHAT_ALARM_TEMPLATE_PREFIX, WechatNotifyConst.WECHAT_ALARM_COMMON_TEMPLATE.repeat(Math.max(0, num)), WechatNotifyConst.WECHAT_ALARM_TEMPLATE_SUFFIX};
+    }
+
+    @Override
     protected Pair<String, String> getColors() {
         return new ImmutablePair<>(WechatNotifyConst.WARNING_COLOR, WechatNotifyConst.COMMENT_COLOR);
     }

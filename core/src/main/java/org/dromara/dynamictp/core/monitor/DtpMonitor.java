@@ -102,9 +102,9 @@ public class DtpMonitor {
     }
 
 
-    private void doCollect(ExecutorStats threadPoolStats) {
+    private void doCollect(ExecutorStats executorStats) {
         try {
-            CollectorHandler.getInstance().collect(threadPoolStats, dtpProperties.getCollectorTypes());
+            CollectorHandler.getInstance().collect(executorStats, dtpProperties.getCollectorTypes());
         } catch (Exception e) {
             log.error("DynamicTp monitor, metrics collect error.", e);
         }

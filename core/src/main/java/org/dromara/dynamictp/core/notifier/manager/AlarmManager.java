@@ -116,11 +116,15 @@ public class AlarmManager {
         }
     }
 
+
     public static void destroy() {
         ALARM_EXECUTOR.shutdownNow();
     }
 
     private static boolean checkLiveness(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
+        if (executorWrapper.isVirtualThreadExecutor()) {
+            return false;
+        }
         val executor = executorWrapper.getExecutor();
         int maximumPoolSize = executor.getMaximumPoolSize();
         double div = NumberUtil.div(executor.getActiveCount(), maximumPoolSize, 2) * 100;
@@ -128,9 +132,8 @@ public class AlarmManager {
     }
 
     private static boolean checkCapacity(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
-
         val executor = executorWrapper.getExecutor();
-        if (executor.getQueueSize() <= 0) {
+        if (executor.getQueueSize() <= 0 || executorWrapper.isVirtualThreadExecutor()) {
             return false;
         }
         double div = NumberUtil.div(executor.getQueueSize(), executor.getQueueCapacity(), 2) * 100;

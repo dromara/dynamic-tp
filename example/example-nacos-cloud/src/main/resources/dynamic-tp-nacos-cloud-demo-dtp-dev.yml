@@ -90,3 +90,9 @@ dynamictp:
       keepAliveTime: 50
       allowCoreThreadTimeOut: false
       threadNamePrefix: test
+    - threadPoolName: virtualThreadExecutor1
+      executorType: virtual
+      notifyItems:
+        - type: pin_timeout
+          enabled: true
+          threshold: 3

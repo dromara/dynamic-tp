@@ -52,7 +52,7 @@ public class MicroMeterCollector extends AbstractCollector {
 
     public static final String APP_NAME_TAG = "app.name";
 
-    private static final Map<String, ExecutorStats> GAUGE_CACHE = new ConcurrentHashMap<>();
+    public static final Map<String, ExecutorStats> GAUGE_CACHE = new ConcurrentHashMap<>();
 
     @Override
     public void collect(ExecutorStats executorStats) {

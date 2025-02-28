@@ -52,6 +52,11 @@ public class DtpYunZhiJiaNotifier extends AbstractDtpNotifier {
     }
 
     @Override
+    protected String[] getCommonAlarmTemplate(int num) {
+        return new String[]{YunZhiJiaNotifyConst.ALARM_TEMPLATE_PREFIX, YunZhiJiaNotifyConst.ALARM_COMMON_TEMPLATE.repeat(Math.max(0, num)), YunZhiJiaNotifyConst.ALARM_TEMPLATE_SUFFIX};
+    }
+
+    @Override
     protected Pair<String, String> getColors() {
         return new ImmutablePair<>(YunZhiJiaNotifyConst.WARNING_COLOR, YunZhiJiaNotifyConst.COMMENT_COLOR);
     }

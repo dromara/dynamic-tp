@@ -77,6 +77,9 @@ public class AlarmCounter {
 
     public static int calcCurrentValue(ExecutorWrapper wrapper, NotifyItemEnum itemEnum) {
         val executor = wrapper.getExecutor();
+        if (wrapper.isVirtualThreadExecutor()) {
+            return Integer.MAX_VALUE;
+        }
         switch (itemEnum) {
             case CAPACITY:
                 return (int) (NumberUtil.div(executor.getQueueSize(), executor.getQueueCapacity(), 2) * 100);

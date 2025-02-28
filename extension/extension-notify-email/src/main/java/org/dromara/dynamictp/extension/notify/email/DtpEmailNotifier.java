@@ -73,6 +73,11 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
     }
 
     @Override
+    protected String[] getCommonAlarmTemplate(int length) {
+        return null;
+    }
+
+    @Override
     protected Pair<String, String> getColors() {
         return null;
     }
@@ -84,7 +89,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         val executor = executorWrapper.getExecutor();
         NotifyItem notifyItem = alarmCtx.getNotifyItem();
         AlarmInfo alarmInfo = alarmCtx.getAlarmInfo();
-        val statProvider = executorWrapper.getThreadPoolStatProvider();
+        val statProvider = executorWrapper.getExecutorStatProvider();
         val alarmValue = notifyItem.getThreshold() + notifyItemEnum.getUnit() + " / "
                 + AlarmCounter.calcCurrentValue(executorWrapper, notifyItemEnum) + notifyItemEnum.getUnit();
 

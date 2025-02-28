@@ -40,6 +40,7 @@ import org.dromara.dynamictp.core.system.SystemMetricManager;
 import org.slf4j.MDC;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -88,12 +89,22 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         notifier.send(newTargetPlatform(notifyPlatform), content);
     }
 
+    @Override
+    public void sendCommonAlarmMsg(NotifyPlatform notifyPlatform, NotifyItemEnum notifyItemEnum, String... content) {
+        String formattedContent = buildCommonAlarmContent(notifyPlatform, notifyItemEnum, content);
+        if (StringUtils.isBlank(formattedContent) || StringUtils.isEmpty(Arrays.toString(content))) {
+            log.debug("Alarm content is empty, ignore send alarm message.");
+            return;
+        }
+        notifier.send(newTargetPlatform(notifyPlatform), formattedContent);
+    }
+
     protected String buildAlarmContent(NotifyPlatform platform, NotifyItemEnum notifyItemEnum) {
         AlarmCtx context = (AlarmCtx) DtpNotifyCtxHolder.get();
         ExecutorWrapper executorWrapper = context.getExecutorWrapper();
         val executor = executorWrapper.getExecutor();
         NotifyItem notifyItem = context.getNotifyItem();
-        val statProvider = executorWrapper.getThreadPoolStatProvider();
+        val statProvider = executorWrapper.getExecutorStatProvider();
         val alarmValue = notifyItem.getThreshold() + notifyItemEnum.getUnit() + " / "
                 + AlarmCounter.calcCurrentValue(executorWrapper, notifyItemEnum) + notifyItemEnum.getUnit();
         String content = String.format(
@@ -128,6 +139,39 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 getExtInfo()
         );
         return highlightAlarmContent(content, notifyItemEnum);
+    }
+
+    private String buildCommonAlarmContent(NotifyPlatform notifyPlatform, NotifyItemEnum notifyItemEnum, String... content) {
+        AlarmCtx context = (AlarmCtx) DtpNotifyCtxHolder.get();
+        ExecutorWrapper executorWrapper = context.getExecutorWrapper();
+        NotifyItem notifyItem = context.getNotifyItem();
+        val alarmValue = notifyItem.getThreshold() + notifyItemEnum.getUnit() + " / "
+                + AlarmCounter.calcCurrentValue(executorWrapper, notifyItemEnum) + notifyItemEnum.getUnit();
+        String[] template = getCommonAlarmTemplate(content.length);
+        String formatContentPrefix = String.format(
+                template[0],
+                CommonUtil.getInstance().getServiceName(),
+                CommonUtil.getInstance().getIp() + ":" + CommonUtil.getInstance().getPort(),
+                CommonUtil.getInstance().getEnv(),
+                populatePoolName(executorWrapper),
+                populateAlarmItem(notifyItemEnum, executorWrapper),
+                alarmValue
+        );
+        String formatCommonContent = String.format(
+                template[1],
+                content
+        );
+        String formatContentSuffix = String.format(
+                template[2],
+                Optional.ofNullable(context.getAlarmInfo()).map(AlarmInfo::getLastAlarmTime).orElse(UNKNOWN),
+                DateUtil.now(),
+                getReceives(notifyItem, notifyPlatform),
+                getTraceInfo(),
+                notifyItem.getInterval(),
+                getExtInfo()
+        );
+        String formatContent = formatContentPrefix + formatCommonContent + formatContentSuffix;
+        return highlightAlarmContent(formatContent, notifyItemEnum);
     }
 
     protected String buildNoticeContent(NotifyPlatform platform, TpMainFields oldFields, List<String> diffs) {
@@ -202,9 +246,9 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
     protected String populateAlarmItem(NotifyItemEnum notifyType, ExecutorWrapper executorWrapper) {
         String suffix = StringUtils.EMPTY;
         if (notifyType == NotifyItemEnum.RUN_TIMEOUT) {
-            suffix = " (" + executorWrapper.getThreadPoolStatProvider().getRunTimeout() + "ms)";
+            suffix = " (" + executorWrapper.getExecutorStatProvider().getRunTimeout() + "ms)";
         } else if (notifyType == NotifyItemEnum.QUEUE_TIMEOUT) {
-            suffix = " (" + executorWrapper.getThreadPoolStatProvider().getQueueTimeout() + "ms)";
+            suffix = " (" + executorWrapper.getExecutorStatProvider().getQueueTimeout() + "ms)";
         }
         return notifyType.getValue() + suffix;
     }
@@ -253,6 +297,14 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
      * @return alarm template
      */
     protected abstract String getAlarmTemplate();
+
+    /**
+     * Implement by subclass, get common alarm template.
+     *
+     * @param num number of args
+     * @return alarm template
+     */
+    protected abstract String[] getCommonAlarmTemplate(int num);
 
     /**
      * Implement by subclass, get content color config.

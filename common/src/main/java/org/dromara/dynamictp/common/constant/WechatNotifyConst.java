@@ -37,17 +37,31 @@ public final class WechatNotifyConst {
 
     public static final String COMMENT_COLOR = "comment";
 
-    /**
-     * receivers only supports userid, view more, see <a href="https://developer.work.weixin.qq.com/document/path/91770">more</a>.
-     */
-    public static final String WECHAT_ALARM_TEMPLATE =
+    public static final String WECHAT_ALARM_TEMPLATE_PREFIX =
             "<font color='warning'>【报警】</font> 动态线程池告警 \n" +
             "> <font color='comment'>服务名称：%s</font> \n" +
             "> <font color='comment'>实例信息：%s</font> \n" +
             "> <font color='comment'>环境：%s</font> \n" +
             "> <font color='comment'>线程池名称：%s</font> \n" +
             "> <font color='alarmType'>报警项：%s</font> \n" +
-            "> <font color='alarmValue'>报警阈值 / 当前值：%s</font> \n" +
+            "> <font color='alarmValue'>报警阈值 / 当前值：%s</font> \n";
+
+    public static final String WECHAT_ALARM_COMMON_TEMPLATE =
+            "> <font color='comment'>%s</font> \n";
+
+    public static final String WECHAT_ALARM_TEMPLATE_SUFFIX =
+            "> <font color='comment'>上次报警时间：%s</font> \n" +
+            "> <font color='comment'>报警时间：%s</font> \n" +
+            "> <font color='comment'>接收人：%s</font> \n" +
+            "> <font color='comment'>trace 信息：%s</font> \n" +
+            "> <font color='info'>报警间隔：%ss</font> \n" +
+            "> <font color='comment'>扩展信息：%s</font> \n";
+
+    /**
+     * receivers only supports userid, view more, see <a href="https://developer.work.weixin.qq.com/document/path/91770">more</a>.
+     */
+    public static final String WECHAT_ALARM_TEMPLATE =
+            WECHAT_ALARM_TEMPLATE_PREFIX +
             "> <font color='corePoolSize'>核心线程数：%s</font> \n" +
             "> <font color='maximumPoolSize'>最大线程数：%s</font> \n" +
             "> <font color='poolSize'>当前线程数：%s</font> \n" +
@@ -64,12 +78,7 @@ public final class WechatNotifyConst {
             "> <font color='rejectCount'>总拒绝任务数量：%s</font> \n" +
             "> <font color='runTimeoutCount'>总执行超时任务数量：%s</font> \n" +
             "> <font color='queueTimeoutCount'>总等待超时任务数量：%s</font> \n" +
-            "> <font color='comment'>上次报警时间：%s</font> \n" +
-            "> <font color='comment'>报警时间：%s</font> \n" +
-            "> <font color='comment'>接收人：%s</font> \n" +
-            "> <font color='comment'>trace 信息：%s</font> \n" +
-            "> <font color='info'>报警间隔：%ss</font> \n" +
-            "> <font color='comment'>扩展信息：%s</font> \n";
+            WECHAT_ALARM_TEMPLATE_SUFFIX;
 
     public static final String WECHAT_CHANGE_NOTICE_TEMPLATE =
             "<font color='info'>【通知】</font> 动态线程池参数变更 \n" +

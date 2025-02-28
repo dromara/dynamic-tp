@@ -22,6 +22,7 @@ import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
+import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
 import org.dromara.dynamictp.core.support.task.runnable.EnhancedRunnable;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 
@@ -71,6 +72,11 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
     private String threadPoolAliasName;
 
     /**
+     * Current pinned duration.
+     */
+    private long curPinDuration = 0;
+
+    /**
      * If enable notify.
      */
     private boolean notifyEnabled = true;
@@ -78,7 +84,7 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
     /**
      * Notify items, see {@link NotifyItemEnum}.
      */
-    private List<NotifyItem> notifyItems;
+    private List<NotifyItem> notifyItems = NotifyItem.getAllNotifyItems();
 
     /**
      * Plugin names.
@@ -190,6 +196,10 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
         return threadPerTaskExecutor.invokeAny(collection, l, timeUnit);
     }
 
+    public void initialize() {
+        NotifyHelper.initNotify(this);
+    }
+
     public String getThreadPoolName() {
         return threadPoolName;
     }
@@ -245,4 +255,13 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, ExecutorSer
     public void setNotifyItems(List<NotifyItem> notifyItems) {
         this.notifyItems = notifyItems;
     }
+
+    public long getCurPinDuration() {
+        return curPinDuration;
+    }
+
+    public void setCurPinDuration(long curPinDuration) {
+        this.curPinDuration = curPinDuration;
+    }
+
 }

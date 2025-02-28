@@ -28,6 +28,7 @@ import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
+import org.dromara.dynamictp.core.support.adapter.VirtualThreadExecutorAdapter;
 import org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy;
 import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.adapter.ThreadPoolExecutorAdapter;
@@ -104,9 +105,9 @@ public class ExecutorWrapper {
     protected int awaitTerminationSeconds = 0;
 
     /**
-     * Thread pool stat provider
+     * Executor stat provider
      */
-    private ThreadPoolStatProvider threadPoolStatProvider;
+    private ExecutorStatProvider executorStatProvider;
 
     private ExecutorWrapper() {
     }
@@ -127,7 +128,7 @@ public class ExecutorWrapper {
         this.rejectEnhanced = executor.isRejectEnhanced();
         this.waitForTasksToCompleteOnShutdown = executor.isWaitForTasksToCompleteOnShutdown();
         this.awaitTerminationSeconds = executor.getAwaitTerminationSeconds();
-        this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
+        this.executorStatProvider = ExecutorStatProvider.of(this);
     }
 
     /**
@@ -140,16 +141,23 @@ public class ExecutorWrapper {
         this.threadPoolName = threadPoolName;
         if (executor instanceof ThreadPoolExecutor) {
             this.executor = new ThreadPoolExecutorAdapter((ThreadPoolExecutor) executor);
+            this.notifyItems = NotifyItem.getAllNotifyItems();
         } else if (executor instanceof ExecutorAdapter<?>) {
             this.executor = (ExecutorAdapter<?>) executor;
+            this.notifyItems = NotifyItem.getAllNotifyItems();
         } else if (executor instanceof VirtualThreadExecutorProxy) {
-            this.executor = new VirtualThreadExecutorAdapter(((VirtualThreadExecutorProxy) executor).getThreadPerTaskExecutor());
+            this.executor = new VirtualThreadExecutorAdapter(executor);
+            this.threadPoolAliasName = ((VirtualThreadExecutorProxy) executor).getThreadPoolAliasName();
+            this.notifyItems = ((VirtualThreadExecutorProxy) executor).getNotifyItems();
+            this.notifyEnabled = ((VirtualThreadExecutorProxy) executor).isNotifyEnabled();
+            this.platformIds = ((VirtualThreadExecutorProxy) executor).getPlatformIds();
+            this.awareNames = ((VirtualThreadExecutorProxy) executor).getAwareNames();
+            this.executorStatProvider = ExecutorStatProvider.of(this);
         } else {
             throw new IllegalArgumentException("unsupported Executor type !");
         }
-        this.notifyItems = NotifyItem.getAllNotifyItems();
         AlarmManager.initAlarm(threadPoolName, notifyItems);
-        this.threadPoolStatProvider = ThreadPoolStatProvider.of(this);
+        this.executorStatProvider = ExecutorStatProvider.of(this);
     }
 
     /**
@@ -180,7 +188,10 @@ public class ExecutorWrapper {
         if (isDtpExecutor()) {
             ((DtpExecutor) getExecutor()).initialize();
             AwareManager.register(this);
-        } else if (isThreadPoolExecutor() || isVirtualThreadExecutor()) {
+        } else if (isVirtualThreadExecutor()) {
+            ((VirtualThreadExecutorProxy) getExecutor().getOriginal()).initialize();
+            AwareManager.register(this);
+        } else if (isThreadPoolExecutor()) {
             AwareManager.register(this);
         }
     }
@@ -213,7 +224,8 @@ public class ExecutorWrapper {
      * @return boolean
      */
     public boolean isVirtualThreadExecutor() {
-        return this.executor instanceof VirtualThreadExecutorAdapter;
+        return this.executor instanceof VirtualThreadExecutorAdapter
+                || this.executor.getOriginal() instanceof VirtualThreadExecutorAdapter;
     }
 
     /**

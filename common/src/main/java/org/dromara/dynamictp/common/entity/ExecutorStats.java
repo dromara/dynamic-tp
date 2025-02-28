@@ -20,6 +20,9 @@ package org.dromara.dynamictp.common.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
  * ExecutorStats related
@@ -74,7 +77,12 @@ public class ExecutorStats extends Metrics {
     /**
      * 是否为虚拟线程执行器
      */
-    private boolean isVirtualExecutor;
+    private boolean isVirtualThreadExecutor;
+
+    /**
+     * 拓展字段
+     */
+    private final Map<String, Object> extMap = new ConcurrentHashMap<>();
 
     /**
      * 空闲时间 (ms)

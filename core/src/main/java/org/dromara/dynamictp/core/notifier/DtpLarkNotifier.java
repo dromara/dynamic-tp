@@ -62,6 +62,11 @@ public class DtpLarkNotifier extends AbstractDtpNotifier {
     }
 
     @Override
+    protected String[] getCommonAlarmTemplate(int num) {
+        return new String[]{LarkNotifyConst.LARK_ALARM_JSON_STR_PREFIX, LarkNotifyConst.LARK_ALARM_JSON_COMMON_STR.repeat(Math.max(0, num)), LarkNotifyConst.LARK_ALARM_JSON_STR_SUFFIX};
+    }
+
+    @Override
     protected Pair<String, String> getColors() {
         return new ImmutablePair<>(LarkNotifyConst.WARNING_COLOR, LarkNotifyConst.COMMENT_COLOR);
     }

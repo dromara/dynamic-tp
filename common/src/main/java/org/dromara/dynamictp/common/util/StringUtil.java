@@ -17,9 +17,12 @@
 
 package org.dromara.dynamictp.common.util;
 
+import jdk.jfr.consumer.RecordedFrame;
+import jdk.jfr.consumer.RecordedStackTrace;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * StringUtil related
@@ -63,5 +66,23 @@ public final class StringUtil {
             return null == testStr;
         }
         return str.toString().toLowerCase().contains(testStr.toString().toLowerCase());
+    }
+
+    public static String formatJfrStackTrace(RecordedStackTrace stackTrace, int maxDepth) {
+        if (stackTrace == null) {
+            return "\t<not available>";
+        }
+        String formatted = "\t" + stackTrace.getFrames().stream()
+                .limit(maxDepth)
+                .map(StringUtil::formatStackTraceFrame)
+                .collect(Collectors.joining("\n\t"));
+        if (maxDepth < stackTrace.getFrames().size()) {
+            return formatted + "\n\t(...)";
+        }
+        return formatted;
+    }
+
+    private static String formatStackTraceFrame(RecordedFrame frame) {
+        return frame.getMethod().getType().getName() + "#" + frame.getMethod().getName() + ": " + frame.getLineNumber();
     }
 }

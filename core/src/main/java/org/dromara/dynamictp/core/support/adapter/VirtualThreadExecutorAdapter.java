@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.dromara.dynamictp.core.support;
-
-import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
+package org.dromara.dynamictp.core.support.adapter;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;

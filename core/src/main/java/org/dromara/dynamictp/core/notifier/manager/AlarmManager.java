@@ -32,8 +32,6 @@ import org.dromara.dynamictp.core.notifier.context.AlarmCtx;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
-import org.dromara.dynamictp.core.support.adapter.VirtualThreadExecutorAdapter;
-import org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy;
 import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.slf4j.MDC;
@@ -93,18 +91,10 @@ public class AlarmManager {
         ALARM_EXECUTOR.execute(() -> notifyTypes.forEach(x -> doTryAlarm(executorWrapper, x)));
     }
 
-    public static void tryCommonAlarmAsync(ExecutorWrapper executorWrapper, List<NotifyItemEnum> notifyTypes, boolean isToLog, String... content) {
-        ALARM_EXECUTOR.execute(() -> notifyTypes.forEach(x -> doTryAlarm(executorWrapper, x, true, isToLog, content)));
-    }
-
     public static void doTryAlarm(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType) {
-        doTryAlarm(executorWrapper, notifyType, false, false, "");
-    }
-
-    public static void doTryAlarm(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType, boolean isCommonNotify, boolean isToLog, String... content) {
         AlarmCounter.incAlarmCounter(executorWrapper.getThreadPoolName(), notifyType.getValue());
         NotifyHelper.getNotifyItem(executorWrapper, notifyType).ifPresent(notifyItem -> {
-            val alarmCtx = new AlarmCtx(executorWrapper, notifyItem, isCommonNotify, isToLog, content);
+            val alarmCtx = new AlarmCtx(executorWrapper, notifyItem);
             ALARM_INVOKER_CHAIN.proceed(alarmCtx);
         });
     }
@@ -116,8 +106,6 @@ public class AlarmManager {
                 return checkCapacity(executor, notifyItem);
             case LIVENESS:
                 return checkLiveness(executor, notifyItem);
-            case PIN_TIMEOUT:
-                return checkPinTimeout(executor, notifyItem);
             case REJECT:
             case RUN_TIMEOUT:
             case QUEUE_TIMEOUT:
@@ -135,7 +123,7 @@ public class AlarmManager {
 
     private static boolean checkLiveness(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
         if (executorWrapper.isVirtualThreadExecutor()) {
-            return true;
+            return false;
         }
         val executor = executorWrapper.getExecutor();
         int maximumPoolSize = executor.getMaximumPoolSize();
@@ -144,20 +132,12 @@ public class AlarmManager {
     }
 
     private static boolean checkCapacity(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
-        if (executorWrapper.isVirtualThreadExecutor()) {
-            return true;
-        }
         val executor = executorWrapper.getExecutor();
-        if (executor.getQueueSize() <= 0) {
+        if (executor.getQueueSize() <= 0 || executorWrapper.isVirtualThreadExecutor()) {
             return false;
         }
         double div = NumberUtil.div(executor.getQueueSize(), executor.getQueueCapacity(), 2) * 100;
         return div >= notifyItem.getThreshold();
-    }
-
-    private static boolean checkPinTimeout(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
-        return ((VirtualThreadExecutorProxy) ((VirtualThreadExecutorAdapter) executorWrapper.getExecutor().getOriginal())
-                .getOriginal()).getCurPinDuration() >= notifyItem.getThreshold();
     }
 
     private static boolean checkWithAlarmInfo(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {

@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.core.monitor;
 
-import com.google.common.collect.ImmutableList;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import jdk.jfr.consumer.RecordedEvent;
@@ -25,9 +24,10 @@ import jdk.jfr.consumer.RecordingStream;
 import lombok.Getter;
 import lombok.val;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
+import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.core.DtpRegistry;
+import org.dromara.dynamictp.core.handler.NotifierHandler;
 import org.dromara.dynamictp.core.metric.MMAPCounter;
-import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy;
 
@@ -35,6 +35,7 @@ import java.io.Closeable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -121,8 +122,13 @@ public class PerformanceProvider implements Closeable {
         String[] pinContent = populatePinContent(maxPinnedTime, totalPinnedTime, durationPinnedTime, stackTrace);
         ExecutorWrapper executorWrapper = DtpRegistry.getExecutorWrapper(executorName);
         ((VirtualThreadExecutorProxy) executorWrapper.getExecutor().getOriginal()).setCurPinDuration(duration.toSeconds());
-        AlarmManager.tryCommonAlarmAsync(executorWrapper, ImmutableList.of(NotifyItemEnum.PIN_TIMEOUT), true, pinContent);
-
+        List<NotifyItem> pinnedNotifyItems = executorWrapper.getNotifyItems().stream().filter(notifyItem -> notifyItem.getType().equals(NotifyItemEnum.PIN_TIMEOUT.getValue())).toList();
+        if (!pinnedNotifyItems.isEmpty()) {
+            NotifyItem pinnedNotifyItem = pinnedNotifyItems.getFirst();
+            if (pinnedNotifyItem.isEnabled() && duration.toSeconds() > pinnedNotifyItem.getThreshold()) {
+                NotifierHandler.getInstance().sendCommonAlarm(executorWrapper, pinnedNotifyItem, true, pinContent);
+            }
+        }
         VTE_STATS_CACHE.put(executorName, vtExecutorStat);
     }
 

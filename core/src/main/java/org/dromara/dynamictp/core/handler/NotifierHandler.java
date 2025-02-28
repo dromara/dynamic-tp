@@ -18,6 +18,7 @@
 package org.dromara.dynamictp.core.handler;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.TpMainFields;
@@ -29,9 +30,12 @@ import org.dromara.dynamictp.core.notifier.DtpWechatNotifier;
 import org.dromara.dynamictp.common.notifier.DingNotifier;
 import org.dromara.dynamictp.common.notifier.LarkNotifier;
 import org.dromara.dynamictp.common.notifier.WechatNotifier;
-import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
+import org.dromara.dynamictp.core.notifier.alarm.AlarmCounter;
+import org.dromara.dynamictp.core.notifier.alarm.AlarmLimiter;
+import org.dromara.dynamictp.core.notifier.context.AlarmCtx;
 import org.dromara.dynamictp.core.notifier.context.DtpNotifyCtxHolder;
 import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -74,25 +78,48 @@ public final class NotifierHandler {
     }
 
     public void sendAlarm(NotifyItemEnum notifyItemEnum) {
-        BaseNotifyCtx notifyCtx = DtpNotifyCtxHolder.get();
-        if (notifyCtx.isToLog()) {
-            log.warn("DynamicTp alarm, executor [" + notifyCtx.getExecutorWrapper().getThreadPoolName() + "]: \n" + Arrays.toString(notifyCtx.getContent()));
-        }
-        NotifyItem notifyItem = notifyCtx.getNotifyItem();
+        NotifyItem notifyItem = DtpNotifyCtxHolder.get().getNotifyItem();
         for (String platformId : notifyItem.getPlatformIds()) {
             NotifyHelper.getPlatform(platformId).ifPresent(p -> {
                 DtpNotifier notifier = NOTIFIERS.get(p.getPlatform().toLowerCase());
                 if (notifier != null) {
-                    if (notifyCtx.isCommonNotify()) {
-                        notifier.sendCommonAlarmMsg(p, notifyItemEnum, notifyCtx.getContent());
-                    } else {
-                        if (!notifyCtx.getExecutorWrapper().isVirtualThreadExecutor()) {
-                            notifier.sendAlarmMsg(p, notifyItemEnum);
-                        }
-                    }
+                    notifier.sendAlarmMsg(p, notifyItemEnum);
                 }
             });
         }
+    }
+
+    public void sendCommonAlarm(ExecutorWrapper executorWrapper, NotifyItem notifyItem, boolean isToLog, String[] content) {
+        if (!AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyItem.getType())) {
+            return;
+        }
+        tolog(executorWrapper, isToLog, content);
+        val alarmCtx = new AlarmCtx(executorWrapper, notifyItem);
+        val alarmInfo = AlarmCounter.getAlarmInfo(executorWrapper.getThreadPoolName(), notifyItem.getType());
+        alarmCtx.setAlarmInfo(alarmInfo);
+
+        try {
+            DtpNotifyCtxHolder.set(alarmCtx);
+            for (String platformId : notifyItem.getPlatformIds()) {
+                NotifyHelper.getPlatform(platformId).ifPresent(p -> {
+                    DtpNotifier notifier = NOTIFIERS.get(p.getPlatform().toLowerCase());
+                    if (notifier != null) {
+                        notifier.sendCommonAlarmMsg(p, NotifyItemEnum.of(notifyItem.getType()), content);
+                    }
+                });
+            }
+        } finally {
+            AlarmCounter.reset(executorWrapper.getThreadPoolName(), notifyItem.getType());
+            AlarmLimiter.putVal(executorWrapper.getThreadPoolName(), notifyItem.getType());
+            DtpNotifyCtxHolder.remove();
+        }
+    }
+
+    private void tolog(ExecutorWrapper executorWrapper, boolean isToLog, String[] content) {
+        if (!isToLog) {
+            return;
+        }
+        log.warn("DynamicTp alarm, executor [{}]: \n{}", executorWrapper.getThreadPoolName(), Arrays.toString(content));
     }
 
     public static NotifierHandler getInstance() {

@@ -102,16 +102,11 @@ public class NotifyItem {
         queueTimeoutNotify.setType(NotifyItemEnum.QUEUE_TIMEOUT.getValue());
         queueTimeoutNotify.setThreshold(10);
 
-        NotifyItem pinTimeoutNotify = new NotifyItem();
-        pinTimeoutNotify.setType(NotifyItemEnum.PIN_TIMEOUT.getValue());
-        pinTimeoutNotify.setThreshold(10);
-
-        List<NotifyItem> notifyItems = new ArrayList<>(7);
+        List<NotifyItem> notifyItems = new ArrayList<>(6);
         notifyItems.addAll(getSimpleNotifyItems());
         notifyItems.add(rejectNotify);
         notifyItems.add(runTimeoutNotify);
         notifyItems.add(queueTimeoutNotify);
-        notifyItems.add(pinTimeoutNotify);
 
         return notifyItems;
     }

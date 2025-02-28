@@ -93,7 +93,7 @@ public final class NotifierHandler {
         if (!AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyItem.getType())) {
             return;
         }
-        tolog(executorWrapper, isToLog, content);
+        toLog(executorWrapper, isToLog, content);
         val alarmCtx = new AlarmCtx(executorWrapper, notifyItem);
         val alarmInfo = AlarmCounter.getAlarmInfo(executorWrapper.getThreadPoolName(), notifyItem.getType());
         alarmCtx.setAlarmInfo(alarmInfo);
@@ -115,7 +115,7 @@ public final class NotifierHandler {
         }
     }
 
-    private void tolog(ExecutorWrapper executorWrapper, boolean isToLog, String[] content) {
+    private void toLog(ExecutorWrapper executorWrapper, boolean isToLog, String[] content) {
         if (!isToLog) {
             return;
         }

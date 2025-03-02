@@ -85,8 +85,8 @@
       "id": 12,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -105,8 +105,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "keBBh9Lnk"
+            "type": "prometheus"
           },
           "exemplar": true,
           "expr": "thread_pool_current_size{cluster=\"$cluster\",namespace=\"$namespace\",container=\"$container\",pod=\"$pod\",thread_pool_name=~\"$threadpool\"}",
@@ -175,8 +174,8 @@
       "id": 8,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -195,8 +194,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "keBBh9Lnk"
+            "type": "prometheus"
           },
           "exemplar": true,
           "expr": "thread_pool_active_count{cluster=\"$cluster\",namespace=\"$namespace\",container=\"$container\",pod=\"$pod\",thread_pool_name=~\"$threadpool\"}",
@@ -264,8 +262,8 @@
       "id": 6,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -284,8 +282,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "keBBh9Lnk"
+            "type": "prometheus"
           },
           "exemplar": true,
           "expr": "thread_pool_queue_size{cluster=\"$cluster\",namespace=\"$namespace\",container=\"$container\",pod=\"$pod\",thread_pool_name=~\"$threadpool\"}\n",
@@ -354,8 +351,8 @@
       "id": 2,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -375,8 +372,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "keBBh9Lnk"
+            "type": "prometheus"
           },
           "exemplar": true,
           "expr": "thread_pool_queue_remaining_capacity{cluster=\"$cluster\",namespace=\"$namespace\",container=\"$container\",pod=\"$pod\",thread_pool_name=~\"$threadpool\"}",
@@ -446,8 +442,8 @@
       "id": 10,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -466,8 +462,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "keBBh9Lnk"
+            "type": "prometheus"
           },
           "exemplar": true,
           "expr": "thread_pool_completed_task_count{cluster=\"$cluster\",namespace=\"$namespace\",container=\"$container\",pod=\"$pod\",thread_pool_name=~\"$threadpool\"}",
@@ -536,8 +531,8 @@
       "id": 4,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -557,8 +552,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "keBBh9Lnk"
+            "type": "prometheus"
           },
           "exemplar": true,
           "expr": "thread_pool_reject_count{cluster=\"$cluster\",namespace=\"$namespace\",container=\"$container\",pod=\"$pod\",thread_pool_name=~\"$threadpool\"}\n",
@@ -628,8 +622,8 @@
       "id": 14,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -648,8 +642,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "keBBh9Lnk"
+            "type": "prometheus"
           },
           "exemplar": true,
           "expr": "thread_pool_run_timeout_count{cluster=\"$cluster\",namespace=\"$namespace\",container=\"$container\",pod=\"$pod\",thread_pool_name=~\"$threadpool\"}",
@@ -717,8 +710,8 @@
       "id": 16,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -737,8 +730,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "keBBh9Lnk"
+            "type": "prometheus"
           },
           "exemplar": true,
           "expr": "thread_pool_queue_timeout_count{cluster=\"$cluster\",namespace=\"$namespace\",container=\"$container\",pod=\"$pod\",thread_pool_name=~\"$threadpool\"}",
@@ -759,13 +751,10 @@
     "list": [
       {
         "current":{
-          "selected":true,
-          "text":"k8s-hw-bj-1-prod",
-          "value":"k8s-hw-bj-1-prod"
+          "selected":true
         },
         "datasource":{
-          "type":"prometheus",
-          "uid":"000000045"
+          "type":"prometheus"
         },
         "definition":"label_values(cluster)",
         "hide":0,
@@ -788,13 +777,10 @@
       },
       {
         "current":{
-          "selected":false,
-          "text":"default",
-          "value":"default"
+          "selected":false
         },
         "datasource":{
-          "type":"prometheus",
-          "uid":"000000045"
+          "type":"prometheus"
         },
         "definition":"label_values(kube_namespace_created{job=\"kube-state-metrics\", cluster=\"$cluster\"}, namespace)",
         "hide":0,
@@ -817,13 +803,10 @@
       },
       {
         "current":{
-          "selected":false,
-          "text":"room",
-          "value":"room"
+          "selected":false
         },
         "datasource":{
-          "type":"prometheus",
-          "uid":"000000045"
+          "type":"prometheus"
         },
         "definition":"label_values(kube_pod_container_info{cluster=~\"$cluster\",namespace=~\"$namespace\"},container)",
         "hide":0,
@@ -846,13 +829,10 @@
       },
       {
         "current":{
-          "selected":false,
-          "text":"t-bean-portal-5db9b7548-bznwx",
-          "value":"t-bean-portal-5db9b7548-bznwx"
+          "selected":false
         },
         "datasource":{
-          "type":"prometheus",
-          "uid":"000000045"
+          "type":"prometheus"
         },
         "definition":"label_values(kube_pod_container_info{cluster=~\"$cluster\",namespace=~\"$namespace\",container=~\"$container\"},pod)",
         "hide":0,
@@ -917,6 +897,5 @@
   "timepicker": {},
   "timezone": "",
   "title": "线程池监控（DynamicTp）",
-  "uid": "5wBx-ysnk",
   "version": 8
 }

@@ -17,10 +17,10 @@
 
 package org.dromara.dynamictp.core.support;
 
+import cn.hutool.core.bean.BeanUtil;
 import lombok.Data;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
-import org.dromara.dynamictp.common.util.BeanCopierUtil;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.RejectHandlerAware;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
@@ -166,8 +166,8 @@ public class ExecutorWrapper {
      */
     public ExecutorWrapper capture() {
         ExecutorWrapper executorWrapper = new ExecutorWrapper();
-        BeanCopierUtil.copyProperties(this, executorWrapper);
-        executorWrapper.executor = new CapturedExecutor(this.getExecutor());
+        BeanUtil.copyProperties(this, executorWrapper);
+        executorWrapper.setExecutor(new CapturedExecutor(this.getExecutor()));
         return executorWrapper;
     }
     /**

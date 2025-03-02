@@ -17,19 +17,20 @@
 
 package org.dromara.dynamictp.common.plugin;
 
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
 import org.apache.commons.collections4.CollectionUtils;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * @author windsearcher.lq
- * @since 1.1.4
+ * DtpInvocationHandler related
+ *
+ * @author yanhom
+ * @since 1.2.1
  */
-public class DtpInterceptorProxy implements MethodInterceptor {
+public class DtpInvocationHandler implements InvocationHandler {
 
     private final Object target;
 
@@ -37,19 +38,18 @@ public class DtpInterceptorProxy implements MethodInterceptor {
 
     private final Map<Class<?>, Set<Method>> signatureMap;
 
-    public DtpInterceptorProxy(Object target, DtpInterceptor interceptor, Map<Class<?>, Set<Method>> signatureMap) {
+    public DtpInvocationHandler(Object target, DtpInterceptor interceptor, Map<Class<?>, Set<Method>> signatureMap) {
         this.target = target;
         this.interceptor = interceptor;
         this.signatureMap = signatureMap;
     }
 
     @Override
-    public Object intercept(Object object, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Set<Method> methods = signatureMap.get(method.getDeclaringClass());
         if (CollectionUtils.isNotEmpty(methods) && methods.contains(method)) {
             return interceptor.intercept(new DtpInvocation(target, method, args));
         }
-
         return method.invoke(target, args);
     }
 }

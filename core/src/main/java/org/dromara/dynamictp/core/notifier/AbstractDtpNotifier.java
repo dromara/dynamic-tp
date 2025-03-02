@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.core.notifier;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.google.common.base.Joiner;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,7 +29,6 @@ import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.TpMainFields;
 import org.dromara.dynamictp.common.notifier.Notifier;
-import org.dromara.dynamictp.common.util.BeanCopierUtil;
 import org.dromara.dynamictp.common.util.CommonUtil;
 import org.dromara.dynamictp.common.util.DateUtil;
 import org.dromara.dynamictp.core.notifier.alarm.AlarmCounter;
@@ -182,7 +182,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
 
     private NotifyPlatform newTargetPlatform(NotifyPlatform platform) {
         NotifyPlatform targetPlatform = new NotifyPlatform();
-        BeanCopierUtil.copyProperties(platform, targetPlatform);
+        BeanUtil.copyProperties(platform, targetPlatform);
 
         BaseNotifyCtx context = DtpNotifyCtxHolder.get();
         NotifyItem item = context.getNotifyItem();

@@ -66,10 +66,12 @@ public abstract class AbstractWebServerDtpAdapter<A extends Executor> extends Ab
         ApplicationContext applicationContext = SpringContextHolder.getInstance();
         WebServer webServer = ((WebServerApplicationContext) applicationContext).getWebServer();
         doEnhance(webServer);
-        if (Objects.nonNull(executors.get(getTpName()))) {
-            log.info("DynamicTp adapter, {} init end, executor: {}",
-                    getTpName(), ExecutorConverter.toMainFields(executors.get(getTpName())));
+        if (Objects.isNull(executors.get(getTpName()))) {
+            return;
         }
+        log.info("DynamicTp adapter, {} init end, executor: {}.",
+                getTpName(), ExecutorConverter.toMainFields(executors.get(getTpName())));
+
     }
 
     protected String getTpName() {

@@ -24,9 +24,7 @@ import org.dromara.dynamictp.common.event.AlarmCheckEvent;
 import org.dromara.dynamictp.common.event.CollectEvent;
 import org.dromara.dynamictp.common.event.CustomContextRefreshedEvent;
 import org.dromara.dynamictp.common.manager.EventBusManager;
-
 import org.dromara.dynamictp.common.properties.DtpProperties;
-
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.core.handler.CollectorHandler;
@@ -80,8 +78,12 @@ public class DtpMonitor {
 
     private void run() {
         Set<String> executorNames = DtpRegistry.getAllExecutorNames();
-        checkAlarm(executorNames);
-        collectMetrics(executorNames);
+        try {
+            checkAlarm(executorNames);
+            collectMetrics(executorNames);
+        } catch (Exception e) {
+            log.error("DynamicTp monitor, run error", e);
+        }
     }
 
     private void checkAlarm(Set<String> executorNames) {

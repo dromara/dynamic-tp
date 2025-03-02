@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.test.core.thread;
+package org.dromara.dynamictp.test.core.plugin;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.plugin.DtpInterceptor;
@@ -45,17 +45,20 @@ public class AInterceptorTest implements DtpInterceptor {
     @Override
     public Object intercept(DtpInvocation invocation) throws Throwable {
         String method = invocation.getMethod().getName();
-        Object[] args = invocation.getArgs();
-        if (BEFORE_EXECUTE.equals(method)) {
-            log.info("beforeExecute代理");
-        } else if (AFTER_EXECUTE.equals(method)) {
-            log.info("afterExecute代理");
-        } else if ("execute".equals(method)) {
-            log.info("execute代理");
+        switch (method) {
+            case BEFORE_EXECUTE:
+                log.info("beforeExecute代理");
+                break;
+            case AFTER_EXECUTE:
+                log.info("afterExecute代理");
+                break;
+            case "execute":
+                log.info("execute代理");
+                break;
+            default:
+                break;
         }
-
         return invocation.proceed();
     }
-
 
 }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.test.core.interceptor;
+package org.dromara.dynamictp.example.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.plugin.DtpInterceptor;

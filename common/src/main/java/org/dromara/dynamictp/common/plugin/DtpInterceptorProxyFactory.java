@@ -18,7 +18,12 @@
 package org.dromara.dynamictp.common.plugin;
 
 import com.google.common.collect.Maps;
-import net.sf.cglib.proxy.Enhancer;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
+import net.bytebuddy.implementation.InvocationHandlerAdapter;
+import net.bytebuddy.implementation.attribute.MethodAttributeAppender;
+import net.bytebuddy.matcher.ElementMatchers;
+import org.dromara.dynamictp.common.util.UUIDUtil;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -43,13 +48,25 @@ public class DtpInterceptorProxyFactory {
         if (!signatureMap.containsKey(target.getClass())) {
             return target;
         }
-        Enhancer enhancer = new Enhancer();
-        enhancer.setSuperclass(target.getClass());
-        enhancer.setCallback(new DtpInterceptorProxy(target, interceptor, signatureMap));
-        if (Objects.isNull(argumentTypes) || Objects.isNull(arguments)) {
-            return enhancer.create();
+        try {
+            Class<?> proxyClass = new ByteBuddy()
+                    .subclass(target.getClass())
+                    .name(String.format("%s$ByteBuddy$%s", target.getClass().getName(), UUIDUtil.genUuid(5)))
+                    .method(ElementMatchers.any())
+                    .intercept(InvocationHandlerAdapter.of(new DtpInvocationHandler(target, interceptor, signatureMap)))
+                    .attribute(MethodAttributeAppender.ForInstrumentedMethod.INCLUDING_RECEIVER)
+                    .annotateType(target.getClass().getAnnotations())
+                    .make()
+                    .load(DtpInterceptorProxyFactory.class.getClassLoader(), ClassLoadingStrategy.Default.INJECTION)
+                    .getLoaded();
+
+            if (Objects.isNull(argumentTypes) || Objects.isNull(arguments)) {
+                return proxyClass.getDeclaredConstructor().newInstance();
+            }
+            return proxyClass.getDeclaredConstructor(argumentTypes).newInstance(arguments);
+        } catch (Exception e) {
+            throw new PluginException("Failed to create proxy instance", e);
         }
-        return enhancer.create(argumentTypes, arguments);
     }
 
     private static Map<Class<?>, Set<Method>> getSignatureMap(DtpInterceptor interceptor) {
@@ -57,7 +74,6 @@ public class DtpInterceptorProxyFactory {
         if (interceptsAnno == null) {
             throw new PluginException("No @DtpIntercepts annotation was found in interceptor " + interceptor.getClass().getName());
         }
-
         DtpSignature[] signatures = interceptsAnno.signatures();
         Map<Class<?>, Set<Method>> signatureMap = Maps.newHashMap();
         for (DtpSignature signature : signatures) {

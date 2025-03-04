@@ -15,47 +15,42 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.test.core.thread;
+package org.dromara.dynamictp.example.interceptor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.plugin.DtpInterceptor;
 import org.dromara.dynamictp.common.plugin.DtpIntercepts;
 import org.dromara.dynamictp.common.plugin.DtpInvocation;
 import org.dromara.dynamictp.common.plugin.DtpSignature;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
+import org.dromara.dynamictp.core.executor.ScheduledDtpExecutor;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
- * @author hanli
- * @date 2023年07月19日 9:19 AM
+ * TestExecuteInterceptor related
+ *
+ * @author yanhom
+ * @since 1.2.1
  */
 @DtpIntercepts(
-        name = "TestAInterceptor",
+        name = "testExecuteInterceptor",
         signatures = {
-                @DtpSignature(clazz = InterceptTest.TestA.class, method = "beforeExecute", args = {}),
-                @DtpSignature(clazz = InterceptTest.TestA.class, method = "afterExecute", args = {}),
-                @DtpSignature(clazz = InterceptTest.TestA.class, method = "execute", args = {})
+                @DtpSignature(clazz = DtpExecutor.class, method = "execute", args = {Runnable.class}),
+                @DtpSignature(clazz = ScheduledDtpExecutor.class, method = "execute", args = {Runnable.class})
         }
 )
 @Slf4j
-public class AInterceptorTest implements DtpInterceptor {
-
-    private static final String BEFORE_EXECUTE = "beforeExecute";
-
-    private static final String AFTER_EXECUTE = "afterExecute";
+public class TestExecuteInterceptor implements DtpInterceptor {
 
     @Override
-    public Object intercept(DtpInvocation invocation) throws Throwable {
+    public Object intercept(DtpInvocation invocation) throws InvocationTargetException, IllegalAccessException {
+
+        DtpExecutor dtpExecutor = (DtpExecutor) invocation.getTarget();
         String method = invocation.getMethod().getName();
         Object[] args = invocation.getArgs();
-        if (BEFORE_EXECUTE.equals(method)) {
-            log.info("beforeExecute代理");
-        } else if (AFTER_EXECUTE.equals(method)) {
-            log.info("afterExecute代理");
-        } else if ("execute".equals(method)) {
-            log.info("execute代理");
-        }
-
+        log.info("TestExecuteInterceptor: dtpExecutor: {}, method: {}, args: {}",
+                dtpExecutor.getThreadPoolName(), method, args);
         return invocation.proceed();
     }
-
-
 }

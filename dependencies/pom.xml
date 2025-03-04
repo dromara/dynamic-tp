@@ -71,6 +71,7 @@
         <jakarta-mail.version>2.1.0</jakarta-mail.version>
         <jmh.version>1.35</jmh.version>
         <native-lib-loader.version>2.0.2</native-lib-loader.version>
+        <bytebuddy.version>1.15.5</bytebuddy.version>
     </properties>
 
     <dependencyManagement>
@@ -337,6 +338,13 @@
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-core</artifactId>
                 <version>${dropwizard-metrics.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy -->
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>${bytebuddy.version}</version>
             </dependency>
 
             <dependency>

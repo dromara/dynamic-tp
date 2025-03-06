@@ -93,7 +93,7 @@ public class GsonParser extends AbstractJsonParser {
     }
 
     @Override
-    protected String getMapperClassName() {
-        return PACKAGE_NAME;
+    protected String[] getMapperClassNames() {
+        return new String[]{PACKAGE_NAME};
     }
 }

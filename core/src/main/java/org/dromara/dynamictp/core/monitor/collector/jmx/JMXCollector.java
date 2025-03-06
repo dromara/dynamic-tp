@@ -17,10 +17,10 @@
 
 package org.dromara.dynamictp.core.monitor.collector.jmx;
 
+import cn.hutool.core.bean.BeanUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.em.CollectorTypeEnum;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
-import org.dromara.dynamictp.common.util.BeanCopierUtil;
 import org.dromara.dynamictp.core.monitor.collector.AbstractCollector;
 
 import javax.management.JMException;
@@ -49,7 +49,7 @@ public class JMXCollector extends AbstractCollector {
     public void collect(ThreadPoolStats threadPoolStats) {
         if (GAUGE_CACHE.containsKey(threadPoolStats.getPoolName())) {
             ThreadPoolStats poolStats = GAUGE_CACHE.get(threadPoolStats.getPoolName());
-            BeanCopierUtil.copyProperties(threadPoolStats, poolStats);
+            BeanUtil.copyProperties(threadPoolStats, poolStats);
         } else {
             try {
                 MBeanServer server = ManagementFactory.getPlatformMBeanServer();

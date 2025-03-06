@@ -19,11 +19,10 @@ package org.dromara.dynamictp.example.service;
 
 import com.yomahub.liteflow.core.FlowExecutor;
 import com.yomahub.liteflow.flow.LiteflowResponse;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.example.ctx.CusCtx;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
 
 /**
  * BizService related
@@ -33,10 +32,10 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @Service
+@AllArgsConstructor
 public class BizService {
 
-    @Resource
-    private FlowExecutor flowExecutor;
+    private final FlowExecutor flowExecutor;
 
     public void testConfig() {
         CusCtx ctx = CusCtx.of(1L, "test");

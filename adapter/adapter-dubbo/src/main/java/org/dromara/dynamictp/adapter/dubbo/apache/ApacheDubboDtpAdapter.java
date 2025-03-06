@@ -97,31 +97,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter implements Applica
         super.initialize();
         String currVersion = Version.getVersion();
         if (DubboVersion.compare(DubboVersion.VERSION_2_7_5, currVersion) > 0) {
-            // 当前dubbo版本 < 2.7.5
-            val handlers = JVMTI.getInstances(WrappedChannelHandler.class);
-            if (CollectionUtils.isEmpty(handlers)) {
-                return;
-            }
-            DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
-            handlers.forEach(handler -> {
-                //获取WrappedChannelHandler中的原始线程池
-                val originExecutor = ReflectionUtil.getFieldValue(EXECUTOR_FIELD, handler);
-                if (!(originExecutor instanceof ExecutorService)) {
-                    return;
-                }
-                URL url = handler.getUrl();
-                //低版本跳过消费者线程池配置
-                if (!CONSUMER_SIDE.equalsIgnoreCase(url.getParameter(SIDE_KEY))) {
-                    String port = String.valueOf(url.getPort());
-                    String tpName = genTpName(port);
-                    //增强原始线程池,替换为动态线程池代理
-                    enhanceOriginExecutor(tpName, (ThreadPoolExecutor) originExecutor, EXECUTOR_FIELD, handler);
-                    //获取增强后的新动态线程池
-                    Object newExexutor = ReflectionUtil.getFieldValue(EXECUTOR_FIELD, handler);
-                    //替换dataStore中的线程池
-                    dataStore.put(EXECUTOR_SERVICE_COMPONENT_KEY, port, newExexutor);
-                }
-            });
+            handleLessThanV275();
             return;
         }
 
@@ -140,9 +116,11 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter implements Applica
             return;
         }
 
-        //3.0.9 <= 当前dubbo版本 < 3.1.8时，执行线程池使用的是INTERNAL_SERVICE_EXECUTOR
-        boolean isUseInternalExecutorVersion = DubboVersion.compare(currVersion, DubboVersion.VERSION_3_0_9) >= 0 && DubboVersion.compare(currVersion, DubboVersion.VERSION_3_1_8) < 0;
-        Map<Object, ExecutorService> executorMap = isUseInternalExecutorVersion ? data.get(INTERNAL_EXECUTOR_SERVICE_COMPONENT_KEY) : data.get(EXECUTOR_SERVICE_COMPONENT_KEY);
+        // 3.0.9 <= 当前dubbo版本 < 3.1.8时，执行线程池使用的是INTERNAL_SERVICE_EXECUTOR
+        boolean useInternalExecutorVersion = DubboVersion.compare(currVersion, DubboVersion.VERSION_3_0_9) >= 0 &&
+                DubboVersion.compare(currVersion, DubboVersion.VERSION_3_1_8) < 0;
+        Map<Object, ExecutorService> executorMap = useInternalExecutorVersion ?
+                data.get(INTERNAL_EXECUTOR_SERVICE_COMPONENT_KEY) : data.get(EXECUTOR_SERVICE_COMPONENT_KEY);
         if (MapUtils.isNotEmpty(executorMap)) {
             executorMap.forEach((k, v) -> {
                 ThreadPoolExecutor proxy = getProxy(v);
@@ -151,6 +129,36 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter implements Applica
             });
         }
     }
+
+    /**
+     * Handle versions less than 2.7.5
+     */
+    private void handleLessThanV275() {
+        val handlers = JVMTI.getInstances(WrappedChannelHandler.class);
+        if (CollectionUtils.isEmpty(handlers)) {
+            return;
+        }
+        DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();
+        handlers.forEach(handler -> {
+            val originExecutor = ReflectionUtil.getFieldValue(EXECUTOR_FIELD, handler);
+            if (!(originExecutor instanceof ExecutorService)) {
+                return;
+            }
+            URL url = handler.getUrl();
+            // 低版本跳过消费者线程池配置
+            if (!CONSUMER_SIDE.equalsIgnoreCase(url.getParameter(SIDE_KEY))) {
+                String port = String.valueOf(url.getPort());
+                String tpName = genTpName(port);
+                // 增强原始线程池,替换为动态线程池代理
+                enhanceOriginExecutor(tpName, (ThreadPoolExecutor) originExecutor, EXECUTOR_FIELD, handler);
+                // 获取增强后的新动态线程池
+                Object newExexutor = ReflectionUtil.getFieldValue(EXECUTOR_FIELD, handler);
+                // 替换dataStore中的线程池
+                dataStore.put(EXECUTOR_SERVICE_COMPONENT_KEY, port, newExexutor);
+            }
+        });
+    }
+
     private ThreadPoolExecutor getProxy(Executor executor) {
         ThreadPoolExecutor proxy;
         if (executor instanceof EagerThreadPoolExecutor) {

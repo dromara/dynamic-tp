@@ -26,6 +26,7 @@ import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
 import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
 import org.dromara.dynamictp.core.support.task.runnable.OrderedRunnable;
 import org.dromara.dynamictp.example.service.TestService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -54,11 +55,11 @@ public class TestServiceImpl implements TestService {
 
     private final OrderedDtpExecutor orderedDtpExecutor;
 
-    public TestServiceImpl(ThreadPoolExecutor jucThreadPoolExecutor,
-                           ThreadPoolTaskExecutor threadPoolTaskExecutor,
-                           DtpExecutor eagerDtpExecutor,
-                           ScheduledExecutorService scheduledDtpExecutor,
-                           OrderedDtpExecutor orderedDtpExecutor) {
+    public TestServiceImpl(@Qualifier("jucThreadPoolExecutor") ThreadPoolExecutor jucThreadPoolExecutor,
+                           @Qualifier("threadPoolTaskExecutor") ThreadPoolTaskExecutor threadPoolTaskExecutor,
+                           @Qualifier("eagerDtpExecutor") DtpExecutor eagerDtpExecutor,
+                           @Qualifier("scheduledDtpExecutor") ScheduledExecutorService scheduledDtpExecutor,
+                           @Qualifier("orderedDtpExecutor") OrderedDtpExecutor orderedDtpExecutor) {
         this.jucThreadPoolExecutor = jucThreadPoolExecutor;
         this.threadPoolTaskExecutor = threadPoolTaskExecutor;
         this.eagerDtpExecutor = eagerDtpExecutor;

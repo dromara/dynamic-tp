@@ -513,6 +513,12 @@
       "description": "ThreadPoolExecutor auto create.",
       "defaultValue": true,
       "sourceType": "org.dromara.dynamictp.common.entity.DtpExecutorProps"
+    },
+    {
+      "name": "dynamictp.global-executor-props",
+      "type": "org.dromara.dynamictp.common.entity.DtpExecutorProps",
+      "description": "global executor configs.",
+      "sourceType": "org.dromara.dynamictp.common.entity.DtpExecutorProps"
     }
   ],
   "hints": []

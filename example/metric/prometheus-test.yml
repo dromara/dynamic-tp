@@ -1,0 +1,50 @@
+# my global config
+global:
+  scrape_interval: 5s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 55s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+# - "first_rules.yml"
+# - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+    # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+  - job_name: prometheus
+    static_configs:
+      - targets: [ 'localhost:9090' ]
+        labels:
+          instance: prometheus
+
+  - job_name: linux
+    static_configs:
+      - targets: [ '192.168.31.44:9100' ]
+        labels:
+          instance: linux
+
+  - job_name: 'dynamictp-polaris'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ '192.168.1.5:9018' ]
+
+  - job_name: 'dynamictp-nacos'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ '192.168.1.5:9100' ]
+
+  - job_name: 'dynamictp-apollo'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ '192.168.1.5:8888' ]

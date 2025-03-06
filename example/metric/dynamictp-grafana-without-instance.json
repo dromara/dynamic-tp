@@ -24,14 +24,13 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 2,
+  "id": 1,
   "links": [],
   "liveNow": false,
   "panels": [
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "核心线程数",
       "fieldConfig": {
@@ -40,22 +39,13 @@
             "mode": "palette-classic"
           },
           "custom": {
-            "neutral": -2
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
           },
           "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
           "unit": "none"
         },
         "overrides": []
@@ -68,58 +58,62 @@
       },
       "id": 25,
       "options": {
-        "orientation": "auto",
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
         "reduceOptions": {
-          "calcs": [],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       },
       "pluginVersion": "10.0.1",
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
           "editorMode": "code",
-          "expr": "thread_pool_core_size{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_core_size{app_name=\"$application\", thread_pool_name=\"$threadpool\"}",
           "instant": false,
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
       "title": "核心线程数",
-      "type": "gauge"
+      "type": "piechart"
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "最大线程数",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
         },
         "overrides": []
       },
@@ -131,59 +125,62 @@
       },
       "id": 26,
       "options": {
-        "orientation": "auto",
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
         "reduceOptions": {
           "calcs": [
-            "last"
+            "lastNotNull"
           ],
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       },
       "pluginVersion": "10.0.1",
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
           "editorMode": "code",
-          "expr": "thread_pool_maximum_size{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_maximum_size{app_name=\"$application\", thread_pool_name=\"$threadpool\"}",
           "instant": false,
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
       "title": "最大线程数",
-      "type": "gauge"
+      "type": "piechart"
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "tps",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
         },
         "overrides": []
       },
@@ -195,59 +192,62 @@
       },
       "id": 28,
       "options": {
-        "orientation": "auto",
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
         "reduceOptions": {
           "calcs": [
-            "last"
+            "lastNotNull"
           ],
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       },
       "pluginVersion": "10.0.1",
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
           "editorMode": "code",
-          "expr": "thread_pool_tps{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_tps{app_name=\"$application\", thread_pool_name=\"$threadpool\"}",
           "instant": false,
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
       "title": "tps",
-      "type": "gauge"
+      "type": "piechart"
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "tp99 耗时",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
         },
         "overrides": []
       },
@@ -259,44 +259,54 @@
       },
       "id": 29,
       "options": {
-        "orientation": "auto",
+        "displayLabels": [],
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
         "reduceOptions": {
           "calcs": [
-            "last"
+            "lastNotNull"
           ],
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       },
       "pluginVersion": "10.0.1",
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
           "editorMode": "code",
-          "expr": "thread_pool_completed_task_time_tp99{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_completed_task_time_tp99{app_name=\"$application\", thread_pool_name=\"$threadpool\"}",
           "instant": false,
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
       "title": "tp99 耗时",
-      "type": "gauge"
+      "type": "piechart"
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "当前线程数",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -354,8 +364,8 @@
       "id": 27,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -377,14 +387,13 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "thread_pool_current_size{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_current_size{app_name=\"$application\", thread_pool_name=\"$threadpool\"}",
           "interval": "",
-          "legendFormat": "{{thread_pool_name}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -394,14 +403,13 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "活跃线程数",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -459,8 +467,8 @@
       "id": 8,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -482,14 +490,13 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "thread_pool_active_count{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_active_count{app_name=\"$application\", thread_pool_name=\"$threadpool\"}",
           "interval": "",
-          "legendFormat": "{{thread_pool_name}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -499,14 +506,13 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "任务队列大小",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -564,8 +570,8 @@
       "id": 6,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -587,13 +593,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "thread_pool_queue_size{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}\n",
+          "expr": "thread_pool_queue_size{app_name=\"$application\", thread_pool_name=\"$threadpool\"}\n",
           "interval": "",
-          "legendFormat": "{{thread_pool_name}}",
+          "legendFormat": "{{instance}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -602,14 +609,13 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "任务队列剩余大小",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -668,8 +674,8 @@
       "id": 2,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -692,15 +698,16 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "thread_pool_queue_remaining_capacity{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_queue_remaining_capacity{app_name=\"$application\", thread_pool_name=\"$threadpool\"}",
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{thread_pool_name}}",
+          "legendFormat": "{{instance}}",
+          "range": true,
           "refId": "B"
         }
       ],
@@ -709,14 +716,13 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "完成任务数",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -774,8 +780,8 @@
       "id": 10,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -797,13 +803,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "thread_pool_completed_task_count{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_completed_task_count{app_name=\"$application\", thread_pool_name=\"$threadpool\"}",
           "interval": "",
-          "legendFormat": "{{thread_pool_name}}",
+          "legendFormat": "{{instance}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -812,14 +819,13 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "拒绝任务数",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -878,8 +884,8 @@
       "id": 4,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -902,15 +908,16 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "thread_pool_reject_count{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}\n",
+          "expr": "thread_pool_reject_count{app_name=\"$application\", thread_pool_name=\"$threadpool\"}\n",
           "format": "time_series",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{thread_pool_name}}",
+          "legendFormat": "{{instance}}",
+          "range": true,
           "refId": "B"
         }
       ],
@@ -919,14 +926,13 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "执行超时任务数",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -963,8 +969,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -984,8 +989,8 @@
       "id": 14,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -1007,13 +1012,14 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
+          "editorMode": "code",
           "exemplar": true,
-          "expr": "thread_pool_run_timeout_count{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_run_timeout_count{app_name=\"$application\", thread_pool_name=\"$threadpool\"}",
           "interval": "",
-          "legendFormat": "{{thread_pool_name}}",
+          "legendFormat": "{{instance}}",
+          "range": true,
           "refId": "A"
         }
       ],
@@ -1022,14 +1028,13 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "排队超时任务数",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -1066,8 +1071,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1087,8 +1091,8 @@
       "id": 18,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -1110,14 +1114,13 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "thread_pool_queue_timeout_count{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_queue_timeout_count{app_name=\"$application\", thread_pool_name=\"$threadpool\"}",
           "interval": "",
-          "legendFormat": "{{thread_pool_name}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -1127,14 +1130,13 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "tps",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -1171,8 +1173,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1192,8 +1193,8 @@
       "id": 17,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -1215,14 +1216,13 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "thread_pool_tps{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_tps{app_name=\"$application\", thread_pool_name=\"$threadpool\"}",
           "interval": "",
-          "legendFormat": "{{thread_pool_name}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -1232,14 +1232,13 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "tp999 耗时",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -1276,8 +1275,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1297,8 +1295,8 @@
       "id": 16,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -1320,14 +1318,13 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "thread_pool_completed_task_time_tp999{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_completed_task_time_tp999{app_name=\"$application\", thread_pool_name=\"$threadpool\"}",
           "interval": "",
-          "legendFormat": "{{thread_pool_name}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -1337,14 +1334,13 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "tp99 耗时",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -1381,8 +1377,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1402,8 +1397,8 @@
       "id": 19,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -1425,14 +1420,13 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "thread_pool_completed_task_time_tp99{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_completed_task_time_tp99{app_name=\"$application\", thread_pool_name=\"$threadpool\"}",
           "interval": "",
-          "legendFormat": "{{thread_pool_name}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -1442,14 +1436,13 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "tp95 耗时",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -1486,8 +1479,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1507,8 +1499,8 @@
       "id": 20,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -1530,14 +1522,13 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "thread_pool_completed_task_time_tp95{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_completed_task_time_tp95{app_name=\"$application\", thread_pool_name=\"$threadpool\"}",
           "interval": "",
-          "legendFormat": "{{thread_pool_name}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -1547,14 +1538,13 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "tp90 耗时",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -1591,8 +1581,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1612,8 +1601,8 @@
       "id": 21,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -1635,14 +1624,13 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "thread_pool_completed_task_time_tp90{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_completed_task_time_tp90{app_name=\"$application\", thread_pool_name=\"$threadpool\"}",
           "interval": "",
-          "legendFormat": "{{thread_pool_name}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -1652,14 +1640,13 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "tp50 耗时",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -1696,8 +1683,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1717,8 +1703,8 @@
       "id": 22,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -1740,14 +1726,13 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "thread_pool_completed_task_time_tp50{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_completed_task_time_tp50{app_name=\"$application\", thread_pool_name=\"$threadpool\"}",
           "interval": "",
-          "legendFormat": "{{thread_pool_name}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -1757,14 +1742,13 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "任务平均耗时",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -1801,8 +1785,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1822,8 +1805,8 @@
       "id": 23,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -1845,14 +1828,13 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "thread_pool_completed_task_time_avg{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_completed_task_time_avg{app_name=\"$application\", thread_pool_name=\"$threadpool\"}",
           "interval": "",
-          "legendFormat": "{{thread_pool_name}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -1862,14 +1844,13 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+        "type": "prometheus"
       },
       "description": "任务最大耗时",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "palette-classic-by-name"
           },
           "custom": {
             "axisCenteredZero": false,
@@ -1906,8 +1887,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1927,8 +1907,8 @@
       "id": 24,
       "links": [
         {
-          "title": "https://github.com/lyh200/dynamic-tp",
-          "url": "https://github.com/lyh200/dynamic-tp"
+          "title": "https://github.com/dromara/dynamic-tp",
+          "url": "https://github.com/dromara/dynamic-tp"
         }
       ],
       "options": {
@@ -1950,14 +1930,13 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+            "type": "prometheus"
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "thread_pool_completed_task_time_max{app_name=\"$application\", instance=\"$instance\", thread_pool_name=\"$threadpool\"}",
+          "expr": "thread_pool_completed_task_time_max{app_name=\"$application\", thread_pool_name=\"$threadpool\"}",
           "interval": "",
-          "legendFormat": "{{thread_pool_name}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -1974,13 +1953,10 @@
     "list": [
       {
         "current": {
-          "selected": false,
-          "text": "dynamic-tp-demo",
-          "value": "dynamic-tp-demo"
+          "selected": false
         },
         "datasource": {
-          "type": "prometheus",
-          "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+          "type": "prometheus"
         },
         "definition": "label_values(app_name)",
         "hide": 0,
@@ -2001,40 +1977,10 @@
       },
       {
         "current": {
-          "selected": false,
-          "text": "192.168.1.2:9018",
-          "value": "192.168.1.2:9018"
+          "selected": false
         },
         "datasource": {
-          "type": "prometheus",
-          "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
-        },
-        "definition": "label_values({app_name=\"$application\"}, instance)",
-        "hide": 0,
-        "includeAll": false,
-        "label": "instance",
-        "multi": false,
-        "name": "instance",
-        "options": [],
-        "query": {
-          "query": "label_values({app_name=\"$application\"}, instance)",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": "dtpExecutor1",
-          "value": "dtpExecutor1"
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "a4ef36c9-2114-42d2-b71a-7d0350bf3d4c"
+          "type": "prometheus"
         },
         "definition": "label_values({app_name=\"$application\"}, thread_pool_name)",
         "hide": 0,
@@ -2062,7 +2008,6 @@
   "timepicker": {},
   "timezone": "",
   "title": "线程池监控（DynamicTp）",
-  "uid": "b48d82b2-96b0-45ea-801e-1d0a030459dc",
-  "version": 5,
+  "version": 32,
   "weekStart": ""
 }

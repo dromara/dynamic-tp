@@ -64,12 +64,19 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
         XnioWorker xnioWorker = undertow.getWorker();
         Object taskPool = ReflectionUtil.getFieldValue(XnioWorker.class, "taskPool", xnioWorker);
         if (Objects.isNull(taskPool)) {
+            log.warn("DynamicTp adapter, {} enhance failed, taskPool is null.");
             return;
         }
+        String tpName = getTpName();
         val handler = TaskPoolHandlerFactory.getTaskPoolHandler(taskPool.getClass().getSimpleName());
+        if (Objects.isNull(handler)) {
+            log.warn("DynamicTp adapter, {} enhance failed, unsupported TaskPool {}.",
+                    getTpName(), taskPool.getClass().getSimpleName());
+            return;
+        }
         String internalExecutor = handler.taskPoolType().getInternalExecutor();
         Object executor = ReflectionUtil.getFieldValue(taskPool.getClass(), internalExecutor, taskPool);
-        String tpName = getTpName();
+
         if (executor instanceof ThreadPoolExecutor) {
             enhanceOriginExecutor(tpName, (ThreadPoolExecutor) executor, internalExecutor, taskPool);
         } else if (executor instanceof EnhancedQueueExecutor) {
@@ -78,7 +85,7 @@ public class UndertowDtpAdapter extends AbstractWebServerDtpAdapter<XnioWorker> 
                 ReflectionUtil.setFieldValue(internalExecutor, taskPool, proxy);
                 putAndFinalize(tpName, (ExecutorService) executor, new EnhancedQueueExecutorAdapter(proxy));
             } catch (Throwable t) {
-                log.error("DynamicTp adapter, enhance {} failed, please adjust the order of the two dependencies" +
+                log.warn("DynamicTp adapter, {} enhance failed, please adjust the order of the two dependencies" +
                         "(spring-boot-starter-undertow and starter-adapter-webserver) and try again.", tpName, t);
                 executors.put(tpName, new ExecutorWrapper(tpName, handler.adapt(executor)));
             }

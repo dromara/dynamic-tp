@@ -46,9 +46,11 @@ public final class JsonUtil {
             try {
                 JsonParser jsonParser = iterator.next();
                 if (jsonParser.supports()) {
+                    log.info("Using JSON parser: {}", jsonParser.getClass().getName());
                     return jsonParser;
                 }
-            } catch (Throwable ignored) {
+            } catch (Throwable e) {
+                log.error("Failed to load JSON parser", e);
             }
         }
         throw new IllegalStateException("No JSON parser found");

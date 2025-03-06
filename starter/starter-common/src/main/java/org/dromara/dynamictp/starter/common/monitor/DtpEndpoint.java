@@ -39,7 +39,7 @@ import java.util.List;
  * @author yanhom
  * @since 1.0.0
  **/
-@Endpoint(id = "dynamic-tp")
+@Endpoint(id = "dynamictp")
 public class DtpEndpoint {
 
     @ReadOperation

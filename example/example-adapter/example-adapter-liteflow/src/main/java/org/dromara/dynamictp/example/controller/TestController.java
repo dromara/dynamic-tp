@@ -17,12 +17,11 @@
 
 package org.dromara.dynamictp.example.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.example.service.BizService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.annotation.Resource;
 
 /**
  * TestController related
@@ -32,11 +31,11 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @RestController
+@AllArgsConstructor
 @SuppressWarnings("all")
 public class TestController {
 
-    @Resource
-    private BizService bizService;
+    private final BizService bizService;
 
     @GetMapping("/dtp-example-adapter/testLiteflow")
     public String testLiteflow() throws InterruptedException {

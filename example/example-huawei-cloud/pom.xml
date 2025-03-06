@@ -13,8 +13,8 @@
     <artifactId>dynamic-tp-example-huawei-cloud</artifactId>
 
     <properties>
-        <spring-cloud.version>2020.0.6</spring-cloud.version>
-        <spring-cloud-huawei.version>1.10.8-2020.0.x</spring-cloud-huawei.version>
+        <spring-cloud.version>2023.0.5</spring-cloud.version>
+        <spring-cloud-huawei.version>1.11.10-2023.0.x</spring-cloud-huawei.version>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 

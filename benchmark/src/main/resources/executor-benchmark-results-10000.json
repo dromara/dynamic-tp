@@ -1,0 +1,180 @@
+[
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.dromara.dynamictp.benchmark.ExecutorBenchmark.testDtpSubmit",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Xmn256m",
+            "-Xmx1024m",
+            "-XX:+UseConcMarkSweepGC",
+            "-javaagent:/Applications/IntelliJ IDEA 2025.1 EAP.app/Contents/lib/idea_rt.jar=49282",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_212",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.212-b03",
+        "warmupIterations" : 2,
+        "warmupTime" : "3 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "3 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "taskCount" : "10000",
+            "taskType" : "MEDIUM"
+        },
+        "primaryMetric" : {
+            "score" : 32954.527808069026,
+            "scoreError" : 2311.7156261531773,
+            "scoreConfidence" : [
+                30642.812181915848,
+                35266.243434222204
+            ],
+            "scorePercentiles" : {
+                "0.0" : 26220.48523665142,
+                "50.0" : 34458.85161356895,
+                "90.0" : 36115.654021324255,
+                "95.0" : 36256.51274498096,
+                "99.0" : 36289.87945996767,
+                "99.9" : 36289.87945996767,
+                "99.99" : 36289.87945996767,
+                "99.999" : 36289.87945996767,
+                "99.9999" : 36289.87945996767,
+                "100.0" : 36289.87945996767
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    35372.302924781456,
+                    32776.23740083045,
+                    29892.912629027156,
+                    29890.2335937213,
+                    33122.714035336525
+                ],
+                [
+                    29208.637300563456,
+                    29210.69941932777,
+                    29021.780210360605,
+                    28918.246677386218,
+                    29411.90359600989
+                ],
+                [
+                    31408.797984981953,
+                    33131.99157900621,
+                    34482.828421129,
+                    34458.85161356895,
+                    35457.9320691013
+                ],
+                [
+                    35657.561782508805,
+                    35794.9818994246,
+                    35628.005541312,
+                    36178.65707667863,
+                    26220.48523665142
+                ],
+                [
+                    34662.49401097389,
+                    35594.35655721538,
+                    36289.87945996767,
+                    36073.65198442134,
+                    35997.05219743983
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.dromara.dynamictp.benchmark.ExecutorBenchmark.testStandardSubmit",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Xmn256m",
+            "-Xmx1024m",
+            "-XX:+UseConcMarkSweepGC",
+            "-javaagent:/Applications/IntelliJ IDEA 2025.1 EAP.app/Contents/lib/idea_rt.jar=49282",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_212",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.212-b03",
+        "warmupIterations" : 2,
+        "warmupTime" : "3 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "3 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "taskCount" : "10000",
+            "taskType" : "MEDIUM"
+        },
+        "primaryMetric" : {
+            "score" : 32257.61198989847,
+            "scoreError" : 2408.5946622469246,
+            "scoreConfidence" : [
+                29849.017327651545,
+                34666.206652145396
+            ],
+            "scorePercentiles" : {
+                "0.0" : 26531.51007388847,
+                "50.0" : 33166.02859731879,
+                "90.0" : 36562.265895182565,
+                "95.0" : 36619.14792604378,
+                "99.0" : 36621.622852431654,
+                "99.9" : 36621.622852431654,
+                "99.99" : 36621.622852431654,
+                "99.999" : 36621.622852431654,
+                "99.9999" : 36621.622852431654,
+                "100.0" : 36621.622852431654
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    36621.622852431654,
+                    36153.53636379015,
+                    36528.19442676734,
+                    36613.3730978054,
+                    32938.79491143425
+                ],
+                [
+                    27184.37316148416,
+                    27595.236296531635,
+                    27216.408369568795,
+                    26973.735318016934,
+                    26531.51007388847
+                ],
+                [
+                    32127.524333336067,
+                    28140.189370526277,
+                    30696.48476472954,
+                    33253.3415252634,
+                    35373.35336431965
+                ],
+                [
+                    33281.024121031514,
+                    33166.02859731879,
+                    32090.18348933553,
+                    32823.49438885968,
+                    32845.51685165267
+                ],
+                [
+                    33670.10535630524,
+                    33802.06286265187,
+                    33909.81688892643,
+                    33466.303878175626,
+                    33438.08508331047
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    }
+]
+
+

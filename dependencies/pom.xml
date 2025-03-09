@@ -62,7 +62,7 @@
         <central-publishing-maven-plugin.version>0.6.0</central-publishing-maven-plugin.version>
 
         <dropwizard-metrics.version>4.2.20</dropwizard-metrics.version>
-        <jmh.version>1.35</jmh.version>
+        <jmh.version>1.36</jmh.version>
         <native-lib-loader.version>2.0.2</native-lib-loader.version>
         <bytebuddy.version>1.15.5</bytebuddy.version>
     </properties>
@@ -263,14 +263,12 @@
                 <groupId>org.openjdk.jmh</groupId>
                 <artifactId>jmh-core</artifactId>
                 <version>${jmh.version}</version>
-                <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.openjdk.jmh</groupId>
                 <artifactId>jmh-generator-annprocess</artifactId>
                 <version>${jmh.version}</version>
-                <scope>test</scope>
             </dependency>
 
             <dependency>

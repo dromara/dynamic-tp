@@ -49,8 +49,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Warmup(iterations = 5)
 public class ExecutorBenchmark {
 
-    @Param({"100", "2000", "4000", "6000", "8000", "10000", "12000"})
-    private int taskCount;
+    @Param({"100", "2000", "4000", "6000", "8000", "10000"})
+    private int max;
 
     @Param({"MEDIUM"})
     private TaskType taskType;
@@ -126,34 +126,34 @@ public class ExecutorBenchmark {
         executeTasksAndWait(dtpExecutor, bh);
     }
 
-//    @Benchmark
-//    @Threads(8)
-//    public void test8ThreadsStandardSubmit(Blackhole bh) {
-//        executeTasksAndWait(standardExecutor, bh);
-//    }
-//
-//    @Benchmark
-//    @Threads(8)
-//    public void test8ThreadsSingleEntry(Blackhole bh) {
-//        executeTasksAndWait(dtpExecutor, bh);
-//    }
+    @Benchmark
+    @Threads(8)
+    public void test8ThreadsStandardSubmit(Blackhole bh) {
+        executeTasksAndWait(standardExecutor, bh);
+    }
+
+    @Benchmark
+    @Threads(8)
+    public void test8ThreadsSingleEntry(Blackhole bh) {
+        executeTasksAndWait(dtpExecutor, bh);
+    }
 
     private void executeTasksAndWait(ThreadPoolExecutor executor, Blackhole bh) {
         executor.submit(() -> {
             try {
                 switch (taskType) {
                     case LIGHT:
-                        bh.consume(taskCount * taskCount);
+                        bh.consume(max * max);
                         break;
                     case MEDIUM:
-                        bh.consume(calculatePrimes(taskCount));
+                        bh.consume(calculatePrimes(max));
                         break;
                     case HEAVY:
-                        bh.consume(calculatePrimes(30));
+                        bh.consume(calculatePrimes(max));
                         Thread.sleep(2);
                         break;
                 }
-                return taskCount;
+                return max;
             } catch (Exception e) {
                 return -1;
             }

@@ -1,0 +1,1236 @@
+[
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.dromara.dynamictp.benchmark.ExecutorBenchmark.testDtpSubmit",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Xmn256m",
+            "-Xmx1024m",
+            "-XX:+UseConcMarkSweepGC",
+            "-javaagent:/Applications/IntelliJ IDEA 2025.1 EAP.app/Contents/lib/idea_rt.jar=52403",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_212",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.212-b03",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "taskCount" : "100",
+            "taskType" : "MEDIUM"
+        },
+        "primaryMetric" : {
+            "score" : 1103532.8112517924,
+            "scoreError" : 35446.89775284983,
+            "scoreConfidence" : [
+                1068085.9134989425,
+                1138979.7090046422
+            ],
+            "scorePercentiles" : {
+                "0.0" : 1010488.0047735514,
+                "50.0" : 1117300.7784185004,
+                "90.0" : 1157972.482813812,
+                "95.0" : 1159440.4587831239,
+                "99.0" : 1159746.2333446685,
+                "99.9" : 1159746.2333446685,
+                "99.99" : 1159746.2333446685,
+                "99.999" : 1159746.2333446685,
+                "99.9999" : 1159746.2333446685,
+                "100.0" : 1159746.2333446685
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    1143826.8347275034,
+                    1147050.0721960228,
+                    1150264.0003704256,
+                    1149756.7595554157,
+                    1106774.9200363955
+                ],
+                [
+                    1157469.4814855626,
+                    1150547.115156094,
+                    1158726.9848061865,
+                    1148721.3966452996,
+                    1159746.2333446685
+                ],
+                [
+                    1119357.602234334,
+                    1133142.5543592775,
+                    1117841.9686800314,
+                    1101546.8578804564,
+                    1117300.7784185004
+                ],
+                [
+                    1032757.4140772773,
+                    1054817.4947350263,
+                    1060736.4915705277,
+                    1058211.4177417848,
+                    1058478.7505447967
+                ],
+                [
+                    1074779.0927106466,
+                    1077530.740024152,
+                    1077886.9822029963,
+                    1020560.3330178749,
+                    1010488.0047735514
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.dromara.dynamictp.benchmark.ExecutorBenchmark.testDtpSubmit",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Xmn256m",
+            "-Xmx1024m",
+            "-XX:+UseConcMarkSweepGC",
+            "-javaagent:/Applications/IntelliJ IDEA 2025.1 EAP.app/Contents/lib/idea_rt.jar=52403",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_212",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.212-b03",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "taskCount" : "2000",
+            "taskType" : "MEDIUM"
+        },
+        "primaryMetric" : {
+            "score" : 209062.97962228965,
+            "scoreError" : 13287.502085251932,
+            "scoreConfidence" : [
+                195775.47753703772,
+                222350.4817075416
+            ],
+            "scorePercentiles" : {
+                "0.0" : 171509.8526424779,
+                "50.0" : 216176.49082086876,
+                "90.0" : 224307.7681491452,
+                "95.0" : 226119.6211992213,
+                "99.0" : 226341.11105977808,
+                "99.9" : 226341.11105977808,
+                "99.99" : 226341.11105977808,
+                "99.999" : 226341.11105977808,
+                "99.9999" : 226341.11105977808,
+                "100.0" : 226341.11105977808
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    219111.96366980803,
+                    220814.3994993678,
+                    218624.2345455766,
+                    217300.041788771,
+                    218950.95771435436
+                ],
+                [
+                    216228.6360859563,
+                    216176.49082086876,
+                    215509.1752497259,
+                    217554.35982049306,
+                    216131.40393410964
+                ],
+                [
+                    220912.77933131607,
+                    225602.81152458882,
+                    226341.11105977808,
+                    222977.96293275245,
+                    223444.40589884948
+                ],
+                [
+                    176528.72640849408,
+                    174835.47020606103,
+                    177471.09672675066,
+                    177182.62174836744,
+                    171509.8526424779
+                ],
+                [
+                    211273.400190838,
+                    209927.12872935677,
+                    211313.43122312197,
+                    208433.4808708627,
+                    212418.54793459497
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.dromara.dynamictp.benchmark.ExecutorBenchmark.testDtpSubmit",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Xmn256m",
+            "-Xmx1024m",
+            "-XX:+UseConcMarkSweepGC",
+            "-javaagent:/Applications/IntelliJ IDEA 2025.1 EAP.app/Contents/lib/idea_rt.jar=52403",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_212",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.212-b03",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "taskCount" : "4000",
+            "taskType" : "MEDIUM"
+        },
+        "primaryMetric" : {
+            "score" : 105047.67537637708,
+            "scoreError" : 4477.830872507213,
+            "scoreConfidence" : [
+                100569.84450386987,
+                109525.5062488843
+            ],
+            "scorePercentiles" : {
+                "0.0" : 92487.37998812133,
+                "50.0" : 107348.75569950728,
+                "90.0" : 108959.54204995498,
+                "95.0" : 108992.2156165008,
+                "99.0" : 108994.4152364523,
+                "99.9" : 108994.4152364523,
+                "99.99" : 108994.4152364523,
+                "99.999" : 108994.4152364523,
+                "99.9999" : 108994.4152364523,
+                "100.0" : 108994.4152364523
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    93731.52853068087,
+                    94099.07273219946,
+                    93379.73333292177,
+                    93504.22637117341,
+                    92487.37998812133
+                ],
+                [
+                    108941.18130329343,
+                    108465.24480355378,
+                    108987.0831699473,
+                    108666.3512543524,
+                    108994.4152364523
+                ],
+                [
+                    108084.85581405937,
+                    107421.8370438473,
+                    107348.75569950728,
+                    108511.71443333876,
+                    108481.58200932488
+                ],
+                [
+                    107323.43408259685,
+                    107188.60833423659,
+                    107022.73358676364,
+                    106955.0893603503,
+                    106182.03765982033
+                ],
+                [
+                    108665.94872281788,
+                    106979.6291342228,
+                    108693.10051928609,
+                    108733.1609059918,
+                    107343.18038056795
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.dromara.dynamictp.benchmark.ExecutorBenchmark.testDtpSubmit",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Xmn256m",
+            "-Xmx1024m",
+            "-XX:+UseConcMarkSweepGC",
+            "-javaagent:/Applications/IntelliJ IDEA 2025.1 EAP.app/Contents/lib/idea_rt.jar=52403",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_212",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.212-b03",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "taskCount" : "6000",
+            "taskType" : "MEDIUM"
+        },
+        "primaryMetric" : {
+            "score" : 61213.90077313408,
+            "scoreError" : 6763.951532589577,
+            "scoreConfidence" : [
+                54449.949240544505,
+                67977.85230572366
+            ],
+            "scorePercentiles" : {
+                "0.0" : 45105.19440126749,
+                "50.0" : 66197.93110424417,
+                "90.0" : 68739.16974746807,
+                "95.0" : 68848.50411997772,
+                "99.0" : 68883.96278245034,
+                "99.9" : 68883.96278245034,
+                "99.99" : 68883.96278245034,
+                "99.999" : 68883.96278245034,
+                "99.9999" : 68883.96278245034,
+                "100.0" : 68883.96278245034
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    45287.04562494987,
+                    45368.187389809085,
+                    45105.19440126749,
+                    45362.389731315125,
+                    45229.921494323644
+                ],
+                [
+                    67540.76013791146,
+                    59403.96801498157,
+                    66197.93110424417,
+                    63991.697466697326,
+                    64465.04879238095
+                ],
+                [
+                    68243.21068220658,
+                    68087.25075119859,
+                    68058.69779292954,
+                    68386.46201979258,
+                    68288.17666881722
+                ],
+                [
+                    68579.45267944706,
+                    68883.96278245034,
+                    66990.87205465828,
+                    68765.76724087493,
+                    68721.43808519682
+                ],
+                [
+                    54544.75170496748,
+                    60760.58138514317,
+                    56427.19183097795,
+                    61250.349412555726,
+                    66407.21007925502
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.dromara.dynamictp.benchmark.ExecutorBenchmark.testDtpSubmit",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Xmn256m",
+            "-Xmx1024m",
+            "-XX:+UseConcMarkSweepGC",
+            "-javaagent:/Applications/IntelliJ IDEA 2025.1 EAP.app/Contents/lib/idea_rt.jar=52403",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_212",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.212-b03",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "taskCount" : "8000",
+            "taskType" : "MEDIUM"
+        },
+        "primaryMetric" : {
+            "score" : 45515.769188362894,
+            "scoreError" : 2363.4799326026596,
+            "scoreConfidence" : [
+                43152.28925576023,
+                47879.249120965556
+            ],
+            "scorePercentiles" : {
+                "0.0" : 35295.23668899761,
+                "50.0" : 46791.154750272304,
+                "90.0" : 47232.5543353645,
+                "95.0" : 47552.90977511996,
+                "99.0" : 47592.48432482061,
+                "99.9" : 47592.48432482061,
+                "99.99" : 47592.48432482061,
+                "99.999" : 47592.48432482061,
+                "99.9999" : 47592.48432482061,
+                "100.0" : 47592.48432482061
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    45704.23521003391,
+                    47460.56915915177,
+                    46886.58287142204,
+                    47080.544452839655,
+                    47592.48432482061
+                ],
+                [
+                    46791.154750272304,
+                    46827.95584068275,
+                    46837.73984160427,
+                    46771.7835127474,
+                    46952.30587516715
+                ],
+                [
+                    46902.19296448442,
+                    47028.14929264642,
+                    46937.278559482605,
+                    46801.157957446696,
+                    46787.62537412599
+                ],
+                [
+                    35295.23668899761,
+                    41818.56295818429,
+                    44718.98616675532,
+                    41814.246617412144,
+                    37245.360964211126
+                ],
+                [
+                    46744.465901248266,
+                    46666.897982177485,
+                    46764.120934495586,
+                    46659.149693660125,
+                    46805.44181500235
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.dromara.dynamictp.benchmark.ExecutorBenchmark.testDtpSubmit",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Xmn256m",
+            "-Xmx1024m",
+            "-XX:+UseConcMarkSweepGC",
+            "-javaagent:/Applications/IntelliJ IDEA 2025.1 EAP.app/Contents/lib/idea_rt.jar=52403",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_212",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.212-b03",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "taskCount" : "10000",
+            "taskType" : "MEDIUM"
+        },
+        "primaryMetric" : {
+            "score" : 35075.42243961711,
+            "scoreError" : 430.9688710782734,
+            "scoreConfidence" : [
+                34667.45356853884,
+                35529.391310695384
+            ],
+            "scorePercentiles" : {
+                "0.0" : 33407.97962156331,
+                "50.0" : 35358.155706091835,
+                "90.0" : 35540.46685896874,
+                "95.0" : 35592.863557422184,
+                "99.0" : 35609.25195432113,
+                "99.9" : 35609.25195432113,
+                "99.99" : 35609.25195432113,
+                "99.999" : 35609.25195432113,
+                "99.9999" : 35609.25195432113,
+                "100.0" : 35609.25195432113
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    35531.028788509255,
+                    35554.62396465798,
+                    34773.70896010084,
+                    35501.52805195061,
+                    35609.25195432113
+                ],
+                [
+                    35297.99705948298,
+                    35300.319782118975,
+                    35402.12441730641,
+                    35399.336464268614,
+                    35382.63600423721
+                ],
+                [
+                    35232.36316387686,
+                    35242.40422089905,
+                    35451.40634019355,
+                    35403.10390607505,
+                    35439.80051370157
+                ],
+                [
+                    35358.155706091835,
+                    35435.231642221814,
+                    34872.40653986989,
+                    34160.460282026856,
+                    35359.26550734539
+                ],
+                [
+                    33709.837320862156,
+                    34750.90168769264,
+                    34652.3900796835,
+                    35232.2990113704,
+                    33407.97962156331
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.dromara.dynamictp.benchmark.ExecutorBenchmark.testDtpSubmit",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Xmn256m",
+            "-Xmx1024m",
+            "-XX:+UseConcMarkSweepGC",
+            "-javaagent:/Applications/IntelliJ IDEA 2025.1 EAP.app/Contents/lib/idea_rt.jar=52403",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_212",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.212-b03",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "taskCount" : "12000",
+            "taskType" : "MEDIUM"
+        },
+        "primaryMetric" : {
+            "score" : 27051.16821175431,
+            "scoreError" : 1709.0409973921119,
+            "scoreConfidence" : [
+                25342.127214362197,
+                28760.209209146422
+            ],
+            "scorePercentiles" : {
+                "0.0" : 22247.923722715794,
+                "50.0" : 27850.696390467143,
+                "90.0" : 29279.583085696708,
+                "95.0" : 29359.749954732095,
+                "99.0" : 29384.467071697465,
+                "99.9" : 29384.467071697465,
+                "99.99" : 29384.467071697465,
+                "99.999" : 29384.467071697465,
+                "99.9999" : 29384.467071697465,
+                "100.0" : 29384.467071697465
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    22247.923722715794,
+                    23457.047303364983,
+                    23158.21783542511,
+                    23453.923168019173,
+                    22779.22022809492
+                ],
+                [
+                    28125.203790642827,
+                    27839.48877449398,
+                    27036.025858041696,
+                    26101.058265230567,
+                    27888.154345701467
+                ],
+                [
+                    27518.965605717214,
+                    27518.70863848804,
+                    25966.29808759208,
+                    26125.529584446795,
+                    27850.696390467143
+                ],
+                [
+                    28294.96532786257,
+                    28626.710521698336,
+                    28766.21794111983,
+                    28704.65515481415,
+                    28696.33692403822
+                ],
+                [
+                    29081.14779745811,
+                    29264.587354952586,
+                    29384.467071697465,
+                    29302.076681812894,
+                    29091.5789199618
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.dromara.dynamictp.benchmark.ExecutorBenchmark.testStandardSubmit",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Xmn256m",
+            "-Xmx1024m",
+            "-XX:+UseConcMarkSweepGC",
+            "-javaagent:/Applications/IntelliJ IDEA 2025.1 EAP.app/Contents/lib/idea_rt.jar=52403",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_212",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.212-b03",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "taskCount" : "100",
+            "taskType" : "MEDIUM"
+        },
+        "primaryMetric" : {
+            "score" : 1838039.3163374283,
+            "scoreError" : 26320.249456275233,
+            "scoreConfidence" : [
+                1811719.066881153,
+                1864359.5657937035
+            ],
+            "scorePercentiles" : {
+                "0.0" : 1771755.0102554106,
+                "50.0" : 1844424.9886515974,
+                "90.0" : 1891553.7371517464,
+                "95.0" : 1898154.6103939726,
+                "99.0" : 1898905.5594973078,
+                "99.9" : 1898905.5594973078,
+                "99.99" : 1898905.5594973078,
+                "99.999" : 1898905.5594973078,
+                "99.9999" : 1898905.5594973078,
+                "100.0" : 1898905.5594973078
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    1780080.8556449418,
+                    1771755.0102554106,
+                    1806731.0587743833,
+                    1811523.4988160825,
+                    1809161.8058067567
+                ],
+                [
+                    1810241.0393036022,
+                    1860301.2892064096,
+                    1802012.9420591071,
+                    1843046.4491741182,
+                    1818781.4652897492
+                ],
+                [
+                    1870606.0823291943,
+                    1854462.3921661843,
+                    1815428.5330479732,
+                    1821886.6689057231,
+                    1853475.4973128552
+                ],
+                [
+                    1844424.9886515974,
+                    1845796.5609312723,
+                    1861004.0974674083,
+                    1862078.3736972625,
+                    1850680.4518726878
+                ],
+                [
+                    1797888.2264858203,
+                    1875986.3678804482,
+                    1888321.2980398943,
+                    1898905.5594973078,
+                    1896402.3958195243
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.dromara.dynamictp.benchmark.ExecutorBenchmark.testStandardSubmit",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Xmn256m",
+            "-Xmx1024m",
+            "-XX:+UseConcMarkSweepGC",
+            "-javaagent:/Applications/IntelliJ IDEA 2025.1 EAP.app/Contents/lib/idea_rt.jar=52403",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_212",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.212-b03",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "taskCount" : "2000",
+            "taskType" : "MEDIUM"
+        },
+        "primaryMetric" : {
+            "score" : 236730.48548829978,
+            "scoreError" : 7520.09815761259,
+            "scoreConfidence" : [
+                229210.3873306872,
+                244250.58364591235
+            ],
+            "scorePercentiles" : {
+                "0.0" : 218678.06622470648,
+                "50.0" : 240148.09706389953,
+                "90.0" : 248682.3500062623,
+                "95.0" : 250918.67335980735,
+                "99.0" : 251641.39343174573,
+                "99.9" : 251641.39343174573,
+                "99.99" : 251641.39343174573,
+                "99.999" : 251641.39343174573,
+                "99.9999" : 251641.39343174573,
+                "100.0" : 251641.39343174573
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    244546.07950503303,
+                    242436.25368921252,
+                    245461.96796144842,
+                    247640.80295553716,
+                    249232.32652528444
+                ],
+                [
+                    251641.39343174573,
+                    236461.69359732786,
+                    236383.34956500953,
+                    240148.09706389953,
+                    234996.52911409468
+                ],
+                [
+                    224189.36143277967,
+                    222499.62971917572,
+                    221565.68651602126,
+                    219452.6704270151,
+                    218678.06622470648
+                ],
+                [
+                    226807.206118522,
+                    228112.21695254088,
+                    248315.69899358088,
+                    231909.73936196323,
+                    235479.6103663127
+                ],
+                [
+                    246374.6803981328,
+                    240802.8691422238,
+                    240955.83151134226,
+                    240404.98383651263,
+                    243765.39279807132
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.dromara.dynamictp.benchmark.ExecutorBenchmark.testStandardSubmit",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Xmn256m",
+            "-Xmx1024m",
+            "-XX:+UseConcMarkSweepGC",
+            "-javaagent:/Applications/IntelliJ IDEA 2025.1 EAP.app/Contents/lib/idea_rt.jar=52403",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_212",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.212-b03",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "taskCount" : "4000",
+            "taskType" : "MEDIUM"
+        },
+        "primaryMetric" : {
+            "score" : 110866.01635460617,
+            "scoreError" : 1465.175936776565,
+            "scoreConfidence" : [
+                109400.8404178296,
+                112331.19229138273
+            ],
+            "scorePercentiles" : {
+                "0.0" : 106696.38853874976,
+                "50.0" : 111530.74403337955,
+                "90.0" : 113033.84060537968,
+                "95.0" : 113565.81502690719,
+                "99.0" : 113653.73138340306,
+                "99.9" : 113653.73138340306,
+                "99.99" : 113653.73138340306,
+                "99.999" : 113653.73138340306,
+                "99.9999" : 113653.73138340306,
+                "100.0" : 113653.73138340306
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    109958.59318348259,
+                    109860.38578105849,
+                    111316.08386158526,
+                    113653.73138340306,
+                    112533.1761802177
+                ],
+                [
+                    112391.7334781671,
+                    111910.73567269827,
+                    111542.7863433319,
+                    111664.86484589378,
+                    111204.96168030277
+                ],
+                [
+                    111409.27175842077,
+                    109187.40404640247,
+                    108168.43374613966,
+                    107277.14076548869,
+                    112619.33237393686
+                ],
+                [
+                    113360.67686175014,
+                    111765.6984352535,
+                    111631.68028735065,
+                    112269.15204773637,
+                    112815.94976779938
+                ],
+                [
+                    106696.38853874976,
+                    106960.70757265817,
+                    109688.65035528265,
+                    110232.12586466392,
+                    111530.74403337955
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.dromara.dynamictp.benchmark.ExecutorBenchmark.testStandardSubmit",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Xmn256m",
+            "-Xmx1024m",
+            "-XX:+UseConcMarkSweepGC",
+            "-javaagent:/Applications/IntelliJ IDEA 2025.1 EAP.app/Contents/lib/idea_rt.jar=52403",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_212",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.212-b03",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "taskCount" : "6000",
+            "taskType" : "MEDIUM"
+        },
+        "primaryMetric" : {
+            "score" : 66213.18143081591,
+            "scoreError" : 1309.3138425193958,
+            "scoreConfidence" : [
+                64903.86758829651,
+                67522.4952733353
+            ],
+            "scorePercentiles" : {
+                "0.0" : 61497.40923929285,
+                "50.0" : 66691.53546439671,
+                "90.0" : 67847.25965482392,
+                "95.0" : 67992.72781435879,
+                "99.0" : 68050.73980731821,
+                "99.9" : 68050.73980731821,
+                "99.99" : 68050.73980731821,
+                "99.999" : 68050.73980731821,
+                "99.9999" : 68050.73980731821,
+                "100.0" : 68050.73980731821
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    66370.4374203702,
+                    66581.88306435106,
+                    66084.2644861414,
+                    66691.53546439671,
+                    66770.15001367523
+                ],
+                [
+                    66627.85243475712,
+                    66981.20698876656,
+                    67262.53497468305,
+                    68050.73980731821,
+                    67480.1872687222
+                ],
+                [
+                    62944.61119782626,
+                    64881.21139092084,
+                    67552.0024670129,
+                    67459.71614416226,
+                    67840.52175973754
+                ],
+                [
+                    64405.65451160455,
+                    66375.06667067554,
+                    63008.54640573094,
+                    61497.40923929285,
+                    65361.7477459621
+                ],
+                [
+                    64628.79695088941,
+                    67098.46936835014,
+                    67857.36649745348,
+                    67822.80253120935,
+                    67694.82096638794
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.dromara.dynamictp.benchmark.ExecutorBenchmark.testStandardSubmit",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Xmn256m",
+            "-Xmx1024m",
+            "-XX:+UseConcMarkSweepGC",
+            "-javaagent:/Applications/IntelliJ IDEA 2025.1 EAP.app/Contents/lib/idea_rt.jar=52403",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_212",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.212-b03",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "taskCount" : "8000",
+            "taskType" : "MEDIUM"
+        },
+        "primaryMetric" : {
+            "score" : 46498.980332316154,
+            "scoreError" : 1183.287191159314,
+            "scoreConfidence" : [
+                45315.69314115684,
+                47682.26752347547
+            ],
+            "scorePercentiles" : {
+                "0.0" : 42967.298812256246,
+                "50.0" : 47459.69730662006,
+                "90.0" : 47747.92300333565,
+                "95.0" : 47843.07678329861,
+                "99.0" : 47870.887982387685,
+                "99.9" : 47870.887982387685,
+                "99.99" : 47870.887982387685,
+                "99.999" : 47870.887982387685,
+                "99.9999" : 47870.887982387685,
+                "100.0" : 47870.887982387685
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    45234.36593808247,
+                    46356.150175696486,
+                    44819.419434440635,
+                    46130.98085695463,
+                    46765.007730327605
+                ],
+                [
+                    42967.298812256246,
+                    44100.723694535256,
+                    43953.35691544615,
+                    43999.123924672334,
+                    44098.0674503536
+                ],
+                [
+                    47634.59260173732,
+                    47727.749015276684,
+                    47870.887982387685,
+                    47723.34830355514,
+                    47778.183985424104
+                ],
+                [
+                    47520.46616430997,
+                    47543.26740239449,
+                    47440.79740347275,
+                    47444.39970425081,
+                    47560.5793095862
+                ],
+                [
+                    47634.22258723625,
+                    47564.90240056483,
+                    47459.69730662006,
+                    47516.21834956709,
+                    47630.70085875508
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.dromara.dynamictp.benchmark.ExecutorBenchmark.testStandardSubmit",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Xmn256m",
+            "-Xmx1024m",
+            "-XX:+UseConcMarkSweepGC",
+            "-javaagent:/Applications/IntelliJ IDEA 2025.1 EAP.app/Contents/lib/idea_rt.jar=52403",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_212",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.212-b03",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "taskCount" : "10000",
+            "taskType" : "MEDIUM"
+        },
+        "primaryMetric" : {
+            "score" : 35098.82286006603,
+            "scoreError" : 903.1181796283523,
+            "scoreConfidence" : [
+                34172.70468043768,
+                35978.94103969438
+            ],
+            "scorePercentiles" : {
+                "0.0" : 32639.130532874962,
+                "50.0" : 35656.58833656179,
+                "90.0" : 35857.52247626191,
+                "95.0" : 35916.51823147274,
+                "99.0" : 35921.49068011437,
+                "99.9" : 35921.49068011437,
+                "99.99" : 35921.49068011437,
+                "99.999" : 35921.49068011437,
+                "99.9999" : 35921.49068011437,
+                "100.0" : 35921.49068011437
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    35671.94502512869,
+                    35904.91585130894,
+                    35825.92689289722,
+                    35796.99187529982,
+                    35634.22265198881
+                ],
+                [
+                    35823.978218947654,
+                    35744.338375310675,
+                    35921.49068011437,
+                    35656.58833656179,
+                    35768.55670698962
+                ],
+                [
+                    35450.72558291133,
+                    35292.34468708202,
+                    35461.30348788241,
+                    35498.27578721768,
+                    35433.30940270787
+                ],
+                [
+                    35599.62185747065,
+                    35726.472147767636,
+                    35662.519809637524,
+                    35661.70460592869,
+                    35701.625345125896
+                ],
+                [
+                    32726.318581406078,
+                    32814.94510170699,
+                    32639.130532874962,
+                    32718.26503360563,
+                    32760.054923777632
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.dromara.dynamictp.benchmark.ExecutorBenchmark.testStandardSubmit",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Xmn256m",
+            "-Xmx1024m",
+            "-XX:+UseConcMarkSweepGC",
+            "-javaagent:/Applications/IntelliJ IDEA 2025.1 EAP.app/Contents/lib/idea_rt.jar=52403",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_212",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.212-b03",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "taskCount" : "12000",
+            "taskType" : "MEDIUM"
+        },
+        "primaryMetric" : {
+            "score" : 27412.20682090342,
+            "scoreError" : 919.5918505579242,
+            "scoreConfidence" : [
+                26492.614970345494,
+                28331.798671461343
+            ],
+            "scorePercentiles" : {
+                "0.0" : 25920.318163276006,
+                "50.0" : 28374.45968473258,
+                "90.0" : 28649.950491628046,
+                "95.0" : 28709.582033791172,
+                "99.0" : 28718.05524055999,
+                "99.9" : 28718.05524055999,
+                "99.99" : 28718.05524055999,
+                "99.999" : 28718.05524055999,
+                "99.9999" : 28718.05524055999,
+                "100.0" : 28718.05524055999
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    28525.514517551077,
+                    28457.502890794192,
+                    28411.998058107365,
+                    28449.628663776657,
+                    28233.569209200497
+                ],
+                [
+                    25995.671616740274,
+                    26015.561401024537,
+                    26017.012719891096,
+                    26053.486233510044,
+                    26079.948600105945
+                ],
+                [
+                    28375.00181221049,
+                    28374.45968473258,
+                    28425.23045682337,
+                    28446.54251742563,
+                    28374.943440261115
+                ],
+                [
+                    28460.866389945746,
+                    26653.0023362872,
+                    28718.05524055999,
+                    28623.376674048566,
+                    28689.811217997263
+                ],
+                [
+                    26035.925919140915,
+                    25926.65665246165,
+                    25920.318163276006,
+                    25966.53030271897,
+                    26074.555803994455
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    }
+]
+
+

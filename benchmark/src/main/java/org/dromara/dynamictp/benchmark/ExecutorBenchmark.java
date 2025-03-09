@@ -23,7 +23,6 @@ import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Measurement;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Param;
@@ -47,11 +46,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 @BenchmarkMode(Mode.Throughput)
 @OutputTimeUnit(TimeUnit.SECONDS)
 @State(Scope.Thread)
-@Warmup(iterations = 2, time = 3)
-@Measurement(iterations = 5, time = 3)
+@Warmup(iterations = 5)
 public class ExecutorBenchmark {
 
-    @Param({"10000"})
+    @Param({"100", "2000", "4000", "6000", "8000", "10000", "12000"})
     private int taskCount;
 
     @Param({"MEDIUM"})

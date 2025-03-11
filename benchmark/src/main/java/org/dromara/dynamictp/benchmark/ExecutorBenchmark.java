@@ -41,15 +41,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * ExecutorBenchmark related
+ *
  * @author yanhom
- */
+ * @since 1.2.1
+ **/
 @BenchmarkMode(Mode.Throughput)
 @OutputTimeUnit(TimeUnit.SECONDS)
 @State(Scope.Thread)
 @Warmup(iterations = 5)
 public class ExecutorBenchmark {
 
-    @Param({"100", "2000", "4000", "6000", "8000", "10000"})
+    @Param({"100", "2000", "4000", "6000", "8000"})
     private int max;
 
     @Param({"MEDIUM"})
@@ -127,33 +130,37 @@ public class ExecutorBenchmark {
     }
 
     @Benchmark
-    @Threads(8)
+    @Threads(4)
     public void test8ThreadsStandardSubmit(Blackhole bh) {
         executeTasksAndWait(standardExecutor, bh);
     }
 
     @Benchmark
-    @Threads(8)
-    public void test8ThreadsSingleEntry(Blackhole bh) {
+    @Threads(4)
+    public void test8ThreadsDtpSubmit(Blackhole bh) {
         executeTasksAndWait(dtpExecutor, bh);
     }
 
     private void executeTasksAndWait(ThreadPoolExecutor executor, Blackhole bh) {
         executor.submit(() -> {
             try {
+                int res = 0;
                 switch (taskType) {
                     case LIGHT:
-                        bh.consume(max * max);
+                        res = max * max;
                         break;
                     case MEDIUM:
-                        bh.consume(calculatePrimes(max));
+                        res = calculatePrimes(max);
                         break;
                     case HEAVY:
-                        bh.consume(calculatePrimes(max));
+                        res = calculatePrimes(max);
                         Thread.sleep(2);
                         break;
+                    default:
+                        break;
                 }
-                return max;
+                bh.consume(res);
+                return res;
             } catch (Exception e) {
                 return -1;
             }

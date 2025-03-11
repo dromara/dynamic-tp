@@ -1,0 +1,85 @@
+[
+    {
+        "jmhVersion" : "1.36",
+        "benchmark" : "org.dromara.dynamictp.benchmark.ExecutorBenchmark.testDtpSubmit",
+        "mode" : "thrpt",
+        "threads" : 1,
+        "forks" : 5,
+        "jvm" : "/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/jre/bin/java",
+        "jvmArgs" : [
+            "-Xmn256m",
+            "-Xmx1024m",
+            "-XX:+UseConcMarkSweepGC",
+            "-javaagent:/Applications/IntelliJ IDEA 2025.1 EAP.app/Contents/lib/idea_rt.jar=65420",
+            "-Dfile.encoding=UTF-8"
+        ],
+        "jdkVersion" : "1.8.0_212",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "25.212-b03",
+        "warmupIterations" : 5,
+        "warmupTime" : "10 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "10 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "max" : "100",
+            "taskType" : "MEDIUM"
+        },
+        "primaryMetric" : {
+            "score" : 1038197.3031587042,
+            "scoreError" : 30993.163928745482,
+            "scoreConfidence" : [
+                1007204.1392299588,
+                1069190.4670874497
+            ],
+            "scorePercentiles" : {
+                "0.0" : 954260.2351710228,
+                "50.0" : 1042715.8106544812,
+                "90.0" : 1084645.2657076803,
+                "95.0" : 1107660.6410694888,
+                "99.0" : 1108838.240473541,
+                "99.9" : 1108838.240473541,
+                "99.99" : 1108838.240473541,
+                "99.999" : 1108838.240473541,
+                "99.9999" : 1108838.240473541,
+                "100.0" : 1108838.240473541
+            },
+            "scoreUnit" : "ops/s",
+            "rawData" : [
+                [
+                    1019342.2082895241,
+                    983319.7174231138,
+                    1016410.3447858405,
+                    1007467.2137123635,
+                    954260.2351710228
+                ],
+                [
+                    1061438.4338367097,
+                    1060902.2337545308,
+                    1048117.2019182567,
+                    1042462.8090376467,
+                    1044151.7829482307
+                ],
+                [
+                    1108838.240473541,
+                    1078876.3855443234,
+                    1085286.2523924976,
+                    1060387.5071854512,
+                    999042.7738860861
+                ],
+                [
+                    1042968.8122713155,
+                    1038224.706870897,
+                    1047062.3850626809,
+                    1040282.9632030502,
+                    1025103.8554070015
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    }
+]
+
+

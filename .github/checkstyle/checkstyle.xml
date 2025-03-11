@@ -166,7 +166,7 @@
     </module>
     <!-- 检查未被注释的main方法,排除以Application结尾命名的类 -->
     <module name="UncommentedMain">
-      <property name="excludedClasses" value=".*Application$"/>
+      <property name="excludedClasses" value=".*Application$|.*BenchmarkRunner"/>
     </module>
     <!-- 禁止使用System.out.println -->
     <module name="Regexp">

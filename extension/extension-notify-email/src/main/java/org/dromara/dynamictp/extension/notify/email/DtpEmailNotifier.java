@@ -96,7 +96,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("poolSize", executor.getPoolSize());
         context.setVariable("activeCount", executor.getActiveCount());
         context.setVariable("largestPoolSize", executor.getLargestPoolSize());
-        context.setVariable("max", executor.getTaskCount());
+        context.setVariable("taskCount", executor.getTaskCount());
         context.setVariable("completedTaskCount", executor.getCompletedTaskCount());
         context.setVariable("waitingTaskCount", executor.getQueueSize());
         context.setVariable("queueType", executor.getQueueType());

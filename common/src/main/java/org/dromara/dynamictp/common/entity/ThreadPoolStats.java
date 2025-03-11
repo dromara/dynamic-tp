@@ -88,7 +88,7 @@ public class ThreadPoolStats extends Metrics {
     /**
      * 大致任务总数
      */
-    private long max;
+    private long taskCount;
 
     /**
      * 已执行完成的大致任务总数

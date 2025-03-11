@@ -53,7 +53,7 @@ public final class CapturedExecutor implements ExecutorAdapter<ExecutorAdapter<?
 
     private final int largestPoolSize;
 
-    private final long max;
+    private final long taskCount;
 
     private final long completedTaskCount;
 
@@ -80,7 +80,7 @@ public final class CapturedExecutor implements ExecutorAdapter<ExecutorAdapter<?
         this.activeCount = executorAdapter.getActiveCount();
         this.poolSize = executorAdapter.getPoolSize();
         this.largestPoolSize = executorAdapter.getLargestPoolSize();
-        this.max = executorAdapter.getTaskCount();
+        this.taskCount = executorAdapter.getTaskCount();
         this.completedTaskCount = executorAdapter.getCompletedTaskCount();
         this.keepAliveTime = executorAdapter.getKeepAliveTime(TimeUnit.SECONDS);
         this.allowCoreThreadTimeOut = executorAdapter.allowsCoreThreadTimeOut();
@@ -136,7 +136,7 @@ public final class CapturedExecutor implements ExecutorAdapter<ExecutorAdapter<?
 
     @Override
     public long getTaskCount() {
-        return max;
+        return taskCount;
     }
 
     @Override

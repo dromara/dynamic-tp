@@ -24,13 +24,15 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 /**
+ * BenchmarkRunner related
+ *
  * @author yanhom
- */
+ * @since 1.2.1
+ **/
 public class BenchmarkRunner {
 
     public static void main(String[] args) throws RunnerException {
         Options options = new OptionsBuilder()
-                .include(ExecutorBenchmark.class.getSimpleName())
                 .include(ExecutorBenchmark.class.getSimpleName())
                 .resultFormat(ResultFormatType.JSON)
                 .result("executor-benchmark-results.json")
@@ -39,3 +41,4 @@ public class BenchmarkRunner {
         new Runner(options).run();
     }
 }
+

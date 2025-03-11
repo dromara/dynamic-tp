@@ -50,6 +50,7 @@
         <module>test</module>
         <module>dependencies</module>
         <module>spring</module>
+        <module>benchmark</module>
     </modules>
 
     <dependencies>

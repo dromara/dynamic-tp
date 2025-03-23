@@ -29,11 +29,11 @@
         <ttl.version>2.14.3</ttl.version>
         <equator.version>1.0.4</equator.version>
 
-        <sofa-rpc.version>5.9.1</sofa-rpc.version>
+        <sofa-rpc.version>5.12.0</sofa-rpc.version>
         <liteflow.version>2.12.3</liteflow.version>
         <brpc.version>2022.2.0</brpc.version>
-        <apache-dubbo.version>3.0.7</apache-dubbo.version>
-        <alibaba-dubbo.version>2.6.0</alibaba-dubbo.version>
+        <apache-dubbo.version>3.0.14</apache-dubbo.version>
+        <alibaba-dubbo.version>2.6.10</alibaba-dubbo.version>
         <alibaba-dubbo-starter.version>2.0.0</alibaba-dubbo-starter.version>
         <grpc-starter.version>2.15.0.RELEASE</grpc-starter.version>
         <hystrix.version>1.5.18</hystrix.version>
@@ -43,11 +43,11 @@
         <rocketmq.version>4.9.3</rocketmq.version>
         <!--until 2023-04-06 latest state version-->
         <aliyun-rocketmq.version>1.8.8.8.Final</aliyun-rocketmq.version>
-        <tars.version>1.7.2</tars.version>
-        <skywalking.version>8.11.0</skywalking.version>
+        <tars.version>1.7.3</tars.version>
+        <skywalking.version>9.1.0</skywalking.version>
         <opentelemetry.version>1.25.0</opentelemetry.version>
 
-        <apollo.version>1.5.0</apollo.version>
+        <apollo.version>2.0.0</apollo.version>
         <nacos-api.version>2.0.4</nacos-api.version>
         <spring-boot-nacos.version>0.2.12</spring-boot-nacos.version>
         <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>

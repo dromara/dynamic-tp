@@ -34,8 +34,6 @@
         <maven-site-plugin.version>3.7.1</maven-site-plugin.version>
         <maven-checkstyle-plugin.version>3.1.0</maven-checkstyle-plugin.version>
         <central-publishing-maven-plugin.version>0.6.0</central-publishing-maven-plugin.version>
-
-        <cglib.version>3.3.0</cglib.version>
     </properties>
 
     <modules>
@@ -104,14 +102,6 @@
                 <groupId>org.dromara.dynamictp</groupId>
                 <artifactId>dynamic-tp-dependencies</artifactId>
                 <version>${project.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>cglib</groupId>
-                <artifactId>cglib</artifactId>
-                <version>${cglib.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

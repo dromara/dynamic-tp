@@ -48,7 +48,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTI
 @Slf4j
 public class DtpMonitor {
 
-    private static ScheduledExecutorService MONITOR_EXECUTOR;
+    private static ScheduledExecutorService monitorExecutor;
 
     private final DtpProperties dtpProperties;
 
@@ -71,12 +71,12 @@ public class DtpMonitor {
         if (monitorFuture != null) {
             monitorFuture.cancel(true);
         }
-        if (MONITOR_EXECUTOR == null || MONITOR_EXECUTOR.isShutdown() || MONITOR_EXECUTOR.isTerminated()) {
-            MONITOR_EXECUTOR = ThreadPoolCreator.newScheduledThreadPool("dtp-monitor", 1);
+        // Compatible with the springboot devtool restart scenario.
+        if (monitorExecutor == null || monitorExecutor.isShutdown() || monitorExecutor.isTerminated()) {
+            monitorExecutor = ThreadPoolCreator.newScheduledThreadPool("dtp-monitor", 1);
         }
         monitorInterval = dtpProperties.getMonitorInterval();
-        monitorFuture = MONITOR_EXECUTOR.scheduleWithFixedDelay(this::run,
-                0, dtpProperties.getMonitorInterval(), TimeUnit.SECONDS);
+        monitorFuture = monitorExecutor.scheduleWithFixedDelay(this::run, 0, monitorInterval, TimeUnit.SECONDS);
     }
 
     private void run() {
@@ -127,6 +127,6 @@ public class DtpMonitor {
     }
 
     public static void destroy() {
-        MONITOR_EXECUTOR.shutdownNow();
+        monitorExecutor.shutdownNow();
     }
 }

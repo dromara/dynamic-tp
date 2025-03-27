@@ -64,7 +64,7 @@ public class SystemMetricManager {
         return MEMORY_METRICS_CAPTOR.getLongLivedMemoryUsage();
     }
 
-    public static void stop() {
+    public static void destroy() {
         EXECUTOR.shutdown();
     }
 }

@@ -80,7 +80,7 @@ public class DtpLifecycle implements LifeCycleManagement {
         DtpMonitor.destroy();
         AlarmManager.destroy();
         NoticeManager.destroy();
-        SystemMetricManager.stop();
+        SystemMetricManager.destroy();
         EventBusManager.destroy();
     }
 }

@@ -48,7 +48,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTI
 @Slf4j
 public class DtpMonitor {
 
-    private static final ScheduledExecutorService MONITOR_EXECUTOR = ThreadPoolCreator.newScheduledThreadPool("dtp-monitor", 1);
+    private static ScheduledExecutorService MONITOR_EXECUTOR;
 
     private final DtpProperties dtpProperties;
 
@@ -70,6 +70,9 @@ public class DtpMonitor {
         // cancel old monitor task.
         if (monitorFuture != null) {
             monitorFuture.cancel(true);
+        }
+        if (MONITOR_EXECUTOR == null || MONITOR_EXECUTOR.isShutdown() || MONITOR_EXECUTOR.isTerminated()) {
+            MONITOR_EXECUTOR = ThreadPoolCreator.newScheduledThreadPool("dtp-monitor", 1);
         }
         monitorInterval = dtpProperties.getMonitorInterval();
         monitorFuture = MONITOR_EXECUTOR.scheduleWithFixedDelay(this::run,

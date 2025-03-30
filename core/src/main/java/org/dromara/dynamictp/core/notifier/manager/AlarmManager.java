@@ -75,7 +75,7 @@ public class AlarmManager {
 
     public static void initAlarm(String poolName, NotifyItem notifyItem) {
         AlarmLimiter.initAlarmLimiter(poolName, notifyItem);
-        AlarmCounter.init(poolName, notifyItem.getType());
+        AlarmCounter.initAlarmCounter(poolName, notifyItem);
     }
 
     public static void tryAlarmAsync(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType, Runnable runnable) {

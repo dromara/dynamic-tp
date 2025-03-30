@@ -63,6 +63,12 @@ public class NotifyItem {
      */
     private int interval = 120;
 
+    private int count;
+
+    private int period;
+
+    private int silencePeriod;
+
     /**
      * Cluster notify limit.
      */

@@ -24,6 +24,8 @@
         <module>example-adapter-motan</module>
         <module>example-adapter-rocketmq</module>
         <module>example-adapter-rabbitmq</module>
+        <module>example-adapter-liteflow</module>
+        <module>example-adapter-webserver</module>
     </modules>
 
     <dependencies>

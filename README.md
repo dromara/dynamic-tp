@@ -182,6 +182,16 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ---
 
+## 知识星球
+
+微信打开领 100 元劵
+
+<a href="https://t.zsxq.com/DVGGO" target="_blank">
+    <img class="no-zoom" src="/resources/img/zsxq.jpg" width="30%" height="30%"/>
+</a>
+
+---
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=dromara/dynamic-tp&type=Date)](https://star-history.com/#dromara/dynamic-tp&Date)

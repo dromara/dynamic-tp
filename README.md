@@ -184,10 +184,8 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ## 知识星球
 
-微信打开领 100 元劵
-
-<a href="https://t.zsxq.com/DVGGO" target="_blank">
-    <img class="no-zoom" src="/resources/img/zsxq.jpg" width="30%" height="30%"/>
+<a href="https://t.zsxq.com/annca" target="_blank">
+    <img class="no-zoom" src="/resources/img/zsxq.png" width="50%" height="50%"/>
 </a>
 
 ---

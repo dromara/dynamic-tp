@@ -37,7 +37,10 @@ import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.slf4j.MDC;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.TRACE_ID;
 import static org.dromara.dynamictp.common.em.QueueTypeEnum.LINKED_BLOCKING_QUEUE;
@@ -66,6 +69,8 @@ public class AlarmManager {
     static {
         ALARM_INVOKER_CHAIN = NotifyFilterBuilder.getAlarmInvokerChain();
     }
+
+    private static final Map<String, AtomicInteger> ALARM_COUNTER = new ConcurrentHashMap<>();
 
     private AlarmManager() { }
 
@@ -116,6 +121,16 @@ public class AlarmManager {
         }
     }
 
+    public static boolean incrementAndCheckAlarmCount(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType, NotifyItem notifyItem) {
+        String key = genKey(executorWrapper.getThreadPoolName(), notifyType.getValue());
+        return ALARM_COUNTER.computeIfAbsent(key, k -> new AtomicInteger(0)).incrementAndGet() >= notifyItem.getCount();
+    }
+
+    public static void resetAlarmCount(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType) {
+        String key = genKey(executorWrapper.getThreadPoolName(), notifyType.getValue());
+        ALARM_COUNTER.getOrDefault(key, new AtomicInteger(0)).set(0);
+    }
+
     public static void destroy() {
         ALARM_EXECUTOR.shutdownNow();
     }
@@ -152,5 +167,9 @@ public class AlarmManager {
         if (runnable instanceof DtpRunnable) {
             MDC.remove(TRACE_ID);
         }
+    }
+
+    private static String genKey(String threadPoolName, String type) {
+        return threadPoolName + ":" + type;
     }
 }

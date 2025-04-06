@@ -39,11 +39,6 @@ import static java.util.stream.Collectors.toList;
 public class NotifyItem {
 
     /**
-     * Notify platform id
-     */
-    private List<String> platformIds;
-
-    /**
      * If enabled notify.
      */
     private boolean enabled = true;
@@ -54,20 +49,29 @@ public class NotifyItem {
     private String type;
 
     /**
+     * Notify platform id
+     */
+    private List<String> platformIds;
+
+    /**
      * Alarm threshold.
      */
     private int threshold;
 
     /**
-     * Alarm interval, time unit（s）
+     * Within a cycle window, if the number of occurrences exceeding the threshold reaches count, an alarm will be triggered.
      */
-    private int interval = 120;
-
     private int count;
 
-    private int period;
+    /**
+     * The size of cache in seconds for checking the alarm conditions.
+     */
+    private int period = 120;
 
-    private int silencePeriod;
+    /**
+     * After the alarm is triggered at Time-N (TN), there will be silence during the TN -> TN + silencePeriod.
+     */
+    private int silencePeriod = 120;
 
     /**
      * Cluster notify limit.
@@ -98,15 +102,15 @@ public class NotifyItem {
     public static List<NotifyItem> getAllNotifyItems() {
         NotifyItem rejectNotify = new NotifyItem();
         rejectNotify.setType(NotifyItemEnum.REJECT.getValue());
-        rejectNotify.setThreshold(10);
+        rejectNotify.setCount(10);
 
         NotifyItem runTimeoutNotify = new NotifyItem();
         runTimeoutNotify.setType(NotifyItemEnum.RUN_TIMEOUT.getValue());
-        runTimeoutNotify.setThreshold(10);
+        runTimeoutNotify.setCount(10);
 
         NotifyItem queueTimeoutNotify = new NotifyItem();
         queueTimeoutNotify.setType(NotifyItemEnum.QUEUE_TIMEOUT.getValue());
-        queueTimeoutNotify.setThreshold(10);
+        queueTimeoutNotify.setCount(10);
 
         List<NotifyItem> notifyItems = new ArrayList<>(6);
         notifyItems.addAll(getSimpleNotifyItems());
@@ -120,15 +124,17 @@ public class NotifyItem {
     public static List<NotifyItem> getSimpleNotifyItems() {
         NotifyItem changeNotify = new NotifyItem();
         changeNotify.setType(NotifyItemEnum.CHANGE.getValue());
-        changeNotify.setInterval(1);
+        changeNotify.setSilencePeriod(1);
 
         NotifyItem livenessNotify = new NotifyItem();
         livenessNotify.setType(NotifyItemEnum.LIVENESS.getValue());
         livenessNotify.setThreshold(70);
+        livenessNotify.setCount(2);
 
         NotifyItem capacityNotify = new NotifyItem();
         capacityNotify.setType(NotifyItemEnum.CAPACITY.getValue());
         capacityNotify.setThreshold(70);
+        capacityNotify.setCount(2);
 
         List<NotifyItem> notifyItems = new ArrayList<>(3);
         notifyItems.add(livenessNotify);

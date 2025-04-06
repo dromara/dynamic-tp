@@ -24,7 +24,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
-import org.dromara.dynamictp.common.entity.AlarmInfo;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.TpMainFields;
@@ -96,6 +95,7 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
         val statProvider = executorWrapper.getThreadPoolStatProvider();
         val alarmValue = notifyItem.getThreshold() + notifyItemEnum.getUnit() + " / "
                 + AlarmCounter.calcCurrentValue(executorWrapper, notifyItemEnum) + notifyItemEnum.getUnit();
+        val lastAlarmTime = AlarmCounter.getLastAlarmTime(executorWrapper.getThreadPoolName(), notifyItem.getType());
         String content = String.format(
                 getAlarmTemplate(),
                 CommonUtil.getInstance().getServiceName(),
@@ -120,11 +120,11 @@ public abstract class AbstractDtpNotifier implements DtpNotifier {
                 statProvider.getRejectedTaskCount(),
                 statProvider.getRunTimeoutCount(),
                 statProvider.getQueueTimeoutCount(),
-                Optional.ofNullable(context.getAlarmInfo()).map(AlarmInfo::getLastAlarmTime).orElse(UNKNOWN),
+                Optional.ofNullable(lastAlarmTime).orElse(UNKNOWN),
                 DateUtil.now(),
                 getReceives(notifyItem, platform),
                 getTraceInfo(),
-                notifyItem.getInterval(),
+                notifyItem.getSilencePeriod(),
                 getExtInfo()
         );
         return highlightAlarmContent(content, notifyItemEnum);

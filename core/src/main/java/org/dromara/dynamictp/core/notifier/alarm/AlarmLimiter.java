@@ -48,7 +48,7 @@ public class AlarmLimiter {
 
         String key = genKey(threadPoolName, notifyItem.getType());
         Cache<String, String> cache = CacheBuilder.newBuilder()
-                .expireAfterWrite(notifyItem.getInterval(), TimeUnit.SECONDS)
+                .expireAfterWrite(notifyItem.getPeriod(), TimeUnit.SECONDS)
                 .build();
         ALARM_LIMITER.put(key, cache);
     }

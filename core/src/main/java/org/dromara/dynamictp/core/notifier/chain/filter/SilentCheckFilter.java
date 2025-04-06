@@ -19,43 +19,46 @@ package org.dromara.dynamictp.core.notifier.chain.filter;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.collections4.CollectionUtils;
-import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.pattern.filter.Invoker;
+import org.dromara.dynamictp.core.notifier.alarm.AlarmLimiter;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
-
-import java.util.Objects;
 
 /**
- * NoticeBaseFilter related
+ * SilentCheckFilter related
  *
  * @author yanhom
- * @since 1.1.0
+ * @since 1.0.0
  **/
 @Slf4j
-public class NoticeBaseFilter implements NotifyFilter {
+public class SilentCheckFilter implements NotifyFilter {
+
+    private static final Object SEND_LOCK = new Object();
+
+    @Override
+    public int getOrder() {
+        return 2;
+    }
 
     @Override
     public void doFilter(BaseNotifyCtx context, Invoker<BaseNotifyCtx> nextInvoker) {
-        val executorWrapper = context.getExecutorWrapper();
-        val notifyItem = context.getNotifyItem();
-        if (Objects.isNull(notifyItem) || !satisfyBaseCondition(notifyItem, executorWrapper)) {
-            log.debug("DynamicTp notify, no platforms configured or notification is not enabled, threadPoolName: {}",
-                    executorWrapper.getThreadPoolName());
+        if (isSilent(context)) {
             return;
         }
         nextInvoker.invoke(context);
     }
 
-    private boolean satisfyBaseCondition(NotifyItem notifyItem, ExecutorWrapper executor) {
-        return executor.isNotifyEnabled()
-                && notifyItem.isEnabled()
-                && CollectionUtils.isNotEmpty(notifyItem.getPlatformIds());
-    }
-
-    @Override
-    public int getOrder() {
-        return 0;
+    protected boolean isSilent(BaseNotifyCtx context) {
+        val executorWrapper = context.getExecutorWrapper();
+        val notifyItem = context.getNotifyItem();
+        synchronized (SEND_LOCK) {
+            boolean ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyItem.getType());
+            if (!ifAlarm) {
+                log.debug("DynamicTp notify, alarm limit, threadPoolName: {}, notifyItem: {}",
+                        executorWrapper.getThreadPoolName(), notifyItem.getType());
+                return true;
+            }
+            AlarmLimiter.putVal(executorWrapper.getThreadPoolName(), notifyItem.getType());
+        }
+        return false;
     }
 }

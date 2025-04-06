@@ -39,6 +39,7 @@ import org.thymeleaf.context.Context;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.UNKNOWN;
@@ -87,6 +88,7 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         val statProvider = executorWrapper.getThreadPoolStatProvider();
         val alarmValue = notifyItem.getThreshold() + notifyItemEnum.getUnit() + " / "
                 + AlarmCounter.calcCurrentValue(executorWrapper, notifyItemEnum) + notifyItemEnum.getUnit();
+        val lastAlarmTime = AlarmCounter.getLastAlarmTime(executorWrapper.getThreadPoolName(), notifyItem.getType());
 
         Context context = newContext(executorWrapper);
         context.setVariable("alarmType", populateAlarmItem(notifyItemEnum, executorWrapper));
@@ -107,10 +109,10 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("rejectCount", statProvider.getRejectedTaskCount());
         context.setVariable("runTimeoutCount", statProvider.getRunTimeoutCount());
         context.setVariable("queueTimeoutCount", statProvider.getQueueTimeoutCount());
-        context.setVariable("lastAlarmTime", alarmInfo.getLastAlarmTime() == null ? UNKNOWN : alarmInfo.getLastAlarmTime());
+        context.setVariable("lastAlarmTime", Optional.ofNullable(lastAlarmTime).orElse(UNKNOWN));
         context.setVariable("alarmTime", DateUtil.now());
         context.setVariable("trace", getTraceInfo());
-        context.setVariable("alarmInterval", notifyItem.getInterval());
+        context.setVariable("alarmInterval", notifyItem.getSilencePeriod());
         context.setVariable("highlightVariables", getAlarmKeys(notifyItemEnum));
         context.setVariable("ext", getExtInfo());
         return ((EmailNotifier) notifier).processTemplateContent("alarm", context);

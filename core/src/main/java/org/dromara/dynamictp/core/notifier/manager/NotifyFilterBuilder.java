@@ -21,6 +21,7 @@ import org.dromara.dynamictp.common.em.NotifyTypeEnum;
 import org.dromara.dynamictp.common.pattern.filter.Filter;
 import org.dromara.dynamictp.common.pattern.filter.InvokerChain;
 import org.dromara.dynamictp.common.pattern.filter.InvokerChainFactory;
+import org.dromara.dynamictp.core.notifier.chain.filter.SilentCheckFilter;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
 import org.dromara.dynamictp.core.notifier.chain.filter.AlarmBaseFilter;
 import org.dromara.dynamictp.core.notifier.chain.filter.NoticeBaseFilter;
@@ -50,6 +51,7 @@ public class NotifyFilterBuilder {
         val filters = ContextManagerHelper.getBeansOfType(NotifyFilter.class);
         Collection<NotifyFilter> alarmFilters = Lists.newArrayList(filters.values());
         alarmFilters.add(new AlarmBaseFilter());
+        alarmFilters.add(new SilentCheckFilter());
         alarmFilters = alarmFilters.stream()
                 .filter(x -> x.supports(NotifyTypeEnum.ALARM))
                 .sorted(Comparator.comparing(Filter::getOrder))

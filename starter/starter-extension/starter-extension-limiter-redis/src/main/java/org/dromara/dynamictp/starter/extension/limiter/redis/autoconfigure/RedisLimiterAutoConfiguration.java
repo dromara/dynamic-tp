@@ -17,7 +17,7 @@
 
 package org.dromara.dynamictp.starter.extension.limiter.redis.autoconfigure;
 
-import org.dromara.dynamictp.extension.limiter.redis.ratelimiter.NotifyRedisRateLimiterFilter;
+import org.dromara.dynamictp.extension.limiter.redis.ratelimiter.RedisRateLimiterNotifyFilter;
 import org.dromara.dynamictp.extension.limiter.redis.ratelimiter.RedisRateLimiter;
 import org.dromara.dynamictp.extension.limiter.redis.ratelimiter.SlidingWindowRateLimiter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -46,7 +46,7 @@ public class RedisLimiterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public NotifyRedisRateLimiterFilter notifyRedisRateLimiterFilter() {
-        return new NotifyRedisRateLimiterFilter();
+    public RedisRateLimiterNotifyFilter notifyRedisRateLimiterFilter() {
+        return new RedisRateLimiterNotifyFilter();
     }
 }

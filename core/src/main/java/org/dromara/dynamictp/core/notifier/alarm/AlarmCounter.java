@@ -42,7 +42,7 @@ public class AlarmCounter {
 
     private static final Map<String, Cache<String, AlarmInfo>> ALARM_INFO_CACHE = new ConcurrentHashMap<>();
 
-    private static final Map<String, String> LAST_ALARM_TIMES = new ConcurrentHashMap<>();
+    private static final Map<String, String> LAST_ALARM_TIME_MAP = new ConcurrentHashMap<>();
 
     private AlarmCounter() { }
 
@@ -81,15 +81,15 @@ public class AlarmCounter {
             alarmInfo.reset();
         }
         String key = buildKey(threadPoolName, notifyType);
-        LAST_ALARM_TIMES.put(key, DateUtil.now());
+        LAST_ALARM_TIME_MAP.put(key, DateUtil.now());
     }
 
     public static String getLastAlarmTime(String threadPoolName, String notifyType) {
         String key = buildKey(threadPoolName, notifyType);
-        return LAST_ALARM_TIMES.get(key);
+        return LAST_ALARM_TIME_MAP.get(key);
     }
 
-    public static void incAlarmCounter(String threadPoolName, String notifyType) {
+    public static void incAlarmCount(String threadPoolName, String notifyType) {
         AlarmInfo alarmInfo = getAlarmInfo(threadPoolName, notifyType);
         if (Objects.isNull(alarmInfo)) {
             String key = buildKey(threadPoolName, notifyType);

@@ -20,7 +20,6 @@ package org.dromara.dynamictp.common.entity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
-import org.dromara.dynamictp.common.util.DateUtil;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -36,8 +35,6 @@ public class AlarmInfo {
 
     private NotifyItemEnum notifyItem;
 
-    private String lastAlarmTime;
-
     private final AtomicInteger counter = new AtomicInteger(0);
 
     public void incCounter() {
@@ -45,7 +42,6 @@ public class AlarmInfo {
     }
 
     public void reset() {
-        lastAlarmTime = DateUtil.now();
         counter.set(0);
     }
 

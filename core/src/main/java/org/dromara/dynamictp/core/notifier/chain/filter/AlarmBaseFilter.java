@@ -17,15 +17,18 @@
 
 package org.dromara.dynamictp.core.notifier.chain.filter;
 
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.common.entity.NotifyItem;
-import org.dromara.dynamictp.common.pattern.filter.Invoker;
-import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
-import org.dromara.dynamictp.core.notifier.alarm.AlarmLimiter;
-import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
+import cn.hutool.core.util.NumberUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
+import org.dromara.dynamictp.common.em.NotifyItemEnum;
+import org.dromara.dynamictp.common.entity.AlarmInfo;
+import org.dromara.dynamictp.common.entity.NotifyItem;
+import org.dromara.dynamictp.common.pattern.filter.Invoker;
+import org.dromara.dynamictp.core.notifier.alarm.AlarmCounter;
+import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
+import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.util.Objects;
 
@@ -38,36 +41,21 @@ import java.util.Objects;
 @Slf4j
 public class AlarmBaseFilter implements NotifyFilter {
 
-    private static final Object SEND_LOCK = new Object();
-
     @Override
     public void doFilter(BaseNotifyCtx context, Invoker<BaseNotifyCtx> nextInvoker) {
-
         val executorWrapper = context.getExecutorWrapper();
         val notifyItem = context.getNotifyItem();
         if (Objects.isNull(notifyItem) || !satisfyBaseCondition(notifyItem, executorWrapper)) {
             return;
         }
 
-        boolean ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyItem.getType());
-        if (!ifAlarm) {
-            log.debug("DynamicTp notify, alarm limit, threadPoolName: {}, notifyItem: {}",
-                    executorWrapper.getThreadPoolName(), notifyItem.getType());
+        if (!hasReachedThreshold(executorWrapper, context.getNotifyItemEnum(), notifyItem)) {
             return;
         }
-
-        if (!AlarmManager.checkThreshold(executorWrapper, context.getNotifyItemEnum(), notifyItem)) {
+        AlarmCounter.incAlarmCount(executorWrapper.getThreadPoolName(), notifyItem.getType());
+        int count = AlarmCounter.getCount(executorWrapper.getThreadPoolName(), notifyItem.getType());
+        if (count < notifyItem.getCount()) {
             return;
-        }
-        synchronized (SEND_LOCK) {
-            // recheck alarm limit.
-            ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyItem.getType());
-            if (!ifAlarm) {
-                log.warn("DynamicTp notify, concurrent send, alarm limit, threadPoolName: {}, notifyItem: {}",
-                        executorWrapper.getThreadPoolName(), notifyItem.getType());
-                return;
-            }
-            AlarmLimiter.putVal(executorWrapper.getThreadPoolName(), notifyItem.getType());
         }
         nextInvoker.invoke(context);
     }
@@ -76,6 +64,43 @@ public class AlarmBaseFilter implements NotifyFilter {
         return executor.isNotifyEnabled()
                 && notifyItem.isEnabled()
                 && CollectionUtils.isNotEmpty(notifyItem.getPlatformIds());
+    }
+
+    private boolean hasReachedThreshold(ExecutorWrapper executor, NotifyItemEnum notifyType, NotifyItem notifyItem) {
+        switch (notifyType) {
+            case CAPACITY:
+                return checkCapacity(executor, notifyItem);
+            case LIVENESS:
+                return checkLiveness(executor, notifyItem);
+            case REJECT:
+            case RUN_TIMEOUT:
+            case QUEUE_TIMEOUT:
+                return true;
+            default:
+                log.error("Unsupported alarm type [{}]", notifyType);
+                return false;
+        }
+    }
+
+    private boolean checkLiveness(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
+        val executor = executorWrapper.getExecutor();
+        int maximumPoolSize = executor.getMaximumPoolSize();
+        double div = NumberUtil.div(executor.getActiveCount(), maximumPoolSize, 2) * 100;
+        return div >= notifyItem.getThreshold();
+    }
+
+    private boolean checkCapacity(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
+        val executor = executorWrapper.getExecutor();
+        if (executor.getQueueSize() <= 0) {
+            return false;
+        }
+        double div = NumberUtil.div(executor.getQueueSize(), executor.getQueueCapacity(), 2) * 100;
+        return div >= notifyItem.getThreshold();
+    }
+
+    private static boolean checkWithAlarmInfo(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
+        AlarmInfo alarmInfo = AlarmCounter.getAlarmInfo(executorWrapper.getThreadPoolName(), notifyItem.getType());
+        return alarmInfo.getCount() >= notifyItem.getThreshold();
     }
 
     @Override

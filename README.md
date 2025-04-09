@@ -224,13 +224,6 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ---
 
-## 特别赞助
-
-**JNPF低代码开发平台**
-
-<a href="https://www.jnpfsoft.com/?from=dynamic-tp"><img src="/resources/img/jnpfsoft.png"></a>
-
----
 ## 鸣谢
 
 感谢 JetBrains 对开源项目的支持

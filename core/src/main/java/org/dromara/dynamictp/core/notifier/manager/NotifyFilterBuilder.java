@@ -21,9 +21,10 @@ import org.dromara.dynamictp.common.em.NotifyTypeEnum;
 import org.dromara.dynamictp.common.pattern.filter.Filter;
 import org.dromara.dynamictp.common.pattern.filter.InvokerChain;
 import org.dromara.dynamictp.common.pattern.filter.InvokerChainFactory;
+import org.dromara.dynamictp.core.notifier.chain.filter.SilentCheckFilter;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
-import org.dromara.dynamictp.core.notifier.chain.filter.AlarmBaseFilter;
-import org.dromara.dynamictp.core.notifier.chain.filter.NoticeBaseFilter;
+import org.dromara.dynamictp.core.notifier.chain.filter.BaseAlarmFilter;
+import org.dromara.dynamictp.core.notifier.chain.filter.BaseNoticeFilter;
 import org.dromara.dynamictp.core.notifier.chain.filter.NotifyFilter;
 import org.dromara.dynamictp.core.notifier.chain.invoker.AlarmInvoker;
 import org.dromara.dynamictp.core.notifier.chain.invoker.NoticeInvoker;
@@ -49,7 +50,8 @@ public class NotifyFilterBuilder {
     public static InvokerChain<BaseNotifyCtx> getAlarmInvokerChain() {
         val filters = ContextManagerHelper.getBeansOfType(NotifyFilter.class);
         Collection<NotifyFilter> alarmFilters = Lists.newArrayList(filters.values());
-        alarmFilters.add(new AlarmBaseFilter());
+        alarmFilters.add(new BaseAlarmFilter());
+        alarmFilters.add(new SilentCheckFilter());
         alarmFilters = alarmFilters.stream()
                 .filter(x -> x.supports(NotifyTypeEnum.ALARM))
                 .sorted(Comparator.comparing(Filter::getOrder))
@@ -60,7 +62,7 @@ public class NotifyFilterBuilder {
     public static InvokerChain<BaseNotifyCtx> getCommonInvokerChain() {
         val filters = ContextManagerHelper.getBeansOfType(NotifyFilter.class);
         Collection<NotifyFilter> noticeFilters = Lists.newArrayList(filters.values());
-        noticeFilters.add(new NoticeBaseFilter());
+        noticeFilters.add(new BaseNoticeFilter());
         noticeFilters = noticeFilters.stream()
                 .filter(x -> x.supports(NotifyTypeEnum.COMMON))
                 .sorted(Comparator.comparing(Filter::getOrder))

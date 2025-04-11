@@ -17,33 +17,39 @@
 
 package org.dromara.dynamictp.core.notifier.chain.filter;
 
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.pattern.filter.Invoker;
+import org.dromara.dynamictp.core.notifier.alarm.AlarmCounter;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.collections4.CollectionUtils;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.util.Objects;
 
 /**
- * NoticeBaseFilter related
+ * BaseAlarmFilter related
  *
  * @author yanhom
- * @since 1.1.0
+ * @since 1.0.8
  **/
 @Slf4j
-public class NoticeBaseFilter implements NotifyFilter {
+public class BaseAlarmFilter implements NotifyFilter {
 
     @Override
     public void doFilter(BaseNotifyCtx context, Invoker<BaseNotifyCtx> nextInvoker) {
-
-        val executorWrapper = context.getExecutorWrapper();
-        val notifyItem = context.getNotifyItem();
+        ExecutorWrapper executorWrapper = context.getExecutorWrapper();
+        NotifyItem notifyItem = context.getNotifyItem();
         if (Objects.isNull(notifyItem) || !satisfyBaseCondition(notifyItem, executorWrapper)) {
-            log.debug("DynamicTp notify, no platforms configured or notification is not enabled, threadPoolName: {}",
-                    executorWrapper.getThreadPoolName());
+            return;
+        }
+        AlarmCounter.incAlarmCount(executorWrapper.getThreadPoolName(), notifyItem.getType());
+        int count = AlarmCounter.getCount(executorWrapper.getThreadPoolName(), notifyItem.getType());
+        if (count < notifyItem.getCount()) {
+            if (log.isDebugEnabled()) {
+                log.debug("DynamicTp notify, alarm count not reached, current count: {}, threshold: {}, threadPoolName: {}, notifyItem: {}",
+                        count, notifyItem.getCount(), executorWrapper.getThreadPoolName(), notifyItem);
+            }
             return;
         }
         nextInvoker.invoke(context);

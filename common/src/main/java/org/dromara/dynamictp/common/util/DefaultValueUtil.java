@@ -15,37 +15,26 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.common.entity;
+package org.dromara.dynamictp.common.util;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
-import org.dromara.dynamictp.common.em.NotifyItemEnum;
-
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
- * AlarmInfo related
+ * DefaultValueUtil related
  *
  * @author yanhom
- * @since 1.0.4
+ * @since 1.2.1
  **/
-@Data
-@Accessors(chain = true)
-public class AlarmInfo {
+public final class DefaultValueUtil {
 
-    private NotifyItemEnum notifyItem;
-
-    private final AtomicInteger counter = new AtomicInteger(0);
-
-    public void incCounter() {
-        counter.incrementAndGet();
+    private DefaultValueUtil() {
     }
 
-    public void reset() {
-        counter.set(0);
-    }
-
-    public int getCount() {
-        return counter.get();
+    public static <T extends Number> void setIfZero(Supplier<T> getter, Consumer<T> setter, T defaultValue) {
+        T value = getter.get();
+        if (value == null || value.intValue() == 0) {
+            setter.accept(defaultValue);
+        }
     }
 }

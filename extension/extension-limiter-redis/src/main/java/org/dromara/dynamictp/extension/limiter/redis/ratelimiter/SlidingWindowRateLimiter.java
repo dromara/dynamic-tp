@@ -69,7 +69,9 @@ public class SlidingWindowRateLimiter extends AbstractRedisRateLimiter {
                 return true;
             }
             if (Objects.isNull(res.get(LUA_RES_REMAIN_INDEX)) || (long) res.get(LUA_RES_REMAIN_INDEX) <= 0) {
-                log.debug("DynamicTp notify, trigger redis rate limit, limitKey:{}", res.get(0));
+                if (log.isDebugEnabled()) {
+                    log.debug("DynamicTp notify, trigger redis rate limit, limitKey:{}, res:{}", name, res);
+                }
                 return false;
             }
             return true;

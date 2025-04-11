@@ -25,9 +25,11 @@ import org.dromara.dynamictp.common.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
+import static org.dromara.dynamictp.common.util.DefaultValueUtil.setIfZero;
 
 /**
  * NotifyItem related
@@ -47,11 +49,6 @@ public class NotifyItem {
      * Notify item, see {@link NotifyItemEnum}
      */
     private String type;
-
-    /**
-     * Notify platform id
-     */
-    private List<String> platformIds;
 
     /**
      * Alarm threshold.
@@ -83,34 +80,37 @@ public class NotifyItem {
      */
     private String receivers;
 
+    /**
+     * Notify platform id
+     */
+    private List<String> platformIds;
+
     public static List<NotifyItem> mergeAllNotifyItems(List<NotifyItem> source) {
-        // update notify items
+
+        List<NotifyItem> notifyItems = new ArrayList<>(6);
         if (CollectionUtils.isEmpty(source)) {
-            return getAllNotifyItems();
+            notifyItems = getAllNotifyItems();
         } else {
             val configuredTypes = source.stream().map(NotifyItem::getType).collect(toList());
             val defaultItems = getAllNotifyItems().stream()
                     .filter(t -> !StringUtil.containsIgnoreCase(t.getType(), configuredTypes))
                     .collect(Collectors.toList());
-            List<NotifyItem> notifyItems = new ArrayList<>(6);
             notifyItems.addAll(defaultItems);
             notifyItems.addAll(source);
-            return notifyItems;
         }
+        populateDefaultValues(notifyItems);
+        return notifyItems;
     }
 
     public static List<NotifyItem> getAllNotifyItems() {
         NotifyItem rejectNotify = new NotifyItem();
         rejectNotify.setType(NotifyItemEnum.REJECT.getValue());
-        rejectNotify.setCount(10);
 
         NotifyItem runTimeoutNotify = new NotifyItem();
         runTimeoutNotify.setType(NotifyItemEnum.RUN_TIMEOUT.getValue());
-        runTimeoutNotify.setCount(10);
 
         NotifyItem queueTimeoutNotify = new NotifyItem();
         queueTimeoutNotify.setType(NotifyItemEnum.QUEUE_TIMEOUT.getValue());
-        queueTimeoutNotify.setCount(10);
 
         List<NotifyItem> notifyItems = new ArrayList<>(6);
         notifyItems.addAll(getSimpleNotifyItems());
@@ -128,13 +128,9 @@ public class NotifyItem {
 
         NotifyItem livenessNotify = new NotifyItem();
         livenessNotify.setType(NotifyItemEnum.LIVENESS.getValue());
-        livenessNotify.setThreshold(70);
-        livenessNotify.setCount(2);
 
         NotifyItem capacityNotify = new NotifyItem();
         capacityNotify.setType(NotifyItemEnum.CAPACITY.getValue());
-        capacityNotify.setThreshold(70);
-        capacityNotify.setCount(2);
 
         List<NotifyItem> notifyItems = new ArrayList<>(3);
         notifyItems.add(livenessNotify);
@@ -142,5 +138,30 @@ public class NotifyItem {
         notifyItems.add(capacityNotify);
 
         return notifyItems;
+    }
+
+    private static void populateDefaultValues(List<NotifyItem> source) {
+        if (CollectionUtils.isEmpty(source)) {
+            return;
+        }
+        for (NotifyItem item : source) {
+            NotifyItemEnum itemEnum = NotifyItemEnum.of(item.getType());
+            switch (Objects.requireNonNull(itemEnum)) {
+                case REJECT:
+                    setIfZero(item::getCount, item::setCount, 1);
+                    break;
+                case RUN_TIMEOUT:
+                case QUEUE_TIMEOUT:
+                    setIfZero(item::getCount, item::setCount, 10);
+                    break;
+                case LIVENESS:
+                case CAPACITY:
+                    setIfZero(item::getThreshold, item::setThreshold, 70);
+                    setIfZero(item::getCount, item::setCount, 2);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

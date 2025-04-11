@@ -116,6 +116,6 @@ public class AlarmCounter {
     }
 
     private static String buildKey(String threadPoolName, String notifyItemType) {
-        return threadPoolName + ":" + notifyItemType;
+        return threadPoolName + "#" + notifyItemType;
     }
 }

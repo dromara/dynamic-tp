@@ -18,10 +18,16 @@
 package org.dromara.dynamictp.core.notifier.chain.filter;
 
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
+import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.pattern.filter.Invoker;
 import org.dromara.dynamictp.core.notifier.alarm.AlarmLimiter;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * SilentCheckFilter related
@@ -32,7 +38,7 @@ import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
 @Slf4j
 public class SilentCheckFilter implements NotifyFilter {
 
-    private static final Object SEND_LOCK = new Object();
+    private static final Map<String, Lock> LOCK_MAP = new ConcurrentHashMap<>();
 
     @Override
     public int getOrder() {
@@ -48,17 +54,26 @@ public class SilentCheckFilter implements NotifyFilter {
     }
 
     protected boolean isSilent(BaseNotifyCtx context) {
-        val executorWrapper = context.getExecutorWrapper();
-        val notifyItem = context.getNotifyItem();
-        synchronized (SEND_LOCK) {
-            boolean ifAlarm = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyItem.getType());
-            if (!ifAlarm) {
-                log.debug("DynamicTp notify, alarm limit, threadPoolName: {}, notifyItem: {}",
-                        executorWrapper.getThreadPoolName(), notifyItem.getType());
+        ExecutorWrapper executorWrapper = context.getExecutorWrapper();
+        NotifyItem notifyItem = context.getNotifyItem();
+        String lockKey = executorWrapper.getThreadPoolName();
+        Lock lock = LOCK_MAP.computeIfAbsent(lockKey, k -> new ReentrantLock());
+
+        lock.lock();
+        try {
+            boolean isAllowed = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyItem.getType());
+            if (!isAllowed) {
+                if (log.isDebugEnabled()) {
+                    log.debug("DynamicTp notify, trigger rate limit, threadPoolName: {}, notifyItem: {}",
+                            executorWrapper.getThreadPoolName(), notifyItem.getType());
+                }
                 return true;
             }
             AlarmLimiter.putVal(executorWrapper.getThreadPoolName(), notifyItem.getType());
+        } finally {
+            lock.unlock();
         }
+
         return false;
     }
 }

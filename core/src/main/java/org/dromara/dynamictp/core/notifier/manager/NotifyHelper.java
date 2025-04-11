@@ -197,12 +197,15 @@ public class NotifyHelper {
         Map<String, NotifyItem> oldNotifyItemMap = StreamUtil.toMap(oldNotifyItems, NotifyItem::getType);
         newNotifyItems.forEach(x -> {
             NotifyItem oldNotifyItem = oldNotifyItemMap.get(x.getType());
-            if (Objects.nonNull(oldNotifyItem) &&
-                    oldNotifyItem.getPeriod() == x.getPeriod() &&
-                    oldNotifyItem.getSilencePeriod() == x.getSilencePeriod()) {
-                return;
+            if (Objects.isNull(oldNotifyItem)) {
+                AlarmManager.initAlarm(poolName, x);
             }
-            AlarmManager.initAlarm(poolName, x);
+            if (oldNotifyItem.getPeriod() != x.getPeriod()) {
+                AlarmManager.initAlarmCounter(poolName, x);
+            }
+            if (oldNotifyItem.getSilencePeriod() != x.getSilencePeriod()) {
+                AlarmManager.initAlarmLimiter(poolName, x);
+            }
         });
     }
 }

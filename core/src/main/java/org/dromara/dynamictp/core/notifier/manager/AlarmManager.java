@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.core.notifier.manager;
 
+import cn.hutool.core.util.NumberUtil;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -76,6 +77,14 @@ public class AlarmManager {
         AlarmCounter.initAlarmCounter(poolName, notifyItem);
     }
 
+    public static void initAlarmLimiter(String poolName, NotifyItem notifyItem) {
+        AlarmLimiter.initAlarmLimiter(poolName, notifyItem);
+    }
+
+    public static void initAlarmCounter(String poolName, NotifyItem notifyItem) {
+        AlarmCounter.initAlarmCounter(poolName, notifyItem);
+    }
+
     public static void tryAlarmAsync(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType, Runnable runnable) {
         preAlarm(runnable);
         try {
@@ -83,6 +92,18 @@ public class AlarmManager {
         } finally {
             postAlarm(runnable);
         }
+    }
+
+    public static void checkAndTryAlarmAsync(ExecutorWrapper executorWrapper, List<NotifyItemEnum> notifyTypes) {
+        ALARM_EXECUTOR.execute(() -> notifyTypes.forEach(x -> doCheckAndTryAlarm(executorWrapper, x)));
+    }
+
+    public static void doCheckAndTryAlarm(ExecutorWrapper executorWrapper, NotifyItemEnum notifyType) {
+        NotifyHelper.getNotifyItem(executorWrapper, notifyType).ifPresent(notifyItem -> {
+            if (hasReachedThreshold(executorWrapper, notifyType, notifyItem)) {
+                ALARM_INVOKER_CHAIN.proceed(new AlarmCtx(executorWrapper, notifyItem));
+            }
+        });
     }
 
     public static void tryAlarmAsync(ExecutorWrapper executorWrapper, List<NotifyItemEnum> notifyTypes) {
@@ -110,5 +131,46 @@ public class AlarmManager {
         if (runnable instanceof DtpRunnable) {
             MDC.remove(TRACE_ID);
         }
+    }
+
+    /**
+     * Check if the threshold is reached, for capacity and liveness we need to check.
+     * for reject, run timeout and queue timeout we don't need to check here, because it has been checked before.
+     *
+     * @param executor    the executor
+     * @param notifyType  the notify type
+     * @param notifyItem  the notify item
+     * @return true if the threshold is reached, false otherwise
+     */
+    private static boolean hasReachedThreshold(ExecutorWrapper executor, NotifyItemEnum notifyType, NotifyItem notifyItem) {
+        switch (notifyType) {
+            case CAPACITY:
+                return checkCapacity(executor, notifyItem);
+            case LIVENESS:
+                return checkLiveness(executor, notifyItem);
+            case REJECT:
+            case RUN_TIMEOUT:
+            case QUEUE_TIMEOUT:
+                return true;
+            default:
+                log.error("Unsupported alarm type [{}]", notifyType);
+                return false;
+        }
+    }
+
+    private static boolean checkLiveness(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
+        val executor = executorWrapper.getExecutor();
+        int maximumPoolSize = executor.getMaximumPoolSize();
+        double div = NumberUtil.div(executor.getActiveCount(), maximumPoolSize, 2) * 100;
+        return div >= notifyItem.getThreshold();
+    }
+
+    private static boolean checkCapacity(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
+        val executor = executorWrapper.getExecutor();
+        if (executor.getQueueSize() <= 0) {
+            return false;
+        }
+        double div = NumberUtil.div(executor.getQueueSize(), executor.getQueueCapacity(), 2) * 100;
+        return div >= notifyItem.getThreshold();
     }
 }

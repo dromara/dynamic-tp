@@ -19,6 +19,7 @@ package org.dromara.dynamictp.core.support;
 
 import com.alibaba.ttl.TtlRunnable;
 import com.alibaba.ttl.threadpool.TtlExecutors;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +38,6 @@ import org.dromara.dynamictp.core.executor.eager.TaskQueue;
 import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
-import com.google.common.base.Preconditions;
 
 import java.util.List;
 import java.util.Objects;
@@ -173,19 +173,9 @@ public class ThreadPoolBuilder {
     private boolean notifyEnabled = true;
 
     /**
-     * Task execute timeout, unit (ms).
-     */
-    private long runTimeout = 0;
-
-    /**
      * If try interrupt thread when run timeout.
      */
     private boolean tryInterrupt = false;
-
-    /**
-     * Task queue wait timeout, unit (ms), just for statistics.
-     */
-    private long queueTimeout = 0;
 
     /**
      * Task wrappers.
@@ -442,18 +432,8 @@ public class ThreadPoolBuilder {
         return this;
     }
 
-    public ThreadPoolBuilder runTimeout(long runTimeout) {
-        this.runTimeout = runTimeout;
-        return this;
-    }
-
     public ThreadPoolBuilder tryInterrupt(boolean tryInterrupt) {
         this.tryInterrupt = tryInterrupt;
-        return this;
-    }
-
-    public ThreadPoolBuilder queueTimeout(long queueTimeout) {
-        this.queueTimeout = queueTimeout;
         return this;
     }
 
@@ -586,9 +566,7 @@ public class ThreadPoolBuilder {
         dtpExecutor.setAwaitTerminationSeconds(builder.awaitTerminationSeconds);
         dtpExecutor.setPreStartAllCoreThreads(builder.preStartAllCoreThreads);
         dtpExecutor.setRejectEnhanced(builder.rejectEnhanced);
-        dtpExecutor.setRunTimeout(builder.runTimeout);
         dtpExecutor.setTryInterrupt(builder.tryInterrupt);
-        dtpExecutor.setQueueTimeout(builder.queueTimeout);
         dtpExecutor.setTaskWrappers(builder.taskWrappers);
         dtpExecutor.setNotifyItems(builder.notifyItems);
         dtpExecutor.setPlatformIds(builder.platformIds);

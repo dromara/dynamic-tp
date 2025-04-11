@@ -182,6 +182,14 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ---
 
+## 知识星球
+
+<a href="https://t.zsxq.com/annca" target="_blank">
+    <img class="no-zoom" src="/resources/img/zsxq.png" width="50%" height="50%"/>
+</a>
+
+---
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=dromara/dynamic-tp&type=Date)](https://star-history.com/#dromara/dynamic-tp&Date)

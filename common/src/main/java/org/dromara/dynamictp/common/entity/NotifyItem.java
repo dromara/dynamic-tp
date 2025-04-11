@@ -59,6 +59,11 @@ public class NotifyItem {
     private int threshold;
 
     /**
+     * The count to alarm.
+     */
+    private int count = 1;
+
+    /**
      * Alarm interval, time unit（s）
      */
     private int interval = 120;

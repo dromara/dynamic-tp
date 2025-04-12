@@ -86,18 +86,16 @@ public class NotifyItem {
     private List<String> platformIds;
 
     public static List<NotifyItem> mergeAllNotifyItems(List<NotifyItem> source) {
-
-        List<NotifyItem> notifyItems = new ArrayList<>(6);
         if (CollectionUtils.isEmpty(source)) {
-            notifyItems = getAllNotifyItems();
-        } else {
-            val configuredTypes = source.stream().map(NotifyItem::getType).collect(toList());
-            val defaultItems = getAllNotifyItems().stream()
-                    .filter(t -> !StringUtil.containsIgnoreCase(t.getType(), configuredTypes))
-                    .collect(Collectors.toList());
-            notifyItems.addAll(defaultItems);
-            notifyItems.addAll(source);
+            return getAllNotifyItems();
         }
+        val configuredTypes = source.stream().map(NotifyItem::getType).collect(toList());
+        val defaultItems = getAllNotifyItems().stream()
+                .filter(t -> !StringUtil.containsIgnoreCase(t.getType(), configuredTypes))
+                .collect(Collectors.toList());
+        List<NotifyItem> notifyItems = new ArrayList<>(6);
+        notifyItems.addAll(defaultItems);
+        notifyItems.addAll(source);
         populateDefaultValues(notifyItems);
         return notifyItems;
     }
@@ -118,6 +116,7 @@ public class NotifyItem {
         notifyItems.add(runTimeoutNotify);
         notifyItems.add(queueTimeoutNotify);
 
+        populateDefaultValues(notifyItems);
         return notifyItems;
     }
 

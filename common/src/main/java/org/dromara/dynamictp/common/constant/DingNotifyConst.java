@@ -68,8 +68,9 @@ public final class DingNotifyConst {
             "<font color=#664B4B size=2>上次报警时间：%s</font> \n\n" +
             "<font color=#664B4B size=2>报警时间：%s</font> \n\n" +
             "<font color=#664B4B size=2>接收人：@%s</font> \n\n" +
+            "<font color=#22B838 size=2>统计窗口：%ss</font> \n\n" +
+            "<font color=#22B838 size=2>静默时长：%ss</font> \n\n" +
             "<font color=#664B4B size=2>trace 信息：%s</font> \n\n" +
-            "<font color=#22B838 size=2>报警间隔：%ss</font> \n\n" +
             "<font color=#664B4B size=2>扩展信息：%s</font> \n\n";
 
     public static final String DING_CHANGE_NOTICE_TEMPLATE =

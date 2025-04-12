@@ -22,7 +22,6 @@ import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
-import org.dromara.dynamictp.common.entity.AlarmInfo;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.TpMainFields;
@@ -81,17 +80,16 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
     @Override
     protected String buildAlarmContent(NotifyPlatform platform, NotifyItemEnum notifyItemEnum) {
         AlarmCtx alarmCtx = (AlarmCtx) DtpNotifyCtxHolder.get();
-        ExecutorWrapper executorWrapper = alarmCtx.getExecutorWrapper();
-        val executor = executorWrapper.getExecutor();
         NotifyItem notifyItem = alarmCtx.getNotifyItem();
-        AlarmInfo alarmInfo = alarmCtx.getAlarmInfo();
-        val statProvider = executorWrapper.getThreadPoolStatProvider();
-        val alarmValue = notifyItem.getThreshold() + notifyItemEnum.getUnit() + " / "
-                + AlarmCounter.calcCurrentValue(executorWrapper, notifyItemEnum) + notifyItemEnum.getUnit();
-        val lastAlarmTime = AlarmCounter.getLastAlarmTime(executorWrapper.getThreadPoolName(), notifyItem.getType());
+        ExecutorWrapper executorWrapper = alarmCtx.getExecutorWrapper();
+        String threadPoolName = executorWrapper.getThreadPoolName();
+        String alarmValue = notifyItem.getCount() + " / " + alarmCtx.getAlarmInfo().getCount();
+        String lastAlarmTime = AlarmCounter.getLastAlarmTime(threadPoolName, notifyItem.getType());
 
+        val executor = executorWrapper.getExecutor();
+        val statProvider = executorWrapper.getThreadPoolStatProvider();
         Context context = newContext(executorWrapper);
-        context.setVariable("alarmType", populateAlarmItem(notifyItemEnum, executorWrapper));
+        context.setVariable("alarmType", populateAlarmItem(notifyItemEnum, notifyItem, executorWrapper));
         context.setVariable("alarmValue", alarmValue);
         context.setVariable("corePoolSize", executor.getCorePoolSize());
         context.setVariable("maximumPoolSize", executor.getMaximumPoolSize());
@@ -111,9 +109,10 @@ public class DtpEmailNotifier extends AbstractDtpNotifier {
         context.setVariable("queueTimeoutCount", statProvider.getQueueTimeoutCount());
         context.setVariable("lastAlarmTime", Optional.ofNullable(lastAlarmTime).orElse(UNKNOWN));
         context.setVariable("alarmTime", DateUtil.now());
-        context.setVariable("trace", getTraceInfo());
-        context.setVariable("alarmInterval", notifyItem.getSilencePeriod());
+        context.setVariable("alarmPeriod", notifyItem.getPeriod());
+        context.setVariable("alarmSilencePeriod", notifyItem.getSilencePeriod());
         context.setVariable("highlightVariables", getAlarmKeys(notifyItemEnum));
+        context.setVariable("trace", getTraceInfo());
         context.setVariable("ext", getExtInfo());
         return ((EmailNotifier) notifier).processTemplateContent("alarm", context);
     }

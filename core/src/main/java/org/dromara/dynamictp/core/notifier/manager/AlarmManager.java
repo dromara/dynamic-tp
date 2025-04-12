@@ -162,7 +162,12 @@ public class AlarmManager {
         val executor = executorWrapper.getExecutor();
         int maximumPoolSize = executor.getMaximumPoolSize();
         double div = NumberUtil.div(executor.getActiveCount(), maximumPoolSize, 2) * 100;
-        return div >= notifyItem.getThreshold();
+        if (div >= notifyItem.getThreshold()) {
+            log.warn("DynamicTp monitor, current liveness [{}] >= threshold [{}], threadPoolName: {}",
+                    div, notifyItem.getThreshold(), executorWrapper.getThreadPoolName());
+            return true;
+        }
+        return false;
     }
 
     private static boolean checkCapacity(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
@@ -171,6 +176,11 @@ public class AlarmManager {
             return false;
         }
         double div = NumberUtil.div(executor.getQueueSize(), executor.getQueueCapacity(), 2) * 100;
-        return div >= notifyItem.getThreshold();
+        if (div >= notifyItem.getThreshold()) {
+            log.warn("DynamicTp monitor, current queue utilization [{}] >= threshold [{}], threadPoolName: {}",
+                    div, notifyItem.getThreshold(), executorWrapper.getThreadPoolName());
+            return true;
+        }
+        return false;
     }
 }

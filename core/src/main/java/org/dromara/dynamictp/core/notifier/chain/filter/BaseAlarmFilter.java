@@ -43,12 +43,14 @@ public class BaseAlarmFilter implements NotifyFilter {
         if (Objects.isNull(notifyItem) || !satisfyBaseCondition(notifyItem, executorWrapper)) {
             return;
         }
-        AlarmCounter.incAlarmCount(executorWrapper.getThreadPoolName(), notifyItem.getType());
-        int count = AlarmCounter.getCount(executorWrapper.getThreadPoolName(), notifyItem.getType());
+
+        String threadPoolName = executorWrapper.getThreadPoolName();
+        AlarmCounter.incAlarmCount(threadPoolName, notifyItem.getType());
+        int count = AlarmCounter.getCount(threadPoolName, notifyItem.getType());
         if (count < notifyItem.getCount()) {
             if (log.isDebugEnabled()) {
                 log.debug("DynamicTp notify, alarm count not reached, current count: {}, threshold: {}, threadPoolName: {}, notifyItem: {}",
-                        count, notifyItem.getCount(), executorWrapper.getThreadPoolName(), notifyItem);
+                        count, notifyItem.getCount(), threadPoolName, notifyItem);
             }
             return;
         }

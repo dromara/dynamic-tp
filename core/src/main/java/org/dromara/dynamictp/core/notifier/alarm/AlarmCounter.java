@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.core.notifier.alarm;
 
-import cn.hutool.core.util.NumberUtil;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import lombok.val;
@@ -25,7 +24,6 @@ import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.AlarmInfo;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.util.DateUtil;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.util.Map;
 import java.util.Objects;
@@ -80,13 +78,11 @@ public class AlarmCounter {
         if (Objects.nonNull(alarmInfo)) {
             alarmInfo.reset();
         }
-        String key = buildKey(threadPoolName, notifyType);
-        LAST_ALARM_TIME_MAP.put(key, DateUtil.now());
+        LAST_ALARM_TIME_MAP.put(buildKey(threadPoolName, notifyType), DateUtil.now());
     }
 
     public static String getLastAlarmTime(String threadPoolName, String notifyType) {
-        String key = buildKey(threadPoolName, notifyType);
-        return LAST_ALARM_TIME_MAP.get(key);
+        return LAST_ALARM_TIME_MAP.get(buildKey(threadPoolName, notifyType));
     }
 
     public static void incAlarmCount(String threadPoolName, String notifyType) {
@@ -97,22 +93,6 @@ public class AlarmCounter {
             ALARM_INFO_CACHE.get(key).put(notifyType, alarmInfo);
         }
         alarmInfo.incCounter();
-    }
-
-    public static int calcCurrentValue(ExecutorWrapper wrapper, NotifyItemEnum itemEnum) {
-        val executor = wrapper.getExecutor();
-        switch (itemEnum) {
-            case CAPACITY:
-                return (int) (NumberUtil.div(executor.getQueueSize(), executor.getQueueCapacity(), 2) * 100);
-            case LIVENESS:
-                return (int) (NumberUtil.div(executor.getActiveCount(), executor.getMaximumPoolSize(), 2) * 100);
-            case REJECT:
-            case RUN_TIMEOUT:
-            case QUEUE_TIMEOUT:
-                return getCount(wrapper.getThreadPoolName(), itemEnum.getValue());
-            default:
-                return 0;
-        }
     }
 
     private static String buildKey(String threadPoolName, String notifyItemType) {

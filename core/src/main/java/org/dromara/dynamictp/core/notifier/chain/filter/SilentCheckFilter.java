@@ -73,7 +73,6 @@ public class SilentCheckFilter implements NotifyFilter {
         } finally {
             lock.unlock();
         }
-
         return false;
     }
 }

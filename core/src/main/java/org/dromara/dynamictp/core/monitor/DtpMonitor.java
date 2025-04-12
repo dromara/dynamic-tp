@@ -92,7 +92,7 @@ public class DtpMonitor {
     private void checkAlarm(Set<String> executorNames) {
         executorNames.forEach(name -> {
             ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(name);
-            AlarmManager.tryAlarmAsync(wrapper, SCHEDULE_NOTIFY_ITEMS);
+            AlarmManager.checkAndTryAlarmAsync(wrapper, SCHEDULE_NOTIFY_ITEMS);
         });
         publishAlarmCheckEvent();
     }

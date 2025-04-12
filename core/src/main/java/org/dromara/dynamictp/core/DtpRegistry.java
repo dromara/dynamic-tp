@@ -294,8 +294,6 @@ public class DtpRegistry {
         }
 
         // update timeout related
-        executor.setRunTimeout(props.getRunTimeout());
-        executor.setQueueTimeout(props.getQueueTimeout());
         executor.setTryInterrupt(props.isTryInterrupt());
 
         // update shutdown related

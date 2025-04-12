@@ -210,7 +210,7 @@ protected void afterExecute(Runnable r, Throwable t);
 
 使用过程中有任何问题，或者对项目有什么想法或者建议，可以加入社群，跟 1500+ 群友一起交流讨论。
 
-微信群已满 200 人，可以关注微信公众号，加我个人微信拉群（备注：dynamic-tp）。
+微信群均已满 200 人，可以关注微信公众号，加我个人微信拉群（备注：dynamic-tp 拉群）。
 
 ![](resources/img/contact.jpg)
 

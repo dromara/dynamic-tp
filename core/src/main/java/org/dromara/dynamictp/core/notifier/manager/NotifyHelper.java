@@ -28,11 +28,10 @@ import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
+import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.StreamUtil;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
-
-import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
 import java.util.Collection;
@@ -198,10 +197,15 @@ public class NotifyHelper {
         Map<String, NotifyItem> oldNotifyItemMap = StreamUtil.toMap(oldNotifyItems, NotifyItem::getType);
         newNotifyItems.forEach(x -> {
             NotifyItem oldNotifyItem = oldNotifyItemMap.get(x.getType());
-            if (Objects.nonNull(oldNotifyItem) && oldNotifyItem.getInterval() == x.getInterval()) {
-                return;
+            if (Objects.isNull(oldNotifyItem)) {
+                AlarmManager.initAlarm(poolName, x);
             }
-            AlarmManager.initAlarm(poolName, x);
+            if (oldNotifyItem.getPeriod() != x.getPeriod()) {
+                AlarmManager.initAlarmCounter(poolName, x);
+            }
+            if (oldNotifyItem.getSilencePeriod() != x.getSilencePeriod()) {
+                AlarmManager.initAlarmLimiter(poolName, x);
+            }
         });
     }
 }

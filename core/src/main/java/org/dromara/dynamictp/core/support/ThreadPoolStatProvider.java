@@ -101,8 +101,8 @@ public class ThreadPoolStatProvider {
         val provider = new ThreadPoolStatProvider(executorWrapper);
         if (executorWrapper.isDtpExecutor()) {
             val dtpExecutor = (DtpExecutor) executorWrapper.getExecutor();
-            provider.setRunTimeout(dtpExecutor.getRunTimeout());
-            provider.setQueueTimeout(dtpExecutor.getQueueTimeout());
+            provider.setRunTimeout(executorWrapper.getRunTimeout());
+            provider.setQueueTimeout(executorWrapper.getQueueTimeout());
             provider.setTryInterrupt(dtpExecutor.isTryInterrupt());
         }
         return provider;

@@ -95,8 +95,8 @@ public class NotifyItem {
                 .collect(Collectors.toList());
         List<NotifyItem> notifyItems = new ArrayList<>(6);
         notifyItems.addAll(defaultItems);
+        populateDefaultValues(source);
         notifyItems.addAll(source);
-        populateDefaultValues(notifyItems);
         return notifyItems;
     }
 

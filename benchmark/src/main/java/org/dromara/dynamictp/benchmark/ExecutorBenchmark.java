@@ -93,8 +93,6 @@ public class ExecutorBenchmark {
                 .maximumPoolSize(8)
                 .keepAliveTime(60)
                 .threadFactory("dtp-test-pool")
-                .runTimeout(100)
-                .queueCapacity(100)
                 .queueCapacity(1024)
                 .taskWrappers(TaskWrappers.getInstance().getByNames(Sets.newHashSet("ttl", "mdc")))
                 .rejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy())

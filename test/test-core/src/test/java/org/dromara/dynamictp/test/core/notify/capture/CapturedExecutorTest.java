@@ -17,12 +17,12 @@
 
 package org.dromara.dynamictp.test.core.notify.capture;
 
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
-import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
 import org.dromara.dynamictp.core.support.ThreadPoolCreator;
+import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.adapter.ThreadPoolExecutorAdapter;
-import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;
@@ -54,8 +54,6 @@ public class CapturedExecutorTest {
                 .workQueue(VARIABLE_LINKED_BLOCKING_QUEUE.getName(), 100, false, null)
                 .waitForTasksToCompleteOnShutdown(true)
                 .awaitTerminationSeconds(5)
-                .runTimeout(200)
-                .queueTimeout(200)
                 .buildDynamic();
     }
 

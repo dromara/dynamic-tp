@@ -23,6 +23,7 @@ import lombok.val;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.AlarmInfo;
 import org.dromara.dynamictp.common.entity.NotifyItem;
+import org.dromara.dynamictp.common.ex.DtpException;
 import org.dromara.dynamictp.common.util.DateUtil;
 
 import java.util.Map;
@@ -58,11 +59,11 @@ public class AlarmCounter {
 
     public static AlarmInfo getAlarmInfo(String threadPoolName, String notifyType) {
         String key = buildKey(threadPoolName, notifyType);
-        val alarmInfo = ALARM_INFO_CACHE.get(key);
-        if (Objects.isNull(alarmInfo)) {
-            return null;
+        val cache = ALARM_INFO_CACHE.get(key);
+        if (Objects.isNull(cache)) {
+            throw new DtpException("Alarm info cache has not been initialized for " + key);
         }
-        return alarmInfo.getIfPresent(notifyType);
+        return cache.getIfPresent(notifyType);
     }
 
     public static int getCount(String threadPoolName, String notifyType) {

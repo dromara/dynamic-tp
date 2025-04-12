@@ -50,10 +50,8 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.NOTIFY_ITEMS;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PLATFORM_IDS;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PLUGIN_NAMES;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.PRE_START_ALL_CORE_THREADS;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.QUEUE_TIMEOUT;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.REJECT_ENHANCED;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.REJECT_HANDLER_TYPE;
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.RUN_TIMEOUT;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.TASK_WRAPPERS;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.THREAD_POOL_ALIAS_NAME;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.THREAD_POOL_NAME;
@@ -145,5 +143,4 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
                 RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType())
         };
     }
-
 }

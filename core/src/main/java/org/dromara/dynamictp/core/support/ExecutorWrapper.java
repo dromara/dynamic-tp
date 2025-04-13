@@ -21,7 +21,6 @@ import cn.hutool.core.bean.BeanUtil;
 import lombok.Data;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
-import org.dromara.dynamictp.common.util.StreamUtil;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.RejectHandlerAware;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
@@ -226,19 +225,5 @@ public class ExecutorWrapper {
         } else {
             executor.setRejectedExecutionHandler(handler);
         }
-    }
-
-    /**
-     * Task execute timeout, unit (ms).
-     */
-    public int getRunTimeout() {
-        return StreamUtil.toMap(notifyItems, NotifyItem::getType).get(NotifyItemEnum.RUN_TIMEOUT.getValue()).getThreshold();
-    }
-
-    /**
-     * Task queue wait timeout, unit (ms), just for statistics.
-     */
-    public int getQueueTimeout() {
-        return StreamUtil.toMap(notifyItems, NotifyItem::getType).get(NotifyItemEnum.QUEUE_TIMEOUT.getValue()).getThreshold();
     }
 }

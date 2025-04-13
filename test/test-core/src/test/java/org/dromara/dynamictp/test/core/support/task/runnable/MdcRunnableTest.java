@@ -24,7 +24,6 @@ import org.dromara.dynamictp.core.support.task.runnable.MdcRunnable;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.MDC;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -52,6 +51,8 @@ public class MdcRunnableTest {
                 .workQueue(VARIABLE_LINKED_BLOCKING_QUEUE.getName(), 20, false, null)
                 .waitForTasksToCompleteOnShutdown(true)
                 .awaitTerminationSeconds(5)
+                .runTimeout(200)
+                .queueTimeout(200)
                 .buildDynamic();
 
         CountDownLatch latch = new CountDownLatch(2);
@@ -83,6 +84,8 @@ public class MdcRunnableTest {
                 .workQueue(VARIABLE_LINKED_BLOCKING_QUEUE.getName(), 1, false, null)
                 .waitForTasksToCompleteOnShutdown(true)
                 .awaitTerminationSeconds(5)
+                .runTimeout(200)
+                .queueTimeout(200)
                 .rejectedExecutionHandler("CallerRunsPolicy")
                 .buildDynamic();
 

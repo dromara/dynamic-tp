@@ -51,22 +51,22 @@ public class NotifyItem {
     private String type;
 
     /**
-     * Alarm threshold.
+     * Indicator detection threshold.
      */
     private int threshold;
 
     /**
-     * Within a cycle window, if the number of occurrences exceeding the threshold reaches count, an alarm will be triggered.
+     * Within a cycle window, when the number of occurrences surpassing the threshold reaches the specified count, an alarm will be triggered.
      */
     private int count;
 
     /**
-     * The size of cache in seconds for checking the alarm conditions.
+     * The time span (in seconds) of the cache applied to check alarm conditions.
      */
     private int period = 120;
 
     /**
-     * After the alarm is triggered at Time-N (TN), there will be silence during the TN -> TN + silencePeriod.
+     * When the alarm is triggered at Time - N (TN), it will stay silent from TN to TN + silencePeriod.
      */
     private int silencePeriod = 120;
 

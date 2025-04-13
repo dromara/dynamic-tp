@@ -113,9 +113,19 @@ public class TpExecutorProps {
     private boolean notifyEnabled = true;
 
     /**
+     * Task execute timeout, unit (ms).
+     */
+    private long runTimeout = 0;
+
+    /**
      * If try interrupt thread when task run timeout.
      */
     private boolean tryInterrupt = false;
+
+    /**
+     * Task queue wait timeout, unit (ms).
+     */
+    private long queueTimeout = 0;
 
     /**
      * Whether to wait for scheduled tasks to complete on shutdown,

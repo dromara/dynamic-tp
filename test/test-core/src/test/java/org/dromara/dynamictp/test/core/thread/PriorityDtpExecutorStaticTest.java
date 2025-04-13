@@ -49,6 +49,8 @@ public class PriorityDtpExecutorStaticTest {
                 .timeUnit(TimeUnit.MILLISECONDS)
                 .waitForTasksToCompleteOnShutdown(true)
                 .awaitTerminationSeconds(5)
+                .runTimeout(10000)
+                .queueTimeout(10000)
                 .buildPriority();
     }
 

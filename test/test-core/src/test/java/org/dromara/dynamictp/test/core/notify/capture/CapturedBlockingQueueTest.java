@@ -49,8 +49,6 @@ public class CapturedBlockingQueueTest {
                 .workQueue(VARIABLE_LINKED_BLOCKING_QUEUE.getName(), 100, false, null)
                 .waitForTasksToCompleteOnShutdown(true)
                 .awaitTerminationSeconds(5)
-                .runTimeout(200)
-                .queueTimeout(200)
                 .buildDynamic();
     }
 

@@ -147,5 +147,4 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
                 RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType())
         };
     }
-
 }

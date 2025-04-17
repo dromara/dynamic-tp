@@ -19,6 +19,7 @@ package org.dromara.dynamictp.core.support;
 
 import com.alibaba.ttl.TtlRunnable;
 import com.alibaba.ttl.threadpool.TtlExecutors;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +38,6 @@ import org.dromara.dynamictp.core.executor.eager.TaskQueue;
 import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
-import com.google.common.base.Preconditions;
 
 import java.util.List;
 import java.util.Objects;
@@ -178,7 +178,7 @@ public class ThreadPoolBuilder {
     private long runTimeout = 0;
 
     /**
-     * If try interrupt thread when run timeout.
+     * If try interrupt thread when task run timeout.
      */
     private boolean tryInterrupt = false;
 

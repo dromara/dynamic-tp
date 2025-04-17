@@ -18,12 +18,12 @@
 package org.dromara.dynamictp.core.support;
 
 import com.google.common.eventbus.Subscribe;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.constant.DynamicTpConst;
 import org.dromara.dynamictp.common.event.CustomContextRefreshedEvent;
 import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.manager.EventBusManager;
 import org.dromara.dynamictp.common.util.VersionUtil;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * DtpBannerPrinter related
@@ -51,21 +51,8 @@ public class DtpBannerPrinter {
             "         __/ |                              | |    \n" +
             "        |___/                               |_|    ";
 
-    private static volatile DtpBannerPrinter instance;
-
-    private DtpBannerPrinter() {
+    public DtpBannerPrinter() {
         EventBusManager.register(this);
-    }
-
-    public static DtpBannerPrinter getInstance() {
-        if (instance == null) {
-            synchronized (DtpBannerPrinter.class) {
-                if (instance == null) {
-                    instance = new DtpBannerPrinter();
-                }
-            }
-        }
-        return instance;
     }
 
     @Subscribe

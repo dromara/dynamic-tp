@@ -15,37 +15,30 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.common.entity;
+package org.dromara.dynamictp.benchmark;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
-import org.dromara.dynamictp.common.em.NotifyItemEnum;
-
-import java.util.concurrent.atomic.AtomicInteger;
+import org.openjdk.jmh.results.format.ResultFormatType;
+import org.openjdk.jmh.runner.Runner;
+import org.openjdk.jmh.runner.RunnerException;
+import org.openjdk.jmh.runner.options.Options;
+import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 /**
- * AlarmInfo related
+ * BenchmarkRunner related
  *
  * @author yanhom
- * @since 1.0.4
+ * @since 1.2.1
  **/
-@Data
-@Accessors(chain = true)
-public class AlarmInfo {
+public class BenchmarkRunner {
 
-    private NotifyItemEnum notifyItem;
+    public static void main(String[] args) throws RunnerException {
+        Options options = new OptionsBuilder()
+                .include(ExecutorBenchmark.class.getSimpleName())
+                .resultFormat(ResultFormatType.JSON)
+                .result("executor-benchmark-results.json")
+                .build();
 
-    private final AtomicInteger counter = new AtomicInteger(0);
-
-    public void incCounter() {
-        counter.incrementAndGet();
-    }
-
-    public void reset() {
-        counter.set(0);
-    }
-
-    public int getCount() {
-        return counter.get();
+        new Runner(options).run();
     }
 }
+

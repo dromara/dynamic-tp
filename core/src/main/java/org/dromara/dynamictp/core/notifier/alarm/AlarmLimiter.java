@@ -17,12 +17,12 @@
 
 package org.dromara.dynamictp.core.notifier.alarm;
 
-import org.dromara.dynamictp.common.em.NotifyItemEnum;
-import org.dromara.dynamictp.common.entity.NotifyItem;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.dynamictp.common.em.NotifyItemEnum;
+import org.dromara.dynamictp.common.entity.NotifyItem;
 
 import java.util.Map;
 import java.util.Objects;
@@ -48,7 +48,7 @@ public class AlarmLimiter {
 
         String key = genKey(threadPoolName, notifyItem.getType());
         Cache<String, String> cache = CacheBuilder.newBuilder()
-                .expireAfterWrite(notifyItem.getInterval(), TimeUnit.SECONDS)
+                .expireAfterWrite(notifyItem.getSilencePeriod(), TimeUnit.SECONDS)
                 .build();
         ALARM_LIMITER.put(key, cache);
     }
@@ -66,12 +66,12 @@ public class AlarmLimiter {
         return cache.getIfPresent(type);
     }
 
-    public static boolean ifAlarm(String threadPoolName, String type) {
+    public static boolean isAllowed(String threadPoolName, String type) {
         String key = genKey(threadPoolName, type);
         return StringUtils.isBlank(getAlarmLimitInfo(key, type));
     }
 
     public static String genKey(String threadPoolName, String type) {
-        return threadPoolName + ":" + type;
+        return threadPoolName + "#" + type;
     }
 }

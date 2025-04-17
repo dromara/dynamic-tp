@@ -48,7 +48,7 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.SCHEDULE_NOTI
 @Slf4j
 public class DtpMonitor {
 
-    private static final ScheduledExecutorService MONITOR_EXECUTOR = ThreadPoolCreator.newScheduledThreadPool("dtp-monitor", 1);
+    private static ScheduledExecutorService monitorExecutor;
 
     private final DtpProperties dtpProperties;
 
@@ -71,9 +71,12 @@ public class DtpMonitor {
         if (monitorFuture != null) {
             monitorFuture.cancel(true);
         }
+        // Compatible with the springboot devtool restart scenario.
+        if (monitorExecutor == null || monitorExecutor.isShutdown() || monitorExecutor.isTerminated()) {
+            monitorExecutor = ThreadPoolCreator.newScheduledThreadPool("dtp-monitor", 1);
+        }
         monitorInterval = dtpProperties.getMonitorInterval();
-        monitorFuture = MONITOR_EXECUTOR.scheduleWithFixedDelay(this::run,
-                0, dtpProperties.getMonitorInterval(), TimeUnit.SECONDS);
+        monitorFuture = monitorExecutor.scheduleWithFixedDelay(this::run, 0, monitorInterval, TimeUnit.SECONDS);
     }
 
     private void run() {
@@ -89,7 +92,7 @@ public class DtpMonitor {
     private void checkAlarm(Set<String> executorNames) {
         executorNames.forEach(name -> {
             ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(name);
-            AlarmManager.tryAlarmAsync(wrapper, SCHEDULE_NOTIFY_ITEMS);
+            AlarmManager.checkAndTryAlarmAsync(wrapper, SCHEDULE_NOTIFY_ITEMS);
         });
         publishAlarmCheckEvent();
     }
@@ -124,6 +127,6 @@ public class DtpMonitor {
     }
 
     public static void destroy() {
-        MONITOR_EXECUTOR.shutdownNow();
+        monitorExecutor.shutdownNow();
     }
 }

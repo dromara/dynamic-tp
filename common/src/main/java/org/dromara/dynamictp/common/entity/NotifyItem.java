@@ -156,7 +156,7 @@ public class NotifyItem {
                 case LIVENESS:
                 case CAPACITY:
                     setIfZero(item::getThreshold, item::setThreshold, 70);
-                    setIfZero(item::getCount, item::setCount, 2);
+                    setIfZero(item::getCount, item::setCount, 1);
                     break;
                 default:
                     break;

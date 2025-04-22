@@ -48,5 +48,4 @@ public class NotifyEmailAutoConfiguration {
     public DtpNotifier dtpEmailNotifier() {
         return new DtpEmailNotifier();
     }
-
 }

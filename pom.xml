@@ -13,7 +13,7 @@
     <url>https://github.com/yanhom1314/dynamic-tp</url>
 
     <properties>
-        <revision>1.2.0</revision>
+        <revision>1.2.1-beta</revision>
 
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
@@ -25,7 +25,6 @@
         <commons-collections4.version>4.4</commons-collections4.version>
 
         <maven-flatten.version>1.7.0</maven-flatten.version>
-        <maven-checkstyle-plugin.verion>3.1.0</maven-checkstyle-plugin.verion>
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-source-plugin.version>2.4</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
@@ -155,7 +154,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>${maven-checkstyle-plugin.verion}</version>
+                    <version>${maven-checkstyle-plugin.version}</version>
                     <configuration>
                         <configLocation>.github/checkstyle/checkstyle.xml</configLocation>
                         <includeTestSourceDirectory>false</includeTestSourceDirectory>

@@ -42,7 +42,7 @@ public class SilentCheckFilter implements NotifyFilter {
 
     @Override
     public int getOrder() {
-        return 2;
+        return 5;
     }
 
     @Override
@@ -61,7 +61,7 @@ public class SilentCheckFilter implements NotifyFilter {
 
         lock.lock();
         try {
-            boolean isAllowed = AlarmLimiter.ifAlarm(executorWrapper.getThreadPoolName(), notifyItem.getType());
+            boolean isAllowed = AlarmLimiter.isAllowed(executorWrapper.getThreadPoolName(), notifyItem.getType());
             if (!isAllowed) {
                 if (log.isDebugEnabled()) {
                     log.debug("DynamicTp notify, trigger rate limit, threadPoolName: {}, notifyItem: {}",

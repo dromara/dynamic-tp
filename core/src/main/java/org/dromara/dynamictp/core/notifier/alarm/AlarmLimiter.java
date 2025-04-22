@@ -66,7 +66,7 @@ public class AlarmLimiter {
         return cache.getIfPresent(type);
     }
 
-    public static boolean ifAlarm(String threadPoolName, String type) {
+    public static boolean isAllowed(String threadPoolName, String type) {
         String key = genKey(threadPoolName, type);
         return StringUtils.isBlank(getAlarmLimitInfo(key, type));
     }

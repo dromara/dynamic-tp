@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import cn.hutool.core.text.CharSequenceUtil;
 
 import static org.dromara.dynamictp.common.em.ConfigFileTypeEnum.JSON;
 import static org.dromara.dynamictp.common.em.ConfigFileTypeEnum.PROPERTIES;
@@ -59,8 +60,14 @@ public class CuratorUtil {
     public static CuratorFramework getCuratorFramework(DtpProperties dtpProperties) {
         if (curatorFramework == null) {
             DtpProperties.Zookeeper zookeeper = dtpProperties.getZookeeper();
-            curatorFramework = CuratorFrameworkFactory.newClient(zookeeper.getZkConnectStr(),
-                    new ExponentialBackoffRetry(1000, 3));
+            CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory
+                    .builder()
+                    .connectString(zookeeper.getZkConnectStr())
+                    .retryPolicy(new ExponentialBackoffRetry(1000, 3));
+            if (CharSequenceUtil.isAllNotBlank(zookeeper.getScheme(), zookeeper.getAuth())){
+                builder.authorization(zookeeper.getScheme(), zookeeper.getAuth().getBytes());
+            }
+            curatorFramework = builder.build();
             final ConnectionStateListener connectionStateListener = (client, newState) -> {
                 if (newState == ConnectionState.CONNECTED) {
                     COUNT_DOWN_LATCH.countDown();

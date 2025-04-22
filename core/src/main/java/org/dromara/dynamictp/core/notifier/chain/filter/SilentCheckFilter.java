@@ -42,7 +42,7 @@ public class SilentCheckFilter implements NotifyFilter {
 
     @Override
     public int getOrder() {
-        return 2;
+        return 5;
     }
 
     @Override

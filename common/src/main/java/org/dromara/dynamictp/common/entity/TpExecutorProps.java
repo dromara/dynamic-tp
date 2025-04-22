@@ -118,12 +118,12 @@ public class TpExecutorProps {
     private long runTimeout = 0;
 
     /**
-     * If try interrupt thread when run timeout.
+     * If try interrupt thread when task run timeout.
      */
     private boolean tryInterrupt = false;
 
     /**
-     * Task queue wait timeout, unit (ms), just for statistics.
+     * Task queue wait timeout, unit (ms).
      */
     private long queueTimeout = 0;
 

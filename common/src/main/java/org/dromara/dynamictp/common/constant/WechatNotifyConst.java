@@ -67,8 +67,9 @@ public final class WechatNotifyConst {
             "> <font color='comment'>上次报警时间：%s</font> \n" +
             "> <font color='comment'>报警时间：%s</font> \n" +
             "> <font color='comment'>接收人：%s</font> \n" +
+            "> <font color='info'>统计窗口：%ss</font> \n" +
+            "> <font color='info'>静默时长：%ss</font> \n" +
             "> <font color='comment'>trace 信息：%s</font> \n" +
-            "> <font color='info'>报警间隔：%ss</font> \n" +
             "> <font color='comment'>扩展信息：%s</font> \n";
 
     public static final String WECHAT_CHANGE_NOTICE_TEMPLATE =

@@ -182,6 +182,14 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ---
 
+## 知识星球
+
+<a href="https://t.zsxq.com/annca" target="_blank">
+    <img class="no-zoom" src="/resources/img/zsxq.png" width="50%" height="50%"/>
+</a>
+
+---
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=dromara/dynamic-tp&type=Date)](https://star-history.com/#dromara/dynamic-tp&Date)
@@ -202,7 +210,7 @@ protected void afterExecute(Runnable r, Throwable t);
 
 使用过程中有任何问题，或者对项目有什么想法或者建议，可以加入社群，跟 1500+ 群友一起交流讨论。
 
-微信群已满 200 人，可以关注微信公众号，加我个人微信拉群（备注：dynamic-tp）。
+微信群均已满 200 人，可以关注微信公众号，加我个人微信拉群（备注：dynamic-tp 拉群）。
 
 ![](resources/img/contact.jpg)
 
@@ -216,13 +224,6 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ---
 
-## 特别赞助
-
-**JNPF低代码开发平台**
-
-<a href="https://www.jnpfsoft.com/?from=dynamic-tp"><img src="/resources/img/jnpfsoft.png"></a>
-
----
 ## 鸣谢
 
 感谢 JetBrains 对开源项目的支持

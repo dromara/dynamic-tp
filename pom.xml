@@ -15,7 +15,7 @@
     <url>https://github.com/yanhom1314/dynamic-tp</url>
 
     <properties>
-        <revision>1.2.0-x</revision>
+        <revision>1.2.1-beta-x</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <maven.compiler.source>17</maven.compiler.source>
@@ -33,7 +33,6 @@
         <maven-javadoc-plugin.version>3.6.2</maven-javadoc-plugin.version>
         <maven-checkstyle-plugin.version>3.1.0</maven-checkstyle-plugin.version>
         <maven-site-plugin.version>3.7.1</maven-site-plugin.version>
-
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
         <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
@@ -52,6 +51,7 @@
         <module>test</module>
         <module>dependencies</module>
         <module>spring</module>
+        <module>benchmark</module>
     </modules>
 
     <dependencies>

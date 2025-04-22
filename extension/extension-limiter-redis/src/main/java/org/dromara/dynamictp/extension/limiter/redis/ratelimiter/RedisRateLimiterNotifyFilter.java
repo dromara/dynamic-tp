@@ -25,17 +25,17 @@ import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
 import java.util.List;
 
 /**
- * NotifyRedisRateLimiterFilter related
+ * RedisRateLimiterNotifyFilter related
  *
  * @author yanhom
  * @since 1.0.8
  **/
 @Slf4j
-public class NotifyRedisRateLimiterFilter implements NotifyFilter {
+public class RedisRateLimiterNotifyFilter implements NotifyFilter {
 
     private final RedisRateLimiter<List<Long>> redisScriptRateLimiter;
 
-    public NotifyRedisRateLimiterFilter(RedisRateLimiter<List<Long>> redisScriptRateLimiter) {
+    public RedisRateLimiterNotifyFilter(RedisRateLimiter<List<Long>> redisScriptRateLimiter) {
         this.redisScriptRateLimiter = redisScriptRateLimiter;
     }
 
@@ -46,10 +46,10 @@ public class NotifyRedisRateLimiterFilter implements NotifyFilter {
 
     @Override
     public void doFilter(BaseNotifyCtx context, Invoker<BaseNotifyCtx> nextFilter) {
-        String notifyName = context.getExecutorWrapper().getThreadPoolName() + ":" + context.getNotifyItemEnum().getValue();
-        int interval = context.getNotifyItem().getInterval();
-        int limit = context.getNotifyItem().getClusterLimit();
-        boolean checkResult = redisScriptRateLimiter.check(notifyName, interval, limit);
+        String notifyName = context.getExecutorWrapper().getThreadPoolName() + "#" + context.getNotifyItemEnum().getValue();
+        int silencePeriod = context.getNotifyItem().getSilencePeriod();
+        int clusterLimit = context.getNotifyItem().getClusterLimit();
+        boolean checkResult = redisScriptRateLimiter.check(notifyName, silencePeriod, clusterLimit);
         if (checkResult) {
             nextFilter.invoke(context);
         }

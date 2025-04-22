@@ -53,8 +53,9 @@ public class SmsNotifyConst {
                     "上次报警时间：%s \n" +
                     "报警时间：%s \n" +
                     "接收人：@%s \n" +
+                    "统计周期：%ss \n" +
+                    "静默时长：%ss \n" +
                     "trace 信息：%s \n" +
-                    "报警间隔：%ss \n" +
                     "扩展信息：%s \n";
 
     public static final String SMS_NOTICE_TEMPLATE =

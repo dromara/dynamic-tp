@@ -17,17 +17,19 @@
 
 package org.dromara.dynamictp.core.notifier.alarm;
 
-import cn.hutool.core.util.NumberUtil;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import lombok.val;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.AlarmInfo;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.common.entity.NotifyItem;
+import org.dromara.dynamictp.common.ex.DtpException;
+import org.dromara.dynamictp.common.util.DateUtil;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static org.dromara.dynamictp.common.constant.DynamicTpConst.UNKNOWN;
+import java.util.concurrent.TimeUnit;
 
 /**
  * AlarmCounter related
@@ -37,61 +39,56 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.UNKNOWN;
  **/
 public class AlarmCounter {
 
-    private static final Map<String, AlarmInfo> ALARM_INFO_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, Cache<String, AlarmInfo>> ALARM_INFO_CACHE = new ConcurrentHashMap<>();
+
+    private static final Map<String, String> LAST_ALARM_TIME_MAP = new ConcurrentHashMap<>();
 
     private AlarmCounter() { }
 
-    public static void init(String threadPoolName, String notifyItemType) {
-        String key = buildKey(threadPoolName, notifyItemType);
-        val alarmInfo = new AlarmInfo().setNotifyItem(NotifyItemEnum.of(notifyItemType));
-        ALARM_INFO_CACHE.putIfAbsent(key, alarmInfo);
+    public static void initAlarmCounter(String threadPoolName, NotifyItem notifyItem) {
+        if (NotifyItemEnum.CHANGE.getValue().equalsIgnoreCase(notifyItem.getType())) {
+            return;
+        }
+
+        String key = buildKey(threadPoolName, notifyItem.getType());
+        Cache<String, AlarmInfo> cache = CacheBuilder.newBuilder()
+                .expireAfterWrite(notifyItem.getPeriod(), TimeUnit.SECONDS)
+                .build();
+        ALARM_INFO_CACHE.put(key, cache);
     }
 
-    public static AlarmInfo getAlarmInfo(String threadPoolName, String notifyItemType) {
-        String key = buildKey(threadPoolName, notifyItemType);
-        return ALARM_INFO_CACHE.get(key);
+    public static AlarmInfo getAlarmInfo(String threadPoolName, String notifyType) {
+        String key = buildKey(threadPoolName, notifyType);
+        val cache = ALARM_INFO_CACHE.get(key);
+        if (Objects.isNull(cache)) {
+            throw new DtpException("Alarm info cache has not been initialized for " + key);
+        }
+        return cache.getIfPresent(notifyType);
     }
 
-    public static String getCount(String threadPoolName, String notifyItemType) {
-        String key = buildKey(threadPoolName, notifyItemType);
-        val alarmInfo = ALARM_INFO_CACHE.get(key);
+    public static void reset(String threadPoolName, String notifyType) {
+        val alarmInfo = getAlarmInfo(threadPoolName, notifyType);
         if (Objects.nonNull(alarmInfo)) {
-            return String.valueOf(alarmInfo.getCount());
+            alarmInfo.reset();
         }
-        return UNKNOWN;
+        LAST_ALARM_TIME_MAP.put(buildKey(threadPoolName, notifyType), DateUtil.now());
     }
 
-    public static void reset(String threadPoolName, String notifyItemType) {
-        String key = buildKey(threadPoolName, notifyItemType);
-        val alarmInfo = ALARM_INFO_CACHE.get(key);
-        alarmInfo.reset();
+    public static void incAlarmCount(String threadPoolName, String notifyType) {
+        AlarmInfo alarmInfo = getAlarmInfo(threadPoolName, notifyType);
+        if (Objects.isNull(alarmInfo)) {
+            String key = buildKey(threadPoolName, notifyType);
+            alarmInfo = new AlarmInfo().setNotifyItem(NotifyItemEnum.of(notifyType));
+            ALARM_INFO_CACHE.get(key).put(notifyType, alarmInfo);
+        }
+        alarmInfo.incCounter();
     }
 
-    public static void incAlarmCounter(String threadPoolName, String notifyItemType) {
-        String key = buildKey(threadPoolName, notifyItemType);
-        val alarmInfo = ALARM_INFO_CACHE.get(key);
-        if (Objects.nonNull(alarmInfo)) {
-            alarmInfo.incCounter();
-        }
-    }
-
-    public static int calcCurrentValue(ExecutorWrapper wrapper, NotifyItemEnum itemEnum) {
-        val executor = wrapper.getExecutor();
-        switch (itemEnum) {
-            case CAPACITY:
-                return (int) (NumberUtil.div(executor.getQueueSize(), executor.getQueueCapacity(), 2) * 100);
-            case LIVENESS:
-                return (int) (NumberUtil.div(executor.getActiveCount(), executor.getMaximumPoolSize(), 2) * 100);
-            case REJECT:
-            case RUN_TIMEOUT:
-            case QUEUE_TIMEOUT:
-                return Integer.parseInt(getCount(wrapper.getThreadPoolName(), itemEnum.getValue()));
-            default:
-                return 0;
-        }
+    public static String getLastAlarmTime(String threadPoolName, String notifyType) {
+        return LAST_ALARM_TIME_MAP.get(buildKey(threadPoolName, notifyType));
     }
 
     private static String buildKey(String threadPoolName, String notifyItemType) {
-        return threadPoolName + ":" + notifyItemType;
+        return threadPoolName + "#" + notifyItemType;
     }
 }

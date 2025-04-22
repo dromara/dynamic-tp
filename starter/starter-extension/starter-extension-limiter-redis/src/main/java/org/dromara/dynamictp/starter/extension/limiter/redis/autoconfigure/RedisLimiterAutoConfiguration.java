@@ -47,6 +47,6 @@ public class RedisLimiterAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public RedisRateLimiterNotifyFilter redisRateLimiterNotifyFilter(RedisRateLimiter<List<Long>> redisScriptRateLimiter) {
-        return new RedisRateLimiterNotifyFilter();
+        return new RedisRateLimiterNotifyFilter(redisScriptRateLimiter);
     }
 }

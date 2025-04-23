@@ -56,13 +56,13 @@ public interface RedisRateLimiter<T> {
     String[] getArgs(String key, long windowSize, int limit);
 
     /**
-     * check.
+     * Acquires permission of an invocation only if it is available at the time of invoking.
      *
      * @param name the key
      * @param interval the interval
      * @param limit the limit
      * @return the result
      */
-    boolean check(String name, long interval, int limit);
+    boolean tryPass(String name, long interval, int limit);
 
 }

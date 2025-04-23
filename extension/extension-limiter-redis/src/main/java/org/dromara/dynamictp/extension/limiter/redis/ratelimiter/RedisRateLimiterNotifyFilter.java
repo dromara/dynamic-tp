@@ -18,6 +18,7 @@
 package org.dromara.dynamictp.extension.limiter.redis.ratelimiter;
 
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.pattern.filter.Invoker;
 import org.dromara.dynamictp.core.notifier.chain.filter.NotifyFilter;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
@@ -45,13 +46,21 @@ public class RedisRateLimiterNotifyFilter implements NotifyFilter {
     }
 
     @Override
-    public void doFilter(BaseNotifyCtx context, Invoker<BaseNotifyCtx> nextFilter) {
-        String notifyName = context.getExecutorWrapper().getThreadPoolName() + "#" + context.getNotifyItemEnum().getValue();
-        int silencePeriod = context.getNotifyItem().getSilencePeriod();
-        int clusterLimit = context.getNotifyItem().getClusterLimit();
-        boolean checkResult = redisScriptRateLimiter.check(notifyName, silencePeriod, clusterLimit);
-        if (checkResult) {
-            nextFilter.invoke(context);
+    public void doFilter(BaseNotifyCtx context, Invoker<BaseNotifyCtx> nextInvoker) {
+        if (tryPass(context)) {
+            nextInvoker.invoke(context);
         }
+    }
+
+    private boolean tryPass(BaseNotifyCtx context) {
+        // silence period <= 0 indicates that no rate limit check is required.
+        NotifyItem notifyItem = context.getNotifyItem();
+        if (notifyItem.getSilencePeriod() <= 0) {
+            return true;
+        }
+        String notifyName = context.getExecutorWrapper().getThreadPoolName() + "#" + context.getNotifyItemEnum().getValue();
+        int silencePeriod = notifyItem.getSilencePeriod();
+        int clusterLimit = notifyItem.getClusterLimit();
+        return redisScriptRateLimiter.tryPass(notifyName, silencePeriod, clusterLimit);
     }
 }

@@ -64,7 +64,7 @@ public class CuratorUtil {
                     .builder()
                     .connectString(zookeeper.getZkConnectStr())
                     .retryPolicy(new ExponentialBackoffRetry(1000, 3));
-            if (CharSequenceUtil.isAllNotBlank(zookeeper.getScheme(), zookeeper.getAuth())){
+            if (CharSequenceUtil.isAllNotBlank(zookeeper.getScheme(), zookeeper.getAuth())) {
                 builder.authorization(zookeeper.getScheme(), zookeeper.getAuth().getBytes());
             }
             curatorFramework = builder.build();

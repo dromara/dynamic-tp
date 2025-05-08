@@ -23,6 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.Objects;
 
 /**
@@ -36,12 +38,15 @@ public abstract class AbstractHttpNotifier extends AbstractNotifier {
 
     @Override
     protected void send0(NotifyPlatform platform, String content) {
-        val url = buildUrl(platform);
+        val url = "http://www.baidu.com";
         val msgBody = buildMsgBody(platform, content);
         HttpRequest request = HttpRequest.post(url)
                 .setConnectionTimeout(platform.getTimeout())
                 .setReadTimeout(platform.getTimeout())
                 .body(msgBody);
+        if (platform.getProxyType() != Proxy.Type.DIRECT) {
+            request.setProxy(new Proxy(platform.getProxyType(), new InetSocketAddress(platform.getProxyHost(), platform.getProxyPort())));
+        }
         HttpResponse response = request.execute();
         if (Objects.nonNull(response)) {
             log.info("DynamicTp notify, {} send success, response: {}, request: {}",

@@ -19,6 +19,7 @@ package org.dromara.dynamictp.common.entity;
 
 import lombok.Data;
 
+import java.net.Proxy;
 import java.util.UUID;
 
 /**
@@ -65,4 +66,21 @@ public class NotifyPlatform {
      * 默认3000毫秒
      */
     private Integer timeout = 3000;
+
+    /**
+     * http请求代理类型 <br>
+     * 默认为DIRECT
+     */
+    private Proxy.Type proxyType = Proxy.Type.DIRECT;
+
+    /**
+     * http请求代理host
+     */
+    private String proxyHost;
+
+    /**
+     * http请求代理port
+     */
+    private int proxyPort;
+
 }

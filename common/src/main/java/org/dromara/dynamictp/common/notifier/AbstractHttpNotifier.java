@@ -38,7 +38,7 @@ public abstract class AbstractHttpNotifier extends AbstractNotifier {
 
     @Override
     protected void send0(NotifyPlatform platform, String content) {
-        val url = "http://www.baidu.com";
+        val url = buildUrl(platform);
         val msgBody = buildMsgBody(platform, content);
         HttpRequest request = HttpRequest.post(url)
                 .setConnectionTimeout(platform.getTimeout())

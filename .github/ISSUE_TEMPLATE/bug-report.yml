@@ -25,6 +25,7 @@ body:
     attributes:
       label: Jdk版本
       placeholder: 例如：JDK 8, JDK 11
+      description: 您正在使用哪个 JDK 版本？
     validations:
       required: true
 
@@ -33,6 +34,7 @@ body:
     attributes:
       label: SpringBoot版本
       placeholder: 例如：2.6.3
+      description: 您正在使用哪个 SpringBoot 版本？
     validations:
       required: true
 
@@ -41,6 +43,7 @@ body:
     attributes:
       label: DynamicTp版本
       placeholder: 例如：1.0.0
+      description: 您正在使用哪个 dynamic-tp 版本？
     validations:
       required: true
 
@@ -49,6 +52,7 @@ body:
     attributes:
       label: 配置中心类型
       placeholder: 例如：Nacos, Apollo
+      description: 您正在使用哪个配置中心？
     validations:
       required: false
 
@@ -57,6 +61,7 @@ body:
     attributes:
       label: 配置中心版本
       placeholder: 例如：2.0.0
+      description: 您正在使用哪个配置中心版本？
     validations:
       required: false
 

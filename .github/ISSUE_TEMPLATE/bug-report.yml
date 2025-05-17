@@ -8,10 +8,17 @@ body:
       value: |
         **首先感谢您使用 DynamicTp，如果使用过程中有任何问题，请按照下述模板反馈问题，请使用 Markdown 语法**。
 
-  - type: markdown
+  - type: dropdown
+    id: platform
     attributes:
-      value: |
-        ### 版本信息
+      label: 平台
+      description: 您正在使用哪个平台？
+      options:
+        - Windows
+        - macOS
+        - Linux
+    validations:
+      required: true
 
   - type: input
     id: jdk-version
@@ -56,50 +63,18 @@ body:
   - type: textarea
     id: problem-description
     attributes:
-      label: 问题描述详情
+      label: 问题描述
       description: 文字描述、截图、粘代码方式
-      placeholder: 请详细描述您遇到的问题
+      placeholder: |
+        文字描述、截图、粘代码方式
+
+        - 配置文件：
+        - 引入的依赖：
+        - 代码使用步骤：
+        - 报错信息：
+        - 猜测可能原因：
     validations:
       required: true
-
-  - type: textarea
-    id: config-file
-    attributes:
-      label: 配置文件
-      render: yaml
-    validations:
-      required: false
-
-  - type: textarea
-    id: dependencies
-    attributes:
-      label: 引入的依赖
-      render: xml
-    validations:
-      required: false
-
-  - type: textarea
-    id: code-steps
-    attributes:
-      label: 代码使用步骤
-      render: java
-    validations:
-      required: false
-
-  - type: textarea
-    id: error-message
-    attributes:
-      label: 报错信息
-      render: shell
-    validations:
-      required: false
-
-  - type: textarea
-    id: possible-reason
-    attributes:
-      label: 猜测可能原因
-    validations:
-      required: false
 
   - type: textarea
     id: reproduction-steps

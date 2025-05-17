@@ -53,11 +53,6 @@ body:
     validations:
       required: false
 
-  - type: markdown
-    attributes:
-      value: |
-        ### 问题描述
-
   - type: textarea
     id: problem-description
     attributes:
@@ -106,11 +101,6 @@ body:
     validations:
       required: false
 
-  - type: markdown
-    attributes:
-      value: |
-        ### 复现步骤
-
   - type: textarea
     id: reproduction-steps
     attributes:
@@ -121,11 +111,6 @@ body:
         2. xxx
     validations:
       required: true
-
-  - type: markdown
-    attributes:
-      value: |
-        ### 其他信息
 
   - type: textarea
     id: additional-info

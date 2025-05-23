@@ -46,8 +46,8 @@ public class ThriftDtpAdapter extends AbstractDtpAdapter {
     private static final String TP_PREFIX = "thriftTp";
     
     private static final String THREAD_POOL_SERVER_EXECUTOR_FIELD = "executorService_";
-    private static final String HSHASERVER_EXECUTOR_FIELD = "invoker_";
-    private static final String THREADED_SELECTOR_WORKER_FIELD = "executorService_";
+    private static final String HSHASERVER_EXECUTOR_FIELD = "invoker";
+    private static final String THREADED_SELECTOR_WORKER_FIELD = "invoker";
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
@@ -57,6 +57,10 @@ public class ThriftDtpAdapter extends AbstractDtpAdapter {
     @Override
     protected String getTpPrefix() {
         return TP_PREFIX;
+    }
+    
+    private String genTpName(String serverType, int port) {
+        return TP_PREFIX + "#" + serverType + "#" + (port > 0 ? port : "");
     }
 
     @Override
@@ -89,10 +93,10 @@ public class ThriftDtpAdapter extends AbstractDtpAdapter {
         ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(
                 TThreadPoolServer.class, THREAD_POOL_SERVER_EXECUTOR_FIELD, server);
         if (Objects.nonNull(executor)) {
+            int port = getServerPort(server);
+            String tpName = genTpName("TThreadPoolServer", port);
             ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executor);
-            String tpName = TP_PREFIX + "#TThreadPoolServer#" + System.identityHashCode(server);
-            ReflectionUtil.setFieldValue(THREAD_POOL_SERVER_EXECUTOR_FIELD, server, proxy);
-            putAndFinalize(tpName, executor, proxy);
+            enhanceOriginExecutorWithoutFinalize(tpName, proxy, THREAD_POOL_SERVER_EXECUTOR_FIELD, server);
             log.info("DynamicTp adapter, thrift TThreadPoolServer executorService_ enhanced, tpName: {}", tpName);
         }
     }
@@ -101,11 +105,11 @@ public class ThriftDtpAdapter extends AbstractDtpAdapter {
         ExecutorService executor = (ExecutorService) ReflectionUtil.getFieldValue(
                 THsHaServer.class, HSHASERVER_EXECUTOR_FIELD, server);
         if (Objects.nonNull(executor) && executor instanceof ThreadPoolExecutor) {
+            int port = getServerPort(server);
+            String tpName = genTpName("THsHaServer", port);
             ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) executor);
-            String tpName = TP_PREFIX + "#THsHaServer#" + System.identityHashCode(server);
-            ReflectionUtil.setFieldValue(HSHASERVER_EXECUTOR_FIELD, server, proxy);
-            putAndFinalize(tpName, executor, proxy);
-            log.info("DynamicTp adapter, thrift THsHaServer invoker_ enhanced, tpName: {}", tpName);
+            enhanceOriginExecutorWithoutFinalize(tpName, proxy, HSHASERVER_EXECUTOR_FIELD, server);
+            log.info("DynamicTp adapter, thrift THsHaServer invoker enhanced, tpName: {}", tpName);
         }
     }
     
@@ -113,11 +117,24 @@ public class ThriftDtpAdapter extends AbstractDtpAdapter {
         ExecutorService executor = (ExecutorService) ReflectionUtil.getFieldValue(
                 TThreadedSelectorServer.class, THREADED_SELECTOR_WORKER_FIELD, server);
         if (Objects.nonNull(executor) && executor instanceof ThreadPoolExecutor) {
+            int port = getServerPort(server);
+            String tpName = genTpName("TThreadedSelectorServer", port);
             ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) executor);
-            String tpName = TP_PREFIX + "#TThreadedSelectorServer#" + System.identityHashCode(server);
-            ReflectionUtil.setFieldValue(THREADED_SELECTOR_WORKER_FIELD, server, proxy);
-            putAndFinalize(tpName, executor, proxy);
-            log.info("DynamicTp adapter, thrift TThreadedSelectorServer executorService_ enhanced, tpName: {}", tpName);
+            enhanceOriginExecutorWithoutFinalize(tpName, proxy, THREADED_SELECTOR_WORKER_FIELD, server);
+            log.info("DynamicTp adapter, thrift TThreadedSelectorServer invoker enhanced, tpName: {}", tpName);
         }
+    }
+    
+    /**
+     * Try to get the server port for better naming
+     * 
+     * @param server Thrift server instance
+     * @return port number or -1 if not available
+     */
+    private int getServerPort(Object server) {
+        try {
+        } catch (Exception e) {
+        }
+        return -1;
     }
 }

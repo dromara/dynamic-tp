@@ -112,4 +112,31 @@ public class ThriftDtpAdapterTest {
                 TThreadedSelectorServer.class, THREADED_SELECTOR_WORKER_FIELD, tThreadedSelectorServer);
         Assert.assertTrue(enhancedExecutor instanceof ThreadPoolExecutorProxy);
     }
+    
+    @Test
+    public void testGetServerPort() {
+        Object mockServerTransport = Mockito.mock(Object.class);
+        Object mockServerSocket = Mockito.mock(Object.class);
+        
+        ReflectionUtil.setFieldValue("serverTransport_", tThreadPoolServer, mockServerTransport);
+        ReflectionUtil.setFieldValue("serverSocket_", mockServerTransport, mockServerSocket);
+        
+        try {
+            java.lang.reflect.Method getServerPortMethod = ThriftDtpAdapter.class.getDeclaredMethod("getServerPort", Object.class);
+            getServerPortMethod.setAccessible(true);
+            
+            java.lang.reflect.Method mockLocalPortMethod = Mockito.mock(java.lang.reflect.Method.class);
+            Mockito.when(mockLocalPortMethod.invoke(mockServerSocket)).thenReturn(9090);
+            
+            Mockito.mockStatic(ReflectionUtil.class);
+            Mockito.when(ReflectionUtil.getFieldValue("serverTransport_", tThreadPoolServer)).thenReturn(mockServerTransport);
+            Mockito.when(ReflectionUtil.getFieldValue("serverSocket_", mockServerTransport)).thenReturn(mockServerSocket);
+            Mockito.when(ReflectionUtil.findMethod(mockServerSocket.getClass(), "getLocalPort")).thenReturn(mockLocalPortMethod);
+            
+            int port = (int) getServerPortMethod.invoke(thriftDtpAdapter, tThreadPoolServer);
+            Assert.assertEquals(9090, port);
+        } catch (Exception e) {
+            Assert.fail("Test failed with exception: " + e.getMessage());
+        }
+    }
 }

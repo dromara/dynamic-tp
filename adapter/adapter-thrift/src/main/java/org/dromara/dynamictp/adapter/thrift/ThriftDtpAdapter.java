@@ -141,9 +141,9 @@ public class ThriftDtpAdapter extends AbstractDtpAdapter {
                 if (serverSocket != null) {
                     Method getLocalPortMethod = ReflectionUtil.findMethod(serverSocket.getClass(), "getLocalPort");
                     if (getLocalPortMethod != null) {
-                        long port = MethodUtil.invokeAndReturnLong(getLocalPortMethod, serverSocket);
+                        int port = MethodUtil.invokeAndReturnInt(getLocalPortMethod, serverSocket);
                         if (port > 0) {
-                            return (int) port;
+                            return port;
                         }
                     }
                 }
@@ -155,9 +155,9 @@ public class ThriftDtpAdapter extends AbstractDtpAdapter {
                 if (socket != null) {
                     Method getLocalPortMethod = ReflectionUtil.findMethod(socket.getClass(), "getLocalPort");
                     if (getLocalPortMethod != null) {
-                        long port = MethodUtil.invokeAndReturnLong(getLocalPortMethod, socket);
+                        int port = MethodUtil.invokeAndReturnInt(getLocalPortMethod, socket);
                         if (port > 0) {
-                            return (int) port;
+                            return port;
                         }
                     }
                 }

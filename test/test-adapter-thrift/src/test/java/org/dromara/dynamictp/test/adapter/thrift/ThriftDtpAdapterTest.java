@@ -60,8 +60,8 @@ public class ThriftDtpAdapterTest {
     private ThreadPoolExecutor threadPoolExecutor;
     
     private static final String THREAD_POOL_SERVER_EXECUTOR_FIELD = "executorService_";
-    private static final String HSHASERVER_EXECUTOR_FIELD = "invoker_";
-    private static final String THREADED_SELECTOR_WORKER_FIELD = "executorService_";
+    private static final String HSHASERVER_EXECUTOR_FIELD = "invoker";
+    private static final String THREADED_SELECTOR_WORKER_FIELD = "invoker";
 
     @Before
     public void setUp() {

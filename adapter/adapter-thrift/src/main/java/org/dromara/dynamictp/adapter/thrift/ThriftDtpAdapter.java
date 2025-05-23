@@ -133,7 +133,31 @@ public class ThriftDtpAdapter extends AbstractDtpAdapter {
      */
     private int getServerPort(Object server) {
         try {
+            Object serverTransport = ReflectionUtil.getFieldValue("serverTransport_", server);
+            if (serverTransport != null) {
+                Object serverSocket = ReflectionUtil.getFieldValue("serverSocket_", serverTransport);
+                if (serverSocket != null) {
+                    Object localPort = ReflectionUtil.getFieldValue("port_", serverSocket);
+                    if (localPort instanceof Integer) {
+                        return (Integer) localPort;
+                    }
+                }
+            }
+            
+            Object transport = ReflectionUtil.getFieldValue("inputTransport_", server);
+            if (transport != null) {
+                Object socket = ReflectionUtil.getFieldValue("serverSocket_", transport);
+                if (socket != null) {
+                    Object localPort = ReflectionUtil.getFieldValue("port_", socket);
+                    if (localPort instanceof Integer) {
+                        return (Integer) localPort;
+                    }
+                }
+            }
+            
+            log.debug("Could not extract port from Thrift server: {}", server.getClass().getSimpleName());
         } catch (Exception e) {
+            log.debug("Error extracting port from Thrift server: {}", e.getMessage());
         }
         return -1;
     }

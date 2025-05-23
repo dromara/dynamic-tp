@@ -24,10 +24,12 @@ import org.apache.thrift.server.THsHaServer;
 import org.apache.thrift.server.TThreadedSelectorServer;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.util.MethodUtil;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.jvmti.JVMTI;
 
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -137,9 +139,12 @@ public class ThriftDtpAdapter extends AbstractDtpAdapter {
             if (serverTransport != null) {
                 Object serverSocket = ReflectionUtil.getFieldValue("serverSocket_", serverTransport);
                 if (serverSocket != null) {
-                    Object localPort = ReflectionUtil.getFieldValue("port_", serverSocket);
-                    if (localPort instanceof Integer) {
-                        return (Integer) localPort;
+                    Method getLocalPortMethod = ReflectionUtil.findMethod(serverSocket.getClass(), "getLocalPort");
+                    if (getLocalPortMethod != null) {
+                        long port = MethodUtil.invokeAndReturnLong(getLocalPortMethod, serverSocket);
+                        if (port > 0) {
+                            return (int) port;
+                        }
                     }
                 }
             }
@@ -148,9 +153,12 @@ public class ThriftDtpAdapter extends AbstractDtpAdapter {
             if (transport != null) {
                 Object socket = ReflectionUtil.getFieldValue("serverSocket_", transport);
                 if (socket != null) {
-                    Object localPort = ReflectionUtil.getFieldValue("port_", socket);
-                    if (localPort instanceof Integer) {
-                        return (Integer) localPort;
+                    Method getLocalPortMethod = ReflectionUtil.findMethod(socket.getClass(), "getLocalPort");
+                    if (getLocalPortMethod != null) {
+                        long port = MethodUtil.invokeAndReturnLong(getLocalPortMethod, socket);
+                        if (port > 0) {
+                            return (int) port;
+                        }
                     }
                 }
             }

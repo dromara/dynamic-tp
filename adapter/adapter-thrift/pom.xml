@@ -17,6 +17,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.dromara.dynamictp</groupId>
+            <artifactId>dynamic-tp-jvmti-runtime</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.thrift</groupId>
             <artifactId>libthrift</artifactId>
             <version>0.21.0</version>

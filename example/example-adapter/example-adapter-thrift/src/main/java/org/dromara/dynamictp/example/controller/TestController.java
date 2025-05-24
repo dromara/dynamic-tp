@@ -26,7 +26,7 @@ import javax.annotation.Resource;
 
 /**
  * @author devin
- * @since 1.1.5
+ * @since 1.2.2
  */
 @Slf4j
 @RestController

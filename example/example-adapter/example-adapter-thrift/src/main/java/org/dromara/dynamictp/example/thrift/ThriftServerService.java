@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.example.thrift;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.server.TThreadPoolServer;
@@ -35,9 +36,10 @@ import java.util.concurrent.Executors;
  * ThriftServerService related
  *
  * @author devin
- * @since 1.1.5
+ * @since 1.2.2
  */
 @Service
+@Slf4j
 public class ThriftServerService implements SimpleService.Iface {
 
     @Value("${thrift.server.port:9998}")
@@ -57,7 +59,7 @@ public class ThriftServerService implements SimpleService.Iface {
                         .processor(processor)
                         .protocolFactory(new TBinaryProtocol.Factory());
                 server = new TThreadPoolServer(args);
-                System.out.println("Starting Thrift server on port " + serverPort);
+                log.info("Starting Thrift server on port {}", serverPort);
                 server.serve();
             } catch (TTransportException e) {
                 e.printStackTrace();

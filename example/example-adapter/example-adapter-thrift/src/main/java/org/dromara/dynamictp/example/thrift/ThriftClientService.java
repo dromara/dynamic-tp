@@ -31,7 +31,7 @@ import org.springframework.stereotype.Service;
  * ThriftClientService related
  *
  * @author devin
- * @since 1.1.5
+ * @since 1.2.2
  */
 @Service
 @Slf4j

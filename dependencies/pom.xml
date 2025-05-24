@@ -448,6 +448,12 @@
 
             <dependency>
                 <groupId>org.dromara.dynamictp</groupId>
+                <artifactId>dynamic-tp-adapter-thrift</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara.dynamictp</groupId>
                 <artifactId>dynamic-tp-extension-limiter-redis</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -608,6 +614,11 @@
             <dependency>
                 <groupId>org.dromara.dynamictp</groupId>
                 <artifactId>dynamic-tp-spring-boot-starter-adapter-liteflow</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dromara.dynamictp</groupId>
+                <artifactId>dynamic-tp-spring-boot-starter-adapter-thrift</artifactId>
                 <version>${revision}</version>
             </dependency>
         </dependencies>

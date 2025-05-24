@@ -17,23 +17,26 @@
 
 package org.dromara.dynamictp.test.adapter.thrift;
 
-import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.server.THsHaServer;
+import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.server.TThreadedSelectorServer;
+import org.apache.thrift.transport.TServerSocket;
+import org.apache.thrift.transport.TTransportException;
 import org.dromara.dynamictp.adapter.thrift.ThriftDtpAdapter;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -71,10 +74,20 @@ public class ThriftDtpAdapterTest {
                 new LinkedBlockingQueue<>(100));
     }
 
+    @After
+    public void tearDown() {
+        thriftDtpAdapter = null;
+        threadPoolExecutor.shutdownNow();
+        tThreadPoolServer = null;
+        tHsHaServer = null;
+        tThreadedSelectorServer = null;
+    }
+
     @Test
-    public void testEnhanceTThreadPoolServer() {
+    public void testEnhanceTThreadPoolServer() throws IOException, TTransportException {
         ReflectionUtil.setFieldValue(THREAD_POOL_SERVER_EXECUTOR_FIELD, tThreadPoolServer, threadPoolExecutor);
-        
+        TServerSocket tServerSocket = new TServerSocket(new ServerSocket(8989));
+        ReflectionUtil.setFieldValue("serverTransport_", tThreadPoolServer, tServerSocket);
         thriftDtpAdapter.initializeTThreadPoolServer(tThreadPoolServer);
         
         Map<String, ExecutorWrapper> executors = thriftDtpAdapter.getExecutorWrappers();
@@ -86,9 +99,10 @@ public class ThriftDtpAdapterTest {
     }
 
     @Test
-    public void testEnhanceTHsHaServer() {
+    public void testEnhanceTHsHaServer() throws IOException, TTransportException {
         ReflectionUtil.setFieldValue(HSHASERVER_EXECUTOR_FIELD, tHsHaServer, threadPoolExecutor);
-        
+        TServerSocket tServerSocket = new TServerSocket(new ServerSocket(8990));
+        ReflectionUtil.setFieldValue("serverTransport_", tHsHaServer, tServerSocket);
         thriftDtpAdapter.initializeTHsHaServer(tHsHaServer);
         
         Map<String, ExecutorWrapper> executors = thriftDtpAdapter.getExecutorWrappers();
@@ -100,9 +114,10 @@ public class ThriftDtpAdapterTest {
     }
 
     @Test
-    public void testEnhanceTThreadedSelectorServer() {
+    public void testEnhanceTThreadedSelectorServer() throws IOException, TTransportException {
         ReflectionUtil.setFieldValue(THREADED_SELECTOR_WORKER_FIELD, tThreadedSelectorServer, threadPoolExecutor);
-        
+        TServerSocket tServerSocket = new TServerSocket(new ServerSocket(8991));
+        ReflectionUtil.setFieldValue("serverTransport_", tThreadedSelectorServer, tServerSocket);
         thriftDtpAdapter.initializeTThreadedSelectorServer(tThreadedSelectorServer);
         
         Map<String, ExecutorWrapper> executors = thriftDtpAdapter.getExecutorWrappers();
@@ -111,32 +126,5 @@ public class ThriftDtpAdapterTest {
         Object enhancedExecutor = ReflectionUtil.getFieldValue(
                 TThreadedSelectorServer.class, THREADED_SELECTOR_WORKER_FIELD, tThreadedSelectorServer);
         Assert.assertTrue(enhancedExecutor instanceof ThreadPoolExecutorProxy);
-    }
-    
-    @Test
-    public void testGetServerPort() {
-        Object mockServerTransport = Mockito.mock(Object.class);
-        Object mockServerSocket = Mockito.mock(Object.class);
-        
-        ReflectionUtil.setFieldValue("serverTransport_", tThreadPoolServer, mockServerTransport);
-        ReflectionUtil.setFieldValue("serverSocket_", mockServerTransport, mockServerSocket);
-        
-        try {
-            java.lang.reflect.Method getServerPortMethod = ThriftDtpAdapter.class.getDeclaredMethod("getServerPort", Object.class);
-            getServerPortMethod.setAccessible(true);
-            
-            java.lang.reflect.Method mockLocalPortMethod = Mockito.mock(java.lang.reflect.Method.class);
-            Mockito.when(mockLocalPortMethod.invoke(mockServerSocket)).thenReturn(9090);
-            
-            Mockito.mockStatic(ReflectionUtil.class);
-            Mockito.when(ReflectionUtil.getFieldValue("serverTransport_", tThreadPoolServer)).thenReturn(mockServerTransport);
-            Mockito.when(ReflectionUtil.getFieldValue("serverSocket_", mockServerTransport)).thenReturn(mockServerSocket);
-            Mockito.when(ReflectionUtil.findMethod(mockServerSocket.getClass(), "getLocalPort")).thenReturn(mockLocalPortMethod);
-            
-            int port = (int) getServerPortMethod.invoke(thriftDtpAdapter, tThreadPoolServer);
-            Assert.assertEquals(9090, port);
-        } catch (Exception e) {
-            Assert.fail("Test failed with exception: " + e.getMessage());
-        }
     }
 }

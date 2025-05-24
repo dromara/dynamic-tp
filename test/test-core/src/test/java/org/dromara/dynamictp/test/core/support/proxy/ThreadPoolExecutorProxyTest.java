@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.test.adapter.thrift;
+package org.dromara.dynamictp.test.core.support.proxy;
 
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;

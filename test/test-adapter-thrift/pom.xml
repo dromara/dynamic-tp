@@ -19,7 +19,6 @@
         <dependency>
             <groupId>org.apache.thrift</groupId>
             <artifactId>libthrift</artifactId>
-            <version>0.21.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -46,6 +46,7 @@
         <tars.version>1.7.3</tars.version>
         <skywalking.version>9.1.0</skywalking.version>
         <opentelemetry.version>1.25.0</opentelemetry.version>
+        <thrift.version>0.21.0</thrift.version>
 
         <apollo.version>2.0.0</apollo.version>
         <nacos-api.version>2.0.4</nacos-api.version>
@@ -336,6 +337,12 @@
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>
                 <version>${bytebuddy.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.thrift</groupId>
+                <artifactId>libthrift</artifactId>
+                <version>${thrift.version}</version>
             </dependency>
 
             <dependency>

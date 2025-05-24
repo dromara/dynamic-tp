@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Configuration;
  * ThriftTpAutoConfiguration related
  *
  * @author devin
- * @since 1.1.5
+ * @since 1.2.2
  */
 @Configuration
 @ConditionalOnClass(name = "org.apache.thrift.server.TServer")

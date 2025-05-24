@@ -39,14 +39,14 @@ import java.util.concurrent.ThreadPoolExecutor;
  * ThriftDtpAdapter for managing Thrift server thread pools
  *
  * @author devin
- * @since 1.1.5
+ * @since 1.2.2
  */
 @Slf4j
 @SuppressWarnings("all")
 public class ThriftDtpAdapter extends AbstractDtpAdapter {
 
     private static final String TP_PREFIX = "thriftTp";
-    
+
     private static final String THREAD_POOL_SERVER_EXECUTOR_FIELD = "executorService_";
     private static final String HSHASERVER_EXECUTOR_FIELD = "invoker";
     private static final String THREADED_SELECTOR_WORKER_FIELD = "invoker";
@@ -60,37 +60,35 @@ public class ThriftDtpAdapter extends AbstractDtpAdapter {
     protected String getTpPrefix() {
         return TP_PREFIX;
     }
-    
-    private String genTpName(String serverType, int port) {
-        return TP_PREFIX + "#" + serverType + "#" + (port > 0 ? port : "");
-    }
 
     @Override
     protected void initialize() {
         super.initialize();
-        
         List<TThreadPoolServer> tThreadPoolServers = JVMTI.getInstances(TThreadPoolServer.class);
         if (CollectionUtils.isEmpty(tThreadPoolServers)) {
-            log.warn("Cannot find instances of TThreadPoolServer.");
-        } else {
-            tThreadPoolServers.forEach(this::initializeTThreadPoolServer);
+            if (log.isDebugEnabled()) {
+                log.debug("Cannot find instances of TThreadPoolServer.");
+            }
         }
-        
+        tThreadPoolServers.forEach(this::initializeTThreadPoolServer);
+
         List<THsHaServer> tHsHaServers = JVMTI.getInstances(THsHaServer.class);
         if (CollectionUtils.isEmpty(tHsHaServers)) {
-            log.warn("Cannot find instances of THsHaServer.");
-        } else {
-            tHsHaServers.forEach(this::initializeTHsHaServer);
+            if (log.isDebugEnabled()) {
+                log.debug("Cannot find instances of THsHaServer.");
+            }
         }
-        
+        tHsHaServers.forEach(this::initializeTHsHaServer);
+
         List<TThreadedSelectorServer> tThreadedSelectorServers = JVMTI.getInstances(TThreadedSelectorServer.class);
         if (CollectionUtils.isEmpty(tThreadedSelectorServers)) {
-            log.warn("Cannot find instances of TThreadedSelectorServer.");
-        } else {
-            tThreadedSelectorServers.forEach(this::initializeTThreadedSelectorServer);
+            if (log.isDebugEnabled()) {
+                log.debug("Cannot find instances of TThreadedSelectorServer.");
+            }
         }
+        tThreadedSelectorServers.forEach(this::initializeTThreadedSelectorServer);
     }
-    
+
     public void initializeTThreadPoolServer(TThreadPoolServer server) {
         ThreadPoolExecutor executor = (ThreadPoolExecutor) ReflectionUtil.getFieldValue(
                 TThreadPoolServer.class, THREAD_POOL_SERVER_EXECUTOR_FIELD, server);
@@ -98,11 +96,11 @@ public class ThriftDtpAdapter extends AbstractDtpAdapter {
             int port = getServerPort(server);
             String tpName = genTpName("TThreadPoolServer", port);
             ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executor);
-            enhanceOriginExecutorWithoutFinalize(tpName, proxy, THREAD_POOL_SERVER_EXECUTOR_FIELD, server);
+            enhanceOriginExecutor(tpName, proxy, THREAD_POOL_SERVER_EXECUTOR_FIELD, server);
             log.info("DynamicTp adapter, thrift TThreadPoolServer executorService_ enhanced, tpName: {}", tpName);
         }
     }
-    
+
     public void initializeTHsHaServer(THsHaServer server) {
         ExecutorService executor = (ExecutorService) ReflectionUtil.getFieldValue(
                 THsHaServer.class, HSHASERVER_EXECUTOR_FIELD, server);
@@ -110,11 +108,11 @@ public class ThriftDtpAdapter extends AbstractDtpAdapter {
             int port = getServerPort(server);
             String tpName = genTpName("THsHaServer", port);
             ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) executor);
-            enhanceOriginExecutorWithoutFinalize(tpName, proxy, HSHASERVER_EXECUTOR_FIELD, server);
+            enhanceOriginExecutor(tpName, proxy, HSHASERVER_EXECUTOR_FIELD, server);
             log.info("DynamicTp adapter, thrift THsHaServer invoker enhanced, tpName: {}", tpName);
         }
     }
-    
+
     public void initializeTThreadedSelectorServer(TThreadedSelectorServer server) {
         ExecutorService executor = (ExecutorService) ReflectionUtil.getFieldValue(
                 TThreadedSelectorServer.class, THREADED_SELECTOR_WORKER_FIELD, server);
@@ -122,50 +120,41 @@ public class ThriftDtpAdapter extends AbstractDtpAdapter {
             int port = getServerPort(server);
             String tpName = genTpName("TThreadedSelectorServer", port);
             ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) executor);
-            enhanceOriginExecutorWithoutFinalize(tpName, proxy, THREADED_SELECTOR_WORKER_FIELD, server);
+            enhanceOriginExecutor(tpName, proxy, THREADED_SELECTOR_WORKER_FIELD, server);
             log.info("DynamicTp adapter, thrift TThreadedSelectorServer invoker enhanced, tpName: {}", tpName);
         }
     }
-    
+
+    private String genTpName(String serverType, int port) {
+        return TP_PREFIX + "#" + serverType + "#" + (port > 0 ? port : "");
+    }
+
     /**
      * Try to get the server port for better naming
-     * 
+     *
      * @param server Thrift server instance
      * @return port number or -1 if not available
      */
     private int getServerPort(Object server) {
         try {
             Object serverTransport = ReflectionUtil.getFieldValue("serverTransport_", server);
-            if (serverTransport != null) {
-                Object serverSocket = ReflectionUtil.getFieldValue("serverSocket_", serverTransport);
-                if (serverSocket != null) {
-                    Method getLocalPortMethod = ReflectionUtil.findMethod(serverSocket.getClass(), "getLocalPort");
-                    if (getLocalPortMethod != null) {
-                        int port = MethodUtil.invokeAndReturnInt(getLocalPortMethod, serverSocket);
-                        if (port > 0) {
-                            return port;
-                        }
-                    }
+            if (Objects.isNull(serverTransport)) {
+                return -1;
+            }
+            Object serverSocket = ReflectionUtil.getFieldValue("serverSocket_", serverTransport);
+            if (Objects.isNull(serverSocket)) {
+                return -1;
+            }
+            Method getLocalPortMethod = ReflectionUtil.findMethod(serverSocket.getClass(), "getLocalPort");
+            if (getLocalPortMethod != null) {
+                int port = MethodUtil.invokeAndReturnInt(getLocalPortMethod, serverSocket);
+                if (port > 0) {
+                    return port;
                 }
             }
-            
-            Object transport = ReflectionUtil.getFieldValue("inputTransport_", server);
-            if (transport != null) {
-                Object socket = ReflectionUtil.getFieldValue("serverSocket_", transport);
-                if (socket != null) {
-                    Method getLocalPortMethod = ReflectionUtil.findMethod(socket.getClass(), "getLocalPort");
-                    if (getLocalPortMethod != null) {
-                        int port = MethodUtil.invokeAndReturnInt(getLocalPortMethod, socket);
-                        if (port > 0) {
-                            return port;
-                        }
-                    }
-                }
-            }
-            
-            log.debug("Could not extract port from Thrift server: {}", server.getClass().getSimpleName());
+            log.warn("Could not extract port from Thrift server: {}", server.getClass().getSimpleName());
         } catch (Exception e) {
-            log.debug("Error extracting port from Thrift server: {}", e.getMessage());
+            log.warn("Error extracting port from Thrift server: {}", e.getMessage());
         }
         return -1;
     }

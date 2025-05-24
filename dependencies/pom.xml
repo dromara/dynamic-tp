@@ -46,6 +46,7 @@
         <tars.version>1.7.3</tars.version>
         <skywalking.version>9.1.0</skywalking.version>
         <opentelemetry.version>1.25.0</opentelemetry.version>
+        <thrift.version>0.21.0</thrift.version>
 
         <apollo.version>2.0.0</apollo.version>
         <nacos-api.version>2.0.4</nacos-api.version>
@@ -339,6 +340,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.apache.thrift</groupId>
+                <artifactId>libthrift</artifactId>
+                <version>${thrift.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.dromara.dynamictp</groupId>
                 <artifactId>dynamic-tp-jvmti-runtime</artifactId>
                 <version>${revision}</version>
@@ -443,6 +450,12 @@
             <dependency>
                 <groupId>org.dromara.dynamictp</groupId>
                 <artifactId>dynamic-tp-adapter-liteflow</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.dromara.dynamictp</groupId>
+                <artifactId>dynamic-tp-adapter-thrift</artifactId>
                 <version>${revision}</version>
             </dependency>
 
@@ -608,6 +621,11 @@
             <dependency>
                 <groupId>org.dromara.dynamictp</groupId>
                 <artifactId>dynamic-tp-spring-boot-starter-adapter-liteflow</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dromara.dynamictp</groupId>
+                <artifactId>dynamic-tp-spring-boot-starter-adapter-thrift</artifactId>
                 <version>${revision}</version>
             </dependency>
         </dependencies>

@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.common.manager;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -29,36 +30,36 @@ public class NullContextManager implements ContextManager {
 
     @Override
     public <T> T getBean(Class<T> clazz) {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
     public <T> T getBean(String name, Class<T> clazz) {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
     public <T> Map<String, T> getBeansOfType(Class<T> clazz) {
-        throw new UnsupportedOperationException();
+        return Collections.emptyMap();
     }
 
     @Override
     public Object getEnvironment() {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
     public String getEnvironmentProperty(String key) {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
     public String getEnvironmentProperty(String key, Object environment) {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
     @Override
     public String getEnvironmentProperty(String key, String defaultValue) {
-        throw new UnsupportedOperationException();
+        return null;
     }
 }

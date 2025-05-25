@@ -86,7 +86,7 @@ public abstract class AbstractDtpAdapter implements DtpAdapter {
             initialize();
             afterInitialize();
             refresh(dtpProperties);
-            log.info("DynamicTp adapter, {} init end, executors: {}", getTpPrefix(), executors);
+            log.info("DynamicTp adapter, {} init end, executors {}", getTpPrefix(), executors.keySet());
         } catch (Throwable e) {
             log.error("DynamicTp adapter, {} init failed.", getTpPrefix(), e);
         }

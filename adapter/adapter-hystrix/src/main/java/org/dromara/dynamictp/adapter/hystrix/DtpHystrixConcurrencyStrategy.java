@@ -22,20 +22,18 @@ import com.netflix.hystrix.HystrixThreadPoolProperties;
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
 import com.netflix.hystrix.strategy.properties.HystrixProperty;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.common.manager.ContextManagerHelper;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
 
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
  * DtpHystrixConcurrencyStrategy related
  *
- * @author yanhom
- * @since 1.0.8
+ * @author devin
+ * @since 1.2.2
  */
 @Slf4j
 public class DtpHystrixConcurrencyStrategy extends HystrixConcurrencyStrategy {
@@ -43,44 +41,30 @@ public class DtpHystrixConcurrencyStrategy extends HystrixConcurrencyStrategy {
     private final HystrixConcurrencyStrategy delegate;
     private final HystrixDtpAdapter hystrixDtpAdapter;
 
-    public DtpHystrixConcurrencyStrategy(HystrixConcurrencyStrategy delegate) {
+    public DtpHystrixConcurrencyStrategy(HystrixConcurrencyStrategy delegate, HystrixDtpAdapter hystrixDtpAdapter) {
         this.delegate = delegate;
-        this.hystrixDtpAdapter = ContextManagerHelper.getBean(HystrixDtpAdapter.class);
+        this.hystrixDtpAdapter = hystrixDtpAdapter;
     }
 
     @Override
     public ThreadPoolExecutor getThreadPool(HystrixThreadPoolKey threadPoolKey,
-                                           HystrixProperty<Integer> corePoolSize,
-                                           HystrixProperty<Integer> maximumPoolSize,
-                                           HystrixProperty<Integer> keepAliveTime,
-                                           TimeUnit unit,
-                                           BlockingQueue<Runnable> workQueue) {
+                                            HystrixProperty<Integer> corePoolSize,
+                                            HystrixProperty<Integer> maximumPoolSize,
+                                            HystrixProperty<Integer> keepAliveTime,
+                                            TimeUnit unit,
+                                            BlockingQueue<Runnable> workQueue) {
         ThreadPoolExecutor originalExecutor = delegate.getThreadPool(
                 threadPoolKey, corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
-        
         ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(originalExecutor);
-        
-        String poolName = HystrixDtpAdapter.TP_PREFIX + "#" + threadPoolKey.name();
-        ExecutorWrapper wrapper = new ExecutorWrapper(poolName, proxy);
-        hystrixDtpAdapter.registerExecutor(poolName, wrapper);
-        
-        log.info("DynamicTp adapter, created enhanced thread pool for Hystrix: {}", poolName);
-        
+        hystrixDtpAdapter.registerExecutor(threadPoolKey.name(), proxy, originalExecutor);
         return proxy;
     }
 
     @Override
     public ThreadPoolExecutor getThreadPool(HystrixThreadPoolKey threadPoolKey, HystrixThreadPoolProperties threadPoolProperties) {
         ThreadPoolExecutor originalExecutor = delegate.getThreadPool(threadPoolKey, threadPoolProperties);
-        
         ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(originalExecutor);
-        
-        String poolName = HystrixDtpAdapter.TP_PREFIX + "#" + threadPoolKey.name();
-        ExecutorWrapper wrapper = new ExecutorWrapper(poolName, proxy);
-        hystrixDtpAdapter.registerExecutor(poolName, wrapper);
-        
-        log.info("DynamicTp adapter, created enhanced thread pool for Hystrix: {}", poolName);
-        
+        hystrixDtpAdapter.registerExecutor(threadPoolKey.name(), proxy, originalExecutor);
         return proxy;
     }
 
@@ -90,7 +74,7 @@ public class DtpHystrixConcurrencyStrategy extends HystrixConcurrencyStrategy {
     }
 
     @Override
-    public <T> java.util.concurrent.Callable<T> wrapCallable(java.util.concurrent.Callable<T> callable) {
+    public <T> Callable<T> wrapCallable(Callable<T> callable) {
         return delegate.wrapCallable(callable);
     }
 }

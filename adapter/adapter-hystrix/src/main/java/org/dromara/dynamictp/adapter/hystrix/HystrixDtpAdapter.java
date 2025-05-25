@@ -49,7 +49,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class HystrixDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String TP_PREFIX = "hystrixTp";
+    public static final String TP_PREFIX = "hystrixTp";
 
     private static final String THREAD_POOL_FIELD = "threadPool";
 
@@ -75,7 +75,9 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
         return TP_PREFIX;
     }
 
+    @Deprecated
     public void register(String poolName, HystrixThreadPoolMetrics metrics) {
+        log.warn("DynamicTp adapter, using deprecated metrics publisher approach for Hystrix thread pool: {}", poolName);
         ThreadPoolExecutor threadPoolExecutor = metrics.getThreadPool();
         if (executors.containsKey(poolName)) {
             return;
@@ -92,6 +94,19 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
     public void cacheMetricsPublisher(String poolName, DtpMetricsPublisherThreadPool metricsPublisher) {
         METRICS_PUBLISHERS.putIfAbsent(poolName, metricsPublisher);
     }
+    
+    public void registerExecutor(String poolName, ExecutorWrapper wrapper) {
+        if (executors.containsKey(poolName)) {
+            return;
+        }
+        
+        DtpProperties dtpProperties = ContextManagerHelper.getBean(DtpProperties.class);
+        val prop = StreamUtil.toMap(dtpProperties.getHystrixTp(), TpExecutorProps::getThreadPoolName);
+        
+        executors.put(poolName, wrapper);
+        refresh(wrapper, dtpProperties.getPlatforms(), prop.get(poolName));
+        log.info("DynamicTp adapter, {} registered executor {}", getTpPrefix(), wrapper);
+    }
 
     @Override
     protected void initialize() {
@@ -105,7 +120,7 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
         HystrixPlugins.reset();
 
         HystrixPlugins.getInstance().registerMetricsPublisher(new DtpHystrixMetricsPublisher(metricsPublisher));
-        HystrixPlugins.getInstance().registerConcurrencyStrategy(concurrencyStrategy);
+        HystrixPlugins.getInstance().registerConcurrencyStrategy(new DtpHystrixConcurrencyStrategy(concurrencyStrategy));
         HystrixPlugins.getInstance().registerEventNotifier(eventNotifier);
         HystrixPlugins.getInstance().registerPropertiesStrategy(propertiesStrategy);
         HystrixPlugins.getInstance().registerCommandExecutionHook(commandExecutionHook);

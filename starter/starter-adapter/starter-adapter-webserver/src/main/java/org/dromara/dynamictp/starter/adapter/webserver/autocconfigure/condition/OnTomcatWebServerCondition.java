@@ -33,8 +33,15 @@ public class OnTomcatWebServerCondition extends AnyNestedCondition {
     }
 
     @ConditionalOnBean(name = {"tomcatServletWebServerFactory"})
-    static class ServletWebServer { }
+    static class ServletWebServer {
+    }
 
     @ConditionalOnBean(name = {"tomcatReactiveWebServerFactory"})
-    static class ReactiveWebServer { }
+    static class ReactiveWebServer {
+    }
+
+    @ConditionalOnBean(name = {"tomcatEmbeddedServletContainerFactory"})
+    static class ServletWebServer1x {
+    }
+
 }

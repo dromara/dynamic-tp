@@ -34,8 +34,10 @@ public class OnUndertowWebServerCondition extends AnyNestedCondition {
     }
 
     @ConditionalOnBean(name = {"undertowServletWebServerFactory"})
-    static class ServletWebServer { }
+    static class ServletWebServer {
+    }
 
     @ConditionalOnBean(name = {"undertowReactiveWebServerFactory"})
-    static class ReactiveWebServer { }
+    static class ReactiveWebServer {
+    }
 }

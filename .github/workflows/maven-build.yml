@@ -18,12 +18,5 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
           cache: maven
-      - name: Install thrift
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y software-properties-common
-          sudo add-apt-repository -y ppa:thrift/ppa
-          sudo apt-get update
-          sudo apt-get install -y thrift
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        run: mvn -B package --file pom.xml -DskipThrift=true

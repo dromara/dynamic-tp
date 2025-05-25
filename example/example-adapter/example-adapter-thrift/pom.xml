@@ -73,33 +73,58 @@
                 <version>1.7.1</version>
             </extension>
         </extensions>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.thrift</groupId>
-                <artifactId>thrift-maven-plugin</artifactId>
-                <version>0.10.0</version>
-                <configuration>
-                    <thriftExecutable>thrift</thriftExecutable>
-                    <thriftSourceRoot>${project.basedir}/src/main/thrift</thriftSourceRoot>
-                    <outputDirectory>${project.basedir}/src/main/java</outputDirectory>
-                    <generator>java</generator>
-
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>thrift-sources</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- Add Spring Boot Maven plugin -->
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>skip-thrift</id>
+            <activation>
+                <property>
+                    <name>skipThrift</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.thrift</groupId>
+                        <artifactId>thrift-maven-plugin</artifactId>
+                        <version>0.10.0</version>
+                        <!-- no executions = skip -->
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>with-thrift</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.thrift</groupId>
+                        <artifactId>thrift-maven-plugin</artifactId>
+                        <version>0.10.0</version>
+                        <configuration>
+                            <thriftExecutable>thrift</thriftExecutable>
+                            <thriftSourceRoot>${project.basedir}/src/main/thrift</thriftSourceRoot>
+                            <outputDirectory>${project.basedir}/src/main/java</outputDirectory>
+                            <generator>java</generator>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>thrift-sources</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

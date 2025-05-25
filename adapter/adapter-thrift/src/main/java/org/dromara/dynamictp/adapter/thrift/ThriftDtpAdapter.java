@@ -19,8 +19,8 @@ package org.dromara.dynamictp.adapter.thrift;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.server.THsHaServer;
+import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.server.TThreadedSelectorServer;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
 import org.dromara.dynamictp.common.properties.DtpProperties;
@@ -97,7 +97,6 @@ public class ThriftDtpAdapter extends AbstractDtpAdapter {
             String tpName = genTpName("TThreadPoolServer", port);
             ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executor);
             enhanceOriginExecutor(tpName, proxy, THREAD_POOL_SERVER_EXECUTOR_FIELD, server);
-            log.info("DynamicTp adapter, thrift TThreadPoolServer executorService_ enhanced, tpName: {}", tpName);
         }
     }
 
@@ -109,7 +108,6 @@ public class ThriftDtpAdapter extends AbstractDtpAdapter {
             String tpName = genTpName("THsHaServer", port);
             ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) executor);
             enhanceOriginExecutor(tpName, proxy, HSHASERVER_EXECUTOR_FIELD, server);
-            log.info("DynamicTp adapter, thrift THsHaServer invoker enhanced, tpName: {}", tpName);
         }
     }
 
@@ -121,7 +119,6 @@ public class ThriftDtpAdapter extends AbstractDtpAdapter {
             String tpName = genTpName("TThreadedSelectorServer", port);
             ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) executor);
             enhanceOriginExecutor(tpName, proxy, THREADED_SELECTOR_WORKER_FIELD, server);
-            log.info("DynamicTp adapter, thrift TThreadedSelectorServer invoker enhanced, tpName: {}", tpName);
         }
     }
 

@@ -199,6 +199,7 @@ public class NotifyHelper {
             NotifyItem oldNotifyItem = oldNotifyItemMap.get(x.getType());
             if (Objects.isNull(oldNotifyItem)) {
                 AlarmManager.initAlarm(poolName, x);
+                return;
             }
             if (oldNotifyItem.getPeriod() != x.getPeriod()) {
                 AlarmManager.initAlarmCounter(poolName, x);

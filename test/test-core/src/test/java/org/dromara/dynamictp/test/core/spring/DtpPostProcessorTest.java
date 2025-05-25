@@ -22,10 +22,10 @@ import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
 import org.dromara.dynamictp.spring.support.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.SpringApplication;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
@@ -41,14 +41,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 @EnableAutoConfiguration
 @PropertySource(value = "classpath:/postprocessor-dtp-dev.yml", factory = YamlPropertySourceFactory.class)
 @ComponentScan(basePackages = "org.dromara.dynamictp.test.core.spring")
-public class DtpPostProcessorTest {
+@SpringBootTest(classes = DtpPostProcessorTest.class)
+class DtpPostProcessorTest {
 
-    private static ConfigurableApplicationContext context;
-
-    @BeforeAll
-    public static void setUp() {
-        context = SpringApplication.run(DtpPostProcessorTest.class);
-    }
+    @Autowired
+    private ConfigurableApplicationContext context;
 
     @Test
     void test() {
@@ -56,11 +53,11 @@ public class DtpPostProcessorTest {
         Assertions.assertNotNull(executor);
 
         Executor commonExecutor = context.getBean("commonExecutor", ThreadPoolExecutor.class);
-        Assertions.assertEquals(commonExecutor.getClass(), ThreadPoolExecutorProxy.class);
+        Assertions.assertEquals(ThreadPoolExecutorProxy.class, commonExecutor.getClass());
         commonExecutor.execute(() -> System.out.println("enhance commonExecutor success!"));
 
         ThreadPoolTaskExecutor taskExecutor = context.getBean("taskExecutor", ThreadPoolTaskExecutor.class);
-        Assertions.assertEquals(taskExecutor.getThreadPoolExecutor().getClass(), ThreadPoolExecutorProxy.class);
+        Assertions.assertEquals(ThreadPoolExecutorProxy.class, taskExecutor.getThreadPoolExecutor().getClass());
         taskExecutor.execute(() -> System.out.println("enhance taskExecutor success!"));
     }
 

@@ -24,6 +24,7 @@
         <module>adapter-sofa</module>
         <module>adapter-rabbitmq</module>
         <module>adapter-liteflow</module>
+        <module>adapter-thrift</module>
     </modules>
 
     <dependencies>

@@ -17,8 +17,6 @@
 
 package org.dromara.dynamictp.adapter.hystrix;
 
-import com.google.common.collect.Maps;
-import com.netflix.hystrix.HystrixThreadPoolMetrics;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
 import com.netflix.hystrix.strategy.eventnotifier.HystrixEventNotifier;
@@ -28,16 +26,13 @@ import com.netflix.hystrix.strategy.properties.HystrixPropertiesStrategy;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
-import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.StreamUtil;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -49,11 +44,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Slf4j
 public class HystrixDtpAdapter extends AbstractDtpAdapter {
 
-    private static final String TP_PREFIX = "hystrixTp";
-
-    private static final String THREAD_POOL_FIELD = "threadPool";
-
-    private static final Map<String, DtpMetricsPublisherThreadPool> METRICS_PUBLISHERS = Maps.newHashMap();
+    public static final String TP_PREFIX = "hystrixTp";
 
     @Override
     public void refresh(DtpProperties dtpProperties) {
@@ -61,36 +52,23 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
     }
 
     @Override
-    public void refresh(ExecutorWrapper executorWrapper, List<NotifyPlatform> platforms, TpExecutorProps props) {
-        super.refresh(executorWrapper, platforms, props);
-        val metricsPublisher = METRICS_PUBLISHERS.get(executorWrapper.getThreadPoolName());
-        if (Objects.isNull(metricsPublisher)) {
-            return;
-        }
-        metricsPublisher.refreshProperties(props);
-    }
-
-    @Override
     protected String getTpPrefix() {
         return TP_PREFIX;
     }
-
-    public void register(String poolName, HystrixThreadPoolMetrics metrics) {
-        ThreadPoolExecutor threadPoolExecutor = metrics.getThreadPool();
+    
+    public void registerExecutor(String threadPoolKey, ThreadPoolExecutorProxy proxy, ThreadPoolExecutor original) {
+        String poolName = getTpPrefix() + "#" + threadPoolKey;
         if (executors.containsKey(poolName)) {
             return;
         }
+        ExecutorWrapper wrapper = new ExecutorWrapper(poolName, proxy);
+        executors.put(poolName, wrapper);
+        shutdownOriginalExecutor(original);
 
         DtpProperties dtpProperties = ContextManagerHelper.getBean(DtpProperties.class);
         val prop = StreamUtil.toMap(dtpProperties.getHystrixTp(), TpExecutorProps::getThreadPoolName);
-        String tpName = TP_PREFIX + "#" + poolName;
-        enhanceOriginExecutor(tpName, threadPoolExecutor, THREAD_POOL_FIELD, metrics);
-        refresh(executors.get(tpName), dtpProperties.getPlatforms(), prop.get(tpName));
-        log.info("DynamicTp adapter, {} init end, executor {}", getTpPrefix(), executors.get(tpName));
-    }
-
-    public void cacheMetricsPublisher(String poolName, DtpMetricsPublisherThreadPool metricsPublisher) {
-        METRICS_PUBLISHERS.putIfAbsent(poolName, metricsPublisher);
+        refresh(wrapper, dtpProperties.getPlatforms(), prop.get(poolName));
+        log.info("DynamicTp adapter, executor [{}] enhanced success.", poolName);
     }
 
     @Override
@@ -104,8 +82,8 @@ public class HystrixDtpAdapter extends AbstractDtpAdapter {
 
         HystrixPlugins.reset();
 
-        HystrixPlugins.getInstance().registerMetricsPublisher(new DtpHystrixMetricsPublisher(metricsPublisher));
-        HystrixPlugins.getInstance().registerConcurrencyStrategy(concurrencyStrategy);
+        HystrixPlugins.getInstance().registerMetricsPublisher(metricsPublisher);
+        HystrixPlugins.getInstance().registerConcurrencyStrategy(new DtpHystrixConcurrencyStrategy(concurrencyStrategy, this));
         HystrixPlugins.getInstance().registerEventNotifier(eventNotifier);
         HystrixPlugins.getInstance().registerPropertiesStrategy(propertiesStrategy);
         HystrixPlugins.getInstance().registerCommandExecutionHook(commandExecutionHook);

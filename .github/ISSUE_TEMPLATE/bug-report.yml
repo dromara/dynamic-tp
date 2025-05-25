@@ -1,0 +1,101 @@
+name: BUG 报告
+description: 'Report a bug'
+title: '[BUG]: '
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **首先感谢您使用 DynamicTp，如果使用过程中有任何问题，请按照下述模板反馈问题，请使用 Markdown 语法**。
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: 平台
+      description: 您正在使用哪个平台？
+      options:
+        - Windows
+        - macOS
+        - Linux
+    validations:
+      required: true
+
+  - type: input
+    id: jdk-version
+    attributes:
+      label: Jdk版本
+      placeholder: 例如：JDK 8, JDK 11
+      description: 您正在使用哪个 JDK 版本？
+    validations:
+      required: true
+
+  - type: input
+    id: springboot-version
+    attributes:
+      label: SpringBoot版本
+      placeholder: 例如：2.6.3
+      description: 您正在使用哪个 SpringBoot 版本？
+    validations:
+      required: true
+
+  - type: input
+    id: dynamictp-version
+    attributes:
+      label: DynamicTp版本
+      placeholder: 例如：1.0.0
+      description: 您正在使用哪个 dynamic-tp 版本？
+    validations:
+      required: true
+
+  - type: input
+    id: config-center-type
+    attributes:
+      label: 配置中心类型
+      placeholder: 例如：Nacos, Apollo
+      description: 您正在使用哪个配置中心？
+    validations:
+      required: false
+
+  - type: input
+    id: config-center-version
+    attributes:
+      label: 配置中心版本
+      placeholder: 例如：2.0.0
+      description: 您正在使用哪个配置中心版本？
+    validations:
+      required: false
+
+  - type: textarea
+    id: problem-description
+    attributes:
+      label: 问题描述
+      description: 文字描述、截图、粘代码方式
+      placeholder: |
+        文字描述、截图、粘代码方式
+
+        - 配置文件：
+        - 引入的依赖：
+        - 代码使用步骤：
+        - 报错信息：
+        - 猜测可能原因：
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: 复现步骤
+      description: 请详细描述如何复现此问题
+      placeholder: |
+        1. xxx
+        2. xxx
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: 其他信息
+      description: 其他有助于解决问题的信息
+    validations:
+      required: false

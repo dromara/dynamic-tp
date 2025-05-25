@@ -58,4 +58,19 @@ public final class MethodUtil {
             return -1;
         }
     }
+    
+    /**
+     * Invoke method and return int value.
+     *
+     * @param method target method
+     * @param targetObj the object the underlying method is invoked from
+     * @return result
+     */
+    public static int invokeAndReturnInt(Method method, Object targetObj) {
+        try {
+            return method != null ? (int) method.invoke(targetObj) : -1;
+        } catch (Exception e) {
+            return -1;
+        }
+    }
 }

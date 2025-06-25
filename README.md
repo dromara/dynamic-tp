@@ -208,7 +208,7 @@ protected void afterExecute(Runnable r, Throwable t);
 
 看到这儿，**请给项目一个 star**，你的支持是我们前进的动力！
 
-使用过程中有任何问题，或者对项目有什么想法或者建议，可以加入社群，跟 1500+ 群友一起交流讨论。
+使用过程中有任何问题，或者对项目有什么想法或者建议，可以加入社群，跟 1700+ 群友一起交流讨论。
 
 微信群均已满 200 人，可以关注微信公众号，加我个人微信拉群（备注：dynamic-tp 拉群）。
 
@@ -222,12 +222,3 @@ protected void afterExecute(Runnable r, Throwable t);
 
 - [HertzBeat](https://github.com/dromara/hertzbeat) : 易用友好的实时监控告警系统，无需Agent，强大自定义监控能力.
 
----
-
-## 鸣谢
-
-感谢 JetBrains 对开源项目的支持
-
-<a href="https://jb.gg/OpenSourceSupport">
-  <img src="https://user-images.githubusercontent.com/8643542/160519107-199319dc-e1cf-4079-94b7-01b6b8d23aa6.png" align="left" height="150" width="150" alt="JetBrains">
-</a>

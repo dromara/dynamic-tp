@@ -1,4 +1,4 @@
-package org.dromara.dynamictp.sdk;
+package org.dromara.dynamictp.sdk.client;
 
 import lombok.Getter;
 
@@ -12,19 +12,20 @@ public class AdminRequestBody implements Serializable {
     @Getter
     private final long id;
 
-    private AdminRequestTypeEnum requestType;
+    @Getter
+    private final AdminRequestTypeEnum requestType;
 
     private byte[] body;
 
     public AdminRequestBody(long id, AdminRequestTypeEnum requestType) {
-        this.id = id;
-        this.requestType = requestType;
+        this(id, requestType, 1024);
     }
 
-    public AdminRequestBody(int id, int size) {
+    public AdminRequestBody(long id, AdminRequestTypeEnum requestType, int size) {
         this.id = id;
         this.body = new byte[size];
         ThreadLocalRandom.current().nextBytes(this.body);
+        this.requestType = requestType;
     }
 
 }

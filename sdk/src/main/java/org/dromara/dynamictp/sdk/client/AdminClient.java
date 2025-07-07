@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.sdk;
+package org.dromara.dynamictp.sdk.client;
 
 import cn.hutool.core.lang.generator.SnowflakeGenerator;
 import com.alipay.remoting.Connection;

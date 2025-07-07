@@ -1,4 +1,4 @@
-package org.dromara.dynamictp.sdk;
+package org.dromara.dynamictp.sdk.client;
 
 import com.alipay.remoting.Connection;
 import com.alipay.remoting.ConnectionEventProcessor;

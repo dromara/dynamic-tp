@@ -48,6 +48,7 @@
         <module>dependencies</module>
         <module>spring</module>
         <module>benchmark</module>
+        <module>sdk</module>
     </modules>
 
     <dependencies>

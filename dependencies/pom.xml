@@ -36,6 +36,8 @@
         <alibaba-dubbo.version>2.6.10</alibaba-dubbo.version>
         <alibaba-dubbo-starter.version>2.0.0</alibaba-dubbo-starter.version>
         <grpc-starter.version>2.15.0.RELEASE</grpc-starter.version>
+        <sofa-bolt.version>1.6.12</sofa-bolt.version>
+        <sofa-common-tools.version>1.4.0</sofa-common-tools.version>
         <hystrix.version>1.5.18</hystrix.version>
         <motan.version>1.2.0</motan.version>
         <okhttp.version>3.14.9</okhttp.version>
@@ -182,6 +184,18 @@
                 <groupId>org.apache.rocketmq</groupId>
                 <artifactId>rocketmq-client</artifactId>
                 <version>${rocketmq.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alipay.sofa</groupId>
+                <artifactId>bolt</artifactId>
+                <version>${sofa-bolt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alipay.sofa.common</groupId>
+                <artifactId>sofa-common-tools</artifactId>
+                <version>1.4.0</version>
             </dependency>
 
             <dependency>

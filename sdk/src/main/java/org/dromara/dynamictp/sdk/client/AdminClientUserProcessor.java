@@ -4,10 +4,14 @@ import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.SyncUserProcessor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.common.properties.DtpProperties;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static org.dromara.dynamictp.core.DtpRegistry.refresh;
+
 
 @Slf4j
 public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody> {
@@ -22,7 +26,7 @@ public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody
     }
 
     @Override
-    public Object handleRequest(BizContext bizContext, AdminRequestBody adminRequestBody) throws Exception {
+    public Object handleRequest(BizContext bizContext, AdminRequestBody adminRequestBody) {
         log.info("DynamicTp admin request received:{}",adminRequestBody.getRequestType().getValue());
         if(bizContext.isRequestTimeout()) {
             log.warn("DynamicTp admin request timeout:{}s",bizContext.getClientTimeout());
@@ -62,7 +66,9 @@ public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody
     }
 
     private Object handleExecutorRefreshRequest(AdminRequestBody adminRequestBody) {
-        return null;
+        DtpProperties dtpProperties = (DtpProperties) adminRequestBody.bytesToObject();
+        refresh(dtpProperties);
+        return adminRequestBody;
     }
 
     private Object handleAlarmManageRequest(AdminRequestBody adminRequestBody) {

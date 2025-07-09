@@ -1,10 +1,12 @@
 package org.dromara.dynamictp.sdk.handler.refresher;
 
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.spring.AbstractSpringRefresher;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.SmartApplicationListener;
 
+@Slf4j
 public class AdminRefresher extends AbstractSpringRefresher implements SmartApplicationListener {
 
     protected AdminRefresher(DtpProperties dtpProperties) {

@@ -15,16 +15,43 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.sdk.client;
+package org.dromara.dynamictp.example.wrapper;
 
-import com.alipay.remoting.Connection;
-import com.alipay.remoting.ConnectionEventProcessor;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 
+/**
+ * CustomTaskWrapper related
+ *
+ * @author yanhom
+ * @since 1.1.0
+ */
 @Slf4j
-public class AdminConnectEventProcessor implements ConnectionEventProcessor {
+public class CustomTaskWrapper implements TaskWrapper {
+
     @Override
-    public void onEvent(String remoteAddress, Connection connection) {
-        log.info("DynamicTp admin client connected, admin address: {}", remoteAddress);
+    public String name() {
+        return "custom";
+    }
+
+    @Override
+    public Runnable wrap(Runnable runnable) {
+        return new MyRunnable(runnable);
+    }
+
+    public static class MyRunnable implements Runnable {
+
+        private final Runnable runnable;
+
+        public MyRunnable(Runnable runnable) {
+            this.runnable = runnable;
+        }
+
+        @Override
+        public void run() {
+            log.info("before run");
+            runnable.run();
+            log.info("after run");
+        }
     }
 }

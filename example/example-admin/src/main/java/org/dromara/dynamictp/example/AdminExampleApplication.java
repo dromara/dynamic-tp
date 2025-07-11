@@ -15,16 +15,20 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.sdk.client;
+package org.dromara.dynamictp.example;
 
-import com.alipay.remoting.Connection;
-import com.alipay.remoting.ConnectionEventProcessor;
-import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@Slf4j
-public class AdminConnectEventProcessor implements ConnectionEventProcessor {
-    @Override
-    public void onEvent(String remoteAddress, Connection connection) {
-        log.info("DynamicTp admin client connected, admin address: {}", remoteAddress);
+/**
+ * @author Redick01
+ */
+@SpringBootApplication
+@EnableDynamicTp
+public class AdminExampleApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(AdminExampleApplication.class, args);
     }
 }

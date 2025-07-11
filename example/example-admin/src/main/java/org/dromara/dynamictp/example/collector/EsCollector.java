@@ -15,16 +15,33 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.sdk.client;
+package org.dromara.dynamictp.example.collector;
 
-import com.alipay.remoting.Connection;
-import com.alipay.remoting.ConnectionEventProcessor;
-import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.common.entity.ThreadPoolStats;
+import org.dromara.dynamictp.common.util.JsonUtil;
+import org.dromara.dynamictp.core.monitor.collector.AbstractCollector;
 
-@Slf4j
-public class AdminConnectEventProcessor implements ConnectionEventProcessor {
+/**
+ * EsCollector related
+ *
+ * @author yanhom
+ * @since 1.1.0
+ */
+public class EsCollector extends AbstractCollector {
+
+    private final EsClient esClient;
+
+    public EsCollector() {
+        this.esClient = new EsClient();
+    }
+
     @Override
-    public void onEvent(String remoteAddress, Connection connection) {
-        log.info("DynamicTp admin client connected, admin address: {}", remoteAddress);
+    public void collect(ThreadPoolStats poolStats) {
+        esClient.save(JsonUtil.toJson(poolStats));
+    }
+
+    @Override
+    public String type() {
+        return "es";
     }
 }

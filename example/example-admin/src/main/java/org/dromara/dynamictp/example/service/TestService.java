@@ -15,16 +15,43 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.sdk.client;
+package org.dromara.dynamictp.example.service;
 
-import com.alipay.remoting.Connection;
-import com.alipay.remoting.ConnectionEventProcessor;
-import lombok.extern.slf4j.Slf4j;
+/**
+ * TestService related
+ *
+ * @author yanhom
+ * @since 1.1.0
+ */
+public interface TestService {
 
-@Slf4j
-public class AdminConnectEventProcessor implements ConnectionEventProcessor {
-    @Override
-    public void onEvent(String remoteAddress, Connection connection) {
-        log.info("DynamicTp admin client connected, admin address: {}", remoteAddress);
-    }
+    /**
+     * Test juc tp.
+     */
+    void testJucTp();
+
+    /**
+     * Test spring tp.
+     */
+    void testSpringTp();
+
+    /**
+     * Test common dtp.
+     */
+    void testCommonDtp();
+
+    /**
+     * Test eager dtp.
+     */
+    void testEagerDtp();
+
+    /**
+     * Test scheduled dtp.
+     */
+    void testScheduledDtp();
+
+    /**
+     * Test ordered dtp.
+     */
+    void testOrderedDtp();
 }

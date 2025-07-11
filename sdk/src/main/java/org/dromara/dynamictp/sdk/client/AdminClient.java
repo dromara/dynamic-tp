@@ -23,16 +23,13 @@ import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcClient;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 
 @Slf4j
 public class AdminClient {
 
-    @Value("${dynamictp.admin.ip}")
-    private String adminIp;
+    private final String adminIp = "127.0.0.1";
 
-    @Value("${dynamictp.admin.port}")
-    private int port;
+    private final int port = 8989;
 
     private final RpcClient client = new RpcClient();
 
@@ -42,12 +39,15 @@ public class AdminClient {
 
     public AdminClient() {
         client.addConnectionEventProcessor(ConnectionEventType.CONNECT, new AdminConnectEventProcessor());
+        client.addConnectionEventProcessor(ConnectionEventType.CLOSE, new AdminCloseEventProcessor());
         client.registerUserProcessor(new AdminClientUserProcessor());
+        client.enableReconnectSwitch();
         client.startup();
+        log.info("DynamicTp admin client started, admin ip: {}, port: {}", adminIp, port);
         try {
             connection = client.createStandaloneConnection(adminIp, port, 30000);
         } catch (RemotingException e) {
-            throw new RuntimeException(e);
+            log.info("DynamicTp admin client is not connected, admin ip: {}, port: {}", adminIp, port);
         } finally {
             client.closeStandaloneConnection(connection);
             client.shutdown();

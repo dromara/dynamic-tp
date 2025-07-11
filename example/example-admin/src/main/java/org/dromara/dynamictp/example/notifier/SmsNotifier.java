@@ -15,16 +15,33 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.sdk.client;
+package org.dromara.dynamictp.example.notifier;
 
-import com.alipay.remoting.Connection;
-import com.alipay.remoting.ConnectionEventProcessor;
-import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.common.entity.NotifyPlatform;
+import org.dromara.dynamictp.common.notifier.AbstractNotifier;
 
-@Slf4j
-public class AdminConnectEventProcessor implements ConnectionEventProcessor {
+/**
+ * SmsNotifier related
+ *
+ * @author yanhom
+ * @since 1.1.0
+ */
+public class SmsNotifier extends AbstractNotifier {
+
+    private final SmsClient smsClient;
+
+    public SmsNotifier(SmsClient smsClient) {
+        this.smsClient = smsClient;
+    }
+
     @Override
-    public void onEvent(String remoteAddress, Connection connection) {
-        log.info("DynamicTp admin client connected, admin address: {}", remoteAddress);
+    public String platform() {
+        return "sms";
+    }
+
+    @Override
+    protected void send0(NotifyPlatform platform, String content) {
+        String[] receivers = platform.getReceivers().split(",");
+        smsClient.send(platform.getSecret(), receivers, content);
     }
 }

@@ -16,6 +16,7 @@
     </properties>
 
     <modules>
+        <module>example-admin</module>
         <module>example-nacos</module>
         <module>example-nacos-cloud</module>
         <module>example-apollo</module>
@@ -26,6 +27,7 @@
         <module>example-adapter</module>
         <module>example-polaris-cloud</module>
         <module>example-huawei-cloud</module>
+        <module>example-admin</module>
     </modules>
 
     <build>

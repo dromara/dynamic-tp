@@ -12,6 +12,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.dromara.dynamictp</groupId>
             <artifactId>dynamic-tp-core</artifactId>
         </dependency>

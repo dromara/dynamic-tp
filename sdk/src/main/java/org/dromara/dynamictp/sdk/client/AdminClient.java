@@ -23,6 +23,9 @@ import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcClient;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.sdk.client.processor.AdminClientUserProcessor;
+import org.dromara.dynamictp.sdk.client.processor.AdminCloseEventProcessor;
+import org.dromara.dynamictp.sdk.client.processor.AdminConnectEventProcessor;
 
 @Slf4j
 public class AdminClient {

@@ -17,14 +17,23 @@
 
 package org.dromara.dynamictp.sdk.client;
 
+import com.caucho.hessian.io.Hessian2Input;
+import com.caucho.hessian.io.Hessian2Output;
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class AdminRequestBody implements Serializable {
 
     private static final long  serialVersionUID = -1288207208017808618L;
+
+    private static final Logger log = LoggerFactory.getLogger(AdminRequestBody.class);
 
     @Getter
     private final long id;
@@ -45,23 +54,28 @@ public class AdminRequestBody implements Serializable {
         this.requestType = requestType;
     }
 
-    public void objectToBytes(Object object) {
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-             ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
+    public void serialize(Object object) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        Hessian2Output  objectOutputStream = new Hessian2Output(byteArrayOutputStream);
+        try {
             objectOutputStream.writeObject(object);
-            this.body = byteArrayOutputStream.toByteArray();
+            objectOutputStream.flush();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.warn("DynamicTp admin client serialize failed.");
         }
+        this.body = byteArrayOutputStream.toByteArray();
     }
 
-    public Object bytesToObject() {
-        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(body);
-             ObjectInputStream  objectOutputStream = new ObjectInputStream(byteArrayInputStream)) {
-            return objectOutputStream.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+    public Object deserialize() {
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(body);
+        Hessian2Input   objectOutputStream = new Hessian2Input(byteArrayInputStream);
+        Object object = null;
+        try {
+            object = objectOutputStream.readObject();
+        } catch (IOException e) {
+            log.warn("DynamicTp admin client deserialize failed.");
         }
+        return object;
     }
 
 }

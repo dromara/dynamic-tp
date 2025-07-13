@@ -20,12 +20,6 @@
             <groupId>org.dromara.dynamictp</groupId>
             <artifactId>dynamic-tp-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.dromara.dynamictp</groupId>
-            <artifactId>dynamic-tp-sdk</artifactId>
-            <version>1.2.2</version>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 
 </project>

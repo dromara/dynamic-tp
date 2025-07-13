@@ -21,9 +21,8 @@ import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.SyncUserProcessor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.sdk.client.AdminRequestBody;
-import org.dromara.dynamictp.sdk.client.handler.AdminRefresher;
+import org.dromara.dynamictp.sdk.client.handler.refresh.AdminRefresher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +31,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static org.dromara.dynamictp.core.DtpRegistry.refresh;
 
 @Slf4j
 @Component
@@ -44,7 +42,7 @@ public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody
     private String remoteAddress = "NOT-CONNECT";
 
     @Autowired
-    AdminRefresher adminRefresher;
+    private AdminRefresher adminRefresher;
 
     public AdminClientUserProcessor() {
         this.executor = Executors.newSingleThreadExecutor();
@@ -92,7 +90,7 @@ public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody
     }
 
     private Object handleExecutorRefreshRequest(AdminRequestBody adminRequestBody) {
-        Map<Object, Object> properties = (Map<Object, Object>) adminRequestBody.deserialize();
+        Map<Object, Object> properties = (Map<Object, Object>) adminRequestBody.deserializeBody();
         if (properties == null) {
             log.error("DynamicTp admin request refresh failed, properties is null");
             return null;

@@ -17,23 +17,21 @@
 
 package org.dromara.dynamictp.sdk.client;
 
+import cn.hutool.core.lang.generator.SnowflakeGenerator;
 import com.caucho.hessian.io.Hessian2Input;
 import com.caucho.hessian.io.Hessian2Output;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.concurrent.ThreadLocalRandom;
 
+@Slf4j
 public class AdminRequestBody implements Serializable {
 
     private static final long  serialVersionUID = -1288207208017808618L;
-
-    private static final Logger log = LoggerFactory.getLogger(AdminRequestBody.class);
 
     @Getter
     private final long id;
@@ -43,18 +41,15 @@ public class AdminRequestBody implements Serializable {
 
     private byte[] body;
 
-    public AdminRequestBody(long id, AdminRequestTypeEnum requestType) {
-        this(id, requestType, 1024);
-    }
+    private final SnowflakeGenerator idGenerator = new SnowflakeGenerator();
 
-    public AdminRequestBody(long id, AdminRequestTypeEnum requestType, int size) {
-        this.id = id;
-        this.body = new byte[size];
-        ThreadLocalRandom.current().nextBytes(this.body);
+    public AdminRequestBody(AdminRequestTypeEnum requestType, Object body) {
+        this.id = idGenerator.next();
+        serializeBody(body);
         this.requestType = requestType;
     }
 
-    public void serialize(Object object) {
+    private void serializeBody(Object object) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         Hessian2Output  objectOutputStream = new Hessian2Output(byteArrayOutputStream);
         try {
@@ -66,7 +61,7 @@ public class AdminRequestBody implements Serializable {
         this.body = byteArrayOutputStream.toByteArray();
     }
 
-    public Object deserialize() {
+    public Object deserializeBody() {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(body);
         Hessian2Input   objectOutputStream = new Hessian2Input(byteArrayInputStream);
         Object object = null;

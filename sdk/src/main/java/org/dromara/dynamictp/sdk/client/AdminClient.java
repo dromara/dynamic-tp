@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.sdk.client;
 
-import cn.hutool.core.lang.generator.SnowflakeGenerator;
 import com.alipay.remoting.Connection;
 import com.alipay.remoting.ConnectionEventType;
 import com.alipay.remoting.exception.RemotingException;
@@ -27,39 +26,42 @@ import org.dromara.dynamictp.sdk.client.processor.AdminClientUserProcessor;
 import org.dromara.dynamictp.sdk.client.processor.AdminCloseEventProcessor;
 import org.dromara.dynamictp.sdk.client.processor.AdminConnectEventProcessor;
 
+/**
+ * AdminClient related
+ *
+ * @author eachannchan
+ */
 @Slf4j
-public class AdminClient {
+public class AdminClient extends RpcClient {
 
     private final String adminIp = "127.0.0.1";
 
     private final int port = 8989;
 
-    private final RpcClient client = new RpcClient();
-
     private Connection connection;
 
-    private final SnowflakeGenerator idGenerator = new SnowflakeGenerator();
 
     public AdminClient() {
-        client.addConnectionEventProcessor(ConnectionEventType.CONNECT, new AdminConnectEventProcessor());
-        client.addConnectionEventProcessor(ConnectionEventType.CLOSE, new AdminCloseEventProcessor());
-        client.registerUserProcessor(new AdminClientUserProcessor());
-        client.enableReconnectSwitch();
-        client.startup();
+        super();
+        super.addConnectionEventProcessor(ConnectionEventType.CONNECT, new AdminConnectEventProcessor());
+        super.addConnectionEventProcessor(ConnectionEventType.CLOSE, new AdminCloseEventProcessor());
+        super.registerUserProcessor(new AdminClientUserProcessor());
+        super.enableReconnectSwitch();
+        super.startup();
         log.info("DynamicTp admin client started, admin ip: {}, port: {}", adminIp, port);
         try {
-            connection = client.createStandaloneConnection(adminIp, port, 30000);
+            connection = super.createStandaloneConnection(adminIp, port, 30000);
         } catch (RemotingException e) {
             log.info("DynamicTp admin client is not connected, admin ip: {}, port: {}", adminIp, port);
         } finally {
-            client.closeStandaloneConnection(connection);
-            client.shutdown();
+            super.closeStandaloneConnection(connection);
+            super.shutdown();
         }
     }
 
-    public Object requestToServer(AdminRequestTypeEnum requestType) throws RemotingException, InterruptedException {
-        AdminRequestBody requestBody = new AdminRequestBody(idGenerator.next(), requestType);
-        return client.invokeSync(connection, requestBody, 30000);
+    public Object requestToServer(AdminRequestTypeEnum requestType, Object body) throws RemotingException, InterruptedException {
+        AdminRequestBody requestBody = new AdminRequestBody(requestType, body);
+        return super.invokeSync(connection, requestBody, 30000);
     }
 
 }

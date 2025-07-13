@@ -43,13 +43,18 @@ public class AdminRequestBody implements Serializable {
 
     private final SnowflakeGenerator idGenerator = new SnowflakeGenerator();
 
+    public AdminRequestBody(AdminRequestTypeEnum requestType) {
+        this.id = idGenerator.next();
+        this.requestType = requestType;
+    }
+
     public AdminRequestBody(AdminRequestTypeEnum requestType, Object body) {
         this.id = idGenerator.next();
         serializeBody(body);
         this.requestType = requestType;
     }
 
-    private void serializeBody(Object object) {
+    public void serializeBody(Object object) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         Hessian2Output  objectOutputStream = new Hessian2Output(byteArrayOutputStream);
         try {

@@ -15,28 +15,28 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.sdk.client.handler.refresh;
+package org.dromara.dynamictp.sdk.client.handler.collector;
 
+import org.dromara.dynamictp.common.entity.ThreadPoolStats;
+import org.dromara.dynamictp.core.monitor.collector.AbstractCollector;
+import org.dromara.dynamictp.sdk.client.AdminClient;
+import org.dromara.dynamictp.sdk.client.AdminRequestBody;
+import org.dromara.dynamictp.sdk.client.AdminRequestTypeEnum;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.refresher.AbstractRefresher;
+public class AdminCollector extends AbstractCollector {
 
-import java.util.Map;
+    @Autowired
+    private AdminClient adminClient;
 
-/**
- * AdminRefresher related
- *
- * @author eachann
- */
-public class AdminRefresher extends AbstractRefresher {
-
-    public AdminRefresher(DtpProperties dtpProperties) {
-        super(dtpProperties);
+    @Override
+    public void collect(ThreadPoolStats poolStats) {
+        AdminRequestBody adminRequestBody = new AdminRequestBody(AdminRequestTypeEnum.EXECUTOR_MONITOR, poolStats);
+        adminClient.invokeSync(adminRequestBody);
     }
 
     @Override
-    public void refresh(Map<Object, Object> properties) {
-        super.refresh(properties);
+    public String type() {
+        return "admin";
     }
-
 }

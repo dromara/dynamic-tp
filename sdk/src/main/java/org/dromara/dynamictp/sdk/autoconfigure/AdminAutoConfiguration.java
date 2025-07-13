@@ -19,6 +19,7 @@ package org.dromara.dynamictp.sdk.autoconfigure;
 
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.sdk.client.AdminClient;
+import org.dromara.dynamictp.sdk.client.handler.collector.AdminCollector;
 import org.dromara.dynamictp.sdk.client.handler.refresh.AdminRefresher;
 import org.dromara.dynamictp.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -26,7 +27,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 
 /**
  * AdminAutoConfiguration related
@@ -39,7 +39,6 @@ import org.springframework.context.annotation.Lazy;
 public class AdminAutoConfiguration {
 
     @Bean
-    @Lazy(false)
     public AdminClient adminClient() {
         return new AdminClient();
     }
@@ -48,5 +47,10 @@ public class AdminAutoConfiguration {
     @ConditionalOnMissingBean()
     public AdminRefresher adminRefresher(DtpProperties dtpProperties) {
         return new AdminRefresher(dtpProperties);
+    }
+
+    @Bean
+    public AdminCollector adminCollector() {
+        return new AdminCollector();
     }
 }

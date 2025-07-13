@@ -26,42 +26,46 @@ import org.dromara.dynamictp.sdk.client.processor.AdminClientUserProcessor;
 import org.dromara.dynamictp.sdk.client.processor.AdminCloseEventProcessor;
 import org.dromara.dynamictp.sdk.client.processor.AdminConnectEventProcessor;
 
-/**
- * AdminClient related
- *
- * @author eachannchan
- */
 @Slf4j
-public class AdminClient extends RpcClient {
+public class AdminClient {
 
     private final String adminIp = "127.0.0.1";
 
     private final int port = 8989;
 
+    private final RpcClient client = new RpcClient();
+
     private Connection connection;
 
-
     public AdminClient() {
-        super();
-        super.addConnectionEventProcessor(ConnectionEventType.CONNECT, new AdminConnectEventProcessor());
-        super.addConnectionEventProcessor(ConnectionEventType.CLOSE, new AdminCloseEventProcessor());
-        super.registerUserProcessor(new AdminClientUserProcessor());
-        super.enableReconnectSwitch();
-        super.startup();
+        client.addConnectionEventProcessor(ConnectionEventType.CONNECT, new AdminConnectEventProcessor());
+        client.addConnectionEventProcessor(ConnectionEventType.CLOSE, new AdminCloseEventProcessor());
+        client.registerUserProcessor(new AdminClientUserProcessor());
+        client.enableReconnectSwitch();
+        client.startup();
         log.info("DynamicTp admin client started, admin ip: {}, port: {}", adminIp, port);
         try {
-            connection = super.createStandaloneConnection(adminIp, port, 30000);
+            connection = client.createStandaloneConnection(adminIp, port, 30000);
         } catch (RemotingException e) {
-            log.info("DynamicTp admin client is not connected, admin ip: {}, port: {}", adminIp, port);
+            log.info("DynamicTp admin is not connected, admin ip: {}, port: {}", adminIp, port);
         } finally {
-            super.closeStandaloneConnection(connection);
-            super.shutdown();
+            client.closeStandaloneConnection(connection);
+            client.shutdown();
         }
     }
 
-    public Object requestToServer(AdminRequestTypeEnum requestType, Object body) throws RemotingException, InterruptedException {
-        AdminRequestBody requestBody = new AdminRequestBody(requestType, body);
-        return super.invokeSync(connection, requestBody, 30000);
+    public Object requestToServer(AdminRequestTypeEnum requestType) throws RemotingException, InterruptedException {
+        AdminRequestBody requestBody = new AdminRequestBody(requestType);
+        return client.invokeSync(connection, requestBody, 30000);
     }
 
+    public Object invokeSync(AdminRequestBody adminRequestBody) {
+        Object object = null;
+        try {
+            object = client.invokeSync(connection, adminRequestBody, 5000);
+        } catch (RemotingException | InterruptedException e) {
+            log.warn("DynamicTp admin client invoke failed, admin ip: {}, port: {}", adminIp, port);
+        }
+        return object;
+    }
 }

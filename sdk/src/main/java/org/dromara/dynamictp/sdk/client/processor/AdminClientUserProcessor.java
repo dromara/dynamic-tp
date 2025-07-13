@@ -43,7 +43,6 @@ public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody
 
     @Autowired
     private AdminRefresher adminRefresher;
-
     public AdminClientUserProcessor() {
         this.executor = Executors.newSingleThreadExecutor();
     }
@@ -85,7 +84,6 @@ public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody
     }
 
     private Object handleExecutorMonitorRequest(AdminRequestBody adminRequestBody) {
-
         return adminRequestBody;
     }
 

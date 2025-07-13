@@ -19,6 +19,7 @@ package org.dromara.dynamictp.sdk.client;
 
 import com.alipay.remoting.Connection;
 import com.alipay.remoting.ConnectionEventType;
+import com.alipay.remoting.Url;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcClient;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,8 @@ public class AdminClient {
 
     private final int port = 8989;
 
+    private final Url url = new Url(adminIp, port);
+
     private final RpcClient client = new RpcClient();
 
     private Connection connection;
@@ -45,7 +48,7 @@ public class AdminClient {
         client.startup();
         log.info("DynamicTp admin client started, admin ip: {}, port: {}", adminIp, port);
         try {
-            connection = client.createStandaloneConnection(adminIp, port, 30000);
+            connection = client.createStandaloneConnection(url.getOriginUrl(), 30000);
         } catch (RemotingException e) {
             log.info("DynamicTp admin is not connected, admin ip: {}, port: {}", adminIp, port);
         } finally {

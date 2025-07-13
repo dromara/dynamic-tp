@@ -39,6 +39,7 @@
         <module>adapter</module>
         <module>core</module>
         <module>common</module>
+        <module>sdk</module>
         <module>starter</module>
         <module>logging</module>
         <module>example</module>
@@ -48,7 +49,6 @@
         <module>dependencies</module>
         <module>spring</module>
         <module>benchmark</module>
-        <module>sdk</module>
     </modules>
 
     <dependencies>

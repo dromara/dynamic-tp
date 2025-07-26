@@ -21,11 +21,16 @@ import com.alipay.remoting.Connection;
 import com.alipay.remoting.ConnectionEventProcessor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * AdminCloseEventProcessor related
+ *
+ * @author eachann
+ */
 @Slf4j
 public class AdminCloseEventProcessor implements ConnectionEventProcessor {
+
     @Override
     public void onEvent(String remoteAddress, Connection connection) {
         log.info("DynamicTp admin client is disconnected, admin ip: {}, port: {}", connection.getRemoteAddress(), connection.getRemotePort());
-
     }
 }

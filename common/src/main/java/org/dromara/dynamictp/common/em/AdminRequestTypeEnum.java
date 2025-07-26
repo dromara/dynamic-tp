@@ -15,11 +15,16 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.sdk.client;
+package org.dromara.dynamictp.common.em;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Admin request type enum.
+ *
+ * @author eachann
+ */
 @Getter
 @AllArgsConstructor
 public enum AdminRequestTypeEnum {

@@ -20,11 +20,18 @@ package org.dromara.dynamictp.sdk.client.processor;
 import com.alipay.remoting.Connection;
 import com.alipay.remoting.ConnectionEventProcessor;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.sdk.client.AdminClient;
 
+/**
+ * AdminConnectEventProcessor related
+ *
+ * @author eachann
+ */
 @Slf4j
 public class AdminConnectEventProcessor implements ConnectionEventProcessor {
     @Override
     public void onEvent(String remoteAddress, Connection connection) {
+        AdminClient.setConnection(connection);
         log.info("DynamicTp admin client connected, admin address: {}", remoteAddress);
     }
 }

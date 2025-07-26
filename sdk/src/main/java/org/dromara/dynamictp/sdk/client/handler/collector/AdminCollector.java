@@ -20,8 +20,8 @@ package org.dromara.dynamictp.sdk.client.handler.collector;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 import org.dromara.dynamictp.core.monitor.collector.AbstractCollector;
 import org.dromara.dynamictp.sdk.client.AdminClient;
-import org.dromara.dynamictp.sdk.client.AdminRequestBody;
-import org.dromara.dynamictp.sdk.client.AdminRequestTypeEnum;
+import org.dromara.dynamictp.common.entity.AdminRequestBody;
+import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AdminCollector extends AbstractCollector {
@@ -31,8 +31,8 @@ public class AdminCollector extends AbstractCollector {
 
     @Override
     public void collect(ThreadPoolStats poolStats) {
-        AdminRequestBody adminRequestBody = new AdminRequestBody(AdminRequestTypeEnum.EXECUTOR_MONITOR, poolStats);
-        adminClient.invokeSync(adminRequestBody);
+        AdminRequestBody adminRequestBody = new AdminRequestBody(AdminClient.getSNOWFLAKE_GENERATOR().next(), AdminRequestTypeEnum.EXECUTOR_MONITOR, poolStats);
+        adminClient.requestToServer(adminRequestBody);
     }
 
     @Override

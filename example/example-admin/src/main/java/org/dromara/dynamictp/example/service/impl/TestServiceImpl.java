@@ -26,6 +26,8 @@ import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
 import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
 import org.dromara.dynamictp.core.support.task.runnable.OrderedRunnable;
 import org.dromara.dynamictp.example.service.TestService;
+import org.dromara.dynamictp.sdk.client.AdminClient;
+import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -54,16 +56,26 @@ public class TestServiceImpl implements TestService {
 
     private final OrderedDtpExecutor orderedDtpExecutor;
 
+    private AdminClient  adminClient;
+
     public TestServiceImpl(ThreadPoolExecutor jucThreadPoolExecutor,
                            ThreadPoolTaskExecutor threadPoolTaskExecutor,
                            DtpExecutor eagerDtpExecutor,
                            ScheduledExecutorService scheduledDtpExecutor,
-                           OrderedDtpExecutor orderedDtpExecutor) {
+                           OrderedDtpExecutor orderedDtpExecutor,
+                           AdminClient adminClient) {
         this.jucThreadPoolExecutor = jucThreadPoolExecutor;
         this.threadPoolTaskExecutor = threadPoolTaskExecutor;
         this.eagerDtpExecutor = eagerDtpExecutor;
         this.scheduledDtpExecutor = scheduledDtpExecutor;
         this.orderedDtpExecutor = orderedDtpExecutor;
+        this.adminClient = adminClient;
+    }
+
+    @Override
+    public void testAdminClient() {
+        adminClient.requestToServer(AdminRequestTypeEnum.ALARM_MANAGE);
+        log.info("testAdminClient,remoteAddress:{}", adminClient.getConnection().getRemoteAddress());
     }
 
     @Override

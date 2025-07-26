@@ -21,7 +21,7 @@ import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.SyncUserProcessor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.sdk.client.AdminRequestBody;
+import org.dromara.dynamictp.common.entity.AdminRequestBody;
 import org.dromara.dynamictp.sdk.client.handler.refresh.AdminRefresher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,6 +32,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
+/**
+ * AdminClientUserProcessor related
+ *
+ * @author eachann
+ */
 @Slf4j
 @Component
 public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody> {

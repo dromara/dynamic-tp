@@ -1,6 +1,10 @@
-logging:
-  level:
-    org:
-      springframework:
-        boot:
-          autoconfigure: DEBUG
+server:
+  port: 9100
+
+
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        boot:
+#          autoconfigure: DEBUG

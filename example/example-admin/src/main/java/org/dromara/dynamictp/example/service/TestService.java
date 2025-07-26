@@ -17,6 +17,8 @@
 
 package org.dromara.dynamictp.example.service;
 
+import com.alipay.remoting.exception.RemotingException;
+
 /**
  * TestService related
  *
@@ -24,6 +26,8 @@ package org.dromara.dynamictp.example.service;
  * @since 1.1.0
  */
 public interface TestService {
+
+    void testAdminClient() throws RemotingException, InterruptedException;
 
     /**
      * Test juc tp.

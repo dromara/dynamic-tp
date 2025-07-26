@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.example.controller;
 
+import com.alipay.remoting.exception.RemotingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.example.service.TestService;
@@ -32,6 +33,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     private final TestService testService;
+
+    @GetMapping("/dtp-nacos-example/testAdminClient")
+    public String testAdminClient() throws RemotingException, InterruptedException {
+        testService.testAdminClient();
+        return "testAdminClient success";
+    }
 
     @GetMapping("/dtp-nacos-example/testJucTp")
     public String testJuc() {

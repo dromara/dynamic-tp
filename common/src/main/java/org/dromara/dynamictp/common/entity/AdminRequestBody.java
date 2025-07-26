@@ -15,17 +15,14 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.sdk.client;
+package org.dromara.dynamictp.common.entity;
 
-import cn.hutool.core.lang.generator.SnowflakeGenerator;
-import com.caucho.hessian.io.Hessian2Input;
-import com.caucho.hessian.io.Hessian2Output;
+import com.alipay.remoting.exception.CodecException;
+import com.alipay.remoting.serialization.HessianSerializer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.Serializable;
 
 @Slf4j
@@ -41,39 +38,33 @@ public class AdminRequestBody implements Serializable {
 
     private byte[] body;
 
-    private final SnowflakeGenerator idGenerator = new SnowflakeGenerator();
-
-    public AdminRequestBody(AdminRequestTypeEnum requestType) {
-        this.id = idGenerator.next();
+    public AdminRequestBody(long id, AdminRequestTypeEnum requestType) {
+        this.id = id;
         this.requestType = requestType;
     }
 
-    public AdminRequestBody(AdminRequestTypeEnum requestType, Object body) {
-        this.id = idGenerator.next();
+    public AdminRequestBody(long id, AdminRequestTypeEnum requestType, Object body) {
+        this.id = id;
         serializeBody(body);
         this.requestType = requestType;
     }
 
-    public void serializeBody(Object object) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        Hessian2Output  objectOutputStream = new Hessian2Output(byteArrayOutputStream);
+    private void serializeBody(Object object) {
+        HessianSerializer serializer = new HessianSerializer();
         try {
-            objectOutputStream.writeObject(object);
-            objectOutputStream.flush();
-        } catch (IOException e) {
-            log.warn("DynamicTp admin client serialize failed.");
+            this.body = serializer.serialize(object);
+        } catch (CodecException e) {
+            log.error("DynamicTp admin client serialize failed.", e);
         }
-        this.body = byteArrayOutputStream.toByteArray();
     }
 
     public Object deserializeBody() {
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(body);
-        Hessian2Input   objectOutputStream = new Hessian2Input(byteArrayInputStream);
+        HessianSerializer serializer = new HessianSerializer();
         Object object = null;
         try {
-            object = objectOutputStream.readObject();
-        } catch (IOException e) {
-            log.warn("DynamicTp admin client deserialize failed.");
+            object = serializer.deserialize(this.body, null);
+        } catch (CodecException e) {
+            log.error("DynamicTp admin client deserialize failed.", e);
         }
         return object;
     }

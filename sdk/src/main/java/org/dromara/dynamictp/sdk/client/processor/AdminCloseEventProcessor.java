@@ -20,6 +20,7 @@ package org.dromara.dynamictp.sdk.client.processor;
 import com.alipay.remoting.Connection;
 import com.alipay.remoting.ConnectionEventProcessor;
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.sdk.client.AdminClient;
 
 /**
  * AdminCloseEventProcessor related
@@ -29,8 +30,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AdminCloseEventProcessor implements ConnectionEventProcessor {
 
+    private final AdminClient adminClient;
+
+    public AdminCloseEventProcessor(AdminClient adminClient) {
+        this.adminClient = adminClient;
+    }
+
     @Override
     public void onEvent(String remoteAddress, Connection connection) {
-        log.info("DynamicTp admin client is disconnected, admin ip: {}, port: {}", connection.getRemoteAddress(), connection.getRemotePort());
+        log.info("DynamicTp admin client is disconnected, admin ip: {}, port: {}", connection.getRemoteAddress(),
+                connection.getRemotePort());
+        // Clean up connection object and update status when connection is closed
+        AdminClient.setConnection(null);
+        adminClient.updateConnectionStatus(false);
     }
 }

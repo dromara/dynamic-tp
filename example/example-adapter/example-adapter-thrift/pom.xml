@@ -9,7 +9,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-example-adapter-thrift</artifactId>
-
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>

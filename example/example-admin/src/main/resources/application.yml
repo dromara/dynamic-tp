@@ -1,6 +1,15 @@
 server:
   port: 9100
 
+spring:
+  application:
+    name: dynamic-tp-admin-demo
+  profiles:
+    active: dev
+  redis:
+    host: ${redis:localhost}
+    port: 6379
+
 
 #logging:
 #  level:

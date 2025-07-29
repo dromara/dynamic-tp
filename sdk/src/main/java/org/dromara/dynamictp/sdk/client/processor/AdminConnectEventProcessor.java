@@ -29,9 +29,17 @@ import org.dromara.dynamictp.sdk.client.AdminClient;
  */
 @Slf4j
 public class AdminConnectEventProcessor implements ConnectionEventProcessor {
+
+    private final AdminClient adminClient;
+
+    public AdminConnectEventProcessor(AdminClient adminClient) {
+        this.adminClient = adminClient;
+    }
+
     @Override
     public void onEvent(String remoteAddress, Connection connection) {
         AdminClient.setConnection(connection);
+        adminClient.updateConnectionStatus(true);
         log.info("DynamicTp admin client connected, admin address: {}", remoteAddress);
     }
 }

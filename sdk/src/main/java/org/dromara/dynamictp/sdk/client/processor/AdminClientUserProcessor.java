@@ -22,6 +22,7 @@ import com.alipay.remoting.rpc.protocol.SyncUserProcessor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.entity.AdminRequestBody;
+import org.dromara.dynamictp.sdk.client.handler.collector.AdminCollector;
 import org.dromara.dynamictp.sdk.client.handler.refresh.AdminRefresher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,6 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 
 /**
  * AdminClientUserProcessor related
@@ -48,6 +48,9 @@ public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody
 
     @Autowired
     private AdminRefresher adminRefresher;
+
+    private AdminCollector adminCollector = new AdminCollector();
+
     public AdminClientUserProcessor() {
         this.executor = Executors.newSingleThreadExecutor();
     }
@@ -73,7 +76,8 @@ public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody
             case LOG_MANAGE:
                 return handleLogManageRequest(adminRequestBody);
             default:
-                throw new IllegalArgumentException("DynamicTp admin request type " + adminRequestBody.getRequestType().getValue() + " is not supported");
+                throw new IllegalArgumentException("DynamicTp admin request type "
+                        + adminRequestBody.getRequestType().getValue() + " is not supported");
         }
     }
 
@@ -82,13 +86,15 @@ public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody
         return AdminRequestBody.class.getName();
     }
 
-
     @Override
     public Executor getExecutor() {
         return executor;
     }
 
     private Object handleExecutorMonitorRequest(AdminRequestBody adminRequestBody) {
+        // Actively collect all pool stats before returning
+        adminCollector.collectAllPoolStats();
+        adminRequestBody.serializeBody(adminCollector.getMultiPoolStats());
         return adminRequestBody;
     }
 

@@ -17,22 +17,86 @@
 
 package org.dromara.dynamictp.sdk.client.handler.collector;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
+import org.dromara.dynamictp.core.DtpRegistry;
+import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.core.monitor.collector.AbstractCollector;
-import org.dromara.dynamictp.sdk.client.AdminClient;
-import org.dromara.dynamictp.common.entity.AdminRequestBody;
-import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+/**
+ * AdminCollector for collecting thread pool statistics
+ * Enhanced to support active collection and multiple thread pools
+ *
+ * @author eachann
+ */
+@Slf4j
+@Component
 public class AdminCollector extends AbstractCollector {
 
-    @Autowired
-    private AdminClient adminClient;
+    @Getter
+    private ThreadPoolStats poolStats = new ThreadPoolStats();
+
+    @Getter
+    private final List<ThreadPoolStats> multiPoolStats = new CopyOnWriteArrayList<>();
 
     @Override
     public void collect(ThreadPoolStats poolStats) {
-        AdminRequestBody adminRequestBody = new AdminRequestBody(AdminClient.getSNOWFLAKE_GENERATOR().next(), AdminRequestTypeEnum.EXECUTOR_MONITOR, poolStats);
-        adminClient.requestToServer(adminRequestBody);
+        this.poolStats = poolStats;
+        // Also store in multiPoolStats for consistency
+        if (poolStats != null && poolStats.getPoolName() != null) {
+            // Remove existing stats with same pool name if exists
+            this.multiPoolStats.removeIf(
+                    stats -> stats.getPoolName() != null && stats.getPoolName().equals(poolStats.getPoolName()));
+            this.multiPoolStats.add(poolStats);
+        }
+        log.debug("AdminCollector collected single pool stats: {}",
+                poolStats != null ? poolStats.getPoolName() : "null");
+    }
+
+    /**
+     * Actively collect all thread pool statistics from DtpRegistry
+     * This method can be called independently to refresh data
+     */
+    public void collectAllPoolStats() {
+        try {
+            Set<String> executorNames = DtpRegistry.getAllExecutorNames();
+            if (executorNames.isEmpty()) {
+                log.debug("No executors found in DtpRegistry");
+                return;
+            }
+
+            List<ThreadPoolStats> newStatsList = new ArrayList<>();
+            for (String executorName : executorNames) {
+                try {
+                    ThreadPoolStats stats = ExecutorConverter.toMetrics(DtpRegistry.getExecutorWrapper(executorName));
+                    if (stats != null) {
+                        newStatsList.add(stats);
+                    }
+                } catch (Exception e) {
+                    log.warn("Failed to collect stats for executor: {}", executorName, e);
+                }
+            }
+
+            // Update multiPoolStats
+            this.multiPoolStats.clear();
+            this.multiPoolStats.addAll(newStatsList);
+
+            // Set the first pool stats as the main poolStats for backward compatibility
+            if (!newStatsList.isEmpty()) {
+                this.poolStats = newStatsList.get(0);
+            }
+
+            log.debug("AdminCollector actively collected {} pool stats", newStatsList.size());
+        } catch (Exception e) {
+            log.error("Failed to collect all pool stats", e);
+        }
     }
 
     @Override

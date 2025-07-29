@@ -35,6 +35,14 @@ import org.dromara.dynamictp.sdk.client.processor.AdminClientUserProcessor;
 import org.dromara.dynamictp.sdk.client.processor.AdminCloseEventProcessor;
 import org.dromara.dynamictp.sdk.client.processor.AdminConnectEventProcessor;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+/**
+ * DynamicTp admin client
+ * 
+ * @author eachann
+ */
 @Slf4j
 public class AdminClient {
 
@@ -56,9 +64,15 @@ public class AdminClient {
     @Setter
     private static Connection connection;
 
+    // Connection state management
+    private final AtomicBoolean isConnected = new AtomicBoolean(false);
+    private final AtomicInteger retryCount = new AtomicInteger(0);
+    private static final int MAX_RETRY_COUNT = 3;
+    private static final long RETRY_DELAY_MS = 1000;
+
     public AdminClient() {
-        client.addConnectionEventProcessor(ConnectionEventType.CONNECT, new AdminConnectEventProcessor());
-        client.addConnectionEventProcessor(ConnectionEventType.CLOSE, new AdminCloseEventProcessor());
+        client.addConnectionEventProcessor(ConnectionEventType.CONNECT, new AdminConnectEventProcessor(this));
+        client.addConnectionEventProcessor(ConnectionEventType.CLOSE, new AdminCloseEventProcessor(this));
         client.registerUserProcessor(new AdminClientUserProcessor());
         client.enableReconnectSwitch();
         client.startup();
@@ -68,49 +82,161 @@ public class AdminClient {
     }
 
     public Object requestToServer(AdminRequestTypeEnum requestType) {
-        if (!client.checkConnection(url.getOriginUrl(), true)) {
-            if (!createConnection()) {
-                return null;
-            }
+        if (!ensureConnection()) {
+            log.error("DynamicTp admin client cannot establish connection after retries, admin ip: {}, port: {}",
+                    adminIp, port);
+            return null;
         }
         AdminRequestBody requestBody = new AdminRequestBody(SNOWFLAKE_GENERATOR.next(), requestType);
 
-        Object object =  null;
+        Object object = null;
         try {
             object = client.invokeSync(connection, requestBody, 30000);
         } catch (RemotingException | InterruptedException e) {
             log.warn("DynamicTp admin client invoke failed, admin ip: {}, port: {}, exception:", adminIp, port, e);
+            // Mark connection as disconnected when request fails
+            isConnected.set(false);
         }
         return object;
     }
 
     public Object requestToServer(AdminRequestBody adminRequestBody) {
-        if (!client.checkConnection(url.getOriginUrl(), true)) {
-            if (!createConnection()) {
-                return null;
-            }
+        if (!ensureConnection()) {
+            log.error("DynamicTp admin client cannot establish connection after retries, admin ip: {}, port: {}",
+                    adminIp, port);
+            return null;
         }
+
         Object object = null;
         try {
             object = client.invokeSync(connection, adminRequestBody, 5000);
         } catch (RemotingException | InterruptedException e) {
             log.warn("DynamicTp admin client invoke failed, admin ip: {}, port: {}, exception:", adminIp, port, e);
+            // Mark connection as disconnected when request fails
+            isConnected.set(false);
         }
         return object;
     }
 
+    /**
+     * Ensure connection is available, try to reconnect if not available
+     * 
+     * @return whether connection is available
+     */
+    private boolean ensureConnection() {
+        // Check connection status
+        if (isConnected.get() && connection != null && client.checkConnection(url.getOriginUrl(), true)) {
+            return true;
+        }
+
+        // Connection not available, try to reconnect
+        return reconnectWithRetry();
+    }
+
+    /**
+     * Reconnect with retry mechanism
+     * 
+     * @return whether reconnection is successful
+     */
+    private boolean reconnectWithRetry() {
+        int currentRetry = 0;
+        while (currentRetry < MAX_RETRY_COUNT) {
+            log.info("DynamicTp admin client attempting to reconnect, attempt: {}/{}", currentRetry + 1,
+                    MAX_RETRY_COUNT);
+
+            if (createConnection()) {
+                isConnected.set(true);
+                retryCount.set(0);
+                log.info("DynamicTp admin client reconnected successfully");
+                return true;
+            }
+
+            currentRetry++;
+            retryCount.incrementAndGet();
+
+            if (currentRetry < MAX_RETRY_COUNT) {
+                try {
+                    Thread.sleep(RETRY_DELAY_MS * currentRetry); // Incremental delay
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    log.warn("DynamicTp admin client reconnection interrupted");
+                    return false;
+                }
+            }
+        }
+
+        log.error("DynamicTp admin client failed to reconnect after {} attempts", MAX_RETRY_COUNT);
+        return false;
+    }
+
     private boolean createConnection() {
         try {
+            // Clean up old connection
+            if (connection != null) {
+                try {
+                    client.closeStandaloneConnection(connection);
+                } catch (Exception e) {
+                    log.debug("Error closing old connection", e);
+                }
+                connection = null;
+            }
+
             connection = client.createStandaloneConnection(url.getOriginUrl(), 30000);
+            if (connection != null && connection.isFine()) {
+                log.info("DynamicTp admin client connection created successfully, admin ip: {}, port: {}", adminIp,
+                        port);
+                return true;
+            } else {
+                log.warn("DynamicTp admin client connection created but not fine, admin ip: {}, port: {}", adminIp,
+                        port);
+                return false;
+            }
         } catch (RemotingException e) {
             log.warn("DynamicTp admin create connection failed, admin ip: {}, port: {}", adminIp, port, e);
             return false;
         }
-        return true;
+    }
+
+    /**
+     * Get current connection status
+     * 
+     * @return whether connection is available
+     */
+    public boolean isConnected() {
+        return isConnected.get() && connection != null && connection.isFine();
+    }
+
+    /**
+     * Get retry count
+     * 
+     * @return retry count
+     */
+    public int getRetryCount() {
+        return retryCount.get();
+    }
+
+    /**
+     * Update connection status
+     * 
+     * @param connected whether connected
+     */
+    public void updateConnectionStatus(boolean connected) {
+        isConnected.set(connected);
+        if (!connected) {
+            retryCount.incrementAndGet();
+        }
     }
 
     public void close() {
-        client.closeStandaloneConnection(connection);
+        isConnected.set(false);
+        if (connection != null) {
+            try {
+                client.closeStandaloneConnection(connection);
+            } catch (Exception e) {
+                log.warn("Error closing connection", e);
+            }
+            connection = null;
+        }
         client.shutdown();
     }
 }

@@ -49,7 +49,7 @@ public class AdminRequestBody implements Serializable {
         this.requestType = requestType;
     }
 
-    private void serializeBody(Object object) {
+    public void serializeBody(Object object) {
         HessianSerializer serializer = new HessianSerializer();
         try {
             this.body = serializer.serialize(object);

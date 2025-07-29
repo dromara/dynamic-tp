@@ -50,6 +50,7 @@ public class AdminAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean()
     public AdminCollector adminCollector() {
         return new AdminCollector();
     }

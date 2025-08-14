@@ -10,6 +10,8 @@ spring:
     host: ${redis:localhost}
     port: 6379
 
+dynamictp:
+  clientName: dynamic-tp-admin-demo
 
 #logging:
 #  level:

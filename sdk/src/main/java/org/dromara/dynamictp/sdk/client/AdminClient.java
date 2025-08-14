@@ -31,13 +31,17 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.entity.AdminRequestBody;
 import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
+import org.dromara.dynamictp.common.entity.AttributeRequestBody;
 import org.dromara.dynamictp.sdk.client.processor.AdminClientUserProcessor;
 import org.dromara.dynamictp.sdk.client.processor.AdminCloseEventProcessor;
 import org.dromara.dynamictp.sdk.client.processor.AdminConnectEventProcessor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import java.util.concurrent.TimeUnit;
+import javax.annotation.PostConstruct;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * DynamicTp admin client
  * 
@@ -48,9 +52,12 @@ public class AdminClient {
 
     private final String adminIp = "127.0.0.1";
 
-    private final int port = 8989;
+    private final int adminPort = 8989;
 
-    private final Url url = new Url(adminIp, port);
+    private final Url adminUrl = new Url(adminIp, adminPort);
+
+    @Value("${dynamictp.clientName:${spring.application.name}}")
+    private String clientName;
 
     @Getter
     private static final SnowflakeGenerator SNOWFLAKE_GENERATOR = new SnowflakeGenerator();
@@ -70,30 +77,36 @@ public class AdminClient {
     private static final int MAX_RETRY_COUNT = 3;
     private static final long RETRY_DELAY_MS = 1000;
 
-    public AdminClient() {
+    public AdminClient(AdminClientUserProcessor adminClientUserProcessor) {
         client.addConnectionEventProcessor(ConnectionEventType.CONNECT, new AdminConnectEventProcessor(this));
         client.addConnectionEventProcessor(ConnectionEventType.CLOSE, new AdminCloseEventProcessor(this));
-        client.registerUserProcessor(new AdminClientUserProcessor());
+        client.registerUserProcessor(adminClientUserProcessor);
         client.enableReconnectSwitch();
         client.startup();
         SerializerManager.addSerializer(1, SERIALIZER);
         System.setProperty(Configs.SERIALIZER, String.valueOf(SERIALIZER));
+    }
+
+    @PostConstruct
+    public void init() {
         createConnection();
     }
 
     public Object requestToServer(AdminRequestTypeEnum requestType) {
         if (!ensureConnection()) {
             log.error("DynamicTp admin client cannot establish connection after retries, admin ip: {}, port: {}",
-                    adminIp, port);
+                    adminIp, adminPort);
             return null;
         }
+        AttributeRequestBody attributeRequestBody = new AttributeRequestBody();
+        attributeRequestBody.setAttribute("clientName", clientName);
         AdminRequestBody requestBody = new AdminRequestBody(SNOWFLAKE_GENERATOR.next(), requestType);
-
         Object object = null;
         try {
+            client.invokeSync(connection, attributeRequestBody, 5000);
             object = client.invokeSync(connection, requestBody, 30000);
         } catch (RemotingException | InterruptedException e) {
-            log.warn("DynamicTp admin client invoke failed, admin ip: {}, port: {}, exception:", adminIp, port, e);
+            log.warn("DynamicTp admin client invoke failed, admin ip: {}, port: {}, exception:", adminIp, adminPort, e);
             // Mark connection as disconnected when request fails
             isConnected.set(false);
         }
@@ -103,15 +116,17 @@ public class AdminClient {
     public Object requestToServer(AdminRequestBody adminRequestBody) {
         if (!ensureConnection()) {
             log.error("DynamicTp admin client cannot establish connection after retries, admin ip: {}, port: {}",
-                    adminIp, port);
+                    adminIp, adminPort);
             return null;
         }
-
+        AttributeRequestBody attributeRequestBody = new AttributeRequestBody();
+        attributeRequestBody.setAttribute("clientName", clientName);
         Object object = null;
         try {
+            client.invokeSync(connection, attributeRequestBody, 5000);
             object = client.invokeSync(connection, adminRequestBody, 5000);
         } catch (RemotingException | InterruptedException e) {
-            log.warn("DynamicTp admin client invoke failed, admin ip: {}, port: {}, exception:", adminIp, port, e);
+            log.warn("DynamicTp admin client invoke failed, admin ip: {}, port: {}, exception:", adminIp, adminPort, e);
             // Mark connection as disconnected when request fails
             isConnected.set(false);
         }
@@ -125,7 +140,7 @@ public class AdminClient {
      */
     private boolean ensureConnection() {
         // Check connection status
-        if (isConnected.get() && connection != null && client.checkConnection(url.getOriginUrl(), true)) {
+        if (isConnected.get() && connection != null && client.checkConnection(adminUrl.getOriginUrl(), true)) {
             return true;
         }
 
@@ -181,18 +196,21 @@ public class AdminClient {
                 connection = null;
             }
 
-            connection = client.createStandaloneConnection(url.getOriginUrl(), 30000);
+            connection = client.createStandaloneConnection(adminUrl.getOriginUrl(), 30000);
             if (connection != null && connection.isFine()) {
                 log.info("DynamicTp admin client connection created successfully, admin ip: {}, port: {}", adminIp,
-                        port);
+                        adminPort);
+                AttributeRequestBody attributeRequestBody = new AttributeRequestBody();
+                attributeRequestBody.setAttribute("clientName", clientName);
+                client.invokeSync(connection, attributeRequestBody, 5000);
                 return true;
             } else {
                 log.warn("DynamicTp admin client connection created but not fine, admin ip: {}, port: {}", adminIp,
-                        port);
+                        adminPort);
                 return false;
             }
-        } catch (RemotingException e) {
-            log.warn("DynamicTp admin create connection failed, admin ip: {}, port: {}", adminIp, port, e);
+        } catch (RemotingException | InterruptedException e) {
+            log.warn("DynamicTp admin create connection failed, admin ip: {}, port: {}", adminIp, adminPort, e);
             return false;
         }
     }

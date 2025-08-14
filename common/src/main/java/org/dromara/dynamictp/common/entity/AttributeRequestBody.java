@@ -15,38 +15,40 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.sdk.client.handler.refresh;
+package org.dromara.dynamictp.common.entity;
 
 
-import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.refresher.AbstractRefresher;
-import org.dromara.dynamictp.spring.AbstractSpringRefresher;
-import org.springframework.beans.factory.InitializingBean;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
-
 /**
- * AdminRefresher related
- *
  * @author eachann
  */
-@Slf4j
-public class AdminRefresher extends AbstractSpringRefresher implements InitializingBean {
+public class AttributeRequestBody implements Serializable {
 
-    public AdminRefresher(DtpProperties dtpProperties) {
-        super(dtpProperties);
+    private static final long serialVersionUID = -1288207208017808630L;
+
+    @Setter
+    @Getter
+    private String message;
+
+    @Getter
+    private final Map<String, String> attributes;
+    
+    public AttributeRequestBody() {
+        this.attributes = new HashMap<>();
+    }
+    
+    public void setAttribute(String key, String value) {
+        this.attributes.put(key, value);
+    }
+    
+    public String getAttribute(String key) {
+        return this.attributes.get(key);
     }
 
-    @Override
-    public void refresh(Map<Object, Object> properties) {
-        log.info("Dynamic-tp adminRefresher refresh properties");
-        super.refresh(properties);
-    }
-
-    @Override
-    public void afterPropertiesSet() {
-
-    }
 }

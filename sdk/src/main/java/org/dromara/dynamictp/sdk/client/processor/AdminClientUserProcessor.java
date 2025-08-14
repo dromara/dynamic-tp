@@ -38,7 +38,6 @@ import java.util.concurrent.Executors;
  * @author eachann
  */
 @Slf4j
-@Component
 public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody> {
 
     private final ExecutorService executor;
@@ -46,13 +45,14 @@ public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody
     @Getter
     private String remoteAddress = "NOT-CONNECT";
 
-    @Autowired
     private AdminRefresher adminRefresher;
 
-    private AdminCollector adminCollector = new AdminCollector();
+    private final AdminCollector adminCollector = new AdminCollector();
 
-    public AdminClientUserProcessor() {
+    @Autowired
+    public AdminClientUserProcessor(AdminRefresher adminRefresher) {
         this.executor = Executors.newSingleThreadExecutor();
+        this.adminRefresher = adminRefresher;
     }
 
     @Override
@@ -92,19 +92,18 @@ public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody
     }
 
     private Object handleExecutorMonitorRequest(AdminRequestBody adminRequestBody) {
-        // Actively collect all pool stats before returning
         adminCollector.collectAllPoolStats();
         adminRequestBody.serializeBody(adminCollector.getMultiPoolStats());
         return adminRequestBody;
     }
 
     private Object handleExecutorRefreshRequest(AdminRequestBody adminRequestBody) {
-        Map<Object, Object> properties = (Map<Object, Object>) adminRequestBody.deserializeBody();
+        Object properties = adminRequestBody.deserializeBody();
         if (properties == null) {
-            log.error("DynamicTp admin request refresh failed, properties is null");
+            log.error("DynamicTp admin executor refresh failed, properties is null");
             return null;
         }
-        adminRefresher.refresh(properties);
+        adminRefresher.refresh((Map<Object, Object>) properties);
         return adminRequestBody;
     }
 
@@ -117,5 +116,4 @@ public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody
 
         return adminRequestBody;
     }
-
 }

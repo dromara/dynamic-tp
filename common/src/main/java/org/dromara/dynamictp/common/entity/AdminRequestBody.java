@@ -25,10 +25,13 @@ import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
 
 import java.io.Serializable;
 
+/**
+ * @author eachann
+ */
 @Slf4j
 public class AdminRequestBody implements Serializable {
 
-    private static final long  serialVersionUID = -1288207208017808618L;
+    private static final long serialVersionUID = -1288207208017808618L;
 
     @Getter
     private final long id;

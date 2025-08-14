@@ -21,6 +21,9 @@ import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.sdk.client.AdminClient;
 import org.dromara.dynamictp.sdk.client.handler.collector.AdminCollector;
 import org.dromara.dynamictp.sdk.client.handler.refresh.AdminRefresher;
+import org.dromara.dynamictp.sdk.client.processor.AdminClientUserProcessor;
+import org.dromara.dynamictp.sdk.client.processor.AdminCloseEventProcessor;
+import org.dromara.dynamictp.sdk.client.processor.AdminConnectEventProcessor;
 import org.dromara.dynamictp.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -34,24 +37,38 @@ import org.springframework.context.annotation.Configuration;
  * @author eachann
  */
 @Configuration
-@ConditionalOnBean({DtpBaseBeanConfiguration.class})
-@AutoConfigureAfter({DtpBaseBeanConfiguration.class})
+@ConditionalOnBean({ DtpBaseBeanConfiguration.class })
+@AutoConfigureAfter({ DtpBaseBeanConfiguration.class })
 public class AdminAutoConfiguration {
 
     @Bean
-    public AdminClient adminClient() {
-        return new AdminClient();
+    public AdminClient adminClient(AdminClientUserProcessor adminClientUserProcessor) {
+        return new AdminClient(adminClientUserProcessor);
     }
 
     @Bean
-    @ConditionalOnMissingBean()
-    public AdminRefresher adminRefresher(DtpProperties dtpProperties) {
-        return new AdminRefresher(dtpProperties);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean()
     public AdminCollector adminCollector() {
         return new AdminCollector();
     }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public AdminRefresher adminRefresher(DtpProperties dtpProperties) {
+        return new AdminRefresher(dtpProperties);
+    }
+    @Bean
+    public AdminClientUserProcessor adminClientUserProcessor(AdminRefresher adminRefresher) {
+        return new AdminClientUserProcessor(adminRefresher);
+    }
+
+    @Bean
+    public AdminConnectEventProcessor adminConnectEventProcessor(AdminClient adminClient) {
+        return new AdminConnectEventProcessor(adminClient);
+    }
+
+    @Bean
+    public AdminCloseEventProcessor adminCloseEventProcessor(AdminClient adminClient) {
+        return new AdminCloseEventProcessor(adminClient);
+    }
+
 }

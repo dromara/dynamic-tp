@@ -56,7 +56,7 @@ public class TestServiceImpl implements TestService {
 
     private final OrderedDtpExecutor orderedDtpExecutor;
 
-    private AdminClient  adminClient;
+    private AdminClient adminClient;
 
     public TestServiceImpl(ThreadPoolExecutor jucThreadPoolExecutor,
                            ThreadPoolTaskExecutor threadPoolTaskExecutor,

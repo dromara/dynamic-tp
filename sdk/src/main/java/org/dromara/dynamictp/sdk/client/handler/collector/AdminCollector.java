@@ -22,8 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
-import org.dromara.dynamictp.core.monitor.collector.AbstractCollector;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,28 +35,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author eachann
  */
 @Slf4j
-@Component
-public class AdminCollector extends AbstractCollector {
+public class AdminCollector {
 
     @Getter
     private ThreadPoolStats poolStats = new ThreadPoolStats();
 
     @Getter
     private final List<ThreadPoolStats> multiPoolStats = new CopyOnWriteArrayList<>();
-
-    @Override
-    public void collect(ThreadPoolStats poolStats) {
-        this.poolStats = poolStats;
-        // Also store in multiPoolStats for consistency
-        if (poolStats != null && poolStats.getPoolName() != null) {
-            // Remove existing stats with same pool name if exists
-            this.multiPoolStats.removeIf(
-                    stats -> stats.getPoolName() != null && stats.getPoolName().equals(poolStats.getPoolName()));
-            this.multiPoolStats.add(poolStats);
-        }
-        log.debug("AdminCollector collected single pool stats: {}",
-                poolStats != null ? poolStats.getPoolName() : "null");
-    }
 
     /**
      * Actively collect all thread pool statistics from DtpRegistry
@@ -97,10 +80,5 @@ public class AdminCollector extends AbstractCollector {
         } catch (Exception e) {
             log.error("Failed to collect all pool stats", e);
         }
-    }
-
-    @Override
-    public String type() {
-        return "admin";
     }
 }

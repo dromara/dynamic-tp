@@ -61,7 +61,7 @@ public class AdminConfigEnvironmentProcessor implements EnvironmentPostProcessor
 
         Map<Object, Object> properties = (Map<Object, Object>) adminClient
                 .requestToServer(AdminRequestTypeEnum.EXECUTOR_REFRESH);
-        if (!checkPropertyExist(environment)) {
+        if (!checkPropertyExist(environment) && properties != null) {
             createAdminPropertySource(environment, properties);
         }
         adminClient.close();

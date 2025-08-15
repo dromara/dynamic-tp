@@ -56,6 +56,7 @@ public class AdminAutoConfiguration {
     public AdminRefresher adminRefresher(DtpProperties dtpProperties) {
         return new AdminRefresher(dtpProperties);
     }
+
     @Bean
     public AdminClientUserProcessor adminClientUserProcessor(AdminRefresher adminRefresher) {
         return new AdminClientUserProcessor(adminRefresher);

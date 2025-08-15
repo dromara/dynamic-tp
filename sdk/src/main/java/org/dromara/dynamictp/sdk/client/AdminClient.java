@@ -38,6 +38,10 @@ import org.dromara.dynamictp.sdk.client.processor.AdminConnectEventProcessor;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -58,6 +62,9 @@ public class AdminClient {
     @Value("${dynamictp.clientName:${spring.application.name}}")
     private String clientName;
 
+    @Value("${dynamictp.adminEnabled:false}")
+    private Boolean adminEnabled;
+
     @Getter
     private static final SnowflakeGenerator SNOWFLAKE_GENERATOR = new SnowflakeGenerator();
 
@@ -75,6 +82,10 @@ public class AdminClient {
     private final AtomicInteger retryCount = new AtomicInteger(0);
     private static final int MAX_RETRY_COUNT = 3;
     private static final long RETRY_DELAY_MS = 1000;
+
+    // Heartbeat mechanism
+    private static final long HEARTBEAT_INTERVAL_SECONDS = 30;
+    private ScheduledExecutorService heartbeatExecutor;
 
     public AdminClient(AdminClientUserProcessor adminClientUserProcessor) {
         client.addConnectionEventProcessor(ConnectionEventType.CONNECT, new AdminConnectEventProcessor(this));
@@ -103,6 +114,47 @@ public class AdminClient {
     @PostConstruct
     public void init() {
         createConnection();
+        startHeartbeat();
+    }
+
+    /**
+     * Start heartbeat mechanism if admin is enabled
+     */
+    private void startHeartbeat() {
+        if (adminEnabled) {
+            heartbeatExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
+                Thread thread = new Thread(r, "DynamicTp-AdminClient-Heartbeat");
+                thread.setDaemon(true);
+                return thread;
+            });
+
+            heartbeatExecutor.scheduleAtFixedRate(() -> {
+                try {
+                    ensureConnection();
+                } catch (Exception e) {
+                    log.warn("DynamicTp admin client heartbeat execution failed", e);
+                }
+            }, HEARTBEAT_INTERVAL_SECONDS, HEARTBEAT_INTERVAL_SECONDS, TimeUnit.SECONDS);
+        }
+    }
+
+    /**
+     * Stop heartbeat mechanism
+     */
+    private void stopHeartbeat() {
+        if (heartbeatExecutor != null && !heartbeatExecutor.isShutdown()) {
+            try {
+                heartbeatExecutor.shutdown();
+                if (!heartbeatExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    heartbeatExecutor.shutdownNow();
+                }
+                log.info("DynamicTp admin client heartbeat stopped");
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                heartbeatExecutor.shutdownNow();
+                log.warn("DynamicTp admin client heartbeat shutdown interrupted");
+            }
+        }
     }
 
     public Object requestToServer(AdminRequestTypeEnum requestType) {
@@ -258,7 +310,9 @@ public class AdminClient {
         }
     }
 
+    @PreDestroy
     public void close() {
+        stopHeartbeat();
         isConnected.set(false);
         if (connection != null) {
             try {

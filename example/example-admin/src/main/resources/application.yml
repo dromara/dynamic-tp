@@ -12,6 +12,7 @@ spring:
 
 dynamictp:
   clientName: dynamic-tp-admin-demo
+  adminEnabled: true
 
 #logging:
 #  level:

@@ -36,7 +36,6 @@ import org.dromara.dynamictp.sdk.client.processor.AdminClientUserProcessor;
 import org.dromara.dynamictp.sdk.client.processor.AdminCloseEventProcessor;
 import org.dromara.dynamictp.sdk.client.processor.AdminConnectEventProcessor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.concurrent.atomic.AtomicBoolean;

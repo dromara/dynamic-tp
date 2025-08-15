@@ -20,7 +20,6 @@ package org.dromara.dynamictp.sdk.client.handler.refresh;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.refresher.AbstractRefresher;
 import org.dromara.dynamictp.spring.AbstractSpringRefresher;
 import org.springframework.beans.factory.InitializingBean;
 

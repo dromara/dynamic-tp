@@ -22,7 +22,6 @@ import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.support.binder.BinderHelper;
 import org.dromara.dynamictp.sdk.client.AdminClient;
-import org.dromara.dynamictp.sdk.client.handler.refresh.AdminRefresher;
 import org.dromara.dynamictp.sdk.client.processor.AdminClientUserProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
@@ -63,7 +62,7 @@ public class AdminConfigEnvironmentProcessor implements EnvironmentPostProcessor
         Map<Object, Object> properties = (Map<Object, Object>) adminClient
                 .requestToServer(AdminRequestTypeEnum.EXECUTOR_REFRESH);
         if (!checkPropertyExist(environment)) {
-             createAdminPropertySource(environment, properties);
+            createAdminPropertySource(environment, properties);
         }
         adminClient.close();
     }

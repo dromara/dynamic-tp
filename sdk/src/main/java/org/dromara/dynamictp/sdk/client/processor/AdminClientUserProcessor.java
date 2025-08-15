@@ -25,7 +25,6 @@ import org.dromara.dynamictp.common.entity.AdminRequestBody;
 import org.dromara.dynamictp.sdk.client.handler.collector.AdminCollector;
 import org.dromara.dynamictp.sdk.client.handler.refresh.AdminRefresher;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.concurrent.Executor;

@@ -87,6 +87,20 @@ public class AdminClient {
         System.setProperty(Configs.SERIALIZER, String.valueOf(SERIALIZER));
     }
 
+    public AdminClient(AdminClientUserProcessor adminClientUserProcessor, String clientName) {
+        this(adminClientUserProcessor);
+        this.clientName = clientName;
+    }
+
+    /**
+     * Set client name manually
+     * 
+     * @param clientName the client name to set
+     */
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+
     @PostConstruct
     public void init() {
         createConnection();

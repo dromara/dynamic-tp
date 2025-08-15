@@ -49,6 +49,10 @@ public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody
 
     private final AdminCollector adminCollector = new AdminCollector();
 
+    public AdminClientUserProcessor() {
+        this.executor = Executors.newSingleThreadExecutor();
+    }
+
     @Autowired
     public AdminClientUserProcessor(AdminRefresher adminRefresher) {
         this.executor = Executors.newSingleThreadExecutor();

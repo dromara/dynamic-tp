@@ -22,6 +22,8 @@ import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.support.binder.BinderHelper;
 import org.dromara.dynamictp.sdk.client.AdminClient;
+import org.dromara.dynamictp.sdk.client.handler.refresh.AdminRefresher;
+import org.dromara.dynamictp.sdk.client.processor.AdminClientUserProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.boot.env.OriginTrackedMapPropertySource;
@@ -40,22 +42,30 @@ import java.util.Map;
 @Slf4j
 public class AdminConfigEnvironmentProcessor implements EnvironmentPostProcessor, Ordered {
 
-//    AdminClient adminClient;
-
-//    public AdminConfigEnvironmentProcessor(AdminClient adminClient) {
-//        this.adminClient = adminClient;
-//    }
+    public AdminConfigEnvironmentProcessor() {
+    }
 
     public static final String ADMIN_PROPERTY_SOURCE_NAME = "dtpAdminPropertySource";
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-//        DtpProperties dtpProperties = DtpProperties.getInstance();
-//        BinderHelper.bindDtpProperties(environment, dtpProperties);
-//        Map<Object, Object> properties = (Map<Object, Object>) adminClient.requestToServer(AdminRequestTypeEnum.EXECUTOR_REFRESH);
-//        if (!checkPropertyExist(environment)) {
-//            createAdminPropertySource(environment, properties);
-//        }
+        // 先绑定配置属性
+        DtpProperties dtpProperties = DtpProperties.getInstance();
+        BinderHelper.bindDtpProperties(environment, dtpProperties);
+
+        // 从 Environment 中直接获取 clientName 配置
+        String clientName = environment.getProperty("dynamictp.clientName",
+                environment.getProperty("spring.application.name", "unknown"));
+
+        // 创建 AdminClient 时传入配置的 clientName
+        AdminClient adminClient = new AdminClient(new AdminClientUserProcessor(), clientName);
+
+        Map<Object, Object> properties = (Map<Object, Object>) adminClient
+                .requestToServer(AdminRequestTypeEnum.EXECUTOR_REFRESH);
+        if (!checkPropertyExist(environment)) {
+             createAdminPropertySource(environment, properties);
+        }
+        adminClient.close();
     }
 
     private boolean checkPropertyExist(ConfigurableEnvironment environment) {
@@ -65,7 +75,8 @@ public class AdminConfigEnvironmentProcessor implements EnvironmentPostProcessor
 
     private void createAdminPropertySource(ConfigurableEnvironment environment, Map<Object, Object> properties) {
         MutablePropertySources propertySources = environment.getPropertySources();
-        OriginTrackedMapPropertySource adminSource = new OriginTrackedMapPropertySource(ADMIN_PROPERTY_SOURCE_NAME, properties);
+        OriginTrackedMapPropertySource adminSource = new OriginTrackedMapPropertySource(ADMIN_PROPERTY_SOURCE_NAME,
+                properties);
         propertySources.addLast(adminSource);
     }
 

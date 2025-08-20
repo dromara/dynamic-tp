@@ -17,7 +17,8 @@
 
 package org.dromara.dynamictp.example.service;
 
-import com.alipay.remoting.exception.RemotingException;
+import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
+import java.util.Map;
 
 /**
  * TestService related
@@ -27,35 +28,18 @@ import com.alipay.remoting.exception.RemotingException;
  */
 public interface TestService {
 
-    void testAdminClient() throws RemotingException, InterruptedException;
+    Object testAdminClient();
 
     /**
-     * Test juc tp.
+     * Invoke admin with the specified request type.
+     *
+     * @param type admin request type
      */
-    void testJucTp();
+    Object testAdminClient(AdminRequestTypeEnum type);
 
     /**
-     * Test spring tp.
+     * Invoke admin with all available request types.
      */
-    void testSpringTp();
+    Map<String, Object> testAdminClientAll();
 
-    /**
-     * Test common dtp.
-     */
-    void testCommonDtp();
-
-    /**
-     * Test eager dtp.
-     */
-    void testEagerDtp();
-
-    /**
-     * Test scheduled dtp.
-     */
-    void testScheduledDtp();
-
-    /**
-     * Test ordered dtp.
-     */
-    void testOrderedDtp();
 }

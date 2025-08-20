@@ -15,12 +15,11 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.sdk.client;
+package org.dromara.dynamictp.client.adminclient;
 
 import cn.hutool.core.lang.generator.SnowflakeGenerator;
 import com.alipay.remoting.Connection;
 import com.alipay.remoting.ConnectionEventType;
-import com.alipay.remoting.Url;
 import com.alipay.remoting.config.Configs;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcClient;
@@ -31,14 +30,14 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.entity.AdminRequestBody;
 import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
-import org.dromara.dynamictp.common.entity.AttributeRequestBody;
-import org.dromara.dynamictp.sdk.client.processor.AdminClientUserProcessor;
-import org.dromara.dynamictp.sdk.client.processor.AdminCloseEventProcessor;
-import org.dromara.dynamictp.sdk.client.processor.AdminConnectEventProcessor;
+import org.dromara.dynamictp.client.adminclient.processor.AdminClientUserProcessor;
+import org.dromara.dynamictp.client.adminclient.processor.AdminCloseEventProcessor;
+import org.dromara.dynamictp.client.adminclient.processor.AdminConnectEventProcessor;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -53,11 +52,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class AdminClient {
 
-    private final String adminIp = "127.0.0.1";
+    @Value("${dynamictp.adminIp:127.0.0.1}")
+    private String adminIp;
 
-    private final int adminPort = 8989;
-
-    private final Url adminUrl = new Url(adminIp, adminPort);
+    @Value("${dynamictp.adminPort:8989}")
+    private int adminPort;
 
     @Value("${dynamictp.clientName:${spring.application.name}}")
     private String clientName;
@@ -103,9 +102,9 @@ public class AdminClient {
     }
 
     /**
-     * Set client name manually
+     * Set adminclient name manually
      * 
-     * @param clientName the client name to set
+     * @param clientName the adminclient name to set
      */
     public void setClientName(String clientName) {
         this.clientName = clientName;
@@ -163,8 +162,10 @@ public class AdminClient {
                     adminIp, adminPort);
             return null;
         }
-        AttributeRequestBody attributeRequestBody = new AttributeRequestBody();
-        attributeRequestBody.setAttribute("clientName", clientName);
+        AdminRequestBody attributeRequestBody = new AdminRequestBody(SNOWFLAKE_GENERATOR.next(), AdminRequestTypeEnum.ATTRIBUTE);
+        HashMap<String, String> attributes = new HashMap<>();
+        attributes.put("clientName", clientName);
+        attributeRequestBody.setBody(attributes);
         AdminRequestBody requestBody = new AdminRequestBody(SNOWFLAKE_GENERATOR.next(), requestType);
         Object object = null;
         try {
@@ -172,7 +173,6 @@ public class AdminClient {
             object = client.invokeSync(connection, requestBody, 30000);
         } catch (RemotingException | InterruptedException e) {
             log.warn("DynamicTp admin client invoke failed, admin ip: {}, port: {}, exception:", adminIp, adminPort, e);
-            // Mark connection as disconnected when request fails
             isConnected.set(false);
         }
         return object;
@@ -184,8 +184,10 @@ public class AdminClient {
                     adminIp, adminPort);
             return null;
         }
-        AttributeRequestBody attributeRequestBody = new AttributeRequestBody();
-        attributeRequestBody.setAttribute("clientName", clientName);
+        AdminRequestBody attributeRequestBody = new AdminRequestBody(SNOWFLAKE_GENERATOR.next(), AdminRequestTypeEnum.ATTRIBUTE);
+        HashMap<String, String> attributes = new HashMap<>();
+        attributes.put("clientName", clientName);
+        attributeRequestBody.setBody(attributes);
         Object object = null;
         try {
             client.invokeSync(connection, attributeRequestBody, 5000);
@@ -205,7 +207,7 @@ public class AdminClient {
      */
     private boolean ensureConnection() {
         // Check connection status
-        if (isConnected.get() && connection != null && client.checkConnection(adminUrl.getOriginUrl(), true)) {
+        if (isConnected.get() && connection != null && client.checkConnection(getAdminAddress(), true)) {
             return true;
         }
 
@@ -261,12 +263,14 @@ public class AdminClient {
                 connection = null;
             }
 
-            connection = client.createStandaloneConnection(adminUrl.getOriginUrl(), 30000);
+            connection = client.createStandaloneConnection(getAdminAddress(), 30000);
             if (connection != null && connection.isFine()) {
                 log.info("DynamicTp admin client connection created successfully, admin ip: {}, port: {}", adminIp,
                         adminPort);
-                AttributeRequestBody attributeRequestBody = new AttributeRequestBody();
-                attributeRequestBody.setAttribute("clientName", clientName);
+                AdminRequestBody attributeRequestBody = new AdminRequestBody(SNOWFLAKE_GENERATOR.next(), AdminRequestTypeEnum.ATTRIBUTE);
+                HashMap<String, String> attributes = new HashMap<>();
+                attributes.put("clientName", clientName);
+                attributeRequestBody.setBody(attributes);
                 client.invokeSync(connection, attributeRequestBody, 5000);
                 return true;
             } else {
@@ -308,6 +312,10 @@ public class AdminClient {
         if (!connected) {
             retryCount.incrementAndGet();
         }
+    }
+
+    private String getAdminAddress() {
+        return adminIp + ":" + adminPort;
     }
 
     @PreDestroy

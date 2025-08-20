@@ -17,9 +17,8 @@
 
 package org.dromara.dynamictp.common.entity;
 
-import com.alipay.remoting.exception.CodecException;
-import com.alipay.remoting.serialization.HessianSerializer;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
 
@@ -39,7 +38,9 @@ public class AdminRequestBody implements Serializable {
     @Getter
     private final AdminRequestTypeEnum requestType;
 
-    private byte[] body;
+    @Setter
+    @Getter
+    private Object body;
 
     public AdminRequestBody(long id, AdminRequestTypeEnum requestType) {
         this.id = id;
@@ -48,28 +49,8 @@ public class AdminRequestBody implements Serializable {
 
     public AdminRequestBody(long id, AdminRequestTypeEnum requestType, Object body) {
         this.id = id;
-        serializeBody(body);
+        this.body = body;
         this.requestType = requestType;
-    }
-
-    public void serializeBody(Object object) {
-        HessianSerializer serializer = new HessianSerializer();
-        try {
-            this.body = serializer.serialize(object);
-        } catch (CodecException e) {
-            log.error("DynamicTp admin client serialize failed.", e);
-        }
-    }
-
-    public Object deserializeBody() {
-        HessianSerializer serializer = new HessianSerializer();
-        Object object = null;
-        try {
-            object = serializer.deserialize(this.body, null);
-        } catch (CodecException e) {
-            log.error("DynamicTp admin client deserialize failed.", e);
-        }
-        return object;
     }
 
 }

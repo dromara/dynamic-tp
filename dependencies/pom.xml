@@ -391,7 +391,7 @@
 
             <dependency>
                 <groupId>org.dromara.dynamictp</groupId>
-                <artifactId>dynamic-tp-sdk</artifactId>
+                <artifactId>dynamic-tp-client</artifactId>
                 <version>${revision}</version>
             </dependency>
 
@@ -727,19 +727,19 @@
             </plugin>
 
             <!-- Gpg Signature -->
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-gpg-plugin</artifactId>-->
-<!--                <version>1.6</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <phase>verify</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>sign</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.sonatype.central</groupId>

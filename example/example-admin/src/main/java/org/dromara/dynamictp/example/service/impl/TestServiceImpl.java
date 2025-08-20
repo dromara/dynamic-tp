@@ -17,24 +17,17 @@
 
 package org.dromara.dynamictp.example.service.impl;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
-import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
-import org.dromara.dynamictp.core.support.task.runnable.OrderedRunnable;
 import org.dromara.dynamictp.example.service.TestService;
-import org.dromara.dynamictp.sdk.client.AdminClient;
+import org.dromara.dynamictp.client.adminclient.AdminClient;
 import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * TestServiceImpl related
@@ -59,11 +52,11 @@ public class TestServiceImpl implements TestService {
     private AdminClient adminClient;
 
     public TestServiceImpl(ThreadPoolExecutor jucThreadPoolExecutor,
-                           ThreadPoolTaskExecutor threadPoolTaskExecutor,
-                           DtpExecutor eagerDtpExecutor,
-                           ScheduledExecutorService scheduledDtpExecutor,
-                           OrderedDtpExecutor orderedDtpExecutor,
-                           AdminClient adminClient) {
+            ThreadPoolTaskExecutor threadPoolTaskExecutor,
+            DtpExecutor eagerDtpExecutor,
+            ScheduledExecutorService scheduledDtpExecutor,
+            OrderedDtpExecutor orderedDtpExecutor,
+            AdminClient adminClient) {
         this.jucThreadPoolExecutor = jucThreadPoolExecutor;
         this.threadPoolTaskExecutor = threadPoolTaskExecutor;
         this.eagerDtpExecutor = eagerDtpExecutor;
@@ -73,115 +66,28 @@ public class TestServiceImpl implements TestService {
     }
 
     @Override
-    public void testAdminClient() {
-        adminClient.requestToServer(AdminRequestTypeEnum.ALARM_MANAGE);
+    public Object testAdminClient() {
+        Object resp = adminClient.requestToServer(AdminRequestTypeEnum.ALARM_MANAGE);
         log.info("testAdminClient,remoteAddress:{}", adminClient.getConnection().getRemoteAddress());
+        return resp;
     }
 
     @Override
-    public void testJucTp() {
-        for (int i = 0; i < 10; i++) {
-            jucThreadPoolExecutor.execute(() -> {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-                log.info("i am a jucThreadPoolExecutor's task");
-            });
-        }
+    public Object testAdminClient(AdminRequestTypeEnum type) {
+        Object resp = adminClient.requestToServer(type);
+        log.info("testAdminClient type:{}, remoteAddress:{}", type, adminClient.getConnection().getRemoteAddress());
+        return resp;
     }
 
     @Override
-    public void testSpringTp() {
-        for (int i = 0; i < 10; i++) {
-            threadPoolTaskExecutor.execute(() -> {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-                log.info("i am a threadPoolTaskExecutor's task");
-            });
+    public java.util.Map<String, Object> testAdminClientAll() {
+        java.util.Map<String, Object> result = new java.util.LinkedHashMap<>();
+        for (AdminRequestTypeEnum type : AdminRequestTypeEnum.values()) {
+            Object resp = adminClient.requestToServer(type);
+            log.info("testAdminClient type:{}, remoteAddress:{}", type, adminClient.getConnection().getRemoteAddress());
+            result.put(type.name(), resp);
         }
+        return result;
     }
 
-    @Override
-    public void testCommonDtp() {
-        Executor dtpExecutor1 = DtpRegistry.getExecutor("dtpExecutor1");
-        for (int i = 0; i < 10; i++) {
-            dtpExecutor1.execute(NamedRunnable.of(() -> {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-                log.info("i am a dtpExecutor's task");
-            }, "task" + i));
-        }
-    }
-
-    @Override
-    public void testEagerDtp() {
-        for (int i = 0; i < 10; i++) {
-            eagerDtpExecutor.execute(() -> {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-                log.info("i am a eagerDtpExecutor's task");
-            });
-        }
-    }
-
-    @Override
-    public void testScheduledDtp() {
-        scheduledDtpExecutor.scheduleAtFixedRate(() -> {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-            log.info("i am a scheduledDtpExecutor's task");
-        }, 0, 2, TimeUnit.SECONDS);
-    }
-
-    @Override
-    public void testOrderedDtp() {
-        for (int i = 0; i < 10; i++) {
-            orderedDtpExecutor.execute(new TestOrderedRunnable(new UserInfo(i, "dtp" + i)));
-        }
-    }
-
-    public static class TestOrderedRunnable implements OrderedRunnable {
-
-        private final UserInfo userInfo;
-
-        public TestOrderedRunnable(UserInfo userInfo) {
-            this.userInfo = userInfo;
-        }
-
-        @Override
-        public Object hashKey() {
-            return userInfo.getUid();
-        }
-
-        @Override
-        public void run() {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-            log.info("i am a orderedDtpExecutor's task, userInfo: {}", userInfo);
-        }
-    }
-
-    @Data
-    @AllArgsConstructor
-    public static class UserInfo {
-        private long uid;
-        private String name;
-    }
 }

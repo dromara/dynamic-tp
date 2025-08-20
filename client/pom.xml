@@ -8,7 +8,7 @@
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>dynamic-tp-sdk</artifactId>
+    <artifactId>dynamic-tp-client</artifactId>
 
     <dependencies>
         <dependency>

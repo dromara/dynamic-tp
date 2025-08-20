@@ -24,10 +24,9 @@
         <module>example-zookeeper-cloud</module>
         <module>example-consul-cloud</module>
         <module>example-etcd</module>
-<!--        <module>example-adapter</module>-->
+        <module>example-adapter</module>
         <module>example-polaris-cloud</module>
         <module>example-huawei-cloud</module>
-<!--        <module>example-admin</module>-->
     </modules>
 
     <build>

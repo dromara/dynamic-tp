@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  org.dromara.dynamictp.client.autoconfigure.AdminAutoConfiguration
+org.springframework.boot.env.EnvironmentPostProcessor=\
+  org.dromara.dynamictp.client.autoconfigure.AdminConfigEnvironmentProcessor

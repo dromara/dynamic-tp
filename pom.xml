@@ -39,7 +39,7 @@
         <module>adapter</module>
         <module>core</module>
         <module>common</module>
-        <module>sdk</module>
+        <module>client</module>
         <module>starter</module>
         <module>logging</module>
         <module>example</module>

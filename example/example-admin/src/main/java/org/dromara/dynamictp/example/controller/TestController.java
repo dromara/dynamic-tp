@@ -18,10 +18,14 @@
 package org.dromara.dynamictp.example.controller;
 
 import com.alipay.remoting.exception.RemotingException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.example.service.TestService;
+import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -34,45 +38,33 @@ public class TestController {
 
     private final TestService testService;
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     @GetMapping("/dtp-nacos-example/testAdminClient")
-    public String testAdminClient() throws RemotingException, InterruptedException {
-        testService.testAdminClient();
-        return "testAdminClient success";
+    public String testAdminClient() {
+        return toJson(testService.testAdminClient());
     }
 
-    @GetMapping("/dtp-nacos-example/testJucTp")
-    public String testJuc() {
-        testService.testJucTp();
-        return "testJucTp success";
+    @GetMapping("/dtp-nacos-example/testAdminClient/{type}")
+    public String testAdminClientByType(@PathVariable("type") String type) {
+        AdminRequestTypeEnum requestType = AdminRequestTypeEnum.of(type);
+        if (requestType == null) {
+            return "unknown type: " + type;
+        }
+        return toJson(testService.testAdminClient(requestType));
     }
 
-    @GetMapping("/dtp-nacos-example/testSpringTp")
-    public String testSpring() {
-        testService.testSpringTp();
-        return "testSpringTp success";
+    @GetMapping("/dtp-nacos-example/testAdminClientAll")
+    public String testAdminClientAll() {
+        return toJson(testService.testAdminClientAll());
     }
 
-    @GetMapping("/dtp-nacos-example/testCommonDtp")
-    public String testCommon() {
-        testService.testCommonDtp();
-        return "testCommonDtp success";
+    private String toJson(Object value) {
+        try {
+            return OBJECT_MAPPER.writeValueAsString(value);
+        } catch (JsonProcessingException e) {
+            return String.valueOf(value);
+        }
     }
 
-    @GetMapping("/dtp-nacos-example/testEagerDtp")
-    public String testEager() {
-        testService.testEagerDtp();
-        return "testEagerDtp success";
-    }
-
-    @GetMapping("/dtp-nacos-example/testScheduledDtp")
-    public String testScheduled() {
-        testService.testScheduledDtp();
-        return "testScheduledDtp success";
-    }
-
-    @GetMapping("/dtp-nacos-example/testOrderedDtp")
-    public String testOrdered() {
-        testService.testOrderedDtp();
-        return "testOrderedDtp success";
-    }
 }

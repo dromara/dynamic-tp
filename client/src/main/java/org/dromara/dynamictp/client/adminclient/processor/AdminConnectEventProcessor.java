@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.sdk.client.processor;
+package org.dromara.dynamictp.client.adminclient.processor;
 
 import com.alipay.remoting.Connection;
 import com.alipay.remoting.ConnectionEventProcessor;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.sdk.client.AdminClient;
+import org.dromara.dynamictp.client.adminclient.AdminClient;
 
 /**
  * AdminConnectEventProcessor related

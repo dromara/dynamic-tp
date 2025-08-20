@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.sdk.client.handler.refresh;
+package org.dromara.dynamictp.client.adminclient.handler.refresh;
 
 
 import lombok.extern.slf4j.Slf4j;

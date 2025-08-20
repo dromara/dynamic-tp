@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.sdk.autoconfigure;
+package org.dromara.dynamictp.client.autoconfigure;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.support.binder.BinderHelper;
-import org.dromara.dynamictp.sdk.client.AdminClient;
-import org.dromara.dynamictp.sdk.client.processor.AdminClientUserProcessor;
+import org.dromara.dynamictp.client.adminclient.AdminClient;
+import org.dromara.dynamictp.client.adminclient.processor.AdminClientUserProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.boot.env.OriginTrackedMapPropertySource;

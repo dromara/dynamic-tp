@@ -11,8 +11,10 @@ spring:
     port: 6379
 
 dynamictp:
-  clientName: dynamic-tp-admin-demo
   adminEnabled: true
+  adminPort: 8989
+  clientName: dynamic-tp-admin-demo
+  collector-types: admin
 
 #logging:
 #  level:

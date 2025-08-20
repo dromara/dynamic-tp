@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.sdk.client.processor;
+package org.dromara.dynamictp.client.adminclient.processor;
 
 import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.SyncUserProcessor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.entity.AdminRequestBody;
-import org.dromara.dynamictp.sdk.client.handler.collector.AdminCollector;
-import org.dromara.dynamictp.sdk.client.handler.refresh.AdminRefresher;
+import org.dromara.dynamictp.client.adminclient.handler.collector.AdminCollector;
+import org.dromara.dynamictp.client.adminclient.handler.refresh.AdminRefresher;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
@@ -45,8 +45,6 @@ public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody
     private String remoteAddress = "NOT-CONNECT";
 
     private AdminRefresher adminRefresher;
-
-    private final AdminCollector adminCollector = new AdminCollector();
 
     public AdminClientUserProcessor() {
         this.executor = Executors.newSingleThreadExecutor();
@@ -95,13 +93,12 @@ public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody
     }
 
     private Object handleExecutorMonitorRequest(AdminRequestBody adminRequestBody) {
-        adminCollector.collectAllPoolStats();
-        adminRequestBody.serializeBody(adminCollector.getMultiPoolStats());
+        adminRequestBody.setBody(AdminCollector.getMultiPoolStats());
         return adminRequestBody;
     }
 
     private Object handleExecutorRefreshRequest(AdminRequestBody adminRequestBody) {
-        Object properties = adminRequestBody.deserializeBody();
+        Object properties = adminRequestBody.getBody();
         if (properties == null) {
             log.error("DynamicTp admin executor refresh failed, properties is null");
             return null;

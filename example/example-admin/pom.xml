@@ -33,7 +33,7 @@
 
         <dependency>
             <groupId>org.dromara.dynamictp</groupId>
-            <artifactId>dynamic-tp-sdk</artifactId>
+            <artifactId>dynamic-tp-client</artifactId>
         </dependency>
 
     </dependencies>

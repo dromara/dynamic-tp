@@ -15,33 +15,37 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.client.adminclient.processor;
+package org.dromara.dynamictp.client.handler.refresh;
 
-import com.alipay.remoting.Connection;
-import com.alipay.remoting.ConnectionEventProcessor;
+
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.client.adminclient.AdminClient;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.spring.AbstractSpringRefresher;
+import org.springframework.beans.factory.InitializingBean;
+
+import java.util.Map;
+
 
 /**
- * AdminCloseEventProcessor related
+ * AdminRefresher related
  *
  * @author eachann
  */
 @Slf4j
-public class AdminCloseEventProcessor implements ConnectionEventProcessor {
+public class AdminRefresher extends AbstractSpringRefresher implements InitializingBean {
 
-    private final AdminClient adminClient;
-
-    public AdminCloseEventProcessor(AdminClient adminClient) {
-        this.adminClient = adminClient;
+    public AdminRefresher(DtpProperties dtpProperties) {
+        super(dtpProperties);
     }
 
     @Override
-    public void onEvent(String remoteAddress, Connection connection) {
-        log.info("DynamicTp admin client is disconnected, admin ip: {}, port: {}", connection.getRemoteAddress(),
-                connection.getRemotePort());
-        // Clean up connection object and update status when connection is closed
-        AdminClient.setConnection(null);
-        adminClient.updateConnectionStatus(false);
+    public void refresh(Map<Object, Object> properties) {
+        log.info("Dynamic-tp adminRefresher refresh properties");
+        super.refresh(properties);
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+
     }
 }

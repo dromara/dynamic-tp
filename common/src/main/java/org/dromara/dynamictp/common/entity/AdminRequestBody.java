@@ -23,6 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author eachann
@@ -42,6 +44,9 @@ public class AdminRequestBody implements Serializable {
     @Getter
     private Object body;
 
+    @Getter
+    private Map<String, String> attributes = new HashMap<>();
+
     public AdminRequestBody(long id, AdminRequestTypeEnum requestType) {
         this.id = id;
         this.requestType = requestType;
@@ -53,4 +58,7 @@ public class AdminRequestBody implements Serializable {
         this.requestType = requestType;
     }
 
+    public void setAttributes(String key, String value) {
+        this.attributes.put(key, value);
+    }
 }

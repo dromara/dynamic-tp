@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.client.adminclient.processor;
+package org.dromara.dynamictp.client.processor;
 
 import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.SyncUserProcessor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.entity.AdminRequestBody;
-import org.dromara.dynamictp.client.adminclient.handler.collector.AdminCollector;
-import org.dromara.dynamictp.client.adminclient.handler.refresh.AdminRefresher;
+import org.dromara.dynamictp.client.handler.collector.AdminCollector;
+import org.dromara.dynamictp.client.handler.refresh.AdminRefresher;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;

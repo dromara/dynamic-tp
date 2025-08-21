@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.example.controller;
 
-import com.alipay.remoting.exception.RemotingException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;

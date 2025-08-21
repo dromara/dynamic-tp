@@ -18,11 +18,11 @@
 package org.dromara.dynamictp.client.autoconfigure;
 
 import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.client.adminclient.AdminClient;
-import org.dromara.dynamictp.client.adminclient.handler.refresh.AdminRefresher;
-import org.dromara.dynamictp.client.adminclient.processor.AdminClientUserProcessor;
-import org.dromara.dynamictp.client.adminclient.processor.AdminCloseEventProcessor;
-import org.dromara.dynamictp.client.adminclient.processor.AdminConnectEventProcessor;
+import org.dromara.dynamictp.client.AdminClient;
+import org.dromara.dynamictp.client.handler.refresh.AdminRefresher;
+import org.dromara.dynamictp.client.processor.AdminClientUserProcessor;
+import org.dromara.dynamictp.client.processor.AdminCloseEventProcessor;
+import org.dromara.dynamictp.client.processor.AdminConnectEventProcessor;
 import org.dromara.dynamictp.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

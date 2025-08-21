@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
 import org.dromara.dynamictp.example.service.TestService;
-import org.dromara.dynamictp.client.adminclient.AdminClient;
+import org.dromara.dynamictp.client.AdminClient;
 import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;

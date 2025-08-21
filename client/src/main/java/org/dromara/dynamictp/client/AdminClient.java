@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.client.adminclient;
+package org.dromara.dynamictp.client;
 
 import cn.hutool.core.lang.generator.SnowflakeGenerator;
 import com.alipay.remoting.Connection;
@@ -30,14 +30,13 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.entity.AdminRequestBody;
 import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
-import org.dromara.dynamictp.client.adminclient.processor.AdminClientUserProcessor;
-import org.dromara.dynamictp.client.adminclient.processor.AdminCloseEventProcessor;
-import org.dromara.dynamictp.client.adminclient.processor.AdminConnectEventProcessor;
+import org.dromara.dynamictp.client.processor.AdminClientUserProcessor;
+import org.dromara.dynamictp.client.processor.AdminCloseEventProcessor;
+import org.dromara.dynamictp.client.processor.AdminConnectEventProcessor;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -162,14 +161,10 @@ public class AdminClient {
                     adminIp, adminPort);
             return null;
         }
-        AdminRequestBody attributeRequestBody = new AdminRequestBody(SNOWFLAKE_GENERATOR.next(), AdminRequestTypeEnum.ATTRIBUTE);
-        HashMap<String, String> attributes = new HashMap<>();
-        attributes.put("clientName", clientName);
-        attributeRequestBody.setBody(attributes);
         AdminRequestBody requestBody = new AdminRequestBody(SNOWFLAKE_GENERATOR.next(), requestType);
+        requestBody.setAttributes("clientName", clientName);
         Object object = null;
         try {
-            client.invokeSync(connection, attributeRequestBody, 5000);
             object = client.invokeSync(connection, requestBody, 30000);
         } catch (RemotingException | InterruptedException e) {
             log.warn("DynamicTp admin client invoke failed, admin ip: {}, port: {}, exception:", adminIp, adminPort, e);
@@ -184,13 +179,9 @@ public class AdminClient {
                     adminIp, adminPort);
             return null;
         }
-        AdminRequestBody attributeRequestBody = new AdminRequestBody(SNOWFLAKE_GENERATOR.next(), AdminRequestTypeEnum.ATTRIBUTE);
-        HashMap<String, String> attributes = new HashMap<>();
-        attributes.put("clientName", clientName);
-        attributeRequestBody.setBody(attributes);
+        adminRequestBody.setAttributes("clientName", clientName);
         Object object = null;
         try {
-            client.invokeSync(connection, attributeRequestBody, 5000);
             object = client.invokeSync(connection, adminRequestBody, 5000);
         } catch (RemotingException | InterruptedException e) {
             log.warn("DynamicTp admin client invoke failed, admin ip: {}, port: {}, exception:", adminIp, adminPort, e);
@@ -267,11 +258,9 @@ public class AdminClient {
             if (connection != null && connection.isFine()) {
                 log.info("DynamicTp admin client connection created successfully, admin ip: {}, port: {}", adminIp,
                         adminPort);
-                AdminRequestBody attributeRequestBody = new AdminRequestBody(SNOWFLAKE_GENERATOR.next(), AdminRequestTypeEnum.ATTRIBUTE);
-                HashMap<String, String> attributes = new HashMap<>();
-                attributes.put("clientName", clientName);
-                attributeRequestBody.setBody(attributes);
-                client.invokeSync(connection, attributeRequestBody, 5000);
+                AdminRequestBody adminRequestBody = new AdminRequestBody(SNOWFLAKE_GENERATOR.next(), AdminRequestTypeEnum.EXECUTOR_REFRESH);
+                adminRequestBody.setAttributes("clientName", clientName);
+                client.invokeSync(connection, adminRequestBody, 5000);
                 return true;
             } else {
                 log.warn("DynamicTp admin client connection created but not fine, admin ip: {}, port: {}", adminIp,

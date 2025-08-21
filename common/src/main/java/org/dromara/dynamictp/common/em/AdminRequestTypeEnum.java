@@ -35,9 +35,7 @@ public enum AdminRequestTypeEnum {
 
     ALARM_MANAGE("alarm_manage"),
 
-    LOG_MANAGE("log_manage"),
-
-    ATTRIBUTE("attribute");
+    LOG_MANAGE("log_manage");
 
     private final String value;
 

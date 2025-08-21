@@ -34,7 +34,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @AutoConfigureAfter({DtpBaseBeanConfiguration.class})
-@ConditionalOnClass(name = "com.qq.tars.adminclient.Communicator")
+@ConditionalOnClass(name = "com.qq.tars.client.Communicator")
 @ConditionalOnBean({DtpBaseBeanConfiguration.class})
 public class TarsTpAutoConfiguration {
 

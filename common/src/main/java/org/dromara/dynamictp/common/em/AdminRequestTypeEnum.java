@@ -17,40 +17,34 @@
 
 package org.dromara.dynamictp.common.em;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * CollectorTypeEnum related
+ * Admin request type enum.
  *
- * @author yanhom
- * @since 1.0.0
- **/
+ * @author eachann
+ */
 @Getter
-public enum CollectorTypeEnum {
+@AllArgsConstructor
+public enum AdminRequestTypeEnum {
 
-    /**
-     * Metrics collect type.
-     */
-    LOGGING,
+    EXECUTOR_MONITOR("executor_monitor"),
 
-    /**
-     * Micrometer collect type.
-     */
-    MICROMETER,
+    EXECUTOR_REFRESH("executor_refresh"),
 
-    /**
-     * Logging collect type.
-     */
-    INTERNAL_LOGGING,
+    ALARM_MANAGE("alarm_manage"),
 
-    /**
-     * JMX collect type.
-     */
-    JMX,
+    LOG_MANAGE("log_manage");
 
-    /**
-     * ADMIN collect type.
-     */
-    ADMIN
+    private final String value;
 
+    public static AdminRequestTypeEnum of(String value) {
+        for (AdminRequestTypeEnum adminRequestType : AdminRequestTypeEnum.values()) {
+            if (adminRequestType.value.equals(value)) {
+                return adminRequestType;
+            }
+        }
+        return null;
+    }
 }

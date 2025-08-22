@@ -15,42 +15,31 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.common.em;
+package org.dromara.dynamictp.client.processor;
 
-import lombok.Getter;
+import com.alipay.remoting.Connection;
+import com.alipay.remoting.ConnectionEventProcessor;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.client.AdminClient;
 
 /**
- * CollectorTypeEnum related
+ * AdminConnectEventProcessor related
  *
- * @author yanhom
- * @since 1.0.0
- **/
-@Getter
-public enum CollectorTypeEnum {
+ * @author eachann
+ */
+@Slf4j
+public class AdminConnectEventProcessor implements ConnectionEventProcessor {
 
-    /**
-     * Metrics collect type.
-     */
-    LOGGING,
+    private final AdminClient adminClient;
 
-    /**
-     * Micrometer collect type.
-     */
-    MICROMETER,
+    public AdminConnectEventProcessor(AdminClient adminClient) {
+        this.adminClient = adminClient;
+    }
 
-    /**
-     * Logging collect type.
-     */
-    INTERNAL_LOGGING,
-
-    /**
-     * JMX collect type.
-     */
-    JMX,
-
-    /**
-     * ADMIN collect type.
-     */
-    ADMIN
-
+    @Override
+    public void onEvent(String remoteAddress, Connection connection) {
+        AdminClient.setConnection(connection);
+        adminClient.updateConnectionStatus(true);
+        log.info("DynamicTp admin client connected, admin address: {}", remoteAddress);
+    }
 }

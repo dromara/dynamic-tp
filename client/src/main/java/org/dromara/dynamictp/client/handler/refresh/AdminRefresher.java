@@ -15,42 +15,37 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.common.em;
+package org.dromara.dynamictp.client.handler.refresh;
 
-import lombok.Getter;
+
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.spring.AbstractSpringRefresher;
+import org.springframework.beans.factory.InitializingBean;
+
+import java.util.Map;
+
 
 /**
- * CollectorTypeEnum related
+ * AdminRefresher related
  *
- * @author yanhom
- * @since 1.0.0
- **/
-@Getter
-public enum CollectorTypeEnum {
+ * @author eachann
+ */
+@Slf4j
+public class AdminRefresher extends AbstractSpringRefresher implements InitializingBean {
 
-    /**
-     * Metrics collect type.
-     */
-    LOGGING,
+    public AdminRefresher(DtpProperties dtpProperties) {
+        super(dtpProperties);
+    }
 
-    /**
-     * Micrometer collect type.
-     */
-    MICROMETER,
+    @Override
+    public void refresh(Map<Object, Object> properties) {
+        log.info("Dynamic-tp adminRefresher refresh properties");
+        super.refresh(properties);
+    }
 
-    /**
-     * Logging collect type.
-     */
-    INTERNAL_LOGGING,
+    @Override
+    public void afterPropertiesSet() {
 
-    /**
-     * JMX collect type.
-     */
-    JMX,
-
-    /**
-     * ADMIN collect type.
-     */
-    ADMIN
-
+    }
 }

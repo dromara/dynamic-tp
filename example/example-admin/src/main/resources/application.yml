@@ -1,0 +1,24 @@
+server:
+  port: 9100
+
+spring:
+  application:
+    name: dynamic-tp-admin-demo
+  profiles:
+    active: dev
+  redis:
+    host: ${redis:localhost}
+    port: 6379
+
+dynamictp:
+  adminEnabled: true
+  adminPort: 8989
+  clientName: dynamic-tp-admin-demo
+  collector-types: admin
+
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        boot:
+#          autoconfigure: DEBUG

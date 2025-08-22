@@ -129,7 +129,8 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         if (clazz.equals(EagerDtpExecutor.class)) {
             taskQueue = new TaskQueue(props.getQueueCapacity());
         } else if (clazz.equals(PriorityDtpExecutor.class)) {
-            taskQueue = new PriorityBlockingQueue<>(props.getQueueCapacity(), PriorityDtpExecutor.getRunnableComparator());
+            taskQueue = new PriorityBlockingQueue<>(props.getQueueCapacity(),
+                    PriorityDtpExecutor.getRunnableComparator());
         } else {
             taskQueue = buildLbq(props.getQueueType(),
                     props.getQueueCapacity(),
@@ -137,7 +138,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
                     props.getMaxFreeMemory());
         }
 
-        return new Object[]{
+        return new Object[] {
                 props.getCorePoolSize(),
                 props.getMaximumPoolSize(),
                 props.getKeepAliveTime(),

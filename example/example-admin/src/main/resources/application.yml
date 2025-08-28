@@ -12,13 +12,13 @@ spring:
 
 dynamictp:
   adminEnabled: true
-  adminPort: 8989
   clientName: dynamic-tp-admin-demo
   collector-types: admin
-
-#logging:
-#  level:
-#    org:
-#      springframework:
-#        boot:
-#          autoconfigure: DEBUG
+  # 集群配置 - 必须配置多个admin节点
+  # 格式：ip:port:weight,ip:port:weight
+  # weight为可选参数，默认为1
+  adminNodes: >
+    127.0.0.1:8989
+  # 负载均衡策略
+  # 可选值：roundRobin（轮询，默认）、random（随机）、weighted（加权轮询）
+  loadBalanceStrategy: roundRobin

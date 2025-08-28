@@ -1,0 +1,44 @@
+# DynamicTp Admin Client 集群和负载均衡配置示例
+# 将此配置添加到你的 application.yml 或 bootstrap.yml 中
+
+dynamictp:
+  # 集群配置 - 必须配置多个admin节点
+  # 格式：ip:port:weight,ip:port:weight
+  # weight为可选参数，默认为1
+  adminNodes: >
+    192.168.1.100:8989:2,
+    192.168.1.101:8989:1,
+    192.168.1.102:8989:3
+  
+  # 负载均衡策略
+  # 可选值：roundRobin（轮询，默认）、random（随机）、weighted（加权轮询）
+  loadBalanceStrategy: roundRobin
+  
+  # 其他配置
+  clientName: ${spring.application.name}
+  adminEnabled: true
+# 集群配置说明：
+# 1. adminNodes: 必须配置多个admin节点，用逗号分隔
+#    - 每个节点格式：ip:port:weight
+#    - weight为权重，数值越大被选中的概率越高
+#    - 如果不指定weight，默认为1
+#    - 至少需要配置2个节点才能形成集群
+#
+# 2. loadBalanceStrategy: 负载均衡策略
+#    - roundRobin: 轮询选择，按顺序选择节点
+#    - random: 随机选择，每次随机选择一个可用节点
+#    - weighted: 加权轮询，根据节点权重进行选择
+#
+# 3. 故障转移：当某个节点不可用时，自动选择其他健康节点
+# 4. 健康检查：定期检查节点健康状态，自动标记不健康节点
+# 5. 权重支持：支持为不同节点设置不同权重，实现负载分配
+#
+# 重要提示：
+# - adminNodes 配置项是必须的，不能为空
+# - 至少需要配置2个节点才能启用集群功能
+# - 单个节点配置将导致启动失败
+#
+# 示例场景：
+# - 生产环境：配置多个admin节点，使用加权轮询
+# - 测试环境：配置2-3个节点，使用轮询策略
+# - 高可用：配置多个节点，自动故障转移

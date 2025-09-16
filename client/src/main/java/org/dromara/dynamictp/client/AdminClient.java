@@ -65,14 +65,20 @@ public class AdminClient {
     private String loadBalanceStrategy;
 
     /**
-     * -- SETTER --
-     * Set adminclient name manually
      *
-     * @param clientName the adminclient name to set
+     * @param clientName the adminclient name
      */
     @Setter
     @Value("${dynamictp.clientName:${spring.application.name}}")
     private String clientName;
+
+    /**
+     *
+     * @param serviceName the adminclient service name
+     */
+    @Setter
+    @Value("${dynamictp.serviceName:${spring.application.name}}")
+    private String serviceName;
 
     @Value("${dynamictp.adminEnabled:false}")
     private Boolean adminEnabled;
@@ -89,20 +95,38 @@ public class AdminClient {
     @Setter
     private static Connection connection;
 
-    // 集群管理器
+    /**
+     * 集群管理器
+     */
     private AdminClusterManager clusterManager;
 
-    // Connection state management
+    /**
+     * Connection state management
+      */
     private final AtomicBoolean isConnected = new AtomicBoolean(false);
     private final AtomicInteger retryCount = new AtomicInteger(0);
     private static final int MAX_RETRY_COUNT = 3;
     private static final long RETRY_DELAY_MS = 1000;
 
-    // Heartbeat mechanism
+    /**
+     * Heartbeat mechanism
+     */
     private static final long HEARTBEAT_INTERVAL_SECONDS = 30;
+
     private ScheduledExecutorService heartbeatExecutor;
 
     public AdminClient(AdminClientUserProcessor adminClientUserProcessor) {
+        this(adminClientUserProcessor, "");
+    }
+
+    public AdminClient(AdminClientUserProcessor adminClientUserProcessor, String clientName) {
+        this(adminClientUserProcessor, clientName, "");
+    }
+
+    public AdminClient(AdminClientUserProcessor adminClientUserProcessor, String clientName, String serviceName) {
+        this.clientName = clientName;
+        this.serviceName = serviceName;
+
         client.addConnectionEventProcessor(ConnectionEventType.CONNECT, new AdminConnectEventProcessor(this));
         client.addConnectionEventProcessor(ConnectionEventType.CLOSE, new AdminCloseEventProcessor(this));
         client.registerUserProcessor(adminClientUserProcessor);
@@ -110,11 +134,6 @@ public class AdminClient {
         client.startup();
         SerializerManager.addSerializer(1, SERIALIZER);
         System.setProperty(Configs.SERIALIZER, String.valueOf(SERIALIZER));
-    }
-
-    public AdminClient(AdminClientUserProcessor adminClientUserProcessor, String clientName) {
-        this(adminClientUserProcessor);
-        this.clientName = clientName;
     }
 
     @PostConstruct
@@ -264,6 +283,7 @@ public class AdminClient {
         }
         AdminRequestBody requestBody = new AdminRequestBody(SNOWFLAKE_GENERATOR.next(), requestType);
         requestBody.setAttributes("clientName", clientName);
+        requestBody.setAttributes("serviceName", serviceName);
         Object object = null;
         try {
             object = client.invokeSync(connection, requestBody, 30000);
@@ -284,15 +304,16 @@ public class AdminClient {
         return object;
     }
 
-    public Object requestToServer(AdminRequestBody adminRequestBody) {
+    public Object requestToServer(AdminRequestBody requestBody) {
         if (!ensureConnection()) {
             log.error("DynamicTp admin client cannot establish connection after retries");
             return null;
         }
-        adminRequestBody.setAttributes("clientName", clientName);
+        requestBody.setAttributes("clientName", clientName);
+        requestBody.setAttributes("serviceName", serviceName);
         Object object = null;
         try {
-            object = client.invokeSync(connection, adminRequestBody, 5000);
+            object = client.invokeSync(connection, requestBody, 5000);
             // 标记当前节点成功
             AdminNode currentNode = getCurrentNode();
             if (currentNode != null) {
@@ -366,7 +387,8 @@ public class AdminClient {
 
             if (currentRetry < MAX_RETRY_COUNT) {
                 try {
-                    Thread.sleep(RETRY_DELAY_MS * currentRetry); // Incremental delay
+                    // Incremental delay
+                    Thread.sleep(RETRY_DELAY_MS * currentRetry);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     log.warn("DynamicTp admin client reconnection interrupted");
@@ -407,10 +429,11 @@ public class AdminClient {
             if (connection != null && connection.isFine()) {
                 log.info("DynamicTp admin client connection created successfully, admin node: {}",
                         selectedNode.getAddress());
-                AdminRequestBody adminRequestBody = new AdminRequestBody(SNOWFLAKE_GENERATOR.next(),
+                AdminRequestBody requestBody = new AdminRequestBody(SNOWFLAKE_GENERATOR.next(),
                         AdminRequestTypeEnum.EXECUTOR_REFRESH);
-                adminRequestBody.setAttributes("clientName", clientName);
-                client.invokeSync(connection, adminRequestBody, 5000);
+                requestBody.setAttributes("clientName", clientName);
+                requestBody.setAttributes("serviceName", serviceName);
+                client.invokeSync(connection, requestBody, 5000);
                 return true;
             } else {
                 log.warn("DynamicTp admin client connection created but not fine, admin node: {}",

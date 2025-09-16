@@ -20,11 +20,13 @@ package org.dromara.dynamictp.client.processor;
 import com.alipay.remoting.BizContext;
 import com.alipay.remoting.rpc.protocol.SyncUserProcessor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.entity.AdminRequestBody;
 import org.dromara.dynamictp.client.handler.collector.AdminCollector;
 import org.dromara.dynamictp.client.handler.refresh.AdminRefresher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -46,6 +48,23 @@ public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody
 
     private AdminRefresher adminRefresher;
 
+    /**
+     *
+     * @param clientName the adminclient name
+     */
+    @Setter
+    @Value("${dynamictp.clientName:${spring.application.name}}")
+    private String clientName;
+
+    /**
+     *
+     * @param serviceName the adminclient service name
+     */
+    @Setter
+    @Value("${dynamictp.serviceName:${spring.application.name}}")
+    private String serviceName;
+
+
     public AdminClientUserProcessor() {
         this.executor = Executors.newSingleThreadExecutor();
     }
@@ -57,11 +76,13 @@ public class AdminClientUserProcessor extends SyncUserProcessor<AdminRequestBody
     }
 
     @Override
-    public Object handleRequest(BizContext bizContext, AdminRequestBody adminRequestBody) throws Exception {
+    public Object handleRequest(BizContext bizContext, AdminRequestBody adminRequestBody) {
         log.info("DynamicTp admin request received:{}", adminRequestBody.getRequestType().getValue());
         if (bizContext.isRequestTimeout()) {
             log.warn("DynamicTp admin request timeout:{}s", bizContext.getClientTimeout());
         }
+        adminRequestBody.setAttributes("clientName", clientName);
+        adminRequestBody.setAttributes("serviceName", serviceName);
         this.remoteAddress = bizContext.getRemoteAddress();
         return doHandleRequest(adminRequestBody);
     }

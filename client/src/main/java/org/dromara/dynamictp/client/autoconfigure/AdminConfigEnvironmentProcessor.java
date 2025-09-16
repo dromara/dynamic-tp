@@ -54,10 +54,12 @@ public class AdminConfigEnvironmentProcessor implements EnvironmentPostProcessor
 
         // 从 Environment 中直接获取 clientName 配置
         String clientName = environment.getProperty("dynamictp.clientName",
-                environment.getProperty("spring.application.name", "unknown"));
+                environment.getProperty("spring.application.name"));
+        String serviceName = environment.getProperty("dynamictp.serviceName",
+                environment.getProperty("spring.application.name"));
 
         // 创建 AdminClient 时传入配置的 clientName
-        AdminClient adminClient = new AdminClient(new AdminClientUserProcessor(), clientName);
+        AdminClient adminClient = new AdminClient(new AdminClientUserProcessor(), clientName, serviceName);
 
         Map<Object, Object> properties = (Map<Object, Object>) adminClient
                 .requestToServer(AdminRequestTypeEnum.EXECUTOR_REFRESH);

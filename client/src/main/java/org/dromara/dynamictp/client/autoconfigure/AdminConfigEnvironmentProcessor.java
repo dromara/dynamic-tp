@@ -57,10 +57,13 @@ public class AdminConfigEnvironmentProcessor implements EnvironmentPostProcessor
                 environment.getProperty("spring.application.name"));
         String serviceName = environment.getProperty("dynamictp.serviceName",
                 environment.getProperty("spring.application.name"));
+        String adminNodes = environment.getProperty("dynamictp.adminNodes");
+        String loadBalanceStrategy = environment.getProperty("dynamictp.loadBalanceStrategy", "roundRobin");
+        Boolean adminEnabled = Boolean.parseBoolean(environment.getProperty("dynamictp.adminEnabled", "false"));
 
         // 创建 AdminClient 时传入配置的 clientName
-        AdminClient adminClient = new AdminClient(new AdminClientUserProcessor(), clientName, serviceName);
-
+        AdminClient adminClient = new AdminClient(new AdminClientUserProcessor(), clientName, serviceName, adminNodes, loadBalanceStrategy, adminEnabled);
+        adminClient.init();
         Map<Object, Object> properties = (Map<Object, Object>) adminClient
                 .requestToServer(AdminRequestTypeEnum.EXECUTOR_REFRESH);
         if (!checkPropertyExist(environment) && properties != null) {

@@ -120,12 +120,23 @@ public class AdminClient {
     }
 
     public AdminClient(AdminClientUserProcessor adminClientUserProcessor, String clientName) {
-        this(adminClientUserProcessor, clientName, "");
+        this(adminClientUserProcessor, clientName, "", "", "", false);
     }
 
-    public AdminClient(AdminClientUserProcessor adminClientUserProcessor, String clientName, String serviceName) {
-        this.clientName = clientName;
-        this.serviceName = serviceName;
+    public AdminClient(AdminClientUserProcessor adminClientUserProcessor, String clientName, String serviceName, String adminNodes, String loadBalanceStrategy, Boolean adminEnabled) {
+        if (!clientName.isEmpty()) {
+            this.clientName = clientName;
+        }
+        if (!serviceName.isEmpty()) {
+            this.serviceName = serviceName;
+        }
+        if (!adminNodes.isEmpty()) {
+            this.adminNodes = adminNodes;
+        }
+        if (!loadBalanceStrategy.isEmpty()) {
+            this.loadBalanceStrategy = loadBalanceStrategy;
+        }
+        this.adminEnabled = adminEnabled;
 
         client.addConnectionEventProcessor(ConnectionEventType.CONNECT, new AdminConnectEventProcessor(this));
         client.addConnectionEventProcessor(ConnectionEventType.CLOSE, new AdminCloseEventProcessor(this));
@@ -301,6 +312,10 @@ public class AdminClient {
             }
             isConnected.set(false);
         }
+        if (object instanceof IllegalStateException) {
+            log.error(((IllegalStateException) object).getMessage());
+            return null;
+        }
         return object;
     }
 
@@ -328,6 +343,10 @@ public class AdminClient {
             }
             // Mark connection as disconnected when request fails
             isConnected.set(false);
+        }
+        if (object instanceof IllegalStateException) {
+            log.error(((IllegalStateException) object).getMessage());
+            return null;
         }
         return object;
     }
@@ -433,7 +452,12 @@ public class AdminClient {
                         AdminRequestTypeEnum.EXECUTOR_REFRESH);
                 requestBody.setAttributes("clientName", clientName);
                 requestBody.setAttributes("serviceName", serviceName);
-                client.invokeSync(connection, requestBody, 5000);
+                Object object = client.invokeSync(connection, requestBody, 5000);
+                if (object instanceof IllegalStateException) {
+                    log.error(((IllegalStateException) object).getMessage());
+                    client.closeStandaloneConnection(connection);
+                    return false;
+                }
                 return true;
             } else {
                 log.warn("DynamicTp admin client connection created but not fine, admin node: {}",
@@ -441,7 +465,7 @@ public class AdminClient {
                 return false;
             }
         } catch (RemotingException | InterruptedException e) {
-            log.warn("DynamicTp admin create connection failed", e);
+            log.error("DynamicTp admin create connection failed", e);
             return false;
         }
     }

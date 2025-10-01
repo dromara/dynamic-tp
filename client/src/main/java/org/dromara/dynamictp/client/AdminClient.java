@@ -376,6 +376,21 @@ public class AdminClient {
     private boolean ensureConnection() {
         // Check connection status
         if (isConnected.get() && connection != null && connection.isFine()) {
+            // send health message to server
+            AdminRequestBody requestBody = new AdminRequestBody(SNOWFLAKE_GENERATOR.next(), AdminRequestTypeEnum.EXECUTOR_MONITOR);
+            requestBody.setAttributes("clientName", clientName);
+            requestBody.setAttributes("serviceName", serviceName);
+            try {
+                client.invokeSync(connection, requestBody, 30000);
+            } catch (RemotingException | InterruptedException e) {
+                log.warn("DynamicTp admin client invoke failed, exception:", e);
+                // 标记当前节点失败
+                AdminNode currentNode = getCurrentNode();
+                if (currentNode != null) {
+                    clusterManager.markNodeFailed(currentNode);
+                }
+                isConnected.set(false);
+            }
             return true;
         }
 
@@ -502,6 +517,7 @@ public class AdminClient {
 
     /**
      * 获取集群管理器
+     * @return clusterManager
      */
     public AdminClusterManager getClusterManager() {
         return clusterManager;
@@ -509,6 +525,7 @@ public class AdminClient {
 
     /**
      * 获取所有admin节点
+     * @return allAdminNodes
      */
     public List<AdminNode> getAllAdminNodes() {
         return clusterManager != null ? clusterManager.getAllNodes() : null;
@@ -516,6 +533,7 @@ public class AdminClient {
 
     /**
      * 获取健康的admin节点
+     * @return healthyAdminNodes
      */
     public List<AdminNode> getHealthyAdminNodes() {
         return clusterManager != null ? clusterManager.getHealthyNodes() : null;

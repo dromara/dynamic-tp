@@ -33,7 +33,6 @@ public interface AdminNodeSelector {
    * 选择admin节点
    *
    * @param nodes 可用的admin节点列表
-   * @param arg   选择参数
    * @return 选中的admin节点
    */
   AdminNode select(List<AdminNode> nodes);

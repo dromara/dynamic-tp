@@ -1,0 +1,45 @@
+name: idea 建议
+description: 'Suggest an idea'
+title: '[FEATURE]: '
+labels: ['feature']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **首先感谢您使用 DynamicTp，如果对项目有好的想法建议，请按照下述模板提议讨论，请使用 Markdown 语法**。
+
+  - type: textarea
+    id: solution-description
+    attributes:
+      label: 方案描述
+      description: 请详细描述您的建议方案
+      placeholder: 详细描述您的建议方案...
+    validations:
+      required: true
+
+  - type: textarea
+    id: application-scenario
+    attributes:
+      label: 应用场景
+      description: 此功能适用的场景
+      placeholder: 描述此功能适用的场景...
+    validations:
+      required: true
+
+  - type: textarea
+    id: difficulty-risk
+    attributes:
+      label: 难度风险
+      description: 实现此功能可能的难度和风险
+      placeholder: 描述实现此功能可能的难度和风险...
+    validations:
+      required: true
+
+  - type: textarea
+    id: external-dependencies
+    attributes:
+      label: 外部依赖
+      description: 实现此功能需要的外部依赖
+      placeholder: 描述实现此功能需要的外部依赖...
+    validations:
+      required: true

@@ -43,7 +43,7 @@ class RedisRateLimiterTest {
     void testRedisRateLimiterCheck() throws InterruptedException {
         for (int i = 0; i < 6; i++) {
             TimeUnit.SECONDS.sleep(1);
-            val res = redisScriptRateLimiter.check("rate-limiter", 120, 5);
+            val res = redisScriptRateLimiter.tryPass("rate-limiter", 120, 5);
             System.out.println(res);
         }
     }

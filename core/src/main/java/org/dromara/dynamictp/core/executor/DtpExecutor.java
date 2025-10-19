@@ -107,7 +107,17 @@ public class DtpExecutor extends ThreadPoolExecutor implements TaskEnhanceAware,
     /**
      * for manual builder thread pools only
      */
+    private long runTimeout = 0;
+
+    /**
+     * for manual builder thread pools only
+     */
     private boolean tryInterrupt = false;
+
+    /**
+     * for manual builder thread pools only
+     */
+    private long queueTimeout = 0;
 
     /**
      * Whether to wait for scheduled tasks to complete on shutdown,
@@ -314,12 +324,28 @@ public class DtpExecutor extends ThreadPoolExecutor implements TaskEnhanceAware,
         this.rejectHandlerType = rejectHandlerType;
     }
 
+    public long getRunTimeout() {
+        return runTimeout;
+    }
+
+    public void setRunTimeout(long runTimeout) {
+        this.runTimeout = runTimeout;
+    }
+
     public boolean isTryInterrupt() {
         return tryInterrupt;
     }
 
     public void setTryInterrupt(boolean tryInterrupt) {
         this.tryInterrupt = tryInterrupt;
+    }
+
+    public long getQueueTimeout() {
+        return queueTimeout;
+    }
+
+    public void setQueueTimeout(long queueTimeout) {
+        this.queueTimeout = queueTimeout;
     }
 
     public boolean isWaitForTasksToCompleteOnShutdown() {

@@ -26,6 +26,7 @@
         <module>example-adapter-rabbitmq</module>
         <module>example-adapter-liteflow</module>
         <module>example-adapter-webserver</module>
+        <module>example-adapter-thrift</module>
     </modules>
 
     <dependencies>

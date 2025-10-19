@@ -18,6 +18,7 @@
         <module>test-logging</module>
         <module>test-configcenter</module>
         <module>test-extension</module>
+        <module>test-adapter-thrift</module>
     </modules>
 
     <properties>

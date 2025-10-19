@@ -74,4 +74,5 @@ public class DtpBaseBeanConfiguration {
     public DtpApplicationListener dtpApplicationListener() {
         return new DtpApplicationListener();
     }
+
 }

@@ -84,7 +84,7 @@ protected void afterExecute(Runnable r, Throwable t);
 >
 > 4. 集成常用三方中间件内部线程池管理
 
-**经过多个版本的迭代，目前最新版本 v1.2.0 具有以下特性** ✅
+**经过多个版本的迭代，目前最新版本 v1.2.2 具有以下特性** ✅
 
 - **代码零侵入**：我们改变了线程池以往的使用姿势，所有配置均放在配置中心，服务启动时会从配置中心拉取配置生成线程池对象放到 Spring 容器中，使用时直接从 Spring 容器中获取，对业务代码零侵入
 
@@ -98,7 +98,7 @@ protected void afterExecute(Runnable r, Throwable t);
 
 - **多配置中心支持**：支持多种主流配置中心，包括 Nacos、Apollo、Zookeeper、Consul、Etcd、Polaris、ServiceComb，同时也提供 SPI 接口可自定义扩展实现
 
-- **中间件线程池管理**：集成管理常用第三方组件的线程池，已集成 Tomcat、Jetty、Undertow、Dubbo、RocketMq、Hystrix、Grpc、Motan、Okhttp3、Brpc、Tars、SofaRpc、RabbitMq、Liteflow 等组件的线程池管理（动态调参、监控、报警）
+- **中间件线程池管理**：集成管理常用第三方组件的线程池，已集成 Tomcat、Jetty、Undertow、Dubbo、RocketMq、Hystrix、Grpc、Motan、Okhttp3、Brpc、Tars、SofaRpc、RabbitMq、Liteflow、Thrift 等组件的线程池管理（动态调参、监控、报警）
 
 - **多模式**：提供了增强线程池 DtpExecutor，IO 密集型场景使用的线程池 EagerDtpExecutor，调度线程池 ScheduledDtpExecutor，有序线程池 OrderedDtpExecutor，可以根据业务场景选择合适的线程池
 
@@ -182,14 +182,6 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ---
 
-## 知识星球
-
-<a href="https://t.zsxq.com/annca" target="_blank">
-    <img class="no-zoom" src="/resources/img/zsxq.png" width="50%" height="50%"/>
-</a>
-
----
-
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=dromara/dynamic-tp&type=Date)](https://star-history.com/#dromara/dynamic-tp&Date)
@@ -208,7 +200,7 @@ protected void afterExecute(Runnable r, Throwable t);
 
 看到这儿，**请给项目一个 star**，你的支持是我们前进的动力！
 
-使用过程中有任何问题，或者对项目有什么想法或者建议，可以加入社群，跟 1500+ 群友一起交流讨论。
+使用过程中有任何问题，或者对项目有什么想法或者建议，可以加入社群，跟 1700+ 群友一起交流讨论。
 
 微信群均已满 200 人，可以关注微信公众号，加我个人微信拉群（备注：dynamic-tp 拉群）。
 
@@ -222,12 +214,3 @@ protected void afterExecute(Runnable r, Throwable t);
 
 - [HertzBeat](https://github.com/dromara/hertzbeat) : 易用友好的实时监控告警系统，无需Agent，强大自定义监控能力.
 
----
-
-## 鸣谢
-
-感谢 JetBrains 对开源项目的支持
-
-<a href="https://jb.gg/OpenSourceSupport">
-  <img src="https://user-images.githubusercontent.com/8643542/160519107-199319dc-e1cf-4079-94b7-01b6b8d23aa6.png" align="left" height="150" width="150" alt="JetBrains">
-</a>

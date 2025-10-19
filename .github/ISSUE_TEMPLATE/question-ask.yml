@@ -1,0 +1,36 @@
+name: 疑问解答
+description: 'Ask a question'
+title: '[QUESTION]: '
+labels: ['question']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **首先感谢您使用 DynamicTp，如果对项目有任何疑问需要解答，请按照下述模板提问，请使用 Markdown 语法**。
+
+  - type: textarea
+    id: usage-questions
+    attributes:
+      label: 使用方面
+      description: 关于项目使用方面的疑问
+      placeholder: 描述您关于项目使用方面的疑问...
+    validations:
+      required: false
+
+  - type: textarea
+    id: principle-questions
+    attributes:
+      label: 原理方面
+      description: 关于项目原理方面的疑问
+      placeholder: 描述您关于项目原理方面的疑问...
+    validations:
+      required: false
+
+  - type: textarea
+    id: other-questions
+    attributes:
+      label: 其他
+      description: 其他方面的疑问
+      placeholder: 描述您的其他方面疑问...
+    validations:
+      required: false

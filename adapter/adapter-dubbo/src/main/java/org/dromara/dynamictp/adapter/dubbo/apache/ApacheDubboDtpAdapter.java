@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.adapter.dubbo.apache;
 
+import com.google.common.eventbus.Subscribe;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
@@ -32,6 +33,7 @@ import org.apache.dubbo.config.spring.context.event.ServiceBeanExportedEvent;
 import org.apache.dubbo.remoting.transport.dispatcher.WrappedChannelHandler;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.event.CustomContextRefreshedEvent;
 import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
@@ -68,6 +70,12 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter implements Applica
 
     private static final String EXECUTOR_FIELD = "executor";
 
+    @Subscribe
+    @Override
+    public synchronized void onContextRefreshedEvent(CustomContextRefreshedEvent event) {
+        // do nothing, initialize in onApplicationEvent
+    }
+
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof ServiceBeanExportedEvent) {
@@ -76,6 +84,7 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter implements Applica
                 initialize();
                 afterInitialize();
                 refresh(dtpProperties);
+                log.info("DynamicTp adapter, {} init end, executors {}", getTpPrefix(), executors.keySet());
             } catch (Exception e) {
                 log.error("DynamicTp adapter, {} init failed.", getTpPrefix(), e);
             }

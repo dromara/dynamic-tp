@@ -23,6 +23,7 @@ import lombok.val;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.AlarmInfo;
 import org.dromara.dynamictp.common.entity.NotifyItem;
+import org.dromara.dynamictp.common.ex.DtpException;
 import org.dromara.dynamictp.common.util.DateUtil;
 
 import java.util.Map;
@@ -58,19 +59,11 @@ public class AlarmCounter {
 
     public static AlarmInfo getAlarmInfo(String threadPoolName, String notifyType) {
         String key = buildKey(threadPoolName, notifyType);
-        val alarmInfo = ALARM_INFO_CACHE.get(key);
-        if (Objects.isNull(alarmInfo)) {
-            return null;
+        val cache = ALARM_INFO_CACHE.get(key);
+        if (Objects.isNull(cache)) {
+            throw new DtpException("Alarm info cache has not been initialized for " + key);
         }
-        return alarmInfo.getIfPresent(notifyType);
-    }
-
-    public static int getCount(String threadPoolName, String notifyType) {
-        val alarmInfo = getAlarmInfo(threadPoolName, notifyType);
-        if (Objects.nonNull(alarmInfo)) {
-            return alarmInfo.getCount();
-        }
-        return 0;
+        return cache.getIfPresent(notifyType);
     }
 
     public static void reset(String threadPoolName, String notifyType) {
@@ -81,10 +74,6 @@ public class AlarmCounter {
         LAST_ALARM_TIME_MAP.put(buildKey(threadPoolName, notifyType), DateUtil.now());
     }
 
-    public static String getLastAlarmTime(String threadPoolName, String notifyType) {
-        return LAST_ALARM_TIME_MAP.get(buildKey(threadPoolName, notifyType));
-    }
-
     public static void incAlarmCount(String threadPoolName, String notifyType) {
         AlarmInfo alarmInfo = getAlarmInfo(threadPoolName, notifyType);
         if (Objects.isNull(alarmInfo)) {
@@ -93,6 +82,10 @@ public class AlarmCounter {
             ALARM_INFO_CACHE.get(key).put(notifyType, alarmInfo);
         }
         alarmInfo.incCounter();
+    }
+
+    public static String getLastAlarmTime(String threadPoolName, String notifyType) {
+        return LAST_ALARM_TIME_MAP.get(buildKey(threadPoolName, notifyType));
     }
 
     private static String buildKey(String threadPoolName, String notifyItemType) {

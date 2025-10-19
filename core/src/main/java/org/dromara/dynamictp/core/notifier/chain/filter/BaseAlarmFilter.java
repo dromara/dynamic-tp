@@ -19,9 +19,11 @@ package org.dromara.dynamictp.core.notifier.chain.filter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.dromara.dynamictp.common.entity.AlarmInfo;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.pattern.filter.Invoker;
 import org.dromara.dynamictp.core.notifier.alarm.AlarmCounter;
+import org.dromara.dynamictp.core.notifier.context.AlarmCtx;
 import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
@@ -46,19 +48,24 @@ public class BaseAlarmFilter implements NotifyFilter {
 
         String threadPoolName = executorWrapper.getThreadPoolName();
         AlarmCounter.incAlarmCount(threadPoolName, notifyItem.getType());
-        int count = AlarmCounter.getCount(threadPoolName, notifyItem.getType());
-        if (count < notifyItem.getCount()) {
+        AlarmInfo alarmInfo = AlarmCounter.getAlarmInfo(threadPoolName, notifyItem.getType());
+        if (Objects.isNull(alarmInfo)) {
+            return;
+        }
+
+        if (alarmInfo.getCount() < notifyItem.getCount()) {
             if (log.isDebugEnabled()) {
                 log.debug("DynamicTp notify, alarm count not reached, current count: {}, threshold: {}, threadPoolName: {}, notifyItem: {}",
-                        count, notifyItem.getCount(), threadPoolName, notifyItem);
+                        alarmInfo.getCount(), notifyItem.getCount(), threadPoolName, notifyItem);
             }
             return;
         }
+        ((AlarmCtx) context).setAlarmInfo(alarmInfo);
         nextInvoker.invoke(context);
     }
 
-    private boolean satisfyBaseCondition(NotifyItem notifyItem, ExecutorWrapper executor) {
-        return executor.isNotifyEnabled()
+    private boolean satisfyBaseCondition(NotifyItem notifyItem, ExecutorWrapper executorWrapper) {
+        return executorWrapper.isNotifyEnabled()
                 && notifyItem.isEnabled()
                 && CollectionUtils.isNotEmpty(notifyItem.getPlatformIds());
     }

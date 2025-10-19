@@ -33,8 +33,10 @@ public class OnJettyWebServerCondition extends AnyNestedCondition {
     }
 
     @ConditionalOnBean(name = {"JettyServletWebServerFactory"})
-    static class ServletWebServer { }
+    static class ServletWebServer {
+    }
 
     @ConditionalOnBean(name = {"JettyReactiveWebServerFactory"})
-    static class ReactiveWebServer { }
+    static class ReactiveWebServer {
+    }
 }

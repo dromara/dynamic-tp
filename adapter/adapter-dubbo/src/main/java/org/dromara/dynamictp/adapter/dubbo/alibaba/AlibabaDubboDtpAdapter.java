@@ -20,9 +20,12 @@ package org.dromara.dynamictp.adapter.dubbo.alibaba;
 import com.alibaba.dubbo.common.extension.ExtensionLoader;
 import com.alibaba.dubbo.common.store.DataStore;
 import com.alibaba.dubbo.remoting.transport.dispatcher.WrappedChannelHandler;
+import com.google.common.eventbus.Subscribe;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.adapter.common.AbstractDtpAdapter;
+import org.dromara.dynamictp.common.event.CustomContextRefreshedEvent;
 import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.jvmti.JVMTI;
@@ -42,6 +45,7 @@ import static com.alibaba.dubbo.common.Constants.EXECUTOR_SERVICE_COMPONENT_KEY;
  * @since 1.0.6
  */
 @SuppressWarnings("all")
+@Slf4j
 public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements InitializingBean {
 
     private static final String TP_PREFIX = "dubboTp";
@@ -49,6 +53,12 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements Initia
     private static final String EXECUTOR_FIELD = "executor";
 
     private final AtomicBoolean registered = new AtomicBoolean(false);
+
+    @Subscribe
+    @Override
+    public synchronized void onContextRefreshedEvent(CustomContextRefreshedEvent event) {
+        // do nothing, initialize in afterPropertiesSet
+    }
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -64,6 +74,7 @@ public class AlibabaDubboDtpAdapter extends AbstractDtpAdapter implements Initia
                     initialize();
                     afterInitialize();
                     refresh(dtpProperties);
+                    log.info("DynamicTp adapter, {} init end, executors {}", getTpPrefix(), executors.keySet());
                 } catch (Throwable e) { }
             }
         });

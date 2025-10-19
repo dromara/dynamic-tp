@@ -117,10 +117,6 @@ public class AlarmManager {
         });
     }
 
-    public static void destroy() {
-        ALARM_EXECUTOR.shutdownNow();
-    }
-
     private static void preAlarm(Runnable runnable) {
         if (runnable instanceof DtpRunnable) {
             MDC.put(TRACE_ID, ((DtpRunnable) runnable).getTraceId());
@@ -182,5 +178,9 @@ public class AlarmManager {
             return true;
         }
         return false;
+    }
+
+    public static void destroy() {
+        ALARM_EXECUTOR.shutdownNow();
     }
 }

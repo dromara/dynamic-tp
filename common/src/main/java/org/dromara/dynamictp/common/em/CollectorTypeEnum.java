@@ -46,6 +46,11 @@ public enum CollectorTypeEnum {
     /**
      * JMX collect type.
      */
-    JMX
+    JMX,
+
+    /**
+     * ADMIN collect type.
+     */
+    ADMIN
 
 }

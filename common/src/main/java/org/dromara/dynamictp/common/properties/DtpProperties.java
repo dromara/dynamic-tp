@@ -172,6 +172,11 @@ public class DtpProperties {
      */
     private List<TpExecutorProps> liteflowTp;
     
+    /**
+     * Thrift thread pools.
+     */
+    private List<TpExecutorProps> thriftTp;
+    
     public static DtpProperties getInstance() {
         return Holder.INSTANCE;
     }

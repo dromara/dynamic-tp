@@ -62,7 +62,7 @@ public class SlidingWindowRateLimiter extends AbstractRedisRateLimiter {
     }
 
     @Override
-    public boolean check(String name, long interval, int limit) {
+    public boolean tryPass(String name, long interval, int limit) {
         try {
             val res = isAllowed(name, interval, limit);
             if (CollectionUtils.isEmpty(res)) {

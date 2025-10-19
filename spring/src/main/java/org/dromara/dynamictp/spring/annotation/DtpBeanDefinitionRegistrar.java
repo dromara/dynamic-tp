@@ -109,7 +109,9 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         propertyValues.put(PRE_START_ALL_CORE_THREADS, props.isPreStartAllCoreThreads());
         propertyValues.put(REJECT_HANDLER_TYPE, props.getRejectedHandlerType());
         propertyValues.put(REJECT_ENHANCED, props.isRejectEnhanced());
+        propertyValues.put(RUN_TIMEOUT, props.getRunTimeout());
         propertyValues.put(TRY_INTERRUPT_WHEN_TIMEOUT, props.isTryInterrupt());
+        propertyValues.put(QUEUE_TIMEOUT, props.getQueueTimeout());
         val notifyItems = mergeAllNotifyItems(props.getNotifyItems());
         propertyValues.put(NOTIFY_ITEMS, notifyItems);
         propertyValues.put(PLATFORM_IDS, props.getPlatformIds());
@@ -127,7 +129,8 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         if (clazz.equals(EagerDtpExecutor.class)) {
             taskQueue = new TaskQueue(props.getQueueCapacity());
         } else if (clazz.equals(PriorityDtpExecutor.class)) {
-            taskQueue = new PriorityBlockingQueue<>(props.getQueueCapacity(), PriorityDtpExecutor.getRunnableComparator());
+            taskQueue = new PriorityBlockingQueue<>(props.getQueueCapacity(),
+                    PriorityDtpExecutor.getRunnableComparator());
         } else {
             taskQueue = buildLbq(props.getQueueType(),
                     props.getQueueCapacity(),
@@ -135,7 +138,7 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
                     props.getMaxFreeMemory());
         }
 
-        return new Object[]{
+        return new Object[] {
                 props.getCorePoolSize(),
                 props.getMaximumPoolSize(),
                 props.getKeepAliveTime(),
@@ -145,5 +148,4 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
                 RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType())
         };
     }
-
 }

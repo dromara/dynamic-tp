@@ -15,42 +15,20 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.common.em;
+package org.dromara.dynamictp.example.notifier;
 
-import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
- * CollectorTypeEnum related
+ * SmsClient related
  *
  * @author yanhom
- * @since 1.0.0
- **/
-@Getter
-public enum CollectorTypeEnum {
+ * @since 1.1.0
+ */
+@Slf4j
+public class SmsClient {
 
-    /**
-     * Metrics collect type.
-     */
-    LOGGING,
-
-    /**
-     * Micrometer collect type.
-     */
-    MICROMETER,
-
-    /**
-     * Logging collect type.
-     */
-    INTERNAL_LOGGING,
-
-    /**
-     * JMX collect type.
-     */
-    JMX,
-
-    /**
-     * ADMIN collect type.
-     */
-    ADMIN
-
+    public void send(String secret, String[] receivers, String content) {
+        log.info("send sms, secret: {}, receivers: {}, content: {}", secret, receivers, content);
+    }
 }

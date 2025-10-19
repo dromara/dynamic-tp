@@ -15,42 +15,20 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.common.em;
+package org.dromara.dynamictp.example;
 
-import lombok.Getter;
+import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * CollectorTypeEnum related
- *
- * @author yanhom
- * @since 1.0.0
- **/
-@Getter
-public enum CollectorTypeEnum {
+ * @author Redick01
+ */
+@SpringBootApplication
+@EnableDynamicTp
+public class AdminExampleApplication {
 
-    /**
-     * Metrics collect type.
-     */
-    LOGGING,
-
-    /**
-     * Micrometer collect type.
-     */
-    MICROMETER,
-
-    /**
-     * Logging collect type.
-     */
-    INTERNAL_LOGGING,
-
-    /**
-     * JMX collect type.
-     */
-    JMX,
-
-    /**
-     * ADMIN collect type.
-     */
-    ADMIN
-
+    public static void main(String[] args) {
+        SpringApplication.run(AdminExampleApplication.class, args);
+    }
 }

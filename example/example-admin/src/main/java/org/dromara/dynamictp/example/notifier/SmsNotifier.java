@@ -15,42 +15,33 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.common.em;
+package org.dromara.dynamictp.example.notifier;
 
-import lombok.Getter;
+import org.dromara.dynamictp.common.entity.NotifyPlatform;
+import org.dromara.dynamictp.common.notifier.AbstractNotifier;
 
 /**
- * CollectorTypeEnum related
+ * SmsNotifier related
  *
  * @author yanhom
- * @since 1.0.0
- **/
-@Getter
-public enum CollectorTypeEnum {
+ * @since 1.1.0
+ */
+public class SmsNotifier extends AbstractNotifier {
 
-    /**
-     * Metrics collect type.
-     */
-    LOGGING,
+    private final SmsClient smsClient;
 
-    /**
-     * Micrometer collect type.
-     */
-    MICROMETER,
+    public SmsNotifier(SmsClient smsClient) {
+        this.smsClient = smsClient;
+    }
 
-    /**
-     * Logging collect type.
-     */
-    INTERNAL_LOGGING,
+    @Override
+    public String platform() {
+        return "sms";
+    }
 
-    /**
-     * JMX collect type.
-     */
-    JMX,
-
-    /**
-     * ADMIN collect type.
-     */
-    ADMIN
-
+    @Override
+    protected void send0(NotifyPlatform platform, String content) {
+        String[] receivers = platform.getReceivers().split(",");
+        smsClient.send(platform.getSecret(), receivers, content);
+    }
 }

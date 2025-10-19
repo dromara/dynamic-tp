@@ -15,42 +15,33 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.common.em;
+package org.dromara.dynamictp.example.collector;
 
-import lombok.Getter;
+import org.dromara.dynamictp.common.entity.ThreadPoolStats;
+import org.dromara.dynamictp.common.util.JsonUtil;
+import org.dromara.dynamictp.core.monitor.collector.AbstractCollector;
 
 /**
- * CollectorTypeEnum related
+ * EsCollector related
  *
  * @author yanhom
- * @since 1.0.0
- **/
-@Getter
-public enum CollectorTypeEnum {
+ * @since 1.1.0
+ */
+public class EsCollector extends AbstractCollector {
 
-    /**
-     * Metrics collect type.
-     */
-    LOGGING,
+    private final EsClient esClient;
 
-    /**
-     * Micrometer collect type.
-     */
-    MICROMETER,
+    public EsCollector() {
+        this.esClient = new EsClient();
+    }
 
-    /**
-     * Logging collect type.
-     */
-    INTERNAL_LOGGING,
+    @Override
+    public void collect(ThreadPoolStats poolStats) {
+        esClient.save(JsonUtil.toJson(poolStats));
+    }
 
-    /**
-     * JMX collect type.
-     */
-    JMX,
-
-    /**
-     * ADMIN collect type.
-     */
-    ADMIN
-
+    @Override
+    public String type() {
+        return "es";
+    }
 }

@@ -20,6 +20,8 @@ package org.dromara.dynamictp.common.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
+
 /**
  * ThreadPoolStats related
  *
@@ -28,7 +30,7 @@ import lombok.EqualsAndHashCode;
  **/
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class ThreadPoolStats extends Metrics {
+public class ThreadPoolStats extends Metrics implements Serializable {
 
     /**
      * 线程池名字

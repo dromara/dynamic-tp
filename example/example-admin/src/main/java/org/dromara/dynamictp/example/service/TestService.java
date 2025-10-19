@@ -15,42 +15,31 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.common.em;
+package org.dromara.dynamictp.example.service;
 
-import lombok.Getter;
+import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
+import java.util.Map;
 
 /**
- * CollectorTypeEnum related
+ * TestService related
  *
  * @author yanhom
- * @since 1.0.0
- **/
-@Getter
-public enum CollectorTypeEnum {
+ * @since 1.1.0
+ */
+public interface TestService {
+
+    Object testAdminClient();
 
     /**
-     * Metrics collect type.
+     * Invoke admin with the specified request type.
+     *
+     * @param type admin request type
      */
-    LOGGING,
+    Object testAdminClient(AdminRequestTypeEnum type);
 
     /**
-     * Micrometer collect type.
+     * Invoke admin with all available request types.
      */
-    MICROMETER,
-
-    /**
-     * Logging collect type.
-     */
-    INTERNAL_LOGGING,
-
-    /**
-     * JMX collect type.
-     */
-    JMX,
-
-    /**
-     * ADMIN collect type.
-     */
-    ADMIN
+    Map<String, Object> testAdminClientAll();
 
 }

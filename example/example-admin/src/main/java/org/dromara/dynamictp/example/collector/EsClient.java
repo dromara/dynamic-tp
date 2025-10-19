@@ -15,42 +15,20 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.common.em;
+package org.dromara.dynamictp.example.collector;
 
-import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
- * CollectorTypeEnum related
+ * EsClient related
  *
  * @author yanhom
- * @since 1.0.0
- **/
-@Getter
-public enum CollectorTypeEnum {
+ * @since 1.1.0
+ */
+@Slf4j
+public class EsClient {
 
-    /**
-     * Metrics collect type.
-     */
-    LOGGING,
-
-    /**
-     * Micrometer collect type.
-     */
-    MICROMETER,
-
-    /**
-     * Logging collect type.
-     */
-    INTERNAL_LOGGING,
-
-    /**
-     * JMX collect type.
-     */
-    JMX,
-
-    /**
-     * ADMIN collect type.
-     */
-    ADMIN
-
+    public void save(String json) {
+        log.info("save to es, json: {}", json);
+    }
 }

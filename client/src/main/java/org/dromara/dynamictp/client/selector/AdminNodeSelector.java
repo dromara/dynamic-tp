@@ -15,42 +15,26 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.common.em;
+package org.dromara.dynamictp.client.selector;
 
-import lombok.Getter;
+import org.dromara.dynamictp.client.node.AdminNode;
+
+import java.util.List;
 
 /**
- * CollectorTypeEnum related
+ * Admin节点选择器接口，用于负载均衡选择admin节点
  *
- * @author yanhom
- * @since 1.0.0
- **/
-@Getter
-public enum CollectorTypeEnum {
+ * @author eachann
+ * @since 1.2.3
+ */
+public interface AdminNodeSelector {
 
-    /**
-     * Metrics collect type.
-     */
-    LOGGING,
-
-    /**
-     * Micrometer collect type.
-     */
-    MICROMETER,
-
-    /**
-     * Logging collect type.
-     */
-    INTERNAL_LOGGING,
-
-    /**
-     * JMX collect type.
-     */
-    JMX,
-
-    /**
-     * ADMIN collect type.
-     */
-    ADMIN
-
+  /**
+   * 选择admin节点
+   *
+   * @param nodes 可用的admin节点列表
+   * @return 选中的admin节点
+   */
+  AdminNode select(List<AdminNode> nodes);
 }
+

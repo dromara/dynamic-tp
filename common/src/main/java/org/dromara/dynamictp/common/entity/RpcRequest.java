@@ -19,18 +19,18 @@ package org.dromara.dynamictp.common.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * RPC request body for admin communication.
+ *
  * @author eachann
  */
-@Slf4j
-public class AdminRequestBody implements Serializable {
+public class RpcRequest implements Serializable {
 
     private static final long serialVersionUID = -1288207208017808618L;
 
@@ -38,27 +38,36 @@ public class AdminRequestBody implements Serializable {
     private final long id;
 
     @Getter
-    private final AdminRequestTypeEnum requestType;
+    private final String requestType;
 
     @Setter
     @Getter
     private Object body;
 
-    @Getter
-    private Map<String, String> attributes = new HashMap<>();
+    private final Map<String, String> attributes = new HashMap<>();
 
-    public AdminRequestBody(long id, AdminRequestTypeEnum requestType) {
+    public RpcRequest(long id, String requestType) {
         this.id = id;
         this.requestType = requestType;
     }
 
-    public AdminRequestBody(long id, AdminRequestTypeEnum requestType, Object body) {
-        this.id = id;
+    public RpcRequest(long id, String requestType, Object body) {
+        this(id, requestType);
         this.body = body;
-        this.requestType = requestType;
     }
 
-    public void setAttributes(String key, String value) {
+    /**
+     * Get attributes as unmodifiable map
+     */
+    public Map<String, String> getAttributes() {
+        return Collections.unmodifiableMap(attributes);
+    }
+
+    /**
+     * Add an attribute
+     */
+    public RpcRequest addAttribute(String key, String value) {
         this.attributes.put(key, value);
+        return this;
     }
 }

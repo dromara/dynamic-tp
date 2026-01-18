@@ -17,9 +17,6 @@
 
 package org.dromara.dynamictp.example.service;
 
-import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
-import java.util.Map;
-
 /**
  * TestService related
  *
@@ -35,11 +32,5 @@ public interface TestService {
      *
      * @param type admin request type
      */
-    Object testAdminClient(AdminRequestTypeEnum type);
-
-    /**
-     * Invoke admin with all available request types.
-     */
-    Map<String, Object> testAdminClientAll();
-
+    Object testAdminClient(String type);
 }

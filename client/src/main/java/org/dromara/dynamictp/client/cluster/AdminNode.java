@@ -15,48 +15,48 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.client.node;
+package org.dromara.dynamictp.client.cluster;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
- * Admin节点信息
+ * Admin node information
  *
  * @author eachann
  * @since 1.2.3
  */
 @Data
-@EqualsAndHashCode
+@EqualsAndHashCode(of = {"ip", "port"})
 public class AdminNode {
 
   /**
-   * 节点IP地址
+   * Node IP address
    */
   private String ip;
 
   /**
-   * 节点端口
+   * Node port
    */
   private int port;
 
   /**
-   * 节点权重，用于加权负载均衡
+   * Node weight for weighted load balancing
    */
   private int weight = 1;
 
   /**
-   * 节点是否可用
+   * Whether the node is available
    */
   private boolean available = true;
 
   /**
-   * 节点最后心跳时间
+   * Last heartbeat timestamp
    */
   private long lastHeartbeatTime;
 
   /**
-   * 节点连接失败次数
+   * Connection failure count
    */
   private int failCount = 0;
 
@@ -72,16 +72,16 @@ public class AdminNode {
   }
 
   /**
-   * 获取节点地址字符串
+   * Get the node address string
    *
-   * @return 节点地址
+   * @return node address in format "ip:port"
    */
   public String getAddress() {
     return ip + ":" + port;
   }
 
   /**
-   * 标记节点失败
+   * Mark node as failed and increment failure count
    */
   public void markFailed() {
     this.failCount++;
@@ -89,7 +89,7 @@ public class AdminNode {
   }
 
   /**
-   * 标记节点成功
+   * Mark node as successful and reset failure count
    */
   public void markSuccess() {
     this.failCount = 0;
@@ -98,11 +98,11 @@ public class AdminNode {
   }
 
   /**
-   * 检查节点是否健康
+   * Check if node is healthy based on failure count and heartbeat interval
    *
-   * @param maxFailCount        最大失败次数
-   * @param healthCheckInterval 健康检查间隔（毫秒）
-   * @return 是否健康
+   * @param maxFailCount        maximum allowed failure count
+   * @param healthCheckInterval health check interval in milliseconds
+   * @return true if node is healthy, false otherwise
    */
   public boolean isHealthy(int maxFailCount, long healthCheckInterval) {
     if (failCount >= maxFailCount) {

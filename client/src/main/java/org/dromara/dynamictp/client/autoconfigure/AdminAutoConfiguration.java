@@ -17,53 +17,44 @@
 
 package org.dromara.dynamictp.client.autoconfigure;
 
-import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.client.AdminClient;
-import org.dromara.dynamictp.client.handler.refresh.AdminRefresher;
-import org.dromara.dynamictp.client.processor.AdminClientUserProcessor;
-import org.dromara.dynamictp.client.processor.AdminCloseEventProcessor;
-import org.dromara.dynamictp.client.processor.AdminConnectEventProcessor;
+import org.dromara.dynamictp.client.processor.ClientUserProcessor;
+import org.dromara.dynamictp.client.refresh.ConfigRefresher;
+import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.spring.DtpBaseBeanConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * AdminAutoConfiguration related
+ * Auto-configuration for DynamicTp Admin client
  *
  * @author eachann
  */
 @Configuration
 @ConditionalOnBean({ DtpBaseBeanConfiguration.class })
 @AutoConfigureAfter({ DtpBaseBeanConfiguration.class })
+@ConditionalOnProperty(prefix = "dynamictp", name = "adminEnabled", havingValue = "true", matchIfMissing = true)
 public class AdminAutoConfiguration {
 
     @Bean
-    public AdminClient adminClient(AdminClientUserProcessor adminClientUserProcessor) {
-        return new AdminClient(adminClientUserProcessor);
+    @ConditionalOnMissingBean
+    public AdminClient adminClient(ClientUserProcessor clientUserProcessor) {
+        return new AdminClient(clientUserProcessor);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public AdminRefresher adminRefresher(DtpProperties dtpProperties) {
-        return new AdminRefresher(dtpProperties);
+    public ConfigRefresher configRefresher(DtpProperties dtpProperties) {
+        return new ConfigRefresher(dtpProperties);
     }
 
     @Bean
-    public AdminClientUserProcessor adminClientUserProcessor(AdminRefresher adminRefresher) {
-        return new AdminClientUserProcessor(adminRefresher);
+    @ConditionalOnMissingBean
+    public ClientUserProcessor clientUserProcessor(ConfigRefresher configRefresher) {
+        return new ClientUserProcessor(configRefresher);
     }
-
-    @Bean
-    public AdminConnectEventProcessor adminConnectEventProcessor(AdminClient adminClient) {
-        return new AdminConnectEventProcessor(adminClient);
-    }
-
-    @Bean
-    public AdminCloseEventProcessor adminCloseEventProcessor(AdminClient adminClient) {
-        return new AdminCloseEventProcessor(adminClient);
-    }
-
 }

@@ -23,23 +23,30 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.client.AdminClient;
 
 /**
- * AdminConnectEventProcessor related
+ * Close event processor for handling connection close events
  *
  * @author eachann
  */
 @Slf4j
-public class AdminConnectEventProcessor implements ConnectionEventProcessor {
+public class CloseEventProcessor implements ConnectionEventProcessor {
 
     private final AdminClient adminClient;
 
-    public AdminConnectEventProcessor(AdminClient adminClient) {
+    public CloseEventProcessor(AdminClient adminClient) {
         this.adminClient = adminClient;
     }
 
     @Override
     public void onEvent(String remoteAddress, Connection connection) {
-        AdminClient.setConnection(connection);
-        adminClient.updateConnectionStatus(true);
-        log.info("DynamicTp admin client connected, admin address: {}", remoteAddress);
+        String remoteIp = "unknown";
+        int remotePort = -1;
+        if (connection != null && connection.getRemoteAddress() != null) {
+            remoteIp = String.valueOf(connection.getRemoteAddress().getAddress());
+            remotePort = connection.getRemoteAddress().getPort();
+        }
+        log.info("DynamicTp admin client is disconnected, admin ip: {}, port: {}", remoteIp, remotePort);
+        // Clean up connection object and update status when connection is closed
+        AdminClient.setConnection(null);
+        adminClient.updateConnectionStatus(false);
     }
 }

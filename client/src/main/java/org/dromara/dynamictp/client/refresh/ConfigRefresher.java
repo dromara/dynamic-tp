@@ -15,36 +15,28 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.common.em;
+package org.dromara.dynamictp.client.refresh;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.spring.AbstractSpringRefresher;
+
+import java.util.Map;
 
 /**
- * Admin request type enum.
+ * ConfigRefresher for refreshing dynamic thread pool configuration from admin server
  *
  * @author eachann
  */
-@Getter
-@AllArgsConstructor
-public enum AdminRequestTypeEnum {
+@Slf4j
+public class ConfigRefresher extends AbstractSpringRefresher {
 
-    EXECUTOR_MONITOR("executor_monitor"),
+    public ConfigRefresher(DtpProperties dtpProperties) {
+        super(dtpProperties);
+    }
 
-    EXECUTOR_REFRESH("executor_refresh"),
-
-    ALARM_MANAGE("alarm_manage"),
-
-    LOG_MANAGE("log_manage");
-
-    private final String value;
-
-    public static AdminRequestTypeEnum of(String value) {
-        for (AdminRequestTypeEnum adminRequestType : AdminRequestTypeEnum.values()) {
-            if (adminRequestType.value.equals(value)) {
-                return adminRequestType;
-            }
-        }
-        return null;
+    @Override
+    public void refresh(Map<Object, Object> properties) {
+        super.refresh(properties);
     }
 }

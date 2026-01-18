@@ -15,47 +15,46 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.client.selector;
+package org.dromara.dynamictp.client.loadbalance;
 
-import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.client.node.AdminNode;
+import org.dromara.dynamictp.client.cluster.AdminNode;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
- * 轮询选择器实现
+ * Node selector interface for load balancing node selection
  *
  * @author eachann
  * @since 1.2.3
  */
-@Slf4j
-public class RoundRobinAdminNodeSelector implements AdminNodeSelector {
+public interface NodeSelector {
 
-  private final AtomicInteger counter = new AtomicInteger(0);
+  /**
+   * Select an admin node
+   *
+   * @param nodes list of available admin nodes
+   * @return selected admin node
+   */
+  AdminNode select(List<AdminNode> nodes);
 
-  @Override
-  public AdminNode select(List<AdminNode> nodes) {
+  /**
+   * Filter healthy nodes, return all nodes if no healthy nodes available
+   *
+   * @param nodes list of all nodes
+   * @return list of healthy nodes (or original list if no healthy nodes)
+   */
+  default List<AdminNode> filterHealthyNodes(List<AdminNode> nodes) {
     if (nodes == null || nodes.isEmpty()) {
-      log.warn("No available admin nodes for selection");
-      return null;
+      return Collections.emptyList();
     }
-
-    // 过滤出健康的节点
+    
     List<AdminNode> healthyNodes = nodes.stream()
         .filter(AdminNode::isAvailable)
         .collect(Collectors.toList());
-
-    if (healthyNodes.isEmpty()) {
-      log.warn("No healthy admin nodes available, using all nodes");
-      healthyNodes = nodes;
-    }
-
-    int index = counter.getAndIncrement() % healthyNodes.size();
-    AdminNode selectedNode = healthyNodes.get(index);
-
-    log.debug("RoundRobin selector selected admin node: {}", selectedNode.getAddress());
-    return selectedNode;
+    
+    return healthyNodes.isEmpty() ? nodes : healthyNodes;
   }
 }
+

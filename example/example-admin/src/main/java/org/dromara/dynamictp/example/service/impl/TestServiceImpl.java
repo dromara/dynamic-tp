@@ -18,11 +18,10 @@
 package org.dromara.dynamictp.example.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.dynamictp.client.AdminClient;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
 import org.dromara.dynamictp.example.service.TestService;
-import org.dromara.dynamictp.client.AdminClient;
-import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -67,27 +66,16 @@ public class TestServiceImpl implements TestService {
 
     @Override
     public Object testAdminClient() {
-        Object resp = adminClient.requestToServer(AdminRequestTypeEnum.ALARM_MANAGE);
+        Object resp = adminClient.requestToServer("");
         log.info("testAdminClient,remoteAddress:{}", adminClient.getConnection().getRemoteAddress());
         return resp;
     }
 
     @Override
-    public Object testAdminClient(AdminRequestTypeEnum type) {
+    public Object testAdminClient(String type) {
         Object resp = adminClient.requestToServer(type);
         log.info("testAdminClient type:{}, remoteAddress:{}", type, adminClient.getConnection().getRemoteAddress());
         return resp;
-    }
-
-    @Override
-    public java.util.Map<String, Object> testAdminClientAll() {
-        java.util.Map<String, Object> result = new java.util.LinkedHashMap<>();
-        for (AdminRequestTypeEnum type : AdminRequestTypeEnum.values()) {
-            Object resp = adminClient.requestToServer(type);
-            log.info("testAdminClient type:{}, remoteAddress:{}", type, adminClient.getConnection().getRemoteAddress());
-            result.put(type.name(), resp);
-        }
-        return result;
     }
 
 }

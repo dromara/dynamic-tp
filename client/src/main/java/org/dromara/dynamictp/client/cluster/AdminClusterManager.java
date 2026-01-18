@@ -18,9 +18,9 @@
 package org.dromara.dynamictp.client.cluster;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.client.node.AdminNode;
-import org.dromara.dynamictp.client.selector.AdminNodeSelector;
-import org.dromara.dynamictp.client.selector.RoundRobinAdminNodeSelector;
+import org.dromara.dynamictp.client.AdminClientConstants;
+import org.dromara.dynamictp.client.loadbalance.NodeSelector;
+import org.dromara.dynamictp.client.loadbalance.RoundRobinNodeSelector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Admin集群管理器
+ * Admin cluster manager for managing admin nodes and health checks
  *
  * @author eachann
  * @since 1.2.3
@@ -39,20 +39,22 @@ import java.util.concurrent.TimeUnit;
 public class AdminClusterManager {
 
   private final List<AdminNode> adminNodes = new CopyOnWriteArrayList<>();
-  private final AdminNodeSelector nodeSelector;
+  private final NodeSelector nodeSelector;
+  private final AdminNodeHealthChecker healthChecker;
   private final ScheduledExecutorService healthCheckExecutor;
 
-  private static final long HEALTH_CHECK_INTERVAL = 30000; // 30秒
-  private static final int MAX_FAIL_COUNT = 3;
-
   public AdminClusterManager() {
-    this(new RoundRobinAdminNodeSelector());
+    this(new RoundRobinNodeSelector());
   }
 
-  public AdminClusterManager(AdminNodeSelector nodeSelector) {
+  public AdminClusterManager(NodeSelector nodeSelector) {
     this.nodeSelector = nodeSelector;
+    this.healthChecker = new AdminNodeHealthChecker(
+        AdminClientConstants.MAX_FAIL_COUNT,
+        AdminClientConstants.HEALTH_CHECK_INTERVAL_MS
+    );
     this.healthCheckExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
-      Thread thread = new Thread(r, "DynamicTp-AdminCluster-HealthCheck");
+      Thread thread = new Thread(r, AdminClientConstants.THREAD_NAME_HEALTH_CHECK);
       thread.setDaemon(true);
       return thread;
     });
@@ -61,21 +63,21 @@ public class AdminClusterManager {
   }
 
   /**
-   * 添加admin节点
+   * Add admin node with default weight
    *
-   * @param ip   节点IP
-   * @param port 节点端口
+   * @param ip   node IP address
+   * @param port node port
    */
   public void addNode(String ip, int port) {
     addNode(ip, port, 1);
   }
 
   /**
-   * 添加admin节点
+   * Add admin node with specified weight
    *
-   * @param ip     节点IP
-   * @param port   节点端口
-   * @param weight 节点权重
+   * @param ip     node IP address
+   * @param port   node port
+   * @param weight node weight for load balancing
    */
   public void addNode(String ip, int port, int weight) {
     AdminNode node = new AdminNode(ip, port, weight);
@@ -86,10 +88,10 @@ public class AdminClusterManager {
   }
 
   /**
-   * 移除admin节点
+   * Remove admin node from cluster
    *
-   * @param ip   节点IP
-   * @param port 节点端口
+   * @param ip   node IP address
+   * @param port node port
    */
   public void removeNode(String ip, int port) {
     adminNodes.removeIf(node -> node.getIp().equals(ip) && node.getPort() == port);
@@ -97,10 +99,10 @@ public class AdminClusterManager {
   }
 
   /**
-   * 选择admin节点
+   * Select an admin node from the cluster using the configured selector
    *
-   * @param arg 选择参数
-   * @return 选中的admin节点
+   * @param arg selection argument (for extensibility)
+   * @return selected admin node, or null if no nodes available
    */
   public AdminNode selectNode(Object arg) {
     if (adminNodes.isEmpty()) {
@@ -116,18 +118,18 @@ public class AdminClusterManager {
   }
 
   /**
-   * 获取所有admin节点
+   * Get all admin nodes in the cluster
    *
-   * @return admin节点列表
+   * @return list of all admin nodes
    */
   public List<AdminNode> getAllNodes() {
     return new ArrayList<>(adminNodes);
   }
 
   /**
-   * 获取健康的admin节点
+   * Get all healthy admin nodes in the cluster
    *
-   * @return 健康的admin节点列表
+   * @return list of healthy admin nodes
    */
   public List<AdminNode> getHealthyNodes() {
     return adminNodes.stream()
@@ -136,9 +138,9 @@ public class AdminClusterManager {
   }
 
   /**
-   * 标记节点失败
+   * Mark a node as failed
    *
-   * @param node 失败的节点
+   * @param node the failed node
    */
   public void markNodeFailed(AdminNode node) {
     if (node != null) {
@@ -148,9 +150,9 @@ public class AdminClusterManager {
   }
 
   /**
-   * 标记节点成功
+   * Mark a node as successful
    *
-   * @param node 成功的节点
+   * @param node the successful node
    */
   public void markNodeSuccess(AdminNode node) {
     if (node != null) {
@@ -160,24 +162,25 @@ public class AdminClusterManager {
   }
 
   /**
-   * 启动健康检查
+   * Start the periodic health check task
    */
   private void startHealthCheck() {
+    long interval = AdminClientConstants.HEALTH_CHECK_INTERVAL_MS;
     healthCheckExecutor.scheduleAtFixedRate(() -> {
       try {
         performHealthCheck();
       } catch (Exception e) {
         log.warn("Health check execution failed", e);
       }
-    }, HEALTH_CHECK_INTERVAL, HEALTH_CHECK_INTERVAL, TimeUnit.MILLISECONDS);
+    }, interval, interval, TimeUnit.MILLISECONDS);
   }
 
   /**
-   * 执行健康检查
+   * Perform health check on all nodes
    */
   private void performHealthCheck() {
     for (AdminNode node : adminNodes) {
-      boolean healthy = node.isHealthy(MAX_FAIL_COUNT, HEALTH_CHECK_INTERVAL);
+      boolean healthy = healthChecker.isHealthy(node);
       if (!healthy && node.isAvailable()) {
         log.warn("Admin node {} is marked as unhealthy", node.getAddress());
       }
@@ -185,7 +188,7 @@ public class AdminClusterManager {
   }
 
   /**
-   * 关闭集群管理器
+   * Shutdown the cluster manager and stop health checks
    */
   public void shutdown() {
     if (healthCheckExecutor != null && !healthCheckExecutor.isShutdown()) {

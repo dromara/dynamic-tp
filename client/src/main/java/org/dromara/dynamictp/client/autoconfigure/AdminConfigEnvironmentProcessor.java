@@ -18,11 +18,11 @@
 package org.dromara.dynamictp.client.autoconfigure;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.support.binder.BinderHelper;
 import org.dromara.dynamictp.client.AdminClient;
-import org.dromara.dynamictp.client.processor.AdminClientUserProcessor;
+import org.dromara.dynamictp.client.AdminClientConstants;
+import org.dromara.dynamictp.client.processor.ClientUserProcessor;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.boot.env.OriginTrackedMapPropertySource;
@@ -31,9 +31,10 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
- * ZkConfigEnvironmentProcessor related
+ * Admin config environment processor
  *
  * @author yanhom
  * @since 1.0.4
@@ -48,25 +49,26 @@ public class AdminConfigEnvironmentProcessor implements EnvironmentPostProcessor
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        // 先绑定配置属性
+        // Bind configuration properties first
         DtpProperties dtpProperties = DtpProperties.getInstance();
         BinderHelper.bindDtpProperties(environment, dtpProperties);
 
-        // 从 Environment 中直接获取 clientName 配置
+        // Get clientName configuration from Environment
         String clientName = environment.getProperty("dynamictp.clientName",
-                environment.getProperty("spring.application.name"));
+                Objects.requireNonNull(environment.getProperty("spring.application.name")));
         String serviceName = environment.getProperty("dynamictp.serviceName",
-                environment.getProperty("spring.application.name"));
+                Objects.requireNonNull(environment.getProperty("spring.application.name")));
         String adminNodes = environment.getProperty("dynamictp.adminNodes");
         String loadBalanceStrategy = environment.getProperty("dynamictp.loadBalanceStrategy", "roundRobin");
         Boolean adminEnabled = Boolean.parseBoolean(environment.getProperty("dynamictp.adminEnabled", "false"));
 
-        // 创建 AdminClient 时传入配置的 clientName
-        AdminClient adminClient = new AdminClient(new AdminClientUserProcessor(), clientName, serviceName, adminNodes, loadBalanceStrategy, adminEnabled);
+        // Create AdminClient with configured clientName
+        AdminClient adminClient = new AdminClient(new ClientUserProcessor(), clientName, serviceName, adminNodes, loadBalanceStrategy, adminEnabled);
         adminClient.init();
-        Map<Object, Object> properties = (Map<Object, Object>) adminClient
-                .requestToServer(AdminRequestTypeEnum.EXECUTOR_REFRESH);
-        if (!checkPropertyExist(environment) && properties != null) {
+        Object response = adminClient.requestToServer(AdminClientConstants.REQUEST_TYPE_EXECUTOR_REFRESH);
+        if (!checkPropertyExist(environment) && response instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<Object, Object> properties = (Map<Object, Object>) response;
             createAdminPropertySource(environment, properties);
         }
         adminClient.close();

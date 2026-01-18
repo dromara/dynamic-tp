@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.example.service.TestService;
-import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,16 +45,7 @@ public class TestController {
 
     @GetMapping("/dtp-nacos-example/testAdminClient/{type}")
     public String testAdminClientByType(@PathVariable("type") String type) {
-        AdminRequestTypeEnum requestType = AdminRequestTypeEnum.of(type);
-        if (requestType == null) {
-            return "unknown type: " + type;
-        }
-        return toJson(testService.testAdminClient(requestType));
-    }
-
-    @GetMapping("/dtp-nacos-example/testAdminClientAll")
-    public String testAdminClientAll() {
-        return toJson(testService.testAdminClientAll());
+        return toJson(testService.testAdminClient(type));
     }
 
     private String toJson(Object value) {

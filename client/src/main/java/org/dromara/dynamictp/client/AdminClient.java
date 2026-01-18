@@ -28,27 +28,28 @@ import com.alipay.remoting.serialization.SerializerManager;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.client.selector.RandomAdminNodeSelector;
-import org.dromara.dynamictp.client.selector.WeightedRoundRobinAdminNodeSelector;
-import org.dromara.dynamictp.common.entity.AdminRequestBody;
-import org.dromara.dynamictp.common.em.AdminRequestTypeEnum;
-import org.dromara.dynamictp.client.processor.AdminClientUserProcessor;
-import org.dromara.dynamictp.client.processor.AdminCloseEventProcessor;
-import org.dromara.dynamictp.client.processor.AdminConnectEventProcessor;
 import org.dromara.dynamictp.client.cluster.AdminClusterManager;
-import org.dromara.dynamictp.client.node.AdminNode;
-import org.dromara.dynamictp.client.selector.AdminNodeSelector;
-import org.dromara.dynamictp.client.selector.RoundRobinAdminNodeSelector;
+import org.dromara.dynamictp.client.cluster.AdminNode;
+import org.dromara.dynamictp.client.processor.ClientUserProcessor;
+import org.dromara.dynamictp.client.processor.CloseEventProcessor;
+import org.dromara.dynamictp.client.processor.ConnectEventProcessor;
+import org.dromara.dynamictp.client.loadbalance.NodeSelector;
+import org.dromara.dynamictp.client.loadbalance.RandomNodeSelector;
+import org.dromara.dynamictp.client.loadbalance.RoundRobinNodeSelector;
+import org.dromara.dynamictp.client.loadbalance.WeightedRoundRobinNodeSelector;
+import org.dromara.dynamictp.common.entity.RpcRequest;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * DynamicTp admin client
@@ -64,18 +65,10 @@ public class AdminClient {
     @Value("${dynamictp.loadBalanceStrategy:roundRobin}")
     private String loadBalanceStrategy;
 
-    /**
-     *
-     * @param clientName the adminclient name
-     */
     @Setter
     @Value("${dynamictp.clientName:${spring.application.name}}")
     private String clientName;
 
-    /**
-     *
-     * @param serviceName the adminclient service name
-     */
     @Setter
     @Value("${dynamictp.serviceName:${spring.application.name}}")
     private String serviceName;
@@ -91,39 +84,41 @@ public class AdminClient {
     @Getter
     private static final HessianSerializer SERIALIZER = new HessianSerializer();
 
-    @Getter
-    @Setter
-    private static Connection connection;
+    /**
+     * Use AtomicReference to ensure thread safety
+     */
+    private static final AtomicReference<Connection> CONNECTION_REF = new AtomicReference<>();
+
+    public static Connection getConnection() {
+        return CONNECTION_REF.get();
+    }
+
+    public static void setConnection(Connection connection) {
+        CONNECTION_REF.set(connection);
+    }
 
     /**
-     * 集群管理器
+     * Cluster manager
      */
     private AdminClusterManager clusterManager;
 
     /**
      * Connection state management
-      */
+     */
     private final AtomicBoolean isConnected = new AtomicBoolean(false);
     private final AtomicInteger retryCount = new AtomicInteger(0);
-    private static final int MAX_RETRY_COUNT = 3;
-    private static final long RETRY_DELAY_MS = 1000;
-
-    /**
-     * Heartbeat mechanism
-     */
-    private static final long HEARTBEAT_INTERVAL_SECONDS = 30;
 
     private ScheduledExecutorService heartbeatExecutor;
 
-    public AdminClient(AdminClientUserProcessor adminClientUserProcessor) {
-        this(adminClientUserProcessor, "");
+    public AdminClient(ClientUserProcessor clientUserProcessor) {
+        this(clientUserProcessor, "");
     }
 
-    public AdminClient(AdminClientUserProcessor adminClientUserProcessor, String clientName) {
-        this(adminClientUserProcessor, clientName, "", "", "", false);
+    public AdminClient(ClientUserProcessor clientUserProcessor, String clientName) {
+        this(clientUserProcessor, clientName, "", "", "", false);
     }
 
-    public AdminClient(AdminClientUserProcessor adminClientUserProcessor, String clientName, String serviceName, String adminNodes, String loadBalanceStrategy, Boolean adminEnabled) {
+    public AdminClient(ClientUserProcessor clientUserProcessor, String clientName, String serviceName, String adminNodes, String loadBalanceStrategy, Boolean adminEnabled) {
         if (!clientName.isEmpty()) {
             this.clientName = clientName;
         }
@@ -138,9 +133,9 @@ public class AdminClient {
         }
         this.adminEnabled = adminEnabled;
 
-        client.addConnectionEventProcessor(ConnectionEventType.CONNECT, new AdminConnectEventProcessor(this));
-        client.addConnectionEventProcessor(ConnectionEventType.CLOSE, new AdminCloseEventProcessor(this));
-        client.registerUserProcessor(adminClientUserProcessor);
+        client.addConnectionEventProcessor(ConnectionEventType.CONNECT, new ConnectEventProcessor(this));
+        client.addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventProcessor(this));
+        client.registerUserProcessor(clientUserProcessor);
         client.enableReconnectSwitch();
         client.startup();
         SerializerManager.addSerializer(1, SERIALIZER);
@@ -155,7 +150,7 @@ public class AdminClient {
             startHeartbeat();
         } catch (Exception e) {
             log.error("Failed to initialize AdminClient", e);
-            // 如果初始化失败，不要启动心跳，避免持续重试
+            // If initialization fails, don't start heartbeat to avoid continuous retries
             if (heartbeatExecutor != null) {
                 stopHeartbeat();
             }
@@ -164,79 +159,50 @@ public class AdminClient {
     }
 
     /**
-     * 初始化集群管理器
+     * Initialize cluster manager
      */
     private void initClusterManager() {
-        // 创建节点选择器
-        AdminNodeSelector selector = createNodeSelector();
+        // Create node selector
+        NodeSelector selector = createNodeSelector();
 
-        // 创建集群管理器
+        // Create cluster manager
         clusterManager = new AdminClusterManager(selector);
 
-        // 添加配置的节点
+        // Add configured nodes
         addConfiguredNodes();
 
         log.info("Admin cluster manager initialized with {} nodes", clusterManager.getAllNodes().size());
     }
 
     /**
-     * 创建节点选择器
+     * Create node selector
      */
-    private AdminNodeSelector createNodeSelector() {
-        switch (loadBalanceStrategy.toLowerCase()) {
-            case "random":
-                return new RandomAdminNodeSelector();
-            case "weighted":
-                return new WeightedRoundRobinAdminNodeSelector();
-            case "roundRobin":
+    private NodeSelector createNodeSelector() {
+        String strategy = loadBalanceStrategy.toLowerCase();
+        switch (strategy) {
+            case AdminClientConstants.STRATEGY_RANDOM:
+                return new RandomNodeSelector();
+            case AdminClientConstants.STRATEGY_WEIGHTED_ROUND_ROBIN:
+                return new WeightedRoundRobinNodeSelector();
+            case AdminClientConstants.STRATEGY_ROUND_ROBIN:
             default:
-                return new RoundRobinAdminNodeSelector();
+                return new RoundRobinNodeSelector();
         }
     }
 
-        /**
-     * 添加配置的节点
+    /**
+     * Add configured nodes
      */
     private void addConfiguredNodes() {
         log.info("Configuring admin nodes: adminNodes={}", adminNodes);
         
-        if (adminNodes == null || adminNodes.trim().isEmpty()) {
-            log.error("No admin nodes configured. Please configure dynamictp.adminNodes property.");
-            throw new IllegalStateException("No admin nodes configured");
-        }
+        validateAdminNodesConfig();
         
         String[] nodeConfigs = adminNodes.split(",");
         log.info("Parsed {} node configurations", nodeConfigs.length);
         
         for (String nodeConfig : nodeConfigs) {
-            String trimmedConfig = nodeConfig.trim();
-            if (trimmedConfig.isEmpty()) {
-                log.warn("Skipping empty node configuration");
-                continue;
-            }
-            
-            String[] parts = trimmedConfig.split(":");
-            if (parts.length >= 2) {
-                try {
-                    String ip = parts[0].trim();
-                    int port = Integer.parseInt(parts[1].trim());
-                    int weight = parts.length > 2 ? Integer.parseInt(parts[2].trim()) : 1;
-                    
-                    if (ip.isEmpty()) {
-                        log.error("Invalid IP address in node configuration: {}", trimmedConfig);
-                        throw new IllegalArgumentException("Invalid IP address in node configuration: " + trimmedConfig);
-                    }
-                    
-                    clusterManager.addNode(ip, port, weight);
-                    log.info("Added admin node: {}:{} with weight {}", ip, port, weight);
-                } catch (NumberFormatException e) {
-                    log.error("Invalid admin node configuration: {}", trimmedConfig, e);
-                    throw new IllegalArgumentException("Invalid admin node configuration: " + trimmedConfig, e);
-                }
-            } else {
-                log.error("Invalid admin node configuration format: {}", trimmedConfig);
-                throw new IllegalArgumentException("Invalid admin node configuration format: " + trimmedConfig);
-            }
+            parseAndAddNode(nodeConfig);
         }
         
         if (clusterManager.getAllNodes().isEmpty()) {
@@ -248,23 +214,70 @@ public class AdminClient {
     }
 
     /**
-     * Start heartbeat mechanism if admin is enabled
+     * Validate admin nodes configuration
+     */
+    private void validateAdminNodesConfig() {
+        if (adminNodes == null || adminNodes.trim().isEmpty()) {
+            log.error("No admin nodes configured. Please configure dynamictp.adminNodes property.");
+            throw new IllegalStateException("No admin nodes configured");
+        }
+    }
+
+    /**
+     * Parse and add a single node configuration
+     * 
+     * @param nodeConfig node configuration string, format: ip:port[:weight]
+     */
+    private void parseAndAddNode(String nodeConfig) {
+        String trimmedConfig = nodeConfig.trim();
+        if (trimmedConfig.isEmpty()) {
+            log.warn("Skipping empty node configuration");
+            return;
+        }
+        
+        String[] parts = trimmedConfig.split(":");
+        if (parts.length < 2) {
+            log.error("Invalid admin node configuration format: {}", trimmedConfig);
+            throw new IllegalArgumentException("Invalid admin node configuration format: " + trimmedConfig);
+        }
+        
+        try {
+            String ip = parts[0].trim();
+            int port = Integer.parseInt(parts[1].trim());
+            int weight = parts.length > 2 ? Integer.parseInt(parts[2].trim()) : 1;
+            
+            if (ip.isEmpty()) {
+                log.error("Invalid IP address in node configuration: {}", trimmedConfig);
+                throw new IllegalArgumentException("Invalid IP address in node configuration: " + trimmedConfig);
+            }
+            
+            clusterManager.addNode(ip, port, weight);
+            log.debug("Added admin node: {}:{} with weight {}", ip, port, weight);
+        } catch (NumberFormatException e) {
+            log.error("Invalid admin node configuration: {}", trimmedConfig, e);
+            throw new IllegalArgumentException("Invalid admin node configuration: " + trimmedConfig, e);
+        }
+    }
+
+    /**
+     * Start heartbeat mechanism (if admin feature is enabled)
      */
     private void startHeartbeat() {
         if (adminEnabled) {
             heartbeatExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
-                Thread thread = new Thread(r, "DynamicTp-AdminClient-Heartbeat");
+                Thread thread = new Thread(r, AdminClientConstants.THREAD_NAME_HEARTBEAT);
                 thread.setDaemon(true);
                 return thread;
             });
 
+            long interval = AdminClientConstants.HEARTBEAT_INTERVAL_SECONDS;
             heartbeatExecutor.scheduleAtFixedRate(() -> {
                 try {
                     ensureConnection();
                 } catch (Exception e) {
                     log.warn("DynamicTp admin client heartbeat execution failed", e);
                 }
-            }, HEARTBEAT_INTERVAL_SECONDS, HEARTBEAT_INTERVAL_SECONDS, TimeUnit.SECONDS);
+            }, interval, interval, TimeUnit.SECONDS);
         }
     }
 
@@ -287,75 +300,85 @@ public class AdminClient {
         }
     }
 
-    public Object requestToServer(AdminRequestTypeEnum requestType) {
-        if (!ensureConnection()) {
-            log.error("DynamicTp admin client cannot establish connection after retries");
-            return null;
-        }
-        AdminRequestBody requestBody = new AdminRequestBody(SNOWFLAKE_GENERATOR.next(), requestType);
-        requestBody.setAttributes("clientName", clientName);
-        requestBody.setAttributes("serviceName", serviceName);
-        Object object = null;
-        try {
-            object = client.invokeSync(connection, requestBody, 30000);
-            // 标记当前节点成功
-            AdminNode currentNode = getCurrentNode();
-            if (currentNode != null) {
-                clusterManager.markNodeSuccess(currentNode);
-            }
-        } catch (RemotingException | InterruptedException e) {
-            log.warn("DynamicTp admin client invoke failed, exception:", e);
-            // 标记当前节点失败
-            AdminNode currentNode = getCurrentNode();
-            if (currentNode != null) {
-                clusterManager.markNodeFailed(currentNode);
-            }
-            isConnected.set(false);
-        }
-        if (object instanceof IllegalStateException) {
-            log.error(((IllegalStateException) object).getMessage());
-            return null;
-        }
-        return object;
-    }
-
-    public Object requestToServer(AdminRequestBody requestBody) {
-        if (!ensureConnection()) {
-            log.error("DynamicTp admin client cannot establish connection after retries");
-            return null;
-        }
-        requestBody.setAttributes("clientName", clientName);
-        requestBody.setAttributes("serviceName", serviceName);
-        Object object = null;
-        try {
-            object = client.invokeSync(connection, requestBody, 5000);
-            // 标记当前节点成功
-            AdminNode currentNode = getCurrentNode();
-            if (currentNode != null) {
-                clusterManager.markNodeSuccess(currentNode);
-            }
-        } catch (RemotingException | InterruptedException e) {
-            log.warn("DynamicTp admin client invoke failed, exception:", e);
-            // 标记当前节点失败
-            AdminNode currentNode = getCurrentNode();
-            if (currentNode != null) {
-                clusterManager.markNodeFailed(currentNode);
-            }
-            // Mark connection as disconnected when request fails
-            isConnected.set(false);
-        }
-        if (object instanceof IllegalStateException) {
-            log.error(((IllegalStateException) object).getMessage());
-            return null;
-        }
-        return object;
+    /**
+     * Send request to server
+     *
+     * @param requestType request type
+     * @return response result
+     */
+    public Object requestToServer(String requestType) {
+        RpcRequest requestBody = new RpcRequest(SNOWFLAKE_GENERATOR.next(), requestType);
+        return doRequest(requestBody, AdminClientConstants.DEFAULT_REQUEST_TIMEOUT_MS);
     }
 
     /**
-     * 获取当前连接的节点
+     * Send request to server
+     *
+     * @param requestBody request body
+     * @return response result
+     */
+    public Object requestToServer(RpcRequest requestBody) {
+        return doRequest(requestBody, AdminClientConstants.QUICK_REQUEST_TIMEOUT_MS);
+    }
+
+    /**
+     * Core method for executing requests
+     *
+     * @param requestBody request body
+     * @param timeoutMs   timeout in milliseconds
+     * @return response result
+     */
+    private Object doRequest(RpcRequest requestBody, int timeoutMs) {
+        if (!ensureConnection()) {
+            log.error("DynamicTp admin client cannot establish connection after retries");
+            return null;
+        }
+        
+        Connection connection = CONNECTION_REF.get();
+        requestBody.addAttribute("clientName", clientName);
+        requestBody.addAttribute("serviceName", serviceName);
+        
+        Object result = null;
+        try {
+            result = client.invokeSync(connection, requestBody, timeoutMs);
+            // Mark current node as success
+            markCurrentNodeStatus(true);
+        } catch (RemotingException | InterruptedException e) {
+            log.warn("DynamicTp admin client invoke failed, exception:", e);
+            // Mark current node as failed
+            markCurrentNodeStatus(false);
+            isConnected.set(false);
+        }
+        
+        if (result instanceof IllegalStateException) {
+            log.error(((IllegalStateException) result).getMessage());
+            return null;
+        }
+        return result;
+    }
+
+    /**
+     * Mark current node status
+     *
+     * @param success whether success
+     */
+    private void markCurrentNodeStatus(boolean success) {
+        AdminNode currentNode = getCurrentNode();
+        if (currentNode != null) {
+            if (success) {
+                clusterManager.markNodeSuccess(currentNode);
+            } else {
+                clusterManager.markNodeFailed(currentNode);
+            }
+        }
+    }
+
+    /**
+     * Get current connected node
      */
     private AdminNode getCurrentNode() {
-        if (connection != null) {
+        Connection connection = CONNECTION_REF.get();
+        if (connection != null && connection.getRemoteAddress() != null) {
             String address = connection.getRemoteAddress().getAddress().getHostAddress();
             int port = connection.getRemoteAddress().getPort();
 
@@ -375,20 +398,17 @@ public class AdminClient {
      */
     private boolean ensureConnection() {
         // Check connection status
+        Connection connection = CONNECTION_REF.get();
         if (isConnected.get() && connection != null && connection.isFine()) {
-            // send health message to server
-            AdminRequestBody requestBody = new AdminRequestBody(SNOWFLAKE_GENERATOR.next(), AdminRequestTypeEnum.EXECUTOR_MONITOR);
-            requestBody.setAttributes("clientName", clientName);
-            requestBody.setAttributes("serviceName", serviceName);
+            // Send health check message to server
+            RpcRequest requestBody = new RpcRequest(SNOWFLAKE_GENERATOR.next(), AdminClientConstants.REQUEST_TYPE_EXECUTOR_MONITOR);
+            requestBody.addAttribute("clientName", clientName);
+            requestBody.addAttribute("serviceName", serviceName);
             try {
-                client.invokeSync(connection, requestBody, 30000);
+                client.invokeSync(connection, requestBody, AdminClientConstants.DEFAULT_REQUEST_TIMEOUT_MS);
             } catch (RemotingException | InterruptedException e) {
                 log.warn("DynamicTp admin client invoke failed, exception:", e);
-                // 标记当前节点失败
-                AdminNode currentNode = getCurrentNode();
-                if (currentNode != null) {
-                    clusterManager.markNodeFailed(currentNode);
-                }
+                markCurrentNodeStatus(false);
                 isConnected.set(false);
             }
             return true;
@@ -405,9 +425,10 @@ public class AdminClient {
      */
     private boolean reconnectWithRetry() {
         int currentRetry = 0;
-        while (currentRetry < MAX_RETRY_COUNT) {
+        int maxRetry = AdminClientConstants.CONNECTION_MAX_RETRY_COUNT;
+        while (currentRetry < maxRetry) {
             log.info("DynamicTp admin client attempting to reconnect, attempt: {}/{}", currentRetry + 1,
-                    MAX_RETRY_COUNT);
+                    maxRetry);
 
             if (createConnection()) {
                 isConnected.set(true);
@@ -419,10 +440,10 @@ public class AdminClient {
             currentRetry++;
             retryCount.incrementAndGet();
 
-            if (currentRetry < MAX_RETRY_COUNT) {
+            if (currentRetry < maxRetry) {
                 try {
                     // Incremental delay
-                    Thread.sleep(RETRY_DELAY_MS * currentRetry);
+                    Thread.sleep(AdminClientConstants.CONNECTION_RETRY_DELAY_MS * currentRetry);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     log.warn("DynamicTp admin client reconnection interrupted");
@@ -431,26 +452,27 @@ public class AdminClient {
             }
         }
 
-        log.error("DynamicTp admin client failed to reconnect after {} attempts", MAX_RETRY_COUNT);
+        log.error("DynamicTp admin client failed to reconnect after {} attempts", maxRetry);
         return false;
     }
 
     private boolean createConnection() {
         try {
-            // 检查集群管理器是否已初始化
+            // Check if cluster manager is initialized
             if (clusterManager == null) {
                 log.error("Cluster manager not initialized");
                 return false;
             }
             
             // Clean up old connection
-            if (connection != null) {
+            Connection oldConnection = CONNECTION_REF.get();
+            if (oldConnection != null) {
                 try {
-                    client.closeStandaloneConnection(connection);
+                    client.closeStandaloneConnection(oldConnection);
                 } catch (Exception e) {
                     log.debug("Error closing old connection", e);
                 }
-                connection = null;
+                CONNECTION_REF.set(null);
             }
 
             AdminNode selectedNode = clusterManager.selectNode(null);
@@ -459,18 +481,20 @@ public class AdminClient {
                 return false;
             }
 
-            connection = client.createStandaloneConnection(selectedNode.getAddress(), 30000);
-            if (connection != null && connection.isFine()) {
+            Connection newConnection = client.createStandaloneConnection(selectedNode.getAddress(), AdminClientConstants.CONNECTION_TIMEOUT_MS);
+            if (newConnection != null && newConnection.isFine()) {
+                CONNECTION_REF.set(newConnection);
                 log.info("DynamicTp admin client connection created successfully, admin node: {}",
                         selectedNode.getAddress());
-                AdminRequestBody requestBody = new AdminRequestBody(SNOWFLAKE_GENERATOR.next(),
-                        AdminRequestTypeEnum.EXECUTOR_REFRESH);
-                requestBody.setAttributes("clientName", clientName);
-                requestBody.setAttributes("serviceName", serviceName);
-                Object object = client.invokeSync(connection, requestBody, 5000);
+                RpcRequest requestBody = new RpcRequest(SNOWFLAKE_GENERATOR.next(),
+                        AdminClientConstants.REQUEST_TYPE_EXECUTOR_REFRESH);
+                requestBody.addAttribute("clientName", clientName);
+                requestBody.addAttribute("serviceName", serviceName);
+                Object object = client.invokeSync(newConnection, requestBody, AdminClientConstants.QUICK_REQUEST_TIMEOUT_MS);
                 if (object instanceof IllegalStateException) {
                     log.error(((IllegalStateException) object).getMessage());
-                    client.closeStandaloneConnection(connection);
+                    client.closeStandaloneConnection(newConnection);
+                    CONNECTION_REF.set(null);
                     return false;
                 }
                 return true;
@@ -491,6 +515,7 @@ public class AdminClient {
      * @return whether connection is available
      */
     public boolean isConnected() {
+        Connection connection = CONNECTION_REF.get();
         return isConnected.get() && connection != null && connection.isFine();
     }
 
@@ -516,27 +541,30 @@ public class AdminClient {
     }
 
     /**
-     * 获取集群管理器
-     * @return clusterManager
+     * Get cluster manager
+     *
+     * @return cluster manager
      */
     public AdminClusterManager getClusterManager() {
         return clusterManager;
     }
 
     /**
-     * 获取所有admin节点
-     * @return allAdminNodes
+     * Get all admin nodes
+     *
+     * @return list of all admin nodes, never null
      */
     public List<AdminNode> getAllAdminNodes() {
-        return clusterManager != null ? clusterManager.getAllNodes() : null;
+        return clusterManager != null ? clusterManager.getAllNodes() : Collections.emptyList();
     }
 
     /**
-     * 获取健康的admin节点
-     * @return healthyAdminNodes
+     * Get healthy admin nodes
+     *
+     * @return list of healthy admin nodes, never null
      */
     public List<AdminNode> getHealthyAdminNodes() {
-        return clusterManager != null ? clusterManager.getHealthyNodes() : null;
+        return clusterManager != null ? clusterManager.getHealthyNodes() : Collections.emptyList();
     }
 
     @PreDestroy
@@ -546,13 +574,14 @@ public class AdminClient {
             clusterManager.shutdown();
         }
         isConnected.set(false);
+        Connection connection = CONNECTION_REF.get();
         if (connection != null) {
             try {
                 client.closeStandaloneConnection(connection);
             } catch (Exception e) {
                 log.warn("Error closing connection", e);
             }
-            connection = null;
+            CONNECTION_REF.set(null);
         }
         client.shutdown();
     }

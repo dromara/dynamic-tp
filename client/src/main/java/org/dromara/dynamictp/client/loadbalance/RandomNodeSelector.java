@@ -15,23 +15,22 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.client.selector;
+package org.dromara.dynamictp.client.loadbalance;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.client.node.AdminNode;
+import org.dromara.dynamictp.client.cluster.AdminNode;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 
 /**
- * 随机选择器实现
+ * Random selector implementation
  *
  * @author eachann
  * @since 1.2.3
  */
 @Slf4j
-public class RandomAdminNodeSelector implements AdminNodeSelector {
+public class RandomNodeSelector implements NodeSelector {
 
   @Override
   public AdminNode select(List<AdminNode> nodes) {
@@ -40,14 +39,11 @@ public class RandomAdminNodeSelector implements AdminNodeSelector {
       return null;
     }
 
-    // 过滤出健康的节点
-    List<AdminNode> healthyNodes = nodes.stream()
-        .filter(AdminNode::isAvailable)
-        .collect(Collectors.toList());
-
+    // Use interface default method to filter healthy nodes
+    List<AdminNode> healthyNodes = filterHealthyNodes(nodes);
     if (healthyNodes.isEmpty()) {
-      log.warn("No healthy admin nodes available, using all nodes");
-      healthyNodes = nodes;
+      log.warn("No healthy admin nodes available");
+      return null;
     }
 
     int index = ThreadLocalRandom.current().nextInt(healthyNodes.size());

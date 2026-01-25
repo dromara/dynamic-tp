@@ -18,12 +18,14 @@
 package org.dromara.dynamictp.client.autoconfigure;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.dynamictp.common.properties.DtpProperties;
-import org.dromara.dynamictp.core.support.binder.BinderHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.client.AdminClient;
 import org.dromara.dynamictp.client.AdminClientConstants;
 import org.dromara.dynamictp.client.processor.ClientUserProcessor;
+import org.dromara.dynamictp.client.properties.AdminClientProperties;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.boot.env.OriginTrackedMapPropertySource;
 import org.springframework.core.Ordered;
@@ -49,21 +51,19 @@ public class AdminConfigEnvironmentProcessor implements EnvironmentPostProcessor
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        // Bind configuration properties first
-        DtpProperties dtpProperties = DtpProperties.getInstance();
-        BinderHelper.bindDtpProperties(environment, dtpProperties);
+        AdminClientProperties props = bindAdminClientProperties(environment);
 
-        // Get clientName configuration from Environment
-        String clientName = environment.getProperty("dynamictp.clientName",
-                Objects.requireNonNull(environment.getProperty("spring.application.name")));
-        String serviceName = environment.getProperty("dynamictp.serviceName",
-                Objects.requireNonNull(environment.getProperty("spring.application.name")));
-        String adminNodes = environment.getProperty("dynamictp.adminNodes");
-        String loadBalanceStrategy = environment.getProperty("dynamictp.loadBalanceStrategy", "roundRobin");
-        Boolean adminEnabled = Boolean.parseBoolean(environment.getProperty("dynamictp.adminEnabled", "false"));
+        // Fall back to spring.application.name when not configured
+        String appName = environment.getProperty("spring.application.name");
+        if (StringUtils.isBlank(props.getClientName())) {
+            props.setClientName(Objects.requireNonNull(appName));
+        }
+        if (StringUtils.isBlank(props.getServiceName())) {
+            props.setServiceName(Objects.requireNonNull(appName));
+        }
 
-        // Create AdminClient with configured clientName
-        AdminClient adminClient = new AdminClient(new ClientUserProcessor(), clientName, serviceName, adminNodes, loadBalanceStrategy, adminEnabled);
+        // Create AdminClient with configured properties
+        AdminClient adminClient = new AdminClient(new ClientUserProcessor(), props);
         adminClient.init();
         Object response = adminClient.requestToServer(AdminClientConstants.REQUEST_TYPE_EXECUTOR_REFRESH);
         if (!checkPropertyExist(environment) && response instanceof Map) {
@@ -72,6 +72,20 @@ public class AdminConfigEnvironmentProcessor implements EnvironmentPostProcessor
             createAdminPropertySource(environment, properties);
         }
         adminClient.close();
+    }
+
+    private AdminClientProperties bindAdminClientProperties(ConfigurableEnvironment environment) {
+        Binder binder = Binder.get(environment);
+
+        AdminClientProperties props = binder.bind("dynamictp", Bindable.of(AdminClientProperties.class))
+                .orElseGet(AdminClientProperties::new);
+
+        // handle relaxed binding variations (e.g. dynamictp.load-balance-strategy)
+        if (props.getLoadBalanceStrategy() == null || props.getLoadBalanceStrategy().trim().isEmpty()) {
+            props.setLoadBalanceStrategy(environment.getProperty("dynamictp.loadBalanceStrategy", "roundRobin"));
+        }
+
+        return props;
     }
 
     private boolean checkPropertyExist(ConfigurableEnvironment environment) {

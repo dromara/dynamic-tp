@@ -19,6 +19,7 @@ package org.dromara.dynamictp.client.autoconfigure;
 
 import org.dromara.dynamictp.client.AdminClient;
 import org.dromara.dynamictp.client.processor.ClientUserProcessor;
+import org.dromara.dynamictp.client.properties.AdminClientProperties;
 import org.dromara.dynamictp.client.refresh.ConfigRefresher;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.spring.DtpBaseBeanConfiguration;
@@ -26,6 +27,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -35,15 +37,16 @@ import org.springframework.context.annotation.Configuration;
  * @author eachann
  */
 @Configuration
+@EnableConfigurationProperties(AdminClientProperties.class)
 @ConditionalOnBean({ DtpBaseBeanConfiguration.class })
 @AutoConfigureAfter({ DtpBaseBeanConfiguration.class })
-@ConditionalOnProperty(prefix = "dynamictp", name = "adminEnabled", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "dynamictp.admin", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class AdminAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public AdminClient adminClient(ClientUserProcessor clientUserProcessor) {
-        return new AdminClient(clientUserProcessor);
+    public AdminClient adminClient(ClientUserProcessor clientUserProcessor, AdminClientProperties properties) {
+        return new AdminClient(clientUserProcessor, properties);
     }
 
     @Bean

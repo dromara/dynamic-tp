@@ -106,13 +106,6 @@ public final class AdminClientConstants {
      */
     public static final String THREAD_NAME_HEALTH_CHECK = "DynamicTp-AdminCluster-HealthCheck";
 
-    // ==================== Default Values ====================
-
-    /**
-     * Default node weight for load balancing
-     */
-    public static final int DEFAULT_NODE_WEIGHT = 1;
-
     // ==================== Request Types ====================
 
     /**

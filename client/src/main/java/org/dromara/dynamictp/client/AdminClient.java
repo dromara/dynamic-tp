@@ -20,30 +20,31 @@ package org.dromara.dynamictp.client;
 import cn.hutool.core.lang.generator.SnowflakeGenerator;
 import com.alipay.remoting.Connection;
 import com.alipay.remoting.ConnectionEventType;
+import com.alipay.remoting.config.BoltClientOption;
 import com.alipay.remoting.config.Configs;
 import com.alipay.remoting.exception.RemotingException;
 import com.alipay.remoting.rpc.RpcClient;
 import com.alipay.remoting.serialization.HessianSerializer;
 import com.alipay.remoting.serialization.SerializerManager;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.client.cluster.AdminClusterManager;
 import org.dromara.dynamictp.client.cluster.AdminNode;
-import org.dromara.dynamictp.client.processor.ClientUserProcessor;
-import org.dromara.dynamictp.client.processor.CloseEventProcessor;
-import org.dromara.dynamictp.client.processor.ConnectEventProcessor;
 import org.dromara.dynamictp.client.loadbalance.NodeSelector;
 import org.dromara.dynamictp.client.loadbalance.RandomNodeSelector;
 import org.dromara.dynamictp.client.loadbalance.RoundRobinNodeSelector;
 import org.dromara.dynamictp.client.loadbalance.WeightedRoundRobinNodeSelector;
+import org.dromara.dynamictp.client.processor.ClientUserProcessor;
+import org.dromara.dynamictp.client.processor.CloseEventProcessor;
+import org.dromara.dynamictp.client.processor.ConnectEventProcessor;
+import org.dromara.dynamictp.client.properties.AdminClientProperties;
 import org.dromara.dynamictp.common.entity.RpcRequest;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -59,35 +60,33 @@ import java.util.concurrent.atomic.AtomicReference;
 @Slf4j
 public class AdminClient {
 
-    @Value("${dynamictp.adminNodes:}")
-    private String adminNodes;
-
-    @Value("${dynamictp.loadBalanceStrategy:roundRobin}")
-    private String loadBalanceStrategy;
-
-    @Setter
-    @Value("${dynamictp.clientName:${spring.application.name}}")
+    private final String adminNodes;
+    private final String loadBalanceStrategy;
     private String clientName;
-
-    @Setter
-    @Value("${dynamictp.serviceName:${spring.application.name}}")
-    private String serviceName;
-
-    @Value("${dynamictp.adminEnabled:false}")
-    private Boolean adminEnabled;
-
-    @Getter
+    private final String serviceName;
+    private final Boolean adminEnabled;
     private static final SnowflakeGenerator SNOWFLAKE_GENERATOR = new SnowflakeGenerator();
-
     private final RpcClient client = new RpcClient();
-
-    @Getter
     private static final HessianSerializer SERIALIZER = new HessianSerializer();
+    private static final AtomicReference<Connection> CONNECTION_REF = new AtomicReference<>();
+    private AdminClusterManager clusterManager;
+    private ScheduledExecutorService heartbeatExecutor;
 
     /**
-     * Use AtomicReference to ensure thread safety
+     * Connection state management
      */
-    private static final AtomicReference<Connection> CONNECTION_REF = new AtomicReference<>();
+    private final AtomicBoolean isConnected = new AtomicBoolean(false);
+    private final AtomicInteger retryCount = new AtomicInteger(0);
+
+    public AdminClient(ClientUserProcessor clientUserProcessor, AdminClientProperties properties) {
+        this.clientName = properties.getClientName();
+        this.serviceName = properties.getServiceName();
+        this.adminNodes = properties.getNodes();
+        this.loadBalanceStrategy = properties.getLoadBalanceStrategy();
+        this.adminEnabled = properties.isEnabled();
+
+        initRpcClient(clientUserProcessor);
+    }
 
     public static Connection getConnection() {
         return CONNECTION_REF.get();
@@ -97,46 +96,11 @@ public class AdminClient {
         CONNECTION_REF.set(connection);
     }
 
-    /**
-     * Cluster manager
-     */
-    private AdminClusterManager clusterManager;
-
-    /**
-     * Connection state management
-     */
-    private final AtomicBoolean isConnected = new AtomicBoolean(false);
-    private final AtomicInteger retryCount = new AtomicInteger(0);
-
-    private ScheduledExecutorService heartbeatExecutor;
-
-    public AdminClient(ClientUserProcessor clientUserProcessor) {
-        this(clientUserProcessor, "");
-    }
-
-    public AdminClient(ClientUserProcessor clientUserProcessor, String clientName) {
-        this(clientUserProcessor, clientName, "", "", "", false);
-    }
-
-    public AdminClient(ClientUserProcessor clientUserProcessor, String clientName, String serviceName, String adminNodes, String loadBalanceStrategy, Boolean adminEnabled) {
-        if (!clientName.isEmpty()) {
-            this.clientName = clientName;
-        }
-        if (!serviceName.isEmpty()) {
-            this.serviceName = serviceName;
-        }
-        if (!adminNodes.isEmpty()) {
-            this.adminNodes = adminNodes;
-        }
-        if (!loadBalanceStrategy.isEmpty()) {
-            this.loadBalanceStrategy = loadBalanceStrategy;
-        }
-        this.adminEnabled = adminEnabled;
-
+    private void initRpcClient(ClientUserProcessor clientUserProcessor) {
         client.addConnectionEventProcessor(ConnectionEventType.CONNECT, new ConnectEventProcessor(this));
         client.addConnectionEventProcessor(ConnectionEventType.CLOSE, new CloseEventProcessor(this));
         client.registerUserProcessor(clientUserProcessor);
-        client.enableReconnectSwitch();
+        client.option(BoltClientOption.CONN_RECONNECT_SWITCH, true);
         client.startup();
         SerializerManager.addSerializer(1, SERIALIZER);
         System.setProperty(Configs.SERIALIZER, String.valueOf(SERIALIZER));
@@ -145,12 +109,14 @@ public class AdminClient {
     @PostConstruct
     public void init() {
         try {
+            if (StringUtils.isBlank(clientName)) {
+                clientName = serviceName;
+            }
             initClusterManager();
             createConnection();
             startHeartbeat();
         } catch (Exception e) {
             log.error("Failed to initialize AdminClient", e);
-            // If initialization fails, don't start heartbeat to avoid continuous retries
             if (heartbeatExecutor != null) {
                 stopHeartbeat();
             }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.apapter.brpc.client;
+package org.dromara.dynamictp.adapter.brpc.client;
 
 import com.baidu.cloud.starlight.api.rpc.StarlightClient;
 import com.baidu.cloud.starlight.api.rpc.threadpool.ThreadPoolFactory;

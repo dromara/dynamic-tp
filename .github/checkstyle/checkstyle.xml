@@ -70,7 +70,7 @@
     <!-- 方法名的检查 -->
     <module name="MethodName" />
     <!-- 方法的参数名 -->
-    <module name="ParameterName " />
+    <module name="ParameterName" />
     <!-- 常量名的检查（只允许大写），默认^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$ -->
     <module name="ConstantName" />
 
@@ -174,7 +174,7 @@
       <property name="illegalPattern" value="true"/>
     </module>
     <!--try catch 异常处理数量 3-->
-    <module name="NestedTryDepth ">
+    <module name="NestedTryDepth">
       <property name="max" value="3"/>
     </module>
     <!-- clone方法必须调用了super.clone() -->

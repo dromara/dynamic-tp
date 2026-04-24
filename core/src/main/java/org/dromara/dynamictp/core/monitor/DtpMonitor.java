@@ -127,6 +127,8 @@ public class DtpMonitor {
     }
 
     public static void destroy() {
-        monitorExecutor.shutdownNow();
+        if (monitorExecutor != null) {
+            monitorExecutor.shutdownNow();
+        }
     }
 }

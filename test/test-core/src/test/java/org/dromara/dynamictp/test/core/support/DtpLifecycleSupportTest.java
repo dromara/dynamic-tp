@@ -41,7 +41,10 @@ class DtpLifecycleSupportTest {
     void testInternalShutdownGraceful() {
         ExecutorService executor = Executors.newFixedThreadPool(2);
         executor.submit(() -> {
-            try { Thread.sleep(200); } catch (InterruptedException ignored) { }
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException ignored) {
+            }
         });
 
         DtpLifecycleSupport.internalShutdown(executor, "test-graceful", true, 5);
@@ -54,7 +57,10 @@ class DtpLifecycleSupportTest {
     void testInternalShutdownImmediate() {
         ExecutorService executor = Executors.newFixedThreadPool(2);
         executor.submit(() -> {
-            try { Thread.sleep(5000); } catch (InterruptedException ignored) { }
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ignored) {
+            }
         });
 
         DtpLifecycleSupport.internalShutdown(executor, "test-immediate", false, 1);
@@ -81,7 +87,10 @@ class DtpLifecycleSupportTest {
     void testCancelRemainingTaskWithFuture() throws Exception {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<?> future = executor.submit(() -> {
-            try { Thread.sleep(5000); } catch (InterruptedException ignored) { }
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ignored) {
+            }
         });
 
         // shutdownNow returns remaining tasks
@@ -97,7 +106,10 @@ class DtpLifecycleSupportTest {
     void testShutdownGracefulAsync() throws InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(2);
         executor.submit(() -> {
-            try { Thread.sleep(200); } catch (InterruptedException ignored) { }
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException ignored) {
+            }
         });
 
         DtpLifecycleSupport.shutdownGracefulAsync(executor, "test-async", 5);
@@ -112,7 +124,10 @@ class DtpLifecycleSupportTest {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> { });
         executor.shutdown();
-        try { executor.awaitTermination(5, TimeUnit.SECONDS); } catch (InterruptedException ignored) { }
+        try {
+            executor.awaitTermination(5, TimeUnit.SECONDS);
+        } catch (InterruptedException ignored) {
+        }
 
         assertTrue(executor.isTerminated());
         // Should not throw when called on already terminated executor

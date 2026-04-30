@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -130,7 +131,7 @@ class ExecutorWrapperTest {
 
         assertEquals(original.getThreadPoolName(), captured.getThreadPoolName());
         assertNotNull(captured.getExecutor());
-        assertTrue(captured.getExecutor() instanceof CapturedExecutor);
+        assertInstanceOf(CapturedExecutor.class, captured.getExecutor());
         // captured executor is a different object
         assertNotSame(original.getExecutor(), captured.getExecutor());
     }

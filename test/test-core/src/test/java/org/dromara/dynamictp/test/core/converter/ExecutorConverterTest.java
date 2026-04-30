@@ -135,6 +135,7 @@ class ExecutorConverterTest {
         ExecutorWrapper wrapper = ExecutorWrapper.of(dtpExecutor);
         ThreadPoolStats stats = ExecutorConverter.toMetrics(wrapper);
 
+        assertNotNull(stats);
         assertEquals(3, stats.getCorePoolSize());
         assertEquals(6, stats.getMaximumPoolSize());
         assertEquals(0, stats.getActiveCount());

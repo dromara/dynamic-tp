@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,9 +42,9 @@ class ExecutorSelectorTest {
     @Test
     void testHashedSelectConsistent() {
         HashedExecutorSelector selector = new HashedExecutorSelector();
-        Executor e1 = Executors.newSingleThreadExecutor();
-        Executor e2 = Executors.newSingleThreadExecutor();
-        Executor e3 = Executors.newSingleThreadExecutor();
+        ExecutorService e1 = Executors.newSingleThreadExecutor();
+        ExecutorService e2 = Executors.newSingleThreadExecutor();
+        ExecutorService e3 = Executors.newSingleThreadExecutor();
         List<Executor> executors = Arrays.asList(e1, e2, e3);
 
         // Same arg should always select the same executor
@@ -52,18 +53,17 @@ class ExecutorSelectorTest {
         Executor second = selector.select(executors, key);
         assertEquals(first, second);
 
-        e1.toString(); e2.toString(); e3.toString();
         // cleanup
-        ((java.util.concurrent.ExecutorService) e1).shutdownNow();
-        ((java.util.concurrent.ExecutorService) e2).shutdownNow();
-        ((java.util.concurrent.ExecutorService) e3).shutdownNow();
+        e1.shutdownNow();
+        e2.shutdownNow();
+        e3.shutdownNow();
     }
 
     @Test
     void testHashedSelectDifferentKeys() {
         HashedExecutorSelector selector = new HashedExecutorSelector();
-        Executor e1 = Executors.newSingleThreadExecutor();
-        Executor e2 = Executors.newSingleThreadExecutor();
+        ExecutorService e1 = Executors.newSingleThreadExecutor();
+        ExecutorService e2 = Executors.newSingleThreadExecutor();
         List<Executor> executors = Arrays.asList(e1, e2);
 
         // Different keys should still return valid executors
@@ -74,15 +74,15 @@ class ExecutorSelectorTest {
         assertTrue(executors.contains(r1));
         assertTrue(executors.contains(r2));
 
-        ((java.util.concurrent.ExecutorService) e1).shutdownNow();
-        ((java.util.concurrent.ExecutorService) e2).shutdownNow();
+        e1.shutdownNow();
+        e2.shutdownNow();
     }
 
     @Test
     void testHashedNegativeHashCode() {
         HashedExecutorSelector selector = new HashedExecutorSelector();
-        Executor e1 = Executors.newSingleThreadExecutor();
-        Executor e2 = Executors.newSingleThreadExecutor();
+        ExecutorService e1 = Executors.newSingleThreadExecutor();
+        ExecutorService e2 = Executors.newSingleThreadExecutor();
         List<Executor> executors = Arrays.asList(e1, e2);
 
         // Object with negative hashCode
@@ -96,16 +96,16 @@ class ExecutorSelectorTest {
         assertNotNull(result);
         assertTrue(executors.contains(result));
 
-        ((java.util.concurrent.ExecutorService) e1).shutdownNow();
-        ((java.util.concurrent.ExecutorService) e2).shutdownNow();
+        e1.shutdownNow();
+        e2.shutdownNow();
     }
 
     @Test
     void testRandomSelectReturnsValid() {
         RandomExecutorSelector selector = new RandomExecutorSelector();
-        Executor e1 = Executors.newSingleThreadExecutor();
-        Executor e2 = Executors.newSingleThreadExecutor();
-        Executor e3 = Executors.newSingleThreadExecutor();
+        ExecutorService e1 = Executors.newSingleThreadExecutor();
+        ExecutorService e2 = Executors.newSingleThreadExecutor();
+        ExecutorService e3 = Executors.newSingleThreadExecutor();
         List<Executor> executors = Arrays.asList(e1, e2, e3);
 
         // Run multiple times to verify it always returns a valid executor
@@ -115,8 +115,8 @@ class ExecutorSelectorTest {
             assertTrue(executors.contains(selected));
         }
 
-        ((java.util.concurrent.ExecutorService) e1).shutdownNow();
-        ((java.util.concurrent.ExecutorService) e2).shutdownNow();
-        ((java.util.concurrent.ExecutorService) e3).shutdownNow();
+        e1.shutdownNow();
+        e2.shutdownNow();
+        e3.shutdownNow();
     }
 }

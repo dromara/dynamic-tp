@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -51,18 +51,21 @@ class RejectedInvocationHandlerTest {
     }
 
     @Test
-    void testInvokeWithAwareCallbacks() throws Throwable {
+    void testInvokeRethrowsExceptionFromDelegate() throws Throwable {
         RejectedExecutionHandler target = mock(RejectedExecutionHandler.class);
         RejectedInvocationHandler handler = new RejectedInvocationHandler(target);
 
         ThreadPoolExecutor executor = mock(ThreadPoolExecutor.class);
         Runnable runnable = mock(Runnable.class);
+        RuntimeException cause = new RuntimeException("rejected");
+        org.mockito.Mockito.doThrow(cause).when(target).rejectedExecution(runnable, executor);
 
-        // AwareManager.beforeReject / afterReject are called, but no awares registered => no exception
-        assertDoesNotThrow(() -> handler.invoke(null,
-                RejectedExecutionHandler.class.getMethod("rejectedExecution", Runnable.class, ThreadPoolExecutor.class),
-                new Object[]{runnable, executor}));
+        RuntimeException thrown = org.junit.jupiter.api.Assertions.assertThrows(RuntimeException.class,
+                () -> handler.invoke(null,
+                        RejectedExecutionHandler.class.getMethod("rejectedExecution",
+                                Runnable.class, ThreadPoolExecutor.class),
+                        new Object[]{runnable, executor}));
 
-        verify(target).rejectedExecution(runnable, executor);
+        assertEquals(cause, thrown);
     }
 }

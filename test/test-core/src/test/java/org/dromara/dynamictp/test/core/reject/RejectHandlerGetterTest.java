@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -103,9 +104,5 @@ class RejectHandlerGetterTest {
 
     private static Runnable mockRejectedTask() {
         return () -> { };
-    }
-
-    private static void assertDoesNotThrow(org.junit.jupiter.api.function.Executable executable) {
-        org.junit.jupiter.api.Assertions.assertDoesNotThrow(executable);
     }
 }

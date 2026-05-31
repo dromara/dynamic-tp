@@ -22,11 +22,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -84,25 +82,6 @@ class DtpLifecycleSupportTest {
     }
 
     @Test
-    void testCancelRemainingTaskWithFuture() throws Exception {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<?> future = executor.submit(() -> {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException ignored) {
-            }
-        });
-
-        // shutdownNow returns remaining tasks
-        executor.shutdownNow();
-        // The future should be cancellable
-        future.cancel(true);
-        assertTrue(future.isCancelled());
-
-        assertTrue(executor.isShutdown());
-    }
-
-    @Test
     void testShutdownGracefulAsync() throws InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(2);
         executor.submit(() -> {
@@ -114,23 +93,29 @@ class DtpLifecycleSupportTest {
 
         DtpLifecycleSupport.shutdownGracefulAsync(executor, "test-async", 5);
 
-        // Wait for async shutdown to complete
-        Thread.sleep(1000);
+        assertTrue(executor.awaitTermination(10, TimeUnit.SECONDS));
         assertTrue(executor.isShutdown());
     }
 
     @Test
-    void testShutdownAlreadyTerminated() {
+    void testInternalShutdownCancelsFutureTasksOnShutdownNow() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> { });
-        executor.shutdown();
-        try {
-            executor.awaitTermination(5, TimeUnit.SECONDS);
-        } catch (InterruptedException ignored) {
-        }
+        // Fill the single thread so queued tasks stay in queue
+        executor.submit(() -> {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ignored) {
+            }
+        });
+        // This future will sit in queue and be cancelled by shutdownNow
+        java.util.concurrent.RunnableFuture<?> future =
+                new java.util.concurrent.FutureTask<>(() -> { }, null);
+        executor.execute(future);
 
-        assertTrue(executor.isTerminated());
-        // Should not throw when called on already terminated executor
-        assertDoesNotThrow(() -> DtpLifecycleSupport.internalShutdown(executor, "terminated", true, 1));
+        // Immediate shutdown (shutdownNow) should cancel remaining tasks including the future
+        DtpLifecycleSupport.internalShutdown(executor, "cancel-future", false, 3);
+
+        assertTrue(executor.isShutdown());
+        assertTrue(future.isCancelled());
     }
 }

@@ -27,6 +27,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * ThreadPoolStatProvider test
@@ -58,14 +61,99 @@ class ThreadPoolStatProviderTest {
     @Test
     void testStartAndCompleteTaskWorkNormally() {
         ThreadPoolStatProvider provider = createProvider();
-        Runnable task = () -> {
-        };
+        Runnable task = () -> { };
 
         assertDoesNotThrow(() -> {
             provider.startTask(task);
-            TimeUnit.MILLISECONDS.sleep(5);
             provider.completeTask(task);
         });
+    }
+
+    @Test
+    void testRunTimeoutDefaultIsZero() {
+        ThreadPoolStatProvider provider = createProvider();
+        assertEquals(0L, provider.getRunTimeout());
+    }
+
+    @Test
+    void testSetAndGetRunTimeout() {
+        ThreadPoolStatProvider provider = createProvider();
+        provider.setRunTimeout(500L);
+        assertEquals(500L, provider.getRunTimeout());
+    }
+
+    @Test
+    void testQueueTimeoutDefaultIsZero() {
+        ThreadPoolStatProvider provider = createProvider();
+        assertEquals(0L, provider.getQueueTimeout());
+    }
+
+    @Test
+    void testSetAndGetQueueTimeout() {
+        ThreadPoolStatProvider provider = createProvider();
+        provider.setQueueTimeout(300L);
+        assertEquals(300L, provider.getQueueTimeout());
+    }
+
+    @Test
+    void testTryInterruptDefaultIsFalse() {
+        ThreadPoolStatProvider provider = createProvider();
+        assertFalse(provider.isTryInterrupt());
+    }
+
+    @Test
+    void testSetTryInterrupt() {
+        ThreadPoolStatProvider provider = createProvider();
+        provider.setTryInterrupt(true);
+        assertTrue(provider.isTryInterrupt());
+
+        provider.setTryInterrupt(false);
+        assertFalse(provider.isTryInterrupt());
+    }
+
+    @Test
+    void testRejectCountInitiallyZero() {
+        ThreadPoolStatProvider provider = createProvider();
+        assertEquals(0L, provider.getRejectedTaskCount());
+    }
+
+    @Test
+    void testIncRejectCount() {
+        ThreadPoolStatProvider provider = createProvider();
+        provider.incRejectCount(1);
+        assertEquals(1L, provider.getRejectedTaskCount());
+        provider.incRejectCount(4);
+        assertEquals(5L, provider.getRejectedTaskCount());
+    }
+
+    @Test
+    void testRunTimeoutCountInitiallyZero() {
+        ThreadPoolStatProvider provider = createProvider();
+        assertEquals(0L, provider.getRunTimeoutCount());
+    }
+
+    @Test
+    void testIncRunTimeoutCount() {
+        ThreadPoolStatProvider provider = createProvider();
+        provider.incRunTimeoutCount(2);
+        assertEquals(2L, provider.getRunTimeoutCount());
+        provider.incRunTimeoutCount(3);
+        assertEquals(5L, provider.getRunTimeoutCount());
+    }
+
+    @Test
+    void testQueueTimeoutCountInitiallyZero() {
+        ThreadPoolStatProvider provider = createProvider();
+        assertEquals(0L, provider.getQueueTimeoutCount());
+    }
+
+    @Test
+    void testIncQueueTimeoutCount() {
+        ThreadPoolStatProvider provider = createProvider();
+        provider.incQueueTimeoutCount(1);
+        assertEquals(1L, provider.getQueueTimeoutCount());
+        provider.incQueueTimeoutCount(9);
+        assertEquals(10L, provider.getQueueTimeoutCount());
     }
 
     private ThreadPoolStatProvider createProvider() {

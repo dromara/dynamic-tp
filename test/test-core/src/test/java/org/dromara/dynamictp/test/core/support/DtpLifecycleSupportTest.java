@@ -22,6 +22,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -108,8 +110,8 @@ class DtpLifecycleSupportTest {
             }
         });
         // This future will sit in queue and be cancelled by shutdownNow
-        java.util.concurrent.RunnableFuture<?> future =
-                new java.util.concurrent.FutureTask<>(() -> { }, null);
+        RunnableFuture<?> future =
+                new FutureTask<>(() -> { }, null);
         executor.execute(future);
 
         // Immediate shutdown (shutdownNow) should cancel remaining tasks including the future

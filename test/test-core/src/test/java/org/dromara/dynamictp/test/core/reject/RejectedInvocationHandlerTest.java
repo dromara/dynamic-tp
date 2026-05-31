@@ -24,6 +24,8 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -58,9 +60,9 @@ class RejectedInvocationHandlerTest {
         ThreadPoolExecutor executor = mock(ThreadPoolExecutor.class);
         Runnable runnable = mock(Runnable.class);
         RuntimeException cause = new RuntimeException("rejected");
-        org.mockito.Mockito.doThrow(cause).when(target).rejectedExecution(runnable, executor);
+        doThrow(cause).when(target).rejectedExecution(runnable, executor);
 
-        RuntimeException thrown = org.junit.jupiter.api.Assertions.assertThrows(RuntimeException.class,
+        RuntimeException thrown = assertThrows(RuntimeException.class,
                 () -> handler.invoke(null,
                         RejectedExecutionHandler.class.getMethod("rejectedExecution",
                                 Runnable.class, ThreadPoolExecutor.class),

@@ -18,16 +18,18 @@
 package org.dromara.dynamictp.test.core.notify;
 
 import com.google.common.collect.Lists;
-import org.dromara.dynamictp.common.notifier.LarkNotifier;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
+import org.dromara.dynamictp.common.entity.AlarmInfo;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.entity.ServiceInstance;
 import org.dromara.dynamictp.common.entity.TpMainFields;
+import org.dromara.dynamictp.common.notifier.LarkNotifier;
+import org.dromara.dynamictp.common.notifier.Notifier;
 import org.dromara.dynamictp.common.util.CommonUtil;
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.notifier.AbstractDtpNotifier;
 import org.dromara.dynamictp.core.notifier.DtpDingNotifier;
-import org.dromara.dynamictp.common.notifier.Notifier;
 import org.dromara.dynamictp.core.notifier.DtpLarkNotifier;
 import org.dromara.dynamictp.core.notifier.DtpNotifier;
 import org.dromara.dynamictp.core.notifier.context.AlarmCtx;
@@ -35,28 +37,24 @@ import org.dromara.dynamictp.core.notifier.context.DtpNotifyCtxHolder;
 import org.dromara.dynamictp.core.notifier.context.NoticeCtx;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolCreator;
-import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.spring.holder.SpringContextHolder;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
 import java.util.List;
 
 import static org.dromara.dynamictp.common.em.QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * AbstractDtpNotifierTest related
@@ -64,38 +62,45 @@ import static org.powermock.api.mockito.PowerMockito.when;
  * @author ruoan
  * @since 1.1.3
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({SpringContextHolder.class, CommonUtil.class})
-@SuppressStaticInitializationFor("org.dromara.dynamictp.common.util.CommonUtil")
-public class AbstractDtpNotifierTest {
+class AbstractDtpNotifierTest {
 
     private final Notifier notifier = Mockito.mock(Notifier.class);
 
     private final DtpExecutor dtpExecutor = ThreadPoolCreator.createDynamicFast("test");
 
-    @Before
-    public void setUp() {
+    private MockedStatic<SpringContextHolder> mockedSpringContextHolder;
+
+    private MockedStatic<CommonUtil> mockedCommonUtil;
+
+    @BeforeEach
+    void setUp() {
+        // SpringContextHolder MUST be mocked first: CommonUtil.<clinit> calls
+        // ContextManagerHelper.getEnvironmentProperty() -> SpringContextHolder.getInstance()
         ApplicationContext contextMock = mock(ApplicationContext.class);
-        PowerMockito.mockStatic(SpringContextHolder.class);
-        when(SpringContextHolder.getInstance()).thenAnswer((Answer<ApplicationContext>) c -> contextMock);
-
         Environment envMock = mock(Environment.class);
-        when(SpringContextHolder.getInstance().getEnvironment()).thenAnswer((Answer<Environment>) c -> envMock);
-        when(envMock.getProperty("spring.application.name")).thenReturn("test");
-        when(envMock.getProperty("server.port")).thenReturn("8080");
-        when(envMock.getActiveProfiles()).thenReturn(new String[]{"dev"});
+        when(contextMock.getEnvironment()).thenReturn(envMock);
 
-        PowerMockito.mockStatic(CommonUtil.class);
-        when(CommonUtil.getInstance()).thenAnswer((Answer<ServiceInstance>) invocation ->
-                new ServiceInstance("localhost", 8080, "test", "dev"));
-        Assert.assertEquals("localhost", CommonUtil.getInstance().getIp());
-        Assert.assertEquals(8080, CommonUtil.getInstance().getPort());
-        Assert.assertEquals("test", CommonUtil.getInstance().getServiceName());
-        Assert.assertEquals("dev", CommonUtil.getInstance().getEnv());
+        mockedSpringContextHolder = Mockito.mockStatic(SpringContextHolder.class);
+        mockedSpringContextHolder.when(SpringContextHolder::getInstance).thenReturn(contextMock);
+
+        // Now CommonUtil can initialize: its <clinit> will find a valid Spring context
+        ServiceInstance serviceInstance = new ServiceInstance("localhost", 8080, "test", "dev");
+        mockedCommonUtil = Mockito.mockStatic(CommonUtil.class);
+        mockedCommonUtil.when(CommonUtil::getInstance).thenReturn(serviceInstance);
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (mockedCommonUtil != null) {
+            mockedCommonUtil.close();
+        }
+        if (mockedSpringContextHolder != null) {
+            mockedSpringContextHolder.close();
+        }
     }
 
     @Test
-    public void testSendChangeMsg() {
+    void testSendChangeMsg() {
         AbstractDtpNotifier notifier = new DtpDingNotifier(this.notifier);
         NotifyPlatform notifyPlatform = new NotifyPlatform();
         TpMainFields oldFields = new TpMainFields();
@@ -107,23 +112,25 @@ public class AbstractDtpNotifierTest {
     }
 
     @Test
-    public void testSendAlarmMsg() {
+    void testSendAlarmMsg() {
         AbstractDtpNotifier notifier = new DtpDingNotifier(this.notifier);
         NotifyPlatform notifyPlatform = new NotifyPlatform();
         NotifyItemEnum notifyItemEnum = NotifyItemEnum.LIVENESS;
-        DtpNotifyCtxHolder.set(new AlarmCtx(ExecutorWrapper.of(dtpExecutor), new NotifyItem()));
+        AlarmCtx alarmCtx = new AlarmCtx(ExecutorWrapper.of(dtpExecutor), new NotifyItem());
+        alarmCtx.setAlarmInfo(new AlarmInfo());
+        DtpNotifyCtxHolder.set(alarmCtx);
         notifier.sendAlarmMsg(notifyPlatform, notifyItemEnum);
 
         Mockito.verify(this.notifier, Mockito.times(1)).send(any(), anyString());
     }
 
     @Test
-    public void testGetQueueName2() {
-        Assert.assertEquals(dtpExecutor.getQueueType(), VARIABLE_LINKED_BLOCKING_QUEUE.getName());
+    void testGetQueueName() {
+        assertEquals(VARIABLE_LINKED_BLOCKING_QUEUE.getName(), dtpExecutor.getQueueType());
     }
 
     @Test
-    public void testLarkSendChangeMsg() {
+    void testLarkSendChangeMsg() {
         DtpNotifier larkNotifier = new DtpLarkNotifier(new LarkNotifier());
         NotifyPlatform notifyPlatform = new NotifyPlatform();
         notifyPlatform.setWebhook("");
@@ -131,6 +138,7 @@ public class AbstractDtpNotifierTest {
         TpMainFields oldFields = new TpMainFields();
         List<String> diffs = Lists.newArrayList("corePoolSize");
         DtpNotifyCtxHolder.set(new NoticeCtx(ExecutorWrapper.of(dtpExecutor), new NotifyItem(), oldFields, diffs));
+        assertNotNull(DtpNotifyCtxHolder.get());
         larkNotifier.sendChangeMsg(notifyPlatform, oldFields, diffs);
     }
 }

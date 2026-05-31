@@ -20,15 +20,16 @@ package org.dromara.dynamictp.test.core.plugin;
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.plugin.DtpInterceptorRegistry;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author hanli
  * @date 2023年07月19日 3:33 PM
  */
 @Slf4j
-public class InterceptTest {
+class InterceptTest {
 
     public static class TestA {
 
@@ -49,15 +50,15 @@ public class InterceptTest {
     }
 
     @Test
-    public void test() {
+    void test() {
         AInterceptorTest interceptorTest = new AInterceptorTest();
         DtpInterceptorRegistry.register("TestAInterceptor", interceptorTest);
 
         TestA testA = new TestA();
         TestA testA1 = (TestA) DtpInterceptorRegistry.plugin(testA, CollectionUtil.newHashSet("TestAInterceptor"));
 
-        Assert.assertTrue(testA1.getClass().getSimpleName().startsWith("InterceptTest$TestA$ByteBuddy$"));
-        Assert.assertTrue(testA.getClass().isAssignableFrom(testA1.getClass()));
+        assertTrue(testA1.getClass().getSimpleName().startsWith("InterceptTest$TestA$ByteBuddy$"));
+        assertTrue(testA.getClass().isAssignableFrom(testA1.getClass()));
         testA1.execute();
         testA1.beforeExecute();
         testA1.afterExecute();

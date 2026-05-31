@@ -22,48 +22,91 @@ import cn.hutool.http.HttpResponse;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.constant.WechatNotifyConst;
-import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
 import org.dromara.dynamictp.common.entity.MarkdownReq;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.util.DateUtil;
 import org.dromara.dynamictp.common.util.JsonUtil;
-import org.dromara.dynamictp.common.notifier.WechatNotifier;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
-public class DtpWechatNotifierTest {
-
+class DtpWechatNotifierTest {
 
     @Test
-    public void testWechatNotify() {
-        WechatNotifier wechatNotifier = new WechatNotifier();
-//        DtpWechatNotifier dtpWechatNotifier = new DtpWechatNotifier(wechatNotifier);
-        NotifyPlatform notifyPlatform = new NotifyPlatform();
-        notifyPlatform.setPlatformId("1");
-        notifyPlatform.setPlatform(NotifyPlatformEnum.WECHAT.name().toLowerCase());
-        // add your own wechat webhook url and secret
-        notifyPlatform.setUrlKey("");
-//        notifyPlatform.setSecret("");
-        notifyPlatform.setReceivers("小红,小明");
+    void testFormatReceivers() {
+        String result = formatReceivers("小红,小明");
+        assertEquals("<@小红>,<@小明>", result);
+    }
+
+    @Test
+    void testFormatReceiversSingle() {
+        String result = formatReceivers("admin");
+        assertEquals("<@admin>", result);
+    }
+
+    @Test
+    void testGetReceivesUsesNotifyItemFirst() {
         NotifyItem notifyItem = new NotifyItem();
-        notifyItem.setReceivers("小红,小明");
-        val url = WechatNotifyConst.WECHAT_WEB_HOOK + notifyPlatform.getUrlKey();
-        val msgBody = buildMsgBody(notifyPlatform, buildContent(notifyItem, notifyPlatform));
-        try {
-            HttpResponse response = HttpRequest.post(url)
-                    .setReadTimeout(1000)
-                    .setConnectionTimeout(1000)
-                    .body(msgBody).execute();
-            System.out.println(response.body());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        notifyItem.setReceivers("alice,bob");
+        NotifyPlatform platform = new NotifyPlatform();
+        platform.setReceivers("fallback");
+
+        assertEquals("<@alice>,<@bob>", getReceives(notifyItem, platform));
+    }
+
+    @Test
+    void testGetReceivesFallsBackToPlatform() {
+        NotifyItem notifyItem = new NotifyItem();
+        // notifyItem receivers is blank
+        NotifyPlatform platform = new NotifyPlatform();
+        platform.setReceivers("小红,小明");
+
+        assertEquals("<@小红>,<@小明>", getReceives(notifyItem, platform));
+    }
+
+    @Test
+    void testGetReceivesEmptyWhenBothBlank() {
+        NotifyItem notifyItem = new NotifyItem();
+        NotifyPlatform platform = new NotifyPlatform();
+        platform.setReceivers(""); // clear default "all" value
+
+        assertEquals(StringUtils.EMPTY, getReceives(notifyItem, platform));
+    }
+
+    @Test
+    void testBuildMsgBodyContainsMarkdown() {
+        NotifyItem notifyItem = new NotifyItem();
+        notifyItem.setReceivers("小红");
+        NotifyPlatform platform = new NotifyPlatform();
+        platform.setReceivers("小红");
+
+        String content = buildContent(notifyItem, platform);
+        String msgBody = buildMsgBody(platform, content);
+
+        assertTrue(msgBody.contains("\"msgtype\":\"markdown\""), "msgBody should contain msgtype=markdown");
+        assertTrue(msgBody.contains("\"content\""), "msgBody should contain content field");
+    }
+
+    @Test
+    void testBuildContentNotEmpty() {
+        NotifyItem notifyItem = new NotifyItem();
+        notifyItem.setReceivers("小红");
+        NotifyPlatform platform = new NotifyPlatform();
+        platform.setReceivers("小红");
+
+        String content = buildContent(notifyItem, platform);
+
+        assertFalse(StringUtils.isBlank(content), "content should not be blank");
+        assertTrue(content.contains("<@小红>"), "content should contain @-mention for receivers");
     }
 
     protected String buildMsgBody(NotifyPlatform platform, String content) {
@@ -104,7 +147,6 @@ public class DtpWechatNotifierTest {
 
     protected String formatReceivers(String receives) {
         String[] receivers = StringUtils.split(receives, ',');
-//        return Joiner.on(", @").join(receivers);
         return Arrays.stream(receivers).map(a -> "<@" + a + ">").collect(Collectors.joining(","));
     }
 

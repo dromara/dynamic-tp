@@ -18,40 +18,44 @@
 package org.dromara.dynamictp.test.core.executor;
 
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * NamedThreadFactoryTest related
  *
  * @author Copilot
  */
-public class NamedThreadFactoryTest {
+class NamedThreadFactoryTest {
 
     @Test
-    public void testNewThreadUsesPrefixDaemonAndPriority() {
+    void testNewThreadUsesPrefixDaemonAndPriority() {
         NamedThreadFactory factory = new NamedThreadFactory("worker", true, Thread.MAX_PRIORITY);
 
         Thread first = factory.newThread(() -> { });
         Thread second = factory.newThread(() -> { });
 
-        Assert.assertEquals("worker-1", first.getName());
-        Assert.assertEquals("worker-2", second.getName());
-        Assert.assertTrue(first.isDaemon());
-        Assert.assertEquals(Thread.MAX_PRIORITY, first.getPriority());
-        Assert.assertSame(Thread.currentThread().getThreadGroup(), first.getThreadGroup());
+        assertEquals("worker-1", first.getName());
+        assertEquals("worker-2", second.getName());
+        assertTrue(first.isDaemon());
+        assertEquals(Thread.MAX_PRIORITY, first.getPriority());
+        assertSame(Thread.currentThread().getThreadGroup(), first.getThreadGroup());
     }
 
     @Test
-    public void testSetNamePrefixAffectsSubsequentThreads() {
+    void testSetNamePrefixAffectsSubsequentThreads() {
         NamedThreadFactory factory = new NamedThreadFactory("worker");
 
         factory.setNamePrefix("biz");
         Thread thread = factory.newThread(() -> { });
 
-        Assert.assertEquals("biz", factory.getNamePrefix());
-        Assert.assertEquals("biz-1", thread.getName());
-        Assert.assertFalse(thread.isDaemon());
-        Assert.assertEquals(Thread.NORM_PRIORITY, thread.getPriority());
+        assertEquals("biz", factory.getNamePrefix());
+        assertEquals("biz-1", thread.getName());
+        assertFalse(thread.isDaemon());
+        assertEquals(Thread.NORM_PRIORITY, thread.getPriority());
     }
 }

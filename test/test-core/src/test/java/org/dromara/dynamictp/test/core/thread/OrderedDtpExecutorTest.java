@@ -38,9 +38,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @SpringBootTest(classes = OrderedDtpExecutorTest.class)
@@ -57,27 +61,24 @@ class OrderedDtpExecutorTest {
     @Test
     void orderedExecute() throws InterruptedException {
         OrderedDtpExecutor orderedDtpExecutor = (OrderedDtpExecutor) DtpRegistry.getExecutor("orderedDtpExecutor");
-        if (orderedDtpExecutor == null) {
-            return;
-        }
-        for (int i = 0; i < 1000; i++) {
-            if (i == 500) {
-                TimeUnit.MILLISECONDS.sleep(2000L);
-            }
+        assertNotNull(orderedDtpExecutor, "orderedDtpExecutor should be registered");
+        int taskCount = 10;
+        CountDownLatch latch = new CountDownLatch(taskCount);
+        for (int i = 0; i < taskCount; i++) {
             threadLocal.set("test ordered execute " + i);
             MDC.put("traceId", String.valueOf(i));
-            orderedDtpExecutor.execute(new TestOrderedRunnable("TEST"));
+            orderedDtpExecutor.execute(new TestOrderedRunnable("TEST", latch));
         }
+        assertTrue(latch.await(10, TimeUnit.SECONDS), "All ordered tasks should complete within timeout");
     }
 
     @Test
     void orderedSubmit() {
         OrderedDtpExecutor orderedDtpExecutor = (OrderedDtpExecutor) DtpRegistry.getExecutor("orderedDtpExecutor");
-        if (orderedDtpExecutor == null) {
-            return;
-        }
+        assertNotNull(orderedDtpExecutor, "orderedDtpExecutor should be registered");
+        int taskCount = 10;
         List<Future<?>> futures = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < taskCount; i++) {
             threadLocal.set("ttl" + i);
             int tableIdx = ThreadLocalRandom.current().nextInt(3);
             Table table = new Table(TABLES.get(tableIdx), i);
@@ -87,11 +88,13 @@ class OrderedDtpExecutorTest {
         List<String> result = Lists.newArrayList();
         for (Future<?> future : futures) {
             try {
-                result.add((String) future.get(2, TimeUnit.SECONDS));
+                result.add((String) future.get(5, TimeUnit.SECONDS));
             } catch (Exception e) {
                 log.error("get future result error", e);
             }
         }
+        assertTrue(result.size() == taskCount, "All submitted tasks should produce a result");
+        result.forEach(r -> assertTrue(r != null && r.startsWith("table"), "Each result should start with 'table'"));
         log.info("result = {}", result);
     }
 
@@ -106,8 +109,16 @@ class OrderedDtpExecutorTest {
 
         private final String hashKey;
 
+        private final CountDownLatch latch;
+
         public TestOrderedRunnable(String hashKey) {
             this.hashKey = hashKey;
+            this.latch = null;
+        }
+
+        public TestOrderedRunnable(String hashKey, CountDownLatch latch) {
+            this.hashKey = hashKey;
+            this.latch = latch;
         }
 
         @Override
@@ -119,6 +130,9 @@ class OrderedDtpExecutorTest {
         public void run() {
             log.info("{} execute task, hashKey = {}, traceId = {}, threadLocalVal = {}",
                     Thread.currentThread().getName(), hashKey, MDC.get("traceId"), threadLocal.get());
+            if (latch != null) {
+                latch.countDown();
+            }
         }
     }
 

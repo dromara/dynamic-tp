@@ -20,9 +20,11 @@ package org.dromara.dynamictp.test.core.notify.capture;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.notifier.capture.CapturedBlockingQueue;
 import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.concurrent.TimeUnit;
 
@@ -55,20 +57,20 @@ public class CapturedBlockingQueueTest {
     @Test
     public void testBlockingQueueDefaultCapacity() {
         CapturedBlockingQueue capturedBlockingQueue = new CapturedBlockingQueue(dtpExecutor);
-        Assertions.assertEquals(0, capturedBlockingQueue.size());
-        Assertions.assertEquals(100, capturedBlockingQueue.remainingCapacity());
+        assertEquals(0, capturedBlockingQueue.size());
+        assertEquals(100, capturedBlockingQueue.remainingCapacity());
     }
 
     @Test
     public void testPut() {
         CapturedBlockingQueue capturedBlockingQueue = new CapturedBlockingQueue(dtpExecutor);
-        Assertions.assertThrows(UnsupportedOperationException.class, () ->
+        assertThrows(UnsupportedOperationException.class, () ->
                 capturedBlockingQueue.put(() -> System.out.println("can't put Runnable to CapturedBlockingQueue")));
     }
 
     @Test
     public void testTake() {
         CapturedBlockingQueue capturedBlockingQueue = new CapturedBlockingQueue(dtpExecutor);
-        Assertions.assertThrows(UnsupportedOperationException.class, capturedBlockingQueue::take);
+        assertThrows(UnsupportedOperationException.class, capturedBlockingQueue::take);
     }
 }

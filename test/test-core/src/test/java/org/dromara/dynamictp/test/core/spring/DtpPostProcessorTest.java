@@ -21,8 +21,10 @@ import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
 import org.dromara.dynamictp.spring.support.YamlPropertySourceFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,14 +52,14 @@ class DtpPostProcessorTest {
     @Test
     void test() {
         Executor executor = DtpRegistry.getExecutor("asyncExecutor");
-        Assertions.assertNotNull(executor);
+        assertNotNull(executor);
 
         Executor commonExecutor = context.getBean("commonExecutor", ThreadPoolExecutor.class);
-        Assertions.assertEquals(ThreadPoolExecutorProxy.class, commonExecutor.getClass());
+        assertEquals(ThreadPoolExecutorProxy.class, commonExecutor.getClass());
         commonExecutor.execute(() -> System.out.println("enhance commonExecutor success!"));
 
         ThreadPoolTaskExecutor taskExecutor = context.getBean("taskExecutor", ThreadPoolTaskExecutor.class);
-        Assertions.assertEquals(ThreadPoolExecutorProxy.class, taskExecutor.getThreadPoolExecutor().getClass());
+        assertEquals(ThreadPoolExecutorProxy.class, taskExecutor.getThreadPoolExecutor().getClass());
         taskExecutor.execute(() -> System.out.println("enhance taskExecutor success!"));
     }
 

@@ -19,9 +19,13 @@ package org.dromara.dynamictp.test.core.spring;
 
 import org.dromara.dynamictp.core.lifecycle.LifeCycleManagement;
 import org.dromara.dynamictp.spring.lifecycle.DtpLifecycleSpringAdapter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -51,24 +55,24 @@ class DtpLifecycleSpringAdapterTest {
     @Test
     void testLifecycleManagementIntegration() {
         // 验证 DtpLifecycleSpringAdapter 和 LifeCycleManagement 是否注入成功
-        Assertions.assertNotNull(dtpLifecycleSpringAdapter);
-        Assertions.assertNotNull(lifeCycleManagement);
+        assertNotNull(dtpLifecycleSpringAdapter);
+        assertNotNull(lifeCycleManagement);
 
         // 启动 lifecycle 并检查状态
         dtpLifecycleSpringAdapter.start();
-        Assertions.assertTrue(dtpLifecycleSpringAdapter.isRunning());
+        assertTrue(dtpLifecycleSpringAdapter.isRunning());
         Mockito.verify(lifeCycleManagement).start();
         Mockito.when(lifeCycleManagement.isRunning()).thenReturn(true); // Mock isRunning() 状态同步
-        Assertions.assertTrue(lifeCycleManagement.isRunning());
+        assertTrue(lifeCycleManagement.isRunning());
 
         Mockito.reset(lifeCycleManagement);
 
         // 停止 lifecycle 并检查状态
         dtpLifecycleSpringAdapter.stop();
-        Assertions.assertFalse(dtpLifecycleSpringAdapter.isRunning());
+        assertFalse(dtpLifecycleSpringAdapter.isRunning());
         Mockito.verify(lifeCycleManagement).stop();
         Mockito.when(lifeCycleManagement.isRunning()).thenReturn(false); // Mock isRunning() 状态同步
-        Assertions.assertFalse(lifeCycleManagement.isRunning());
+        assertFalse(lifeCycleManagement.isRunning());
     }
 
     @Test
@@ -76,8 +80,8 @@ class DtpLifecycleSpringAdapterTest {
         // 验证 isAutoStartup 和 getPhase 方法的行为
         Mockito.when(lifeCycleManagement.isAutoStartup()).thenReturn(true); // Mock 返回值为 true
         Mockito.when(lifeCycleManagement.getPhase()).thenReturn(0); // Mock 返回值为 int 类型 0
-        Assertions.assertEquals(lifeCycleManagement.isAutoStartup(), dtpLifecycleSpringAdapter.isAutoStartup());
-        Assertions.assertEquals(lifeCycleManagement.getPhase(), dtpLifecycleSpringAdapter.getPhase());
+        assertEquals(lifeCycleManagement.isAutoStartup(), dtpLifecycleSpringAdapter.isAutoStartup());
+        assertEquals(lifeCycleManagement.getPhase(), dtpLifecycleSpringAdapter.getPhase());
     }
 
     @SpringBootConfiguration

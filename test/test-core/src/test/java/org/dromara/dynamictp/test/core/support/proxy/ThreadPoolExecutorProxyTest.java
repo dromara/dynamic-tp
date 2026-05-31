@@ -19,20 +19,22 @@ package org.dromara.dynamictp.test.core.support.proxy;
 
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * @author devin
  */
-public class ThreadPoolExecutorProxyTest {
+class ThreadPoolExecutorProxyTest {
 
     @Test
-    public void testParametersAndStatus() throws InterruptedException {
+    void testParametersAndStatus() throws InterruptedException {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(
                 5, 10, 60, TimeUnit.SECONDS,
                 new LinkedBlockingQueue<>(100),
@@ -40,26 +42,26 @@ public class ThreadPoolExecutorProxyTest {
         
         ThreadPoolExecutorProxy proxy = new ThreadPoolExecutorProxy(executor);
 
-        Assert.assertEquals(executor.getCorePoolSize(), proxy.getCorePoolSize());
-        Assert.assertEquals(executor.getMaximumPoolSize(), proxy.getMaximumPoolSize());
-        Assert.assertEquals(executor.getCompletedTaskCount(), proxy.getCompletedTaskCount());
-        Assert.assertEquals(executor.getLargestPoolSize(), proxy.getLargestPoolSize());
-        Assert.assertEquals(executor.getThreadFactory(), proxy.getThreadFactory());
-        Assert.assertEquals(executor.getKeepAliveTime(TimeUnit.SECONDS), proxy.getKeepAliveTime(TimeUnit.SECONDS));
-        Assert.assertEquals(executor.getQueue(), proxy.getQueue());
-        Assert.assertEquals(executor.allowsCoreThreadTimeOut(), proxy.allowsCoreThreadTimeOut());
+        assertEquals(executor.getCorePoolSize(), proxy.getCorePoolSize());
+        assertEquals(executor.getMaximumPoolSize(), proxy.getMaximumPoolSize());
+        assertEquals(executor.getCompletedTaskCount(), proxy.getCompletedTaskCount());
+        assertEquals(executor.getLargestPoolSize(), proxy.getLargestPoolSize());
+        assertEquals(executor.getThreadFactory(), proxy.getThreadFactory());
+        assertEquals(executor.getKeepAliveTime(TimeUnit.SECONDS), proxy.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(executor.getQueue(), proxy.getQueue());
+        assertEquals(executor.allowsCoreThreadTimeOut(), proxy.allowsCoreThreadTimeOut());
 
         proxy.setCorePoolSize(6);
-        Assert.assertEquals(6, proxy.getCorePoolSize());
+        assertEquals(6, proxy.getCorePoolSize());
         
         proxy.setMaximumPoolSize(12);
-        Assert.assertEquals(12, proxy.getMaximumPoolSize());
+        assertEquals(12, proxy.getMaximumPoolSize());
         
         proxy.setKeepAliveTime(120, TimeUnit.SECONDS);
-        Assert.assertEquals(120, proxy.getKeepAliveTime(TimeUnit.SECONDS));
+        assertEquals(120, proxy.getKeepAliveTime(TimeUnit.SECONDS));
         
         executor.shutdown();
-        Thread.sleep(1000);
-        Assert.assertTrue(executor.isShutdown());
+        assertTrue(executor.awaitTermination(5, TimeUnit.SECONDS));
+        assertTrue(executor.isShutdown());
     }
 }

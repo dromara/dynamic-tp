@@ -17,9 +17,17 @@
 
 package org.dromara.dynamictp.test.core.support;
 
+import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
@@ -27,12 +35,54 @@ import org.junit.jupiter.api.Test;
 public class ThreadPoolBuilderTest {
 
     @Test
-    void testBuildDynamic() {
-        Assertions.assertThrows(IllegalArgumentException.class,() -> ThreadPoolBuilder.newBuilder()
+    void testBuildDynamicThrowsWhenBothPriorityAndOrderedSet() {
+        assertThrows(IllegalArgumentException.class, () -> ThreadPoolBuilder.newBuilder()
                 .threadPoolName("dtpExecutor1")
                 .priority()
                 .ordered()
                 .buildDynamic());
+    }
+
+    @Test
+    void testBuildDynamic() {
+        DtpExecutor executor = ThreadPoolBuilder.newBuilder()
+                .threadPoolName("testDynamic")
+                .corePoolSize(4)
+                .maximumPoolSize(8)
+                .keepAliveTime(30)
+                .timeUnit(TimeUnit.SECONDS)
+                .buildDynamic();
+
+        assertNotNull(executor);
+        assertEquals("testDynamic", executor.getThreadPoolName());
+        assertEquals(4, executor.getCorePoolSize());
+        assertEquals(8, executor.getMaximumPoolSize());
+        executor.shutdown();
+    }
+
+    @Test
+    void testBuildCommon() {
+        ThreadPoolExecutor executor = ThreadPoolBuilder.newBuilder()
+                .corePoolSize(2)
+                .maximumPoolSize(4)
+                .keepAliveTime(60)
+                .timeUnit(TimeUnit.SECONDS)
+                .buildCommon();
+
+        assertNotNull(executor);
+        assertInstanceOf(ThreadPoolExecutor.class, executor);
+        assertEquals(2, executor.getCorePoolSize());
+        assertEquals(4, executor.getMaximumPoolSize());
+        executor.shutdown();
+    }
+
+    @Test
+    void testBuildPriority() {
+        assertNotNull(ThreadPoolBuilder.newBuilder()
+                .threadPoolName("priorityPool")
+                .corePoolSize(2)
+                .maximumPoolSize(4)
+                .buildPriority());
     }
 
 }

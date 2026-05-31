@@ -28,8 +28,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * EagerDtpExecutorTest related
@@ -48,14 +51,20 @@ class EagerDtpExecutorTest {
     @Test
     void test() throws InterruptedException {
         Executor executor = DtpRegistry.getExecutor("eagerDtpThreadPoolExecutor");
-        for (int i = 0; i < 10; i++) {
+        int taskCount = 10;
+        CountDownLatch latch = new CountDownLatch(taskCount);
+        for (int i = 0; i < taskCount; i++) {
             executor.execute(() -> {
                 try {
-                    TimeUnit.SECONDS.sleep(300L);
+                    TimeUnit.MILLISECONDS.sleep(200);
                 } catch (InterruptedException e) {
-
+                    Thread.currentThread().interrupt();
+                } finally {
+                    latch.countDown();
                 }
             });
         }
+        boolean completed = latch.await(10, TimeUnit.SECONDS);
+        assertEquals(0, latch.getCount(), "Not all tasks completed within timeout");
     }
 }

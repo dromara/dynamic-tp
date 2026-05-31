@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.test.core.thread;
 
+import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.executor.ScheduledDtpExecutor;
 import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
@@ -32,10 +33,11 @@ import java.time.LocalDateTime;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@Slf4j
 @PropertySource(value = "classpath:/dynamic-tp-nacos-demo-dtp-dev.yml", factory = YamlPropertySourceFactory.class)
-//获取启动类，加载配置，寻找主配置启动类 （被 @SpringBootApplication 注解的）
 @SpringBootTest(classes = ScheduledDtpExecutorTest.class)
-//让JUnit运行Spring的测试环境,获得Spring环境的上下文的支持
 @ExtendWith(SpringExtension.class)
 @EnableDynamicTp
 @EnableAutoConfiguration
@@ -44,12 +46,11 @@ class ScheduledDtpExecutorTest {
     @Test
     void schedule() {
         ScheduledDtpExecutor dtpExecutor12 = (ScheduledDtpExecutor) DtpRegistry.getExecutor("dtpExecutor12");
-        System.out.println(dtpExecutor12.getClass());
-        dtpExecutor12.scheduleAtFixedRate(() -> {
-            System.out.println(Thread.currentThread().getName() + "进来了," +
-                    "当前时间是 " + LocalDateTime.now());
-        }, 10, 5, TimeUnit.SECONDS);
+        dtpExecutor12.scheduleAtFixedRate(() ->
+                log.info("schedule task running at {}", LocalDateTime.now()),
+                10, 5, TimeUnit.SECONDS);
         dtpExecutor12.shutdownNow();
+        assertTrue(dtpExecutor12.isShutdown());
     }
 
     @Test
@@ -62,20 +63,18 @@ class ScheduledDtpExecutorTest {
     @Test
     void testSubNotify() {
         ScheduledDtpExecutor dtpExecutor14 = (ScheduledDtpExecutor) DtpRegistry.getExecutor("dtpExecutor14");
-        dtpExecutor14.scheduleAtFixedRate(() -> {
-            System.out.println("进来了");
-        }, 10, 5, TimeUnit.SECONDS);
+        dtpExecutor14.scheduleAtFixedRate(() -> { }, 10, 5, TimeUnit.SECONDS);
         dtpExecutor14.shutdownNow();
+        assertTrue(dtpExecutor14.isShutdown());
     }
 
     @Test
     void testScheduleCancel() {
         ScheduledDtpExecutor dtpExecutor12 = (ScheduledDtpExecutor) DtpRegistry.getExecutor("dtpExecutor12");
-        ScheduledFuture<?> scheduledFuture = dtpExecutor12.scheduleWithFixedDelay(() -> {
-            System.out.println(Thread.currentThread().getName() + "进来了," +
-                    "当前时间是 ");
-        }, 0, 1000, TimeUnit.MILLISECONDS);
+        ScheduledFuture<?> scheduledFuture = dtpExecutor12.scheduleWithFixedDelay(() -> { },
+                0, 1000, TimeUnit.MILLISECONDS);
         scheduledFuture.cancel(false);
+        assertTrue(scheduledFuture.isCancelled());
     }
 
 }

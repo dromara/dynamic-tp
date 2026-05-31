@@ -18,9 +18,13 @@
 package org.dromara.dynamictp.test.core.parse;
 
 import cn.hutool.core.io.FileUtil;
+import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
 import org.dromara.dynamictp.common.parser.config.JsonConfigParser;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
@@ -43,7 +47,34 @@ public class JsonConfigParserTest {
 
         JsonConfigParser parser = new JsonConfigParser();
         Map<Object, Object> result = parser.doParse(content);
-        Assertions.assertEquals("dtpExecutor1", result.get("dynamictp.executors[0].threadPoolName").toString());
+        assertEquals("dtpExecutor1", result.get("dynamictp.executors[0].threadPoolName").toString());
+    }
+
+    @Test
+    void testDoParseMultipleFields() throws IOException {
+        File file = ResourceUtils.getFile("classpath:demo-dtp-dev.json");
+        String content = FileUtil.readString(file, StandardCharsets.UTF_8);
+
+        JsonConfigParser parser = new JsonConfigParser();
+        Map<Object, Object> result = parser.doParse(content);
+
+        assertEquals("true", result.get("dynamictp.enabled").toString());
+        assertEquals("dtpExecutor1", result.get("dynamictp.executors[0].threadPoolName").toString());
+        assertEquals("6", result.get("dynamictp.executors[0].corePoolSize").toString());
+    }
+
+    @Test
+    void testDoParseEmptyContentReturnsEmptyMap() throws IOException {
+        JsonConfigParser parser = new JsonConfigParser();
+        assertTrue(parser.doParse("").isEmpty());
+    }
+
+    @Test
+    void testSupports() {
+        JsonConfigParser parser = new JsonConfigParser();
+        assertTrue(parser.supports(ConfigFileTypeEnum.JSON));
+        assertFalse(parser.supports(ConfigFileTypeEnum.YML));
+        assertFalse(parser.supports(ConfigFileTypeEnum.PROPERTIES));
     }
 
 }

@@ -18,10 +18,13 @@
 package org.dromara.dynamictp.test.core.support.task.runnable;
 
 import org.dromara.dynamictp.core.support.task.runnable.NamedRunnable;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * NamedRunnableTest related
@@ -37,15 +40,15 @@ public class NamedRunnableTest {
         NamedRunnable namedRunnable = NamedRunnable.of(() -> executed.set(true), "explicitName");
         namedRunnable.run();
 
-        Assert.assertEquals("explicitName", namedRunnable.getName());
-        Assert.assertTrue(executed.get());
+        assertEquals("explicitName", namedRunnable.getName());
+        assertTrue(executed.get());
     }
 
     @Test
     public void testOfGeneratesNameWhenBlank() {
         NamedRunnable namedRunnable = NamedRunnable.of(new TestRunnable(), " ");
 
-        Assert.assertTrue(namedRunnable.getName().startsWith("TestRunnable-"));
+        assertTrue(namedRunnable.getName().startsWith("TestRunnable-"));
     }
 
     private static class TestRunnable implements Runnable {

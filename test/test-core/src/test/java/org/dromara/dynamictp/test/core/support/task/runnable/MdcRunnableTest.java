@@ -22,26 +22,29 @@ import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
 import org.dromara.dynamictp.core.support.task.runnable.MdcRunnable;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.dromara.dynamictp.common.em.QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * @author kyao
  * @date 2023年09月21日 15:20
  */
 @Slf4j
-public class MdcRunnableTest {
+class MdcRunnableTest {
 
     private final String key = "key";
 
     private final String value = "value";
 
     @Test
-    public void test() throws InterruptedException {
+    void test() throws InterruptedException {
         DtpExecutor executor = ThreadPoolBuilder.newBuilder()
                 .threadPoolName("dtpExecutor1")
                 .corePoolSize(1)
@@ -55,26 +58,39 @@ public class MdcRunnableTest {
                 .queueTimeout(200)
                 .buildDynamic();
 
+        AtomicReference<Throwable> error = new AtomicReference<>();
         CountDownLatch latch = new CountDownLatch(2);
 
         MDC.put(key, value);
         executor.execute(MdcRunnable.get(() -> {
-            Assert.assertEquals(value, MDC.get(key));
-            latch.countDown();
-
+            try {
+                assertEquals(value, MDC.get(key));
+            } catch (Throwable t) {
+                error.set(t);
+            } finally {
+                latch.countDown();
+            }
         }));
 
         MDC.remove(key);
 
         executor.execute(MdcRunnable.get(() -> {
-            Assert.assertNull(MDC.get(key));
-            latch.countDown();
+            try {
+                assertNull(MDC.get(key));
+            } catch (Throwable t) {
+                error.set(t);
+            } finally {
+                latch.countDown();
+            }
         }));
         latch.await();
+        if (error.get() != null) {
+            throw new AssertionError("Assertion failed in worker thread", error.get());
+        }
     }
 
     @Test
-    public void testReject() throws InterruptedException {
+    void testReject() throws InterruptedException {
         DtpExecutor executor = ThreadPoolBuilder.newBuilder()
                 .threadPoolName("dtpExecutor1")
                 .corePoolSize(1)
@@ -89,6 +105,7 @@ public class MdcRunnableTest {
                 .rejectedExecutionHandler("CallerRunsPolicy")
                 .buildDynamic();
 
+        AtomicReference<Throwable> rejectError = new AtomicReference<>();
         CountDownLatch latch = new CountDownLatch(10);
         MDC.put(key, value);
         for (int i = 0; i < 10; i++) {
@@ -96,11 +113,14 @@ public class MdcRunnableTest {
                 executor.execute(MdcRunnable.get(() -> {
                     try {
                         Thread.sleep(300);
-                        Assert.assertEquals(value, MDC.get(key));
+                        assertEquals(value, MDC.get(key));
                         log.info("value -> " + MDC.get(key));
-                        latch.countDown();
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Thread.currentThread().interrupt();
+                    } catch (Throwable t) {
+                        rejectError.set(t);
+                    } finally {
+                        latch.countDown();
                     }
                 }));
             } catch (Exception ex) {
@@ -108,6 +128,9 @@ public class MdcRunnableTest {
             }
         }
         latch.await();
+        if (rejectError.get() != null) {
+            throw new AssertionError("Assertion failed in worker thread", rejectError.get());
+        }
         Assert.assertEquals(value, MDC.get(key));
         log.info("main thread value -> " + MDC.get(key));
     }

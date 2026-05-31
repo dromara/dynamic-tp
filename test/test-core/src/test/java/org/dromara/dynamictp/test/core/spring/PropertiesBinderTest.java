@@ -24,9 +24,11 @@ import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.support.binder.BinderHelper;
 import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
 import org.dromara.dynamictp.spring.support.YamlPropertySourceFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -69,13 +71,13 @@ class PropertiesBinderTest {
             BinderHelper.bindDtpProperties(properties, dtpProperties);
             System.out.println("Collector Types after binding: " + dtpProperties.getCollectorTypes());
 
-            Assertions.assertEquals(properties.get("dynamictp.executors[0].threadPoolName"),
+            assertEquals(properties.get("dynamictp.executors[0].threadPoolName"),
                     dtpProperties.getExecutors().get(0).getThreadPoolName());
-            Assertions.assertIterableEquals((List<String>) properties.get("dynamictp.collectorTypes"),
+            assertIterableEquals((List<String>) properties.get("dynamictp.collectorTypes"),
                     dtpProperties.getCollectorTypes());
-            Assertions.assertEquals("common",
+            assertEquals("common",
                     dtpProperties.getExecutors().get(0).getExecutorType());
-            Assertions.assertEquals(properties.get("dynamictp.globalExecutorProps.executorType"),
+            assertEquals(properties.get("dynamictp.globalExecutorProps.executorType"),
                     dtpProperties.getExecutors().get(1).getExecutorType());
 
         } catch (Exception e) {
@@ -88,9 +90,9 @@ class PropertiesBinderTest {
         DtpProperties dtpProperties = DtpProperties.getInstance();
         BinderHelper.bindDtpProperties(environment, dtpProperties);
         String threadPoolName = environment.getProperty("dynamictp.executors[0].threadPoolName");
-        Assertions.assertEquals(threadPoolName, dtpProperties.getExecutors().get(0).getThreadPoolName());
+        assertEquals(threadPoolName, dtpProperties.getExecutors().get(0).getThreadPoolName());
         String executorType = environment.getProperty("dynamictp.globalExecutorProps.executorType");
-        Assertions.assertEquals(executorType, dtpProperties.getExecutors().get(1).getExecutorType());
+        assertEquals(executorType, dtpProperties.getExecutors().get(1).getExecutorType());
 
     }
 

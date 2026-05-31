@@ -210,6 +210,16 @@ protected void afterExecute(Runnable r, Throwable t);
 
 ---
 
+## 赞助商
+
+- Easysearch：企业级的分布式搜索型数据库
+
+<a href="https://easysearch.cn/" target="_blank">
+    <img class="no-zoom" src="/resources/img/easysearch.png" width="50%" height="50%"/>
+</a>
+
+---
+
 ## 友情链接
 
 - [HertzBeat](https://github.com/dromara/hertzbeat) : 易用友好的实时监控告警系统，无需Agent，强大自定义监控能力.

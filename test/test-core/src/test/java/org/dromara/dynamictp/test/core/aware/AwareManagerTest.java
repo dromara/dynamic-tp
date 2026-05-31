@@ -17,16 +17,22 @@
 
 package org.dromara.dynamictp.test.core.aware;
 
+import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.aware.ExecutorAware;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.junit.jupiter.api.BeforeEach;
+import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
+import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executor;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * AwareManagerTest related
@@ -36,89 +42,110 @@ import static org.mockito.Mockito.*;
  */
 class AwareManagerTest {
 
-    private ExecutorWrapper executorWrapper;
-    private ExecutorAware mockAware1;
-    private ExecutorAware mockAware2;
-    private Executor mockExecutor;
-    private Runnable mockRunnable;
+    private ExecutorAware mockAware(String name, int order) {
+        ExecutorAware aware = mock(ExecutorAware.class);
+        when(aware.getName()).thenReturn(name);
+        when(aware.getOrder()).thenReturn(order);
+        return aware;
+    }
 
-    private List<ExecutorAware> customAwareList;
+    /**
+     * Build a mock ExecutorWrapper that satisfies TaskStatAware.register() /
+     * refresh() / remove() which call wrapper.getExecutor() / getOriginal() /
+     * getThreadPoolStatProvider().
+     */
+    private ExecutorWrapper mockWrapper(Set<String> awareNames) {
+        ExecutorAdapter<?> executorAdapter = mock(ExecutorAdapter.class);
+        Executor original = mock(Executor.class);
+        doReturn(original).when(executorAdapter).getOriginal();
 
-    @BeforeEach
-    void setUp() {
-        executorWrapper = mock(ExecutorWrapper.class);
-        mockAware1 = mock(ExecutorAware.class);
-        mockAware2 = mock(ExecutorAware.class);
-        mockExecutor = mock(Executor.class);
-        mockRunnable = mock(Runnable.class);
+        ThreadPoolStatProvider statProvider = mock(ThreadPoolStatProvider.class);
 
-        when(mockAware1.getName()).thenReturn("Aware1");
-        when(mockAware2.getName()).thenReturn("Aware2");
+        ExecutorWrapper wrapper = mock(ExecutorWrapper.class);
+        when(wrapper.getAwareNames()).thenReturn(awareNames);
+        when(wrapper.getThreadPoolStatProvider()).thenReturn(statProvider);
+        return wrapper;
+    }
 
-        customAwareList = new ArrayList<>();
-        customAwareList.add(mockAware1);
-        customAwareList.add(mockAware2);
+    // ==================== add ====================
+
+    @Test
+    void testAddDuplicateAwareShouldBeIdempotent() {
+        ExecutorAware aware1 = mockAware("TestDupAware", 0);
+        AwareManager.add(aware1);
+
+        ExecutorAware aware2 = mockAware("TestDupAware", 1);
+        // Same name, should be silently ignored
+        assertDoesNotThrow(() -> AwareManager.add(aware2));
+    }
+
+    // ==================== lifecycle callbacks ====================
+
+    @Test
+    void testExecuteCallback() {
+        Executor executor = mock(Executor.class);
+        Runnable runnable = mock(Runnable.class);
+
+        assertDoesNotThrow(() -> AwareManager.execute(executor, runnable));
     }
 
     @Test
-    void testRegister() {
-        for (ExecutorAware aware : customAwareList) {
-            aware.register(executorWrapper);
-        }
+    void testBeforeExecuteCallback() {
+        Executor executor = mock(Executor.class);
+        Thread thread = mock(Thread.class);
+        Runnable runnable = mock(Runnable.class);
 
-        verify(mockAware1).register(executorWrapper);
-        verify(mockAware2).register(executorWrapper);
+        assertDoesNotThrow(() -> AwareManager.beforeExecute(executor, thread, runnable));
     }
 
     @Test
-    void testExecute() {
-        for (ExecutorAware aware : customAwareList) {
-            aware.execute(mockExecutor, mockRunnable);
-        }
+    void testAfterExecuteCallback() {
+        Executor executor = mock(Executor.class);
+        Runnable runnable = mock(Runnable.class);
+        Throwable throwable = new RuntimeException("test");
 
-        verify(mockAware1).execute(mockExecutor, mockRunnable);
-        verify(mockAware2).execute(mockExecutor, mockRunnable);
+        assertDoesNotThrow(() -> AwareManager.afterExecute(executor, runnable, throwable));
     }
 
     @Test
-    void testBeforeExecute() {
-        Thread mockThread = mock(Thread.class);
-        for (ExecutorAware aware : customAwareList) {
-            aware.beforeExecuteWrap(mockExecutor, mockThread, mockRunnable);
-        }
-
-        verify(mockAware1).beforeExecuteWrap(mockExecutor, mockThread, mockRunnable);
-        verify(mockAware2).beforeExecuteWrap(mockExecutor, mockThread, mockRunnable);
+    void testShutdownCallback() {
+        Executor executor = mock(Executor.class);
+        assertDoesNotThrow(() -> AwareManager.shutdown(executor));
     }
 
     @Test
-    void testAfterExecute() {
-        for (ExecutorAware aware : customAwareList) {
-            aware.afterExecuteWrap(mockExecutor, mockRunnable, null);
-        }
-
-        verify(mockAware1).afterExecuteWrap(mockExecutor, mockRunnable, null);
-        verify(mockAware2).afterExecuteWrap(mockExecutor, mockRunnable, null);
+    void testTerminatedCallback() {
+        Executor executor = mock(Executor.class);
+        assertDoesNotThrow(() -> AwareManager.terminated(executor));
     }
 
     @Test
-    void testShutdown() {
-        for (ExecutorAware aware : customAwareList) {
-            aware.shutdown(mockExecutor);
-        }
+    void testBeforeRejectCallback() {
+        Runnable runnable = mock(Runnable.class);
+        Executor executor = mock(Executor.class);
 
-        verify(mockAware1).shutdown(mockExecutor);
-        verify(mockAware2).shutdown(mockExecutor);
+        assertDoesNotThrow(() -> AwareManager.beforeReject(runnable, executor));
     }
 
     @Test
-    void testShutdownNow() {
-        List<Runnable> mockTasks = new ArrayList<>();
-        for (ExecutorAware aware : customAwareList) {
-            aware.shutdownNow(mockExecutor, mockTasks);
-        }
+    void testAfterRejectCallback() {
+        Runnable runnable = mock(Runnable.class);
+        Executor executor = mock(Executor.class);
 
-        verify(mockAware1).shutdownNow(mockExecutor, mockTasks);
-        verify(mockAware2).shutdownNow(mockExecutor, mockTasks);
+        assertDoesNotThrow(() -> AwareManager.afterReject(runnable, executor));
+    }
+
+    // ==================== exception tolerance ====================
+
+    @Test
+    void testExecuteCallbackToleratesAwareException() {
+        ExecutorAware faultyAware = mockAware("FaultyExecuteAware", 0);
+        doThrow(new RuntimeException("intentional")).when(faultyAware).execute(any(), any());
+        AwareManager.add(faultyAware);
+
+        Executor executor = mock(Executor.class);
+        Runnable runnable = mock(Runnable.class);
+
+        assertDoesNotThrow(() -> AwareManager.execute(executor, runnable));
     }
 }

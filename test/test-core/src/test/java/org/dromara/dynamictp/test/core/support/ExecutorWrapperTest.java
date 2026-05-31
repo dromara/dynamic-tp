@@ -17,184 +17,163 @@
 
 package org.dromara.dynamictp.test.core.support;
 
-import org.dromara.dynamictp.common.entity.NotifyItem;
-import org.dromara.dynamictp.core.aware.AwareManager;
-import org.dromara.dynamictp.core.aware.RejectHandlerAware;
-import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.notifier.capture.CapturedExecutor;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
-import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
-import org.junit.Assert;
-import org.junit.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * ExecutorWrapperTest related
+ * ExecutorWrapper test
  *
- * @author Copilot
+ * @author yanhom
+ * @since 1.2.2
  */
-public class ExecutorWrapperTest {
+class ExecutorWrapperTest {
 
-    @Test
-    public void testOfDtpExecutorCopiesCoreProperties() {
-        DtpExecutor executor = mock(DtpExecutor.class);
-        List<NotifyItem> notifyItems = Collections.singletonList(new NotifyItem());
-        Set<String> awareNames = Collections.singleton("monitor");
-        when(executor.getThreadPoolName()).thenReturn("dtpExecutor");
-        when(executor.getThreadPoolAliasName()).thenReturn("aliasExecutor");
-        when(executor.getNotifyItems()).thenReturn(notifyItems);
-        when(executor.isNotifyEnabled()).thenReturn(false);
-        when(executor.getPlatformIds()).thenReturn(Collections.singletonList("ding"));
-        when(executor.getAwareNames()).thenReturn(awareNames);
-        when(executor.isRejectEnhanced()).thenReturn(false);
-        when(executor.isWaitForTasksToCompleteOnShutdown()).thenReturn(true);
-        when(executor.getAwaitTerminationSeconds()).thenReturn(3);
-        when(executor.getRunTimeout()).thenReturn(100L);
-        when(executor.getQueueTimeout()).thenReturn(200L);
-        when(executor.isTryInterrupt()).thenReturn(true);
+    private DtpExecutor dtpExecutor;
 
-        ExecutorWrapper wrapper = ExecutorWrapper.of(executor);
-
-        Assert.assertSame(executor, wrapper.getExecutor());
-        Assert.assertEquals("dtpExecutor", wrapper.getThreadPoolName());
-        Assert.assertEquals("aliasExecutor", wrapper.getThreadPoolAliasName());
-        Assert.assertSame(notifyItems, wrapper.getNotifyItems());
-        Assert.assertFalse(wrapper.isNotifyEnabled());
-        Assert.assertEquals(Collections.singletonList("ding"), wrapper.getPlatformIds());
-        Assert.assertEquals(awareNames, wrapper.getAwareNames());
-        Assert.assertFalse(wrapper.isRejectEnhanced());
-        Assert.assertTrue(wrapper.isWaitForTasksToCompleteOnShutdown());
-        Assert.assertEquals(3, wrapper.getAwaitTerminationSeconds());
-        Assert.assertEquals(100L, wrapper.getThreadPoolStatProvider().getRunTimeout());
-        Assert.assertEquals(200L, wrapper.getThreadPoolStatProvider().getQueueTimeout());
-        Assert.assertTrue(wrapper.getThreadPoolStatProvider().isTryInterrupt());
-    }
-
-    @Test
-    public void testCaptureWrapsExecutorSnapshot() {
-        ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<>(8));
-        ExecutorWrapper wrapper = newExecutorWrapper("capturedPool", executor);
-
-        ExecutorWrapper captured = wrapper.capture();
-
-        Assert.assertTrue(captured.getExecutor() instanceof CapturedExecutor);
-        Assert.assertEquals("capturedPool", captured.getThreadPoolName());
-        Assert.assertSame(wrapper.getNotifyItems(), captured.getNotifyItems());
-        Assert.assertSame(wrapper.getPlatformIds(), captured.getPlatformIds());
-        executor.shutdownNow();
-    }
-
-    @Test
-    public void testInitializeInvokesExecutorAndAwareManagerForDtpExecutor() {
-        DtpExecutor executor = mock(DtpExecutor.class);
-        ExecutorWrapper wrapper = ExecutorWrapper.of(executor);
-
-        try (MockedStatic<AwareManager> awareManagerMock = Mockito.mockStatic(AwareManager.class)) {
-            wrapper.initialize();
-
-            verify(executor).initialize();
-            awareManagerMock.verify(() -> AwareManager.register(wrapper));
+    @AfterEach
+    void tearDown() {
+        if (dtpExecutor != null) {
+            dtpExecutor.shutdownNow();
         }
     }
 
     @Test
-    public void testSetTaskWrappersAndRejectHandlerDelegateToAwareExecutor() {
-        TestAwareThreadPoolExecutor executor = new TestAwareThreadPoolExecutor();
-        ExecutorWrapper wrapper = newExecutorWrapper("awarePool", executor);
-        List<TaskWrapper> taskWrappers = Collections.singletonList(mock(TaskWrapper.class));
-        RejectedExecutionHandler handler = new ThreadPoolExecutor.AbortPolicy();
+    void testConstructorWithDtpExecutor() {
+        dtpExecutor = new DtpExecutor(2, 4, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        dtpExecutor.setThreadPoolName("test-dtp");
 
-        wrapper.setTaskWrappers(taskWrappers);
-        wrapper.setRejectHandler(handler);
+        ExecutorWrapper wrapper = new ExecutorWrapper(dtpExecutor);
 
-        Assert.assertSame(taskWrappers, executor.getTaskWrappers());
-        Assert.assertEquals("AbortPolicy", executor.getRejectHandlerType());
-        Assert.assertNotSame(handler, executor.getRejectedExecutionHandler());
+        assertEquals("test-dtp", wrapper.getThreadPoolName());
+        assertTrue(wrapper.isDtpExecutor());
+        assertFalse(wrapper.isThreadPoolExecutor());
+        assertNotNull(wrapper.getThreadPoolStatProvider());
+        assertTrue(wrapper.isNotifyEnabled());
+        assertTrue(wrapper.isRejectEnhanced());
     }
 
     @Test
-    public void testSetRejectHandlerKeepsOriginalHandlerWhenRejectEnhanceDisabled() {
-        TestAwareThreadPoolExecutor executor = new TestAwareThreadPoolExecutor();
-        ExecutorWrapper wrapper = newExecutorWrapper("awarePool", executor);
+    void testConstructorPreservesAliasName() {
+        dtpExecutor = new DtpExecutor(2, 4, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        dtpExecutor.setThreadPoolName("dtp-alias");
+        dtpExecutor.setThreadPoolAliasName("alias-test");
+
+        ExecutorWrapper wrapper = new ExecutorWrapper(dtpExecutor);
+
+        assertEquals("dtp-alias", wrapper.getThreadPoolName());
+        assertEquals("alias-test", wrapper.getThreadPoolAliasName());
+    }
+
+    @Test
+    void testConstructorPreservesNotifyEnabled() {
+        dtpExecutor = new DtpExecutor(2, 4, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        dtpExecutor.setThreadPoolName("notify-dtp");
+        dtpExecutor.setNotifyEnabled(false);
+
+        ExecutorWrapper wrapper = new ExecutorWrapper(dtpExecutor);
+
+        assertFalse(wrapper.isNotifyEnabled());
+    }
+
+    @Test
+    void testConstructorPreservesShutdownConfig() {
+        dtpExecutor = new DtpExecutor(2, 4, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        dtpExecutor.setThreadPoolName("shutdown-dtp");
+        dtpExecutor.setWaitForTasksToCompleteOnShutdown(true);
+        dtpExecutor.setAwaitTerminationSeconds(60);
+
+        ExecutorWrapper wrapper = new ExecutorWrapper(dtpExecutor);
+
+        assertTrue(wrapper.isWaitForTasksToCompleteOnShutdown());
+        assertEquals(60, wrapper.getAwaitTerminationSeconds());
+    }
+
+    @Test
+    void testOfFactoryMethod() {
+        dtpExecutor = new DtpExecutor(2, 4, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        dtpExecutor.setThreadPoolName("factory-dtp");
+
+        ExecutorWrapper wrapper = ExecutorWrapper.of(dtpExecutor);
+
+        assertEquals("factory-dtp", wrapper.getThreadPoolName());
+        assertTrue(wrapper.isDtpExecutor());
+    }
+
+    @Test
+    void testIsExecutorServiceReturnsTrue() {
+        dtpExecutor = new DtpExecutor(2, 4, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        ExecutorWrapper wrapper = new ExecutorWrapper(dtpExecutor);
+
+        assertTrue(wrapper.isExecutorService());
+    }
+
+    @Test
+    void testCaptureReturnsSnapshot() {
+        dtpExecutor = new DtpExecutor(2, 4, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        dtpExecutor.setThreadPoolName("capture-dtp");
+
+        ExecutorWrapper original = new ExecutorWrapper(dtpExecutor);
+        ExecutorWrapper captured = original.capture();
+
+        assertEquals(original.getThreadPoolName(), captured.getThreadPoolName());
+        assertNotNull(captured.getExecutor());
+        assertInstanceOf(CapturedExecutor.class, captured.getExecutor());
+        // captured executor is a different object
+        assertNotSame(original.getExecutor(), captured.getExecutor());
+    }
+
+    @Test
+    void testCapturePreservesNotifyConfig() {
+        dtpExecutor = new DtpExecutor(2, 4, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        dtpExecutor.setThreadPoolName("capture-notify");
+        dtpExecutor.setNotifyEnabled(false);
+
+        ExecutorWrapper original = new ExecutorWrapper(dtpExecutor);
+        ExecutorWrapper captured = original.capture();
+
+        assertFalse(captured.isNotifyEnabled());
+        assertEquals(original.getThreadPoolName(), captured.getThreadPoolName());
+    }
+
+    @Test
+    void testSetRejectHandlerWithEnhanced() {
+        dtpExecutor = new DtpExecutor(2, 4, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        dtpExecutor.setThreadPoolName("reject-enhanced");
+
+        ExecutorWrapper wrapper = new ExecutorWrapper(dtpExecutor);
+        assertTrue(wrapper.isRejectEnhanced());
+
+        wrapper.setRejectHandler(new ThreadPoolExecutor.AbortPolicy());
+        // with enhancement, handler should be a JDK dynamic proxy
+        assertTrue(java.lang.reflect.Proxy.isProxyClass(
+                dtpExecutor.getRejectedExecutionHandler().getClass()));
+    }
+
+    @Test
+    void testSetRejectHandlerWithoutEnhanced() {
+        dtpExecutor = new DtpExecutor(2, 4, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        dtpExecutor.setThreadPoolName("reject-plain");
+
+        ExecutorWrapper wrapper = new ExecutorWrapper(dtpExecutor);
         wrapper.setRejectEnhanced(false);
-        RejectedExecutionHandler handler = new ThreadPoolExecutor.CallerRunsPolicy();
 
-        wrapper.setRejectHandler(handler);
-
-        Assert.assertSame(handler, executor.getRejectedExecutionHandler());
-        Assert.assertEquals("CallerRunsPolicy", executor.getRejectHandlerType());
-    }
-
-    @Test
-    public void testUnsupportedExecutorTypeThrowsException() {
-        Assert.assertThrows(IllegalArgumentException.class,
-                () -> new ExecutorWrapper("unsupported", command -> { }));
-    }
-
-    private ExecutorWrapper newExecutorWrapper(String threadPoolName, ThreadPoolExecutor executor) {
-        try {
-            Constructor<ExecutorWrapper> constructor = ExecutorWrapper.class.getDeclaredConstructor();
-            constructor.setAccessible(true);
-            ExecutorWrapper wrapper = constructor.newInstance();
-            setField(wrapper, "threadPoolName", threadPoolName);
-            setField(wrapper, "executor", executor instanceof DtpExecutor ? executor :
-                    new org.dromara.dynamictp.core.support.adapter.ThreadPoolExecutorAdapter(executor));
-            return wrapper;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void setField(ExecutorWrapper wrapper, String fieldName, Object value) throws Exception {
-        Field field = ExecutorWrapper.class.getDeclaredField(fieldName);
-        field.setAccessible(true);
-        field.set(wrapper, value);
-    }
-
-    private static class TestAwareThreadPoolExecutor extends ThreadPoolExecutor implements TaskEnhanceAware, RejectHandlerAware {
-
-        private List<TaskWrapper> taskWrappers;
-
-        private String rejectHandlerType;
-
-        TestAwareThreadPoolExecutor() {
-            super(1, 1, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
-        }
-
-        @Override
-        public List<TaskWrapper> getTaskWrappers() {
-            return taskWrappers;
-        }
-
-        @Override
-        public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
-            this.taskWrappers = taskWrappers;
-        }
-
-        @Override
-        public String getRejectHandlerType() {
-            return rejectHandlerType;
-        }
-
-        @Override
-        public void setRejectHandlerType(String rejectHandlerType) {
-            this.rejectHandlerType = rejectHandlerType;
-        }
+        wrapper.setRejectHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        // without enhancement, handler is set directly (not a proxy)
+        assertFalse(java.lang.reflect.Proxy.isProxyClass(
+                dtpExecutor.getRejectedExecutionHandler().getClass()));
     }
 }

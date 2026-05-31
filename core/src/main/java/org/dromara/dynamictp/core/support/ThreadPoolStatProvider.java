@@ -161,7 +161,7 @@ public class ThreadPoolStatProvider {
     }
 
     public void startQueueTimeoutTask(Runnable r) {
-        if (queueTimeout <= 0) {
+        if (queueTimeout <= 0 || r == null) {
             return;
         }
         HashedWheelTimer timer = ContextManagerHelper.getBean(HashedWheelTimer.class);
@@ -170,13 +170,16 @@ public class ThreadPoolStatProvider {
     }
 
     public void cancelQueueTimeoutTask(Runnable r) {
+        if (r == null) {
+            return;
+        }
         Optional.ofNullable(queueTimeoutMap.remove(r))
                 .map(SoftReference::get)
                 .ifPresent(Timeout::cancel);
     }
 
     public void startRunTimeoutTask(Thread t, Runnable r) {
-        if (runTimeout <= 0) {
+        if (runTimeout <= 0 || r == null) {
             return;
         }
         HashedWheelTimer timer = ContextManagerHelper.getBean(HashedWheelTimer.class);
@@ -185,16 +188,25 @@ public class ThreadPoolStatProvider {
     }
 
     public void cancelRunTimeoutTask(Runnable r) {
+        if (r == null) {
+            return;
+        }
         Optional.ofNullable(runTimeoutMap.remove(r))
                 .map(SoftReference::get)
                 .ifPresent(Timeout::cancel);
     }
 
     public void startTask(Runnable r) {
+        if (r == null) {
+            return;
+        }
         stopWatchMap.put(r, System.currentTimeMillis());
     }
 
     public void completeTask(Runnable r) {
+        if (r == null) {
+            return;
+        }
         Optional.ofNullable(stopWatchMap.remove(r))
                 .ifPresent(millis -> {
                     long rt = System.currentTimeMillis() - millis;

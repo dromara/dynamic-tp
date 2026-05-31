@@ -38,3 +38,5 @@ docs/node_modules/
 docs/docs/.vuepress/dist/
 docs/docs/.vuepress/.cache/
 docs/docs/.vuepress/.temp/
+
+.claude/

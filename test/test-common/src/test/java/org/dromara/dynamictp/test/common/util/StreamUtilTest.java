@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
 
 /**
  * StreamUtil related
@@ -32,6 +33,22 @@ import java.util.Map;
  * @author yanhom
  */
 class StreamUtilTest {
+
+    @Test
+    void testFetchPropertyReturnsMappedValues() {
+        List<ServiceInstance> serviceInstances = Lists.newArrayList(
+                new ServiceInstance("172.12.13.1", 9000, "order-service", "prod"),
+                new ServiceInstance("172.12.13.2", 9001, "pay-service", "test"));
+
+        List<String> serviceNames = StreamUtil.fetchProperty(serviceInstances, ServiceInstance::getServiceName);
+
+        Assertions.assertEquals(Lists.newArrayList("order-service", "pay-service"), serviceNames);
+    }
+
+    @Test
+    void testFetchPropertyReturnsEmptyListWhenDataIsEmpty() {
+        Assertions.assertTrue(StreamUtil.fetchProperty(Collections.emptyList(), ServiceInstance::getServiceName).isEmpty());
+    }
 
     @Test
     void testToMap() {
@@ -43,5 +60,31 @@ class StreamUtilTest {
 
         Map<String, ServiceInstance> instanceMap = StreamUtil.toMap(serviceInstances, ServiceInstance::getServiceName);
         Assertions.assertEquals(instanceMap.get("order-service"), serviceInstance2);
+    }
+
+    @Test
+    void testToMapWithValueMapperKeepsLaterValueForDuplicateKey() {
+        List<ServiceInstance> serviceInstances = Lists.newArrayList(
+                new ServiceInstance("172.12.13.1", 9000, "order-service", "prod"),
+                new ServiceInstance("172.12.13.2", 9001, "order-service", "test"));
+
+        Map<String, Integer> instanceMap = StreamUtil.toMap(
+                serviceInstances, ServiceInstance::getServiceName, ServiceInstance::getPort);
+
+        Assertions.assertEquals(9001, instanceMap.get("order-service"));
+    }
+
+    @Test
+    void testToListMapGroupsByKeyAndFillsMissingIds() {
+        List<String> ids = Lists.newArrayList("order-service", "pay-service");
+        List<ServiceInstance> serviceInstances = Lists.newArrayList(
+                new ServiceInstance("172.12.13.1", 9000, "order-service", "prod"),
+                new ServiceInstance("172.12.13.2", 9001, "order-service", "test"));
+
+        Map<String, List<ServiceInstance>> instanceMap = StreamUtil.toListMap(
+                ids, serviceInstances, ServiceInstance::getServiceName);
+
+        Assertions.assertEquals(2, instanceMap.get("order-service").size());
+        Assertions.assertTrue(instanceMap.get("pay-service").isEmpty());
     }
 }

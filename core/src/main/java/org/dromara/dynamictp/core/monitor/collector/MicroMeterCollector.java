@@ -57,13 +57,14 @@ public class MicroMeterCollector extends AbstractCollector {
     @Override
     public void collect(ThreadPoolStats threadPoolStats) {
         // metrics must be held with a strong reference, even though it is never referenced within this class
-        ThreadPoolStats oldStats = GAUGE_CACHE.get(threadPoolStats.getPoolName());
+        String poolName = tagValue(threadPoolStats.getPoolName());
+        ThreadPoolStats oldStats = GAUGE_CACHE.get(poolName);
         if (Objects.isNull(oldStats)) {
-            GAUGE_CACHE.put(threadPoolStats.getPoolName(), threadPoolStats);
+            GAUGE_CACHE.put(poolName, threadPoolStats);
         } else {
             BeanUtil.copyProperties(threadPoolStats, oldStats);
         }
-        gauge(GAUGE_CACHE.get(threadPoolStats.getPoolName()));
+        gauge(GAUGE_CACHE.get(poolName));
     }
 
     @Override
@@ -111,11 +112,24 @@ public class MicroMeterCollector extends AbstractCollector {
 
     private Iterable<Tag> getTags(ThreadPoolStats poolStats) {
         List<Tag> tags = new ArrayList<>(3);
-        tags.add(Tag.of(POOL_NAME_TAG, poolStats.getPoolName()));
-        tags.add(Tag.of(APP_NAME_TAG, CommonUtil.getInstance().getServiceName()));
+        tags.add(Tag.of(POOL_NAME_TAG, tagValue(poolStats.getPoolName())));
+        tags.add(Tag.of(APP_NAME_TAG, tagValue(getServiceName())));
         // https://github.com/dromara/dynamic-tp/issues/359
-        tags.add(Tag.of(POOL_ALIAS_TAG, Optional.ofNullable(poolStats.getPoolAliasName()).orElse(poolStats.getPoolName())));
+        tags.add(Tag.of(POOL_ALIAS_TAG, tagValue(Optional.ofNullable(poolStats.getPoolAliasName()).orElse(poolStats.getPoolName()))));
         return tags;
+    }
+
+    private String getServiceName() {
+        try {
+            return CommonUtil.getInstance().getServiceName();
+        } catch (RuntimeException | LinkageError e) {
+            log.debug("DynamicTp micrometer collector could not resolve service name.", e);
+            return null;
+        }
+    }
+
+    private String tagValue(String value) {
+        return Optional.ofNullable(value).orElse("unknown");
     }
 }
 

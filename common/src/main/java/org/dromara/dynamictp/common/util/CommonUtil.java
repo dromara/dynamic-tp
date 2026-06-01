@@ -56,16 +56,37 @@ public final class CommonUtil {
 
         String env = DtpProperties.getInstance().getEnv();
         if (StringUtils.isBlank(env)) {
-            env = ContextManagerHelper.getEnvironmentProperty(APP_ENV_KEY);
+            env = getEnvironmentProperty(APP_ENV_KEY);
         }
-        String appName = ContextManagerHelper.getEnvironmentProperty(APP_NAME_KEY);
-        String portStr = ContextManagerHelper.getEnvironmentProperty(APP_PORT_KEY);
-        int port = StringUtils.isNotBlank(portStr) ? Integer.parseInt(portStr) : 0;
+        String appName = getEnvironmentProperty(APP_NAME_KEY);
+        String portStr = getEnvironmentProperty(APP_PORT_KEY);
+        int port = parsePort(portStr);
         SERVICE_INSTANCE = new ServiceInstance(address, port, appName, env);
     }
 
     public static ServiceInstance getInstance() {
         return SERVICE_INSTANCE;
+    }
+
+    private static String getEnvironmentProperty(String key) {
+        try {
+            return ContextManagerHelper.getEnvironmentProperty(key);
+        } catch (RuntimeException e) {
+            log.debug("Get environment property failed, key: {}", key, e);
+            return null;
+        }
+    }
+
+    private static int parsePort(String portStr) {
+        if (StringUtils.isBlank(portStr)) {
+            return 0;
+        }
+        try {
+            return Integer.parseInt(portStr);
+        } catch (NumberFormatException e) {
+            log.debug("Parse application port failed, port: {}", portStr, e);
+            return 0;
+        }
     }
 
     private static InetAddress getLocalHostExactAddress() throws SocketException, UnknownHostException {

@@ -17,22 +17,42 @@
 
 package org.dromara.dynamictp.test.common.util;
 
-import org.dromara.dynamictp.common.util.VersionUtil;
+import org.dromara.dynamictp.common.util.DefaultValueUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
- * VersionUtilTest related.
+ * DefaultValueUtilTest related.
  */
-class VersionUtilTest {
+class DefaultValueUtilTest {
 
     @Test
-    void testVersionReturnsResolvedVersion() {
-        Assertions.assertFalse(VersionUtil.version().isEmpty());
+    void testSetIfZeroSetsDefaultWhenValueIsNull() {
+        AtomicReference<Integer> value = new AtomicReference<>();
+
+        DefaultValueUtil.setIfZero(value::get, value::set, 8);
+
+        Assertions.assertEquals(8, value.get());
     }
 
     @Test
-    void testGetVersionReturnsCachedVersion() {
-        Assertions.assertEquals(VersionUtil.version(), VersionUtil.getVersion());
+    void testSetIfZeroSetsDefaultWhenValueIsZero() {
+        AtomicInteger value = new AtomicInteger();
+
+        DefaultValueUtil.setIfZero(value::get, value::set, 16);
+
+        Assertions.assertEquals(16, value.get());
+    }
+
+    @Test
+    void testSetIfZeroKeepsNonZeroValue() {
+        AtomicInteger value = new AtomicInteger(4);
+
+        DefaultValueUtil.setIfZero(value::get, value::set, 16);
+
+        Assertions.assertEquals(4, value.get());
     }
 }

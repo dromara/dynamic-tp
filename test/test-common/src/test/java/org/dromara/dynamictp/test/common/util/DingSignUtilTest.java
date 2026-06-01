@@ -17,22 +17,19 @@
 
 package org.dromara.dynamictp.test.common.util;
 
-import org.dromara.dynamictp.common.util.VersionUtil;
+import org.dromara.dynamictp.common.util.DingSignUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * VersionUtilTest related.
+ * DingSignUtilTest related.
  */
-class VersionUtilTest {
+class DingSignUtilTest {
 
     @Test
-    void testVersionReturnsResolvedVersion() {
-        Assertions.assertFalse(VersionUtil.version().isEmpty());
-    }
+    void testDingSignReturnsUrlEncodedHmacSha256Signature() {
+        String sign = DingSignUtil.dingSign("test-secret", 1700000000000L);
 
-    @Test
-    void testGetVersionReturnsCachedVersion() {
-        Assertions.assertEquals(VersionUtil.version(), VersionUtil.getVersion());
+        Assertions.assertEquals("BYMqUCZnSqbfPf1GCfZftO7Rg2g6P%2BRp3%2F4%2BbLNtSGA%3D", sign);
     }
 }

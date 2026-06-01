@@ -15,24 +15,19 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.test.common.util;
+package org.dromara.dynamictp.test.common.queue;
 
-import org.dromara.dynamictp.common.util.VersionUtil;
+import org.dromara.dynamictp.common.queue.MemoryLimitCalculator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * VersionUtilTest related.
+ * MemoryLimitCalculatorTest related.
  */
-class VersionUtilTest {
+class MemoryLimitCalculatorTest {
 
     @Test
-    void testVersionReturnsResolvedVersion() {
-        Assertions.assertFalse(VersionUtil.version().isEmpty());
-    }
-
-    @Test
-    void testGetVersionReturnsCachedVersion() {
-        Assertions.assertEquals(VersionUtil.version(), VersionUtil.getVersion());
+    void testMaxAvailableReturnsPositiveMemory() {
+        Assertions.assertTrue(MemoryLimitCalculator.maxAvailable() > 0);
     }
 }

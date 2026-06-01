@@ -15,24 +15,32 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.test.common.util;
+package org.dromara.dynamictp.test.common.em;
 
-import org.dromara.dynamictp.common.util.VersionUtil;
+import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * VersionUtilTest related.
+ * ConfigFileTypeEnumTest related.
  */
-class VersionUtilTest {
+class ConfigFileTypeEnumTest {
 
     @Test
-    void testVersionReturnsResolvedVersion() {
-        Assertions.assertFalse(VersionUtil.version().isEmpty());
+    void testOfReturnsMatchingType() {
+        Assertions.assertEquals(ConfigFileTypeEnum.JSON, ConfigFileTypeEnum.of("json"));
+        Assertions.assertEquals(ConfigFileTypeEnum.YML, ConfigFileTypeEnum.of("yml"));
+        Assertions.assertEquals(ConfigFileTypeEnum.YAML, ConfigFileTypeEnum.of("yaml"));
     }
 
     @Test
-    void testGetVersionReturnsCachedVersion() {
-        Assertions.assertEquals(VersionUtil.version(), VersionUtil.getVersion());
+    void testOfReturnsPropertiesWhenValueIsUnknown() {
+        Assertions.assertEquals(ConfigFileTypeEnum.PROPERTIES, ConfigFileTypeEnum.of("conf"));
+    }
+
+    @Test
+    void testGetValueReturnsConfiguredValue() {
+        Assertions.assertEquals("xml", ConfigFileTypeEnum.XML.getValue());
+        Assertions.assertEquals("txt", ConfigFileTypeEnum.TXT.getValue());
     }
 }

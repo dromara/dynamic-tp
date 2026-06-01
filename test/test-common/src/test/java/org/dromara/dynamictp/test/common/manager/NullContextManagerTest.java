@@ -15,24 +15,27 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.test.common.util;
+package org.dromara.dynamictp.test.common.manager;
 
-import org.dromara.dynamictp.common.util.VersionUtil;
+import org.dromara.dynamictp.common.manager.NullContextManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * VersionUtilTest related.
+ * NullContextManagerTest related.
  */
-class VersionUtilTest {
+class NullContextManagerTest {
 
     @Test
-    void testVersionReturnsResolvedVersion() {
-        Assertions.assertFalse(VersionUtil.version().isEmpty());
-    }
+    void testNullContextManagerReturnsEmptyValues() {
+        NullContextManager contextManager = new NullContextManager();
 
-    @Test
-    void testGetVersionReturnsCachedVersion() {
-        Assertions.assertEquals(VersionUtil.version(), VersionUtil.getVersion());
+        Assertions.assertNull(contextManager.getBean(Object.class));
+        Assertions.assertNull(contextManager.getBean("bean", Object.class));
+        Assertions.assertTrue(contextManager.getBeansOfType(Object.class).isEmpty());
+        Assertions.assertNull(contextManager.getEnvironment());
+        Assertions.assertNull(contextManager.getEnvironmentProperty("key"));
+        Assertions.assertNull(contextManager.getEnvironmentProperty("key", new Object()));
+        Assertions.assertNull(contextManager.getEnvironmentProperty("key", "default"));
     }
 }

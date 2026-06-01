@@ -15,24 +15,33 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.test.common.util;
+package org.dromara.dynamictp.test.common.em;
 
-import org.dromara.dynamictp.common.util.VersionUtil;
+import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * VersionUtilTest related.
+ * NotifyItemEnumTest related.
  */
-class VersionUtilTest {
+class NotifyItemEnumTest {
 
     @Test
-    void testVersionReturnsResolvedVersion() {
-        Assertions.assertFalse(VersionUtil.version().isEmpty());
+    void testOfReturnsMatchingNotifyItem() {
+        Assertions.assertEquals(NotifyItemEnum.CHANGE, NotifyItemEnum.of("change"));
+        Assertions.assertEquals(NotifyItemEnum.RUN_TIMEOUT, NotifyItemEnum.of("run_timeout"));
+        Assertions.assertEquals(NotifyItemEnum.QUEUE_TIMEOUT, NotifyItemEnum.of("queue_timeout"));
     }
 
     @Test
-    void testGetVersionReturnsCachedVersion() {
-        Assertions.assertEquals(VersionUtil.version(), VersionUtil.getVersion());
+    void testOfReturnsNullWhenValueIsUnknown() {
+        Assertions.assertNull(NotifyItemEnum.of("unknown"));
+    }
+
+    @Test
+    void testGetValueReturnsConfiguredValue() {
+        Assertions.assertEquals("liveness", NotifyItemEnum.LIVENESS.getValue());
+        Assertions.assertEquals("capacity", NotifyItemEnum.CAPACITY.getValue());
+        Assertions.assertEquals("reject", NotifyItemEnum.REJECT.getValue());
     }
 }

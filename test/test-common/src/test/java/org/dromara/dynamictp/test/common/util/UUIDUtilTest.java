@@ -22,9 +22,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * UUIDUtilTest related
- *
- * @author codex
+ * UUIDUtilTest related.
  */
 class UUIDUtilTest {
 
@@ -33,14 +31,15 @@ class UUIDUtilTest {
         String uuid = UUIDUtil.genUuid();
 
         Assertions.assertEquals(36, uuid.length());
-        Assertions.assertTrue(uuid.matches("[0-9a-f\\-]{36}"));
+        Assertions.assertTrue(uuid.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"));
     }
 
     @Test
-    void testGenUuidWithLengthReturnsCompactPrefix() {
+    void testGenUuidWithLengthReturnsTrimmedUuidWithoutHyphen() {
         String uuid = UUIDUtil.genUuid(16);
 
         Assertions.assertEquals(16, uuid.length());
+        Assertions.assertFalse(uuid.contains("-"));
         Assertions.assertTrue(uuid.matches("[0-9a-f]{16}"));
     }
 }

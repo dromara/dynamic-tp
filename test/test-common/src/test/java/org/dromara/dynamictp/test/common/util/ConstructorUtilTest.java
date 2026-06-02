@@ -85,4 +85,21 @@ class ConstructorUtilTest {
 
         Assertions.assertTrue(argTypes.length > 0);
     }
+
+    @Test
+    void testBuildConstructorArgTypesReturnsEmptyWhenNoPublicConstructor() {
+        Class<?>[] argTypes = ConstructorUtil.buildConstructorArgTypes(PrivateConstructorOnly.create());
+
+        Assertions.assertArrayEquals(new Class[0], argTypes);
+    }
+
+    private static class PrivateConstructorOnly {
+
+        private PrivateConstructorOnly() {
+        }
+
+        private static PrivateConstructorOnly create() {
+            return new PrivateConstructorOnly();
+        }
+    }
 }

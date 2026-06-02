@@ -51,6 +51,12 @@ class StreamUtilTest {
     }
 
     @Test
+    void testFetchPropertyRejectsNullMapping() {
+        Assertions.assertThrows(NullPointerException.class,
+                () -> StreamUtil.fetchProperty(Collections.emptyList(), null));
+    }
+
+    @Test
     void testToMap() {
         List<ServiceInstance> serviceInstances = Lists.newArrayList();
         ServiceInstance serviceInstance = new ServiceInstance("172.12.13.1", 9000, "order-service", "prod");
@@ -60,6 +66,20 @@ class StreamUtilTest {
 
         Map<String, ServiceInstance> instanceMap = StreamUtil.toMap(serviceInstances, ServiceInstance::getServiceName);
         Assertions.assertEquals(instanceMap.get("order-service"), serviceInstance2);
+    }
+
+    @Test
+    void testToMapReturnsEmptyMapWhenCollectionIsEmpty() {
+        Map<String, ServiceInstance> instanceMap = StreamUtil.toMap(
+                Collections.emptyList(), ServiceInstance::getServiceName);
+
+        Assertions.assertTrue(instanceMap.isEmpty());
+    }
+
+    @Test
+    void testToMapRejectsNullKeyMapper() {
+        Assertions.assertThrows(NullPointerException.class,
+                () -> StreamUtil.toMap(Collections.emptyList(), null));
     }
 
     @Test
@@ -75,6 +95,22 @@ class StreamUtilTest {
     }
 
     @Test
+    void testToMapWithValueMapperReturnsEmptyMapWhenCollectionIsEmpty() {
+        Map<String, Integer> instanceMap = StreamUtil.toMap(
+                Collections.emptyList(), ServiceInstance::getServiceName, ServiceInstance::getPort);
+
+        Assertions.assertTrue(instanceMap.isEmpty());
+    }
+
+    @Test
+    void testToMapWithValueMapperRejectsNullMappers() {
+        Assertions.assertThrows(NullPointerException.class,
+                () -> StreamUtil.toMap(Collections.emptyList(), null, ServiceInstance::getPort));
+        Assertions.assertThrows(NullPointerException.class,
+                () -> StreamUtil.toMap(Collections.emptyList(), ServiceInstance::getServiceName, null));
+    }
+
+    @Test
     void testToListMapGroupsByKeyAndFillsMissingIds() {
         List<String> ids = Lists.newArrayList("order-service", "pay-service");
         List<ServiceInstance> serviceInstances = Lists.newArrayList(
@@ -86,5 +122,23 @@ class StreamUtilTest {
 
         Assertions.assertEquals(2, instanceMap.get("order-service").size());
         Assertions.assertTrue(instanceMap.get("pay-service").isEmpty());
+    }
+
+    @Test
+    void testToListMapReturnsEmptyMapWhenIdsOrListEmpty() {
+        List<String> ids = Lists.newArrayList("order-service");
+        List<ServiceInstance> serviceInstances = Lists.newArrayList(
+                new ServiceInstance("172.12.13.1", 9000, "order-service", "prod"));
+
+        Assertions.assertTrue(StreamUtil.toListMap(Collections.emptyList(), serviceInstances,
+                ServiceInstance::getServiceName).isEmpty());
+        Assertions.assertTrue(StreamUtil.toListMap(ids, Collections.emptyList(),
+                ServiceInstance::getServiceName).isEmpty());
+    }
+
+    @Test
+    void testToListMapRejectsNullKeyMapper() {
+        Assertions.assertThrows(NullPointerException.class,
+                () -> StreamUtil.toListMap(Collections.emptyList(), Collections.emptyList(), null));
     }
 }

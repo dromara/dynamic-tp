@@ -22,16 +22,26 @@ import org.dromara.dynamictp.core.aware.ExecutorAware;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolStatProvider;
 import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.same;
 import static org.mockito.Mockito.when;
 
 /**
@@ -40,7 +50,29 @@ import static org.mockito.Mockito.when;
  * @author vzer200
  * @since 1.1.8
  */
+@Execution(ExecutionMode.SAME_THREAD)
 class AwareManagerTest {
+
+    private List<ExecutorAware> originalAwareList;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        originalAwareList = new ArrayList<>(awareList());
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        List<ExecutorAware> awareList = awareList();
+        awareList.clear();
+        awareList.addAll(originalAwareList);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<ExecutorAware> awareList() throws Exception {
+        Field field = AwareManager.class.getDeclaredField("EXECUTOR_AWARE_LIST");
+        field.setAccessible(true);
+        return (List<ExecutorAware>) field.get(null);
+    }
 
     private ExecutorAware mockAware(String name, int order) {
         ExecutorAware aware = mock(ExecutorAware.class);
@@ -140,12 +172,18 @@ class AwareManagerTest {
     @Test
     void testExecuteCallbackToleratesAwareException() {
         ExecutorAware faultyAware = mockAware("FaultyExecuteAware", 0);
-        doThrow(new RuntimeException("intentional")).when(faultyAware).execute(any(), any());
-        AwareManager.add(faultyAware);
-
         Executor executor = mock(Executor.class);
         Runnable runnable = mock(Runnable.class);
+        doThrow(new RuntimeException("intentional")).when(faultyAware).execute(same(executor), same(runnable));
+        AwareManager.add(faultyAware);
 
-        assertDoesNotThrow(() -> AwareManager.execute(executor, runnable));
+        Logger logger = (Logger) LoggerFactory.getLogger(AwareManager.class);
+        Level originalLevel = logger.getLevel();
+        logger.setLevel(Level.OFF);
+        try {
+            assertDoesNotThrow(() -> AwareManager.execute(executor, runnable));
+        } finally {
+            logger.setLevel(originalLevel);
+        }
     }
 }

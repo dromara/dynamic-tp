@@ -23,6 +23,7 @@ import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -111,6 +113,14 @@ class ExecutorWrapperTest {
 
         assertEquals("factory-dtp", wrapper.getThreadPoolName());
         assertTrue(wrapper.isDtpExecutor());
+    }
+
+    @Test
+    void testConstructorRejectsUnsupportedExecutor() {
+        Executor unsupported = Runnable::run;
+
+        assertThrows(IllegalArgumentException.class,
+                () -> new ExecutorWrapper("unsupported-executor", unsupported));
     }
 
     @Test

@@ -23,6 +23,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -69,8 +71,14 @@ class ExecutorAdapterTest {
 
         Assertions.assertThrows(UnsupportedOperationException.class, queue::iterator);
         Assertions.assertThrows(UnsupportedOperationException.class, () -> queue.offer(() -> { }));
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> queue.offer(() -> { }, 1, TimeUnit.MILLISECONDS));
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> queue.put(() -> { }));
+        Assertions.assertThrows(UnsupportedOperationException.class, queue::take);
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> queue.poll(1, TimeUnit.MILLISECONDS));
         Assertions.assertThrows(UnsupportedOperationException.class, queue::poll);
         Assertions.assertThrows(UnsupportedOperationException.class, queue::peek);
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> queue.drainTo(new ArrayList<>()));
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> queue.drainTo(new ArrayList<>(), 1));
     }
 
     @Test
@@ -105,6 +113,45 @@ class ExecutorAdapterTest {
     }
 
     @Test
+    void testThreadPoolExecutorAdapterDelegatesRuntimeStats() throws InterruptedException {
+        executor = new ThreadPoolExecutor(1, 1, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        ThreadPoolExecutorAdapter adapter = new ThreadPoolExecutorAdapter(executor);
+        CountDownLatch running = new CountDownLatch(1);
+        CountDownLatch release = new CountDownLatch(1);
+
+        adapter.execute(() -> {
+            running.countDown();
+            try {
+                release.await(3, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
+        Assertions.assertTrue(running.await(3, TimeUnit.SECONDS));
+        Assertions.assertEquals(1, adapter.getPoolSize());
+        Assertions.assertEquals(1, adapter.getActiveCount());
+        Assertions.assertEquals(1, adapter.getLargestPoolSize());
+        Assertions.assertEquals(1, adapter.getTaskCount());
+
+        release.countDown();
+        executor.shutdown();
+        Assertions.assertTrue(executor.awaitTermination(3, TimeUnit.SECONDS));
+        Assertions.assertEquals(1, adapter.getCompletedTaskCount());
+        Assertions.assertTrue(adapter.isTerminated());
+        Assertions.assertFalse(adapter.isTerminating());
+    }
+
+    @Test
+    void testThreadPoolExecutorAdapterPreStartsCoreThreads() {
+        executor = new ThreadPoolExecutor(2, 2, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+        ThreadPoolExecutorAdapter adapter = new ThreadPoolExecutorAdapter(executor);
+
+        adapter.preStartAllCoreThreads();
+
+        Assertions.assertEquals(2, adapter.getPoolSize());
+    }
+
+    @Test
     void testThreadPoolExecutorAdapterDelegatesRejectedHandler() {
         executor = new ThreadPoolExecutor(1, 1, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
         ThreadPoolExecutorAdapter adapter = new ThreadPoolExecutorAdapter(executor);
@@ -114,6 +161,23 @@ class ExecutorAdapterTest {
 
         Assertions.assertSame(handler, adapter.getRejectedExecutionHandler());
         Assertions.assertEquals("CallerRunsPolicy", adapter.getRejectHandlerType());
+    }
+
+    @Test
+    void testThreadPoolExecutorAdapterQueueMetricsUseBackingQueue() {
+        LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(2);
+        executor = new ThreadPoolExecutor(1, 1, 30, TimeUnit.SECONDS, queue);
+        ThreadPoolExecutorAdapter adapter = new ThreadPoolExecutorAdapter(executor);
+        List<Runnable> drained = new ArrayList<>();
+
+        queue.offer(() -> { });
+
+        Assertions.assertEquals("LinkedBlockingQueue", adapter.getQueueType());
+        Assertions.assertEquals(1, adapter.getQueueSize());
+        Assertions.assertEquals(1, adapter.getQueueRemainingCapacity());
+        Assertions.assertEquals(2, adapter.getQueueCapacity());
+        Assertions.assertEquals(1, adapter.getQueue().drainTo(drained));
+        Assertions.assertEquals(1, drained.size());
     }
 
     private static class MinimalExecutorAdapter implements ExecutorAdapter<Executor> {

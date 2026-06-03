@@ -29,6 +29,7 @@ import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -101,6 +102,31 @@ class ExecutorSelectorTest {
     }
 
     @Test
+    void testHashedNegativeHashCodeUsesAbsoluteIndex() {
+        HashedExecutorSelector selector = new HashedExecutorSelector();
+        Executor first = Runnable::run;
+        Executor second = Runnable::run;
+        Executor third = Runnable::run;
+        List<Executor> executors = Arrays.asList(first, second, third);
+        Object negativeKey = new Object() {
+            @Override
+            public int hashCode() {
+                return -2;
+            }
+        };
+
+        assertEquals(third, selector.select(executors, negativeKey));
+    }
+
+    @Test
+    void testHashedSelectSingleExecutor() {
+        HashedExecutorSelector selector = new HashedExecutorSelector();
+        Executor executor = Runnable::run;
+
+        assertEquals(executor, selector.select(Arrays.asList(executor), "key"));
+    }
+
+    @Test
     void testRandomSelectReturnsValid() {
         RandomExecutorSelector selector = new RandomExecutorSelector();
         ExecutorService e1 = Executors.newSingleThreadExecutor();
@@ -118,5 +144,21 @@ class ExecutorSelectorTest {
         e1.shutdownNow();
         e2.shutdownNow();
         e3.shutdownNow();
+    }
+
+    @Test
+    void testRandomSelectSingleExecutor() {
+        RandomExecutorSelector selector = new RandomExecutorSelector();
+        Executor executor = Runnable::run;
+
+        assertEquals(executor, selector.select(Arrays.asList(executor), "any"));
+    }
+
+    @Test
+    void testSelectorsThrowOnEmptyExecutors() {
+        assertThrows(ArithmeticException.class,
+                () -> new HashedExecutorSelector().select(Arrays.asList(), "key"));
+        assertThrows(IllegalArgumentException.class,
+                () -> new RandomExecutorSelector().select(Arrays.asList(), "key"));
     }
 }

@@ -21,8 +21,11 @@ import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.support.ThreadPoolCreator;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -64,6 +67,32 @@ class ThreadPoolCreatorTest {
         DtpExecutor executor = ThreadPoolCreator.createDynamicFast("dynamic-prefix", "my-prefix");
         try {
             assertEquals("dynamic-prefix", executor.getThreadPoolName());
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
+    @Test
+    void testCreateCommonWithTtlExecutesTask() throws InterruptedException {
+        ExecutorService executor = ThreadPoolCreator.createCommonWithTtl("common-ttl");
+        CountDownLatch latch = new CountDownLatch(1);
+        try {
+            executor.execute(latch::countDown);
+
+            assertTrue(latch.await(3, TimeUnit.SECONDS));
+        } finally {
+            executor.shutdownNow();
+        }
+    }
+
+    @Test
+    void testCreateDynamicWithTtlExecutesTask() throws InterruptedException {
+        ExecutorService executor = ThreadPoolCreator.createDynamicWithTtl("dynamic-ttl", "ttl-prefix");
+        CountDownLatch latch = new CountDownLatch(1);
+        try {
+            executor.execute(latch::countDown);
+
+            assertTrue(latch.await(3, TimeUnit.SECONDS));
         } finally {
             executor.shutdownNow();
         }

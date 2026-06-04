@@ -23,6 +23,7 @@ import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
 import org.dromara.dynamictp.core.support.ThreadPoolCreator;
 import org.dromara.dynamictp.core.support.adapter.ThreadPoolExecutorAdapter;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -62,6 +63,11 @@ public class CapturedExecutorTest {
                 .buildDynamic();
     }
 
+    @AfterAll
+    public static void tearDown() {
+        dtpExecutor.shutdownNow();
+    }
+
     @Test
     public void testCapturedExecutor() {
         CapturedExecutor capturedExecutor = new CapturedExecutor(dtpExecutor);
@@ -73,6 +79,9 @@ public class CapturedExecutorTest {
         assertEquals(capturedExecutor.getTaskCount(), 0);
         assertEquals(capturedExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS), 15000);
         assertEquals(capturedExecutor.getQueueRemainingCapacity(), 100);
+        assertEquals(capturedExecutor.getQueueCapacity(), 100);
+        assertEquals(capturedExecutor.getQueueType(), "VariableLinkedBlockingQueue");
+        assertEquals(capturedExecutor.getRejectHandlerType(), dtpExecutor.getRejectHandlerType());
     }
 
     @Test
@@ -89,6 +98,17 @@ public class CapturedExecutorTest {
         CapturedExecutor captured = new CapturedExecutor(executor);
         assertThrows(UnsupportedOperationException.class, () ->
                 captured.execute(() -> System.out.println("i am mock task")));
+    }
+
+    @Test
+    public void testUnsupportedMutators() {
+        CapturedExecutor captured = new CapturedExecutor(dtpExecutor);
+
+        assertThrows(UnsupportedOperationException.class, () -> captured.setMaximumPoolSize(20));
+        assertThrows(UnsupportedOperationException.class, () -> captured.setRejectedExecutionHandler(
+                new ThreadPoolExecutor.AbortPolicy()));
+        assertThrows(UnsupportedOperationException.class, () -> captured.allowCoreThreadTimeOut(true));
+        assertThrows(UnsupportedOperationException.class, () -> captured.setKeepAliveTime(10, TimeUnit.SECONDS));
     }
 
     @Test

@@ -39,6 +39,16 @@ class LimitedUniformReservoirTest {
     }
 
     @Test
+    void testEmptySnapshot() {
+        LimitedUniformReservoir reservoir = new LimitedUniformReservoir();
+
+        Snapshot snapshot = reservoir.getSnapshot();
+
+        assertEquals(0, snapshot.size());
+        assertEquals(0.0, snapshot.getMedian(), 0.001);
+    }
+
+    @Test
     void testUpdateIncrementsSize() {
         LimitedUniformReservoir reservoir = new LimitedUniformReservoir();
         reservoir.update(100);
@@ -56,6 +66,16 @@ class LimitedUniformReservoirTest {
         }
         // Should be capped at 4096
         assertEquals(4096, reservoir.size());
+    }
+
+    @Test
+    void testSnapshotSizeCappedAtDefaultSize() {
+        LimitedUniformReservoir reservoir = new LimitedUniformReservoir();
+        for (int i = 0; i < 5000; i++) {
+            reservoir.update(i);
+        }
+
+        assertEquals(4096, reservoir.getSnapshot().size());
     }
 
     @Test

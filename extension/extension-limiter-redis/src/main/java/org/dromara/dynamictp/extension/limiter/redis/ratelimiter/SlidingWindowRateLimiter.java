@@ -76,7 +76,11 @@ public class SlidingWindowRateLimiter extends AbstractRedisRateLimiter {
             }
             return true;
         } catch (Exception e) {
-            log.error("DynamicTp notify, redis rate limit check failed, limitKey:{}", name, e);
+            log.warn("DynamicTp notify, redis rate limit unavailable, fail open, limitKey:{}, reason:{}",
+                    name, e.getMessage());
+            if (log.isDebugEnabled()) {
+                log.debug("DynamicTp notify, redis rate limit check failed, limitKey:{}", name, e);
+            }
             return true;
         }
     }

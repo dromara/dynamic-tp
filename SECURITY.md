@@ -13,7 +13,7 @@ Use one of these private channels instead:
    GitHub automatically routes it to the maintainers, keeps the discussion private until you and the maintainers agree to publish, and (optionally) assigns a CVE on publish.
 
 2. **Email.**
-   If GitHub PVR is unavailable to you for any reason, email the maintainers at <security-contact@your-domain> (replace with the project's preferred security contact email).
+   If GitHub PVR is unavailable to you for any reason, email the maintainers at <yanhom1314@gmail.com>.
 
 ## What to include
 
@@ -27,7 +27,7 @@ A good report contains:
 
 ## Scope and supported versions
 
-dynamic-tp is a lightweight dynamic thread-pool framework with monitoring, alerts, and config-center integration. The maintainers support security fixes on the latest minor release. Older releases will not generally receive backports.
+dynamic-tp is a lightweight dynamic thread-pool framework with monitoring, alerts, and config-center integration. The maintainers support security fixes on the latest minor release. Older releases will receive critical security fixes on a best-effort basis.
 
 In-scope vulnerability classes include:
 
@@ -55,7 +55,3 @@ After you submit:
 ## Hall of fame
 
 Reporters who have helped harden dynamic-tp via responsible disclosure will be listed here once the corresponding advisory is published.
-
----
-
-This policy is suggested via [GitHub's "Suggest a security policy" workflow](https://docs.github.com/en/code-security/getting-started/adding-a-security-policy-to-your-repository). Maintainers can edit any section freely; the most important thing is that **a private reporting channel exists** so researchers can submit findings responsibly.

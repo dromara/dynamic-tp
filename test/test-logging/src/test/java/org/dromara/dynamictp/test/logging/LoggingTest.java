@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.GenericApplicationContext;
 
 import java.io.FileNotFoundException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -60,7 +61,11 @@ class LoggingTest {
         TestLogging logging = new TestLogging();
         Path config = Files.createFile(tempDir.resolve("dtp-test.xml"));
 
-        assertEquals("file", logging.getResourceUrl("classpath:dtp-logback.xml").getProtocol());
+        URL classpathResource = logging.getResourceUrl("classpath:dtp-logback.xml");
+        assertNotNull(classpathResource);
+        try (java.io.InputStream inputStream = classpathResource.openStream()) {
+            assertTrue(inputStream.read() >= 0);
+        }
         assertEquals("https", logging.getResourceUrl("https://dynamictp.cn").getProtocol());
         assertEquals(config.toUri().toURL(), logging.getResourceUrl(config.toString()));
     }

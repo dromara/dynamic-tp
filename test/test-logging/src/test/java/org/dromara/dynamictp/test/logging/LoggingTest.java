@@ -42,6 +42,12 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * LoggingTest related
+ *
+ * @author yanhom
+ * @since 1.2.2
+ */
 class LoggingTest {
 
     @TempDir

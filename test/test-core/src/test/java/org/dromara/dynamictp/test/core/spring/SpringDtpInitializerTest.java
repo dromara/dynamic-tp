@@ -32,6 +32,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import static org.junit.jupiter.api.parallel.Resources.SYSTEM_PROPERTIES;
 
+/**
+ * SpringDtpInitializerTest related
+ *
+ * @author yanhom
+ * @since 1.2.2
+ */
 @Execution(SAME_THREAD)
 @ResourceLock(SYSTEM_PROPERTIES)
 class SpringDtpInitializerTest {

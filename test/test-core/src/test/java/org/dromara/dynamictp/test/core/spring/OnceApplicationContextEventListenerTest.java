@@ -28,6 +28,12 @@ import org.springframework.context.support.GenericApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * OnceApplicationContextEventListenerTest related
+ *
+ * @author yanhom
+ * @since 1.2.2
+ */
 class OnceApplicationContextEventListenerTest {
 
     @Test

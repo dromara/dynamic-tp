@@ -28,6 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * BeanRegistrationUtilTest related
+ *
+ * @author yanhom
+ * @since 1.2.2
+ */
 class BeanRegistrationUtilTest {
 
     @Test

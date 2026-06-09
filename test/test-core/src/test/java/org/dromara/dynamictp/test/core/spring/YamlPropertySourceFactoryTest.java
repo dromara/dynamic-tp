@@ -28,6 +28,12 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+/**
+ * YamlPropertySourceFactoryTest related
+ *
+ * @author yanhom
+ * @since 1.2.2
+ */
 class YamlPropertySourceFactoryTest {
 
     private final YamlPropertySourceFactory factory = new YamlPropertySourceFactory();

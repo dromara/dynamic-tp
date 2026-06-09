@@ -29,6 +29,12 @@ import static org.dromara.dynamictp.common.constant.DynamicTpConst.DTP_ENABLED_P
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * DtpConfigurationSelectorTest related
+ *
+ * @author yanhom
+ * @since 1.2.2
+ */
 class DtpConfigurationSelectorTest {
 
     private final DtpConfigurationSelector selector = new DtpConfigurationSelector();

@@ -17,14 +17,18 @@
 
 package org.dromara.dynamictp.test.core.support.task.runnable;
 
+import org.dromara.dynamictp.common.constant.DynamicTpConst;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
 import org.dromara.dynamictp.core.support.task.runnable.MdcRunnable;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -42,6 +46,16 @@ class MdcRunnableTest {
     private final String key = "key";
 
     private final String value = "value";
+
+    private ExecutorService executor;
+
+    @AfterEach
+    void tearDown() {
+        MDC.clear();
+        if (executor != null) {
+            executor.shutdownNow();
+        }
+    }
 
     @Test
     void test() throws InterruptedException {
@@ -133,6 +147,39 @@ class MdcRunnableTest {
         }
         Assert.assertEquals(value, MDC.get(key));
         log.info("main thread value -> " + MDC.get(key));
+    }
+
+    @Test
+    void testTraceIdIsPropagatedAndCustomEntriesAreCleared() throws InterruptedException {
+        executor = Executors.newSingleThreadExecutor();
+        MDC.put(DynamicTpConst.TRACE_ID, "trace-1");
+        MDC.put(key, value);
+
+        AtomicReference<String> childTraceId = new AtomicReference<>();
+        AtomicReference<String> childCustomValue = new AtomicReference<>();
+        AtomicReference<String> postRunTraceId = new AtomicReference<>();
+        AtomicReference<String> postRunCustomValue = new AtomicReference<>();
+        CountDownLatch firstRun = new CountDownLatch(1);
+        CountDownLatch secondRun = new CountDownLatch(1);
+
+        executor.submit(MdcRunnable.get(() -> {
+            childTraceId.set(MDC.get(DynamicTpConst.TRACE_ID));
+            childCustomValue.set(MDC.get(key));
+            firstRun.countDown();
+        }));
+        Assert.assertTrue(firstRun.await(3, TimeUnit.SECONDS));
+
+        executor.submit(() -> {
+            postRunTraceId.set(MDC.get(DynamicTpConst.TRACE_ID));
+            postRunCustomValue.set(MDC.get(key));
+            secondRun.countDown();
+        });
+        Assert.assertTrue(secondRun.await(3, TimeUnit.SECONDS));
+
+        assertEquals("trace-1", childTraceId.get());
+        assertEquals(value, childCustomValue.get());
+        assertEquals("trace-1", postRunTraceId.get());
+        assertNull(postRunCustomValue.get());
     }
 
 }

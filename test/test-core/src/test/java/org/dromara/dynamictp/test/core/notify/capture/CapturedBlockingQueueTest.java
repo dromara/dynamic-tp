@@ -20,9 +20,14 @@ package org.dromara.dynamictp.test.core.notify.capture;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.notifier.capture.CapturedBlockingQueue;
 import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.concurrent.TimeUnit;
 
@@ -52,23 +57,46 @@ public class CapturedBlockingQueueTest {
                 .buildDynamic();
     }
 
+    @AfterAll
+    public static void tearDown() {
+        dtpExecutor.shutdownNow();
+    }
+
     @Test
     public void testBlockingQueueDefaultCapacity() {
         CapturedBlockingQueue capturedBlockingQueue = new CapturedBlockingQueue(dtpExecutor);
-        Assertions.assertEquals(0, capturedBlockingQueue.size());
-        Assertions.assertEquals(100, capturedBlockingQueue.remainingCapacity());
+        assertEquals(0, capturedBlockingQueue.size());
+        assertEquals(100, capturedBlockingQueue.remainingCapacity());
+        assertEquals(100, capturedBlockingQueue.getQueueCapacity());
+        assertEquals("VariableLinkedBlockingQueue", capturedBlockingQueue.getQueueType());
+        assertSame(dtpExecutor.getQueue(), capturedBlockingQueue.getOriginQueue());
     }
 
     @Test
     public void testPut() {
         CapturedBlockingQueue capturedBlockingQueue = new CapturedBlockingQueue(dtpExecutor);
-        Assertions.assertThrows(UnsupportedOperationException.class, () ->
+        assertThrows(UnsupportedOperationException.class, () ->
                 capturedBlockingQueue.put(() -> System.out.println("can't put Runnable to CapturedBlockingQueue")));
     }
 
     @Test
     public void testTake() {
         CapturedBlockingQueue capturedBlockingQueue = new CapturedBlockingQueue(dtpExecutor);
-        Assertions.assertThrows(UnsupportedOperationException.class, capturedBlockingQueue::take);
+        assertThrows(UnsupportedOperationException.class, capturedBlockingQueue::take);
+    }
+
+    @Test
+    public void testUnsupportedReadAndWriteOperations() {
+        CapturedBlockingQueue capturedBlockingQueue = new CapturedBlockingQueue(dtpExecutor);
+
+        assertThrows(UnsupportedOperationException.class, capturedBlockingQueue::iterator);
+        assertThrows(UnsupportedOperationException.class, () -> capturedBlockingQueue.offer(() -> { }));
+        assertThrows(UnsupportedOperationException.class, () ->
+                capturedBlockingQueue.offer(() -> { }, 1, TimeUnit.MILLISECONDS));
+        assertThrows(UnsupportedOperationException.class, capturedBlockingQueue::poll);
+        assertThrows(UnsupportedOperationException.class, () -> capturedBlockingQueue.poll(1, TimeUnit.MILLISECONDS));
+        assertThrows(UnsupportedOperationException.class, capturedBlockingQueue::peek);
+        assertThrows(UnsupportedOperationException.class, () -> capturedBlockingQueue.drainTo(new ArrayList<>()));
+        assertThrows(UnsupportedOperationException.class, () -> capturedBlockingQueue.drainTo(new ArrayList<>(), 1));
     }
 }

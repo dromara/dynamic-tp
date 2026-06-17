@@ -24,10 +24,10 @@ import org.dromara.dynamictp.common.entity.TpExecutorProps;
 import org.dromara.dynamictp.common.util.ExtensionServiceLoader;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * AwareManager related
@@ -38,7 +38,7 @@ import java.util.concurrent.Executor;
 @Slf4j
 public class AwareManager {
 
-    private static final List<ExecutorAware> EXECUTOR_AWARE_LIST = new ArrayList<>();
+    private static final List<ExecutorAware> EXECUTOR_AWARE_LIST = new CopyOnWriteArrayList<>();
 
     private AwareManager() { }
 

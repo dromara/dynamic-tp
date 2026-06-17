@@ -31,6 +31,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
  */
@@ -61,7 +64,8 @@ public class PriorityDtpExecutorStaticTest {
         for (int i = count; i > 0; i--) {
             priorityDtpExecutor.execute(new TestPriorityRunnable(i, countDownLatch));
         }
-        countDownLatch.await();
+        boolean allCompleted = countDownLatch.await(10, TimeUnit.SECONDS);
+        assertEquals(0, countDownLatch.getCount(), "Not all tasks completed within timeout");
     }
 
     @Test
@@ -71,7 +75,8 @@ public class PriorityDtpExecutorStaticTest {
         for (int i = count; i > 0; i--) {
             priorityDtpExecutor.execute(new TestPriorityRunnable(i, countDownLatch), i);
         }
-        countDownLatch.await();
+        boolean allCompleted = countDownLatch.await(10, TimeUnit.SECONDS);
+        assertEquals(0, countDownLatch.getCount(), "Not all priority tasks completed within timeout");
     }
 
     @Test
@@ -81,7 +86,8 @@ public class PriorityDtpExecutorStaticTest {
         for (int i = count; i > 0; i--) {
             priorityDtpExecutor.submit(new TestPriorityRunnable(i, countDownLatch));
         }
-        countDownLatch.await();
+        boolean allCompleted = countDownLatch.await(10, TimeUnit.SECONDS);
+        assertEquals(0, countDownLatch.getCount(), "Not all submitted tasks completed within timeout");
     }
 
     @Test
@@ -91,7 +97,8 @@ public class PriorityDtpExecutorStaticTest {
         for (int i = count; i > 0; i--) {
             priorityDtpExecutor.submit(new TestPriorityRunnable(i, countDownLatch), i);
         }
-        countDownLatch.await();
+        boolean allCompleted = countDownLatch.await(10, TimeUnit.SECONDS);
+        assertEquals(0, countDownLatch.getCount(), "Not all priority submitted tasks completed within timeout");
     }
 
     @Test
@@ -104,9 +111,10 @@ public class PriorityDtpExecutorStaticTest {
             Future<String> result = priorityDtpExecutor.submit(new TestPriorityRunnable(i, countDownLatch), name);
             list.add(result);
         }
-        countDownLatch.await();
+        countDownLatch.await(10, TimeUnit.SECONDS);
+        assertEquals(count, list.size());
         for (Future<String> future : list) {
-            log.info("result: {}", future.get());
+            assertNotNull(future.get());
         }
     }
 
@@ -120,9 +128,10 @@ public class PriorityDtpExecutorStaticTest {
             Future<String> result = priorityDtpExecutor.submit(new TestPriorityRunnable(i, countDownLatch), name, i);
             list.add(result);
         }
-        countDownLatch.await();
+        countDownLatch.await(10, TimeUnit.SECONDS);
+        assertEquals(count, list.size());
         for (Future<String> future : list) {
-            log.info("result: {}", future.get());
+            assertNotNull(future.get());
         }
     }
 
@@ -135,9 +144,10 @@ public class PriorityDtpExecutorStaticTest {
             Future<String> result = priorityDtpExecutor.submit(new TestPriorityCallable(i, countDownLatch));
             list.add(result);
         }
-        countDownLatch.await();
+        countDownLatch.await(10, TimeUnit.SECONDS);
+        assertEquals(count, list.size());
         for (Future<String> future : list) {
-            log.info("result: {}", future.get());
+            assertNotNull(future.get());
         }
     }
 
@@ -150,9 +160,10 @@ public class PriorityDtpExecutorStaticTest {
             Future<String> result = priorityDtpExecutor.submit(new TestPriorityCallable(i, countDownLatch), i);
             list.add(result);
         }
-        countDownLatch.await();
+        countDownLatch.await(10, TimeUnit.SECONDS);
+        assertEquals(count, list.size());
         for (Future<String> future : list) {
-            log.info("result: {}", future.get());
+            assertNotNull(future.get());
         }
     }
 

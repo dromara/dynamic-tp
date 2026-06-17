@@ -23,6 +23,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * ReflectionUtilTest related
@@ -40,6 +42,25 @@ class ReflectionUtilTest {
     }
 
     @Test
+    void testGetFieldValueByObjectClass() {
+        String ip = "172.12.13.1";
+        ServiceInstance serviceInstance = new ServiceInstance(ip, 9000, "order-service", "prod");
+
+        Object fieldVal = ReflectionUtil.getFieldValue("ip", serviceInstance);
+
+        Assertions.assertEquals(ip, fieldVal);
+    }
+
+    @Test
+    void testGetFieldValueReturnsNullWhenFieldMissing() {
+        ServiceInstance serviceInstance = new ServiceInstance("172.12.13.1", 9000, "order-service", "prod");
+
+        Object fieldVal = ReflectionUtil.getFieldValue(ServiceInstance.class, "missing", serviceInstance);
+
+        Assertions.assertNull(fieldVal);
+    }
+
+    @Test
     void testSetFieldValue() throws IllegalAccessException {
         String ip = "172.12.13.1";
         String newIp = "172.12.13.2";
@@ -49,11 +70,59 @@ class ReflectionUtilTest {
     }
 
     @Test
+    void testSetFieldValueByObjectClass() {
+        ServiceInstance serviceInstance = new ServiceInstance("172.12.13.1", 9000, "order-service", "prod");
+
+        boolean updated = ReflectionUtil.setFieldValue("ip", serviceInstance, "172.12.13.2");
+
+        Assertions.assertTrue(updated);
+        Assertions.assertEquals("172.12.13.2", serviceInstance.getIp());
+    }
+
+    @Test
+    void testSetFieldValueByField() {
+        ServiceInstance serviceInstance = new ServiceInstance("172.12.13.1", 9000, "order-service", "prod");
+        Field ipField = ReflectionUtil.getField(ServiceInstance.class, "ip");
+
+        boolean updated = ReflectionUtil.setFieldValue(ipField, serviceInstance, "172.12.13.2");
+
+        Assertions.assertTrue(updated);
+        Assertions.assertEquals("172.12.13.2", serviceInstance.getIp());
+    }
+
+    @Test
+    void testSetFieldValueReturnsFalseWhenFieldMissing() {
+        ServiceInstance serviceInstance = new ServiceInstance("172.12.13.1", 9000, "order-service", "prod");
+
+        boolean updated = ReflectionUtil.setFieldValue(ServiceInstance.class, "missing", serviceInstance, "value");
+
+        Assertions.assertFalse(updated);
+    }
+
+    @Test
     void testGetField() {
         Field ipField = ReflectionUtil.getField(ServiceInstance.class, "ip");
         Field ippField = ReflectionUtil.getField(ServiceInstance.class, "ipp");
         Assertions.assertNotNull(ipField);
         Assertions.assertNull(ippField);
         Assertions.assertEquals("ip", ipField.getName());
+    }
+
+    @Test
+    void testFindMethodReturnsMatchingMethodOrNull() {
+        Method getIp = ReflectionUtil.findMethod(ServiceInstance.class, "getIp");
+        Method missing = ReflectionUtil.findMethod(ServiceInstance.class, "missing");
+
+        Assertions.assertNotNull(getIp);
+        Assertions.assertNull(missing);
+        Assertions.assertEquals("getIp", getIp.getName());
+    }
+
+    @Test
+    void testGetAllFieldsIncludesDeclaredFields() {
+        List<Field> fields = ReflectionUtil.getAllFields(ServiceInstance.class);
+
+        Assertions.assertTrue(fields.stream().anyMatch(field -> "ip".equals(field.getName())));
+        Assertions.assertTrue(fields.stream().anyMatch(field -> "port".equals(field.getName())));
     }
 }

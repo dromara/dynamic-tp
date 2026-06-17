@@ -23,10 +23,14 @@ import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
 import org.dromara.dynamictp.core.support.ThreadPoolCreator;
 import org.dromara.dynamictp.core.support.adapter.ThreadPoolExecutorAdapter;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -59,24 +63,32 @@ public class CapturedExecutorTest {
                 .buildDynamic();
     }
 
+    @AfterAll
+    public static void tearDown() {
+        dtpExecutor.shutdownNow();
+    }
+
     @Test
     public void testCapturedExecutor() {
         CapturedExecutor capturedExecutor = new CapturedExecutor(dtpExecutor);
-        Assertions.assertEquals(dtpExecutor, capturedExecutor.getOriginal());
-        Assertions.assertEquals(capturedExecutor.getCorePoolSize(), 10);
-        Assertions.assertEquals(capturedExecutor.getMaximumPoolSize(), 15);
-        Assertions.assertEquals(capturedExecutor.getPoolSize(), 0);
-        Assertions.assertEquals(capturedExecutor.getActiveCount(), 0);
-        Assertions.assertEquals(capturedExecutor.getTaskCount(), 0);
-        Assertions.assertEquals(capturedExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS), 15000);
-        Assertions.assertEquals(capturedExecutor.getQueueRemainingCapacity(), 100);
+        assertEquals(dtpExecutor, capturedExecutor.getOriginal());
+        assertEquals(capturedExecutor.getCorePoolSize(), 10);
+        assertEquals(capturedExecutor.getMaximumPoolSize(), 15);
+        assertEquals(capturedExecutor.getPoolSize(), 0);
+        assertEquals(capturedExecutor.getActiveCount(), 0);
+        assertEquals(capturedExecutor.getTaskCount(), 0);
+        assertEquals(capturedExecutor.getKeepAliveTime(TimeUnit.MILLISECONDS), 15000);
+        assertEquals(capturedExecutor.getQueueRemainingCapacity(), 100);
+        assertEquals(capturedExecutor.getQueueCapacity(), 100);
+        assertEquals(capturedExecutor.getQueueType(), "VariableLinkedBlockingQueue");
+        assertEquals(capturedExecutor.getRejectHandlerType(), dtpExecutor.getRejectHandlerType());
     }
 
     @Test
     public void testSetCorePoolSize() {
         ExecutorAdapter<?> executor = dtpExecutor;
         CapturedExecutor captured = new CapturedExecutor(executor);
-        Assertions.assertThrows(UnsupportedOperationException.class, () ->
+        assertThrows(UnsupportedOperationException.class, () ->
                 captured.setCorePoolSize(10));
     }
 
@@ -84,8 +96,19 @@ public class CapturedExecutorTest {
     public void testExecute() {
         ExecutorAdapter<?> executor = dtpExecutor;
         CapturedExecutor captured = new CapturedExecutor(executor);
-        Assertions.assertThrows(UnsupportedOperationException.class, () ->
+        assertThrows(UnsupportedOperationException.class, () ->
                 captured.execute(() -> System.out.println("i am mock task")));
+    }
+
+    @Test
+    public void testUnsupportedMutators() {
+        CapturedExecutor captured = new CapturedExecutor(dtpExecutor);
+
+        assertThrows(UnsupportedOperationException.class, () -> captured.setMaximumPoolSize(20));
+        assertThrows(UnsupportedOperationException.class, () -> captured.setRejectedExecutionHandler(
+                new ThreadPoolExecutor.AbortPolicy()));
+        assertThrows(UnsupportedOperationException.class, () -> captured.allowCoreThreadTimeOut(true));
+        assertThrows(UnsupportedOperationException.class, () -> captured.setKeepAliveTime(10, TimeUnit.SECONDS));
     }
 
     @Test
@@ -98,7 +121,7 @@ public class CapturedExecutorTest {
             }
         });
         CapturedExecutor captured = new CapturedExecutor(new ThreadPoolExecutorAdapter(threadPoolExecutor));
-        Assertions.assertEquals(1, captured.getActiveCount());
+        assertEquals(1, captured.getActiveCount());
         threadPoolExecutor.shutdownNow();
     }
 
@@ -110,7 +133,7 @@ public class CapturedExecutorTest {
         TimeUnit.MILLISECONDS.sleep(100);
 
         CapturedExecutor captured = new CapturedExecutor(new ThreadPoolExecutorAdapter(threadPoolExecutor));
-        Assertions.assertEquals(10, captured.getCompletedTaskCount());
+        assertEquals(10, captured.getCompletedTaskCount());
         threadPoolExecutor.shutdownNow();
     }
 
@@ -122,15 +145,15 @@ public class CapturedExecutorTest {
         TimeUnit.MILLISECONDS.sleep(100);
 
         CapturedExecutor captured = new CapturedExecutor(new ThreadPoolExecutorAdapter(threadPoolExecutor));
-        Assertions.assertEquals(10, captured.getTaskCount());
-        Assertions.assertEquals(10, threadPoolExecutor.getTaskCount());
+        assertEquals(10, captured.getTaskCount());
+        assertEquals(10, threadPoolExecutor.getTaskCount());
 
         executeSomeTask(threadPoolExecutor);
         TimeUnit.MILLISECONDS.sleep(100);
 
         //The status of CapturedExecutor remains unchanged after creation.
-        Assertions.assertEquals(10, captured.getTaskCount());
-        Assertions.assertNotEquals(10, threadPoolExecutor.getTaskCount());
+        assertEquals(10, captured.getTaskCount());
+        assertNotEquals(10, threadPoolExecutor.getTaskCount());
         threadPoolExecutor.shutdownNow();
     }
 

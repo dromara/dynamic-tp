@@ -97,8 +97,9 @@ public class NotifyHelper {
 
     public static Set<String> getAlarmKeys(NotifyItemEnum notifyItemEnum) {
         val keys = ALARM_KEYS.get(notifyItemEnum.name());
-        keys.addAll(COMMON_ALARM_KEYS);
-        return keys;
+        Set<String> result = Sets.newHashSet(keys);
+        result.addAll(COMMON_ALARM_KEYS);
+        return result;
     }
 
     public static Optional<NotifyItem> getNotifyItem(ExecutorWrapper executor, NotifyItemEnum notifyType) {

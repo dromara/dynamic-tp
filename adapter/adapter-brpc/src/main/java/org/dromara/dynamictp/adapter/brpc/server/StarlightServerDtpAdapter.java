@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.dromara.dynamictp.apapter.brpc.server;
+package org.dromara.dynamictp.adapter.brpc.server;
 
 import com.baidu.cloud.starlight.api.common.URI;
 import com.baidu.cloud.starlight.api.rpc.StarlightServer;

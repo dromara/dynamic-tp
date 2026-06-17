@@ -21,8 +21,9 @@ import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
 import org.dromara.dynamictp.core.executor.DtpExecutor;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * DtpRegistryTest related
@@ -38,7 +39,7 @@ class DtpRegistryTest {
                 .threadPoolName("test_dtp")
                 .buildDynamic();
         DtpRegistry.registerExecutor(ExecutorWrapper.of(dtpExecutor), "test");
-        Assertions.assertEquals("test_dtp", ((DtpExecutor)DtpRegistry.getExecutor("test_dtp")).getThreadPoolName());
+        assertEquals("test_dtp", ((DtpExecutor)DtpRegistry.getExecutor("test_dtp")).getThreadPoolName());
     }
 
 }

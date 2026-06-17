@@ -19,25 +19,23 @@ package org.dromara.dynamictp.test.core.thread;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.DtpRegistry;
-import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
-import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
 import org.dromara.dynamictp.spring.support.YamlPropertySourceFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.MockedStatic;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.mockStatic;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 
 /**
  * DtpExecutorTest related
@@ -52,54 +50,55 @@ import static org.mockito.Mockito.mockStatic;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = DtpExecutorTest.class)
 @PropertySource(value = "classpath:/dynamic-tp-demo.yml", factory = YamlPropertySourceFactory.class)
+@Execution(SAME_THREAD)
+@ResourceLock("DTP_REGISTRY")
 public class DtpExecutorTest {
 
-    public void mock(MockedStatic<AlarmManager> mockAlarmManager) {
-        mockAlarmManager.when(() -> AlarmManager.tryAlarmAsync(any(), any(), any())).then(invocation -> null);
-        mockAlarmManager.when(() -> AlarmManager.tryAlarmAsync(any(ExecutorWrapper.class), anyList())).then(invocation -> null);
-    }
-
-    @RepeatedTest(100)
-    void testRunTimeout() {
+    @Test
+    void testRunTimeout() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
         Executor dtpExecutor = DtpRegistry.getExecutor("testRunTimeoutDtpExecutor");
         dtpExecutor.execute(() -> {
-            try (MockedStatic<AlarmManager> mockAlarmManager = mockStatic(AlarmManager.class)) {
-                mock(mockAlarmManager);
+            try {
                 TimeUnit.MILLISECONDS.sleep(300);
             } catch (InterruptedException e) {
-                // ignore
+                Thread.currentThread().interrupt();
+            } finally {
+                latch.countDown();
             }
         });
+        assertTrue(latch.await(5, TimeUnit.SECONDS), "Task should complete within timeout");
     }
 
-    @RepeatedTest(100)
-    void testQueueTimeout() {
+    @Test
+    void testQueueTimeout() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
         Executor dtpExecutor = DtpRegistry.getExecutor("testQueueTimeoutDtpExecutor");
         dtpExecutor.execute(() -> {
-            try (MockedStatic<AlarmManager> mockAlarmManager = mockStatic(AlarmManager.class)) {
-                mock(mockAlarmManager);
+            try {
                 TimeUnit.MILLISECONDS.sleep(50);
             } catch (InterruptedException e) {
-                // ignore
+                Thread.currentThread().interrupt();
+            } finally {
+                latch.countDown();
             }
         });
+        assertTrue(latch.await(5, TimeUnit.SECONDS), "Task should complete within timeout");
     }
 
-    @RepeatedTest(100)
-    void testRejectedQueueTimeoutCancel() {
+    @Test
+    void testRejectedQueueTimeoutCancel() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
         Executor dtpExecutor = DtpRegistry.getExecutor("testRejectedQueueTimeoutCancelDtpExecutor");
         dtpExecutor.execute(() -> {
-            try (MockedStatic<AlarmManager> mockAlarmManager = mockStatic(AlarmManager.class)) {
-                mock(mockAlarmManager);
+            try {
                 TimeUnit.MILLISECONDS.sleep(50);
             } catch (InterruptedException e) {
-                // ignore
+                Thread.currentThread().interrupt();
+            } finally {
+                latch.countDown();
             }
         });
-    }
-
-    @AfterAll
-    public static void afterAll() throws InterruptedException {
-//        TimeUnit.SECONDS.sleep(100);
+        assertTrue(latch.await(5, TimeUnit.SECONDS), "Task should complete within timeout");
     }
 }

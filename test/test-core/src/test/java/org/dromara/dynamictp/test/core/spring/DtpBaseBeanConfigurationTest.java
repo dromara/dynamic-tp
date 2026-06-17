@@ -25,9 +25,14 @@ import org.dromara.dynamictp.spring.DtpPostProcessor;
 import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
 import org.dromara.dynamictp.spring.holder.SpringContextHolder;
 import org.dromara.dynamictp.spring.support.YamlPropertySourceFactory;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ResourceLock;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,6 +52,8 @@ public class DtpBaseBeanConfigurationTest {
     @Nested
     @SpringBootTest(classes = DtpBaseBeanConfigurationTest.class)
     @EnableDynamicTp
+    @Execution(SAME_THREAD)
+    @ResourceLock("DTP_REGISTRY")
     class EnableDynamicTpAnnotationTest {
 
         @Autowired
@@ -54,12 +61,12 @@ public class DtpBaseBeanConfigurationTest {
 
         @Test
         void test() {
-            Assertions.assertNotNull(applicationContext.getBean(DtpBaseBeanConfiguration.class));
-            Assertions.assertNotNull(applicationContext.getBean(SpringContextHolder.class));
-            Assertions.assertNotNull(applicationContext.getBean(DtpBannerPrinter.class));
-            Assertions.assertNotNull(applicationContext.getBean(DtpPostProcessor.class));
-            Assertions.assertNotNull(applicationContext.getBean(DtpRegistry.class));
-            Assertions.assertNotNull(applicationContext.getBean(DtpMonitor.class));
+            assertNotNull(applicationContext.getBean(DtpBaseBeanConfiguration.class));
+            assertNotNull(applicationContext.getBean(SpringContextHolder.class));
+            assertNotNull(applicationContext.getBean(DtpBannerPrinter.class));
+            assertNotNull(applicationContext.getBean(DtpPostProcessor.class));
+            assertNotNull(applicationContext.getBean(DtpRegistry.class));
+            assertNotNull(applicationContext.getBean(DtpMonitor.class));
         }
 
     }
@@ -73,12 +80,12 @@ public class DtpBaseBeanConfigurationTest {
 
         @Test
         void test() {
-            Assertions.assertThrows(NoSuchBeanDefinitionException.class, () -> applicationContext.getBean(DtpBaseBeanConfiguration.class));
-            Assertions.assertThrows(NoSuchBeanDefinitionException.class, () -> applicationContext.getBean(SpringContextHolder.class));
-            Assertions.assertThrows(NoSuchBeanDefinitionException.class, () -> applicationContext.getBean(DtpBannerPrinter.class));
-            Assertions.assertThrows(NoSuchBeanDefinitionException.class, () -> applicationContext.getBean(DtpPostProcessor.class));
-            Assertions.assertThrows(NoSuchBeanDefinitionException.class, () -> applicationContext.getBean(DtpRegistry.class));
-            Assertions.assertThrows(NoSuchBeanDefinitionException.class, () -> applicationContext.getBean(DtpMonitor.class));
+            assertThrows(NoSuchBeanDefinitionException.class, () -> applicationContext.getBean(DtpBaseBeanConfiguration.class));
+            assertThrows(NoSuchBeanDefinitionException.class, () -> applicationContext.getBean(SpringContextHolder.class));
+            assertThrows(NoSuchBeanDefinitionException.class, () -> applicationContext.getBean(DtpBannerPrinter.class));
+            assertThrows(NoSuchBeanDefinitionException.class, () -> applicationContext.getBean(DtpPostProcessor.class));
+            assertThrows(NoSuchBeanDefinitionException.class, () -> applicationContext.getBean(DtpRegistry.class));
+            assertThrows(NoSuchBeanDefinitionException.class, () -> applicationContext.getBean(DtpMonitor.class));
         }
 
     }

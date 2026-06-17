@@ -12,7 +12,7 @@ apollo:
     enabled: true
     eagerLoad:
       enabled: true
-    namespaces: dynamic-tp-apollo-demo-dtp.yml,application
+    namespaces: dynamic-tp-apollo-demo-dtp.yml,application,common-dtp.yml
   meta: http://81.68.181.139:8080
 app:
   id: dynamic-tp-apollo-demo

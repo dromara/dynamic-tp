@@ -1,0 +1,51 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.dromara.dynamictp.test.core.executor;
+
+import org.dromara.dynamictp.core.executor.DtpExecutor;
+import org.dromara.dynamictp.core.executor.ExecutorType;
+import org.dromara.dynamictp.core.executor.OrderedDtpExecutor;
+import org.dromara.dynamictp.core.executor.ScheduledDtpExecutor;
+import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
+import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+/**
+ * ExecutorType test.
+ *
+ * @author codex
+ */
+class ExecutorTypeTest {
+
+    @Test
+    void testGetClassReturnsConfiguredExecutorClass() {
+        assertEquals(DtpExecutor.class, ExecutorType.getClass("common"));
+        assertEquals(EagerDtpExecutor.class, ExecutorType.getClass("eager"));
+        assertEquals(ScheduledDtpExecutor.class, ExecutorType.getClass("scheduled"));
+        assertEquals(OrderedDtpExecutor.class, ExecutorType.getClass("ordered"));
+        assertEquals(PriorityDtpExecutor.class, ExecutorType.getClass("priority"));
+    }
+
+    @Test
+    void testGetClassFallsBackToCommonForUnknownType() {
+        assertEquals(DtpExecutor.class, ExecutorType.getClass("unknown"));
+        assertEquals(DtpExecutor.class, ExecutorType.getClass(null));
+    }
+}

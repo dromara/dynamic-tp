@@ -20,13 +20,13 @@ package org.dromara.dynamictp.test.core.refresher;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
 import org.dromara.dynamictp.core.refresher.AbstractRefresher;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import org.springframework.test.context.junit4.SpringRunner;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * AbstractRefresherTest related
@@ -34,12 +34,12 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author vzer200
  * @since 1.1.8
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 public class AbstractRefresherTest {
     private AbstractRefresher refresher;
     private DtpProperties dtpProperties;
 
-    @Before
+    @BeforeEach
     public void setUp(){
         dtpProperties = DtpProperties.getInstance();
         refresher = Mockito.spy(new AbstractRefresher(dtpProperties) {
@@ -58,7 +58,7 @@ public class AbstractRefresherTest {
 
         String refreshedEnv = dtpProperties.getEnv();
         System.out.println("Refreshed env: " + refreshedEnv);
-        Assertions.assertEquals("newEnvValue", refreshedEnv);
+        assertEquals("newEnvValue", refreshedEnv);
     }
 
     private void mockConfigChange() {

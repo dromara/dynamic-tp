@@ -18,9 +18,13 @@
 package org.dromara.dynamictp.test.core.parse;
 
 import cn.hutool.core.io.FileUtil;
+import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
 import org.dromara.dynamictp.common.parser.config.YamlConfigParser;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
@@ -44,6 +48,34 @@ class YamlConfigParserTest {
         YamlConfigParser parser = new YamlConfigParser();
         Map<Object, Object> result = parser.doParse(content);
 
-        Assertions.assertEquals("dtpExecutor1", result.get("dynamictp.executors[0].threadPoolName").toString());
+        assertEquals("dtpExecutor1", result.get("dynamictp.executors[0].threadPoolName").toString());
+    }
+
+    @Test
+    void testDoParseMultipleFields() throws FileNotFoundException {
+        File file = ResourceUtils.getFile("classpath:demo-dtp-dev.yml");
+        String content = FileUtil.readString(file, StandardCharsets.UTF_8);
+
+        YamlConfigParser parser = new YamlConfigParser();
+        Map<Object, Object> result = parser.doParse(content);
+
+        assertEquals("true", result.get("dynamictp.enabled").toString());
+        assertEquals("dtpExecutor1", result.get("dynamictp.executors[0].threadPoolName").toString());
+        assertEquals("6", result.get("dynamictp.executors[0].corePoolSize").toString());
+    }
+
+    @Test
+    void testDoParseEmptyContentReturnsEmptyMap() {
+        YamlConfigParser parser = new YamlConfigParser();
+        assertTrue(parser.doParse("").isEmpty());
+    }
+
+    @Test
+    void testSupports() {
+        YamlConfigParser parser = new YamlConfigParser();
+        assertTrue(parser.supports(ConfigFileTypeEnum.YML));
+        assertTrue(parser.supports(ConfigFileTypeEnum.YAML));
+        assertFalse(parser.supports(ConfigFileTypeEnum.JSON));
+        assertFalse(parser.supports(ConfigFileTypeEnum.PROPERTIES));
     }
 }

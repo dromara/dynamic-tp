@@ -25,6 +25,8 @@ import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
 import org.dromara.dynamictp.spring.support.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.mockito.MockedStatic;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,6 +38,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mockStatic;
@@ -53,6 +56,8 @@ import static org.mockito.Mockito.mockStatic;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = DtpExecutorTest.class)
 @PropertySource(value = "classpath:/dynamic-tp-demo.yml", factory = YamlPropertySourceFactory.class)
+@Execution(SAME_THREAD)
+@ResourceLock("DTP_REGISTRY")
 public class DtpExecutorTest {
 
     public void mock(MockedStatic<AlarmManager> mockAlarmManager) {

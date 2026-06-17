@@ -27,9 +27,12 @@ import org.dromara.dynamictp.spring.holder.SpringContextHolder;
 import org.dromara.dynamictp.spring.support.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,6 +52,8 @@ public class DtpBaseBeanConfigurationTest {
     @Nested
     @SpringBootTest(classes = DtpBaseBeanConfigurationTest.class)
     @EnableDynamicTp
+    @Execution(SAME_THREAD)
+    @ResourceLock("DTP_REGISTRY")
     class EnableDynamicTpAnnotationTest {
 
         @Autowired

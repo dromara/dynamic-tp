@@ -26,9 +26,12 @@ import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
 import org.dromara.dynamictp.spring.support.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,6 +53,8 @@ import java.util.Map;
 @EnableAutoConfiguration
 @EnableDynamicTp
 @TestInstance(TestInstance.Lifecycle.PER_CLASS) // 使用同一个实例运行所有测试
+@Execution(SAME_THREAD)
+@ResourceLock("DTP_REGISTRY")
 class PropertiesBinderTest {
 
     @Autowired

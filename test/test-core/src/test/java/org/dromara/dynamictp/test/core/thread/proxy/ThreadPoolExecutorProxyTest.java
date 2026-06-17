@@ -26,10 +26,13 @@ import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -45,6 +48,8 @@ import java.util.concurrent.*;
 @EnableAutoConfiguration
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = ThreadPoolExecutorProxyTest.class)
+@Execution(SAME_THREAD)
+@ResourceLock("DTP_REGISTRY")
 public class ThreadPoolExecutorProxyTest {
 
     @Test

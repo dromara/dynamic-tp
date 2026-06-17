@@ -30,6 +30,8 @@ import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
 import org.dromara.dynamictp.spring.support.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.slf4j.MDC;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,6 +47,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 
 @Slf4j
 @SpringBootTest(classes = OrderedDtpExecutorTest.class)
@@ -52,6 +55,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @EnableDynamicTp
 @EnableAutoConfiguration
 @PropertySource(value = "classpath:/dynamic-tp-nacos-demo-dtp-dev.yml", factory = YamlPropertySourceFactory.class)
+@Execution(SAME_THREAD)
+@ResourceLock("DTP_REGISTRY")
 class OrderedDtpExecutorTest {
 
     private final TransmittableThreadLocal<String> threadLocal = new TransmittableThreadLocal<>();

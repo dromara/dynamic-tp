@@ -26,19 +26,11 @@ import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.support.task.runnable.EnhancedRunnable;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * Proxy for virtual-thread-per-task executors. It wraps an {@link ExecutorService}
@@ -58,9 +50,9 @@ import java.util.concurrent.TimeoutException;
  *
  * <p>Key design points versus the earlier prototype:</p>
  * <ul>
- *   <li>All submit/execute entry points funnel through a single {@link #decorate}
- *       helper, so the Callable-enhancement bug (building a FutureTask then submitting
- *       the raw Callable) cannot recur.</li>
+ *   <li>{@link AbstractExecutorService}'s submit / invokeAll / invokeAny methods all
+ *       delegate to {@link #execute(Runnable)}, so every entry point goes through the
+ *       same enhancement path.</li>
  *   <li>Size/queue metrics return {@code -1} (unsupported). Virtual threads have no
  *       bounded pool or queue; performance metrics (tps/rt/reject) still flow through
  *       the aware chain.</li>
@@ -69,7 +61,8 @@ import java.util.concurrent.TimeoutException;
  * @author yanhom
  * @since 1.x.x
  */
-public class VirtualThreadExecutorProxy implements TaskEnhanceAware, RejectHandlerAware, ExecutorService {
+public class VirtualThreadExecutorProxy extends AbstractExecutorService
+        implements TaskEnhanceAware, RejectHandlerAware {
 
     private final ExecutorService delegate;
 
@@ -167,115 +160,6 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, RejectHandl
     }
 
     @Override
-    public Future<?> submit(Runnable task) {
-        FutureTask<Object> futureTask = new FutureTask<>(decorate(task), null);
-        delegate.execute(futureTask);
-        return futureTask;
-    }
-
-    @Override
-    public <T> Future<T> submit(Runnable task, T result) {
-        FutureTask<T> futureTask = new FutureTask<>(decorate(task), result);
-        delegate.execute(futureTask);
-        return futureTask;
-    }
-
-    @Override
-    public <T> Future<T> submit(Callable<T> task) {
-        // Wrap the callable as a FutureTask so it still goes through the same
-        // enhancement + aware chain as Runnable, then submit the FutureTask itself
-        // (this is exactly what the old prototype failed to do).
-        FutureTask<T> futureTask = new FutureTask<>(task);
-        Runnable enhanced = decorate(futureTask);
-        delegate.execute(enhanced);
-        return futureTask;
-    }
-
-    @Override
-    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException {
-        if (tasks == null) {
-            throw new NullPointerException();
-        }
-        List<Future<T>> futures = new ArrayList<>(tasks.size());
-        try {
-            for (Callable<T> task : tasks) {
-                futures.add(submit(task));
-            }
-            for (Future<T> future : futures) {
-                if (!future.isDone()) {
-                    try {
-                        future.get();
-                    } catch (CancellationException | ExecutionException ignored) { }
-                }
-            }
-            return futures;
-        } catch (InterruptedException e) {
-            futures.forEach(future -> future.cancel(true));
-            throw e;
-        }
-    }
-
-    @Override
-    public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
-            throws InterruptedException {
-        if (tasks == null || unit == null) {
-            throw new NullPointerException();
-        }
-        long nanos = unit.toNanos(timeout);
-        long deadline = System.nanoTime() + nanos;
-        List<Future<T>> futures = new ArrayList<>(tasks.size());
-        try {
-            for (Callable<T> task : tasks) {
-                futures.add(submit(task));
-            }
-            for (Future<T> future : futures) {
-                if (future.isDone()) {
-                    continue;
-                }
-                if (nanos <= 0L) {
-                    return futures;
-                }
-                try {
-                    future.get(nanos, TimeUnit.NANOSECONDS);
-                } catch (CancellationException | ExecutionException ignored) {
-                    // keep collecting remaining futures, same contract as AbstractExecutorService
-                } catch (TimeoutException e) {
-                    return futures;
-                }
-                nanos = deadline - System.nanoTime();
-            }
-            return futures;
-        } catch (InterruptedException e) {
-            futures.forEach(future -> future.cancel(true));
-            throw e;
-        } finally {
-            for (Future<T> future : futures) {
-                if (!future.isDone()) {
-                    future.cancel(true);
-                }
-            }
-        }
-    }
-
-    @Override
-    public <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException, ExecutionException {
-        try {
-            return doInvokeAny(tasks, false, 0L);
-        } catch (TimeoutException impossible) {
-            throw new AssertionError(impossible);
-        }
-    }
-
-    @Override
-    public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit)
-            throws InterruptedException, ExecutionException, TimeoutException {
-        if (unit == null) {
-            throw new NullPointerException();
-        }
-        return doInvokeAny(tasks, true, unit.toNanos(timeout));
-    }
-
-    @Override
     public void shutdown() {
         delegate.shutdown();
     }
@@ -309,53 +193,6 @@ public class VirtualThreadExecutorProxy implements TaskEnhanceAware, RejectHandl
         EnhancedRunnable enhancedRunnable = EnhancedRunnable.of(enhanced, this);
         AwareManager.execute(this, enhancedRunnable);
         return enhancedRunnable;
-    }
-
-    private <T> T doInvokeAny(Collection<? extends Callable<T>> tasks, boolean timed, long nanos)
-            throws InterruptedException, ExecutionException, TimeoutException {
-        if (tasks == null) {
-            throw new NullPointerException();
-        }
-        if (tasks.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        ExecutorCompletionService<T> completionService = new ExecutorCompletionService<>(this);
-        List<Future<T>> futures = new ArrayList<>(tasks.size());
-        long deadline = timed ? System.nanoTime() + nanos : 0L;
-        ExecutionException executionException = null;
-        try {
-            for (Callable<T> task : tasks) {
-                futures.add(completionService.submit(task));
-            }
-            for (int remaining = tasks.size(); remaining > 0; remaining--) {
-                Future<T> future;
-                if (timed) {
-                    if (nanos <= 0L) {
-                        throw new TimeoutException();
-                    }
-                    future = completionService.poll(nanos, TimeUnit.NANOSECONDS);
-                    if (future == null) {
-                        throw new TimeoutException();
-                    }
-                    nanos = deadline - System.nanoTime();
-                } else {
-                    future = completionService.take();
-                }
-                try {
-                    return future.get();
-                } catch (ExecutionException e) {
-                    executionException = e;
-                } catch (RuntimeException e) {
-                    executionException = new ExecutionException(e);
-                }
-            }
-            if (executionException == null) {
-                executionException = new ExecutionException(null);
-            }
-            throw executionException;
-        } finally {
-            futures.forEach(future -> future.cancel(true));
-        }
     }
 
     // ---------------------------------------------------------------------

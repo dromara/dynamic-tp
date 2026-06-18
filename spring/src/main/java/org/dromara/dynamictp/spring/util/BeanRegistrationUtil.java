@@ -27,6 +27,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * SpringBeanHelper related
@@ -51,13 +52,36 @@ public final class BeanRegistrationUtil {
                                 String beanName,
                                 Class<?> clazz,
                                 Map<String, Object> propertyValues,
+                                Supplier<?> instanceSupplier) {
+        register(registry, beanName, clazz, propertyValues, null, instanceSupplier);
+    }
+
+    public static void register(BeanDefinitionRegistry registry,
+                                String beanName,
+                                Class<?> clazz,
+                                Map<String, Object> propertyValues,
                                 List<String> dependsOnBeanNames,
                                 Object... constructorArgs) {
         if (ifPresent(registry, beanName, clazz) || registry.containsBeanDefinition(beanName)) {
             log.info("DynamicTp registrar, bean [{}] already exists and will be overwritten", beanName);
             registry.removeBeanDefinition(beanName);
         }
-        doRegister(registry, beanName, clazz, propertyValues, dependsOnBeanNames, constructorArgs);
+        doRegister(registry, beanName, clazz,
+                new RegistrationSpec(propertyValues, dependsOnBeanNames, null, constructorArgs));
+    }
+
+    public static void register(BeanDefinitionRegistry registry,
+                                String beanName,
+                                Class<?> clazz,
+                                Map<String, Object> propertyValues,
+                                List<String> dependsOnBeanNames,
+                                Supplier<?> instanceSupplier) {
+        if (ifPresent(registry, beanName, clazz) || registry.containsBeanDefinition(beanName)) {
+            log.info("DynamicTp registrar, bean [{}] already exists and will be overwritten", beanName);
+            registry.removeBeanDefinition(beanName);
+        }
+        doRegister(registry, beanName, clazz,
+                new RegistrationSpec(propertyValues, dependsOnBeanNames, instanceSupplier));
     }
 
     public static void registerIfAbsent(BeanDefinitionRegistry registry,
@@ -79,10 +103,31 @@ public final class BeanRegistrationUtil {
                                         String beanName,
                                         Class<?> clazz,
                                         Map<String, Object> propertyValues,
+                                        Supplier<?> instanceSupplier) {
+        registerIfAbsent(registry, beanName, clazz, propertyValues, null, instanceSupplier);
+    }
+
+    public static void registerIfAbsent(BeanDefinitionRegistry registry,
+                                        String beanName,
+                                        Class<?> clazz,
+                                        Map<String, Object> propertyValues,
                                         List<String> dependsOnBeanNames,
                                         Object... constructorArgs) {
         if (!ifPresent(registry, beanName, clazz) && !registry.containsBeanDefinition(beanName)) {
-            doRegister(registry, beanName, clazz, propertyValues, dependsOnBeanNames, constructorArgs);
+            doRegister(registry, beanName, clazz,
+                    new RegistrationSpec(propertyValues, dependsOnBeanNames, null, constructorArgs));
+        }
+    }
+
+    public static void registerIfAbsent(BeanDefinitionRegistry registry,
+                                        String beanName,
+                                        Class<?> clazz,
+                                        Map<String, Object> propertyValues,
+                                        List<String> dependsOnBeanNames,
+                                        Supplier<?> instanceSupplier) {
+        if (!ifPresent(registry, beanName, clazz) && !registry.containsBeanDefinition(beanName)) {
+            doRegister(registry, beanName, clazz,
+                    new RegistrationSpec(propertyValues, dependsOnBeanNames, instanceSupplier));
         }
     }
 
@@ -98,19 +143,42 @@ public final class BeanRegistrationUtil {
     private static void doRegister(BeanDefinitionRegistry registry,
                                    String beanName,
                                    Class<?> clazz,
-                                   Map<String, Object> propertyValues,
-                                   List<String> dependsOnBeanNames,
-                                   Object... constructorArgs) {
+                                   RegistrationSpec spec) {
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(clazz);
-        for (Object constructorArg : constructorArgs) {
+        if (spec.instanceSupplier != null) {
+            builder.getRawBeanDefinition().setInstanceSupplier(spec.instanceSupplier);
+        }
+        for (Object constructorArg : spec.constructorArgs) {
             builder.addConstructorArgValue(constructorArg);
         }
-        if (MapUtils.isNotEmpty(propertyValues)) {
-            propertyValues.forEach(builder::addPropertyValue);
+        if (MapUtils.isNotEmpty(spec.propertyValues)) {
+
+            spec.propertyValues.forEach(builder::addPropertyValue);
         }
-        if (CollectionUtils.isNotEmpty(dependsOnBeanNames)) {
-            dependsOnBeanNames.forEach(builder::addDependsOn);
+        if (CollectionUtils.isNotEmpty(spec.dependsOnBeanNames)) {
+            spec.dependsOnBeanNames.forEach(builder::addDependsOn);
         }
         registry.registerBeanDefinition(beanName, builder.getBeanDefinition());
+    }
+
+    private static class RegistrationSpec {
+
+        private final Map<String, Object> propertyValues;
+
+        private final List<String> dependsOnBeanNames;
+
+        private final Supplier<?> instanceSupplier;
+
+        private final Object[] constructorArgs;
+
+        RegistrationSpec(Map<String, Object> propertyValues,
+                         List<String> dependsOnBeanNames,
+                         Supplier<?> instanceSupplier,
+                         Object... constructorArgs) {
+            this.propertyValues = propertyValues;
+            this.dependsOnBeanNames = dependsOnBeanNames;
+            this.instanceSupplier = instanceSupplier;
+            this.constructorArgs = constructorArgs;
+        }
     }
 }

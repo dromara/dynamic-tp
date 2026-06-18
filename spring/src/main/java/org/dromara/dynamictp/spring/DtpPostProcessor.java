@@ -32,8 +32,10 @@ import org.dromara.dynamictp.core.support.DynamicTp;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.proxy.ScheduledThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
+import org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
+import org.dromara.dynamictp.spring.support.SimpleAsyncTaskExecutorAdapter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -42,8 +44,11 @@ import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
+import org.springframework.core.env.Environment;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskDecorator;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.lang.NonNull;
@@ -67,11 +72,23 @@ import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGra
  **/
 @Slf4j
 @SuppressWarnings("all")
-public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, PriorityOrdered {
+public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, EnvironmentAware, PriorityOrdered {
 
     private static final String REGISTER_SOURCE = "beanPostProcessor";
 
     private DefaultListableBeanFactory beanFactory;
+
+    /**
+     * Cached via {@link EnvironmentAware}; reading it inside a BeanPostProcessor through
+     * {@code beanFactory.getBean(Environment.class)} would force early bean initialization and
+     * disturb the bean-creation order, so we hold the reference injected by Spring instead.
+     */
+    private Environment environment;
+
+    /**
+     * Property key that enables virtual threads in Spring Boot 3.
+     */
+    private static final String SPRING_THREADS_VIRTUAL_ENABLED = "spring.threads.virtual.enabled";
 
     /**
      * Compatible with lower versions of Spring.
@@ -88,6 +105,16 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
 
     @Override
     public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
+        if (bean instanceof VirtualThreadExecutorProxy) {
+            return registerAndReturnVirtualProxy((VirtualThreadExecutorProxy) bean, beanName);
+        }
+        // Spring Boot 3, when spring.threads.virtual.enabled=true, registers the
+        // applicationTaskExecutor as a SimpleAsyncTaskExecutor (with virtualThreads=true),
+        // which is neither ThreadPoolExecutor nor ThreadPoolTaskExecutor. Catch it here so
+        // dtp can still observe / enhance it without touching the original bean.
+        if (bean instanceof SimpleAsyncTaskExecutor && isVirtualThreadEnabled()) {
+            return registerAndReturnVirtual(bean, beanName);
+        }
         if (!(bean instanceof ThreadPoolExecutor) && !(bean instanceof ThreadPoolTaskExecutor)) {
             return bean;
         }
@@ -96,6 +123,35 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
         }
         // register juc ThreadPoolExecutor or ThreadPoolTaskExecutor
         return registerAndReturnCommon(bean, beanName);
+    }
+
+    /**
+     * Whether Spring Boot virtual threads are enabled.
+     */
+    private boolean isVirtualThreadEnabled() {
+        return environment != null
+                && environment.getProperty(SPRING_THREADS_VIRTUAL_ENABLED, Boolean.class, false);
+    }
+
+    /**
+     * Register a Spring Boot 3 virtual thread executor (SimpleAsyncTaskExecutor) into dtp
+     * without replacing the original bean. Only observe / enhance, do not swap the bean
+     * reference held by Spring.
+     */
+    private Object registerAndReturnVirtual(Object bean, String beanName) {
+        SimpleAsyncTaskExecutor simpleAsyncTaskExecutor = (SimpleAsyncTaskExecutor) bean;
+        SimpleAsyncTaskExecutorAdapter adapter = new SimpleAsyncTaskExecutorAdapter(simpleAsyncTaskExecutor);
+        VirtualThreadExecutorProxy proxy = new VirtualThreadExecutorProxy(adapter);
+        proxy.setThreadPoolName(beanName);
+        tryWrapSimpleAsyncTaskDecorator(beanName, simpleAsyncTaskExecutor, proxy);
+        DtpRegistry.registerExecutor(new ExecutorWrapper(beanName, proxy), REGISTER_SOURCE);
+        return bean;
+    }
+
+    private Object registerAndReturnVirtualProxy(VirtualThreadExecutorProxy proxy, String beanName) {
+        proxy.setThreadPoolName(beanName);
+        DtpRegistry.registerExecutor(new ExecutorWrapper(beanName, proxy), REGISTER_SOURCE);
+        return proxy;
     }
 
     private Object registerAndReturnDtp(Object bean) {
@@ -168,6 +224,11 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
     }
 
     @Override
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
+    }
+
+    @Override
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE;
     }
@@ -202,5 +263,28 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
         };
         ReflectionUtil.setFieldValue("taskWrappers", proxy, Lists.newArrayList(taskWrapper));
         TaskWrappers.getInstance().register(taskWrapper);
+    }
+
+    private void tryWrapSimpleAsyncTaskDecorator(String poolName,
+                                                 SimpleAsyncTaskExecutor executor,
+                                                 VirtualThreadExecutorProxy proxy) {
+        Object taskDecorator = ReflectionUtil.getFieldValue("taskDecorator", executor);
+        if (Objects.nonNull(taskDecorator)) {
+            TaskWrapper taskWrapper = (taskDecorator instanceof TaskWrapper) ? (TaskWrapper) taskDecorator
+                    : new TaskWrapper() {
+                        @Override
+                        public String name() {
+                            return poolName + "#taskDecorator";
+                        }
+
+                        @Override
+                        public Runnable wrap(Runnable runnable) {
+                            return ((TaskDecorator) taskDecorator).decorate(runnable);
+                        }
+                    };
+            proxy.setTaskWrappers(Lists.newArrayList(taskWrapper));
+            TaskWrappers.getInstance().register(taskWrapper);
+        }
+        executor.setTaskDecorator(proxy::decorate);
     }
 }

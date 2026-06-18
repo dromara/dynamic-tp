@@ -231,6 +231,12 @@ public class DtpRegistry {
     }
 
     private static void doRefresh(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
+        if (executorWrapper.isVirtualThreadExecutor()) {
+            // Virtual threads are unbounded: core/max/queue/keepAlive tuning does not apply,
+            // so short-circuit those and only refresh notify / aware / wrapper metadata.
+            refreshVirtual(executorWrapper, props);
+            return;
+        }
         ExecutorAdapter<?> executor = executorWrapper.getExecutor();
         doRefreshPoolSize(executor, props);
         if (!Objects.equals(executor.getKeepAliveTime(props.getUnit()), props.getKeepAliveTime())) {
@@ -247,6 +253,24 @@ public class DtpRegistry {
             return;
         }
         doRefreshCommon(executorWrapper, props);
+    }
+
+    private static void refreshVirtual(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
+        if (StringUtils.isNotBlank(props.getThreadPoolAliasName())) {
+            executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());
+        }
+        String currentRejectHandlerType = executorWrapper.getExecutor().getRejectHandlerType();
+        if (!Objects.equals(currentRejectHandlerType, props.getRejectedHandlerType())) {
+            val rejectHandler = RejectHandlerGetter.buildRejectedHandler(props.getRejectedHandlerType());
+            executorWrapper.setRejectHandler(rejectHandler);
+        }
+        List<TaskWrapper> taskWrappers = TaskWrappers.getInstance().getByNames(props.getTaskWrapperNames());
+        executorWrapper.setTaskWrappers(taskWrappers);
+        // update notify related
+        NotifyHelper.updateNotifyInfo(executorWrapper, props, dtpProperties.getPlatforms());
+        // update aware related
+        AwareManager.refresh(executorWrapper, props);
+        updateWrapper(executorWrapper, props);
     }
 
     private static void doRefreshCommon(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
@@ -381,8 +405,10 @@ public class DtpRegistry {
         }
         val localExecutors = CollectionUtils.subtract(registeredExecutors, remoteExecutors);
 
-        // refresh just for non-dtp executors
-        val nonDtpExecutors = executors.stream().filter(e -> !e.isAutoCreate()).collect(toList());
+        // refresh just for non-dtp executors.
+        val nonDtpExecutors = executors.stream()
+                .filter(e -> !e.isAutoCreate())
+                .collect(toList());
         if (CollectionUtils.isNotEmpty(nonDtpExecutors)) {
             nonDtpExecutors.forEach(DtpRegistry::refresh);
         }

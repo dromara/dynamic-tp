@@ -21,15 +21,18 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.executor.ExecutorType;
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
+import org.dromara.dynamictp.core.executor.VirtualThreadExecutorFactory;
 import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
 import org.dromara.dynamictp.core.executor.eager.TaskQueue;
 import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.binder.BinderHelper;
+import org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.dromara.dynamictp.spring.util.BeanRegistrationUtil;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -37,6 +40,7 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.lang.NonNull;
 
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -93,20 +97,54 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
                 return;
             }
             Class<?> executorTypeClass = ExecutorType.getClass(e.getExecutorType());
+            if (VirtualThreadExecutorProxy.class.equals(executorTypeClass)) {
+                // Virtual thread executors are built reflectively at runtime (JDK 21+);
+                // they do not take the standard 7-arg TPE constructor. Register via an
+                // instance supplier so creation + JDK check happen lazily on first use.
+                registerVirtualExecutor(registry, e);
+                return;
+            }
             Map<String, Object> propertyValues = buildPropertyValues(e);
             Object[] args = buildConstructorArgs(executorTypeClass, e);
             BeanRegistrationUtil.register(registry, e.getThreadPoolName(), executorTypeClass, propertyValues, args);
         });
     }
 
+    /**
+     * Register a virtual-thread-per-task executor bean backed by an instance supplier.
+     * The actual executor (ThreadPerTaskExecutor via reflection) is created lazily, and
+     * wrapped by {@link VirtualThreadExecutorProxy} so dtp can enhance/observe it.
+     */
+    private void registerVirtualExecutor(BeanDefinitionRegistry registry, DtpExecutorProps props) {
+        BeanRegistrationUtil.register(registry,
+                props.getThreadPoolName(),
+                VirtualThreadExecutorProxy.class,
+                buildCommonPropertyValues(props),
+                () -> createVirtualExecutorProxy(props));
+    }
+
+    @NonNull
+    private VirtualThreadExecutorProxy createVirtualExecutorProxy(DtpExecutorProps props) {
+        String namePrefix = StringUtils
+                .isNotBlank(props.getThreadNamePrefix()) ? props.getThreadNamePrefix() : props.getThreadPoolName();
+        java.util.concurrent.ExecutorService delegate =
+                VirtualThreadExecutorFactory.newThreadPerTaskExecutor(namePrefix);
+        return new VirtualThreadExecutorProxy(delegate);
+    }
+
     private Map<String, Object> buildPropertyValues(DtpExecutorProps props) {
+        Map<String, Object> propertyValues = buildCommonPropertyValues(props);
+        propertyValues.put(ALLOW_CORE_THREAD_TIMEOUT, props.isAllowCoreThreadTimeOut());
+        propertyValues.put(PRE_START_ALL_CORE_THREADS, props.isPreStartAllCoreThreads());
+        return propertyValues;
+    }
+
+    private Map<String, Object> buildCommonPropertyValues(DtpExecutorProps props) {
         Map<String, Object> propertyValues = Maps.newHashMap();
         propertyValues.put(THREAD_POOL_NAME, props.getThreadPoolName());
         propertyValues.put(THREAD_POOL_ALIAS_NAME, props.getThreadPoolAliasName());
-        propertyValues.put(ALLOW_CORE_THREAD_TIMEOUT, props.isAllowCoreThreadTimeOut());
         propertyValues.put(WAIT_FOR_TASKS_TO_COMPLETE_ON_SHUTDOWN, props.isWaitForTasksToCompleteOnShutdown());
         propertyValues.put(AWAIT_TERMINATION_SECONDS, props.getAwaitTerminationSeconds());
-        propertyValues.put(PRE_START_ALL_CORE_THREADS, props.isPreStartAllCoreThreads());
         propertyValues.put(REJECT_HANDLER_TYPE, props.getRejectedHandlerType());
         propertyValues.put(REJECT_ENHANCED, props.isRejectEnhanced());
         propertyValues.put(RUN_TIMEOUT, props.getRunTimeout());

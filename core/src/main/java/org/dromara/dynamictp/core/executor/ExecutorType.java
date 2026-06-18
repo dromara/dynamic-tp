@@ -21,6 +21,7 @@ import lombok.AllArgsConstructor;
 import org.dromara.dynamictp.core.executor.eager.EagerDtpExecutor;
 import lombok.Getter;
 import org.dromara.dynamictp.core.executor.priority.PriorityDtpExecutor;
+import org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy;
 
 /**
  * ExecutorType related
@@ -55,7 +56,14 @@ public enum ExecutorType {
     /**
      * Priority executor type.
      */
-    PRIORITY("priority", PriorityDtpExecutor.class);
+    PRIORITY("priority", PriorityDtpExecutor.class),
+
+    /**
+     * Virtual thread executor type.
+     * Spawns one virtual thread per task; requires JDK 21+ at runtime.
+     * Note: core/max/queue tuning and dynamic refresh of those params are not supported.
+     */
+    VIRTUAL("virtual", VirtualThreadExecutorProxy.class);
 
     private final String name;
 

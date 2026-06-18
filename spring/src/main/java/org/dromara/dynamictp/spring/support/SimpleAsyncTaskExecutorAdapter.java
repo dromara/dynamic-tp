@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
  * provided by {@link AbstractExecutorService}.</p>
  *
  * @author yanhom
- * @since 1.x.x
+ * @since 1.3.0
  */
 @Slf4j
 public class SimpleAsyncTaskExecutorAdapter extends AbstractExecutorService {

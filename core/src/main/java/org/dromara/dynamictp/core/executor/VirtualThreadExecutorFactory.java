@@ -33,7 +33,7 @@ import java.util.concurrent.ThreadFactory;
  * other module free of Java 21 API references.</p>
  *
  * @author yanhom
- * @since 1.x.x
+ * @since 1.3.0
  */
 @Slf4j
 public final class VirtualThreadExecutorFactory {

@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * VirtualThreadExecutorPostProcessorTest related
  *
  * @author yanhom
- * @since 1.x.x
+ * @since 1.3.0
  */
 @Execution(ExecutionMode.SAME_THREAD)
 class VirtualThreadExecutorPostProcessorTest {

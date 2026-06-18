@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
  * {@link ExecutorAdapter}'s default methods).</p>
  *
  * @author yanhom
- * @since 1.x.x
+ * @since 1.3.0
  */
 public class VirtualThreadExecutorAdapter implements ExecutorAdapter<VirtualThreadExecutorProxy> {
 

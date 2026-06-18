@@ -59,7 +59,7 @@ import java.util.concurrent.TimeUnit;
  * </ul>
  *
  * @author yanhom
- * @since 1.x.x
+ * @since 1.3.0
  */
 public class VirtualThreadExecutorProxy extends AbstractExecutorService
         implements TaskEnhanceAware, RejectHandlerAware {

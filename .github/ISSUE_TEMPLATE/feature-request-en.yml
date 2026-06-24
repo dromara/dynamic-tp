@@ -1,0 +1,45 @@
+name: Feature Request
+description: 'Suggest an idea'
+title: '[FEATURE]: '
+labels: ['feature']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Thank you for using DynamicTp. If you have any ideas or suggestions, please follow the template below. Use Markdown syntax.**
+
+  - type: textarea
+    id: solution-description
+    attributes:
+      label: Solution Description
+      description: Please describe your proposed solution in detail
+      placeholder: Describe your proposed solution in detail...
+    validations:
+      required: true
+
+  - type: textarea
+    id: application-scenario
+    attributes:
+      label: Application Scenario
+      description: The scenarios where this feature would be useful
+      placeholder: Describe the scenarios where this feature would be useful...
+    validations:
+      required: true
+
+  - type: textarea
+    id: difficulty-risk
+    attributes:
+      label: Difficulty & Risk
+      description: Potential difficulty and risk of implementing this feature
+      placeholder: Describe the potential difficulty and risk of implementing this feature...
+    validations:
+      required: true
+
+  - type: textarea
+    id: external-dependencies
+    attributes:
+      label: External Dependencies
+      description: External dependencies required for this feature
+      placeholder: Describe the external dependencies required for this feature...
+    validations:
+      required: true

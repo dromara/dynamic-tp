@@ -15,6 +15,10 @@
 </p>
 
 <p align="center">
+    🌐 中文 | <a href="README_EN.md">English</a>
+</p>
+
+<p align="center">
     官网： <a href="https://dynamictp.cn">https://dynamictp.cn</a> 🔥
 </p>
 
@@ -35,7 +39,7 @@
 如果看过 ThreadPoolExecutor 的源码，大概可以知道它对核心参数基本都有提供 set / get 方法以及一些扩展方法，可以在运行时动态修改、获取相应的值，这些方法有：
 
 <details>
-<summary>ThreadPoolExecutor 提供的动态方法（点击展开）</summary>
+<summary>👉 ThreadPoolExecutor 提供的动态方法（点击展开）</summary>
 
 ```java
 public void setCorePoolSize(int corePoolSize);                    // 核心线程数

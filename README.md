@@ -38,22 +38,22 @@
 <summary>ThreadPoolExecutor 提供的动态方法（点击展开）</summary>
 
 ```java
-public void setCorePoolSize(int corePoolSize);
-public void setMaximumPoolSize(int maximumPoolSize);
-public void setKeepAliveTime(long time, TimeUnit unit);
-public void setThreadFactory(ThreadFactory threadFactory);
-public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
-public void allowCoreThreadTimeOut(boolean value);
+public void setCorePoolSize(int corePoolSize);                    // 核心线程数
+public void setMaximumPoolSize(int maximumPoolSize);              // 最大线程数
+public void setKeepAliveTime(long time, TimeUnit unit);           // 线程空闲存活时间
+public void setThreadFactory(ThreadFactory threadFactory);        // 线程工厂
+public void setRejectedExecutionHandler(RejectedExecutionHandler handler); // 拒绝策略
+public void allowCoreThreadTimeOut(boolean value);                // 核心线程是否允许超时
 
 public int getCorePoolSize();
 public int getMaximumPoolSize();
 public long getKeepAliveTime(TimeUnit unit);
-public BlockingQueue<Runnable> getQueue();
+public BlockingQueue<Runnable> getQueue();                        // 任务队列
 public RejectedExecutionHandler getRejectedExecutionHandler();
 public boolean allowsCoreThreadTimeOut();
 
-protected void beforeExecute(Thread t, Runnable r);
-protected void afterExecute(Runnable r, Throwable t);
+protected void beforeExecute(Thread t, Runnable r);               // 任务执行前
+protected void afterExecute(Runnable r, Throwable t);             // 任务执行后
 ```
 
 </details>

@@ -56,10 +56,10 @@ public class JMXCollector extends AbstractCollector {
                 ObjectName name = new ObjectName(DTP_METRIC_NAME_PREFIX + ":name=" + threadPoolStats.getPoolName());
                 ThreadPoolStatsJMX stats = new ThreadPoolStatsJMX(threadPoolStats);
                 server.registerMBean(stats, name);
+                GAUGE_CACHE.put(threadPoolStats.getPoolName(), threadPoolStats);
             } catch (JMException e) {
                 log.error("collect thread pool stats error", e);
             }
-            GAUGE_CACHE.put(threadPoolStats.getPoolName(), threadPoolStats);
         }
     }
 

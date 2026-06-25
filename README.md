@@ -15,6 +15,10 @@
 </p>
 
 <p align="center">
+    🌐 中文 | <a href="README_EN.md">English</a>
+</p>
+
+<p align="center">
     官网： <a href="https://dynamictp.cn">https://dynamictp.cn</a> 🔥
 </p>
 
@@ -34,24 +38,29 @@
 
 如果看过 ThreadPoolExecutor 的源码，大概可以知道它对核心参数基本都有提供 set / get 方法以及一些扩展方法，可以在运行时动态修改、获取相应的值，这些方法有：
 
+<details>
+<summary>👉 ThreadPoolExecutor 提供的动态方法（点击展开）</summary>
+
 ```java
-public void setCorePoolSize(int corePoolSize);
-public void setMaximumPoolSize(int maximumPoolSize);
-public void setKeepAliveTime(long time, TimeUnit unit);
-public void setThreadFactory(ThreadFactory threadFactory);
-public void setRejectedExecutionHandler(RejectedExecutionHandler handler);
-public void allowCoreThreadTimeOut(boolean value);
+public void setCorePoolSize(int corePoolSize);                    // 核心线程数
+public void setMaximumPoolSize(int maximumPoolSize);              // 最大线程数
+public void setKeepAliveTime(long time, TimeUnit unit);           // 线程空闲存活时间
+public void setThreadFactory(ThreadFactory threadFactory);        // 线程工厂
+public void setRejectedExecutionHandler(RejectedExecutionHandler handler); // 拒绝策略
+public void allowCoreThreadTimeOut(boolean value);                // 核心线程是否允许超时
 
 public int getCorePoolSize();
 public int getMaximumPoolSize();
 public long getKeepAliveTime(TimeUnit unit);
-public BlockingQueue<Runnable> getQueue();
+public BlockingQueue<Runnable> getQueue();                        // 任务队列
 public RejectedExecutionHandler getRejectedExecutionHandler();
 public boolean allowsCoreThreadTimeOut();
 
-protected void beforeExecute(Thread t, Runnable r);
-protected void afterExecute(Runnable r, Throwable t);
+protected void beforeExecute(Thread t, Runnable r);               // 任务执行前
+protected void afterExecute(Runnable r, Throwable t);             // 任务执行后
 ```
+
+</details>
 
 现在大多数的互联网项目都会采用微服务化部署，有一套自己的服务治理体系，微服务组件中的分布式配置中心
 扮演的就是动态修改配置，实时生效的角色。
@@ -158,8 +167,6 @@ protected void afterExecute(Runnable r, Throwable t);
 
 <img src="resources/img/notice.jpg" alt="变更通知" width="50%" />
 
-更多见官网文档，[通知报警](https://dynamictp.cn/guide/notice/alarm.html)
-
 ---
 
 ## 监控
@@ -178,7 +185,7 @@ protected void afterExecute(Runnable r, Throwable t);
 >
 > 4. Endpoint：暴露 Endpoint 端点，可以通过 http 方式实时获取指标数据
 
-更多见官网文档，[监控](https://dynamictp.cn/guide/monitor/collect_types.html)
+> 📖 更多详细用法见官网文档：[通知报警](https://dynamictp.cn/guide/notice/alarm.html) ｜ [监控](https://dynamictp.cn/guide/monitor/collect_types.html)
 
 ---
 

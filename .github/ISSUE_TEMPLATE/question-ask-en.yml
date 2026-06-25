@@ -1,0 +1,36 @@
+name: Question
+description: 'Ask a question'
+title: '[QUESTION]: '
+labels: ['question']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Thank you for using DynamicTp. If you have any questions, please follow the template below. Use Markdown syntax.**
+
+  - type: textarea
+    id: usage-questions
+    attributes:
+      label: Usage
+      description: Questions about project usage
+      placeholder: Describe your questions about project usage...
+    validations:
+      required: false
+
+  - type: textarea
+    id: principle-questions
+    attributes:
+      label: Principles
+      description: Questions about project principles
+      placeholder: Describe your questions about project principles...
+    validations:
+      required: false
+
+  - type: textarea
+    id: other-questions
+    attributes:
+      label: Other
+      description: Other questions
+      placeholder: Describe your other questions...
+    validations:
+      required: false

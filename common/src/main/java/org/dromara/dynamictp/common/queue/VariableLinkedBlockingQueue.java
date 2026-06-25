@@ -505,7 +505,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
         } finally {
             takeLock.unlock();
         }
-        if (c >= capacity) {
+        if (c == capacity) {
             signalNotFull();
         }
         return x;
@@ -534,7 +534,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
         } finally {
             takeLock.unlock();
         }
-        if (c >= capacity) {
+        if (c == capacity) {
             signalNotFull();
         }
         return x;
@@ -561,7 +561,7 @@ public class VariableLinkedBlockingQueue<E> extends AbstractQueue<E>
         } finally {
             takeLock.unlock();
         }
-        if (c >= capacity) {
+        if (c == capacity) {
             signalNotFull();
         }
         return x;

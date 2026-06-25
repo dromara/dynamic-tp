@@ -82,6 +82,29 @@ class JMXCollectorTest {
         }
     }
 
+    @Test
+    void testCollectDoesNotCacheStatsWhenRegistrationFails() throws Exception {
+        String poolName = "jmx-duplicate-" + UUID.randomUUID();
+        ObjectName objectName = new ObjectName(JMXCollector.DTP_METRIC_NAME_PREFIX + ":name=" + poolName);
+        Map<String, ThreadPoolStats> gaugeCache = getGaugeCache();
+        gaugeCache.remove(poolName);
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+
+        try {
+            server.registerMBean(new ThreadPoolStatsJMX(stats(poolName, 1)), objectName);
+
+            JMXCollector collector = new JMXCollector();
+            collector.collect(stats(poolName, 2));
+
+            Assertions.assertFalse(gaugeCache.containsKey(poolName));
+        } finally {
+            gaugeCache.remove(poolName);
+            if (server.isRegistered(objectName)) {
+                server.unregisterMBean(objectName);
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private static Map<String, ThreadPoolStats> getGaugeCache() throws Exception {
         Field field = JMXCollector.class.getDeclaredField("GAUGE_CACHE");

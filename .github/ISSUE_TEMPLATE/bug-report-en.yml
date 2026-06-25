@@ -1,0 +1,99 @@
+name: BUG Report
+description: 'Report a bug'
+title: '[BUG]: '
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Thank you for using DynamicTp. If you encounter any issues, please follow the template below. Use Markdown syntax.**
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Which platform are you using?
+      options:
+        - Windows
+        - macOS
+        - Linux
+    validations:
+      required: true
+
+  - type: input
+    id: jdk-version
+    attributes:
+      label: JDK Version
+      placeholder: 'e.g.: JDK 8, JDK 11'
+      description: Which JDK version are you using?
+    validations:
+      required: true
+
+  - type: input
+    id: springboot-version
+    attributes:
+      label: SpringBoot Version
+      placeholder: 'e.g.: 2.6.3'
+      description: Which SpringBoot version are you using?
+    validations:
+      required: true
+
+  - type: input
+    id: dynamictp-version
+    attributes:
+      label: DynamicTp Version
+      placeholder: 'e.g.: 1.0.0'
+      description: Which dynamic-tp version are you using?
+    validations:
+      required: true
+
+  - type: input
+    id: config-center-type
+    attributes:
+      label: Config Center Type
+      placeholder: 'e.g.: Nacos, Apollo'
+      description: Which config center are you using?
+    validations:
+      required: false
+
+  - type: input
+    id: config-center-version
+    attributes:
+      label: Config Center Version
+      placeholder: 'e.g.: 2.0.0'
+      description: Which config center version are you using?
+    validations:
+      required: false
+
+  - type: textarea
+    id: problem-description
+    attributes:
+      label: Problem Description
+      description: Text description, screenshots, or code snippets
+      placeholder: |
+        - Configuration files:
+        - Dependencies:
+        - Code steps:
+        - Error messages:
+        - Possible cause:
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: Steps to Reproduce
+      description: Please describe how to reproduce this issue in detail
+      placeholder: |
+        1. xxx
+        2. xxx
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: Additional Information
+      description: Any other information that may help resolve the issue
+    validations:
+      required: false

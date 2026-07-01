@@ -37,7 +37,7 @@ public class ContextManagerHelper {
         contextManager = ExtensionServiceLoader.getFirst(ContextManager.class);
         if (contextManager == null) {
             contextManager = new NullContextManager();
-            throw new IllegalStateException("No ContextManager implementation found");
+            log.warn("No ContextManager implementation found, fallback to NullContextManager.");
         }
     }
 
@@ -69,4 +69,3 @@ public class ContextManagerHelper {
         return contextManager.getEnvironmentProperty(key, defaultValue);
     }
 }
-

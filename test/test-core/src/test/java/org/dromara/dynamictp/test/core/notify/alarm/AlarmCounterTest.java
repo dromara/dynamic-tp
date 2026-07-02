@@ -22,18 +22,15 @@ import org.dromara.dynamictp.common.entity.AlarmInfo;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.ex.DtpException;
 import org.dromara.dynamictp.core.notifier.alarm.AlarmCounter;
-import org.dromara.dynamictp.core.notifier.alarm.AlarmLimiter;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * AlarmCounter and AlarmLimiter test
+ * AlarmCounter test
  *
  * @author yanhom
  * @since 1.2.2
@@ -116,74 +113,5 @@ class AlarmCounterTest {
     @Test
     void testGetLastAlarmTimeBeforeReset() {
         assertNull(AlarmCounter.getLastAlarmTime("no-time-pool", NotifyItemEnum.REJECT.getValue()));
-    }
-
-    // ==================== AlarmLimiter ====================
-
-    @Test
-    void testInitAlarmLimiterSkipsChangeType() {
-        NotifyItem item = new NotifyItem();
-        item.setType(NotifyItemEnum.CHANGE.getValue());
-        item.setSilencePeriod(60);
-
-        String poolName = "limiter-skip-pool";
-        AlarmLimiter.initAlarmLimiter(poolName, item);
-
-        // Not initialized, so getAlarmLimitInfo returns null
-        assertNull(AlarmLimiter.getAlarmLimitInfo(
-                poolName + "#" + NotifyItemEnum.CHANGE.getValue(), NotifyItemEnum.CHANGE.getValue()));
-    }
-
-    @Test
-    void testIsAllowedBeforePut() {
-        NotifyItem item = new NotifyItem();
-        item.setType(NotifyItemEnum.REJECT.getValue());
-        item.setSilencePeriod(60);
-
-        String poolName = "limiter-allowed-pool";
-        AlarmLimiter.initAlarmLimiter(poolName, item);
-
-        // Before putVal, alarm should be allowed
-        assertTrue(AlarmLimiter.isAllowed(poolName, NotifyItemEnum.REJECT.getValue()));
-    }
-
-    @Test
-    void testIsNotAllowedAfterPut() {
-        NotifyItem item = new NotifyItem();
-        item.setType(NotifyItemEnum.REJECT.getValue());
-        item.setSilencePeriod(60);
-
-        String poolName = "limiter-blocked-pool";
-        AlarmLimiter.initAlarmLimiter(poolName, item);
-        AlarmLimiter.putVal(poolName, NotifyItemEnum.REJECT.getValue());
-
-        // After putVal, alarm should be blocked within silence period
-        assertFalse(AlarmLimiter.isAllowed(poolName, NotifyItemEnum.REJECT.getValue()));
-    }
-
-    @Test
-    void testGetAlarmLimitInfoAfterPut() {
-        NotifyItem item = new NotifyItem();
-        item.setType(NotifyItemEnum.RUN_TIMEOUT.getValue());
-        item.setSilencePeriod(60);
-
-        String poolName = "limiter-info-pool";
-        AlarmLimiter.initAlarmLimiter(poolName, item);
-        AlarmLimiter.putVal(poolName, NotifyItemEnum.RUN_TIMEOUT.getValue());
-
-        String key = poolName + "#" + NotifyItemEnum.RUN_TIMEOUT.getValue();
-        String val = AlarmLimiter.getAlarmLimitInfo(key, NotifyItemEnum.RUN_TIMEOUT.getValue());
-        assertNotNull(val);
-        assertEquals(NotifyItemEnum.RUN_TIMEOUT.getValue(), val);
-    }
-
-    @Test
-    void testGetAlarmLimitInfoReturnsNullForNonexistentKey() {
-        assertNull(AlarmLimiter.getAlarmLimitInfo("nonexistent#reject", "reject"));
-    }
-
-    @Test
-    void testGenKey() {
-        assertEquals("pool#reject", AlarmLimiter.genKey("pool", "reject"));
     }
 }

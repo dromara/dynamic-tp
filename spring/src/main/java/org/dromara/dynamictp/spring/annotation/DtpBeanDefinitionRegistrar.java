@@ -22,7 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
+import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.executor.ExecutorType;
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
@@ -42,8 +44,10 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.lang.NonNull;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.PriorityBlockingQueue;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.ALLOW_CORE_THREAD_TIMEOUT;
@@ -119,16 +123,39 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
         BeanRegistrationUtil.register(registry,
                 props.getThreadPoolName(),
                 VirtualThreadExecutorProxy.class,
-                buildCommonPropertyValues(props),
+                buildVirtualPropertyValues(props),
                 () -> createVirtualExecutorProxy(props));
+    }
+
+    /**
+     * Virtual threads have no bounded pool/queue and never reject; disable the
+     * pool-semantics notify items unless the user explicitly configured notifyItems.
+     */
+    private Map<String, Object> buildVirtualPropertyValues(DtpExecutorProps props) {
+        Map<String, Object> propertyValues = buildCommonPropertyValues(props);
+        if (CollectionUtils.isEmpty(props.getNotifyItems())) {
+            @SuppressWarnings("unchecked")
+            List<NotifyItem> notifyItems = (List<NotifyItem>) propertyValues.get(NOTIFY_ITEMS);
+            if (notifyItems != null) {
+                for (NotifyItem item : notifyItems) {
+                    NotifyItemEnum type = NotifyItemEnum.of(item.getType());
+                    if (type == NotifyItemEnum.LIVENESS
+                            || type == NotifyItemEnum.CAPACITY
+                            || type == NotifyItemEnum.REJECT
+                            || type == NotifyItemEnum.QUEUE_TIMEOUT) {
+                        item.setEnabled(false);
+                    }
+                }
+            }
+        }
+        return propertyValues;
     }
 
     @NonNull
     private VirtualThreadExecutorProxy createVirtualExecutorProxy(DtpExecutorProps props) {
         String namePrefix = StringUtils
                 .isNotBlank(props.getThreadNamePrefix()) ? props.getThreadNamePrefix() : props.getThreadPoolName();
-        java.util.concurrent.ExecutorService delegate =
-                VirtualThreadExecutorFactory.newThreadPerTaskExecutor(namePrefix);
+        ExecutorService delegate = VirtualThreadExecutorFactory.newThreadPerTaskExecutor(namePrefix);
         return new VirtualThreadExecutorProxy(delegate);
     }
 

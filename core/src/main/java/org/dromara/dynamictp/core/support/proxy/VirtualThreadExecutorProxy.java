@@ -188,11 +188,28 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
     // Enhancement helper: single source of truth for all submit/execute paths
     // ---------------------------------------------------------------------
 
+    /**
+     * Enhance a task once and register it with the aware chain.
+     *
+     * <p>Key must stay consistent with {@link EnhancedRunnable}:
+     * {@link AwareManager#execute} uses the same runnable instance that
+     * {@code beforeExecute}/{@code afterExecute} later see (the inner task),
+     * matching the Undertow proxy pattern. Otherwise queue-timeout timers
+     * and performance metrics cannot cancel/complete correctly.</p>
+     *
+     * <p>Idempotent: if the command is already an {@link EnhancedRunnable}
+     * produced by a previous {@code decorate} (e.g. SimpleAsyncTaskExecutor
+     * TaskDecorator + registry {@code execute} double entry), return it as-is
+     * so wrappers / aware hooks are not applied twice.</p>
+     */
     public Runnable decorate(Runnable command) {
+        if (command instanceof EnhancedRunnable) {
+            return command;
+        }
+        // Keep the same key for execute / beforeExecute / afterExecute (Undertow style).
         Runnable enhanced = getEnhancedTask(command);
-        EnhancedRunnable enhancedRunnable = EnhancedRunnable.of(enhanced, this);
-        AwareManager.execute(this, enhancedRunnable);
-        return enhancedRunnable;
+        AwareManager.execute(this, enhanced);
+        return EnhancedRunnable.of(enhanced, this);
     }
 
     // ---------------------------------------------------------------------

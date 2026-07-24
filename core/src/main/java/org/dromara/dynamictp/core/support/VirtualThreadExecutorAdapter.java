@@ -104,11 +104,10 @@ public class VirtualThreadExecutorAdapter implements ExecutorAdapter<VirtualThre
 
     @Override
     public void setRejectedExecutionHandler(RejectedExecutionHandler handler) {
-        // unsupported: virtual threads never reject (unbounded), but keep the
-        // reject handler type so notify / refresh can still report it.
-        if (handler != null) {
-            proxy.setRejectHandlerType(handler.getClass().getSimpleName());
-        }
+        // Virtual threads never reject (unbounded). Reject handler type is
+        // already set on the proxy via RejectHandlerAware by ExecutorWrapper
+        // (using the original handler's simple name). Do NOT overwrite it here
+        // with RejectHandlerGetter proxy names such as "$Proxy14".
     }
 
     @Override

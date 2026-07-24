@@ -25,6 +25,7 @@ import org.dromara.dynamictp.core.notifier.context.BaseNotifyCtx;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
+import org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -142,6 +144,39 @@ class AlarmManagerTest {
         AlarmManager.doCheckAndTryAlarm(wrapper, NotifyItemEnum.LIVENESS);
 
         assertNoAlarm();
+    }
+
+    @Test
+    void testDoCheckAndTryAlarmSkipsLivenessForVirtualThreadExecutor() {
+        // Virtual adapter reports active/max as -1; without a skip this would be 100% liveness.
+        NotifyItem notifyItem = notifyItem(NotifyItemEnum.LIVENESS, 1);
+        VirtualThreadExecutorProxy proxy = new VirtualThreadExecutorProxy(Executors.newSingleThreadExecutor());
+        ExecutorWrapper wrapper = new ExecutorWrapper("virtual-liveness", proxy);
+        wrapper.setNotifyItems(Collections.singletonList(notifyItem));
+        wrapper.setNotifyEnabled(true);
+
+        try {
+            AlarmManager.doCheckAndTryAlarm(wrapper, NotifyItemEnum.LIVENESS);
+            assertNoAlarm();
+        } finally {
+            proxy.shutdownNow();
+        }
+    }
+
+    @Test
+    void testDoCheckAndTryAlarmSkipsCapacityForVirtualThreadExecutor() {
+        NotifyItem notifyItem = notifyItem(NotifyItemEnum.CAPACITY, 1);
+        VirtualThreadExecutorProxy proxy = new VirtualThreadExecutorProxy(Executors.newSingleThreadExecutor());
+        ExecutorWrapper wrapper = new ExecutorWrapper("virtual-capacity", proxy);
+        wrapper.setNotifyItems(Collections.singletonList(notifyItem));
+        wrapper.setNotifyEnabled(true);
+
+        try {
+            AlarmManager.doCheckAndTryAlarm(wrapper, NotifyItemEnum.CAPACITY);
+            assertNoAlarm();
+        } finally {
+            proxy.shutdownNow();
+        }
     }
 
     @Test

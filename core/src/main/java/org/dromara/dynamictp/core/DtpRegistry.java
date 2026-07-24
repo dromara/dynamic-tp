@@ -201,7 +201,9 @@ public class DtpRegistry {
     }
 
     private static void refresh(ExecutorWrapper executorWrapper, DtpExecutorProps props) {
-        if (props.coreParamIsInValid()) {
+        // Virtual threads ignore core/max/queue sizing; skip pool-size validation so
+        // notify / taskWrapper / aware refresh still applies when those fields are N/A.
+        if (!executorWrapper.isVirtualThreadExecutor() && props.coreParamIsInValid()) {
             log.error("DynamicTp refresh, invalid parameters exist, properties: {}", props);
             return;
         }

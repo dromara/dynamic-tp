@@ -17,10 +17,14 @@
 
 package org.dromara.dynamictp.test.core;
 
+import org.dromara.dynamictp.common.entity.DtpExecutorProps;
+import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.DtpRegistry;
+import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy;
+import org.dromara.dynamictp.core.support.task.runnable.EnhancedRunnable;
 import org.dromara.dynamictp.spring.DtpPostProcessor;
 import org.dromara.dynamictp.spring.annotation.DtpBeanDefinitionRegistrar;
 import org.dromara.dynamictp.spring.holder.SpringContextHolder;
@@ -41,6 +45,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
@@ -202,6 +207,116 @@ class VirtualThreadExecutorPostProcessorTest {
         } finally {
             proxy.shutdownNow();
         }
+    }
+
+    @Test
+    void decorateIsIdempotentAndKeepsAwareKeyConsistent() throws Exception {
+        VirtualThreadExecutorProxy proxy = new VirtualThreadExecutorProxy(Executors.newSingleThreadExecutor());
+        AtomicInteger wrapCount = new AtomicInteger();
+        proxy.setTaskWrappers(Collections.singletonList(runnable -> {
+            wrapCount.incrementAndGet();
+            return runnable;
+        }));
+
+        ExecutorWrapper wrapper = new ExecutorWrapper(VIRTUAL_PROXY_NAME, proxy);
+        DtpRegistry.registerExecutor(wrapper, "test");
+        AwareManager.register(wrapper);
+        try {
+            CountDownLatch latch = new CountDownLatch(1);
+            Runnable first = proxy.decorate(latch::countDown);
+            Runnable second = proxy.decorate(first);
+
+            assertTrue(first instanceof EnhancedRunnable);
+            assertSame(first, second);
+            assertEquals(1, wrapCount.get());
+
+            // Already decorated: execute must not wrap again.
+            proxy.getDelegate().execute(first);
+            assertTrue(latch.await(3, TimeUnit.SECONDS));
+
+            // Performance/timeout maps keyed by the inner task must be cleared after run.
+            Map<?, ?> stopWatchMap = getStopWatchMap(wrapper);
+            assertTrue(stopWatchMap == null || stopWatchMap.isEmpty());
+        } finally {
+            proxy.shutdownNow();
+        }
+    }
+
+    @Test
+    void simpleAsyncPathDoesNotDoubleEnhanceWhenUsingRegistryExecutor() throws Exception {
+        DtpPostProcessor processor = newPostProcessor(true);
+        SimpleAsyncTaskExecutor executor = new SimpleAsyncTaskExecutor();
+        AtomicInteger wrapCount = new AtomicInteger();
+        CountDownLatch latch = new CountDownLatch(1);
+
+        processor.postProcessAfterInitialization(executor, SIMPLE_ASYNC_NAME);
+        ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(SIMPLE_ASYNC_NAME);
+        wrapper.setTaskWrappers(Collections.singletonList(runnable -> {
+            wrapCount.incrementAndGet();
+            return runnable;
+        }));
+
+        // Registry path: VirtualThreadExecutorAdapter -> proxy.execute -> decorate ->
+        // SimpleAsyncTaskExecutor TaskDecorator -> decorate again (must be idempotent).
+        wrapper.getExecutor().execute(latch::countDown);
+
+        assertTrue(latch.await(3, TimeUnit.SECONDS));
+        assertEquals(1, wrapCount.get());
+    }
+
+    @Test
+    void refreshVirtualStillAppliesWhenCoreParamsAreInvalid() {
+        VirtualThreadExecutorProxy proxy = new VirtualThreadExecutorProxy(Executors.newSingleThreadExecutor());
+        proxy.setThreadPoolAliasName("before");
+        proxy.setNotifyEnabled(true);
+        DtpPostProcessor processor = newPostProcessor(false);
+        processor.postProcessAfterInitialization(proxy, VIRTUAL_PROXY_NAME);
+
+        ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(VIRTUAL_PROXY_NAME);
+        assertTrue(wrapper.isVirtualThreadExecutor());
+
+        // Ensure static DtpProperties is initialized for NotifyHelper during refresh.
+        new DtpRegistry(DtpProperties.getInstance());
+
+        DtpExecutorProps props = new DtpExecutorProps();
+        props.setThreadPoolName(VIRTUAL_PROXY_NAME);
+        props.setThreadPoolAliasName("after-refresh");
+        props.setCorePoolSize(0);
+        props.setMaximumPoolSize(0);
+        props.setNotifyEnabled(false);
+        props.setRejectedHandlerType(wrapper.getExecutor().getRejectHandlerType());
+
+        DtpRegistry.refresh(props);
+
+        assertEquals("after-refresh", DtpRegistry.getExecutorWrapper(VIRTUAL_PROXY_NAME).getThreadPoolAliasName());
+        proxy.shutdownNow();
+    }
+
+    @Test
+    void registrarDisablesPoolSemanticsNotifyItemsForVirtualByDefault() {
+        DtpBeanDefinitionRegistrar registrar = new DtpBeanDefinitionRegistrar();
+        registrar.setEnvironment(new MockEnvironment()
+                .withProperty("dynamictp.executors[0].threadPoolName", CONFIGURED_VIRTUAL_NAME)
+                .withProperty("dynamictp.executors[0].executorType", "virtual"));
+        DefaultListableBeanFactory registry = new DefaultListableBeanFactory();
+
+        registrar.registerBeanDefinitions(AnnotationMetadata.introspect(getClass()), registry);
+
+        BeanDefinition beanDefinition = registry.getBeanDefinition(CONFIGURED_VIRTUAL_NAME);
+        @SuppressWarnings("unchecked")
+        List<NotifyItem> notifyItems = (List<NotifyItem>) beanDefinition.getPropertyValues()
+                .getPropertyValue("notifyItems").getValue();
+        assertTrue(notifyItems.stream()
+                .filter(i -> "liveness".equalsIgnoreCase(i.getType()) || "capacity".equalsIgnoreCase(i.getType()))
+                .noneMatch(NotifyItem::isEnabled));
+        assertTrue(notifyItems.stream()
+                .anyMatch(i -> "change".equalsIgnoreCase(i.getType()) && i.isEnabled()));
+    }
+
+    private Map<?, ?> getStopWatchMap(ExecutorWrapper wrapper) throws Exception {
+        Field field = wrapper.getThreadPoolStatProvider().getClass().getDeclaredField("stopWatchMap");
+        field.setAccessible(true);
+        return (Map<?, ?>) field.get(wrapper.getThreadPoolStatProvider());
     }
 
     private DtpPostProcessor newPostProcessor(boolean virtualEnabled) {

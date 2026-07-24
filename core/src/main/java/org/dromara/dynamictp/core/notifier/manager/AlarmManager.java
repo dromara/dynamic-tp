@@ -155,8 +155,16 @@ public class AlarmManager {
     }
 
     private static boolean checkLiveness(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
+        // Virtual threads are unbounded; active/max are reported as -1 and would
+        // yield a false 100% liveness if divided as-is.
+        if (executorWrapper.isVirtualThreadExecutor()) {
+            return false;
+        }
         val executor = executorWrapper.getExecutor();
         int maximumPoolSize = executor.getMaximumPoolSize();
+        if (maximumPoolSize <= 0) {
+            return false;
+        }
         double div = NumberUtil.div(executor.getActiveCount(), maximumPoolSize, 2) * 100;
         if (div >= notifyItem.getThreshold()) {
             log.warn("DynamicTp monitor, current liveness [{}] >= threshold [{}], threadPoolName: {}",
@@ -167,11 +175,19 @@ public class AlarmManager {
     }
 
     private static boolean checkCapacity(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
+        // Virtual threads have no bounded queue; capacity alarms do not apply.
+        if (executorWrapper.isVirtualThreadExecutor()) {
+            return false;
+        }
         val executor = executorWrapper.getExecutor();
         if (executor.getQueueSize() <= 0) {
             return false;
         }
-        double div = NumberUtil.div(executor.getQueueSize(), executor.getQueueCapacity(), 2) * 100;
+        int queueCapacity = executor.getQueueCapacity();
+        if (queueCapacity <= 0) {
+            return false;
+        }
+        double div = NumberUtil.div(executor.getQueueSize(), queueCapacity, 2) * 100;
         if (div >= notifyItem.getThreshold()) {
             log.warn("DynamicTp monitor, current queue utilization [{}] >= threshold [{}], threadPoolName: {}",
                     div, notifyItem.getThreshold(), executorWrapper.getThreadPoolName());

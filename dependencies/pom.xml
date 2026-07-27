@@ -12,22 +12,24 @@
     <url>https://github.com/yanhom1314/dynamic-tp</url>
 
     <properties>
-        <revision>1.3.0-x</revision>
+        <revision>1.3.0-4-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
 
-        <lombok.version>1.18.24</lombok.version>
-        <slf4j.version>1.7.36</slf4j.version>
-        <logback.version>1.2.10</logback.version>
-        <log4j.version>2.17.1</log4j.version>
+        <!-- Prefer versions aligned with Spring Boot 4 BOM; keep pins only for non-managed deps. -->
+        <lombok.version>1.18.36</lombok.version>
+        <slf4j.version>2.0.16</slf4j.version>
+        <logback.version>1.5.16</logback.version>
+        <log4j.version>2.24.3</log4j.version>
 
-        <hutool.version>5.8.25</hutool.version>
-        <guava.version>31.1-jre</guava.version>
+        <hutool.version>5.8.35</hutool.version>
+        <guava.version>33.4.0-jre</guava.version>
 
-        <jackson.version>2.13.5</jackson.version>
-        <gson.version>2.8.9</gson.version>
+        <!-- Jackson is managed by Spring Boot 4 (Jackson 3 preferred). Keep 2.x coords only for optional multi-parser tests. -->
+        <jackson.version>2.18.2</jackson.version>
+        <gson.version>2.11.0</gson.version>
         <fastjson.version>1.2.83</fastjson.version>
 
         <ttl.version>2.14.5</ttl.version>
@@ -55,6 +57,8 @@
         <apollo.version>2.4.0</apollo.version>
         <nacos-api.version>2.0.4</nacos-api.version>
 
+        <!-- Cloud Alibaba / Tencent / Huawei lag Boot 4; keep last known coordinates for compile of optional starters.
+             Runtime on Boot 4 may require newer upstream trains when available. -->
         <spring-cloud-alibaba.version>2023.0.3.2</spring-cloud-alibaba.version>
         <spring-cloud-tencent.version>1.13.2-2023.0.0</spring-cloud-tencent.version>
         <spring-boot-nacos.version>0.3.0-RC</spring-boot-nacos.version>

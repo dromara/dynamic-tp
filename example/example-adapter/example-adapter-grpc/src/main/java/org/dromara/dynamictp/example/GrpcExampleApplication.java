@@ -20,13 +20,13 @@ package org.dromara.dynamictp.example;
 import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration;
 
 /**
  * @author fabian4
  */
 @EnableDynamicTp
-@SpringBootApplication(exclude = RedisAutoConfiguration.class)
+@SpringBootApplication(exclude = DataRedisAutoConfiguration.class)
 public class GrpcExampleApplication {
     public static void main(String[] args) {
         SpringApplication.run(GrpcExampleApplication.class, args);

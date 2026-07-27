@@ -23,9 +23,9 @@ import org.dromara.dynamictp.common.manager.ContextManagerHelper;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.converter.ExecutorConverter;
 import org.dromara.dynamictp.spring.holder.SpringContextHolder;
-import org.springframework.boot.web.context.WebServerApplicationContext;
-import org.springframework.boot.web.context.WebServerInitializedEvent;
 import org.springframework.boot.web.server.WebServer;
+import org.springframework.boot.web.server.context.WebServerApplicationContext;
+import org.springframework.boot.web.server.context.WebServerInitializedEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
@@ -39,7 +39,8 @@ import java.util.concurrent.Executor;
  * @author yanhom
  * @author dragon-zhang
  * @since 1.0.0
- */@Slf4j
+ */
+@Slf4j
 public abstract class AbstractWebServerDtpAdapter<A extends Executor> extends AbstractDtpAdapter
         implements ApplicationListener<ApplicationEvent> {
 

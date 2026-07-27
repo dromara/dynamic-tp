@@ -1,3 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  org.dromara.dynamictp.starter.adapter.rocketmq.autoconfigure.RocketMqTpAutoConfiguration,\
-  org.dromara.dynamictp.starter.adapter.rocketmq.autoconfigure.AliyunOnsRocketMqAutoConfiguration
+# Spring Boot 4: auto-config via META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports

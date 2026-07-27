@@ -1,4 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  org.dromara.dynamictp.starter.zookeeper.autoconfigure.DtpZkAutoConfiguration
 org.springframework.boot.env.EnvironmentPostProcessor=\
   org.dromara.dynamictp.starter.zookeeper.autoconfigure.ZkConfigEnvironmentProcessor

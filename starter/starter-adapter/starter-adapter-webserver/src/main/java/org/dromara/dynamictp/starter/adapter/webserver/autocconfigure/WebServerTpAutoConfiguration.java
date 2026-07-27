@@ -20,10 +20,8 @@ package org.dromara.dynamictp.starter.adapter.webserver.autocconfigure;
 import org.dromara.dynamictp.spring.DtpBaseBeanConfiguration;
 import org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.condition.ConditionalOnJettyWebServer;
 import org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.condition.ConditionalOnTomcatWebServer;
-import org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.condition.ConditionalOnUndertowWebServer;
 import org.dromara.dynamictp.starter.adapter.webserver.jetty.JettyDtpAdapter;
 import org.dromara.dynamictp.starter.adapter.webserver.tomcat.TomcatDtpAdapter;
-import org.dromara.dynamictp.starter.adapter.webserver.undertow.UndertowDtpAdapter;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -31,7 +29,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * WebServerTpAutoConfiguration related
+ * WebServerTpAutoConfiguration related.
+ *
+ * <p>Undertow support is removed on the Spring Boot 4 line (Servlet 6.1 baseline
+ * dropped Undertow from Spring Boot itself).</p>
  *
  * @author yanhom
  * @since 1.0.6
@@ -52,11 +53,5 @@ public class WebServerTpAutoConfiguration {
     @ConditionalOnJettyWebServer
     public JettyDtpAdapter jettyTpHandler() {
         return new JettyDtpAdapter();
-    }
-
-    @Bean
-    @ConditionalOnUndertowWebServer
-    public UndertowDtpAdapter undertowTpHandler() {
-        return new UndertowDtpAdapter();
     }
 }

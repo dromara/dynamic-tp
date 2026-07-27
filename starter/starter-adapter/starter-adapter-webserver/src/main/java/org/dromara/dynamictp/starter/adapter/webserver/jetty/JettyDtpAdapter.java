@@ -31,8 +31,8 @@ import org.eclipse.jetty.util.thread.ExecutionStrategy;
 import org.eclipse.jetty.util.thread.MonitoredQueuedThreadPool;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.eclipse.jetty.util.thread.strategy.EatWhatYouKill;
-import org.springframework.boot.web.embedded.jetty.JettyWebServer;
+import org.eclipse.jetty.util.thread.strategy.AdaptiveExecutionStrategy;
+import org.springframework.boot.jetty.JettyWebServer;
 import org.springframework.boot.web.server.WebServer;
 
 import java.util.Objects;
@@ -89,13 +89,19 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
                 return;
             }
             for (ManagedSelector managedSelector : managedSelectors) {
-                EatWhatYouKill eatWhatYouKill = (EatWhatYouKill) ReflectionUtil.getFieldValue(STRATEGY_FIELD, managedSelector);
-                if (Objects.isNull(eatWhatYouKill)) {
+                // Jetty 12 renamed EatWhatYouKill -> AdaptiveExecutionStrategy
+                Object strategy = ReflectionUtil.getFieldValue(STRATEGY_FIELD, managedSelector);
+                if (!(strategy instanceof AdaptiveExecutionStrategy)) {
                     continue;
                 }
-                ExecutionStrategy.Producer producer = (ExecutionStrategy.Producer) ReflectionUtil.getFieldValue(PRODUCER_FIELD, eatWhatYouKill);
+                AdaptiveExecutionStrategy adaptiveStrategy = (AdaptiveExecutionStrategy) strategy;
+                ExecutionStrategy.Producer producer =
+                        (ExecutionStrategy.Producer) ReflectionUtil.getFieldValue(PRODUCER_FIELD, adaptiveStrategy);
+                if (Objects.isNull(producer)) {
+                    continue;
+                }
                 SelectorProducerProxy selectorProducerProxy = new SelectorProducerProxy(producer, threadPool);
-                ReflectionUtil.setFieldValue(PRODUCER_FIELD, eatWhatYouKill, selectorProducerProxy);
+                ReflectionUtil.setFieldValue(PRODUCER_FIELD, adaptiveStrategy, selectorProducerProxy);
             }
         }
     }

@@ -1,4 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  org.dromara.dynamictp.starter.etcd.autoconfigure.DtpEtcdAutoConfiguration
 org.springframework.boot.env.EnvironmentPostProcessor=\
   org.dromara.dynamictp.starter.etcd.autoconfigure.EtcdConfigEnvironmentProcessor

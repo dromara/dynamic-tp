@@ -1,2 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.dromara.dynamictp.starter.adapter.thrift.autoconfigure.ThriftTpAutoConfiguration

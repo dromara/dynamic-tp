@@ -19,10 +19,18 @@
         <maven.compiler.target>17</maven.compiler.target>
 
         <!--
-          Do NOT pin versions already managed by spring-boot-dependencies (slf4j/logback/log4j/
-          jackson/lombok/bytebuddy/...). Those would override Boot 4 BOM when this POM is imported
-          after it. Only pin third-party libs Boot does not manage.
+          Core runtime libs must stay versioned for non-Spring consumers (no Boot BOM).
+          Versions are aligned with Spring Boot 4.0.7 BOM so Boot apps that import this BOM
+          after spring-boot-dependencies are not accidentally downgraded.
         -->
+        <slf4j.version>2.0.18</slf4j.version>
+        <logback.version>1.5.34</logback.version>
+        <log4j.version>2.25.4</log4j.version>
+        <!-- Jackson 2.x coords for optional multi-parser path (Boot 4 still manages 2.21.x). -->
+        <jackson.version>2.21.4</jackson.version>
+        <bytebuddy.version>1.17.8</bytebuddy.version>
+        <snakeyaml.version>2.5</snakeyaml.version>
+
         <hutool.version>5.8.35</hutool.version>
         <guava.version>33.4.0-jre</guava.version>
 
@@ -133,7 +141,73 @@
                 <version>${hutool.version}</version>
             </dependency>
 
-            <!-- slf4j / logback / log4j / jackson / bytebuddy: managed by spring-boot-dependencies -->
+            <!-- ===== Core runtime (required even without Spring Boot) ===== -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+
+            <!-- SLF4J 2.x bridge (Boot 4 / modern non-Spring). -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j2-impl</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>${bytebuddy.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.apache.rocketmq</groupId>

@@ -18,17 +18,14 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
 
-        <!-- Prefer versions aligned with Spring Boot 4 BOM; keep pins only for non-managed deps. -->
-        <lombok.version>1.18.36</lombok.version>
-        <slf4j.version>2.0.16</slf4j.version>
-        <logback.version>1.5.16</logback.version>
-        <log4j.version>2.24.3</log4j.version>
-
+        <!--
+          Do NOT pin versions already managed by spring-boot-dependencies (slf4j/logback/log4j/
+          jackson/lombok/bytebuddy/...). Those would override Boot 4 BOM when this POM is imported
+          after it. Only pin third-party libs Boot does not manage.
+        -->
         <hutool.version>5.8.35</hutool.version>
         <guava.version>33.4.0-jre</guava.version>
 
-        <!-- Jackson is managed by Spring Boot 4 (Jackson 3 preferred). Keep 2.x coords only for optional multi-parser tests. -->
-        <jackson.version>2.18.2</jackson.version>
         <gson.version>2.11.0</gson.version>
         <fastjson.version>1.2.83</fastjson.version>
 
@@ -75,11 +72,9 @@
         <central-publishing-maven-plugin.version>0.6.0</central-publishing-maven-plugin.version>
 
         <dropwizard-metrics.version>4.2.20</dropwizard-metrics.version>
-        <jakarta-mail.version>2.1.0</jakarta-mail.version>
-        <jmh.version>1.36</jmh.version>
+        <jmh.version>1.37</jmh.version>
 
         <native-lib-loader.version>2.0.2</native-lib-loader.version>
-        <bytebuddy.version>1.17.5</bytebuddy.version>
     </properties>
 
     <dependencyManagement>
@@ -138,53 +133,7 @@
                 <version>${hutool.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-core</artifactId>
-                <version>${logback.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-api</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-slf4j-impl</artifactId>
-                <version>${log4j.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
+            <!-- slf4j / logback / log4j / jackson / bytebuddy: managed by spring-boot-dependencies -->
 
             <dependency>
                 <groupId>org.apache.rocketmq</groupId>
@@ -344,13 +293,6 @@
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-core</artifactId>
                 <version>${dropwizard-metrics.version}</version>
-            </dependency>
-
-            <!-- https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy -->
-            <dependency>
-                <groupId>net.bytebuddy</groupId>
-                <artifactId>byte-buddy</artifactId>
-                <version>${bytebuddy.version}</version>
             </dependency>
 
             <dependency>

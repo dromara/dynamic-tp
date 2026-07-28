@@ -25,7 +25,7 @@
         <spring-boot.version>4.0.7</spring-boot.version>
         <spring-cloud.version>2025.1.2</spring-cloud.version>
 
-        <guava.version>31.1-jre</guava.version>
+        <guava.version>33.4.0-jre</guava.version>
         <commons-collections4.version>4.4</commons-collections4.version>
 
         <maven-flatten.version>1.7.0</maven-flatten.version>

@@ -40,9 +40,10 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- SLF4J 2.x (Boot 4) requires the slf4j2 bridge, not log4j-slf4j-impl. -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
             <optional>true</optional>
         </dependency>
     </dependencies>

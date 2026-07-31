@@ -15,8 +15,8 @@
     <url>https://github.com/yanhom1314/dynamic-tp</url>
 
     <properties>
-        <!-- 4.x versions mark the Spring Boot 4 product line. -->
-        <revision>4.0.0-SNAPSHOT</revision>
+        <!-- 2.x versions mark the Spring Boot 4 product line. -->
+        <revision>2.0.0</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <maven.compiler.release>17</maven.compiler.release>
@@ -184,7 +184,6 @@
                         <configLocation>.github/checkstyle/checkstyle.xml</configLocation>
                         <includeTestSourceDirectory>false</includeTestSourceDirectory>
                         <consoleOutput>true</consoleOutput>
-                        <encoding>UTF-8</encoding>
                         <skip>false</skip>
                         <!--这里是说当前这个配置是什么错误级别。如果配置的是error，那么扫描到不符合条件的，就是打印error。checkstyle里允许的错误级别有error, warning, info. -->
                         <violationSeverity>error</violationSeverity>

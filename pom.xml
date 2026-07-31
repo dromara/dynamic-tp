@@ -144,32 +144,15 @@
         <url>https://github.com/yanhom1314/dynamic-tp/issues</url>
     </issueManagement>
 
-    <repositories>
-        <repository>
-            <id>Snapshots Repository</id>
-            <url>http://nexus.sys.wanmei.com/repository/java-snapshots</url>
-        </repository>
-        <repository>
-            <id>Release Repository</id>
-            <url>http://nexus.sys.wanmei.com/repository/java-releases</url>
-        </repository>
-        <repository>
-            <id>Public Repository</id>
-            <url>http://nexus.sys.wanmei.com/repository/maven-public</url>
-        </repository>
-    </repositories>
-
     <distributionManagement>
-        <repository>
-            <id>pwrd-nexus-releases</id>
-            <name>Internal Releases</name>
-            <url>http://nexus.sys.wanmei.com/repository/java-releases/</url>
-        </repository>
         <snapshotRepository>
-            <id>pwrd-nexus-snapshots</id>
-            <name>Internal Snapshots</name>
-            <url>http://nexus.sys.wanmei.com/repository/java-snapshots/</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
 
     <build>
@@ -303,6 +286,43 @@
                     <classesDirectory/>
                     <outputDirectory/>
                     <testClassesDirectory/>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>${maven-gpg-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>${central-publishing-maven-plugin.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>ossrh</publishingServerId>
+                    <autoPublish>false</autoPublish>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>${nexus-staging-maven-plugin.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>false</autoReleaseAfterClose>
                 </configuration>
             </plugin>
 

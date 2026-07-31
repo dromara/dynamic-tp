@@ -44,6 +44,7 @@ import org.dromara.dynamictp.core.notifier.manager.NotifyHelper;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
+import org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 
@@ -273,6 +274,31 @@ public class DtpRegistry {
         // update aware related
         AwareManager.refresh(executorWrapper, props);
         updateWrapper(executorWrapper, props);
+        syncVirtualProxy(executorWrapper);
+    }
+
+    /**
+     * The proxy keeps its own copy of the pool metadata (it is a Spring bean whose properties
+     * are injected at registration time). Write the refreshed values back so the proxy and the
+     * wrapper never disagree, i.e. there is a single source of truth after a config change.
+     *
+     * @param executorWrapper the wrapper holding the refreshed values
+     */
+    private static void syncVirtualProxy(ExecutorWrapper executorWrapper) {
+        VirtualThreadExecutorProxy proxy = (VirtualThreadExecutorProxy) executorWrapper.getExecutor().getOriginal();
+        proxy.setThreadPoolName(executorWrapper.getThreadPoolName());
+        proxy.setThreadPoolAliasName(executorWrapper.getThreadPoolAliasName());
+        proxy.setNotifyEnabled(executorWrapper.isNotifyEnabled());
+        proxy.setNotifyItems(executorWrapper.getNotifyItems());
+        proxy.setPlatformIds(executorWrapper.getPlatformIds());
+        proxy.setAwareNames(executorWrapper.getAwareNames());
+        proxy.setRejectEnhanced(executorWrapper.isRejectEnhanced());
+        proxy.setWaitForTasksToCompleteOnShutdown(executorWrapper.isWaitForTasksToCompleteOnShutdown());
+        proxy.setAwaitTerminationSeconds(executorWrapper.getAwaitTerminationSeconds());
+        val statProvider = executorWrapper.getThreadPoolStatProvider();
+        proxy.setRunTimeout(statProvider.getRunTimeout());
+        proxy.setQueueTimeout(statProvider.getQueueTimeout());
+        proxy.setTryInterrupt(statProvider.isTryInterrupt());
     }
 
     private static void doRefreshCommon(ExecutorWrapper executorWrapper, DtpExecutorProps props) {

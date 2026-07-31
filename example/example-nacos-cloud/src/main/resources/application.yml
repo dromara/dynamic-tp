@@ -2,23 +2,25 @@ server:
   port: 9100
 
 spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/user
-    username: root
-    password:
   application:
-    name: dynamic-tp-cloud-consul-demo
+    name: dynamic-tp-nacos-cloud-demo
   profiles:
     active: dev
   cloud:
-    consul:
-      host: 127.0.0.1
-      port: 8500
+    nacos:
+      discovery:
+        server-addr: http://${nacos:localhost}:8848
       config:
-        enabled: true
-        prefixes: config
-        format: yaml
-        data-key: dynamic-tp-cloud-consul-demo-dtp
+        server-addr: http://${nacos:localhost}:8848
+        file-extension: yml
+        refresh-enabled: true
+  config:
+    import:
+      - optional:nacos:dynamic-tp-nacos-cloud-demo-dtp-dev.yml
+  data:
+    redis:
+      host: ${redis:localhost}
+      port: 6379
 
 # 开启 SpringBoot Actuator Endpoint 暴露出DynamicTp指标接口
 # 开启 prometheus 指标采集端点
@@ -31,6 +33,3 @@ management:
     metrics:
       export:
         enabled: true
-
-mybatis:
-  mapper-locations: classpath:mapper/*.xml

@@ -19,8 +19,8 @@ package org.dromara.dynamictp.core.executor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.MethodUtils;
 
+import java.lang.reflect.Method;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -32,13 +32,85 @@ import java.util.concurrent.ThreadFactory;
  * <p>It is the only entry point that touches {@code Thread.ofVirtual()}, keeping every
  * other module free of Java 21 API references.</p>
  *
+ * <p><b>Reflection notes</b> (same approach as Tomcat's {@code Jre21Compat}):
+ * {@code Thread.ofVirtual()} returns {@code java.lang.ThreadBuilders$VirtualThreadBuilder},
+ * a non-public class in the {@code java.lang} package. Resolving methods on that runtime
+ * class forces {@code setAccessible(true)}, which fails with
+ * {@link java.lang.reflect.InaccessibleObjectException} unless the application is started
+ * with {@code --add-opens java.base/java.lang=ALL-UNNAMED}. Methods are therefore resolved
+ * from the public, exported interface {@code java.lang.Thread$Builder}, whose access check
+ * passes without opening the module.</p>
+ *
  * @author yanhom
  * @since 1.3.0
  */
 @Slf4j
 public final class VirtualThreadExecutorFactory {
 
+    private static final String DEFAULT_NAME_PREFIX = "dynamic-tp-virtual";
+
+    /**
+     * {@code Thread.ofVirtual()}, JDK 21+.
+     */
+    private static final Method OF_VIRTUAL_METHOD;
+
+    /**
+     * {@code Thread.Builder#name(String, long)}, resolved on the public interface.
+     */
+    private static final Method NAME_METHOD;
+
+    /**
+     * {@code Thread.Builder#factory()}, resolved on the public interface.
+     */
+    private static final Method FACTORY_METHOD;
+
+    /**
+     * {@code Executors.newThreadPerTaskExecutor(ThreadFactory)}, JDK 21+.
+     */
+    private static final Method THREAD_PER_TASK_EXECUTOR_METHOD;
+
+    private static final boolean SUPPORTED;
+
+    static {
+        Class<?> sequencedCollectionClass = null;
+        Method ofVirtual = null;
+        Method name = null;
+        Method factory = null;
+        Method threadPerTaskExecutor = null;
+        try {
+            // Virtual threads existed as a preview feature before JDK 21, so test for
+            // another class that was added in JDK 21 to detect the runtime accurately.
+            sequencedCollectionClass = Class.forName("java.util.SequencedCollection");
+            Class<?> builderClass = Class.forName("java.lang.Thread$Builder");
+            ofVirtual = Thread.class.getMethod("ofVirtual");
+            name = builderClass.getMethod("name", String.class, long.class);
+            factory = builderClass.getMethod("factory");
+            threadPerTaskExecutor = Executors.class.getMethod("newThreadPerTaskExecutor", ThreadFactory.class);
+        } catch (ClassNotFoundException e) {
+            // must be pre JDK 21
+            log.debug("DynamicTp virtual thread executor is not supported, current JRE is {}",
+                    System.getProperty("java.version"));
+        } catch (ReflectiveOperationException e) {
+            // should never happen
+            log.error("DynamicTp virtual thread executor init failed unexpectedly.", e);
+        }
+        SUPPORTED = sequencedCollectionClass != null && ofVirtual != null;
+        OF_VIRTUAL_METHOD = ofVirtual;
+        NAME_METHOD = name;
+        FACTORY_METHOD = factory;
+        THREAD_PER_TASK_EXECUTOR_METHOD = threadPerTaskExecutor;
+    }
+
     private VirtualThreadExecutorFactory() {
+    }
+
+    /**
+     * Whether the current runtime supports virtual threads, i.e. JDK 21+.
+     *
+     * @return true if virtual threads are available
+     */
+    public static boolean isSupported() {
+        return SUPPORTED;
     }
 
     /**
@@ -53,44 +125,22 @@ public final class VirtualThreadExecutorFactory {
      * @throws IllegalStateException if the runtime is older than Java 21
      */
     public static ExecutorService newThreadPerTaskExecutor(String namePrefix) {
-        ThreadFactory factory = newVirtualThreadFactory(namePrefix);
-        return newThreadPerTaskExecutor(factory);
-    }
-
-    /**
-     * Reflectively call {@code Executors.newThreadPerTaskExecutor(ThreadFactory)},
-     * which only exists on JDK 21+.
-     */
-    private static ExecutorService newThreadPerTaskExecutor(ThreadFactory factory) {
-        try {
-            return (ExecutorService) MethodUtils.invokeStaticMethod(
-                    Executors.class, "newThreadPerTaskExecutor",
-                    new Object[]{factory}, new Class[]{ThreadFactory.class});
-        } catch (Exception e) {
-            throw new IllegalStateException(
-                    "Failed to create thread-per-task executor via reflection", e);
+        String prefix = StringUtils.isNotBlank(namePrefix) ? namePrefix : DEFAULT_NAME_PREFIX;
+        if (!SUPPORTED) {
+            throw new IllegalStateException("Virtual thread executor requires JDK 21+, current JRE is "
+                    + System.getProperty("java.version") + ", prefix: " + prefix);
         }
-    }
-
-    /**
-     * Reflectively build a virtual-thread {@link ThreadFactory} with the given name prefix.
-     * Equivalent to {@code Thread.ofVirtual().name(prefix, 0).factory()}.
-     */
-    private static ThreadFactory newVirtualThreadFactory(String namePrefix) {
-        String prefix = StringUtils.isNotBlank(namePrefix) ? namePrefix : "dynamic-tp-virtual";
         try {
-            // Thread.Builder builder = Thread.ofVirtual();
-            Class<?> threadClass = Class.forName("java.lang.Thread");
-            Object builder = MethodUtils.invokeStaticMethod(threadClass, "ofVirtual");
-            // builder = builder.name(prefix, 0);
-            builder = MethodUtils.invokeMethod(builder, "name", prefix, 0);
-            // return builder.factory();
-            Object factory = MethodUtils.invokeMethod(builder, "factory");
-            return (ThreadFactory) factory;
-        } catch (Exception e) {
+            // Thread.Builder.OfVirtual builder = Thread.ofVirtual().name(prefix, 0);
+            Object builder = OF_VIRTUAL_METHOD.invoke(null);
+            builder = NAME_METHOD.invoke(builder, prefix, 0L);
+            // ThreadFactory factory = builder.factory();
+            ThreadFactory factory = (ThreadFactory) FACTORY_METHOD.invoke(builder);
+            // return Executors.newThreadPerTaskExecutor(factory);
+            return (ExecutorService) THREAD_PER_TASK_EXECUTOR_METHOD.invoke(null, factory);
+        } catch (ReflectiveOperationException e) {
             throw new IllegalStateException(
-                    "Virtual thread executor requires JDK 21+, current JRE is "
-                            + System.getProperty("java.version") + ", prefix: " + prefix, e);
+                    "Failed to create virtual thread per task executor, prefix: " + prefix, e);
         }
     }
 }

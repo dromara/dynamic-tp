@@ -24,10 +24,6 @@ dynamictp:
   jettyTp:                                     # jetty web server线程池配置
     corePoolSize: 100
     maximumPoolSize: 400
-  undertowTp:                                  # undertow web server线程池配置
-    corePoolSize: 100
-    maximumPoolSize: 400
-    keepAliveTime: 60
   hystrixTp:                                   # hystrix 线程池配置
     - threadPoolName: hystrix1
       corePoolSize: 100

@@ -59,13 +59,6 @@ dynamictp:
     runTimeout: 200
     queueTimeout: 1000
 
-  undertowTp: # undertow webserver 线程池配置
-    corePoolSize: 100
-    maximumPoolSize: 200
-    keepAliveTime: 60
-    runTimeout: 20
-    queueTimeout: 10
-
 # 开启 SpringBoot Actuator Endpoint 暴露出DynamicTp指标接口
 # 开启 prometheus 指标采集端点
 management:

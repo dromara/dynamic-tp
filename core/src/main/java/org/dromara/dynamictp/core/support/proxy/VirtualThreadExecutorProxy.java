@@ -31,6 +31,9 @@ import java.util.Set;
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
  * Proxy for virtual-thread-per-task executors. It wraps an {@link ExecutorService}
@@ -65,6 +68,35 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
         implements TaskEnhanceAware, RejectHandlerAware {
 
     private final ExecutorService delegate;
+
+    /**
+     * Guards the one-shot {@code terminated} aware notification.
+     */
+    private final AtomicBoolean terminatedNotified = new AtomicBoolean(false);
+
+    /**
+     * Cumulative number of tasks handed over to the delegate, rejected ones excluded.
+     * The JDK thread-per-task executor keeps no such counter (and its internal
+     * {@code threadCount()} is not reachable without opening {@code java.util.concurrent}),
+     * so the numbers are tracked here, where every submission path passes through.
+     */
+    private final LongAdder taskCount = new LongAdder();
+
+    /**
+     * Cumulative number of finished tasks, including the ones that threw.
+     */
+    private final LongAdder completedTaskCount = new LongAdder();
+
+    /**
+     * Tasks currently running, which equals the number of live threads for a
+     * thread-per-task executor.
+     */
+    private final AtomicInteger activeCount = new AtomicInteger();
+
+    /**
+     * High-water mark of {@link #activeCount}.
+     */
+    private final AtomicInteger largestActiveCount = new AtomicInteger();
 
     /**
      * Task wrappers, do sth enhanced.
@@ -156,17 +188,41 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
     @Override
     public void execute(Runnable command) {
         Runnable enhanced = decorate(command);
-        delegate.execute(enhanced);
+        try {
+            delegate.execute(enhanced);
+        } catch (RuntimeException e) {
+            // The delegate refused the task (e.g. RejectedExecutionException from a JDK
+            // thread-per-task executor, or IllegalStateException from a shut down
+            // SimpleAsyncTaskExecutor). beforeExecute / afterExecute will never run, so the
+            // aware chain has to be closed here, otherwise the performance stopwatch entry
+            // leaks, the queue-timeout timer is never cancelled (false queue timeout alarm)
+            // and the rejection is not counted at all.
+            // Note: the aware chain is keyed on the inner task (see decorate), not on the
+            // outer EnhancedRunnable.
+            Runnable awareKey = enhanced instanceof EnhancedRunnable
+                    ? ((EnhancedRunnable) enhanced).getRunnable() : enhanced;
+            // roll back what decorate counted before notifying the aware chain, so the
+            // rejection log / alarm content does not include the task that never ran
+            taskRejected();
+            AwareManager.beforeReject(awareKey, this);
+            AwareManager.afterReject(awareKey, this);
+            throw e;
+        }
     }
 
     @Override
     public void shutdown() {
+        AwareManager.shutdown(this);
         delegate.shutdown();
+        tryNotifyTerminated();
     }
 
     @Override
     public List<Runnable> shutdownNow() {
-        return delegate.shutdownNow();
+        List<Runnable> tasks = delegate.shutdownNow();
+        AwareManager.shutdownNow(this, tasks);
+        tryNotifyTerminated();
+        return tasks;
     }
 
     @Override
@@ -181,7 +237,22 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
 
     @Override
     public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
-        return delegate.awaitTermination(timeout, unit);
+        boolean terminated = delegate.awaitTermination(timeout, unit);
+        if (terminated) {
+            tryNotifyTerminated();
+        }
+        return terminated;
+    }
+
+    /**
+     * There is no {@code terminated()} hook on {@link AbstractExecutorService}, so the
+     * aware chain is notified from the shutdown / awaitTermination paths instead, at most
+     * once (mirroring {@link java.util.concurrent.ThreadPoolExecutor#terminated()}).
+     */
+    private void tryNotifyTerminated() {
+        if (delegate.isTerminated() && terminatedNotified.compareAndSet(false, true)) {
+            AwareManager.terminated(this);
+        }
     }
 
     // ---------------------------------------------------------------------
@@ -209,7 +280,91 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
         // Keep the same key for execute / beforeExecute / afterExecute (Undertow style).
         Runnable enhanced = getEnhancedTask(command);
         AwareManager.execute(this, enhanced);
-        return EnhancedRunnable.of(enhanced, this);
+        taskSubmitted();
+        return new CountingEnhancedRunnable(enhanced, this);
+    }
+
+    // ---------------------------------------------------------------------
+    // Task statistics, see VirtualThreadExecutorAdapter for the ExecutorAdapter view
+    // ---------------------------------------------------------------------
+
+    /**
+     * Cumulative number of accepted tasks, rejected ones excluded. Approximate, like
+     * {@link java.util.concurrent.ThreadPoolExecutor#getTaskCount()}.
+     *
+     * @return the task count
+     */
+    public long getTaskCount() {
+        return taskCount.sum();
+    }
+
+    /**
+     * @return cumulative number of finished tasks, including the ones that threw
+     */
+    public long getCompletedTaskCount() {
+        return completedTaskCount.sum();
+    }
+
+    /**
+     * @return tasks currently running, i.e. live threads for a thread-per-task executor
+     */
+    public int getActiveCount() {
+        return activeCount.get();
+    }
+
+    /**
+     * @return high-water mark of {@link #getActiveCount()}
+     */
+    public int getLargestActiveCount() {
+        return largestActiveCount.get();
+    }
+
+    private void taskSubmitted() {
+        taskCount.increment();
+        activeCount.incrementAndGet();
+    }
+
+    private void taskRejected() {
+        taskCount.decrement();
+        activeCount.decrementAndGet();
+    }
+
+    /**
+     * The high-water mark is updated when a task actually starts, so a task that ends up
+     * rejected never contributes to it.
+     */
+    private void taskStarted() {
+        largestActiveCount.accumulateAndGet(activeCount.get(), Math::max);
+    }
+
+    private void taskCompleted() {
+        completedTaskCount.increment();
+        activeCount.decrementAndGet();
+    }
+
+    /**
+     * Counts task completion. Extending {@link EnhancedRunnable} keeps {@link #decorate}
+     * idempotent (its check is {@code instanceof EnhancedRunnable}) and keeps the aware
+     * hooks of the parent class intact.
+     */
+    private static class CountingEnhancedRunnable extends EnhancedRunnable {
+
+        private final VirtualThreadExecutorProxy proxy;
+
+        CountingEnhancedRunnable(Runnable runnable, VirtualThreadExecutorProxy proxy) {
+            super(runnable, proxy);
+            this.proxy = proxy;
+        }
+
+        @Override
+        public void run() {
+            proxy.taskStarted();
+            try {
+                super.run();
+            } finally {
+                proxy.taskCompleted();
+            }
+        }
     }
 
     // ---------------------------------------------------------------------

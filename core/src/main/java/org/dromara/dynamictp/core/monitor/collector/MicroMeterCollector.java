@@ -76,23 +76,30 @@ public class MicroMeterCollector extends AbstractCollector {
 
         Iterable<Tag> tags = getTags(poolStats);
 
-        Metrics.gauge(metricName("core.size"), tags, poolStats, ThreadPoolStats::getCorePoolSize);
-        Metrics.gauge(metricName("maximum.size"), tags, poolStats, ThreadPoolStats::getMaximumPoolSize);
+        // Virtual thread executors have no fixed pool and no queue: sizing / queue metrics
+        // are reported as -1 by the adapter and would show up as negative values on
+        // dashboards, so they are skipped. Task statistics are tracked by the proxy and
+        // still meaningful, so they are reported below.
+        if (!poolStats.isVirtual()) {
+            Metrics.gauge(metricName("core.size"), tags, poolStats, ThreadPoolStats::getCorePoolSize);
+            Metrics.gauge(metricName("maximum.size"), tags, poolStats, ThreadPoolStats::getMaximumPoolSize);
+
+            Metrics.gauge(metricName("wait.task.count"), tags, poolStats, ThreadPoolStats::getWaitTaskCount);
+            Metrics.gauge(metricName("queue.size"), tags, poolStats, ThreadPoolStats::getQueueSize);
+            Metrics.gauge(metricName("queue.capacity"), tags, poolStats, ThreadPoolStats::getQueueCapacity);
+            Metrics.gauge(metricName("queue.remaining.capacity"), tags, poolStats,
+                    ThreadPoolStats::getQueueRemainingCapacity);
+            Metrics.gauge(metricName("queue.timeout.count"), tags, poolStats, ThreadPoolStats::getQueueTimeoutCount);
+        }
+
         Metrics.gauge(metricName("current.size"), tags, poolStats, ThreadPoolStats::getPoolSize);
         Metrics.gauge(metricName("largest.size"), tags, poolStats, ThreadPoolStats::getLargestPoolSize);
         Metrics.gauge(metricName("active.count"), tags, poolStats, ThreadPoolStats::getActiveCount);
-
         Metrics.gauge(metricName("task.count"), tags, poolStats, ThreadPoolStats::getTaskCount);
         Metrics.gauge(metricName("completed.task.count"), tags, poolStats, ThreadPoolStats::getCompletedTaskCount);
-        Metrics.gauge(metricName("wait.task.count"), tags, poolStats, ThreadPoolStats::getWaitTaskCount);
-
-        Metrics.gauge(metricName("queue.size"), tags, poolStats, ThreadPoolStats::getQueueSize);
-        Metrics.gauge(metricName("queue.capacity"), tags, poolStats, ThreadPoolStats::getQueueCapacity);
-        Metrics.gauge(metricName("queue.remaining.capacity"), tags, poolStats, ThreadPoolStats::getQueueRemainingCapacity);
 
         Metrics.gauge(metricName("reject.count"), tags, poolStats, ThreadPoolStats::getRejectCount);
         Metrics.gauge(metricName("run.timeout.count"), tags, poolStats, ThreadPoolStats::getRunTimeoutCount);
-        Metrics.gauge(metricName("queue.timeout.count"), tags, poolStats, ThreadPoolStats::getQueueTimeoutCount);
 
         Metrics.gauge(metricName("tps"), tags, poolStats, ThreadPoolStats::getTps);
         Metrics.gauge(metricName("completed.task.time.avg"), tags, poolStats, ThreadPoolStats::getAvg);

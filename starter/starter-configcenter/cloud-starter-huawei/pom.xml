@@ -15,7 +15,19 @@
     <dependencies>
         <dependency>
             <groupId>com.huaweicloud</groupId>
-            <artifactId>spring-cloud-starter-huawei-config</artifactId>
+            <artifactId>spring-cloud-starter-huawei-service-engine-config</artifactId>
+            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-aop</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aspectj</artifactId>
             <optional>true</optional>
         </dependency>
     </dependencies>

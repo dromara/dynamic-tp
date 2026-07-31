@@ -14,13 +14,11 @@
 
     <modules>
         <module>starter-apollo</module>
-        <module>starter-nacos</module>
         <module>cloud-starter-nacos</module>
         <module>starter-zookeeper</module>
         <module>cloud-starter-zookeeper</module>
         <module>cloud-starter-consul</module>
         <module>starter-etcd</module>
-        <module>cloud-starter-polaris</module>
         <module>cloud-starter-huawei</module>
     </modules>
 
@@ -30,4 +28,32 @@
             <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <!-- The standalone Nacos Spring Boot starter supports Spring Boot 3, but not Spring Boot 4. -->
+        <profile>
+            <id>standalone-nacos</id>
+            <activation>
+                <property>
+                    <name>includeStandaloneNacos</name>
+                </property>
+            </activation>
+            <modules>
+                <module>starter-nacos</module>
+            </modules>
+        </profile>
+
+        <!-- Spring Cloud Tencent has no Spring Cloud 2025.1 / Spring Boot 4 release yet. -->
+        <profile>
+            <id>spring-cloud-tencent</id>
+            <activation>
+                <property>
+                    <name>includeSpringCloudTencent</name>
+                </property>
+            </activation>
+            <modules>
+                <module>cloud-starter-polaris</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>

@@ -32,14 +32,21 @@ import java.util.concurrent.TimeUnit;
  * so {@code ExecutorWrapper#setTaskWrappers} / {@code setRejectHandler} keep working
  * via the {@code TaskEnhanceAware} / {@code RejectHandlerAware} contracts.</p>
  *
- * <p>Virtual threads are unbounded and have no queue, so size / queue / keepAlive
+ * <p>Virtual threads are unbounded and have no queue, so sizing / queue / keepAlive
  * metrics return {@code -1} (the {@code unsupported} convention already used by
- * {@link ExecutorAdapter}'s default methods).</p>
+ * {@link ExecutorAdapter}'s default methods). Task statistics (task count, completed
+ * task count, active count, largest pool size) are tracked by the proxy itself, since
+ * the JDK thread-per-task executor exposes no counters.</p>
  *
  * @author yanhom
  * @since 1.3.0
  */
 public class VirtualThreadExecutorAdapter implements ExecutorAdapter<VirtualThreadExecutorProxy> {
+
+    /**
+     * Queue type shown in metrics / notifications, virtual threads have no queue.
+     */
+    public static final String QUEUE_TYPE = "NoQueue(VirtualThread)";
 
     private final VirtualThreadExecutorProxy proxy;
 
@@ -79,12 +86,28 @@ public class VirtualThreadExecutorAdapter implements ExecutorAdapter<VirtualThre
 
     @Override
     public int getPoolSize() {
-        return -1;
+        // thread-per-task: one live thread per running task
+        return proxy.getActiveCount();
     }
 
     @Override
     public int getActiveCount() {
-        return -1;
+        return proxy.getActiveCount();
+    }
+
+    @Override
+    public int getLargestPoolSize() {
+        return proxy.getLargestActiveCount();
+    }
+
+    @Override
+    public long getTaskCount() {
+        return proxy.getTaskCount();
+    }
+
+    @Override
+    public long getCompletedTaskCount() {
+        return proxy.getCompletedTaskCount();
     }
 
     @Override
@@ -108,6 +131,14 @@ public class VirtualThreadExecutorAdapter implements ExecutorAdapter<VirtualThre
         // already set on the proxy via RejectHandlerAware by ExecutorWrapper
         // (using the original handler's simple name). Do NOT overwrite it here
         // with RejectHandlerGetter proxy names such as "$Proxy14".
+    }
+
+    @Override
+    public String getQueueType() {
+        // Thread-per-task: there is no queue at all. Reporting the internal
+        // "UnsupportedBlockingQueue" class name would be misleading in metrics,
+        // registration logs and config-change notifications.
+        return QUEUE_TYPE;
     }
 
     @Override

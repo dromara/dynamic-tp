@@ -20,8 +20,10 @@ package org.dromara.dynamictp.spring.support;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -37,6 +39,14 @@ import java.util.concurrent.TimeUnit;
  * The {@code submit} / {@code invokeAll} / {@code invokeAny} boilerplate is
  * provided by {@link AbstractExecutorService}.</p>
  *
+ * <p><b>Ownership</b>: the adapted executor is a Spring bean that dtp only observes,
+ * it does not own it. {@code SimpleAsyncTaskExecutor} implements {@link AutoCloseable},
+ * so the container closes it on shutdown. Therefore {@link #shutdown()} only flips the
+ * local state and never closes the delegate: dtp's own lifecycle runs at
+ * {@code Integer.MAX_VALUE} phase (i.e. first on shutdown), and closing the application
+ * task executor there would make every async task submitted during the remaining
+ * shutdown sequence fail.</p>
+ *
  * @author yanhom
  * @since 1.3.0
  */
@@ -51,10 +61,16 @@ public class SimpleAsyncTaskExecutorAdapter extends AbstractExecutorService {
         this.delegate = delegate;
     }
 
+    public SimpleAsyncTaskExecutor getDelegate() {
+        return delegate;
+    }
+
     @Override
     public void execute(Runnable command) {
         if (shutdown) {
-            throw new IllegalStateException("Executor has been shut down");
+            // ExecutorService contract: refusing a task is signalled by RejectedExecutionException,
+            // which also lets the aware chain treat it as a rejection.
+            throw new RejectedExecutionException("Executor has been shut down: " + delegate);
         }
         delegate.execute(command);
     }
@@ -62,14 +78,14 @@ public class SimpleAsyncTaskExecutorAdapter extends AbstractExecutorService {
     @Override
     public void shutdown() {
         shutdown = true;
-        closeDelegate();
+        log.debug("DynamicTp shutdown SimpleAsyncTaskExecutor adapter, the adapted executor is owned by "
+                + "the Spring container and is left untouched: {}", delegate);
     }
 
     @Override
     public List<Runnable> shutdownNow() {
-        shutdown = true;
-        closeDelegate();
-        return java.util.Collections.emptyList();
+        shutdown();
+        return Collections.emptyList();
     }
 
     @Override
@@ -85,15 +101,7 @@ public class SimpleAsyncTaskExecutorAdapter extends AbstractExecutorService {
     @Override
     public boolean awaitTermination(long timeout, TimeUnit unit) {
         // SimpleAsyncTaskExecutor has no in-flight tracking we can await on;
-        // once closed, treat it as terminated.
+        // once shut down, treat it as terminated.
         return shutdown;
-    }
-
-    private void closeDelegate() {
-        try {
-            delegate.close();
-        } catch (Exception e) {
-            log.warn("Failed to close SimpleAsyncTaskExecutor", e);
-        }
     }
 }

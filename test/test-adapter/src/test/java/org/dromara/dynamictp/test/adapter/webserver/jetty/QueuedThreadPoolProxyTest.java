@@ -21,8 +21,8 @@ import lombok.val;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.starter.adapter.webserver.jetty.QueuedThreadPoolProxy;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -40,24 +40,23 @@ public class QueuedThreadPoolProxyTest {
         val threadFactory = (ThreadFactory) ReflectionUtil.getFieldValue("_threadFactory", executor);
         QueuedThreadPoolProxy proxy = new QueuedThreadPoolProxy(executor, queue, threadGroup, threadFactory);
 
-        Assert.assertEquals(executor.getMaxThreads(), proxy.getMaxThreads());
-        Assert.assertEquals(executor.getIdleTimeout(), proxy.getIdleTimeout());
-        Assert.assertEquals(executor.getMinThreads(), proxy.getMinThreads());
-        Assert.assertEquals(executor.getBusyThreads(), proxy.getBusyThreads());
-        Assert.assertEquals(executor.getReservedThreads(), proxy.getReservedThreads());
-        Assert.assertEquals(executor.getAvailableReservedThreads(), proxy.getAvailableReservedThreads());
-        Assert.assertEquals(executor.getIdleThreads(), proxy.getIdleThreads());
-        Assert.assertEquals(executor.getLeasedThreads(), proxy.getLeasedThreads());
-        Assert.assertEquals(executor.getLowThreadsThreshold(), proxy.getLowThreadsThreshold());
-        Assert.assertEquals(executor.getMaxAvailableThreads(), proxy.getMaxAvailableThreads());
-        Assert.assertEquals(executor.getMaxLeasedThreads(), proxy.getMaxLeasedThreads());
-        Assert.assertEquals(executor.getQueueSize(), proxy.getQueueSize());
-        Assert.assertEquals(executor.getReadyThreads(), proxy.getReadyThreads());
-        Assert.assertEquals(executor.getThreads(), proxy.getThreads());
-        Assert.assertEquals(executor.getThreadsPriority(), proxy.getThreadsPriority());
-        Assert.assertEquals(executor.getUtilizationRate(), proxy.getUtilizationRate(), 0.0);
-        Assert.assertEquals(executor.getStopTimeout(), proxy.getStopTimeout());
-        Assert.assertEquals(executor.getUtilizedThreads(), proxy.getUtilizedThreads());
-
+        Assertions.assertEquals(executor.getMaxThreads(), proxy.getMaxThreads());
+        Assertions.assertEquals(executor.getIdleTimeout(), proxy.getIdleTimeout());
+        Assertions.assertEquals(executor.getMinThreads(), proxy.getMinThreads());
+        Assertions.assertEquals(executor.getBusyThreads(), proxy.getBusyThreads());
+        Assertions.assertEquals(executor.getReservedThreads(), proxy.getReservedThreads());
+        Assertions.assertEquals(executor.getAvailableReservedThreads(), proxy.getAvailableReservedThreads());
+        Assertions.assertEquals(executor.getIdleThreads(), proxy.getIdleThreads());
+        Assertions.assertEquals(executor.getLeasedThreads(), proxy.getLeasedThreads());
+        Assertions.assertEquals(executor.getLowThreadsThreshold(), proxy.getLowThreadsThreshold());
+        Assertions.assertEquals(executor.getMaxAvailableThreads(), proxy.getMaxAvailableThreads());
+        Assertions.assertEquals(executor.getMaxLeasedThreads(), proxy.getMaxLeasedThreads());
+        Assertions.assertEquals(executor.getQueueSize(), proxy.getQueueSize());
+        Assertions.assertEquals(executor.getReadyThreads(), proxy.getReadyThreads());
+        Assertions.assertEquals(executor.getThreads(), proxy.getThreads());
+        Assertions.assertEquals(executor.getThreadsPriority(), proxy.getThreadsPriority());
+        Assertions.assertEquals(executor.getUtilizationRate(), proxy.getUtilizationRate(), 0.0);
+        Assertions.assertEquals(executor.getStopTimeout(), proxy.getStopTimeout());
+        Assertions.assertEquals(executor.getUtilizedThreads(), proxy.getUtilizedThreads());
     }
 }

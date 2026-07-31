@@ -19,8 +19,8 @@ package org.dromara.dynamictp.test.adapter.webserver.dubbo;
 
 import lombok.val;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

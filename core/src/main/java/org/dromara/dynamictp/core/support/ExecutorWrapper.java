@@ -19,6 +19,8 @@ package org.dromara.dynamictp.core.support;
 
 import cn.hutool.core.bean.BeanUtil;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.core.aware.AwareManager;
@@ -48,6 +50,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @since 1.0.3
  **/
 @Data
+@Slf4j
 public class ExecutorWrapper {
 
     /**
@@ -137,6 +140,14 @@ public class ExecutorWrapper {
      * @param executor       the executor
      */
     public ExecutorWrapper(String threadPoolName, Executor executor) {
+        // A VirtualThreadExecutorProxy is neither a ThreadPoolExecutor nor an ExecutorAdapter,
+        // so it has to be handled explicitly here as well: the dedicated constructor below is
+        // only picked when the caller's static type is the proxy itself, and callers holding it
+        // as Executor / ExecutorService would otherwise fail with "unsupported Executor type".
+        if (executor instanceof VirtualThreadExecutorProxy) {
+            initVirtual(threadPoolName, (VirtualThreadExecutorProxy) executor);
+            return;
+        }
         this.threadPoolName = threadPoolName;
         if (executor instanceof ThreadPoolExecutor) {
             this.executor = new ThreadPoolExecutorAdapter((ThreadPoolExecutor) executor);
@@ -157,6 +168,10 @@ public class ExecutorWrapper {
      * @param executor       the virtual thread executor proxy
      */
     public ExecutorWrapper(String threadPoolName, VirtualThreadExecutorProxy executor) {
+        initVirtual(threadPoolName, executor);
+    }
+
+    private void initVirtual(String threadPoolName, VirtualThreadExecutorProxy executor) {
         this.threadPoolName = threadPoolName;
         this.threadPoolAliasName = executor.getThreadPoolAliasName();
         this.executor = new VirtualThreadExecutorAdapter(executor);
@@ -175,6 +190,10 @@ public class ExecutorWrapper {
         this.threadPoolStatProvider.setRunTimeout(executor.getRunTimeout());
         this.threadPoolStatProvider.setQueueTimeout(executor.getQueueTimeout());
         this.threadPoolStatProvider.setTryInterrupt(executor.isTryInterrupt());
+        if (CollectionUtils.isNotEmpty(executor.getPluginNames())) {
+            log.warn("DynamicTp register, plugins do not apply to virtual thread executors, " +
+                    "they are ignored, tpName: {}, plugins: {}", threadPoolName, executor.getPluginNames());
+        }
     }
 
     /**

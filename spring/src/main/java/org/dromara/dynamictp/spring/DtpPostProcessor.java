@@ -91,6 +91,16 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
     private static final String SPRING_THREADS_VIRTUAL_ENABLED = "spring.threads.virtual.enabled";
 
     /**
+     * Spring's internal marker field, non-null when a SimpleAsyncTaskExecutor spawns virtual threads.
+     */
+    private static final String VIRTUAL_THREAD_DELEGATE_FIELD = "virtualThreadDelegate";
+
+    /**
+     * Spring's internal field holding a user configured task decorator.
+     */
+    private static final String TASK_DECORATOR_FIELD = "taskDecorator";
+
+    /**
      * Compatible with lower versions of Spring.
      *
      * @param bean the new bean instance
@@ -112,7 +122,8 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
         // applicationTaskExecutor as a SimpleAsyncTaskExecutor (with virtualThreads=true),
         // which is neither ThreadPoolExecutor nor ThreadPoolTaskExecutor. Catch it here so
         // dtp can still observe / enhance it without touching the original bean.
-        if (bean instanceof SimpleAsyncTaskExecutor && isVirtualThreadEnabled()) {
+        if (bean instanceof SimpleAsyncTaskExecutor
+                && isVirtualThreadExecutor((SimpleAsyncTaskExecutor) bean)) {
             return registerAndReturnVirtual(bean, beanName);
         }
         if (!(bean instanceof ThreadPoolExecutor) && !(bean instanceof ThreadPoolTaskExecutor)) {
@@ -123,6 +134,25 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
         }
         // register juc ThreadPoolExecutor or ThreadPoolTaskExecutor
         return registerAndReturnCommon(bean, beanName);
+    }
+
+    /**
+     * Whether the given {@link SimpleAsyncTaskExecutor} should be managed as a
+     * virtual-thread (thread-per-task) executor.
+     *
+     * <p>The instance itself is checked first: a {@code SimpleAsyncTaskExecutor} created with
+     * {@code setVirtualThreads(true)} holds a non-null {@code virtualThreadDelegate}. This also
+     * covers executors that opt in manually while the global property is off, which the property
+     * check alone would miss. The property is kept as a fallback for the Spring Boot auto
+     * configured executors.</p>
+     */
+    private boolean isVirtualThreadExecutor(SimpleAsyncTaskExecutor executor) {
+        return usesVirtualThreads(executor) || isVirtualThreadEnabled();
+    }
+
+    private boolean usesVirtualThreads(SimpleAsyncTaskExecutor executor) {
+        // Spring Framework 6.1+ internal field, absent on older versions: fall back to the property.
+        return Objects.nonNull(ReflectionUtil.getFieldValue(VIRTUAL_THREAD_DELEGATE_FIELD, executor));
     }
 
     /**
@@ -220,6 +250,10 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
 
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        if (!(beanFactory instanceof DefaultListableBeanFactory)) {
+            throw new IllegalArgumentException("DynamicTp requires a DefaultListableBeanFactory, but got: "
+                    + beanFactory.getClass().getName());
+        }
         this.beanFactory = (DefaultListableBeanFactory) beanFactory;
     }
 
@@ -268,7 +302,15 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
     private void tryWrapSimpleAsyncTaskDecorator(String poolName,
                                                  SimpleAsyncTaskExecutor executor,
                                                  VirtualThreadExecutorProxy proxy) {
-        Object taskDecorator = ReflectionUtil.getFieldValue("taskDecorator", executor);
+        // dtp installs its own decorator below, so a user configured one must be carried over
+        // as a task wrapper first. If the field cannot be located (Spring internals changed),
+        // bail out instead of silently dropping the user's decorator.
+        if (Objects.isNull(ReflectionUtil.getField(SimpleAsyncTaskExecutor.class, TASK_DECORATOR_FIELD))) {
+            log.warn("DynamicTp cannot read field [{}] of SimpleAsyncTaskExecutor, skip enhancing task decorator, "
+                    + "tpName: {}", TASK_DECORATOR_FIELD, poolName);
+            return;
+        }
+        Object taskDecorator = ReflectionUtil.getFieldValue(TASK_DECORATOR_FIELD, executor);
         if (Objects.nonNull(taskDecorator)) {
             TaskWrapper taskWrapper = (taskDecorator instanceof TaskWrapper) ? (TaskWrapper) taskDecorator
                     : new TaskWrapper() {

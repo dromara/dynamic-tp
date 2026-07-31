@@ -126,6 +126,11 @@ public class ThreadPoolStats extends Metrics {
     private boolean dynamic;
 
     /**
+     * 是否虚拟线程池（无固定池大小和队列，池/队列相关指标不适用，值为 -1）
+     */
+    private boolean virtual;
+
+    /**
      * 执行超时任务数量
      */
     private long runTimeoutCount;

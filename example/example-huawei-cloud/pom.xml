@@ -13,39 +13,8 @@
     <artifactId>dynamic-tp-example-huawei-cloud</artifactId>
 
     <properties>
-        <spring-cloud.version>2023.0.5</spring-cloud.version>
-        <spring-cloud-huawei.version>1.11.10-2023.0.x</spring-cloud-huawei.version>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <!-- configure user spring cloud / spring boot versions -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <!-- configure spring cloud huawei version -->
-            <dependency>
-                <groupId>com.huaweicloud</groupId>
-                <artifactId>spring-cloud-huawei-bom</artifactId>
-                <version>${spring-cloud-huawei.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -60,7 +29,18 @@
 
         <dependency>
             <groupId>com.huaweicloud</groupId>
-            <artifactId>spring-cloud-starter-huawei-config</artifactId>
+            <artifactId>spring-cloud-starter-huawei-service-engine-config</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-aop</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aspectj</artifactId>
         </dependency>
 
         <dependency>

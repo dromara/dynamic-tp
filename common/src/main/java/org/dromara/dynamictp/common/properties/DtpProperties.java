@@ -113,11 +113,6 @@ public class DtpProperties {
     private TpExecutorProps jettyTp;
 
     /**
-     * Undertow thread pool.
-     */
-    private TpExecutorProps undertowTp;
-
-    /**
      * Dubbo thread pools.
      */
     private List<TpExecutorProps> dubboTp;

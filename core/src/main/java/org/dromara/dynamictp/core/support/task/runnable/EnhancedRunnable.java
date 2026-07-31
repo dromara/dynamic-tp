@@ -41,6 +41,16 @@ public class EnhancedRunnable implements Runnable {
         this.executor = executor;
     }
 
+    /**
+     * The wrapped task, which is the key the aware chain (performance stopwatch,
+     * timeout timers) is registered with.
+     *
+     * @return the wrapped task
+     */
+    public Runnable getRunnable() {
+        return runnable;
+    }
+
     public static EnhancedRunnable of(Runnable runnable, Executor executor) {
         return new EnhancedRunnable(runnable, executor);
     }

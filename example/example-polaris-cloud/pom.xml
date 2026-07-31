@@ -13,7 +13,6 @@
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
-        <asm.version>9.6</asm.version>
     </properties>
 
     <dependencyManagement>
@@ -21,7 +20,7 @@
             <dependency>
                 <groupId>com.tencent.cloud</groupId>
                 <artifactId>spring-cloud-tencent-dependencies</artifactId>
-                <version>1.13.2-2023.0.0</version>
+                <version>2.1.1.0-2024.0.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -29,11 +28,9 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.ow2.asm/asm -->
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
-            <version>${asm.version}</version>
         </dependency>
 
         <dependency>

@@ -20,8 +20,8 @@ package org.dromara.dynamictp.starter.adapter.webserver.jetty;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
-import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
+import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
 import org.dromara.dynamictp.starter.adapter.webserver.AbstractWebServerDtpAdapter;
 import org.eclipse.jetty.io.ManagedSelector;
 import org.eclipse.jetty.io.SelectorManager;
@@ -63,7 +63,11 @@ public class JettyDtpAdapter extends AbstractWebServerDtpAdapter<ThreadPool.Size
 
     @Override
     public void doEnhance(WebServer webServer) {
-        JettyWebServer jettyWebServer = (JettyWebServer) webServer;
+        if (!(webServer instanceof JettyWebServer jettyWebServer)) {
+            log.warn("DynamicTp adapter, skip jetty enhance, unexpected webServer type: {}.",
+                    webServer == null ? "null" : webServer.getClass().getName());
+            return;
+        }
         ThreadPool threadPool = jettyWebServer.getServer().getThreadPool();
         JettyExecutorAdapter adapter = new JettyExecutorAdapter((ThreadPool.SizedThreadPool) threadPool);
         enhanceOriginTask(jettyWebServer, threadPool);

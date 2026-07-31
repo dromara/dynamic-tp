@@ -13,8 +13,7 @@
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
-        <mysql.version>8.0.32</mysql.version>
-        <mybatis.version>2.3.2</mybatis.version>
+        <mybatis.version>4.0.1</mybatis.version>
     </properties>
 
     <dependencies>
@@ -55,11 +54,6 @@
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-bootstrap</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
@@ -73,7 +67,6 @@
             <artifactId>dynamic-tp-extension-skywalking</artifactId>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter -->
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -81,9 +74,8 @@
         </dependency>
 
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql.version}</version>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
         </dependency>
     </dependencies>
 

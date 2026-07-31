@@ -164,6 +164,12 @@ public class ThreadPoolStatProvider {
         if (queueTimeout <= 0 || r == null) {
             return;
         }
+        // Virtual thread executors run one thread per task, there is no queue to wait in,
+        // so arming a queue-timeout timer would only add overhead and, if the task ends up
+        // rejected, produce a false "queue timeout" alarm.
+        if (executorWrapper.isVirtualThreadExecutor()) {
+            return;
+        }
         HashedWheelTimer timer = ContextManagerHelper.getBean(HashedWheelTimer.class);
         QueueTimeoutTimerTask timerTask = new QueueTimeoutTimerTask(executorWrapper, r);
         queueTimeoutMap.put(r, new SoftReference<>(timer.newTimeout(timerTask, queueTimeout, TimeUnit.MILLISECONDS)));

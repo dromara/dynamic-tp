@@ -18,7 +18,6 @@
     <modules>
         <module>example-adapter-okhttp3</module>
         <module>example-adapter-dubbo</module>
-        <module>example-adapter-grpc</module>
         <module>example-adapter-brpc</module>
         <module>example-adapter-hystrix</module>
         <module>example-adapter-motan</module>
@@ -28,6 +27,21 @@
         <module>example-adapter-webserver</module>
         <module>example-adapter-thrift</module>
     </modules>
+
+    <profiles>
+        <!-- grpc-spring 3.1.0.RELEASE targets Spring Boot 3.2 and has no Spring Boot 4 release. -->
+        <profile>
+            <id>grpc-spring-boot3</id>
+            <activation>
+                <property>
+                    <name>includeGrpcSpringBoot3</name>
+                </property>
+            </activation>
+            <modules>
+                <module>example-adapter-grpc</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -62,7 +76,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.2</version>
+                <version>${maven-deploy-plugin.version}</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>

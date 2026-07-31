@@ -17,13 +17,13 @@
 
 package org.dromara.dynamictp.common.parser.config;
 
-import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
+import org.dromara.dynamictp.common.util.JsonUtil;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -46,12 +46,6 @@ public class JsonConfigParser extends AbstractConfigParser {
 
     private static final List<ConfigFileTypeEnum> CONFIG_TYPES = Lists.newArrayList(ConfigFileTypeEnum.JSON);
 
-    private static final ObjectMapper MAPPER;
-
-    static {
-        MAPPER = new ObjectMapper();
-    }
-
     @Override
     public List<ConfigFileTypeEnum> types() {
         return CONFIG_TYPES;
@@ -68,7 +62,7 @@ public class JsonConfigParser extends AbstractConfigParser {
     @Override
     public Map<Object, Object> doParse(String content, String prefix) throws IOException {
 
-        Map<String, Object> originMap = MAPPER.readValue(content, LinkedHashMap.class);
+        Map<String, Object> originMap = JsonUtil.fromJson(content, LinkedHashMap.class);
         Map<Object, Object> result = Maps.newHashMap();
 
         flatMap(result, originMap, prefix);

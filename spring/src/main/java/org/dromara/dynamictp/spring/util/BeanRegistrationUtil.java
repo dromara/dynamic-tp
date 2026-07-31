@@ -62,10 +62,7 @@ public final class BeanRegistrationUtil {
                                 Map<String, Object> propertyValues,
                                 List<String> dependsOnBeanNames,
                                 Object... constructorArgs) {
-        if (ifPresent(registry, beanName, clazz) || registry.containsBeanDefinition(beanName)) {
-            log.info("DynamicTp registrar, bean [{}] already exists and will be overwritten", beanName);
-            registry.removeBeanDefinition(beanName);
-        }
+        removeIfPresent(registry, beanName, clazz);
         doRegister(registry, beanName, clazz,
                 new RegistrationSpec(propertyValues, dependsOnBeanNames, null, constructorArgs));
     }
@@ -76,12 +73,21 @@ public final class BeanRegistrationUtil {
                                 Map<String, Object> propertyValues,
                                 List<String> dependsOnBeanNames,
                                 Supplier<?> instanceSupplier) {
-        if (ifPresent(registry, beanName, clazz) || registry.containsBeanDefinition(beanName)) {
-            log.info("DynamicTp registrar, bean [{}] already exists and will be overwritten", beanName);
-            registry.removeBeanDefinition(beanName);
-        }
+        removeIfPresent(registry, beanName, clazz);
         doRegister(registry, beanName, clazz,
                 new RegistrationSpec(propertyValues, dependsOnBeanNames, instanceSupplier));
+    }
+
+    /**
+     * A bean definition registered by dtp wins over an existing one with the same name. This
+     * bypasses the container's own {@code allowBeanDefinitionOverriding} guard, so it is logged
+     * at warn level to keep the override visible.
+     */
+    private static void removeIfPresent(BeanDefinitionRegistry registry, String beanName, Class<?> clazz) {
+        if (ifPresent(registry, beanName, clazz) || registry.containsBeanDefinition(beanName)) {
+            log.warn("DynamicTp registrar, bean [{}] already exists and will be overwritten", beanName);
+            registry.removeBeanDefinition(beanName);
+        }
     }
 
     public static void registerIfAbsent(BeanDefinitionRegistry registry,
@@ -132,6 +138,11 @@ public final class BeanRegistrationUtil {
     }
 
     public static boolean ifPresent(BeanDefinitionRegistry registry, String beanName, Class<?> clazz) {
+        // A BeanDefinitionRegistry is not necessarily a ListableBeanFactory
+        // (e.g. SimpleBeanDefinitionRegistry), so the cast has to be guarded.
+        if (!(registry instanceof ListableBeanFactory)) {
+            return registry.containsBeanDefinition(beanName);
+        }
         String[] beanNames = getBeanNames((ListableBeanFactory) registry, clazz);
         return ArrayUtils.contains(beanNames, beanName);
     }
@@ -148,8 +159,10 @@ public final class BeanRegistrationUtil {
         if (spec.instanceSupplier != null) {
             builder.getRawBeanDefinition().setInstanceSupplier(spec.instanceSupplier);
         }
-        for (Object constructorArg : spec.constructorArgs) {
-            builder.addConstructorArgValue(constructorArg);
+        if (ArrayUtils.isNotEmpty(spec.constructorArgs)) {
+            for (Object constructorArg : spec.constructorArgs) {
+                builder.addConstructorArgValue(constructorArg);
+            }
         }
         if (MapUtils.isNotEmpty(spec.propertyValues)) {
 

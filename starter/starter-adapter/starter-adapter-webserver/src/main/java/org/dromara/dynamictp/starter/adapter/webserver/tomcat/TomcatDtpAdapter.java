@@ -23,7 +23,9 @@ import org.apache.coyote.ProtocolHandler;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.aware.RejectHandlerAware;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
+import org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy;
 import org.dromara.dynamictp.starter.adapter.webserver.AbstractWebServerDtpAdapter;
 import org.springframework.boot.tomcat.TomcatWebServer;
 import org.springframework.boot.web.server.WebServer;
@@ -47,15 +49,54 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<Executor> {
 
     @Override
     public void doEnhance(WebServer webServer) {
-        TomcatWebServer tomcatWebServer = (TomcatWebServer) webServer;
-        Executor originExecutor = tomcatWebServer.getTomcat().getConnector().getProtocolHandler().getExecutor();
-        TomcatExecutorProxy proxy = new TomcatExecutorProxy((ThreadPoolExecutor) originExecutor);
-        ProtocolHandler protocolHandler = tomcatWebServer.getTomcat().getConnector().getProtocolHandler();
-        if (protocolHandler instanceof AbstractProtocol) {
-            // compatible with lower version tomcat
-            ((AbstractProtocol<?>) protocolHandler).setExecutor(proxy);
-            putAndFinalize(getTpName(), (ExecutorService) originExecutor, new TomcatExecutorAdapter(proxy));
+        if (!(webServer instanceof TomcatWebServer tomcatWebServer)) {
+            log.warn("DynamicTp adapter, skip tomcat enhance, unexpected webServer type: {}.",
+                    webServer == null ? "null" : webServer.getClass().getName());
+            return;
         }
+        ProtocolHandler protocolHandler = tomcatWebServer.getTomcat().getConnector().getProtocolHandler();
+        if (!(protocolHandler instanceof AbstractProtocol)) {
+            log.warn("DynamicTp adapter, skip tomcat enhance, protocolHandler type: {}.",
+                    protocolHandler == null ? "null" : protocolHandler.getClass().getName());
+            return;
+        }
+        AbstractProtocol<?> protocol = (AbstractProtocol<?>) protocolHandler;
+        Executor originExecutor = protocol.getExecutor();
+        if (originExecutor instanceof ThreadPoolExecutor) {
+            enhancePlatformThreadPool(protocol, (ThreadPoolExecutor) originExecutor);
+            return;
+        }
+        // server.tomcat.threads.virtual.enabled=true → VirtualThreadExecutor
+        if (originExecutor instanceof ExecutorService) {
+            enhanceVirtualThreadExecutor(protocol, (ExecutorService) originExecutor);
+            return;
+        }
+        log.warn("DynamicTp adapter, skip tomcat enhance, unsupported executor type: {}.",
+                originExecutor == null ? "null" : originExecutor.getClass().getName());
+    }
+
+    /**
+     * Classic Tomcat platform-thread pool: replace with {@link TomcatExecutorProxy}
+     * and shut down the abandoned original pool.
+     */
+    private void enhancePlatformThreadPool(AbstractProtocol<?> protocol, ThreadPoolExecutor origin) {
+        TomcatExecutorProxy proxy = new TomcatExecutorProxy(origin);
+        protocol.setExecutor(proxy);
+        putAndFinalize(getTpName(), origin, new TomcatExecutorAdapter(proxy));
+    }
+
+    /**
+     * Tomcat virtual-thread executor: wrap (do not replace/shutdown) the original
+     * so task wrappers / aware still apply. Pool-size metrics stay unsupported.
+     */
+    private void enhanceVirtualThreadExecutor(AbstractProtocol<?> protocol, ExecutorService origin) {
+        log.info("DynamicTp adapter, tomcatTp detected virtual-thread executor ({}), "
+                        + "wrapping with VirtualThreadExecutorProxy (pool-size refresh not applicable).",
+                origin.getClass().getName());
+        VirtualThreadExecutorProxy proxy = new VirtualThreadExecutorProxy(origin);
+        protocol.setExecutor(proxy);
+        // Must not shutdown origin: proxy still delegates to it.
+        executors.put(getTpName(), new ExecutorWrapper(getTpName(), proxy));
     }
 
     @Override

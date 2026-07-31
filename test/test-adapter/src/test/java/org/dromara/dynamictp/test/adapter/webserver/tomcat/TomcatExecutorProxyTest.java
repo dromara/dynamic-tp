@@ -21,8 +21,8 @@ import org.apache.tomcat.util.threads.TaskQueue;
 import org.apache.tomcat.util.threads.ThreadPoolExecutor;
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.dromara.dynamictp.starter.adapter.webserver.tomcat.TomcatExecutorProxy;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.TimeUnit;
 
@@ -37,19 +37,19 @@ public class TomcatExecutorProxyTest {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 10, 5, TimeUnit.SECONDS, new TaskQueue(1), new NamedThreadFactory("测试线程池"));
         TomcatExecutorProxy proxy = new TomcatExecutorProxy(executor);
 
-        Assert.assertEquals(executor.getCorePoolSize(), proxy.getCorePoolSize());
-        Assert.assertEquals(executor.getMaximumPoolSize(), proxy.getMaximumPoolSize());
-        Assert.assertEquals(executor.getCompletedTaskCount(), proxy.getCompletedTaskCount());
-        Assert.assertEquals(executor.getLargestPoolSize(), proxy.getLargestPoolSize());
-        Assert.assertEquals(executor.getThreadFactory(), proxy.getThreadFactory());
-        Assert.assertEquals(executor.getKeepAliveTime(TimeUnit.SECONDS), proxy.getKeepAliveTime(TimeUnit.SECONDS));
-        Assert.assertEquals(executor.getQueue(), proxy.getQueue());
-        Assert.assertEquals(executor.allowsCoreThreadTimeOut(), proxy.allowsCoreThreadTimeOut());
+        Assertions.assertEquals(executor.getCorePoolSize(), proxy.getCorePoolSize());
+        Assertions.assertEquals(executor.getMaximumPoolSize(), proxy.getMaximumPoolSize());
+        Assertions.assertEquals(executor.getCompletedTaskCount(), proxy.getCompletedTaskCount());
+        Assertions.assertEquals(executor.getLargestPoolSize(), proxy.getLargestPoolSize());
+        Assertions.assertEquals(executor.getThreadFactory(), proxy.getThreadFactory());
+        Assertions.assertEquals(executor.getKeepAliveTime(TimeUnit.SECONDS), proxy.getKeepAliveTime(TimeUnit.SECONDS));
+        Assertions.assertEquals(executor.getQueue(), proxy.getQueue());
+        Assertions.assertEquals(executor.allowsCoreThreadTimeOut(), proxy.allowsCoreThreadTimeOut());
 
         executor.shutdown();
         Thread.sleep(3000);
-        Assert.assertTrue(executor.isShutdown());
-        Assert.assertTrue(executor.isTerminated());
-        Assert.assertFalse(executor.isTerminating());
+        Assertions.assertTrue(executor.isShutdown());
+        Assertions.assertTrue(executor.isTerminated());
+        Assertions.assertFalse(executor.isTerminating());
     }
 }

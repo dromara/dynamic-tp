@@ -16,7 +16,6 @@
     </properties>
 
     <modules>
-        <module>example-nacos</module>
         <module>example-nacos-cloud</module>
         <module>example-apollo</module>
         <module>example-zookeeper</module>
@@ -24,7 +23,6 @@
         <module>example-consul-cloud</module>
         <module>example-etcd</module>
         <module>example-adapter</module>
-        <module>example-polaris-cloud</module>
         <module>example-huawei-cloud</module>
     </modules>
 
@@ -40,4 +38,32 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- The standalone Nacos Spring Boot starter supports Spring Boot 3, but not Spring Boot 4. -->
+        <profile>
+            <id>standalone-nacos</id>
+            <activation>
+                <property>
+                    <name>includeStandaloneNacos</name>
+                </property>
+            </activation>
+            <modules>
+                <module>example-nacos</module>
+            </modules>
+        </profile>
+
+        <!-- Spring Cloud Tencent has no Spring Cloud 2025.1 / Spring Boot 4 release yet. -->
+        <profile>
+            <id>spring-cloud-tencent</id>
+            <activation>
+                <property>
+                    <name>includeSpringCloudTencent</name>
+                </property>
+            </activation>
+            <modules>
+                <module>example-polaris-cloud</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>

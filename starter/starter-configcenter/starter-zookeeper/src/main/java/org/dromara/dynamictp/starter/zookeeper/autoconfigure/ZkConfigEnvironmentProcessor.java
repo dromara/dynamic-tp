@@ -22,7 +22,7 @@ import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.support.binder.BinderHelper;
 import org.dromara.dynamictp.starter.zookeeper.util.CuratorUtil;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.env.EnvironmentPostProcessor;
+import org.springframework.boot.EnvironmentPostProcessor;
 import org.springframework.boot.env.OriginTrackedMapPropertySource;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;

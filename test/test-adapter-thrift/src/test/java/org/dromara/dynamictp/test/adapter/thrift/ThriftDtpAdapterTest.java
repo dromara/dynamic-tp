@@ -26,13 +26,15 @@ import org.dromara.dynamictp.adapter.thrift.ThriftDtpAdapter;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -46,7 +48,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author devin
  */
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ThriftDtpAdapterTest {
 
     private ThriftDtpAdapter thriftDtpAdapter;
@@ -66,7 +68,7 @@ public class ThriftDtpAdapterTest {
     private static final String HSHASERVER_EXECUTOR_FIELD = "invoker";
     private static final String THREADED_SELECTOR_WORKER_FIELD = "invoker";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         thriftDtpAdapter = new ThriftDtpAdapter();
         threadPoolExecutor = new ThreadPoolExecutor(
@@ -74,7 +76,7 @@ public class ThriftDtpAdapterTest {
                 new LinkedBlockingQueue<>(100));
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         thriftDtpAdapter = null;
         threadPoolExecutor.shutdownNow();
@@ -91,11 +93,11 @@ public class ThriftDtpAdapterTest {
         thriftDtpAdapter.initializeTThreadPoolServer(tThreadPoolServer);
         
         Map<String, ExecutorWrapper> executors = thriftDtpAdapter.getExecutorWrappers();
-        Assert.assertFalse(executors.isEmpty());
+        assertFalse(executors.isEmpty());
         
         Object enhancedExecutor = ReflectionUtil.getFieldValue(
                 TThreadPoolServer.class, THREAD_POOL_SERVER_EXECUTOR_FIELD, tThreadPoolServer);
-        Assert.assertTrue(enhancedExecutor instanceof ThreadPoolExecutorProxy);
+        assertTrue(enhancedExecutor instanceof ThreadPoolExecutorProxy);
     }
 
     @Test
@@ -106,11 +108,11 @@ public class ThriftDtpAdapterTest {
         thriftDtpAdapter.initializeTHsHaServer(tHsHaServer);
         
         Map<String, ExecutorWrapper> executors = thriftDtpAdapter.getExecutorWrappers();
-        Assert.assertFalse(executors.isEmpty());
+        assertFalse(executors.isEmpty());
         
         Object enhancedExecutor = ReflectionUtil.getFieldValue(
                 THsHaServer.class, HSHASERVER_EXECUTOR_FIELD, tHsHaServer);
-        Assert.assertTrue(enhancedExecutor instanceof ThreadPoolExecutorProxy);
+        assertTrue(enhancedExecutor instanceof ThreadPoolExecutorProxy);
     }
 
     @Test
@@ -121,10 +123,10 @@ public class ThriftDtpAdapterTest {
         thriftDtpAdapter.initializeTThreadedSelectorServer(tThreadedSelectorServer);
         
         Map<String, ExecutorWrapper> executors = thriftDtpAdapter.getExecutorWrappers();
-        Assert.assertFalse(executors.isEmpty());
+        assertFalse(executors.isEmpty());
         
         Object enhancedExecutor = ReflectionUtil.getFieldValue(
                 TThreadedSelectorServer.class, THREADED_SELECTOR_WORKER_FIELD, tThreadedSelectorServer);
-        Assert.assertTrue(enhancedExecutor instanceof ThreadPoolExecutorProxy);
+        assertTrue(enhancedExecutor instanceof ThreadPoolExecutorProxy);
     }
 }

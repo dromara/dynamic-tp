@@ -23,7 +23,6 @@ import org.dromara.dynamictp.core.executor.DtpExecutor;
 import org.dromara.dynamictp.core.support.ThreadPoolBuilder;
 import org.dromara.dynamictp.core.support.task.runnable.MdcRunnable;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 import java.util.concurrent.CountDownLatch;
@@ -35,6 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.dromara.dynamictp.common.em.QueueTypeEnum.VARIABLE_LINKED_BLOCKING_QUEUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author kyao
@@ -145,7 +145,7 @@ class MdcRunnableTest {
         if (rejectError.get() != null) {
             throw new AssertionError("Assertion failed in worker thread", rejectError.get());
         }
-        Assert.assertEquals(value, MDC.get(key));
+        assertEquals(value, MDC.get(key));
         log.info("main thread value -> " + MDC.get(key));
     }
 
@@ -167,14 +167,14 @@ class MdcRunnableTest {
             childCustomValue.set(MDC.get(key));
             firstRun.countDown();
         }));
-        Assert.assertTrue(firstRun.await(3, TimeUnit.SECONDS));
+        assertTrue(firstRun.await(3, TimeUnit.SECONDS));
 
         executor.submit(() -> {
             postRunTraceId.set(MDC.get(DynamicTpConst.TRACE_ID));
             postRunCustomValue.set(MDC.get(key));
             secondRun.countDown();
         });
-        Assert.assertTrue(secondRun.await(3, TimeUnit.SECONDS));
+        assertTrue(secondRun.await(3, TimeUnit.SECONDS));
 
         assertEquals("trace-1", childTraceId.get());
         assertEquals(value, childCustomValue.get());

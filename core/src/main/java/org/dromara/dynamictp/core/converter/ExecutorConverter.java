@@ -68,6 +68,7 @@ public class ExecutorConverter {
         poolStats.setQueueTimeoutCount(provider.getQueueTimeoutCount());
         poolStats.setRejectCount(provider.getRejectedTaskCount());
         poolStats.setDynamic(executor instanceof DtpExecutor);
+        poolStats.setVirtual(wrapper.isVirtualThreadExecutor());
 
         poolStats.setTps(performanceSnapshot.getTps());
         poolStats.setAvg(performanceSnapshot.getAvg());

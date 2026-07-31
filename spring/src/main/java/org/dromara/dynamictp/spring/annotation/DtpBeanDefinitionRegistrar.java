@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.entity.NotifyItem;
+import org.dromara.dynamictp.common.ex.DtpException;
 import org.dromara.dynamictp.common.properties.DtpProperties;
 import org.dromara.dynamictp.core.executor.ExecutorType;
 import org.dromara.dynamictp.core.executor.NamedThreadFactory;
@@ -120,6 +121,14 @@ public class DtpBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar
      * wrapped by {@link VirtualThreadExecutorProxy} so dtp can enhance/observe it.
      */
     private void registerVirtualExecutor(BeanDefinitionRegistry registry, DtpExecutorProps props) {
+        // Fail fast while parsing the configuration: without this the JDK check would only
+        // trigger when the bean is instantiated, surfacing as a BeanCreationException whose
+        // root cause is buried deep in the stack trace.
+        if (!VirtualThreadExecutorFactory.isSupported()) {
+            throw new DtpException("Executor [" + props.getThreadPoolName() + "] is configured with executorType: "
+                    + ExecutorType.VIRTUAL.getName() + ", which requires JDK 21+, current JRE is "
+                    + System.getProperty("java.version"));
+        }
         BeanRegistrationUtil.register(registry,
                 props.getThreadPoolName(),
                 VirtualThreadExecutorProxy.class,

@@ -18,40 +18,37 @@
 package org.dromara.dynamictp.starter.adapter.webserver.autocconfigure;
 
 import org.dromara.dynamictp.spring.DtpBaseBeanConfiguration;
-import org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.condition.ConditionalOnJettyWebServer;
-import org.dromara.dynamictp.starter.adapter.webserver.autocconfigure.condition.ConditionalOnTomcatWebServer;
-import org.dromara.dynamictp.starter.adapter.webserver.jetty.JettyDtpAdapter;
 import org.dromara.dynamictp.starter.adapter.webserver.tomcat.TomcatDtpAdapter;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
- * WebServerTpAutoConfiguration related.
+ * Tomcat web-server thread-pool adapter auto-configuration.
  *
- * <p>Undertow support is removed on the Spring Boot 4 line (Servlet 6.1 baseline
- * dropped Undertow from Spring Boot itself).</p>
+ * <p>Class-level {@link ConditionalOnClass} is required so this configuration is
+ * filtered out entirely when Tomcat is not on the runtime classpath. Method-level
+ * conditions alone are not safe: loading {@link TomcatDtpAdapter} pulls Tomcat types.</p>
  *
  * @author yanhom
  * @since 1.0.6
  */
-@Configuration
+@AutoConfiguration(
+        afterName = {
+                "org.springframework.boot.tomcat.autoconfigure.servlet.TomcatServletWebServerAutoConfiguration",
+                "org.springframework.boot.tomcat.autoconfigure.reactive.TomcatReactiveWebServerAutoConfiguration"
+        },
+        after = DtpBaseBeanConfiguration.class
+)
+@ConditionalOnClass(name = "org.springframework.boot.tomcat.TomcatWebServer")
 @ConditionalOnWebApplication
-@ConditionalOnBean({DtpBaseBeanConfiguration.class})
-@AutoConfigureAfter({DtpBaseBeanConfiguration.class})
-public class WebServerTpAutoConfiguration {
+@ConditionalOnBean(DtpBaseBeanConfiguration.class)
+public class TomcatWebServerTpAutoConfiguration {
 
     @Bean
-    @ConditionalOnTomcatWebServer
     public TomcatDtpAdapter tomcatTpHandler() {
         return new TomcatDtpAdapter();
-    }
-
-    @Bean
-    @ConditionalOnJettyWebServer
-    public JettyDtpAdapter jettyTpHandler() {
-        return new JettyDtpAdapter();
     }
 }

@@ -19,8 +19,8 @@ package org.dromara.dynamictp.test.common.notifier;
 import org.dromara.dynamictp.common.constant.WechatNotifyConst;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.notifier.WechatNotifier;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

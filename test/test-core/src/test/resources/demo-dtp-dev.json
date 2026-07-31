@@ -32,11 +32,6 @@
     "corePoolSize": 100,
     "maximumPoolSize": 400
   },
-  "undertowTp": {
-    "corePoolSize": 100,
-    "maximumPoolSize": 400,
-    "keepAliveTime": 60
-  },
   "hystrixTp": [
     {
       "threadPoolName": "hystrix1",

@@ -23,6 +23,7 @@ import lombok.NoArgsConstructor;
 import org.dromara.dynamictp.common.parser.json.AbstractJsonParser;
 import org.dromara.dynamictp.common.parser.json.FastJsonParser;
 import org.dromara.dynamictp.common.parser.json.GsonParser;
+import org.dromara.dynamictp.common.parser.json.Jackson3Parser;
 import org.dromara.dynamictp.common.parser.json.JacksonParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,18 @@ class JsonParserTest {
         boolean jsr310Available = isClassPresent("com.fasterxml.jackson.datatype.jsr310.JavaTimeModule");
 
         Assertions.assertEquals(jsr310Available, new JacksonParser().supports());
+    }
+
+    @Test
+    void testJackson3ParserSerializesAndDeserializesLocalDateTime() {
+        Jackson3Parser parser = new Jackson3Parser();
+        JsonPayload payload = new JsonPayload("demo", LocalDateTime.of(2026, 6, 3, 10, 20, 30));
+
+        String json = parser.toJson(payload);
+        JsonPayload result = parser.fromJson(json, JsonPayload.class);
+
+        Assertions.assertTrue(json.contains("2026-06-03 10:20:30"));
+        Assertions.assertEquals(payload, result);
     }
 
     @Test

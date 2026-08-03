@@ -24,6 +24,7 @@ import org.dromara.dynamictp.core.executor.NamedThreadFactory;
 import org.dromara.dynamictp.spring.DtpPostProcessor;
 import org.dromara.dynamictp.spring.holder.SpringContextHolder;
 import org.dromara.dynamictp.spring.util.BeanRegistrationUtil;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
@@ -48,10 +49,14 @@ public class DtpBaseBeanDefinitionRegistrar implements ImportBeanDefinitionRegis
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
         registerHashedWheelTimer(registry);
         BeanRegistrationUtil.registerIfAbsent(registry, APPLICATION_CONTEXT_HOLDER, SpringContextHolder.class);
+        markInfrastructure(registry, APPLICATION_CONTEXT_HOLDER);
 
-        // ApplicationContextHolder and HashedWheelTimer are required in DtpExecutor execute method, so they must be registered first
+        // ApplicationContextHolder and HashedWheelTimer are required in DtpExecutor execute method, so they must be registered first.
+        // They are intentionally created early with DtpPostProcessor; mark as ROLE_INFRASTRUCTURE so
+        // BeanPostProcessorChecker does not warn about early initialization / auto-proxy ineligibility.
         BeanRegistrationUtil.registerIfAbsent(registry, DTP_POST_PROCESSOR, DtpPostProcessor.class,
                 null, Lists.newArrayList(APPLICATION_CONTEXT_HOLDER, HASHED_WHEEL_TIMER));
+        markInfrastructure(registry, DTP_POST_PROCESSOR);
     }
 
     private void registerHashedWheelTimer(BeanDefinitionRegistry registry) {
@@ -61,5 +66,12 @@ public class DtpBaseBeanDefinitionRegistrar implements ImportBeanDefinitionRegis
                 TimeUnit.MILLISECONDS
         };
         BeanRegistrationUtil.registerIfAbsent(registry, HASHED_WHEEL_TIMER, HashedWheelTimer.class, constructorArgs);
+        markInfrastructure(registry, HASHED_WHEEL_TIMER);
+    }
+
+    private static void markInfrastructure(BeanDefinitionRegistry registry, String beanName) {
+        if (registry.containsBeanDefinition(beanName)) {
+            registry.getBeanDefinition(beanName).setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
+        }
     }
 }

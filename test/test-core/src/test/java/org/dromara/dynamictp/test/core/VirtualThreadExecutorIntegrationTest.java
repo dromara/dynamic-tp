@@ -48,6 +48,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskRejectedException;
 import org.springframework.mock.env.MockEnvironment;
 
 import java.io.InputStream;
@@ -181,8 +182,9 @@ class VirtualThreadExecutorIntegrationTest {
 
             ExecutorAdapter<?> adapter = wrapper.getExecutor();
             int expected = taskCount + 1;
-            assertEquals(expected, adapter.getTaskCount());
+            // counters are updated when a task starts, so wait for the last one to finish
             waitUntil(() -> adapter.getCompletedTaskCount() == expected);
+            assertEquals(expected, adapter.getTaskCount());
             assertEquals(expected, adapter.getCompletedTaskCount());
             assertEquals(0, adapter.getActiveCount());
             assertEquals(0, adapter.getPoolSize());
@@ -422,7 +424,10 @@ class VirtualThreadExecutorIntegrationTest {
 
     @Test
     void simpleAsyncUserTaskDecoratorIsPreserved() throws Exception {
+        assumeJdk21Plus();
+
         SimpleAsyncTaskExecutor simple = new SimpleAsyncTaskExecutor("decorated-vt-");
+        simple.setVirtualThreads(true);
         AtomicInteger userDecoratorCalls = new AtomicInteger();
         simple.setTaskDecorator(r -> {
             userDecoratorCalls.incrementAndGet();
@@ -444,12 +449,15 @@ class VirtualThreadExecutorIntegrationTest {
 
     @Test
     void simpleAsyncRegisteredThroughPostProcessorEnhancesAndIsIdempotent() throws Exception {
+        assumeJdk21Plus();
+
         DtpPostProcessor processor = new DtpPostProcessor();
         processor.setBeanFactory(new DefaultListableBeanFactory());
         processor.setEnvironment(new MockEnvironment()
                 .withProperty("spring.threads.virtual.enabled", "true"));
 
         SimpleAsyncTaskExecutor simple = new SimpleAsyncTaskExecutor("app-vt-");
+        simple.setVirtualThreads(true);
         Object returned = processor.postProcessAfterInitialization(simple, POOL_NAME);
         // original bean is preserved for Spring Boot virtual thread executor
         assertSame(simple, returned);
@@ -483,6 +491,82 @@ class VirtualThreadExecutorIntegrationTest {
         });
         assertInstanceOf(EnhancedRunnable.class, once);
         assertSame(once, proxy.decorate(once));
+    }
+
+    @Test
+    void decorateHasNoSideEffectUntilTaskStarts() throws Exception {
+        VirtualThreadExecutorProxy proxy = new VirtualThreadExecutorProxy(
+                java.util.concurrent.Executors.newSingleThreadExecutor());
+        ExecutorWrapper wrapper = new ExecutorWrapper(POOL_NAME, proxy);
+        DtpRegistry.registerExecutor(wrapper, "test");
+        AwareManager.register(wrapper);
+        try {
+            Runnable decorated = proxy.decorate(() -> { });
+            // decorate is also used as a Spring TaskDecorator: a task that never runs
+            // (because Spring rejects it after decorating) must leave nothing behind
+            assertEquals(0, wrapper.getExecutor().getTaskCount());
+            assertEquals(0, wrapper.getExecutor().getActiveCount());
+            assertEquals(0, wrapper.getExecutor().getLargestPoolSize());
+            assertTrue(getStopWatchMap(wrapper).isEmpty());
+
+            decorated.run();
+
+            assertEquals(1, wrapper.getExecutor().getTaskCount());
+            assertEquals(1, wrapper.getExecutor().getCompletedTaskCount());
+            assertEquals(0, wrapper.getExecutor().getActiveCount());
+            assertEquals(1, wrapper.getExecutor().getLargestPoolSize());
+            assertTrue(getStopWatchMap(wrapper).isEmpty());
+        } finally {
+            proxy.shutdownNow();
+        }
+    }
+
+    @Test
+    void taskRejectedBySpringAfterDecorationDoesNotLeakCounters() throws Exception {
+        assumeJdk21Plus();
+
+        SimpleAsyncTaskExecutor simple = new SimpleAsyncTaskExecutor("limited-vt-");
+        simple.setVirtualThreads(true);
+        simple.setConcurrencyLimit(1);
+        // SimpleAsyncTaskExecutor#execute applies the TaskDecorator first and only then hits
+        // the concurrency throttle, i.e. the task is rejected after dtp decorated it
+        simple.setRejectTasksWhenLimitReached(true);
+
+        DtpPostProcessor processor = new DtpPostProcessor();
+        processor.setBeanFactory(new DefaultListableBeanFactory());
+        processor.setEnvironment(new MockEnvironment()
+                .withProperty("spring.threads.virtual.enabled", "true"));
+        processor.postProcessAfterInitialization(simple, POOL_NAME);
+
+        ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper(POOL_NAME);
+        AwareManager.register(wrapper);
+
+        CountDownLatch release = new CountDownLatch(1);
+        CountDownLatch started = new CountDownLatch(1);
+        simple.execute(() -> {
+            started.countDown();
+            try {
+                release.await(10, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
+        assertTrue(started.await(5, TimeUnit.SECONDS));
+
+        assertThrows(TaskRejectedException.class, () -> simple.execute(() -> { }));
+
+        // only the running task is accounted for, the rejected one left no residue
+        assertEquals(1, wrapper.getExecutor().getTaskCount());
+        assertEquals(1, wrapper.getExecutor().getActiveCount());
+        assertEquals(1, getStopWatchMap(wrapper).size());
+
+        release.countDown();
+        waitUntil(() -> wrapper.getExecutor().getCompletedTaskCount() == 1);
+        assertEquals(0, wrapper.getExecutor().getActiveCount(),
+                "active count must not drift when a decorated task gets rejected");
+        // completedTaskCount is incremented after afterExecute cleared the performance key
+        assertTrue(getStopWatchMap(wrapper).isEmpty(), "performance keys must not leak");
+        simple.close();
     }
 
     @Test

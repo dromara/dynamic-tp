@@ -64,6 +64,18 @@ public final class ReflectionUtil {
         }
     }
 
+    public static Object getFieldValue(Field field, Object targetObj) {
+        if (Objects.isNull(field)) {
+            return null;
+        }
+        try {
+            return FieldUtils.readField(field, targetObj, true);
+        } catch (IllegalAccessException e) {
+            log.error("Failed to read field '{}' from object '{}'", field.getName(), targetObj, e);
+            return null;
+        }
+    }
+
     public static boolean setFieldValue(String fieldName, Object targetObj, Object targetVal) {
         return setFieldValue(targetObj.getClass(), fieldName, targetObj, targetVal);
     }

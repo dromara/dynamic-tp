@@ -29,6 +29,7 @@ import org.dromara.dynamictp.spring.DtpPostProcessor;
 import org.dromara.dynamictp.spring.annotation.DtpBeanDefinitionRegistrar;
 import org.dromara.dynamictp.spring.holder.SpringContextHolder;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
@@ -40,6 +41,7 @@ import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.mock.env.MockEnvironment;
+import org.springframework.scheduling.concurrent.SimpleAsyncTaskScheduler;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -170,8 +172,9 @@ class VirtualThreadExecutorPostProcessorTest {
 
     @Test
     void simpleAsyncTaskExecutorRunsThroughRegisteredVirtualProxy() throws Exception {
+        assumeJdk21Plus();
         DtpPostProcessor processor = newPostProcessor(true);
-        SimpleAsyncTaskExecutor executor = new SimpleAsyncTaskExecutor();
+        SimpleAsyncTaskExecutor executor = newVirtualSimpleAsyncTaskExecutor();
         AtomicBoolean enhanced = new AtomicBoolean();
         CountDownLatch latch = new CountDownLatch(1);
 
@@ -186,6 +189,35 @@ class VirtualThreadExecutorPostProcessorTest {
 
         assertTrue(latch.await(3, TimeUnit.SECONDS));
         assertTrue(enhanced.get());
+        executor.close();
+    }
+
+    @Test
+    void platformThreadSimpleAsyncTaskExecutorIsNotManagedEvenWhenPropertyIsOn() {
+        DtpPostProcessor processor = newPostProcessor(true);
+        SimpleAsyncTaskExecutor platformExecutor = new SimpleAsyncTaskExecutor();
+
+        Object returned = processor.postProcessAfterInitialization(platformExecutor, SIMPLE_ASYNC_NAME);
+
+        assertSame(platformExecutor, returned);
+        assertTrue(!DtpRegistry.getAllExecutorNames().contains(SIMPLE_ASYNC_NAME),
+                "an executor running on platform threads must not be managed as a virtual thread pool");
+        platformExecutor.close();
+    }
+
+    @Test
+    void simpleAsyncTaskSchedulerIsNotManagedAsVirtualThreadPool() {
+        assumeJdk21Plus();
+        DtpPostProcessor processor = newPostProcessor(true);
+        SimpleAsyncTaskScheduler scheduler = new SimpleAsyncTaskScheduler();
+        scheduler.setVirtualThreads(true);
+
+        Object returned = processor.postProcessAfterInitialization(scheduler, SIMPLE_ASYNC_NAME);
+
+        assertSame(scheduler, returned);
+        assertTrue(!DtpRegistry.getAllExecutorNames().contains(SIMPLE_ASYNC_NAME),
+                "a task scheduler must not be taken over as a virtual thread pool");
+        scheduler.close();
     }
 
     @Test
@@ -244,8 +276,9 @@ class VirtualThreadExecutorPostProcessorTest {
 
     @Test
     void simpleAsyncPathDoesNotDoubleEnhanceWhenUsingRegistryExecutor() throws Exception {
+        assumeJdk21Plus();
         DtpPostProcessor processor = newPostProcessor(true);
-        SimpleAsyncTaskExecutor executor = new SimpleAsyncTaskExecutor();
+        SimpleAsyncTaskExecutor executor = newVirtualSimpleAsyncTaskExecutor();
         AtomicInteger wrapCount = new AtomicInteger();
         CountDownLatch latch = new CountDownLatch(1);
 
@@ -262,6 +295,37 @@ class VirtualThreadExecutorPostProcessorTest {
 
         assertTrue(latch.await(3, TimeUnit.SECONDS));
         assertEquals(1, wrapCount.get());
+        executor.close();
+    }
+
+    @Test
+    void userTaskDecoratorSurvivesConfigRefresh() throws Exception {
+        assumeJdk21Plus();
+        DtpPostProcessor processor = newPostProcessor(true);
+        SimpleAsyncTaskExecutor executor = newVirtualSimpleAsyncTaskExecutor();
+        AtomicInteger userDecoratorCalls = new AtomicInteger();
+        executor.setTaskDecorator(runnable -> {
+            userDecoratorCalls.incrementAndGet();
+            return runnable;
+        });
+
+        processor.postProcessAfterInitialization(executor, SIMPLE_ASYNC_NAME);
+        // Ensure static DtpProperties is initialized for NotifyHelper during refresh.
+        new DtpRegistry(DtpProperties.getInstance());
+
+        DtpExecutorProps props = new DtpExecutorProps();
+        props.setThreadPoolName(SIMPLE_ASYNC_NAME);
+        // no taskWrapperNames configured: refresh resets the wrappers to an empty list
+        props.setRejectedHandlerType(DtpRegistry.getExecutorWrapper(SIMPLE_ASYNC_NAME)
+                .getExecutor().getRejectHandlerType());
+        DtpRegistry.refresh(props);
+
+        CountDownLatch latch = new CountDownLatch(1);
+        executor.execute(latch::countDown);
+        assertTrue(latch.await(3, TimeUnit.SECONDS));
+        assertEquals(1, userDecoratorCalls.get(),
+                "the TaskDecorator taken over from the bean must not be dropped by a config refresh");
+        executor.close();
     }
 
     @Test
@@ -325,6 +389,17 @@ class VirtualThreadExecutorPostProcessorTest {
         processor.setEnvironment(new MockEnvironment()
                 .withProperty("spring.threads.virtual.enabled", Boolean.toString(virtualEnabled)));
         return processor;
+    }
+
+    private static SimpleAsyncTaskExecutor newVirtualSimpleAsyncTaskExecutor() {
+        SimpleAsyncTaskExecutor executor = new SimpleAsyncTaskExecutor();
+        executor.setVirtualThreads(true);
+        return executor;
+    }
+
+    private static void assumeJdk21Plus() {
+        Assumptions.assumeTrue(Runtime.version().feature() >= 21,
+                "requires JDK 21+ for real virtual threads");
     }
 
     private ApplicationContext springContext() throws Exception {

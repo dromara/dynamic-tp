@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.dromara.dynamictp.common.plugin.DtpInterceptorRegistry;
 import org.dromara.dynamictp.common.util.ConstructorUtil;
 import org.dromara.dynamictp.common.util.ReflectionUtil;
@@ -52,8 +53,10 @@ import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskDecorator;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.lang.NonNull;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
@@ -91,9 +94,11 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
     private static final String SPRING_THREADS_VIRTUAL_ENABLED = "spring.threads.virtual.enabled";
 
     /**
-     * Spring's internal marker field, non-null when a SimpleAsyncTaskExecutor spawns virtual threads.
+     * Spring's internal marker field, non-null when a SimpleAsyncTaskExecutor spawns virtual
+     * threads. Added in Spring Framework 6.1, resolved once and {@code null} on older versions.
      */
-    private static final String VIRTUAL_THREAD_DELEGATE_FIELD = "virtualThreadDelegate";
+    private static final Field VIRTUAL_THREAD_DELEGATE_FIELD =
+            FieldUtils.getField(SimpleAsyncTaskExecutor.class, "virtualThreadDelegate", true);
 
     /**
      * Spring's internal field holding a user configured task decorator.
@@ -140,18 +145,34 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
      * Whether the given {@link SimpleAsyncTaskExecutor} should be managed as a
      * virtual-thread (thread-per-task) executor.
      *
-     * <p>The instance itself is checked first: a {@code SimpleAsyncTaskExecutor} created with
-     * {@code setVirtualThreads(true)} holds a non-null {@code virtualThreadDelegate}. This also
-     * covers executors that opt in manually while the global property is off, which the property
-     * check alone would miss. The property is kept as a fallback for the Spring Boot auto
-     * configured executors.</p>
+     * <p>A {@code SimpleAsyncTaskExecutor} created with {@code setVirtualThreads(true)} holds a
+     * non-null {@code virtualThreadDelegate}, so the instance state is the only reliable signal
+     * and it also covers executors that opt in manually while the global property is off.
+     * Reading the field requires Spring Framework 6.1+, hence it is resolved once; on older
+     * versions the field does not exist and the global property is the only hint left (dtp then
+     * trusts the user's intent, the executor may in fact run on platform threads).</p>
+     *
+     * <p>The property must never be used as an additional signal while the field is available:
+     * with {@code spring.threads.virtual.enabled=true} every single
+     * {@code SimpleAsyncTaskExecutor} bean would be taken over, including the ones that run on
+     * platform threads, and would then be reported as a queue-less virtual pool.</p>
      */
     private boolean isVirtualThreadExecutor(SimpleAsyncTaskExecutor executor) {
-        return usesVirtualThreads(executor) || isVirtualThreadEnabled();
+        if (executor instanceof TaskScheduler) {
+            // SimpleAsyncTaskScheduler extends SimpleAsyncTaskExecutor. A scheduler is not an
+            // application task executor: taking it over would add a pool that cannot be tuned
+            // and would replace the decorator slot used by the scheduling infrastructure.
+            log.debug("DynamicTp, skip managing task scheduler as a virtual thread executor: {}",
+                    executor.getClass().getName());
+            return false;
+        }
+        if (Objects.nonNull(VIRTUAL_THREAD_DELEGATE_FIELD)) {
+            return usesVirtualThreads(executor);
+        }
+        return isVirtualThreadEnabled();
     }
 
     private boolean usesVirtualThreads(SimpleAsyncTaskExecutor executor) {
-        // Spring Framework 6.1+ internal field, absent on older versions: fall back to the property.
         return Objects.nonNull(ReflectionUtil.getFieldValue(VIRTUAL_THREAD_DELEGATE_FIELD, executor));
     }
 
@@ -164,17 +185,20 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
     }
 
     /**
-     * Register a Spring Boot 3 virtual thread executor (SimpleAsyncTaskExecutor) into dtp
+     * Register a Spring Boot virtual thread executor (SimpleAsyncTaskExecutor) into dtp
      * without replacing the original bean. Only observe / enhance, do not swap the bean
      * reference held by Spring.
      */
     private Object registerAndReturnVirtual(Object bean, String beanName) {
+        String poolName = findDtpAnnoValue(beanName)
+                .filter(StringUtils::isNotBlank)
+                .orElse(beanName);
         SimpleAsyncTaskExecutor simpleAsyncTaskExecutor = (SimpleAsyncTaskExecutor) bean;
         SimpleAsyncTaskExecutorAdapter adapter = new SimpleAsyncTaskExecutorAdapter(simpleAsyncTaskExecutor);
         VirtualThreadExecutorProxy proxy = new VirtualThreadExecutorProxy(adapter);
-        proxy.setThreadPoolName(beanName);
-        tryWrapSimpleAsyncTaskDecorator(beanName, simpleAsyncTaskExecutor, proxy);
-        DtpRegistry.registerExecutor(new ExecutorWrapper(beanName, proxy), REGISTER_SOURCE);
+        proxy.setThreadPoolName(poolName);
+        tryWrapSimpleAsyncTaskDecorator(poolName, simpleAsyncTaskExecutor, proxy);
+        DtpRegistry.registerExecutor(new ExecutorWrapper(poolName, proxy), REGISTER_SOURCE);
         return bean;
     }
 
@@ -199,32 +223,44 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
     }
 
     private Object registerAndReturnCommon(Object bean, String beanName) {
-        String dtpAnnoValue;
+        Optional<String> dtpAnnoValue = findDtpAnnoValue(beanName);
+        if (!dtpAnnoValue.isPresent()) {
+            return bean;
+        }
+        String poolName = StringUtils.isNotBlank(dtpAnnoValue.get()) ? dtpAnnoValue.get() : beanName;
+        return doRegisterAndReturnCommon(bean, poolName);
+    }
+
+    /**
+     * Resolve the {@link DynamicTp} annotation value of the given bean.
+     *
+     * @param beanName the bean name
+     * @return empty when the bean is not annotated at all, otherwise the (possibly blank)
+     *         annotation value
+     */
+    private Optional<String> findDtpAnnoValue(String beanName) {
         try {
             DynamicTp dynamicTp = beanFactory.findAnnotationOnBean(beanName, DynamicTp.class);
             if (Objects.nonNull(dynamicTp)) {
-                dtpAnnoValue = dynamicTp.value();
-            } else {
-                BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanName);
-                if (!(beanDefinition instanceof AnnotatedBeanDefinition)) {
-                    return bean;
-                }
-                AnnotatedBeanDefinition annotatedBeanDefinition = (AnnotatedBeanDefinition) beanDefinition;
-                MethodMetadata methodMetadata = (MethodMetadata) annotatedBeanDefinition.getSource();
-                if (Objects.isNull(methodMetadata) || !methodMetadata.isAnnotated(DynamicTp.class.getName())) {
-                    return bean;
-                }
-                dtpAnnoValue = Optional.ofNullable(methodMetadata.getAnnotationAttributes(DynamicTp.class.getName()))
-                        .orElse(Collections.emptyMap())
-                        .getOrDefault("value", "")
-                        .toString();
+                return Optional.of(dynamicTp.value());
             }
+            BeanDefinition beanDefinition = beanFactory.getBeanDefinition(beanName);
+            if (!(beanDefinition instanceof AnnotatedBeanDefinition)) {
+                return Optional.empty();
+            }
+            AnnotatedBeanDefinition annotatedBeanDefinition = (AnnotatedBeanDefinition) beanDefinition;
+            MethodMetadata methodMetadata = (MethodMetadata) annotatedBeanDefinition.getSource();
+            if (Objects.isNull(methodMetadata) || !methodMetadata.isAnnotated(DynamicTp.class.getName())) {
+                return Optional.empty();
+            }
+            return Optional.of(Optional.ofNullable(methodMetadata.getAnnotationAttributes(DynamicTp.class.getName()))
+                    .orElse(Collections.emptyMap())
+                    .getOrDefault("value", "")
+                    .toString());
         } catch (NoSuchBeanDefinitionException e) {
-            log.warn("There is no bean with the given name {}", beanName, e);
-            return bean;
+            log.debug("There is no bean definition with the given name {}", beanName, e);
+            return Optional.empty();
         }
-        String poolName = StringUtils.isNotBlank(dtpAnnoValue) ? dtpAnnoValue : beanName;
-        return doRegisterAndReturnCommon(bean, poolName);
     }
 
     private Object doRegisterAndReturnCommon(Object bean, String poolName) {
@@ -324,9 +360,16 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
                             return ((TaskDecorator) taskDecorator).decorate(runnable);
                         }
                     };
-            proxy.setTaskWrappers(Lists.newArrayList(taskWrapper));
+            // registered as the internal wrapper so a later config refresh, which resets the
+            // wrappers to the ones named in taskWrapperNames, cannot drop it
+            proxy.setInternalTaskWrapper(taskWrapper);
             TaskWrappers.getInstance().register(taskWrapper);
         }
+        // Hooking the decorator keeps the bean itself untouched, but it only sees tasks that
+        // Spring hands to the decorator. Rejections raised by the executor bean itself (closed
+        // executor, or concurrency limit with rejectTasksWhenLimitReached) are never routed
+        // through dtp, so they do not show up in the reject metrics / alarms of this pool.
+        // Only submissions that go through DtpRegistry / the wrapper are counted as rejected.
         executor.setTaskDecorator(proxy::decorate);
     }
 }

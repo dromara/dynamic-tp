@@ -94,6 +94,7 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<Executor> {
                         + "wrapping with VirtualThreadExecutorProxy (pool-size refresh not applicable).",
                 origin.getClass().getName());
         VirtualThreadExecutorProxy proxy = new VirtualThreadExecutorProxy(origin);
+        proxy.setThreadPoolName(getTpName());
         protocol.setExecutor(proxy);
         // Must not shutdown origin: proxy still delegates to it.
         executors.put(getTpName(), new ExecutorWrapper(getTpName(), proxy));

@@ -17,7 +17,9 @@
 
 package org.dromara.dynamictp.core.support.proxy;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.core.aware.AwareManager;
@@ -27,6 +29,7 @@ import org.dromara.dynamictp.core.support.task.runnable.EnhancedRunnable;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ExecutorService;
@@ -59,6 +62,9 @@ import java.util.concurrent.atomic.LongAdder;
  *   <li>Size/queue metrics return {@code -1} (unsupported). Virtual threads have no
  *       bounded pool or queue; performance metrics (tps/rt/reject) still flow through
  *       the aware chain.</li>
+ *   <li>Task statistics and the aware {@code execute} hook are registered when a task
+ *       starts running, not when it is submitted, so a task that is rejected after
+ *       being decorated leaves no residue behind.</li>
  * </ul>
  *
  * @author yanhom
@@ -75,7 +81,7 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
     private final AtomicBoolean terminatedNotified = new AtomicBoolean(false);
 
     /**
-     * Cumulative number of tasks handed over to the delegate, rejected ones excluded.
+     * Cumulative number of tasks that started running, rejected ones excluded.
      * The JDK thread-per-task executor keeps no such counter (and its internal
      * {@code threadCount()} is not reachable without opening {@code java.util.concurrent}),
      * so the numbers are tracked here, where every submission path passes through.
@@ -102,6 +108,14 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
      * Task wrappers, do sth enhanced.
      */
     private List<TaskWrapper> taskWrappers;
+
+    /**
+     * Task wrapper that dtp created itself while taking over the executor, currently the
+     * adapted {@code TaskDecorator} of a Spring {@code SimpleAsyncTaskExecutor} whose
+     * decorator slot dtp had to occupy. It is not derived from {@code taskWrapperNames},
+     * so a config refresh must not drop it, see {@link #setTaskWrappers(List)}.
+     */
+    private TaskWrapper internalTaskWrapper;
 
     /**
      * Reject handler type.
@@ -192,18 +206,15 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
             delegate.execute(enhanced);
         } catch (RuntimeException e) {
             // The delegate refused the task (e.g. RejectedExecutionException from a JDK
-            // thread-per-task executor, or IllegalStateException from a shut down
-            // SimpleAsyncTaskExecutor). beforeExecute / afterExecute will never run, so the
-            // aware chain has to be closed here, otherwise the performance stopwatch entry
-            // leaks, the queue-timeout timer is never cancelled (false queue timeout alarm)
-            // and the rejection is not counted at all.
+            // thread-per-task executor, or TaskRejectedException from a SimpleAsyncTaskExecutor
+            // that is closed / has reached its concurrency limit).
+            // Task statistics and the aware "execute" hook are registered when the task starts
+            // running (see decorate), so nothing has to be rolled back here, but the rejection
+            // itself still has to be reported.
             // Note: the aware chain is keyed on the inner task (see decorate), not on the
             // outer EnhancedRunnable.
             Runnable awareKey = enhanced instanceof EnhancedRunnable
                     ? ((EnhancedRunnable) enhanced).getRunnable() : enhanced;
-            // roll back what decorate counted before notifying the aware chain, so the
-            // rejection log / alarm content does not include the task that never ran
-            taskRejected();
             AwareManager.beforeReject(awareKey, this);
             AwareManager.afterReject(awareKey, this);
             throw e;
@@ -260,13 +271,22 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
     // ---------------------------------------------------------------------
 
     /**
-     * Enhance a task once and register it with the aware chain.
+     * Enhance a task once, without any bookkeeping side effect.
      *
      * <p>Key must stay consistent with {@link EnhancedRunnable}:
      * {@link AwareManager#execute} uses the same runnable instance that
      * {@code beforeExecute}/{@code afterExecute} later see (the inner task),
      * matching the Undertow proxy pattern. Otherwise queue-timeout timers
      * and performance metrics cannot cancel/complete correctly.</p>
+     *
+     * <p><b>No side effect on purpose</b>: task counting and the aware {@code execute}
+     * hook happen when the returned task actually starts (see
+     * {@link CountingEnhancedRunnable}). This method is also installed as the
+     * {@code TaskDecorator} of a Spring {@code SimpleAsyncTaskExecutor}, whose
+     * {@code execute} may still reject the task <i>after</i> decorating it (closed
+     * executor, concurrency limit, thread creation failure). A decorator cannot observe
+     * that rejection, so registering statistics here would permanently leak the active
+     * count and the performance stopwatch entry of a task that never ran.</p>
      *
      * <p>Idempotent: if the command is already an {@link EnhancedRunnable}
      * produced by a previous {@code decorate} (e.g. SimpleAsyncTaskExecutor
@@ -279,8 +299,6 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
         }
         // Keep the same key for execute / beforeExecute / afterExecute (Undertow style).
         Runnable enhanced = getEnhancedTask(command);
-        AwareManager.execute(this, enhanced);
-        taskSubmitted();
         return new CountingEnhancedRunnable(enhanced, this);
     }
 
@@ -289,8 +307,11 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
     // ---------------------------------------------------------------------
 
     /**
-     * Cumulative number of accepted tasks, rejected ones excluded. Approximate, like
-     * {@link java.util.concurrent.ThreadPoolExecutor#getTaskCount()}.
+     * Cumulative number of tasks that started running, rejected ones excluded. Unlike
+     * {@link java.util.concurrent.ThreadPoolExecutor#getTaskCount()} it does not include tasks
+     * that were accepted but have not started yet: a thread-per-task executor has no queue to
+     * count them in, and counting at submission time cannot be undone when the underlying
+     * Spring executor rejects an already decorated task.
      *
      * @return the task count
      */
@@ -319,31 +340,32 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
         return largestActiveCount.get();
     }
 
-    private void taskSubmitted() {
-        taskCount.increment();
-        activeCount.incrementAndGet();
-    }
-
-    private void taskRejected() {
-        taskCount.decrement();
-        activeCount.decrementAndGet();
-    }
-
     /**
-     * The high-water mark is updated when a task actually starts, so a task that ends up
-     * rejected never contributes to it.
+     * Called when a task actually starts, which for a thread-per-task executor is also the
+     * moment its thread comes to life. A task that ends up rejected therefore never shows up
+     * in any counter, and never leaves an entry behind in the aware chain.
+     *
+     * @param awareKey the inner task, i.e. the key shared with beforeExecute / afterExecute
      */
-    private void taskStarted() {
-        largestActiveCount.accumulateAndGet(activeCount.get(), Math::max);
-    }
-
-    private void taskCompleted() {
-        completedTaskCount.increment();
-        activeCount.decrementAndGet();
+    private void taskStarted(Runnable awareKey) {
+        taskCount.increment();
+        int active = activeCount.incrementAndGet();
+        largestActiveCount.accumulateAndGet(active, Math::max);
+        AwareManager.execute(this, awareKey);
     }
 
     /**
-     * Counts task completion. Extending {@link EnhancedRunnable} keeps {@link #decorate}
+     * Active count is decremented first, so an observer that sees the completion also sees the
+     * thread gone (otherwise metrics and tests can catch a moment where a completed task is
+     * still reported as active).
+     */
+    private void taskCompleted() {
+        activeCount.decrementAndGet();
+        completedTaskCount.increment();
+    }
+
+    /**
+     * Counts task execution. Extending {@link EnhancedRunnable} keeps {@link #decorate}
      * idempotent (its check is {@code instanceof EnhancedRunnable}) and keeps the aware
      * hooks of the parent class intact.
      */
@@ -358,7 +380,7 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
 
         @Override
         public void run() {
-            proxy.taskStarted();
+            proxy.taskStarted(getRunnable());
             try {
                 super.run();
             } finally {
@@ -376,9 +398,46 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
         return taskWrappers;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>A config refresh always overwrites the wrappers with the ones resolved from
+     * {@code taskWrapperNames} (empty when nothing is configured). The internal wrapper
+     * created at registration time (see {@link #setInternalTaskWrapper(TaskWrapper)}) is
+     * merged back in, otherwise the first config change would silently and permanently
+     * drop the {@code TaskDecorator} that the underlying Spring executor was configured
+     * with, as dtp replaced its decorator slot.</p>
+     */
     @Override
     public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
-        this.taskWrappers = taskWrappers;
+        if (Objects.isNull(internalTaskWrapper)) {
+            this.taskWrappers = taskWrappers;
+            return;
+        }
+        // the internal wrapper stays innermost, so configured wrappers (mdc / ttl ...)
+        // establish their context around it
+        List<TaskWrapper> merged = Lists.newArrayList(internalTaskWrapper);
+        if (CollectionUtils.isNotEmpty(taskWrappers)) {
+            taskWrappers.stream()
+                    .filter(t -> t != internalTaskWrapper)
+                    .forEach(merged::add);
+        }
+        this.taskWrappers = merged;
+    }
+
+    /**
+     * Set the wrapper dtp created itself while taking over the executor. It is kept across
+     * config refreshes.
+     *
+     * @param internalTaskWrapper the internal task wrapper
+     */
+    public void setInternalTaskWrapper(TaskWrapper internalTaskWrapper) {
+        this.internalTaskWrapper = internalTaskWrapper;
+        setTaskWrappers(this.taskWrappers);
+    }
+
+    public TaskWrapper getInternalTaskWrapper() {
+        return internalTaskWrapper;
     }
 
     // ---------------------------------------------------------------------

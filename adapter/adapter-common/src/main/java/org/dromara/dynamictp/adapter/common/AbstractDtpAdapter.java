@@ -133,7 +133,13 @@ public abstract class AbstractDtpAdapter implements DtpAdapter {
 
     public void refresh(ExecutorWrapper executorWrapper, List<NotifyPlatform> platforms, TpExecutorProps props) {
 
-        if (Objects.isNull(props) || Objects.isNull(executorWrapper) || containsInvalidParams(props, log)) {
+        if (Objects.isNull(props) || Objects.isNull(executorWrapper)) {
+            return;
+        }
+        // Virtual threads are unbounded: core/max/keepAlive are reported as unsupported, so the
+        // pool-size validation would reject every configuration and skip the notify / taskWrapper
+        // / aware refresh as well.
+        if (!executorWrapper.isVirtualThreadExecutor() && containsInvalidParams(props, log)) {
             return;
         }
 
@@ -201,10 +207,12 @@ public abstract class AbstractDtpAdapter implements DtpAdapter {
                              List<NotifyPlatform> platforms,
                              TpExecutorProps props) {
 
-        val executor = executorWrapper.getExecutor();
-        doRefreshPoolSize(executor, props);
-        if (!Objects.equals(executor.getKeepAliveTime(props.getUnit()), props.getKeepAliveTime())) {
-            executor.setKeepAliveTime(props.getKeepAliveTime(), props.getUnit());
+        if (!executorWrapper.isVirtualThreadExecutor()) {
+            val executor = executorWrapper.getExecutor();
+            doRefreshPoolSize(executor, props);
+            if (!Objects.equals(executor.getKeepAliveTime(props.getUnit()), props.getKeepAliveTime())) {
+                executor.setKeepAliveTime(props.getKeepAliveTime(), props.getUnit());
+            }
         }
         if (StringUtils.isNotBlank(props.getThreadPoolAliasName())) {
             executorWrapper.setThreadPoolAliasName(props.getThreadPoolAliasName());

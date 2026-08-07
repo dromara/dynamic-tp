@@ -76,10 +76,11 @@ public class MicroMeterCollector extends AbstractCollector {
 
         Iterable<Tag> tags = getTags(poolStats);
 
-        // Virtual thread executors have no fixed pool and no queue: sizing / queue metrics
-        // are reported as -1 by the adapter and would show up as negative values on
-        // dashboards, so they are skipped. Task statistics are tracked by the proxy and
-        // still meaningful, so they are reported below.
+        // A virtual thread executor has neither a fixed pool nor a queue, so those metrics are
+        // reported as -1 (not applicable) by the adapter and are skipped here instead of showing
+        // up as negative values on dashboards. The peak is skipped as well: without persistent
+        // workers it is just max(active.count) over time. Concurrency and task statistics are
+        // real numbers and are reported below.
         if (!poolStats.isVirtual()) {
             Metrics.gauge(metricName("core.size"), tags, poolStats, ThreadPoolStats::getCorePoolSize);
             Metrics.gauge(metricName("maximum.size"), tags, poolStats, ThreadPoolStats::getMaximumPoolSize);
@@ -90,10 +91,11 @@ public class MicroMeterCollector extends AbstractCollector {
             Metrics.gauge(metricName("queue.remaining.capacity"), tags, poolStats,
                     ThreadPoolStats::getQueueRemainingCapacity);
             Metrics.gauge(metricName("queue.timeout.count"), tags, poolStats, ThreadPoolStats::getQueueTimeoutCount);
+
+            Metrics.gauge(metricName("current.size"), tags, poolStats, ThreadPoolStats::getPoolSize);
+            Metrics.gauge(metricName("largest.size"), tags, poolStats, ThreadPoolStats::getLargestPoolSize);
         }
 
-        Metrics.gauge(metricName("current.size"), tags, poolStats, ThreadPoolStats::getPoolSize);
-        Metrics.gauge(metricName("largest.size"), tags, poolStats, ThreadPoolStats::getLargestPoolSize);
         Metrics.gauge(metricName("active.count"), tags, poolStats, ThreadPoolStats::getActiveCount);
         Metrics.gauge(metricName("task.count"), tags, poolStats, ThreadPoolStats::getTaskCount);
         Metrics.gauge(metricName("completed.task.count"), tags, poolStats, ThreadPoolStats::getCompletedTaskCount);

@@ -33,19 +33,23 @@ import java.util.concurrent.TimeUnit;
  * via the {@code TaskEnhanceAware} / {@code RejectHandlerAware} contracts.</p>
  *
  * <p><b>Metric semantics</b>, a thread-per-task executor has neither a bounded pool nor a
- * queue, so the numbers cannot mean the same thing as on a {@code ThreadPoolExecutor}:</p>
+ * queue, so pool-shape numbers cannot mean what they mean on a {@code ThreadPoolExecutor} and
+ * are reported as {@value #NOT_APPLICABLE} rather than as a number that would be read as a
+ * healthy pool. Task and concurrency numbers on the other hand are real and are reported:</p>
  * <table border="1">
  *   <caption>metric mapping</caption>
  *   <tr><th>metric</th><th>value</th></tr>
  *   <tr><td>corePoolSize / maximumPoolSize / keepAliveTime</td>
- *       <td>{@value #NOT_APPLICABLE}, not applicable (unbounded)</td></tr>
+ *       <td>{@value #NOT_APPLICABLE}, the executor is unbounded</td></tr>
  *   <tr><td>queueSize / queueCapacity / queueRemainingCapacity</td>
- *       <td>{@value #NOT_APPLICABLE}, not applicable (there is no queue). Reporting 0 would
- *       read as "queue is empty", which is not the same statement</td></tr>
- *   <tr><td>poolSize / activeCount</td>
- *       <td>both are the number of tasks currently running: one live thread per running
- *       task, so the two metrics are equal by definition</td></tr>
- *   <tr><td>largestPoolSize</td><td>high-water mark of the above</td></tr>
+ *       <td>{@value #NOT_APPLICABLE}, there is no queue. Reporting 0 would read as "queue is
+ *       empty", which is not the same statement</td></tr>
+ *   <tr><td>poolSize / largestPoolSize</td>
+ *       <td>{@value #NOT_APPLICABLE}, threads are created and discarded per task: there is no
+ *       pool to size, and no persistent worker peak that sampling could not reconstruct from
+ *       activeCount</td></tr>
+ *   <tr><td>activeCount</td><td>tasks currently running, i.e. the concurrency level right
+ *       now</td></tr>
  *   <tr><td>taskCount</td><td>tasks that <b>started</b> running, see
  *       {@link VirtualThreadExecutorProxy#getTaskCount()}</td></tr>
  *   <tr><td>completedTaskCount</td><td>tasks that finished, exceptions included</td></tr>
@@ -106,20 +110,40 @@ public class VirtualThreadExecutorAdapter implements ExecutorAdapter<VirtualThre
         // unsupported: virtual threads are unbounded
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>{@link #NOT_APPLICABLE}: threads are created and discarded per task, so there is no
+     * pool whose size could be reported. The concurrency currently sustained is
+     * {@link #getActiveCount()}.</p>
+     */
     @Override
     public int getPoolSize() {
-        // thread-per-task: one live thread per running task
-        return proxy.getActiveCount();
+        return NOT_APPLICABLE;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Tasks currently running, i.e. the concurrency level the executor sustains right now.
+     * This is a real number, not a pool property.</p>
+     */
     @Override
     public int getActiveCount() {
         return proxy.getActiveCount();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>{@link #NOT_APPLICABLE}: on a {@code ThreadPoolExecutor} this records the peak number of
+     * persistent workers, which sampling cannot reconstruct. A thread-per-task executor has no
+     * persistent workers, so the peak is just the maximum of {@link #getActiveCount()} over time
+     * and tracking it separately would only duplicate that series.</p>
+     */
     @Override
     public int getLargestPoolSize() {
-        return proxy.getLargestActiveCount();
+        return NOT_APPLICABLE;
     }
 
     @Override

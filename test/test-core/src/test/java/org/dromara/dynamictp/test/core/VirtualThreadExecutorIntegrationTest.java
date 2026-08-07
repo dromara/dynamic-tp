@@ -142,18 +142,18 @@ class VirtualThreadExecutorIntegrationTest {
                 java.util.concurrent.Executors.newSingleThreadExecutor());
         VirtualThreadExecutorAdapter adapter = new VirtualThreadExecutorAdapter(proxy);
         try {
-            // no fixed pool, no queue: one single "not applicable" convention
+            // no fixed pool, no queue, no worker threads to count: one single convention
             assertEquals(-1, adapter.getCorePoolSize());
             assertEquals(-1, adapter.getMaximumPoolSize());
             assertEquals(-1, adapter.getKeepAliveTime(TimeUnit.MILLISECONDS));
             assertEquals(-1, adapter.getQueueSize(), "there is no queue, which is not an empty queue");
             assertEquals(-1, adapter.getQueueCapacity());
             assertEquals(-1, adapter.getQueueRemainingCapacity());
+            assertEquals(-1, adapter.getPoolSize(), "threads are created per task, there is no pool to size");
             assertEquals(VirtualThreadExecutorAdapter.QUEUE_TYPE, adapter.getQueueType());
-            // task statistics are tracked, starting from zero
-            assertEquals(0, adapter.getPoolSize());
+            // concurrency and task statistics are real, starting from zero
             assertEquals(0, adapter.getActiveCount());
-            assertEquals(0, adapter.getLargestPoolSize());
+            assertEquals(-1, adapter.getLargestPoolSize(), "the peak is max(activeCount) over time");
             assertEquals(0, adapter.getTaskCount());
             assertEquals(0, adapter.getCompletedTaskCount());
             assertSame(proxy, adapter.getOriginal());
@@ -188,9 +188,8 @@ class VirtualThreadExecutorIntegrationTest {
             assertEquals(expected, adapter.getTaskCount());
             assertEquals(expected, adapter.getCompletedTaskCount());
             assertEquals(0, adapter.getActiveCount());
-            assertEquals(0, adapter.getPoolSize());
-            assertTrue(adapter.getLargestPoolSize() >= 1,
-                    "largest pool size should have been recorded, was " + adapter.getLargestPoolSize());
+            assertEquals(-1, adapter.getPoolSize(), "there is no pool to size");
+            assertEquals(-1, adapter.getLargestPoolSize(), "no persistent workers, so no worker peak");
         } finally {
             proxy.shutdownNow();
         }
@@ -211,8 +210,7 @@ class VirtualThreadExecutorIntegrationTest {
         assertEquals(0, adapter.getTaskCount(), "a rejected task must not be counted");
         assertEquals(0, adapter.getActiveCount(), "active count must not leak on reject");
         assertEquals(0, adapter.getCompletedTaskCount());
-        assertEquals(0, adapter.getLargestPoolSize(),
-                "a task that never ran must not raise the high-water mark");
+        assertEquals(-1, adapter.getLargestPoolSize());
     }
 
     @Test
@@ -227,8 +225,8 @@ class VirtualThreadExecutorIntegrationTest {
             assertEquals(POOL_NAME, stats.getPoolName());
             assertEquals(-1, stats.getCorePoolSize());
             assertEquals(-1, stats.getMaximumPoolSize());
+            assertEquals(-1, stats.getPoolSize());
             assertEquals(0, stats.getActiveCount());
-            assertEquals(0, stats.getPoolSize());
             assertEquals(0, stats.getTaskCount());
             assertFalse(stats.isDynamic());
             assertTrue(stats.isVirtual());
@@ -303,9 +301,9 @@ class VirtualThreadExecutorIntegrationTest {
             assertEquals(taskCount, wrapper.getExecutor().getTaskCount());
             waitUntil(() -> wrapper.getExecutor().getCompletedTaskCount() == taskCount);
             assertEquals(taskCount, wrapper.getExecutor().getCompletedTaskCount());
-            assertTrue(wrapper.getExecutor().getLargestPoolSize() > 1,
-                    "virtual threads run concurrently, largest pool size was "
-                            + wrapper.getExecutor().getLargestPoolSize());
+            // pool shape does not apply to a thread-per-task executor
+            assertEquals(-1, wrapper.getExecutor().getPoolSize());
+            assertEquals(-1, wrapper.getExecutor().getLargestPoolSize());
         } finally {
             proxy.shutdownNow();
         }
@@ -507,7 +505,7 @@ class VirtualThreadExecutorIntegrationTest {
             // (because Spring rejects it after decorating) must leave nothing behind
             assertEquals(0, wrapper.getExecutor().getTaskCount());
             assertEquals(0, wrapper.getExecutor().getActiveCount());
-            assertEquals(0, wrapper.getExecutor().getLargestPoolSize());
+            assertEquals(-1, wrapper.getExecutor().getLargestPoolSize());
             assertTrue(getStopWatchMap(wrapper).isEmpty());
 
             decorated.run();
@@ -515,7 +513,7 @@ class VirtualThreadExecutorIntegrationTest {
             assertEquals(1, wrapper.getExecutor().getTaskCount());
             assertEquals(1, wrapper.getExecutor().getCompletedTaskCount());
             assertEquals(0, wrapper.getExecutor().getActiveCount());
-            assertEquals(1, wrapper.getExecutor().getLargestPoolSize());
+            assertEquals(-1, wrapper.getExecutor().getLargestPoolSize());
             assertTrue(getStopWatchMap(wrapper).isEmpty());
         } finally {
             proxy.shutdownNow();
@@ -563,6 +561,8 @@ class VirtualThreadExecutorIntegrationTest {
 
         release.countDown();
         waitUntil(() -> wrapper.getExecutor().getCompletedTaskCount() == 1);
+        assertEquals(1, wrapper.getExecutor().getTaskCount(),
+                "the rejected task must not be counted as started");
         assertEquals(0, wrapper.getExecutor().getActiveCount(),
                 "active count must not drift when a decorated task gets rejected");
         // completedTaskCount is incremented after afterExecute cleared the performance key
@@ -586,6 +586,10 @@ class VirtualThreadExecutorIntegrationTest {
             assertEquals(-1, stats.getQueueRemainingCapacity());
             assertEquals(-1, stats.getWaitTaskCount());
             assertEquals(-1, stats.getKeepAliveTime());
+            assertEquals(-1, stats.getPoolSize());
+            // concurrency is real
+            assertEquals(0, stats.getActiveCount());
+            assertEquals(-1, stats.getLargestPoolSize());
 
             var main = ExecutorConverter.toMainFields(wrapper);
             assertEquals(-1, main.getQueueCapacity());
@@ -596,7 +600,7 @@ class VirtualThreadExecutorIntegrationTest {
     }
 
     @Test
-    void poolSizeAndActiveCountAreTheSameSeriesForThreadPerTask() throws Exception {
+    void poolShapeIsNotApplicableWhileConcurrencyIsReported() throws Exception {
         VirtualThreadExecutorProxy proxy = new VirtualThreadExecutorProxy(
                 java.util.concurrent.Executors.newFixedThreadPool(2));
         ExecutorWrapper wrapper = new ExecutorWrapper(POOL_NAME, proxy);
@@ -615,9 +619,13 @@ class VirtualThreadExecutorIntegrationTest {
             });
             assertTrue(started.await(5, TimeUnit.SECONDS));
             ExecutorAdapter<?> adapter = wrapper.getExecutor();
-            // one live thread per running task, so the two metrics are equal by definition
-            assertEquals(adapter.getActiveCount(), adapter.getPoolSize());
+            // there is no pool, so nothing about pool sizing is reported
+            assertEquals(-1, adapter.getPoolSize());
+            assertEquals(-1, adapter.getCorePoolSize());
+            assertEquals(-1, adapter.getMaximumPoolSize());
+            // the running task is reported as current concurrency
             assertEquals(1, adapter.getActiveCount());
+            assertEquals(-1, adapter.getLargestPoolSize());
             // startedTaskCount >= completed + active holds at any time
             assertTrue(adapter.getTaskCount() >= adapter.getCompletedTaskCount() + adapter.getActiveCount());
         } finally {
@@ -930,9 +938,15 @@ class VirtualThreadExecutorIntegrationTest {
                 assertNull(registry.find(MicroMeterCollector.DTP_METRIC_NAME_PREFIX + ".core.size").gauge(),
                         "sizing gauges must not be reported for virtual thread executors");
                 assertNull(registry.find(MicroMeterCollector.DTP_METRIC_NAME_PREFIX + ".queue.size").gauge());
+                assertNull(registry.find(MicroMeterCollector.DTP_METRIC_NAME_PREFIX + ".current.size").gauge(),
+                        "pool size must not be reported as -1 for virtual thread executors");
+                assertNotNull(registry.find(MicroMeterCollector.DTP_METRIC_NAME_PREFIX + ".active.count").gauge(),
+                        "concurrency is real and must be reported");
+                assertNull(registry.find(MicroMeterCollector.DTP_METRIC_NAME_PREFIX + ".largest.size").gauge(),
+                        "the peak duplicates max(active.count) and must not be reported as -1");
                 assertNotNull(registry.find(MicroMeterCollector.DTP_METRIC_NAME_PREFIX + ".task.count").gauge(),
                         "task statistics must be reported");
-                assertNotNull(registry.find(MicroMeterCollector.DTP_METRIC_NAME_PREFIX + ".active.count").gauge());
+                assertNotNull(registry.find(MicroMeterCollector.DTP_METRIC_NAME_PREFIX + ".completed.task.count").gauge());
                 assertNotNull(registry.find(MicroMeterCollector.DTP_METRIC_NAME_PREFIX + ".tps").gauge(),
                         "task performance gauges must still be reported");
             } finally {

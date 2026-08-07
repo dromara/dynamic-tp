@@ -57,9 +57,9 @@ import java.util.concurrent.atomic.LongAdder;
  *   <li>{@link AbstractExecutorService}'s submit / invokeAll / invokeAny methods all
  *       delegate to {@link #execute(Runnable)}, so every entry point goes through the
  *       same enhancement path.</li>
- *   <li>Size/queue metrics return {@code -1} (unsupported). Virtual threads have no
- *       bounded pool or queue; performance metrics (tps/rt/reject) still flow through
- *       the aware chain.</li>
+ *   <li>Pool / queue shape metrics are reported as not applicable, virtual threads have no
+ *       bounded pool and no queue. Current concurrency and task metrics
+ *       (started/completed/tps/rt/reject) are real and still flow through the aware chain.</li>
  *   <li>Task statistics and the aware {@code execute} hook are registered when a task
  *       starts running, not when it is submitted, so a task that is rejected after
  *       being decorated leaves no residue behind.</li>
@@ -95,15 +95,10 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
     private final LongAdder completedTaskCount = new LongAdder();
 
     /**
-     * Tasks currently running, which equals the number of live threads for a
-     * thread-per-task executor.
+     * Tasks currently running. There is no pool to size, but the number of tasks in flight is
+     * still worth reporting: it is the concurrency level the executor currently sustains.
      */
     private final AtomicInteger activeCount = new AtomicInteger();
-
-    /**
-     * High-water mark of {@link #activeCount}.
-     */
-    private final AtomicInteger largestActiveCount = new AtomicInteger();
 
     /**
      * Task wrappers, do sth enhanced.
@@ -328,37 +323,30 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
     }
 
     /**
-     * @return tasks currently running, i.e. live threads for a thread-per-task executor
+     * @return tasks currently running, i.e. the current concurrency level
      */
     public int getActiveCount() {
         return activeCount.get();
     }
 
     /**
-     * @return high-water mark of {@link #getActiveCount()}
-     */
-    public int getLargestActiveCount() {
-        return largestActiveCount.get();
-    }
-
-    /**
-     * Called when a task actually starts, which for a thread-per-task executor is also the
-     * moment its thread comes to life. A task that ends up rejected therefore never shows up
-     * in any counter, and never leaves an entry behind in the aware chain.
+     * Called when a task actually starts running. A task that ends up rejected therefore never
+     * shows up in any counter, and never leaves an entry behind in the aware chain.
+     *
+     * <p>No high-water mark is tracked: without persistent workers the peak is simply the
+     * maximum of {@link #getActiveCount()} over time, which the monitoring side already has.</p>
      *
      * @param awareKey the inner task, i.e. the key shared with beforeExecute / afterExecute
      */
     private void taskStarted(Runnable awareKey) {
         startedTaskCount.increment();
-        int active = activeCount.incrementAndGet();
-        largestActiveCount.accumulateAndGet(active, Math::max);
+        activeCount.incrementAndGet();
         AwareManager.execute(this, awareKey);
     }
 
     /**
-     * Active count is decremented first, so an observer that sees the completion also sees the
-     * thread gone (otherwise metrics and tests can catch a moment where a completed task is
-     * still reported as active).
+     * The active count is decremented before the completion is recorded, so an observer that
+     * sees the completion also sees the task gone.
      */
     private void taskCompleted() {
         activeCount.decrementAndGet();

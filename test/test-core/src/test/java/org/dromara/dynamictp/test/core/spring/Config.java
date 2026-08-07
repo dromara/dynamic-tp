@@ -64,4 +64,22 @@ public class Config {
     public ThreadPoolTaskExecutor taskExecutor() {
         return new ThreadPoolTaskExecutor();
     }
+
+    /**
+     * Counts how often its {@link org.springframework.core.task.TaskDecorator} was applied, used
+     * to verify that dtp keeps the decorator of the wrapped bean across config refreshes.
+     */
+    public static final java.util.concurrent.atomic.AtomicInteger DECORATOR_CALLS =
+            new java.util.concurrent.atomic.AtomicInteger();
+
+    @DynamicTp("decoratedTaskExecutor")
+    @Bean
+    public ThreadPoolTaskExecutor decoratedTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setTaskDecorator(runnable -> {
+            DECORATOR_CALLS.incrementAndGet();
+            return runnable;
+        });
+        return executor;
+    }
 }

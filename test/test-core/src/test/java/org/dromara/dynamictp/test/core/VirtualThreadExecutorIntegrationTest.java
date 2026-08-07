@@ -142,12 +142,13 @@ class VirtualThreadExecutorIntegrationTest {
                 java.util.concurrent.Executors.newSingleThreadExecutor());
         VirtualThreadExecutorAdapter adapter = new VirtualThreadExecutorAdapter(proxy);
         try {
-            // no fixed pool, no queue
+            // no fixed pool, no queue: one single "not applicable" convention
             assertEquals(-1, adapter.getCorePoolSize());
             assertEquals(-1, adapter.getMaximumPoolSize());
             assertEquals(-1, adapter.getKeepAliveTime(TimeUnit.MILLISECONDS));
-            assertEquals(0, adapter.getQueueSize());
-            assertEquals(0, adapter.getQueueRemainingCapacity());
+            assertEquals(-1, adapter.getQueueSize(), "there is no queue, which is not an empty queue");
+            assertEquals(-1, adapter.getQueueCapacity());
+            assertEquals(-1, adapter.getQueueRemainingCapacity());
             assertEquals(VirtualThreadExecutorAdapter.QUEUE_TYPE, adapter.getQueueType());
             // task statistics are tracked, starting from zero
             assertEquals(0, adapter.getPoolSize());
@@ -567,6 +568,62 @@ class VirtualThreadExecutorIntegrationTest {
         // completedTaskCount is incremented after afterExecute cleared the performance key
         assertTrue(getStopWatchMap(wrapper).isEmpty(), "performance keys must not leak");
         simple.close();
+    }
+
+    @Test
+    void statsReportOneNotApplicableConventionForVirtualExecutor() {
+        VirtualThreadExecutorProxy proxy = new VirtualThreadExecutorProxy(
+                java.util.concurrent.Executors.newSingleThreadExecutor());
+        ExecutorWrapper wrapper = new ExecutorWrapper(POOL_NAME, proxy);
+        DtpRegistry.registerExecutor(wrapper, "test");
+        try {
+            ThreadPoolStats stats = ExecutorConverter.toMetrics(wrapper);
+            // sizing and queue numbers must not mix -1 with 0 in logs / alarm messages
+            assertEquals(-1, stats.getCorePoolSize());
+            assertEquals(-1, stats.getMaximumPoolSize());
+            assertEquals(-1, stats.getQueueSize());
+            assertEquals(-1, stats.getQueueCapacity());
+            assertEquals(-1, stats.getQueueRemainingCapacity());
+            assertEquals(-1, stats.getWaitTaskCount());
+            assertEquals(-1, stats.getKeepAliveTime());
+
+            var main = ExecutorConverter.toMainFields(wrapper);
+            assertEquals(-1, main.getQueueCapacity());
+            assertEquals(VirtualThreadExecutorAdapter.QUEUE_TYPE, main.getQueueType());
+        } finally {
+            proxy.shutdownNow();
+        }
+    }
+
+    @Test
+    void poolSizeAndActiveCountAreTheSameSeriesForThreadPerTask() throws Exception {
+        VirtualThreadExecutorProxy proxy = new VirtualThreadExecutorProxy(
+                java.util.concurrent.Executors.newFixedThreadPool(2));
+        ExecutorWrapper wrapper = new ExecutorWrapper(POOL_NAME, proxy);
+        DtpRegistry.registerExecutor(wrapper, "test");
+        AwareManager.register(wrapper);
+        CountDownLatch release = new CountDownLatch(1);
+        CountDownLatch started = new CountDownLatch(1);
+        try {
+            proxy.execute(() -> {
+                started.countDown();
+                try {
+                    release.await(10, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            });
+            assertTrue(started.await(5, TimeUnit.SECONDS));
+            ExecutorAdapter<?> adapter = wrapper.getExecutor();
+            // one live thread per running task, so the two metrics are equal by definition
+            assertEquals(adapter.getActiveCount(), adapter.getPoolSize());
+            assertEquals(1, adapter.getActiveCount());
+            // startedTaskCount >= completed + active holds at any time
+            assertTrue(adapter.getTaskCount() >= adapter.getCompletedTaskCount() + adapter.getActiveCount());
+        } finally {
+            release.countDown();
+            proxy.shutdownNow();
+        }
     }
 
     @Test

@@ -23,6 +23,7 @@ import org.dromara.dynamictp.core.aware.RejectHandlerAware;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.reject.RejectHandlerGetter;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
+import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -40,6 +41,12 @@ public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskE
      * Task wrappers, do sth enhanced.
      */
     private List<TaskWrapper> taskWrappers;
+
+    /**
+     * Task wrapper that dtp created itself while taking over the executor, kept across config
+     * refreshes, see {@link #setInternalTaskWrapper(TaskWrapper)}.
+     */
+    private TaskWrapper internalTaskWrapper;
 
     /**
      * Reject handler type.
@@ -81,9 +88,33 @@ public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskE
         return taskWrappers;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The internal wrapper set at registration time (see
+     * {@link #setInternalTaskWrapper(TaskWrapper)}) is merged back in, see
+     * {@link TaskWrappers#merge(TaskWrapper, List)}.</p>
+     */
     @Override
     public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
-        this.taskWrappers = taskWrappers;
+        this.taskWrappers = TaskWrappers.merge(internalTaskWrapper, taskWrappers);
+    }
+
+    /**
+     * Set the wrapper dtp created itself while taking over the executor, currently the adapted
+     * {@code TaskDecorator} of a {@code ThreadPoolTaskExecutor}. The original executor holding
+     * that decorator is shut down and replaced by this proxy, so losing the wrapper means losing
+     * the decorator for good, which is why it survives config refreshes.
+     *
+     * @param internalTaskWrapper the internal task wrapper
+     */
+    public void setInternalTaskWrapper(TaskWrapper internalTaskWrapper) {
+        this.internalTaskWrapper = internalTaskWrapper;
+        setTaskWrappers(this.taskWrappers);
+    }
+
+    public TaskWrapper getInternalTaskWrapper() {
+        return internalTaskWrapper;
     }
 
     @Override

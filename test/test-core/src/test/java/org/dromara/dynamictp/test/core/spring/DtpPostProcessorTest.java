@@ -18,6 +18,7 @@
 package org.dromara.dynamictp.test.core.spring;
 
 import org.dromara.dynamictp.core.DtpRegistry;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
 import org.dromara.dynamictp.spring.support.YamlPropertySourceFactory;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -36,8 +38,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.util.Collections;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author <a href = "mailto:kamtohung@gmail.com">KamTo Hung</a>
@@ -66,6 +71,36 @@ class DtpPostProcessorTest {
         ThreadPoolTaskExecutor taskExecutor = context.getBean("taskExecutor", ThreadPoolTaskExecutor.class);
         assertEquals(ThreadPoolExecutorProxy.class, taskExecutor.getThreadPoolExecutor().getClass());
         taskExecutor.execute(() -> System.out.println("enhance taskExecutor success!"));
+    }
+
+    /**
+     * dtp replaces the decorating executor created by {@link ThreadPoolTaskExecutor} and shuts it
+     * down, so the bean's {@code TaskDecorator} only survives as a dtp task wrapper. A config
+     * refresh resets the wrappers to the ones named in {@code taskWrapperNames} (see
+     * {@code DtpRegistry#doRefreshCommon}), which must not drop it.
+     */
+    @Test
+    void taskDecoratorOfWrappedBeanSurvivesWrapperReset() throws Exception {
+        ThreadPoolTaskExecutor executor = context.getBean("decoratedTaskExecutor", ThreadPoolTaskExecutor.class);
+        ExecutorWrapper wrapper = DtpRegistry.getExecutorWrapper("decoratedTaskExecutor");
+
+        Config.DECORATOR_CALLS.set(0);
+        runAndWait(executor);
+        assertEquals(1, Config.DECORATOR_CALLS.get(), "the bean's TaskDecorator must be applied");
+
+        // exactly what a config refresh does when no taskWrapperNames are configured
+        wrapper.setTaskWrappers(Collections.emptyList());
+
+        Config.DECORATOR_CALLS.set(0);
+        runAndWait(executor);
+        assertEquals(1, Config.DECORATOR_CALLS.get(),
+                "the TaskDecorator taken over from the bean must not be dropped by a refresh");
+    }
+
+    private void runAndWait(ThreadPoolTaskExecutor executor) throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        executor.execute(latch::countDown);
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
     }
 
 }

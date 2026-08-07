@@ -20,6 +20,7 @@ package org.dromara.dynamictp.test.core;
 import org.dromara.dynamictp.common.entity.DtpExecutorProps;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.common.properties.DtpProperties;
+import org.dromara.dynamictp.common.util.ReflectionUtil;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.aware.AwareManager;
 import org.dromara.dynamictp.core.support.ExecutorWrapper;
@@ -34,6 +35,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -381,6 +384,29 @@ class VirtualThreadExecutorPostProcessorTest {
         Field field = wrapper.getThreadPoolStatProvider().getClass().getDeclaredField("stopWatchMap");
         field.setAccessible(true);
         return (Map<?, ?>) field.get(wrapper.getThreadPoolStatProvider());
+    }
+
+    @Test
+    void executorIsNotManagedWhenTheDecoratorHookCannotBeInstalled() throws Exception {
+        assumeJdk21Plus();
+        DtpPostProcessor processor = newPostProcessor(true);
+        SimpleAsyncTaskExecutor executor = newVirtualSimpleAsyncTaskExecutor();
+
+        Field field = ReflectionUtil.getField(SimpleAsyncTaskExecutor.class, "taskDecorator");
+        assertTrue(field != null);
+        // simulate Spring internals having changed: dtp can no longer hook into the executor,
+        // and must not register a pool that would report zeros forever
+        try (MockedStatic<ReflectionUtil> mocked = Mockito.mockStatic(ReflectionUtil.class, Mockito.CALLS_REAL_METHODS)) {
+            mocked.when(() -> ReflectionUtil.getField(SimpleAsyncTaskExecutor.class, "taskDecorator"))
+                    .thenReturn(null);
+
+            Object returned = processor.postProcessAfterInitialization(executor, SIMPLE_ASYNC_NAME);
+
+            assertSame(executor, returned);
+            assertTrue(!DtpRegistry.getAllExecutorNames().contains(SIMPLE_ASYNC_NAME),
+                    "an executor dtp cannot observe must not be registered");
+        }
+        executor.close();
     }
 
     private DtpPostProcessor newPostProcessor(boolean virtualEnabled) {

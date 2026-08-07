@@ -24,6 +24,7 @@ import org.dromara.dynamictp.common.util.StringUtil;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,33 @@ public class TaskWrappers {
         }
 
         return TASK_WRAPPERS.stream().filter(t -> StringUtil.containsIgnoreCase(t.name(), names)).collect(toList());
+    }
+
+    /**
+     * Merge a wrapper that dtp created itself while taking over an executor (currently the
+     * adapted {@code TaskDecorator} of the wrapped Spring executor) with the wrappers resolved
+     * from {@code taskWrapperNames}.
+     *
+     * <p>A config refresh always overwrites the wrappers with {@link #getByNames(Set)}, which is
+     * empty when nothing is configured. Without merging, the first config change would silently
+     * and permanently drop the decorator dtp took over from the bean.</p>
+     *
+     * <p>The internal wrapper stays first, i.e. innermost, so configured wrappers (mdc, ttl ...)
+     * establish their context around it.</p>
+     *
+     * @param internal   the wrapper dtp created itself, may be null
+     * @param configured the wrappers resolved from the configuration, may be null or empty
+     * @return the wrappers to apply
+     */
+    public static List<TaskWrapper> merge(TaskWrapper internal, List<TaskWrapper> configured) {
+        if (Objects.isNull(internal)) {
+            return configured;
+        }
+        List<TaskWrapper> merged = Lists.newArrayList(internal);
+        if (CollectionUtils.isNotEmpty(configured)) {
+            configured.stream().filter(t -> t != internal).forEach(merged::add);
+        }
+        return merged;
     }
 
     public static void register(TaskWrapper taskWrapper) {

@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.spring;
 
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -197,9 +196,29 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
         SimpleAsyncTaskExecutorAdapter adapter = new SimpleAsyncTaskExecutorAdapter(simpleAsyncTaskExecutor);
         VirtualThreadExecutorProxy proxy = new VirtualThreadExecutorProxy(adapter);
         proxy.setThreadPoolName(poolName);
-        tryWrapSimpleAsyncTaskDecorator(poolName, simpleAsyncTaskExecutor, proxy);
+        if (!tryWrapSimpleAsyncTaskDecorator(poolName, simpleAsyncTaskExecutor, proxy)) {
+            // Without the decorator hook every task submitted through the bean bypasses dtp:
+            // registering anyway would add a pool that reports zeros forever.
+            log.warn("DynamicTp, cannot enhance executor [{}], skip managing it.", poolName);
+            return bean;
+        }
+        warnIfTasksCanBeRejectedOutsideDtp(poolName, simpleAsyncTaskExecutor);
         DtpRegistry.registerExecutor(new ExecutorWrapper(poolName, proxy), REGISTER_SOURCE);
         return bean;
+    }
+
+    /**
+     * A {@code SimpleAsyncTaskExecutor} with a concurrency limit throttles or rejects tasks
+     * inside its own {@code execute}, i.e. before / around the decorator dtp hooks into. Those
+     * tasks are invisible to dtp, so say it once at startup instead of letting users wonder why
+     * the reject count stays at zero.
+     */
+    private void warnIfTasksCanBeRejectedOutsideDtp(String poolName, SimpleAsyncTaskExecutor executor) {
+        if (executor.getConcurrencyLimit() != SimpleAsyncTaskExecutor.UNBOUNDED_CONCURRENCY) {
+            log.warn("DynamicTp, executor [{}] has a concurrency limit of [{}], tasks throttled or "
+                            + "rejected by the executor itself are not reflected in the metrics of this pool.",
+                    poolName, executor.getConcurrencyLimit());
+        }
     }
 
     private Object registerAndReturnVirtualProxy(VirtualThreadExecutorProxy proxy, String beanName) {
@@ -266,11 +285,17 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
     private Object doRegisterAndReturnCommon(Object bean, String poolName) {
         if (bean instanceof ThreadPoolTaskExecutor) {
             ThreadPoolTaskExecutor poolTaskExecutor = (ThreadPoolTaskExecutor) bean;
-            val proxy = newProxy(poolName, poolTaskExecutor.getThreadPoolExecutor());
-            try {
-                ReflectionUtil.setFieldValue("threadPoolExecutor", bean, proxy);
-                tryWrapTaskDecorator(poolName, poolTaskExecutor, proxy);
-            } catch (IllegalAccessException ignored) { }
+            ThreadPoolExecutor originExecutor = poolTaskExecutor.getThreadPoolExecutor();
+            val proxy = new ThreadPoolExecutorProxy(originExecutor);
+            // The origin executor is only abandoned once the swap succeeded, otherwise the bean
+            // would be left holding an executor that dtp just shut down.
+            if (!ReflectionUtil.setFieldValue("threadPoolExecutor", bean, proxy)) {
+                log.warn("DynamicTp, cannot replace the inner executor of ThreadPoolTaskExecutor [{}], "
+                        + "skip managing it.", poolName);
+                return bean;
+            }
+            tryWrapTaskDecorator(poolName, poolTaskExecutor, proxy);
+            shutdownGracefulAsync(originExecutor, poolName, 0);
             DtpRegistry.registerExecutor(new ExecutorWrapper(poolName, proxy), REGISTER_SOURCE);
             return bean;
         }
@@ -315,7 +340,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
         return proxy;
     }
 
-    private void tryWrapTaskDecorator(String poolName, ThreadPoolTaskExecutor poolTaskExecutor, ThreadPoolExecutorProxy proxy) throws IllegalAccessException {
+    private void tryWrapTaskDecorator(String poolName, ThreadPoolTaskExecutor poolTaskExecutor, ThreadPoolExecutorProxy proxy) {
         Object taskDecorator = ReflectionUtil.getFieldValue("taskDecorator", poolTaskExecutor);
         if (Objects.isNull(taskDecorator)) {
             return;
@@ -331,20 +356,31 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
                 return ((TaskDecorator) taskDecorator).decorate(runnable);
             }
         };
-        ReflectionUtil.setFieldValue("taskWrappers", proxy, Lists.newArrayList(taskWrapper));
+        // The decorating executor created by ThreadPoolTaskExecutor is replaced by the proxy and
+        // shut down, so the decorator only survives as a task wrapper. Registering it as the
+        // internal one keeps a config refresh (which resets the wrappers to taskWrapperNames)
+        // from dropping it.
+        proxy.setInternalTaskWrapper(taskWrapper);
         TaskWrappers.getInstance().register(taskWrapper);
     }
 
-    private void tryWrapSimpleAsyncTaskDecorator(String poolName,
-                                                 SimpleAsyncTaskExecutor executor,
-                                                 VirtualThreadExecutorProxy proxy) {
+    /**
+     * Take over the {@code TaskDecorator} slot of the given executor, which is the only hook
+     * that lets dtp see the tasks submitted through the bean itself.
+     *
+     * @return false if the hook could not be installed, in which case the executor must not be
+     *         managed at all
+     */
+    private boolean tryWrapSimpleAsyncTaskDecorator(String poolName,
+                                                    SimpleAsyncTaskExecutor executor,
+                                                    VirtualThreadExecutorProxy proxy) {
         // dtp installs its own decorator below, so a user configured one must be carried over
         // as a task wrapper first. If the field cannot be located (Spring internals changed),
         // bail out instead of silently dropping the user's decorator.
         if (Objects.isNull(ReflectionUtil.getField(SimpleAsyncTaskExecutor.class, TASK_DECORATOR_FIELD))) {
             log.warn("DynamicTp cannot read field [{}] of SimpleAsyncTaskExecutor, skip enhancing task decorator, "
                     + "tpName: {}", TASK_DECORATOR_FIELD, poolName);
-            return;
+            return false;
         }
         Object taskDecorator = ReflectionUtil.getFieldValue(TASK_DECORATOR_FIELD, executor);
         if (Objects.nonNull(taskDecorator)) {
@@ -371,5 +407,6 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
         // through dtp, so they do not show up in the reject metrics / alarms of this pool.
         // Only submissions that go through DtpRegistry / the wrapper are counted as rejected.
         executor.setTaskDecorator(proxy::decorate);
+        return true;
     }
 }

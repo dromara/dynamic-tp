@@ -32,16 +32,38 @@ import java.util.concurrent.TimeUnit;
  * so {@code ExecutorWrapper#setTaskWrappers} / {@code setRejectHandler} keep working
  * via the {@code TaskEnhanceAware} / {@code RejectHandlerAware} contracts.</p>
  *
- * <p>Virtual threads are unbounded and have no queue, so sizing / queue / keepAlive
- * metrics return {@code -1} (the {@code unsupported} convention already used by
- * {@link ExecutorAdapter}'s default methods). Task statistics (task count, completed
- * task count, active count, largest pool size) are tracked by the proxy itself, since
- * the JDK thread-per-task executor exposes no counters.</p>
+ * <p><b>Metric semantics</b>, a thread-per-task executor has neither a bounded pool nor a
+ * queue, so the numbers cannot mean the same thing as on a {@code ThreadPoolExecutor}:</p>
+ * <table border="1">
+ *   <caption>metric mapping</caption>
+ *   <tr><th>metric</th><th>value</th></tr>
+ *   <tr><td>corePoolSize / maximumPoolSize / keepAliveTime</td>
+ *       <td>{@value #NOT_APPLICABLE}, not applicable (unbounded)</td></tr>
+ *   <tr><td>queueSize / queueCapacity / queueRemainingCapacity</td>
+ *       <td>{@value #NOT_APPLICABLE}, not applicable (there is no queue). Reporting 0 would
+ *       read as "queue is empty", which is not the same statement</td></tr>
+ *   <tr><td>poolSize / activeCount</td>
+ *       <td>both are the number of tasks currently running: one live thread per running
+ *       task, so the two metrics are equal by definition</td></tr>
+ *   <tr><td>largestPoolSize</td><td>high-water mark of the above</td></tr>
+ *   <tr><td>taskCount</td><td>tasks that <b>started</b> running, see
+ *       {@link VirtualThreadExecutorProxy#getTaskCount()}</td></tr>
+ *   <tr><td>completedTaskCount</td><td>tasks that finished, exceptions included</td></tr>
+ * </table>
+ *
+ * <p>Task statistics are tracked by the proxy itself, since the JDK thread-per-task executor
+ * exposes no counters.</p>
  *
  * @author yanhom
  * @since 1.3.0
  */
 public class VirtualThreadExecutorAdapter implements ExecutorAdapter<VirtualThreadExecutorProxy> {
+
+    /**
+     * Value reported for metrics that have no meaning for a thread-per-task executor,
+     * following the convention of {@link ExecutorAdapter}'s default methods.
+     */
+    public static final int NOT_APPLICABLE = -1;
 
     /**
      * Queue type shown in metrics / notifications, virtual threads have no queue.
@@ -66,7 +88,7 @@ public class VirtualThreadExecutorAdapter implements ExecutorAdapter<VirtualThre
 
     @Override
     public int getCorePoolSize() {
-        return -1;
+        return NOT_APPLICABLE;
     }
 
     @Override
@@ -76,7 +98,7 @@ public class VirtualThreadExecutorAdapter implements ExecutorAdapter<VirtualThre
 
     @Override
     public int getMaximumPoolSize() {
-        return -1;
+        return NOT_APPLICABLE;
     }
 
     @Override
@@ -141,9 +163,33 @@ public class VirtualThreadExecutorAdapter implements ExecutorAdapter<VirtualThre
         return QUEUE_TYPE;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>{@link #NOT_APPLICABLE} instead of the 0 that {@link ExecutorAdapter}'s default
+     * (backed by an unsupported queue) would report: there is no queue, which is a different
+     * statement from an empty queue. Keeping one convention for every inapplicable metric also
+     * avoids alarm / log messages that mix {@code -1} sizing with {@code 0} queue numbers.</p>
+     */
+    @Override
+    public int getQueueSize() {
+        return NOT_APPLICABLE;
+    }
+
+    @Override
+    public int getQueueCapacity() {
+        // must be overridden as well, the default sums size + remainingCapacity
+        return NOT_APPLICABLE;
+    }
+
+    @Override
+    public int getQueueRemainingCapacity() {
+        return NOT_APPLICABLE;
+    }
+
     @Override
     public long getKeepAliveTime(TimeUnit unit) {
-        return -1;
+        return NOT_APPLICABLE;
     }
 
     @Override

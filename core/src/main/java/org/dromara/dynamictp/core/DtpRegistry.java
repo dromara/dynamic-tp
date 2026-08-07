@@ -116,13 +116,20 @@ public class DtpRegistry {
     public static void registerExecutor(ExecutorWrapper wrapper, String source) {
         log.info("DynamicTp register executor: {}, source: {}", ExecutorConverter.toMainFields(wrapper), source);
         ExecutorWrapper existed = EXECUTOR_REGISTRY.putIfAbsent(wrapper.getThreadPoolName(), wrapper);
-        if (Objects.nonNull(existed) && existed != wrapper) {
-            // Otherwise the enhancement silently detaches: the caller keeps using the executor
-            // it just wrapped, while monitoring / notify / refresh all target the one that got
-            // registered first.
-            log.warn("DynamicTp register, thread pool name [{}] is already registered, the newly created executor "
-                    + "will not be managed, please rename it, source: {}", wrapper.getThreadPoolName(), source);
+        if (Objects.isNull(existed) || existed == wrapper) {
+            return;
         }
+        if (existed.getExecutor().getOriginal() == wrapper.getExecutor().getOriginal()) {
+            // same underlying executor registered twice, harmless
+            log.debug("DynamicTp register, executor [{}] is already registered, source: {}",
+                    wrapper.getThreadPoolName(), source);
+            return;
+        }
+        // Otherwise the enhancement silently detaches: the caller keeps using the executor
+        // it just wrapped, while monitoring / notify / refresh all target the one that got
+        // registered first.
+        log.warn("DynamicTp register, thread pool name [{}] is already taken by another executor, the newly "
+                + "created one will not be managed, please rename it, source: {}", wrapper.getThreadPoolName(), source);
     }
 
     /**

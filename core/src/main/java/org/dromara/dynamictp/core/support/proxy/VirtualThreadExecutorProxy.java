@@ -17,9 +17,7 @@
 
 package org.dromara.dynamictp.core.support.proxy;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.core.aware.AwareManager;
@@ -27,9 +25,9 @@ import org.dromara.dynamictp.core.aware.RejectHandlerAware;
 import org.dromara.dynamictp.core.aware.TaskEnhanceAware;
 import org.dromara.dynamictp.core.support.task.runnable.EnhancedRunnable;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
+import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.ExecutorService;
@@ -81,12 +79,15 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
     private final AtomicBoolean terminatedNotified = new AtomicBoolean(false);
 
     /**
-     * Cumulative number of tasks that started running, rejected ones excluded.
+     * Cumulative number of tasks that started running, rejected ones excluded. Monotonically
+     * increasing, so it can be used as a counter in monitoring systems. Invariant:
+     * {@code startedTaskCount >= completedTaskCount + activeCount} (equality holds outside the
+     * short window in which a finishing task updates both of the latter).
      * The JDK thread-per-task executor keeps no such counter (and its internal
      * {@code threadCount()} is not reachable without opening {@code java.util.concurrent}),
      * so the numbers are tracked here, where every submission path passes through.
      */
-    private final LongAdder taskCount = new LongAdder();
+    private final LongAdder startedTaskCount = new LongAdder();
 
     /**
      * Cumulative number of finished tasks, including the ones that threw.
@@ -316,7 +317,7 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
      * @return the task count
      */
     public long getTaskCount() {
-        return taskCount.sum();
+        return startedTaskCount.sum();
     }
 
     /**
@@ -348,7 +349,7 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
      * @param awareKey the inner task, i.e. the key shared with beforeExecute / afterExecute
      */
     private void taskStarted(Runnable awareKey) {
-        taskCount.increment();
+        startedTaskCount.increment();
         int active = activeCount.incrementAndGet();
         largestActiveCount.accumulateAndGet(active, Math::max);
         AwareManager.execute(this, awareKey);
@@ -401,28 +402,13 @@ public class VirtualThreadExecutorProxy extends AbstractExecutorService
     /**
      * {@inheritDoc}
      *
-     * <p>A config refresh always overwrites the wrappers with the ones resolved from
-     * {@code taskWrapperNames} (empty when nothing is configured). The internal wrapper
-     * created at registration time (see {@link #setInternalTaskWrapper(TaskWrapper)}) is
-     * merged back in, otherwise the first config change would silently and permanently
-     * drop the {@code TaskDecorator} that the underlying Spring executor was configured
-     * with, as dtp replaced its decorator slot.</p>
+     * <p>The internal wrapper created at registration time (see
+     * {@link #setInternalTaskWrapper(TaskWrapper)}) is merged back in, see
+     * {@link TaskWrappers#merge(TaskWrapper, List)}.</p>
      */
     @Override
     public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
-        if (Objects.isNull(internalTaskWrapper)) {
-            this.taskWrappers = taskWrappers;
-            return;
-        }
-        // the internal wrapper stays innermost, so configured wrappers (mdc / ttl ...)
-        // establish their context around it
-        List<TaskWrapper> merged = Lists.newArrayList(internalTaskWrapper);
-        if (CollectionUtils.isNotEmpty(taskWrappers)) {
-            taskWrappers.stream()
-                    .filter(t -> t != internalTaskWrapper)
-                    .forEach(merged::add);
-        }
-        this.taskWrappers = merged;
+        this.taskWrappers = TaskWrappers.merge(internalTaskWrapper, taskWrappers);
     }
 
     /**

@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.test.core.parse;
 
-import cn.hutool.core.io.FileUtil;
 import org.dromara.dynamictp.common.em.ConfigFileTypeEnum;
 import org.dromara.dynamictp.common.parser.config.PropertiesConfigParser;
 import org.junit.jupiter.api.Test;
@@ -30,6 +29,7 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Map;
 
 /**
@@ -43,7 +43,7 @@ public class PropertiesConfigParserTest {
     @Test
     void testDoParse() throws IOException {
         File file = ResourceUtils.getFile("classpath:demo-dtp-dev.properties");
-        String content = FileUtil.readString(file, StandardCharsets.UTF_8);
+        String content = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
 
         PropertiesConfigParser parser = new PropertiesConfigParser();
         Map<Object, Object> result = parser.doParse(content);
@@ -53,7 +53,7 @@ public class PropertiesConfigParserTest {
     @Test
     void testDoParseMultipleFields() throws IOException {
         File file = ResourceUtils.getFile("classpath:demo-dtp-dev.properties");
-        String content = FileUtil.readString(file, StandardCharsets.UTF_8);
+        String content = new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
 
         PropertiesConfigParser parser = new PropertiesConfigParser();
         Map<Object, Object> result = parser.doParse(content);

@@ -17,7 +17,7 @@
 
 package org.dromara.dynamictp.test.common.util;
 
-import cn.hutool.core.bean.BeanUtil;
+import org.dromara.dynamictp.common.util.BeanUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -17,7 +17,7 @@
 
 package org.dromara.dynamictp.core.notifier;
 
-import cn.hutool.core.bean.BeanUtil;
+import org.dromara.dynamictp.common.util.BeanUtil;
 import com.google.common.base.Joiner;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

@@ -17,15 +17,19 @@
 
 package org.dromara.dynamictp.common.notifier;
 
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.util.Objects;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 /**
  * The notification is sent over http
@@ -40,17 +44,60 @@ public abstract class AbstractHttpNotifier extends AbstractNotifier {
     protected void send0(NotifyPlatform platform, String content) {
         val url = buildUrl(platform);
         val msgBody = buildMsgBody(platform, content);
-        HttpRequest request = HttpRequest.post(url)
-                .setConnectionTimeout(platform.getTimeout())
-                .setReadTimeout(platform.getTimeout())
-                .body(msgBody);
-        if (platform.getProxyType() != Proxy.Type.DIRECT) {
-            request.setProxy(new Proxy(platform.getProxyType(), new InetSocketAddress(platform.getProxyHost(), platform.getProxyPort())));
+        HttpURLConnection conn = null;
+        try {
+            URL targetUrl = new URL(url);
+            if (platform.getProxyType() != Proxy.Type.DIRECT) {
+                Proxy proxy = new Proxy(platform.getProxyType(),
+                        new InetSocketAddress(platform.getProxyHost(), platform.getProxyPort()));
+                conn = (HttpURLConnection) targetUrl.openConnection(proxy);
+            } else {
+                // no explicit proxy — respect JVM system proxy settings (-Dhttp.proxyHost etc.)
+                conn = (HttpURLConnection) targetUrl.openConnection();
+            }
+            conn.setRequestMethod("POST");
+            conn.setConnectTimeout(platform.getTimeout());
+            conn.setReadTimeout(platform.getTimeout());
+            conn.setDoOutput(true);
+            conn.setUseCaches(false);
+            conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            conn.setRequestProperty("User-Agent", "DynamicTp");
+
+            try (OutputStream os = conn.getOutputStream()) {
+                os.write(msgBody.getBytes(StandardCharsets.UTF_8));
+            }
+
+            int respCode = conn.getResponseCode();
+            String respBody = readResponseBody(conn, respCode);
+            if (respCode >= 200 && respCode < 300) {
+                log.info("DynamicTp notify, {} send success, response: {}, request: {}",
+                        platform(), respBody, msgBody);
+            } else {
+                log.error("DynamicTp notify, {} send failed, http status: {}, response: {}, request: {}",
+                        platform(), respCode, respBody, msgBody);
+            }
+        } catch (Exception e) {
+            log.error("DynamicTp notify, {} send failed, request: {}", platform(), msgBody, e);
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
         }
-        HttpResponse response = request.execute();
-        if (Objects.nonNull(response)) {
-            log.info("DynamicTp notify, {} send success, response: {}, request: {}",
-                    platform(), response.body(), msgBody);
+    }
+
+    private String readResponseBody(HttpURLConnection conn, int code) throws IOException {
+        InputStream is = (code >= 200 && code < 400) ? conn.getInputStream() : conn.getErrorStream();
+        if (is == null) {
+            return "";
+        }
+        try (InputStream in = is) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = in.read(buffer)) != -1) {
+                baos.write(buffer, 0, len);
+            }
+            return baos.toString(StandardCharsets.UTF_8.name());
         }
     }
 

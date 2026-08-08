@@ -17,7 +17,7 @@
 
 package org.dromara.dynamictp.test.core.plugin;
 
-import cn.hutool.core.collection.CollectionUtil;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.plugin.DtpInterceptorRegistry;
 import org.junit.jupiter.api.Test;
@@ -55,7 +55,7 @@ class InterceptTest {
         DtpInterceptorRegistry.register("TestAInterceptor", interceptorTest);
 
         TestA testA = new TestA();
-        TestA testA1 = (TestA) DtpInterceptorRegistry.plugin(testA, CollectionUtil.newHashSet("TestAInterceptor"));
+        TestA testA1 = (TestA) DtpInterceptorRegistry.plugin(testA, Sets.newHashSet("TestAInterceptor"));
 
         assertTrue(testA1.getClass().getSimpleName().startsWith("InterceptTest$TestA$ByteBuddy$"));
         assertTrue(testA.getClass().isAssignableFrom(testA1.getClass()));

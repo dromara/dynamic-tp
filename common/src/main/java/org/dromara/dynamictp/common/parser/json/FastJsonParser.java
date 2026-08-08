@@ -17,8 +17,7 @@
 
 package org.dromara.dynamictp.common.parser.json;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson2.JSON;
 
 import java.lang.reflect.Type;
 
@@ -29,7 +28,7 @@ import java.lang.reflect.Type;
  */
 public class FastJsonParser extends AbstractJsonParser {
 
-    private static final String PACKAGE_NAME = "com.alibaba.fastjson.JSON";
+    private static final String PACKAGE_NAME = "com.alibaba.fastjson2.JSON";
 
     @Override
     public <T> T fromJson(String json, Type typeOfT) {
@@ -38,7 +37,7 @@ public class FastJsonParser extends AbstractJsonParser {
 
     @Override
     public String toJson(Object obj) {
-        return JSON.toJSONString(obj, SerializerFeature.WriteDateUseDateFormat, SerializerFeature.DisableCircularReferenceDetect);
+        return JSON.toJSONString(obj, "yyyy-MM-dd HH:mm:ss");
     }
 
     @Override

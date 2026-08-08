@@ -17,9 +17,6 @@
 
 package org.dromara.dynamictp.test.core.notify;
 
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
-import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.constant.WechatNotifyConst;
 import org.dromara.dynamictp.common.entity.MarkdownReq;

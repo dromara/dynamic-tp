@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.core.notifier.manager;
 
-import cn.hutool.core.util.NumberUtil;
 import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -35,6 +34,8 @@ import org.dromara.dynamictp.core.support.task.runnable.DtpRunnable;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.slf4j.MDC;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
@@ -157,7 +158,9 @@ public class AlarmManager {
     private static boolean checkLiveness(ExecutorWrapper executorWrapper, NotifyItem notifyItem) {
         val executor = executorWrapper.getExecutor();
         int maximumPoolSize = executor.getMaximumPoolSize();
-        double div = NumberUtil.div(executor.getActiveCount(), maximumPoolSize, 2) * 100;
+        double div = BigDecimal.valueOf(executor.getActiveCount())
+                .divide(BigDecimal.valueOf(maximumPoolSize), 2, RoundingMode.HALF_UP)
+                .doubleValue() * 100;
         if (div >= notifyItem.getThreshold()) {
             log.warn("DynamicTp monitor, current liveness [{}] >= threshold [{}], threadPoolName: {}",
                     div, notifyItem.getThreshold(), executorWrapper.getThreadPoolName());
@@ -171,7 +174,9 @@ public class AlarmManager {
         if (executor.getQueueSize() <= 0) {
             return false;
         }
-        double div = NumberUtil.div(executor.getQueueSize(), executor.getQueueCapacity(), 2) * 100;
+        double div = BigDecimal.valueOf(executor.getQueueSize())
+                .divide(BigDecimal.valueOf(executor.getQueueCapacity()), 2, RoundingMode.HALF_UP)
+                .doubleValue() * 100;
         if (div >= notifyItem.getThreshold()) {
             log.warn("DynamicTp monitor, current queue utilization [{}] >= threshold [{}], threadPoolName: {}",
                     div, notifyItem.getThreshold(), executorWrapper.getThreadPoolName());

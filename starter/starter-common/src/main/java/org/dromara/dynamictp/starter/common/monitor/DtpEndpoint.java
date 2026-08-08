@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.starter.common.monitor;
 
-import cn.hutool.core.io.FileUtil;
 import com.google.common.collect.Lists;
 import lombok.val;
 import org.apache.commons.collections4.MapUtils;
@@ -31,6 +30,7 @@ import org.dromara.dynamictp.core.aware.MetricsAware;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -57,11 +57,28 @@ public class DtpEndpoint {
         }
         JvmStats jvmStats = new JvmStats();
         Runtime runtime = Runtime.getRuntime();
-        jvmStats.setMaxMemory(FileUtil.readableFileSize(runtime.maxMemory()));
-        jvmStats.setTotalMemory(FileUtil.readableFileSize(runtime.totalMemory()));
-        jvmStats.setFreeMemory(FileUtil.readableFileSize(runtime.freeMemory()));
-        jvmStats.setUsableMemory(FileUtil.readableFileSize(runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory()));
+        jvmStats.setMaxMemory(readableFileSize(runtime.maxMemory()));
+        jvmStats.setTotalMemory(readableFileSize(runtime.totalMemory()));
+        jvmStats.setFreeMemory(readableFileSize(runtime.freeMemory()));
+        jvmStats.setUsableMemory(readableFileSize(runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory()));
         metricsList.add(jvmStats);
         return metricsList;
+    }
+
+    private static final String[] SIZE_UNITS = {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
+
+    /**
+     * 可读的文件大小表示，参考 hutool DataSizeUtil.format 方法。
+     *
+     * @param size 字节数
+     * @return 可读的大小字符串，如 "1.5 GB"
+     */
+    private static String readableFileSize(long size) {
+        if (size <= 0) {
+            return "0";
+        }
+        int digitGroups = Math.min(SIZE_UNITS.length - 1, (int) (Math.log10(size) / Math.log10(1024)));
+        return new DecimalFormat("#,##0.##")
+                .format(size / Math.pow(1024, digitGroups)) + " " + SIZE_UNITS[digitGroups];
     }
 }

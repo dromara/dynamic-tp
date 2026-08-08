@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.core.timer;
 
-import cn.hutool.core.text.CharSequenceUtil;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
@@ -48,10 +47,10 @@ public class RunTimeoutTimerTask extends AbstractTimeoutTimerTask {
         val pair = getTaskNameAndTraceId();
         statProvider.incRunTimeoutCount(1);
         AlarmManager.tryAlarmAsync(executorWrapper, RUN_TIMEOUT, runnable);
-        String logMsg = CharSequenceUtil.format("DynamicTp execute, run timeout, " +
-                        "tpName: {}, taskName: {}, traceId: {}, runTimeout: {}ms, " +
-                        "poolSize: {} (active: {}, core: {}, max: {}, largest: {}), " +
-                        "queueCapacity: {} (currSize: {}, remaining: {}), stackTrace: {}",
+        String logMsg = String.format("DynamicTp execute, run timeout, " +
+                        "tpName: %s, taskName: %s, traceId: %s, runTimeout: %sms, " +
+                        "poolSize: %s (active: %s, core: %s, max: %s, largest: %s), " +
+                        "queueCapacity: %s (currSize: %s, remaining: %s), stackTrace: %s",
                 statProvider.getExecutorWrapper().getThreadPoolName(), pair.getLeft(), pair.getRight(),
                 statProvider.getRunTimeout(), executor.getPoolSize(), executor.getActiveCount(),
                 executor.getCorePoolSize(), executor.getMaximumPoolSize(), executor.getLargestPoolSize(),

@@ -24,39 +24,17 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
 
 /**
- * {@link ExecutorAdapter} view over a {@link VirtualThreadExecutorProxy}.
+ * {@link ExecutorAdapter} view over a {@link VirtualThreadExecutorProxy}. {@code getOriginal()}
+ * returns the proxy, not the bare delegate, so {@code ExecutorWrapper#setTaskWrappers} /
+ * {@code setRejectHandler} keep working through the aware contracts.
  *
- * <p>Unlike the old prototype (which unwrapped the proxy and stored the bare
- * delegate, silently dropping task-wrappers / aware / notify state), this adapter
- * keeps a reference to the proxy itself. {@code getOriginal()} returns the proxy,
- * so {@code ExecutorWrapper#setTaskWrappers} / {@code setRejectHandler} keep working
- * via the {@code TaskEnhanceAware} / {@code RejectHandlerAware} contracts.</p>
- *
- * <p><b>Metric semantics</b>, a thread-per-task executor has neither a bounded pool nor a
- * queue, so pool-shape numbers cannot mean what they mean on a {@code ThreadPoolExecutor} and
- * are reported as {@value #NOT_APPLICABLE} rather than as a number that would be read as a
- * healthy pool. Task and concurrency numbers on the other hand are real and are reported:</p>
- * <table border="1">
- *   <caption>metric mapping</caption>
- *   <tr><th>metric</th><th>value</th></tr>
- *   <tr><td>corePoolSize / maximumPoolSize / keepAliveTime</td>
- *       <td>{@value #NOT_APPLICABLE}, the executor is unbounded</td></tr>
- *   <tr><td>queueSize / queueCapacity / queueRemainingCapacity</td>
- *       <td>{@value #NOT_APPLICABLE}, there is no queue. Reporting 0 would read as "queue is
- *       empty", which is not the same statement</td></tr>
- *   <tr><td>poolSize / largestPoolSize</td>
- *       <td>{@value #NOT_APPLICABLE}, threads are created and discarded per task: there is no
- *       pool to size, and no persistent worker peak that sampling could not reconstruct from
- *       activeCount</td></tr>
- *   <tr><td>activeCount</td><td>tasks currently running, i.e. the concurrency level right
- *       now</td></tr>
- *   <tr><td>taskCount</td><td>tasks that <b>started</b> running, see
- *       {@link VirtualThreadExecutorProxy#getTaskCount()}</td></tr>
- *   <tr><td>completedTaskCount</td><td>tasks that finished, exceptions included</td></tr>
- * </table>
- *
- * <p>Task statistics are tracked by the proxy itself, since the JDK thread-per-task executor
- * exposes no counters.</p>
+ * <p>A thread-per-task executor has no bounded pool and no queue, so those metrics report
+ * {@value #NOT_APPLICABLE} instead of a number that would read as a healthy pool (reporting 0 for
+ * the queue would mean "empty queue", which is a different statement). Reported as real numbers:
+ * {@code activeCount} (tasks running right now), {@code taskCount} (tasks <b>started</b>, see
+ * {@link VirtualThreadExecutorProxy#getTaskCount()}) and {@code completedTaskCount}.
+ * {@code largestPoolSize} is not applicable either: without persistent workers the peak is just
+ * max(activeCount) over time, which monitoring already has.</p>
  *
  * @author yanhom
  * @since 1.3.0
@@ -64,13 +42,13 @@ import java.util.concurrent.TimeUnit;
 public class VirtualThreadExecutorAdapter implements ExecutorAdapter<VirtualThreadExecutorProxy> {
 
     /**
-     * Value reported for metrics that have no meaning for a thread-per-task executor,
-     * following the convention of {@link ExecutorAdapter}'s default methods.
+     * Reported for metrics that have no meaning here, following {@link ExecutorAdapter}'s
+     * defaults.
      */
     public static final int NOT_APPLICABLE = -1;
 
     /**
-     * Queue type shown in metrics / notifications, virtual threads have no queue.
+     * Queue type shown in metrics / notifications.
      */
     public static final String QUEUE_TYPE = "NoQueue(VirtualThread)";
 
@@ -110,37 +88,16 @@ public class VirtualThreadExecutorAdapter implements ExecutorAdapter<VirtualThre
         // unsupported: virtual threads are unbounded
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>{@link #NOT_APPLICABLE}: threads are created and discarded per task, so there is no
-     * pool whose size could be reported. The concurrency currently sustained is
-     * {@link #getActiveCount()}.</p>
-     */
     @Override
     public int getPoolSize() {
         return NOT_APPLICABLE;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>Tasks currently running, i.e. the concurrency level the executor sustains right now.
-     * This is a real number, not a pool property.</p>
-     */
     @Override
     public int getActiveCount() {
         return proxy.getActiveCount();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>{@link #NOT_APPLICABLE}: on a {@code ThreadPoolExecutor} this records the peak number of
-     * persistent workers, which sampling cannot reconstruct. A thread-per-task executor has no
-     * persistent workers, so the peak is just the maximum of {@link #getActiveCount()} over time
-     * and tracking it separately would only duplicate that series.</p>
-     */
     @Override
     public int getLargestPoolSize() {
         return NOT_APPLICABLE;
@@ -173,27 +130,21 @@ public class VirtualThreadExecutorAdapter implements ExecutorAdapter<VirtualThre
 
     @Override
     public void setRejectedExecutionHandler(RejectedExecutionHandler handler) {
-        // Virtual threads never reject (unbounded). Reject handler type is
-        // already set on the proxy via RejectHandlerAware by ExecutorWrapper
-        // (using the original handler's simple name). Do NOT overwrite it here
-        // with RejectHandlerGetter proxy names such as "$Proxy14".
+        // The type is already set on the proxy by ExecutorWrapper via RejectHandlerAware, using
+        // the original handler's simple name. Do not overwrite it with a "$Proxy14" style name.
     }
 
     @Override
     public String getQueueType() {
-        // Thread-per-task: there is no queue at all. Reporting the internal
-        // "UnsupportedBlockingQueue" class name would be misleading in metrics,
-        // registration logs and config-change notifications.
+        // reporting the internal "UnsupportedBlockingQueue" would be misleading
         return QUEUE_TYPE;
     }
 
     /**
      * {@inheritDoc}
      *
-     * <p>{@link #NOT_APPLICABLE} instead of the 0 that {@link ExecutorAdapter}'s default
-     * (backed by an unsupported queue) would report: there is no queue, which is a different
-     * statement from an empty queue. Keeping one convention for every inapplicable metric also
-     * avoids alarm / log messages that mix {@code -1} sizing with {@code 0} queue numbers.</p>
+     * <p>{@link #NOT_APPLICABLE} rather than the 0 of {@link ExecutorAdapter}'s default, which is
+     * backed by an unsupported queue.</p>
      */
     @Override
     public int getQueueSize() {

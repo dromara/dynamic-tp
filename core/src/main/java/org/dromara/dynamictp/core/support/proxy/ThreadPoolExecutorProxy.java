@@ -91,8 +91,7 @@ public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskE
     /**
      * {@inheritDoc}
      *
-     * <p>The internal wrapper set at registration time (see
-     * {@link #setInternalTaskWrapper(TaskWrapper)}) is merged back in, see
+     * <p>{@link #internalTaskWrapper} is merged back in, see
      * {@link TaskWrappers#merge(TaskWrapper, List)}.</p>
      */
     @Override
@@ -101,12 +100,9 @@ public class ThreadPoolExecutorProxy extends ThreadPoolExecutor implements TaskE
     }
 
     /**
-     * Set the wrapper dtp created itself while taking over the executor, currently the adapted
-     * {@code TaskDecorator} of a {@code ThreadPoolTaskExecutor}. The original executor holding
-     * that decorator is shut down and replaced by this proxy, so losing the wrapper means losing
-     * the decorator for good, which is why it survives config refreshes.
-     *
-     * @param internalTaskWrapper the internal task wrapper
+     * @param internalTaskWrapper wrapper dtp created itself, currently the adapted
+     *                            {@code TaskDecorator} of a {@code ThreadPoolTaskExecutor} whose
+     *                            original executor is shut down, so losing it loses the decorator
      */
     public void setInternalTaskWrapper(TaskWrapper internalTaskWrapper) {
         this.internalTaskWrapper = internalTaskWrapper;

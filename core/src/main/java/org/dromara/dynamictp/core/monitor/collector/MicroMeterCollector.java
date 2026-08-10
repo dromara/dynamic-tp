@@ -76,11 +76,8 @@ public class MicroMeterCollector extends AbstractCollector {
 
         Iterable<Tag> tags = getTags(poolStats);
 
-        // A virtual thread executor has neither a fixed pool nor a queue, so those metrics are
-        // reported as -1 (not applicable) by the adapter and are skipped here instead of showing
-        // up as negative values on dashboards. The peak is skipped as well: without persistent
-        // workers it is just max(active.count) over time. Concurrency and task statistics are
-        // real numbers and are reported below.
+        // Pool and queue metrics are not applicable to a virtual thread executor and would show
+        // up as -1 on dashboards, see VirtualThreadExecutorAdapter.
         if (!poolStats.isVirtual()) {
             Metrics.gauge(metricName("core.size"), tags, poolStats, ThreadPoolStats::getCorePoolSize);
             Metrics.gauge(metricName("maximum.size"), tags, poolStats, ThreadPoolStats::getMaximumPoolSize);

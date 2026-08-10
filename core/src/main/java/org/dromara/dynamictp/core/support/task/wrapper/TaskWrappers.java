@@ -59,15 +59,13 @@ public class TaskWrappers {
     }
 
     /**
-     * Merge a wrapper that dtp created itself while taking over an executor (currently the
-     * adapted {@code TaskDecorator} of the wrapped Spring executor) with the wrappers resolved
-     * from {@code taskWrapperNames}.
+     * Merge a wrapper dtp created itself while taking over an executor (currently the adapted
+     * {@code TaskDecorator} of the wrapped Spring executor) with the wrappers resolved from
+     * {@code taskWrapperNames}. A config refresh overwrites the wrappers with
+     * {@link #getByNames(Set)}, which is empty when nothing is configured, so without merging the
+     * first config change would silently drop that decorator for good.
      *
-     * <p>A config refresh always overwrites the wrappers with {@link #getByNames(Set)}, which is
-     * empty when nothing is configured. Without merging, the first config change would silently
-     * and permanently drop the decorator dtp took over from the bean.</p>
-     *
-     * <p>The internal wrapper stays first, i.e. innermost, so configured wrappers (mdc, ttl ...)
+     * <p>The internal one stays first, i.e. innermost, so configured wrappers (mdc, ttl ...)
      * establish their context around it.</p>
      *
      * @param internal   the wrapper dtp created itself, may be null

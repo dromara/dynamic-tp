@@ -136,9 +136,8 @@ public abstract class AbstractDtpAdapter implements DtpAdapter {
         if (Objects.isNull(props) || Objects.isNull(executorWrapper)) {
             return;
         }
-        // Virtual threads are unbounded: core/max/keepAlive are reported as unsupported, so the
-        // pool-size validation would reject every configuration and skip the notify / taskWrapper
-        // / aware refresh as well.
+        // core/max/keepAlive are unsupported for virtual threads, so the validation would reject
+        // every configuration and skip the notify / taskWrapper / aware refresh with it
         if (!executorWrapper.isVirtualThreadExecutor() && containsInvalidParams(props, log)) {
             return;
         }

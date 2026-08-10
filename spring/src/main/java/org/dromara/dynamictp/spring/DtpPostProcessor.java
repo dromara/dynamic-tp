@@ -34,7 +34,6 @@ import org.dromara.dynamictp.core.support.proxy.ScheduledThreadPoolExecutorProxy
 import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.core.support.proxy.VirtualThreadExecutorProxy;
 import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
-import org.dromara.dynamictp.core.support.task.wrapper.TaskWrappers;
 import org.dromara.dynamictp.spring.support.SimpleAsyncTaskExecutorAdapter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -122,10 +121,8 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
         if (bean instanceof VirtualThreadExecutorProxy) {
             return registerAndReturnVirtualProxy((VirtualThreadExecutorProxy) bean, beanName);
         }
-        // Spring Boot 3, when spring.threads.virtual.enabled=true, registers the
-        // applicationTaskExecutor as a SimpleAsyncTaskExecutor (with virtualThreads=true),
-        // which is neither ThreadPoolExecutor nor ThreadPoolTaskExecutor. Catch it here so
-        // dtp can still observe / enhance it without touching the original bean.
+        // With spring.threads.virtual.enabled=true the applicationTaskExecutor is a
+        // SimpleAsyncTaskExecutor, neither ThreadPoolExecutor nor ThreadPoolTaskExecutor.
         if (bean instanceof SimpleAsyncTaskExecutor
                 && isVirtualThreadExecutor((SimpleAsyncTaskExecutor) bean)) {
             return registerAndReturnVirtual(bean, beanName);
@@ -141,26 +138,19 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
     }
 
     /**
-     * Whether the given {@link SimpleAsyncTaskExecutor} should be managed as a
-     * virtual-thread (thread-per-task) executor.
+     * Whether the given {@link SimpleAsyncTaskExecutor} should be managed as a virtual-thread
+     * (thread-per-task) executor.
      *
-     * <p>A {@code SimpleAsyncTaskExecutor} created with {@code setVirtualThreads(true)} holds a
-     * non-null {@code virtualThreadDelegate}, so the instance state is the only reliable signal
-     * and it also covers executors that opt in manually while the global property is off.
-     * Reading the field requires Spring Framework 6.1+, hence it is resolved once; on older
-     * versions the field does not exist and the global property is the only hint left (dtp then
-     * trusts the user's intent, the executor may in fact run on platform threads).</p>
-     *
-     * <p>The property must never be used as an additional signal while the field is available:
-     * with {@code spring.threads.virtual.enabled=true} every single
-     * {@code SimpleAsyncTaskExecutor} bean would be taken over, including the ones that run on
-     * platform threads, and would then be reported as a queue-less virtual pool.</p>
+     * <p>Only the instance state is trusted: {@code virtualThreadDelegate} is non-null exactly
+     * when the executor spawns virtual threads. Using the global property as an additional signal
+     * would take over every {@code SimpleAsyncTaskExecutor} bean, platform-thread ones included.
+     * The field exists from Spring Framework 6.1 on; without it the property is the only hint
+     * left.</p>
      */
     private boolean isVirtualThreadExecutor(SimpleAsyncTaskExecutor executor) {
         if (executor instanceof TaskScheduler) {
-            // SimpleAsyncTaskScheduler extends SimpleAsyncTaskExecutor. A scheduler is not an
-            // application task executor: taking it over would add a pool that cannot be tuned
-            // and would replace the decorator slot used by the scheduling infrastructure.
+            // SimpleAsyncTaskScheduler extends SimpleAsyncTaskExecutor, but a scheduler is not an
+            // application task executor and its decorator slot belongs to the scheduling code.
             log.debug("DynamicTp, skip managing task scheduler as a virtual thread executor: {}",
                     executor.getClass().getName());
             return false;
@@ -197,8 +187,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
         VirtualThreadExecutorProxy proxy = new VirtualThreadExecutorProxy(adapter);
         proxy.setThreadPoolName(poolName);
         if (!tryWrapSimpleAsyncTaskDecorator(poolName, simpleAsyncTaskExecutor, proxy)) {
-            // Without the decorator hook every task submitted through the bean bypasses dtp:
-            // registering anyway would add a pool that reports zeros forever.
+            // without the hook dtp sees no task at all, a registered pool would report zeros forever
             log.warn("DynamicTp, cannot enhance executor [{}], skip managing it.", poolName);
             return bean;
         }
@@ -208,10 +197,8 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
     }
 
     /**
-     * A {@code SimpleAsyncTaskExecutor} with a concurrency limit throttles or rejects tasks
-     * inside its own {@code execute}, i.e. before / around the decorator dtp hooks into. Those
-     * tasks are invisible to dtp, so say it once at startup instead of letting users wonder why
-     * the reject count stays at zero.
+     * A concurrency limited {@code SimpleAsyncTaskExecutor} throttles or rejects tasks inside its
+     * own {@code execute}, out of reach of the decorator dtp hooks into, so say it once at startup.
      */
     private void warnIfTasksCanBeRejectedOutsideDtp(String poolName, SimpleAsyncTaskExecutor executor) {
         if (executor.getConcurrencyLimit() != SimpleAsyncTaskExecutor.UNBOUNDED_CONCURRENCY) {
@@ -287,8 +274,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
             ThreadPoolTaskExecutor poolTaskExecutor = (ThreadPoolTaskExecutor) bean;
             ThreadPoolExecutor originExecutor = poolTaskExecutor.getThreadPoolExecutor();
             val proxy = new ThreadPoolExecutorProxy(originExecutor);
-            // The origin executor is only abandoned once the swap succeeded, otherwise the bean
-            // would be left holding an executor that dtp just shut down.
+            // abandon the origin executor only once the swap succeeded
             if (!ReflectionUtil.setFieldValue("threadPoolExecutor", bean, proxy)) {
                 log.warn("DynamicTp, cannot replace the inner executor of ThreadPoolTaskExecutor [{}], "
                         + "skip managing it.", poolName);
@@ -356,12 +342,10 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
                 return ((TaskDecorator) taskDecorator).decorate(runnable);
             }
         };
-        // The decorating executor created by ThreadPoolTaskExecutor is replaced by the proxy and
-        // shut down, so the decorator only survives as a task wrapper. Registering it as the
-        // internal one keeps a config refresh (which resets the wrappers to taskWrapperNames)
-        // from dropping it.
+        // The origin executor holding this decorator is shut down, so the wrapper is the only place
+        // it survives: keep it internal, a config refresh must not drop it. Not published in
+        // TaskWrappers, whose names are matched as substrings and would leak it to other pools.
         proxy.setInternalTaskWrapper(taskWrapper);
-        TaskWrappers.getInstance().register(taskWrapper);
     }
 
     /**
@@ -396,16 +380,12 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, En
                             return ((TaskDecorator) taskDecorator).decorate(runnable);
                         }
                     };
-            // registered as the internal wrapper so a later config refresh, which resets the
-            // wrappers to the ones named in taskWrapperNames, cannot drop it
+            // internal, see tryWrapTaskDecorator: a config refresh must not drop it
             proxy.setInternalTaskWrapper(taskWrapper);
-            TaskWrappers.getInstance().register(taskWrapper);
         }
-        // Hooking the decorator keeps the bean itself untouched, but it only sees tasks that
-        // Spring hands to the decorator. Rejections raised by the executor bean itself (closed
-        // executor, or concurrency limit with rejectTasksWhenLimitReached) are never routed
-        // through dtp, so they do not show up in the reject metrics / alarms of this pool.
-        // Only submissions that go through DtpRegistry / the wrapper are counted as rejected.
+        // Hooking the decorator leaves the bean itself untouched, but only tasks Spring hands to
+        // the decorator are visible: rejections raised by the bean (closed, or concurrency limit)
+        // never reach dtp and are not counted.
         executor.setTaskDecorator(proxy::decorate);
         return true;
     }

@@ -191,7 +191,7 @@ Four metric collection modes are available, configured via `collectorTypes` (def
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=dromara/dynamic-tp&type=Date)](https://star-history.com/#dromara/dynamic-tp&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=dromara/dynamic-tp&type=Date)](https://star-history.dera.page/#dromara/dynamic-tp&Date)
 
 ---
 

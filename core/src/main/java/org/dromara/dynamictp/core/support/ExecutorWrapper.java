@@ -17,8 +17,9 @@
 
 package org.dromara.dynamictp.core.support;
 
-import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
+import org.dromara.dynamictp.common.util.BeanUtil;
 import org.dromara.dynamictp.common.em.NotifyItemEnum;
 import org.dromara.dynamictp.common.entity.NotifyItem;
 import org.dromara.dynamictp.core.aware.AwareManager;
@@ -61,7 +62,11 @@ public class ExecutorWrapper {
 
     /**
      * Executor.
+     * <p>
+     * serialize=false: prevents circular reference / stack overflow when JSON serialization
+     * deeply traverses ThreadPoolExecutor internal state.
      */
+    @JSONField(serialize = false)
     private ExecutorAdapter<?> executor;
 
     /**
@@ -103,8 +108,12 @@ public class ExecutorWrapper {
     protected int awaitTerminationSeconds = 0;
 
     /**
-     * Thread pool stat provider
+     * Thread pool stat provider.
+     * <p>
+     * serialize=false: ThreadPoolStatProvider holds a back-reference to this class,
+     * which would cause a circular reference and stack overflow during JSON serialization.
      */
+    @JSONField(serialize = false)
     private ThreadPoolStatProvider threadPoolStatProvider;
 
     private ExecutorWrapper() {
@@ -168,6 +177,7 @@ public class ExecutorWrapper {
         ExecutorWrapper executorWrapper = new ExecutorWrapper();
         BeanUtil.copyProperties(this, executorWrapper);
         executorWrapper.setExecutor(new CapturedExecutor(this.getExecutor()));
+        executorWrapper.setThreadPoolStatProvider(ThreadPoolStatProvider.of(executorWrapper));
         return executorWrapper;
     }
     /**

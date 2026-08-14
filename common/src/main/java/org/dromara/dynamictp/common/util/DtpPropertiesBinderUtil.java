@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.common.util;
 
-import cn.hutool.core.util.ReflectUtil;
 import lombok.val;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -89,7 +88,7 @@ public final class DtpPropertiesBinderUtil {
         val tpExecutorPropFields = ReflectionUtil.getAllFields(TpExecutorProps.class);
         val globalExecutorProps = dtpProperties.getGlobalExecutorProps();
         dtpPropertiesFields.forEach(dtpPropertiesField -> {
-            val candidateExecutor = ReflectUtil.getFieldValue(dtpProperties, dtpPropertiesField);
+            val candidateExecutor = ReflectionUtil.getFieldValue(dtpPropertiesField.getName(), dtpProperties);
             if (Objects.isNull(candidateExecutor)) {
                 return;
             }
@@ -146,30 +145,30 @@ public final class DtpPropertiesBinderUtil {
         if (Objects.isNull(globalFieldVal)) {
             return;
         }
-        ReflectUtil.setFieldValue(executor, field.getName(), globalFieldVal);
+        ReflectionUtil.setFieldValue(field.getName(), executor, globalFieldVal);
     }
 
     private static void setCollectionField(Object source, DtpExecutorProps globalExecutorProps, Object executor, String prefix) {
         if (isNotContains(prefix + ".taskWrapperNames[0]", source) &&
                 CollectionUtils.isNotEmpty(globalExecutorProps.getTaskWrapperNames())) {
-            ReflectUtil.setFieldValue(executor, "taskWrapperNames", globalExecutorProps.getTaskWrapperNames());
+            ReflectionUtil.setFieldValue("taskWrapperNames", executor, globalExecutorProps.getTaskWrapperNames());
         }
         if (isNotContains(prefix + ".platformIds[0]", source) &&
                 CollectionUtils.isNotEmpty(globalExecutorProps.getPlatformIds())) {
-            ReflectUtil.setFieldValue(executor, PLATFORM_IDS, globalExecutorProps.getPlatformIds());
+            ReflectionUtil.setFieldValue(PLATFORM_IDS, executor, globalExecutorProps.getPlatformIds());
         }
         if (isNotContains(prefix + ".notifyItems[0].type", source) &&
                 CollectionUtils.isNotEmpty(globalExecutorProps.getNotifyItems())) {
-            ReflectUtil.setFieldValue(executor, NOTIFY_ITEMS, globalExecutorProps.getNotifyItems());
+            ReflectionUtil.setFieldValue(NOTIFY_ITEMS, executor, globalExecutorProps.getNotifyItems());
         }
         if (isNotContains(prefix + ".awareNames[0]", source) &&
                 CollectionUtils.isNotEmpty(globalExecutorProps.getAwareNames())) {
-            ReflectUtil.setFieldValue(executor, AWARE_NAMES, globalExecutorProps.getAwareNames());
+            ReflectionUtil.setFieldValue(AWARE_NAMES, executor, globalExecutorProps.getAwareNames());
         }
         try {
             if (isNotContains(prefix + ".pluginNames[0]", source) &&
                     CollectionUtils.isNotEmpty(globalExecutorProps.getPluginNames())) {
-                ReflectUtil.setFieldValue(executor, PLUGIN_NAMES, globalExecutorProps.getPluginNames());
+                ReflectionUtil.setFieldValue(PLUGIN_NAMES, executor, globalExecutorProps.getPluginNames());
             }
         } catch (Exception e) {
             // ignore

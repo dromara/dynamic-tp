@@ -17,8 +17,6 @@
 
 package org.dromara.dynamictp.extension.agent;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ArrayUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.dromara.dynamictp.core.aware.TaskStatAware;
@@ -35,6 +33,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.ArrayUtils;
 
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.DTP_EXECUTE_ENHANCED;
 import static org.dromara.dynamictp.common.constant.DynamicTpConst.FALSE_STR;
@@ -72,7 +71,7 @@ public class AgentAware extends TaskStatAware {
             if (o instanceof DtpRunnable) {
                 return (DtpRunnable) o;
             }
-            if (Objects.isNull(o) || CollUtil.contains(visitedClass, o.getClass())) {
+            if (Objects.isNull(o) || visitedClass.contains(o.getClass())) {
                 return null;
             } else {
                 visitedClass.add(o.getClass());
@@ -89,7 +88,7 @@ public class AgentAware extends TaskStatAware {
     private DtpRunnable getDtpRunnable(Class<? extends Runnable> rClass, Runnable r, Set<Class> visitedClass) throws IllegalAccessException {
         while (Runnable.class.isAssignableFrom(rClass)) {
             Field[] declaredFields = rClass.getDeclaredFields();
-            if (ArrayUtil.isNotEmpty(declaredFields)) {
+            if (ArrayUtils.isNotEmpty(declaredFields)) {
                 List<Field> conditionFields = Arrays.stream(declaredFields)
                         .filter(ele -> Runnable.class.isAssignableFrom(ele.getType()))
                         .collect(Collectors.toList());

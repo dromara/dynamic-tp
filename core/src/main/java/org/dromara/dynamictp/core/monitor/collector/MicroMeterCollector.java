@@ -17,7 +17,7 @@
 
 package org.dromara.dynamictp.core.monitor.collector;
 
-import cn.hutool.core.bean.BeanUtil;
+import org.dromara.dynamictp.common.util.BeanUtil;
 import io.micrometer.core.instrument.Metrics;
 import io.micrometer.core.instrument.Tag;
 import lombok.extern.slf4j.Slf4j;

@@ -17,7 +17,7 @@
 
 package org.dromara.dynamictp.core.monitor.collector.jmx;
 
-import cn.hutool.core.bean.BeanUtil;
+import org.dromara.dynamictp.common.util.BeanUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.common.em.CollectorTypeEnum;
 import org.dromara.dynamictp.common.entity.ThreadPoolStats;

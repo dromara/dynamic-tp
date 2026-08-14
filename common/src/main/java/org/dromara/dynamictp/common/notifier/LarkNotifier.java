@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.common.notifier;
 
-import cn.hutool.core.net.url.UrlBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.codec.binary.Base64;
@@ -25,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dromara.dynamictp.common.constant.LarkNotifyConst;
 import org.dromara.dynamictp.common.em.NotifyPlatformEnum;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
+import org.dromara.dynamictp.common.util.UrlBuilder;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -101,7 +101,7 @@ public class LarkNotifier extends AbstractHttpNotifier {
             return platform.getWebhook();
         }
         UrlBuilder builder = UrlBuilder.of(Optional.ofNullable(platform.getWebhook()).orElse(LarkNotifyConst.LARK_WEBHOOK));
-        List<String> segments = builder.getPath().getSegments();
+        List<String> segments = builder.getPathSegments();
         if (!Objects.equals(platform.getUrlKey(), segments.get(segments.size() - 1))) {
            builder.addPath(platform.getUrlKey());
         }

@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.core.aware;
 
-import cn.hutool.core.text.CharSequenceUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.notifier.manager.AlarmManager;
 import org.dromara.dynamictp.core.support.adapter.ExecutorAdapter;
@@ -59,10 +58,10 @@ public class TaskRejectAware extends TaskStatAware {
         statProvider.incRejectCount(1);
         AlarmManager.tryAlarmAsync(statProvider.getExecutorWrapper(), REJECT, runnable);
         ExecutorAdapter<?> executorAdapter = statProvider.getExecutorWrapper().getExecutor();
-        String logMsg = CharSequenceUtil.format("DynamicTp execute, thread pool is exhausted, tpName: {},  traceId: {}, " +
-                        "poolSize: {} (active: {}, core: {}, max: {}, largest: {}), " +
-                        "task: {} (completed: {}), queueCapacity: {}, (currSize: {}, remaining: {}) ," +
-                        "executorStatus: (isShutdown: {}, isTerminated: {}, isTerminating: {})",
+        String logMsg = String.format("DynamicTp execute, thread pool is exhausted, tpName: %s,  traceId: %s, " +
+                        "poolSize: %s (active: %s, core: %s, max: %s, largest: %s), " +
+                        "task: %s (completed: %s), queueCapacity: %s, (currSize: %s, remaining: %s) ," +
+                        "executorStatus: (isShutdown: %s, isTerminated: %s, isTerminating: %s)",
                 statProvider.getExecutorWrapper().getThreadPoolName(), MDC.get(TRACE_ID), executorAdapter.getPoolSize(),
                 executorAdapter.getActiveCount(), executorAdapter.getCorePoolSize(), executorAdapter.getMaximumPoolSize(),
                 executorAdapter.getLargestPoolSize(), executorAdapter.getTaskCount(), executorAdapter.getCompletedTaskCount(),

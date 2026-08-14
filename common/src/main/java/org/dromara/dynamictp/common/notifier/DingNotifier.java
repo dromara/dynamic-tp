@@ -17,7 +17,6 @@
 
 package org.dromara.dynamictp.common.notifier;
 
-import cn.hutool.core.net.url.UrlBuilder;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -28,6 +27,7 @@ import org.dromara.dynamictp.common.entity.MarkdownReq;
 import org.dromara.dynamictp.common.entity.NotifyPlatform;
 import org.dromara.dynamictp.common.util.DingSignUtil;
 import org.dromara.dynamictp.common.util.JsonUtil;
+import org.dromara.dynamictp.common.util.UrlBuilder;
 
 import java.util.List;
 import java.util.Optional;
@@ -88,7 +88,7 @@ public class DingNotifier extends AbstractHttpNotifier {
      */
     private String getTargetUrl(String secret, String accessToken, String webhook) {
         UrlBuilder builder = UrlBuilder.of(webhook);
-        if (StringUtils.isNotBlank(accessToken) && StringUtils.isBlank(builder.getQuery().get(DingNotifyConst.ACCESS_TOKEN_PARAM))) {
+        if (StringUtils.isNotBlank(accessToken) && StringUtils.isBlank(builder.getQueryParam(DingNotifyConst.ACCESS_TOKEN_PARAM))) {
             builder.addQuery(DingNotifyConst.ACCESS_TOKEN_PARAM, accessToken);
         }
         if (StringUtils.isNotBlank(secret)) {

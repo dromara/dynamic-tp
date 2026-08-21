@@ -793,7 +793,12 @@
                 <version>${maven-flatten.version}</version>
                 <configuration>
                     <updatePomFile>true</updatePomFile>
-                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                    <!-- bom: oss metadata required by Central plus the resolved
+                         dependencyManagement/properties sections. flattenMode=oss
+                         strips dependencyManagement, which turns this BOM into an
+                         empty POM and makes consumers fail with
+                         "'dependencies.dependency.version' ... is missing". -->
+                    <flattenMode>bom</flattenMode>
                 </configuration>
                 <executions>
                     <execution>

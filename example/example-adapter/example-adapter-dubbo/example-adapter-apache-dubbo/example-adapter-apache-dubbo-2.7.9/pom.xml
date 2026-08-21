@@ -10,6 +10,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-example-adapter-apache-dubbo-2.7.9</artifactId>
+    <name>dynamic-tp-example-adapter-apache-dubbo-2.7.9</name>
 
     <dependencies>
         <dependency>

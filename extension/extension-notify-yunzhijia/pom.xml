@@ -10,4 +10,5 @@
     </parent>
 
     <artifactId>dynamic-tp-extension-notify-yunzhijia</artifactId>
+    <name>dynamic-tp-extension-notify-yunzhijia</name>
 </project>

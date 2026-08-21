@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-core</artifactId>
+    <name>dynamic-tp-core</name>
 
     <dependencies>
         <dependency>

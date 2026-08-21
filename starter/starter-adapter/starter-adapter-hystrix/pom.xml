@@ -10,6 +10,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-spring-boot-starter-adapter-hystrix</artifactId>
+    <name>dynamic-tp-spring-boot-starter-adapter-hystrix</name>
 
     <dependencies>
         <dependency>

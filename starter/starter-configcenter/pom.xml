@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>dynamic-tp-starter-configcenter</artifactId>
+    <name>dynamic-tp-starter-configcenter</name>
     <packaging>pom</packaging>
 
     <modules>

@@ -10,6 +10,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-example-apollo</artifactId>
+    <name>dynamic-tp-example-apollo</name>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>

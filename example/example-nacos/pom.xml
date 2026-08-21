@@ -10,6 +10,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-example-nacos</artifactId>
+    <name>dynamic-tp-example-nacos</name>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>

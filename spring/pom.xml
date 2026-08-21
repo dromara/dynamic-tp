@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-spring</artifactId>
+    <name>dynamic-tp-spring</name>
 
     <dependencies>
         <dependency>

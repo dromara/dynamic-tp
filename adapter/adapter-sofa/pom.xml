@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-adapter-sofa</artifactId>
+    <name>dynamic-tp-adapter-sofa</name>
 
     <dependencies>
         <dependency>

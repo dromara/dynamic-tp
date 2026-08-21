@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>dynamic-tp-test-extension</artifactId>
+    <name>dynamic-tp-test-extension</name>
     <packaging>pom</packaging>
 
     <modules>

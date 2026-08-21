@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>dynamic-tp-example-huawei-cloud</artifactId>
+    <name>dynamic-tp-example-huawei-cloud</name>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>

@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-spring-boot-starter-adapter-grpc</artifactId>
+    <name>dynamic-tp-spring-boot-starter-adapter-grpc</name>
 
     <dependencies>
         <dependency>

@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>dynamic-tp-extension-skywalking</artifactId>
+    <name>dynamic-tp-extension-skywalking</name>
 
     <dependencies>
         <dependency>

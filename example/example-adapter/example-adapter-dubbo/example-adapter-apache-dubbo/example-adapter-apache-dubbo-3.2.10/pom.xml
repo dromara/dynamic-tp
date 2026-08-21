@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>dynamic-tp-example-adapter-apache-dubbo-3.2.10</artifactId>
+    <name>dynamic-tp-example-adapter-apache-dubbo-3.2.10</name>
 
     <dependencies>
         <dependency>

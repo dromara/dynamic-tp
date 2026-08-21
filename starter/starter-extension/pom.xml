@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>dynamic-tp-starter-extension</artifactId>
+    <name>dynamic-tp-starter-extension</name>
     <packaging>pom</packaging>
 
     <modules>

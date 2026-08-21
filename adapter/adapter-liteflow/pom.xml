@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-adapter-liteflow</artifactId>
+    <name>dynamic-tp-adapter-liteflow</name>
 
     <dependencies>
         <dependency>

@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-spring-boot-starter-adapter-thrift</artifactId>
+    <name>dynamic-tp-spring-boot-starter-adapter-thrift</name>
 
     <dependencies>
         <dependency>

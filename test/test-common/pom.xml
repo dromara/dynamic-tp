@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-test-common</artifactId>
+    <name>dynamic-tp-test-common</name>
     <dependencies>
         <dependency>
             <groupId>org.dromara.dynamictp</groupId>

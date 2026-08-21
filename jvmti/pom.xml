@@ -10,6 +10,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-jvmti</artifactId>
+    <name>dynamic-tp-jvmti</name>
     <packaging>pom</packaging>
 
     <modules>

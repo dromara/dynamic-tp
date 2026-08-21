@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-test</artifactId>
+    <name>dynamic-tp-test</name>
     <packaging>pom</packaging>
 
     <modules>
@@ -23,6 +24,8 @@
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
+        <!-- central-publishing does not honor maven.deploy.skip alone -->
+        <skipPublishing>true</skipPublishing>
         <!-- mockito / junit versions come from spring-boot-dependencies (Boot 4). -->
     </properties>
 

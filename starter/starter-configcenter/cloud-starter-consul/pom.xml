@@ -10,6 +10,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-spring-cloud-starter-consul</artifactId>
+    <name>dynamic-tp-spring-cloud-starter-consul</name>
 
     <dependencies>
         <dependency>

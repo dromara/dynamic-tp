@@ -9,4 +9,5 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-adapter-common</artifactId>
+    <name>dynamic-tp-adapter-common</name>
 </project>

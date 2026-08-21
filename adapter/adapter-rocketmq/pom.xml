@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-adapter-rocketmq</artifactId>
+    <name>dynamic-tp-adapter-rocketmq</name>
 
     <dependencies>
         <dependency>

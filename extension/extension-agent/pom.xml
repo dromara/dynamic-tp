@@ -8,5 +8,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-extension-agent</artifactId>
+    <name>dynamic-tp-extension-agent</name>
 
 </project>

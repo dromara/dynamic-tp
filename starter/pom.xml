@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-starter</artifactId>
+    <name>dynamic-tp-starter</name>
     <packaging>pom</packaging>
 
     <modules>

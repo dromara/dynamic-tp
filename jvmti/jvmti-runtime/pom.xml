@@ -8,6 +8,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-jvmti-runtime</artifactId>
+    <name>dynamic-tp-jvmti-runtime</name>
 
     <dependencies>
         <dependency>

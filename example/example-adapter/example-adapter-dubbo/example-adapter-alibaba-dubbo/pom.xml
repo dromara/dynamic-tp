@@ -10,6 +10,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-example-adapter-alibaba-dubbo</artifactId>
+    <name>dynamic-tp-example-adapter-alibaba-dubbo</name>
 
     <dependencies>
         <dependency>

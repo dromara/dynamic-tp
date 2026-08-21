@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-spring-boot-starter-nacos</artifactId>
+    <name>dynamic-tp-spring-boot-starter-nacos</name>
 
     <dependencies>
         <dependency>

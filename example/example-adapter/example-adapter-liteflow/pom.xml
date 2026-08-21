@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-example-adapter-liteflow</artifactId>
+    <name>dynamic-tp-example-adapter-liteflow</name>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>

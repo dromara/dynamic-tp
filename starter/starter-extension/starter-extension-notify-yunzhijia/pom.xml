@@ -11,6 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dynamic-tp-spring-boot-starter-extension-notify-yunzhijia</artifactId>
+    <name>dynamic-tp-spring-boot-starter-extension-notify-yunzhijia</name>
 
     <dependencies>
         <dependency>

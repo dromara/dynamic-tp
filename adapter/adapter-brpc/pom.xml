@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-adapter-brpc</artifactId>
+    <name>dynamic-tp-adapter-brpc</name>
 
     <dependencies>
         <dependency>

@@ -10,6 +10,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-spring-cloud-starter-zookeeper</artifactId>
+    <name>dynamic-tp-spring-cloud-starter-zookeeper</name>
 
     <dependencies>
         <dependency>

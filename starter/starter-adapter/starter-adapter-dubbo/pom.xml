@@ -10,6 +10,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-spring-boot-starter-adapter-dubbo</artifactId>
+    <name>dynamic-tp-spring-boot-starter-adapter-dubbo</name>
 
     <dependencies>
         <dependency>

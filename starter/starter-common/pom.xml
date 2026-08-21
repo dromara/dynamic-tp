@@ -10,6 +10,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-spring-boot-starter-common</artifactId>
+    <name>dynamic-tp-spring-boot-starter-common</name>
 
     <dependencies>
         <dependency>

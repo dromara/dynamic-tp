@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-test-adapter</artifactId>
+    <name>dynamic-tp-test-adapter</name>
 
     <dependencies>
         <dependency>

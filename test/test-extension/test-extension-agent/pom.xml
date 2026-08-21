@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>dynamic-tp-test-extension-agent</artifactId>
+    <name>dynamic-tp-test-extension-agent</name>
 
     <dependencies>
         <dependency>

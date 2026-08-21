@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-extension-notify-email</artifactId>
+    <name>dynamic-tp-extension-notify-email</name>
 
     <dependencies>
         <dependency>

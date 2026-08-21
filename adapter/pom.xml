@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-adapter</artifactId>
+    <name>dynamic-tp-adapter</name>
     <packaging>pom</packaging>
 
     <modules>

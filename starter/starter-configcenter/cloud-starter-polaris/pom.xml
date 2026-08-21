@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-spring-cloud-starter-polaris</artifactId>
+    <name>dynamic-tp-spring-cloud-starter-polaris</name>
 
     <dependencies>
         <dependency>

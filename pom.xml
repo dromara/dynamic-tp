@@ -336,14 +336,17 @@
                 <version>${maven-site-plugin.version}</version>
             </plugin>
 
-            <!-- flatten -->
+            <!-- flatten: oss mode embeds name/description/url/licenses/developers/scm
+                 required by Maven Central into each module's installed/deployed POM.
+                 resolveCiFriendliesOnly only rewrites ${revision} and leaves child POMs
+                 without those elements, which Central rejects as "Project name is missing". -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
                 <version>${maven-flatten.version}</version>
                 <configuration>
                     <updatePomFile>true</updatePomFile>
-                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                    <flattenMode>oss</flattenMode>
                 </configuration>
                 <executions>
                     <execution>

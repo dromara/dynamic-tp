@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-extension-limiter-redis</artifactId>
+    <name>dynamic-tp-extension-limiter-redis</name>
 
     <dependencies>
         <dependency>

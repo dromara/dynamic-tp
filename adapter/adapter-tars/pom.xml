@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-adapter-tars</artifactId>
+    <name>dynamic-tp-adapter-tars</name>
 
     <dependencies>
         <dependency>

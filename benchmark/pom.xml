@@ -9,6 +9,13 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-benchmark</artifactId>
+    <name>dynamic-tp-benchmark</name>
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <!-- central-publishing does not honor maven.deploy.skip alone -->
+        <skipPublishing>true</skipPublishing>
+    </properties>
 
     <dependencies>
         <dependency>

@@ -11,6 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
     
     <artifactId>dynamic-tp-spring-boot-starter-etcd</artifactId>
+    <name>dynamic-tp-spring-boot-starter-etcd</name>
     
     <dependencies>
         <dependency>

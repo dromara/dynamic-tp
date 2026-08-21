@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>dynamic-tp-test-extension-limiter-redis</artifactId>
+    <name>dynamic-tp-test-extension-limiter-redis</name>
 
     <dependencies>
         <dependency>

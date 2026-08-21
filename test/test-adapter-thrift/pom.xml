@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-test-adapter-thrift</artifactId>
+    <name>dynamic-tp-test-adapter-thrift</name>
 
     <dependencies>
         <dependency>

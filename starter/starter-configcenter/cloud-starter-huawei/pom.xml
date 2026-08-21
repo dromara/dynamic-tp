@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>dynamic-tp-spring-cloud-starter-huawei</artifactId>
+    <name>dynamic-tp-spring-cloud-starter-huawei</name>
 
     <dependencies>
         <dependency>

@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-logging</artifactId>
+    <name>dynamic-tp-logging</name>
 
     <dependencies>
         <dependency>

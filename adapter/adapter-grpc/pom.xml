@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-adapter-grpc</artifactId>
+    <name>dynamic-tp-adapter-grpc</name>
 
     <properties>
         <grpc.version>1.36.0</grpc.version>

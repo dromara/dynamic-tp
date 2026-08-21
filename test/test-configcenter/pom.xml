@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-test-configcenter</artifactId>
+    <name>dynamic-tp-test-configcenter</name>
 
     <dependencies>
         <dependency>

@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-adapter-okhttp3</artifactId>
+    <name>dynamic-tp-adapter-okhttp3</name>
 
     <dependencies>
         <dependency>

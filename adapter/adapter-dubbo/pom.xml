@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>dynamic-tp-adapter-dubbo</artifactId>
+    <name>dynamic-tp-adapter-dubbo</name>
 
     <dependencies>
         <dependency>

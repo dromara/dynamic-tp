@@ -133,6 +133,10 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter implements Applica
         if (MapUtils.isNotEmpty(executorMap)) {
             executorMap.forEach((k, v) -> {
                 ThreadPoolExecutor proxy = getProxy(v);
+                if (proxy == null) {
+                    // 无法增强的执行器类型（如虚拟线程执行器），保持原执行器不变，跳过增强
+                    return;
+                }
                 executorMap.replace(k, proxy);
                 putAndFinalize(genTpName(k.toString()), (ExecutorService) v, proxy);
             });
@@ -169,13 +173,17 @@ public class ApacheDubboDtpAdapter extends AbstractDtpAdapter implements Applica
     }
 
     private ThreadPoolExecutor getProxy(Executor executor) {
-        ThreadPoolExecutor proxy;
-        if (executor instanceof EagerThreadPoolExecutor) {
-            proxy = new EagerThreadPoolExecutorProxy((EagerThreadPoolExecutor) executor);
-        } else {
-            proxy = new ThreadPoolExecutorProxy((ThreadPoolExecutor) executor);
+        // 非 ThreadPoolExecutor 的执行器（如 Dubbo 3.x 虚拟线程场景下的 ThreadPerTaskExecutor）
+        // 无法被 ThreadPoolExecutorProxy 增强，直接跳过，避免 ClassCastException 导致整个 dubboTp 初始化失败
+        if (!(executor instanceof ThreadPoolExecutor)) {
+            log.warn("DynamicTp adapter, dubboTp unsupported executor type: {}, skip enhance.",
+                    executor.getClass().getName());
+            return null;
         }
-        return proxy;
+        if (executor instanceof EagerThreadPoolExecutor) {
+            return new EagerThreadPoolExecutorProxy((EagerThreadPoolExecutor) executor);
+        }
+        return new ThreadPoolExecutorProxy((ThreadPoolExecutor) executor);
     }
 
     private String genTpName(String port) {

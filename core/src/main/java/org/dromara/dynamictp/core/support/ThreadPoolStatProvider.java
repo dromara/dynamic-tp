@@ -217,4 +217,33 @@ public class ThreadPoolStatProvider {
     public PerformanceProvider getPerformanceProvider() {
         return this.performanceProvider;
     }
+
+    /**
+     * 清理一个未真正执行的任务的统计状态（如 shutdownNow 时仍在队列中的任务）。
+     * 这些任务不会走到 afterExecute/afterReject，若不清理，stopWatchMap 中的
+     * DtpRunnable 引用会永久滞留，最终导致内存泄漏。
+     *
+     * @param r 未执行的任务
+     */
+    public void discardTask(Runnable r) {
+        if (r == null) {
+            return;
+        }
+        stopWatchMap.remove(r);
+        cancelRunTimeoutTask(r);
+    }
+
+    /**
+     * 批量清理未执行任务的统计状态
+     *
+     * @param tasks shutdownNow 返回的未执行任务列表
+     */
+    public void discardTasks(Iterable<Runnable> tasks) {
+        if (tasks == null) {
+            return;
+        }
+        for (Runnable r : tasks) {
+            discardTask(r);
+        }
+    }
 }

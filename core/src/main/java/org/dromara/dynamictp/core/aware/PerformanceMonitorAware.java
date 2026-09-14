@@ -17,6 +17,7 @@
 
 package org.dromara.dynamictp.core.aware;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 
@@ -56,5 +57,12 @@ public class PerformanceMonitorAware extends TaskStatAware {
     @Override
     public void afterReject(Runnable r, Executor executor) {
         Optional.ofNullable(statProviders.get(executor)).ifPresent(p -> p.completeTask(r));
+    }
+
+    @Override
+    public void shutdownNow(Executor executor, List<Runnable> tasks) {
+        // shutdownNow 丢弃的队列任务不会经过 afterExecute/afterReject，
+        // 需要显式清理其在 stopWatchMap/runTimeoutMap 中的引用，避免内存泄漏
+        Optional.ofNullable(statProviders.get(executor)).ifPresent(p -> p.discardTasks(tasks));
     }
 }

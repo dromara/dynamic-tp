@@ -186,3 +186,10 @@ dynamictp:
           interval: 1                # 报警间隔（单位：s）
         - type: change
           enabled: true
+    - threadPoolName: dtpExecutor15
+      executorType: scheduled
+      corePoolSize: 2
+      maximumPoolSize: 5
+      queueCapacity: 200
+      queueType: DelayQueue
+      taskWrapperNames: ["ttl"]

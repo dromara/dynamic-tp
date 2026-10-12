@@ -19,6 +19,7 @@ package org.dromara.dynamictp.core.executor;
 
 import org.dromara.dynamictp.common.em.JreEnum;
 import org.dromara.dynamictp.core.support.proxy.ScheduledThreadPoolExecutorProxy;
+import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 
 import java.util.Collection;
 import java.util.List;
@@ -268,5 +269,13 @@ public class ScheduledDtpExecutor extends DtpExecutor implements ScheduledExecut
     @Override
     public ScheduledThreadPoolExecutor getOriginal() {
         return delegate;
+    }
+
+    @Override
+    public void setTaskWrappers(List<TaskWrapper> taskWrappers) {
+        super.setTaskWrappers(taskWrappers);
+        if (delegate != null) {
+            delegate.setTaskWrappers(taskWrappers);
+        }
     }
 }

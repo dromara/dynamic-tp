@@ -20,6 +20,7 @@ package org.dromara.dynamictp.test.core.thread;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.dynamictp.core.DtpRegistry;
 import org.dromara.dynamictp.core.executor.ScheduledDtpExecutor;
+import org.dromara.dynamictp.core.support.task.wrapper.TaskWrapper;
 import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
 import org.dromara.dynamictp.spring.support.YamlPropertySourceFactory;
 import org.junit.jupiter.api.Test;
@@ -32,9 +33,13 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 
@@ -80,6 +85,23 @@ class ScheduledDtpExecutorTest {
                 0, 1000, TimeUnit.MILLISECONDS);
         scheduledFuture.cancel(false);
         assertTrue(scheduledFuture.isCancelled());
+    }
+
+    @Test
+    void testScheduledDtpExecutorTaskWrapper() throws Exception {
+        ScheduledDtpExecutor dtpExecutor15 = (ScheduledDtpExecutor) DtpRegistry.getExecutor("dtpExecutor15");
+
+        AtomicInteger wrappedRuns = new AtomicInteger();
+        TaskWrapper wrapper = runnable -> () -> {
+            wrappedRuns.incrementAndGet();
+            runnable.run();
+        };
+        dtpExecutor15.setTaskWrappers(Collections.singletonList(wrapper));
+
+        CountDownLatch latch = new CountDownLatch(1);
+        dtpExecutor15.schedule(latch::countDown, 10, TimeUnit.MILLISECONDS);
+        assertTrue(latch.await(2, TimeUnit.SECONDS));
+        assertEquals(1, wrappedRuns.get());
     }
 
 }

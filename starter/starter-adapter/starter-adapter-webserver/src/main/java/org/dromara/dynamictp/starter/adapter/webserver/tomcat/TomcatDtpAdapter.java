@@ -49,6 +49,11 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<Executor> {
     public void doEnhance(WebServer webServer) {
         TomcatWebServer tomcatWebServer = (TomcatWebServer) webServer;
         Executor originExecutor = tomcatWebServer.getTomcat().getConnector().getProtocolHandler().getExecutor();
+        if (!isSupportedExecutor(originExecutor)) {
+            log.warn("Tomcat executor type {} is not supported by DynamicTp; skip adaptation.",
+                    originExecutor == null ? "null" : originExecutor.getClass().getName());
+            return;
+        }
         TomcatExecutorProxy proxy = new TomcatExecutorProxy((ThreadPoolExecutor) originExecutor);
         ProtocolHandler protocolHandler = tomcatWebServer.getTomcat().getConnector().getProtocolHandler();
         if (protocolHandler instanceof AbstractProtocol) {
@@ -66,6 +71,10 @@ public class TomcatDtpAdapter extends AbstractWebServerDtpAdapter<Executor> {
     @Override
     protected String getTpPrefix() {
         return TP_PREFIX;
+    }
+
+    static boolean isSupportedExecutor(Executor executor) {
+        return executor instanceof ThreadPoolExecutor;
     }
 
     /**

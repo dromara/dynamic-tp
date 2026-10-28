@@ -91,8 +91,15 @@ public class EagerDtpExecutor extends DtpExecutor {
             throw new NullPointerException();
         }
         submittedTaskCount.incrementAndGet();
+        Runnable enhancedTask;
         try {
-            super.execute(command);
+            enhancedTask = getEnhancedTask(command);
+        } catch (RuntimeException | Error e) {
+            submittedTaskCount.decrementAndGet();
+            throw e;
+        }
+        try {
+            super.executeEnhancedTask(enhancedTask);
         } catch (RejectedExecutionException rx) {
             if (getQueue() instanceof TaskQueue) {
                 // If the Executor is close to maximum pool size, concurrent
@@ -100,14 +107,18 @@ public class EagerDtpExecutor extends DtpExecutor {
                 // some tasks being rejected rather than queued.
                 // If this happens, add them to the queue.
                 final TaskQueue queue = (TaskQueue) getQueue();
+                boolean queued = false;
                 try {
-                    if (!queue.force(command, 0, TimeUnit.MILLISECONDS)) {
-                        submittedTaskCount.decrementAndGet();
-                        throw new RejectedExecutionException("Queue capacity is full.", rx);
-                    }
+                    queued = queue.force(enhancedTask, 0, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException x) {
-                    submittedTaskCount.decrementAndGet();
                     throw new RejectedExecutionException(x);
+                } finally {
+                    if (!queued) {
+                        submittedTaskCount.decrementAndGet();
+                    }
+                }
+                if (!queued) {
+                    throw new RejectedExecutionException("Queue capacity is full.", rx);
                 }
             } else {
                 submittedTaskCount.decrementAndGet();

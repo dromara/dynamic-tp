@@ -179,6 +179,10 @@ public class DtpExecutor extends ThreadPoolExecutor implements TaskEnhanceAware,
     @Override
     public void execute(Runnable command) {
         command = getEnhancedTask(command);
+        executeEnhancedTask(command);
+    }
+
+    protected void executeEnhancedTask(Runnable command) {
         AwareManager.execute(this, command);
         super.execute(command);
     }

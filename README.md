@@ -113,7 +113,7 @@ Based on the above analysis, we extended `ThreadPoolExecutor` with the following
 
 - **Multiple pool modes**: `DtpExecutor` (enhanced), `EagerDtpExecutor` (IO-intensive), `ScheduledDtpExecutor` (scheduled), `OrderedDtpExecutor` (ordered). Choose based on your scenario.
 
-- **Compatibility**: Standard JUC thread pools and Spring `ThreadPoolTaskExecutor` can be managed by adding `@DynamicTp` on the `@Bean` definition.
+- **Compatibility**: Standard JUC thread pools and Spring `ThreadPoolTaskExecutor` can be managed by adding `@DynamicTp` on the `@Bean` definition. A `ThreadPoolExecutor` held in a Spring bean field can also be registered for monitoring with `@DynamicTp`; the existing instance is kept, including for `final` fields.
 
 - **Graceful shutdown**: Leverages Spring lifecycle management to shut down thread pools gracefully, processing as many queued tasks as possible before shutdown.
 

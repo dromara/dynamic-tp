@@ -48,14 +48,21 @@ import org.springframework.core.task.TaskDecorator;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.lang.NonNull;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 import static org.dromara.dynamictp.core.support.DtpLifecycleSupport.shutdownGracefulAsync;
 
@@ -73,6 +80,8 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
 
     private DefaultListableBeanFactory beanFactory;
 
+    private final ConcurrentMap<Class<?>, List<Field>> dynamicTpFieldsCache = new ConcurrentHashMap<>();
+
     /**
      * Compatible with lower versions of Spring.
      *
@@ -88,6 +97,7 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
 
     @Override
     public Object postProcessAfterInitialization(@NonNull Object bean, @NonNull String beanName) throws BeansException {
+        registerFieldExecutors(bean, beanName);
         if (!(bean instanceof ThreadPoolExecutor) && !(bean instanceof ThreadPoolTaskExecutor)) {
             return bean;
         }
@@ -96,6 +106,29 @@ public class DtpPostProcessor implements BeanPostProcessor, BeanFactoryAware, Pr
         }
         // register juc ThreadPoolExecutor or ThreadPoolTaskExecutor
         return registerAndReturnCommon(bean, beanName);
+    }
+
+    private void registerFieldExecutors(Object bean, String beanName) {
+        List<Field> dynamicTpFields = dynamicTpFieldsCache.computeIfAbsent(bean.getClass(), type ->
+                ReflectionUtil.getAllFields(type).stream()
+                        .filter(field -> field.isAnnotationPresent(DynamicTp.class))
+                        .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                        .collect(Collectors.toList()));
+        for (Field field : dynamicTpFields) {
+            DynamicTp dynamicTp = field.getAnnotation(DynamicTp.class);
+            ReflectionUtils.makeAccessible(field);
+            Object fieldValue = ReflectionUtils.getField(field, bean);
+            if (!(fieldValue instanceof ThreadPoolExecutor)) {
+                log.warn("DynamicTp field [{}.{}] must contain a ThreadPoolExecutor, actual type: {}",
+                        beanName, field.getName(), Objects.isNull(fieldValue) ? "null" : fieldValue.getClass().getName());
+                continue;
+            }
+            String poolName = StringUtils.isNotBlank(dynamicTp.value())
+                    ? dynamicTp.value() : beanName + "." + field.getName();
+            // Field-based registration keeps the application's executor instance intact. This is required
+            // for final fields and also avoids changing execution semantics for hard-coded pools.
+            DtpRegistry.registerExecutorIfAbsent(poolName, (ThreadPoolExecutor) fieldValue, REGISTER_SOURCE);
+        }
     }
 
     private Object registerAndReturnDtp(Object bean) {

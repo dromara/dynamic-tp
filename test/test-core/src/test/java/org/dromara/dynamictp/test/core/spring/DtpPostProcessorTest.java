@@ -18,6 +18,7 @@
 package org.dromara.dynamictp.test.core.spring;
 
 import org.dromara.dynamictp.core.DtpRegistry;
+import org.dromara.dynamictp.core.support.ExecutorWrapper;
 import org.dromara.dynamictp.core.support.proxy.ThreadPoolExecutorProxy;
 import org.dromara.dynamictp.spring.annotation.EnableDynamicTp;
 import org.dromara.dynamictp.spring.support.YamlPropertySourceFactory;
@@ -26,7 +27,10 @@ import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -37,6 +41,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -66,6 +72,34 @@ class DtpPostProcessorTest {
         ThreadPoolTaskExecutor taskExecutor = context.getBean("taskExecutor", ThreadPoolTaskExecutor.class);
         assertEquals(ThreadPoolExecutorProxy.class, taskExecutor.getThreadPoolExecutor().getClass());
         taskExecutor.execute(() -> System.out.println("enhance taskExecutor success!"));
+
+        Config.FieldExecutorHolder holder = context.getBean(Config.FieldExecutorHolder.class);
+        ExecutorWrapper fieldExecutor = DtpRegistry.getExecutorWrapper("fieldExecutor");
+        assertSame(holder.getExecutor(), fieldExecutor.getExecutor().getOriginal());
+        assertFalse(holder.getExecutor().isShutdown());
+        assertFalse(fieldExecutor.getExecutor().getOriginal() instanceof ThreadPoolExecutorProxy);
+    }
+
+    @Test
+    void registerExecutorIfAbsentAvoidsDuplicateInstancesAndNameConflicts() {
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<>());
+        ThreadPoolExecutor conflictingExecutor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<>());
+        try {
+            assertTrue(DtpRegistry.registerExecutorIfAbsent(
+                    "fieldExecutorRegistrationTest", executor, "test"));
+            assertFalse(DtpRegistry.registerExecutorIfAbsent(
+                    "fieldExecutorAliasTest", executor, "test"));
+            assertFalse(DtpRegistry.registerExecutorIfAbsent(
+                    "fieldExecutorRegistrationTest", conflictingExecutor, "test"));
+            assertSame(executor, DtpRegistry.getExecutorWrapper("fieldExecutorRegistrationTest")
+                    .getExecutor().getOriginal());
+        } finally {
+            DtpRegistry.unregisterExecutor("fieldExecutorRegistrationTest");
+            executor.shutdownNow();
+            conflictingExecutor.shutdownNow();
+        }
     }
 
 }

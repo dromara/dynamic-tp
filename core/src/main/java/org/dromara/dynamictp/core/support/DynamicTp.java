@@ -29,13 +29,14 @@ import java.lang.annotation.Target;
  * @author yanhom
  * @since 1.0.3
  **/
-@Target({ElementType.METHOD})
+@Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface DynamicTp {
 
     /**
-     * Thread pool name, has higher priority than @Bean annotated method name.
+     * Thread pool name. For @Bean methods it has higher priority than the bean method name.
+     * For fields, an empty value defaults to the Spring bean name and field name joined by a dot.
      *
      * @return name
      */

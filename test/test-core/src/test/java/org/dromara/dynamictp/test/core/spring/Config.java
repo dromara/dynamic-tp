@@ -64,4 +64,19 @@ public class Config {
     public ThreadPoolTaskExecutor taskExecutor() {
         return new ThreadPoolTaskExecutor();
     }
+
+    @Bean
+    public FieldExecutorHolder fieldExecutorHolder() {
+        return new FieldExecutorHolder();
+    }
+
+    public static class FieldExecutorHolder {
+
+        @DynamicTp("fieldExecutor")
+        private final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+
+        public ThreadPoolExecutor getExecutor() {
+            return executor;
+        }
+    }
 }

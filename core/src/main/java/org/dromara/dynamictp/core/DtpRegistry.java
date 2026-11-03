@@ -112,9 +112,43 @@ public class DtpRegistry {
      * @param wrapper the newly created ExecutorWrapper instance
      * @param source  the source of the call to register method
      */
-    public static void registerExecutor(ExecutorWrapper wrapper, String source) {
+    public static synchronized void registerExecutor(ExecutorWrapper wrapper, String source) {
         log.info("DynamicTp register executor: {}, source: {}", ExecutorConverter.toMainFields(wrapper), source);
-        EXECUTOR_REGISTRY.putIfAbsent(wrapper.getThreadPoolName(), wrapper);
+        ExecutorWrapper existing = EXECUTOR_REGISTRY.putIfAbsent(wrapper.getThreadPoolName(), wrapper);
+        if (Objects.nonNull(existing)
+                && existing.getExecutor().getOriginal() != wrapper.getExecutor().getOriginal()) {
+            log.warn("DynamicTp executor name [{}] is already registered with another instance; source [{}] was ignored",
+                    wrapper.getThreadPoolName(), source);
+        }
+    }
+
+    /**
+     * Register an executor only when neither its name nor its underlying instance is already registered.
+     *
+     * @param threadPoolName the thread pool name
+     * @param executor the executor instance
+     * @param source the source of the registration
+     * @return whether the executor was registered
+     */
+    public static synchronized boolean registerExecutorIfAbsent(String threadPoolName,
+                                                                 Executor executor,
+                                                                 String source) {
+        for (ExecutorWrapper existing : EXECUTOR_REGISTRY.values()) {
+            if (existing.getExecutor().getOriginal() == executor) {
+                log.warn("DynamicTp executor instance is already registered as [{}]; registration as [{}] from [{}] was ignored",
+                        existing.getThreadPoolName(), threadPoolName, source);
+                return false;
+            }
+        }
+        if (EXECUTOR_REGISTRY.containsKey(threadPoolName)) {
+            log.warn("DynamicTp executor name [{}] is already registered; source [{}] was ignored",
+                    threadPoolName, source);
+            return false;
+        }
+        ExecutorWrapper wrapper = new ExecutorWrapper(threadPoolName, executor);
+        EXECUTOR_REGISTRY.put(threadPoolName, wrapper);
+        log.info("DynamicTp register executor: {}, source: {}", ExecutorConverter.toMainFields(wrapper), source);
+        return true;
     }
 
     /**
